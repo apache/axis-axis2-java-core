@@ -16,6 +16,7 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -61,7 +62,6 @@ import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.WsdlComposite;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
-import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 /**
@@ -679,10 +679,18 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     		// TODO: Change this to use WSDLToAxisServiceBuilder superclass
     		// Note that the axis service builder takes only the localpart of the port qname.
     		// TODO:: This should check that the namespace of the definition matches the namespace of the portQName per JAXRPC spec
+    		
     		WSDL11ToAxisServiceBuilder serviceBuilder = 
     			new WSDL11ToAxisServiceBuilder( getServiceDescriptionImpl().getWSDLWrapper().getDefinition(), 
     					getServiceDescription().getServiceQName(), 
     					getPortQName().getLocalPart());
+    		
+    		if (getServiceDescriptionImpl().isDBCMap()) {
+     			//this.class.getClass().getClassLoader();
+    			URIResolverImpl uriResolver = 
+    					new URIResolverImpl(composite.getClassLoader());
+    			serviceBuilder.setCustomResolver(uriResolver);
+    		}
     		
     		// TODO: Currently this only builds the client-side AxisService; 
     		// it needs to do client and server somehow.

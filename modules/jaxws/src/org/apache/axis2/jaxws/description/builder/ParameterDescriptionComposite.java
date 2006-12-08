@@ -54,7 +54,12 @@ public class ParameterDescriptionComposite {
 	public Class getParameterTypeClass() {
 		
 		ClassLoader classLoader = null; 
-		//	classLoader = getMethodDescriptionCompositeRef().getDescriptionBuilderCompositeRef().getClassLoader();
+		
+		if (getMethodDescriptionCompositeRef() != null) {
+			if (getMethodDescriptionCompositeRef().getDescriptionBuilderCompositeRef() != null){
+				classLoader = getMethodDescriptionCompositeRef().getDescriptionBuilderCompositeRef().getClassLoader();
+			}
+		}
 		
 		if (parameterTypeClass == null) {
 			if (getParameterType() != null) {

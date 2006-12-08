@@ -18,7 +18,10 @@
 package org.apache.axis2.jaxws.util;
 
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +40,8 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.AxisFault;
+
 
 
 public class WSDL4JWrapper implements WSDLWrapper {
@@ -49,8 +54,19 @@ public class WSDL4JWrapper implements WSDLWrapper {
 		this.wsdlURL = wsdlURL;
 		WSDLFactory factory = WSDLFactory.newInstance();
 		WSDLReader reader = factory.newWSDLReader();
-		wsdlDefinition = reader.readWSDL(wsdlURL.toString());
 		
+		try {
+			URL url = new URL(wsdlURL.toString());
+			URLConnection urlCon = url.openConnection();
+			InputStream is = urlCon.getInputStream();
+			is.close();
+			String explicitWsdl = urlCon.getURL().toString();
+			
+			wsdlDefinition = reader.readWSDL(explicitWsdl);
+			
+		} catch (Exception ex) {
+            throw new WSDLException("WSDL4JWrapper : ", ex.getMessage());
+		}
 	}
 
     public WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition) throws WSDLException{
