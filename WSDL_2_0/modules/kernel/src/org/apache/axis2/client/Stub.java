@@ -145,15 +145,16 @@ public abstract class Stub {
      *
      * @param _operationClient
      * @param addressFromBinding
+     * return existing address
      */
 
 
-    protected void setAppendAddressToEPR(OperationClient _operationClient,
+    protected String setAppendAddressToEPR(OperationClient _operationClient,
                                          String addressFromBinding) {
         EndpointReference toEPRFromServiceClient = _serviceClient.getOptions().getTo();
-        EndpointReference endpointReference = toEPRFromServiceClient.cloneEPR();
 
-        String address = endpointReference.getAddress();
+        String oldAddress = toEPRFromServiceClient.getAddress();
+        String address = toEPRFromServiceClient.getAddress();
 
         // here we assume either addressFromBinding have a '?' infront or not
         if (addressFromBinding.charAt(0) != '?') {
@@ -166,8 +167,19 @@ public abstract class Stub {
             address += addressFromBinding;
         }
 
-        endpointReference.setAddress(address);
-        _operationClient.getOptions().setTo(endpointReference);
+        toEPRFromServiceClient.setAddress(address);
+        _operationClient.getOptions().setTo(toEPRFromServiceClient);
+        return oldAddress;
+    }
+
+    /**
+     * sets the epr of the service client to given value
+     * @param address
+     */
+
+    protected void setServiceClientEPR(String address) {
+        EndpointReference toEPRFromServiceClient = _serviceClient.getOptions().getTo();
+        toEPRFromServiceClient.setAddress(address);
     }
 
     /**
