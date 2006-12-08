@@ -128,6 +128,14 @@ public interface Handler {
         return instructionID;
       }
       
+      public boolean equals(Object obj) {
+        if( !(obj instanceof InvocationResponse) ) {
+            return false;
+        }
+        final InvocationResponse instance = (InvocationResponse)obj;
+        return (instructionID==instance.instructionID);
+      }
+
       public String toString() {
     	  return description;
       }

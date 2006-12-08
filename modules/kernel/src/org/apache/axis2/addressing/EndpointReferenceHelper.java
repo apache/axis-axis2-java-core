@@ -71,8 +71,9 @@ public class EndpointReferenceHelper {
                 map = submissionQNames;
                 isFinalAddressingNamespace = false;
                 
-                if (log.isDebugEnabled())
-                    log.debug("fromOM: Found address element for namespace, " + AddressingConstants.Submission.WSA_NAMESPACE);                
+                if (log.isDebugEnabled()){
+                    log.debug("fromOM: Found address element for namespace, " + AddressingConstants.Submission.WSA_NAMESPACE);
+                }
             }
             else {
                 throw new AxisFault("Unable to locate an address element for the endpoint reference type.");
@@ -85,8 +86,9 @@ public class EndpointReferenceHelper {
                 map = finalQNames;
                 isFinalAddressingNamespace = true;
                 
-                if (log.isDebugEnabled())
-                    log.debug("fromOM: Found address element for namespace, " + AddressingConstants.Final.WSA_NAMESPACE);                
+                if (log.isDebugEnabled()){
+                    log.debug("fromOM: Found address element for namespace, " + AddressingConstants.Final.WSA_NAMESPACE);
+                }
             }
             else {
                 throw new AxisFault("Unable to locate an address element for the endpoint reference type.");
@@ -119,8 +121,9 @@ public class EndpointReferenceHelper {
             map = finalQNames;
             isFinalAddressingNamespace = true;
             
-            if (log.isDebugEnabled())
-                log.debug("fromOM: Found address element for namespace, " + AddressingConstants.Final.WSA_NAMESPACE);                
+            if (log.isDebugEnabled()){
+                log.debug("fromOM: Found address element for namespace, " + AddressingConstants.Final.WSA_NAMESPACE);
+            }
         }
         else {
             address = eprOMElement.getFirstChildWithName((QName) submissionQNames.get(AddressingConstants.EPR_ADDRESS));
@@ -129,8 +132,9 @@ public class EndpointReferenceHelper {
                 map = submissionQNames;
                 isFinalAddressingNamespace = false;
                 
-                if (log.isDebugEnabled())
-                    log.debug("fromOM: Found address element for namespace, " + AddressingConstants.Submission.WSA_NAMESPACE);                
+                if (log.isDebugEnabled()){
+                    log.debug("fromOM: Found address element for namespace, " + AddressingConstants.Submission.WSA_NAMESPACE);
+                }
             }
             else {
                 throw new AxisFault("Unable to locate an address element for the endpoint reference type.");
@@ -172,10 +176,11 @@ public class EndpointReferenceHelper {
         
         if (qname.getPrefix() != null) {
             OMNamespace wrapNs = factory.createOMNamespace(qname.getNamespaceURI(), qname.getPrefix());
-            if (factory instanceof SOAPFactory)
+            if (factory instanceof SOAPFactory){
                 eprElement = ((SOAPFactory) factory).createSOAPHeaderBlock(qname.getLocalPart(), wrapNs);
-            else
+            }else{
                 eprElement = factory.createOMElement(qname.getLocalPart(), wrapNs);
+            }
             
             OMNamespace wsaNS = factory.createOMNamespace(addressingNamespace, AddressingConstants.WSA_DEFAULT_PREFIX);
             OMElement addressE = factory.createOMElement(AddressingConstants.EPR_ADDRESS, wsaNS, eprElement);
