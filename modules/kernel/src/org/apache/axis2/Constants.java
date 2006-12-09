@@ -95,7 +95,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      * Field TRANSPORT_TCP
      */
     public static final String TRANSPORT_TCP = "tcp";
-    public static final String TRANSPORT_MAIL = "mail";
+    public static final String TRANSPORT_MAIL = "mailto";
     public static final String TRANSPORT_LOCAL = "local";
     public static final String TRANSPORT_JMS = "jms";
 

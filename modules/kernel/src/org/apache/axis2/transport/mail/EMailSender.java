@@ -20,21 +20,28 @@ package org.apache.axis2.transport.mail;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 
+import javax.activation.CommandMap;
+import javax.activation.DataSource;
+import javax.activation.MailcapCommandMap;
+import javax.activation.DataHandler;
 import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.activation.MailcapCommandMap;
-import javax.activation.CommandMap;
+import javax.mail.internet.MimeMultipart;
+import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Properties;
 
 public class EMailSender {
     private Properties properties;
     private MessageContext messageContext;
     private PasswordAuthentication passwordAuthentication;
+    private OutputStream outputStream;
 
     static {
         //Initializing the proper mime types
@@ -55,12 +62,21 @@ public class EMailSender {
         this.properties = properties;
     }
 
+    public OutputStream getOutputStream() {
+        return outputStream;
+    }
+
+    public void setOutputStream(OutputStream outputStream) {
+        this.outputStream = outputStream;
+    }
+
     public void setPasswordAuthentication(PasswordAuthentication passwordAuthentication) {
         this.passwordAuthentication = passwordAuthentication;
     }
 
-    public void send(String subject, String targetEmail, String message, OMOutputFormat format)
+    public void send(MailToInfo mailToInfo, OMOutputFormat format)
             throws AxisFault {
+
         try {
 
             Session session = Session.getInstance(properties, new Authenticator() {
@@ -70,28 +86,19 @@ public class EMailSender {
             });
             MimeMessage msg = new MimeMessage(session);
 
-            msg.setFrom(new InternetAddress((passwordAuthentication.getUserName())));
-            msg.addRecipient(Message.RecipientType.TO, new InternetAddress(targetEmail));
-            msg.setSubject(subject);
+            /*from address is comming from mail.smtp.from property */
 
-            String contentType = format.getContentType() != null ? format.getContentType() :
-                                 Constants.DEFAULT_CONTENT_TYPE;
-            if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
-                if (messageContext.getSoapAction() != null) {
-                    msg.setHeader(Constants.HEADER_SOAP_ACTION,
-                                  messageContext.getSoapAction());
-                    msg.setHeader("Content-Transfer-Encoding", "QUOTED-PRINTABLE");
-                }
+            msg.addRecipient(Message.RecipientType.TO,
+                             new InternetAddress(mailToInfo.getEmailAddress()));
+
+//            Fix Subject TODO
+            msg.setSubject("__ Axis2/Java Mail Message __");
+
+            if (mailToInfo.isxServicePath()) {
+                msg.setHeader("X-Service-Path", "\"" + mailToInfo.getContentDescription() + "\"");
             }
-            if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
-                if (messageContext.getSoapAction() != null) {
-                    msg.setContent(message,
-                                   contentType + "; charset=" + format.getCharSetEncoding() +
-                                   " ; action=\"" + messageContext.getSoapAction() + "\"");
-                }
-            } else {
-                msg.setContent(message, contentType + "; charset=" + format.getCharSetEncoding());
-            }
+
+            createMailMimeMessage(msg, mailToInfo, format);
             Transport.send(msg);
         } catch (AddressException e) {
             throw new AxisFault(e);
@@ -99,4 +106,54 @@ public class EMailSender {
             throw new AxisFault(e);
         }
     }
+
+    private void createMailMimeMessage(final MimeMessage msg, MailToInfo mailToInfo,
+                                       OMOutputFormat format)
+            throws MessagingException {
+
+        // Create the message part
+        BodyPart messageBodyPart = new MimeBase64BodyPart();
+        messageBodyPart.setText("");
+        Multipart multipart = new MimeMultipart();
+        multipart.addBodyPart(messageBodyPart);
+
+        DataSource source = null;
+
+        // Part two is attachment
+        if (outputStream instanceof ByteArrayOutputStream) {
+            source = new ByteArrayDataSource(((ByteArrayOutputStream) outputStream).toByteArray());
+        }
+        messageBodyPart = new MimeBase64BodyPart();
+        messageBodyPart.setDataHandler(new DataHandler(source));
+        messageBodyPart.setDisposition(Part.ATTACHMENT);
+
+        messageBodyPart
+                .addHeader("Content-Description", "\"" + mailToInfo.getContentDescription() + "\"");
+
+        String contentType = format.getContentType() != null ? format.getContentType() :
+                             Constants.DEFAULT_CONTENT_TYPE;
+        if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+            if (messageContext.getSoapAction() != null) {
+                messageBodyPart.setHeader(Constants.HEADER_SOAP_ACTION,
+                                          messageContext.getSoapAction());
+            }
+        }
+
+        if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+            if (messageContext.getSoapAction() != null) {
+                messageBodyPart.setHeader("Content-Type",
+                                          contentType + "; charset=" + format.getCharSetEncoding() +
+                                          " ; action=\"" + messageContext.getSoapAction() + "\"");
+            }
+        } else {
+            messageBodyPart.setHeader("Content-Type",
+                                      contentType + "; charset=" + format.getCharSetEncoding());
+        }
+
+        multipart.addBodyPart(messageBodyPart);
+        msg.setContent(multipart);
+
+    }
+
+
 }

@@ -17,15 +17,14 @@
 package org.apache.axis2.transport.mail;
 
 public class Constants {
-    public final static String FROM_ADDRESS = "mail.from";
-    public final static String TO_ADDRESS = "mail.to";
-    public final static String SUBJECT = "mail.subject";
+
     public final static String HEADER_SOAP_ACTION = "mail.soapaction";
 
+    public final static String FROM_ADDRESS = "mail.smtp.from";
     public final static String SMTP_USER = "mail.smtp.user";
     public final static String SMTP_PORT = "mail.smtp.port";
     public final static String SMTP_HOST = "mail.smtp.host";
-     public final static String SMTP_USER_PASSWORD = "transport.mail.smtp.password";
+    public final static String SMTP_USER_PASSWORD = "transport.mail.smtp.password";
 
     public final static String POP3_USER = "mail.pop3.user";
     public final static String POP3_PORT = "mail.pop3.port";

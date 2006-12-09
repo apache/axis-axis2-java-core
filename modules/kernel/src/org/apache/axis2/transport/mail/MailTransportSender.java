@@ -24,11 +24,14 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.AbstractTransportSender;
+import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.HTTPTransportUtils;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.axis2.util.Utils;
 
@@ -39,18 +42,89 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class MailTransportSender extends AbstractTransportSender {
+/**
+ * 0. For this profile we only care about SOAP 1.2
+ * 1. There should be no mime text body in this case
+ * 2. The SOAP envelope should be base64 encoded and marked with the following headers
+ * SOAP 1.2
+ * Content-Type: application/soap+xml; charset=UTF-8 ; action="soap-action-goes-here"
+ * Content-Transfer-Encoding: base64
+ * Content-Description: "/serviceName"
+ * 3. The content-description is the logical name of the service. It should be quoted.
+ * 4. The subject can be anything. Perhaps something like "SOAP Message" might be useful to people looking at the mail in a normal mail browser.
+ * 5. If there are attachments the there will be a mime multipart. There should only be one part with content-type: application/soap+xml.
+ * 6. The service URL will be created as mailto:paul@wso2.com?X-Service-Path=/axis2/services/MyService
+ * or paul@wso2.com?/axis2/services/MyService
+ * <p/>
+ * <p/>
+ * Example without attachments
+ * ========================
+ * From: rm_client@lenio.dk
+ * To: lenioserver@oiositest.dk
+ * Message-ID: <8868170.01165394158287.JavaMail.hgk@hans-guldager-knudsens-computer.local>
+ * Subject: ANYTHING
+ * MIME-Version: 1.0
+ * Content-Type: application/soap+xml; charset=UTF-8 ; action="http://rep.oio.dk/oiosi/IMessageHandler/RequestRespondRequest"
+ * Content-Transfer-Encoding: base64
+ * Content-Description: /my/service/urlpath
+ * <p/>
+ * PD94bWwgdmVyc2lvbj0nMS4wJyBlbmNvZGluZz0ndXRmLTgnPz48c29hcGVudjpFbnZlbG9wZSB4
+ * Y3VtZW50YXRpb24uPC9EZXNjcmlwdGlvbj48L05vdGlmaWNhdGlvbj48L3NvYXBlbnY6Qm9keT48
+ * L3NvYXBlbnY6RW52ZWxvcGU+
+ * <p/>
+ * ========================
+ * <p/>
+ * Example with attachments
+ * <p/>
+ * ========================
+ * From: rm_client@lenio.dk
+ * To: lenioserver@oiositest.dk
+ * Message-ID: <8868170.01165394158287.JavaMail.hgk@hans-guldager-knudsens-computer.local>
+ * Subject: ANYTHING
+ * MIME-Version: 1.0
+ * content-type: multipart/mixed; boundary=--boundary_0_9fdec710-2336-4dc9-8bcd-45f2c06cf605
+ * <p/>
+ * ----boundary_0_9fdec710-2336-4dc9-8bcd-45f2c06cf605
+ * Content-Type: application/soap+xml; charset=UTF-8 ; action="http://rep.oio.dk/oiosi/IMessageHandler/RequestRespondRequest"
+ * Content-Transfer-Encoding: base64
+ * Content-Description: /my/service/urlpath
+ * <p/>
+ * PD94bWwgdmVyc2lvbj0nMS4wJyBlbmNvZGluZz0ndXRmLTgnPz48c29hcGVudjpFbnZlbG9wZSB4
+ * Y3VtZW50YXRpb24uPC9EZXNjcmlwdGlvbj48L05vdGlmaWNhdGlvbj48L3NvYXBlbnY6Qm9keT48
+ * L3NvYXBlbnY6RW52ZWxvcGU+
+ * <p/>
+ * ----boundary_0_9fdec710-2336-4dc9-8bcd-45f2c06cf605
+ * ----boundary_0_9fdec710-2336-4dc9-8bcd-45f2c06cf605
+ * content-type: application/octet-stream
+ * content-transfer-encoding: base64
+ * <p/>
+ * PHM6RW52ZWxvcGUgeG1sbnM6cz0iaHR0cDovL3d3dy53My5vcmcvMjAwMy8wNS9zb2FwLWVu
+ * dmVsb3BlIiB4bWxuczphPSJodHRwOi8vd3d3LnczLm9yZy8yMDA1LzA4L2FkZHJlc3Npbmci
+ * IHhtbG5zOnU9Imh0dHA6Ly9kb2NzLm9hc2lzLW9wZW4ub3JnL3dzcy8yMDA0LzAxL29hc2lz
+ * LTIwMDQwMS13c3Mtd3NzZWN1cml0eS11dGlsaXR5LTEuMC54c2QiPjxzOkhlYWRlcj48YTpB
+ * Y3Rpb24gczptdXN0VW5kZXJzdGFuZD0iMSI+aHR0cDovL3JlcC5vaW8uZGsvb2lvc2kvSU1l
+ * c3NhZ2VIYW5kbGVyL1JlcXVlc3RSZXNwb25kUmVxdWVzdDwvYTpBY3Rpb24+PGE6TWVzc2Fn
+ */
+public class MailTransportSender extends AbstractHandler implements TransportSender {
 
     /* smtpProperties holds all the parameters needed to Java Mail. This will be filled either from Axis2.xml or
        from runtime.
      */
-    private java.util.Properties smtpProperties = new java.util.Properties();
+    private final java.util.Properties smtpProperties = new java.util.Properties();
 
     private PasswordAuthentication passwordAuthentication;
 
     private ByteArrayOutputStream byteArrayOutputStream;
     // assosiation with OMOutputFormat
-    private OMOutputFormat format = new OMOutputFormat();
+    private final OMOutputFormat format = new OMOutputFormat();
+
+    private final MailToInfo mailToInfo = new MailToInfo();
+
+    private final static String NAME = "MailTransportSender";
+
+    public MailTransportSender() {
+        init(new HandlerDescription(NAME));
+    }
 
 
     public void init(ConfigurationContext configurationContext,
@@ -78,20 +152,16 @@ public class MailTransportSender extends AbstractTransportSender {
             if (paramKey.equals(Constants.SMTP_USER_PASSWORD)) {
                 password = paramValue;
             }
+            if (paramKey.equals(Constants.RAPLY_TO)) {
+                mailToInfo.setFromAddress(paramValue);
+            }
 
         }
         passwordAuthentication = new PasswordAuthentication(username, password);
     }
 
-    public MailTransportSender() {
-    }
 
     public void cleanup(MessageContext msgContext) throws AxisFault {
-    }
-
-    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
-                                                                   OutputStream out)
-            throws AxisFault {
     }
 
     private void runtimeMailParameterSetting(MessageContext msgContext) {
@@ -111,18 +181,16 @@ public class MailTransportSender extends AbstractTransportSender {
 
     }
 
-    public void finalizeSendWithToAddress(MessageContext msgContext, OutputStream out)
-            throws AxisFault {
+    public void sendMimeMessage(MessageContext msgContext) throws AxisFault {
         try {
             // Override with runtime settings
             runtimeMailParameterSetting(msgContext);
 
             EMailSender sender = new EMailSender();
+            sender.setOutputStream(byteArrayOutputStream);
             sender.setMessageContext(msgContext);
             sender.setProperties(smtpProperties);
             sender.setPasswordAuthentication(passwordAuthentication);
-
-            String eprAddress = msgContext.getTo().getAddress();
 
             // In mail char set is what is being used. Charset encoding is not what is expected here.
             String charSet =
@@ -135,53 +203,52 @@ public class MailTransportSender extends AbstractTransportSender {
             format.setSOAP11(msgContext.isSOAP11());
             format.setCharSetEncoding(charSet);
 
-            int mailNameIndex = eprAddress.indexOf("mail:");
-            if (mailNameIndex > -1) {
-                eprAddress = eprAddress.substring(mailNameIndex + 5);
-            }
-            int index = eprAddress.indexOf('/');
-            String subject = "";
-            String email;
+            parseMailToAddress(msgContext.getTo());
 
-            if (index >= 0) {
-                subject = eprAddress.substring(index + 1);
-                email = eprAddress.substring(0, index);
-            } else {
-                email = eprAddress;
-            }
-            int emailColon = email.indexOf(":");
-            if (emailColon >= 0) {
-                email = email.substring(emailColon + 1);
-            }
-
-            sender.send(subject, email, new String(byteArrayOutputStream.toByteArray()),
-                        format);
+            sender.send(mailToInfo, format);
 
         } catch (IOException e) {
             throw new AxisFault(e);
         }
     }
 
-    protected OutputStream openTheConnection(EndpointReference epr, MessageContext msgContext)
-            throws AxisFault {
-        byteArrayOutputStream = new ByteArrayOutputStream();
+    private void parseMailToAddress(EndpointReference epr) {
+        String eprAddress = epr.getAddress();
+        //TODO URl validation according to rfc :  http://www.ietf.org/rfc/rfc2368.txt
 
-        return byteArrayOutputStream;
+        int mailToIndex = eprAddress.indexOf("mailto:");
+        if (mailToIndex > -1) {
+            eprAddress = eprAddress.substring(mailToIndex + 7);
+        }
+        int index = eprAddress.indexOf('?');
+        String contentDescription = "";
+        String email;
+        boolean xServicePath = false;
+
+
+        if (index > -1) {
+            email = eprAddress.substring(0, index);
+        } else {
+            email = eprAddress;
+        }
+
+        if (eprAddress.indexOf("x-service-path".toLowerCase()) > -1) {
+            index = eprAddress.indexOf('=');
+            if (index > -1) {
+                xServicePath = true;
+                contentDescription = eprAddress.substring(index + 1);
+            }
+        } else {
+            contentDescription = eprAddress.substring(index + 1);
+
+        }
+        mailToInfo.setContentDescription(contentDescription);
+        mailToInfo.setEmailAddress(email);
+        mailToInfo.setxServicePath(xServicePath);
+
     }
 
-    // Output Stream based cases are not supported
-    public OutputStream startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
-                                                                        OutputStream out)
-            throws AxisFault {
-        throw new UnsupportedOperationException();
-    }
-
-    public OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out)
-            throws AxisFault {
-        return out;
-    }
-
-    public void writeMessage(MessageContext msgContext, OutputStream out) throws AxisFault {
+    public void writeMimeMessage(MessageContext msgContext, OutputStream out) throws AxisFault {
         SOAPEnvelope envelope = msgContext.getEnvelope();
         OMElement outputMessage = envelope;
 
@@ -209,4 +276,41 @@ public class MailTransportSender extends AbstractTransportSender {
     public void stop() {
     }
 
+    /**
+     * TODO
+     *
+     * @param msgContext
+     * @return
+     * @throws AxisFault
+     */
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+
+        msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
+        msgContext.setDoingSwA(HTTPTransportUtils.doWriteSwA(msgContext));
+
+        EndpointReference epr = null;
+
+        if (msgContext.getTo() != null && !msgContext.getTo().hasAnonymousAddress()) {
+            epr = msgContext.getTo();
+        }
+
+        if (epr != null) {
+            if (!epr.hasNoneAddress()) {
+
+                byteArrayOutputStream = new ByteArrayOutputStream();
+
+                writeMimeMessage(msgContext, byteArrayOutputStream);
+
+                sendMimeMessage(msgContext);
+            }
+        } else {
+            // TODO If epr is null or anonymous, then the flow shold be as
+            // replyto : from : or reply-path;
+            if (msgContext.isServerSide()) {
+
+            }
+        }
+
+        return InvocationResponse.CONTINUE;
+    }
 }

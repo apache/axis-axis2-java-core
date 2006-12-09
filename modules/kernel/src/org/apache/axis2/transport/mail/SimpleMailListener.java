@@ -39,20 +39,18 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.util.threadpool.DefaultThreadFactory;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.util.threadpool.DefaultThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.URLName;
+import javax.mail.*;
 import javax.mail.internet.MimeMessage;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
@@ -83,7 +81,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
      * Time has been put from best guest. Let the default be 3 mins.
      * This value is configuralble from Axis2.xml. Under mail transport listener
      * simply set the following parameter.
-     * <parameter name="transport.listener.interval ">[custom listener interval]</parameter>
+     * <parameter name="transport.listener.interval">[custom listener interval]</parameter>
      */
     private int listenerWaitInterval = 1000 * 60 * 3;
 
@@ -146,8 +144,10 @@ public class SimpleMailListener implements Runnable, TransportListener {
             }
 
         }
-        if (password.length() == 0 || user.length() == 0 || host.length() == 0 || protocol.length() == 0) {
-            throw new AxisFault("One or more of Password, User, Host and Protocol are null or empty");
+        if (password.length() == 0 || user.length() == 0 || host.length() == 0 ||
+            protocol.length() == 0) {
+            throw new AxisFault(
+                    "One or more of Password, User, Host and Protocol are null or empty");
         }
 
         if (port.length() == 0) {
@@ -177,7 +177,8 @@ public class SimpleMailListener implements Runnable, TransportListener {
             File repo = new File(path);
             if (repo.exists()) {
                 configurationContext =
-                        ConfigurationContextFactory.createConfigurationContextFromFileSystem(path,axis2xml);
+                        ConfigurationContextFactory
+                                .createConfigurationContextFromFileSystem(path, axis2xml);
             } else {
                 printUsage();
                 throw new AxisFault("repository not found");
@@ -267,76 +268,129 @@ public class SimpleMailListener implements Runnable, TransportListener {
             msgContext.setServerSide(true);
             msgContext.setProperty(org.apache.axis2.transport.mail.Constants.CONTENT_TYPE,
                                    msg.getContentType());
-
-            if (TransportUtils.getCharSetEncoding(msg.getContentType()) != null) {
-                msgContext.setProperty(
-                        org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING,
-                        TransportUtils.getCharSetEncoding(
-                                msg.getContentType()));
-            } else {
-                msgContext.setProperty(
-                        org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING,
-                        MessageContext.DEFAULT_CHAR_SET_ENCODING);
-            }
-
             msgContext.setIncomingTransportName(org.apache.axis2.Constants.TRANSPORT_MAIL);
-            String soapAction = getMailHeader(msg,
-                                              org.apache.axis2.transport.mail.Constants.HEADER_SOAP_ACTION);
-            msgContext.setSoapAction(soapAction);
-            if (msg.getSubject() != null) {
-                msgContext.setTo(new EndpointReference(msg.getSubject()));
+            if (msg.getFrom() != null && msg.getFrom().length > 0) {
+                msgContext.setFrom(new EndpointReference((msg.getFrom()[0]).toString()));
             }
 
-            // Create the SOAP Message
-            // SMTP basically a text protocol, thus, following would be the optimal way to build the
-            // SOAP11/12 body from it.
-            String message = msg.getContent().toString();
-            ByteArrayInputStream bais =
-                    new ByteArrayInputStream(message.getBytes());
-            XMLStreamReader reader =
-                    StAXUtils.createXMLStreamReader(bais);
-            String soapNamespaceURI;
-            if (msg.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE)
-                > -1) {
-                soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-                // set the soapAction if available
-                int index = msg.getContentType().indexOf("action");
-                if (index > -1) {
-                    String transientString = msg.getContentType().substring(index, msg.getContentType().length());
-                    int equal = transientString.indexOf("=");
-                    int firstSemiColon = transientString.indexOf(";");
-                    if (firstSemiColon > -1) {
-                        soapAction = transientString.substring(equal + 1, firstSemiColon);
-                    } else {
-                        soapAction = transientString.substring(equal + 1, transientString.length());
-                    }
-                    if ((soapAction != null) && soapAction.startsWith("\"")
-                        && soapAction.endsWith("\"")) {
-                        soapAction = soapAction
-                                .substring(1, soapAction.length() - 1);
-                    }
-                    msgContext.setSoapAction(soapAction);
-
-                }
-            } else if (msg.getContentType().indexOf(
-                    SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
-                soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            } else {
-                log.warn(
-                        "MailWorker found a message other than text/xml or application/soap+xml");
-                return null;
-            }
-
-            StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
-            SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
-            msgContext.setEnvelope(envelope);
+            buildSOAPEnvelope(msg, msgContext);
         }
         return msgContext;
+    }
+
+    private void buildSOAPEnvelope(MimeMessage msg, MessageContext msgContext)
+            throws AxisFault {
+        //TODO we assume for the time being that there is only one attachement and this attachement contains  the soap evelope
+        try {
+            Multipart mp = (Multipart) msg.getContent();
+            if (mp != null) {
+                for (int i = 0, n = mp.getCount(); i < n; i++) {
+                    Part part = mp.getBodyPart(i);
+
+                    String disposition = part.getDisposition();
+
+                    if (disposition != null && disposition.equals(Part.ATTACHMENT)) {
+                        String soapAction = "";
+                        String soapNamespaceURI = "";
+
+                        /* Set the Charactorset Encoding */
+                        if (TransportUtils.getCharSetEncoding(part.getContentType()) != null) {
+                            msgContext.setProperty(
+                                    org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING,
+                                    TransportUtils.getCharSetEncoding(
+                                            part.getContentType()));
+                        } else {
+                            msgContext.setProperty(
+                                    org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING,
+                                    MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                        }
+
+                        /* SOAP Action */
+                        soapAction = getMailHeaderFromPart(part,
+                                                           org.apache.axis2.transport.mail.Constants.HEADER_SOAP_ACTION);
+                        msgContext.setSoapAction(soapAction);
+
+                        String contentDescription =
+                                getMailHeaderFromPart(part, "Content-Description");
+
+                        /* As an input stream - using the getInputStream() method.
+                        Any mail-specific encodings are decoded before this stream is returned.*/
+                        if (contentDescription != null) {
+                            msgContext.setTo(new EndpointReference(contentDescription));
+                        }
+
+                        XMLStreamReader reader =
+                                StAXUtils.createXMLStreamReader(part.getInputStream());
+
+                        if (part.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE)
+                            > -1) {
+                            soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+                            // set the soapAction if available
+                            int index = part.getContentType().indexOf("action");
+                            if (index > -1) {
+                                String transientString =
+                                        part.getContentType()
+                                                .substring(index, part.getContentType().length());
+                                int equal = transientString.indexOf("=");
+                                int firstSemiColon = transientString.indexOf(";");
+                                if (firstSemiColon > -1) {
+                                    soapAction =
+                                            transientString.substring(equal + 1, firstSemiColon);
+                                } else {
+                                    soapAction = transientString
+                                            .substring(equal + 1, transientString.length());
+                                }
+                                if ((soapAction != null) && soapAction.startsWith("\"")
+                                    && soapAction.endsWith("\"")) {
+                                    soapAction = soapAction
+                                            .substring(1, soapAction.length() - 1);
+                                }
+                                msgContext.setSoapAction(soapAction);
+
+                            }
+                        } else if (part.getContentType().indexOf(
+                                SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+                            soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+                        } else {
+                            log.warn(
+                                    "MailWorker found a message other than text/xml or application/soap+xml");
+                        }
+
+                        StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
+                        SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
+                        msgContext.setEnvelope(envelope);
+                    }
+                }
+
+
+            }
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
+        catch (MessagingException e) {
+            throw new AxisFault(e);
+        } catch (XMLStreamException e) {
+            throw new AxisFault(e);
+        }
     }
 
     private String getMailHeader(MimeMessage msg, String headerName) throws AxisFault {
         try {
             String values[] = msg.getHeader(headerName);
+
+            if (values != null) {
+                return values[0];
+            } else {
+                return null;
+            }
+        } catch (MessagingException e) {
+            throw new AxisFault(e);
+        }
+    }
+
+    private String getMailHeaderFromPart(Part part, String headerName) throws AxisFault {
+        try {
+            String values[] = part.getHeader(headerName);
 
             if (values != null) {
                 return values[0];
@@ -388,7 +442,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
         return new EndpointReference[]{new EndpointReference(Constants.TRANSPORT_MAIL + ":" +
-                                                             replyTo + configurationContext
+                                                             replyTo + "?" + configurationContext
                 .getServiceContextPath() + "/" + serviceName)};
     }
 
