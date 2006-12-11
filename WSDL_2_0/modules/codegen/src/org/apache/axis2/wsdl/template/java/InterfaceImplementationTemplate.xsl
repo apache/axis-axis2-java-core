@@ -366,11 +366,17 @@
                         <!-- No input parameters present. So generate assuming no input parameters-->
                         <xsl:otherwise>
                             <xsl:choose>
-                                <xsl:when test="$style='rpc' or $style='document'">
-                                    //Style is taken to be "document". No input parameters
+                                <xsl:when test="$style='rpc'">
+                                    //Style is taken to be "rpc". No input parameters
                                     org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
                                     env = factory.getDefaultEnvelope();
                                     env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
+                                </xsl:when>
+                                <xsl:when test="$style='document'">
+                                    //Style is taken to be "document". No input parameters
+                                    // according to the WS-Basic profile in this case we have to send an empty soap message
+                                    org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
+                                    env = factory.getDefaultEnvelope();
                                 </xsl:when>
                                 <xsl:otherwise>
                                      //Unknown style detected !! No code is generated
@@ -607,11 +613,17 @@
                         <!-- No input parameters present. So generate assuming no input parameters-->
                         <xsl:otherwise>
                             <xsl:choose>
-                                <xsl:when test="$style='document' or $style='rpc'">
+                                <xsl:when test="$style='rpc'">
                                     //Style is Doc. No input parameters
                                     org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
                                     env = factory.getDefaultEnvelope();
                                     env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
+                                </xsl:when>
+                                <xsl:when test="$style='document'">
+                                    //Style is taken to be "document". No input parameters
+                                    // according to the WS-Basic profile in this case we have to send an empty soap message
+                                    org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
+                                    env = factory.getDefaultEnvelope();
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style detected !! No code is generated
@@ -796,11 +808,17 @@
                                         <!-- No input parameters present. So generate assuming no input parameters-->
                                         <xsl:otherwise>
                                             <xsl:choose>
-                                                <xsl:when test="$style='rpc' or $style='document'">
+                                                <xsl:when test="$style='rpc'">
                                                     //Style is taken to be "document". No input parameters
                                                     org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
                                                     env = factory.getDefaultEnvelope();
                                                     env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
+                                                </xsl:when>
+                                                <xsl:when test="$style='document'">
+                                                    //Style is taken to be "document". No input parameters
+                                                    // according to the WS-Basic profile in this case we have to send an empty soap message
+                                                    org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
+                                                    env = factory.getDefaultEnvelope();
                                                 </xsl:when>
                                                 <xsl:otherwise>
                                                      //Unknown style detected !! No code is generated
