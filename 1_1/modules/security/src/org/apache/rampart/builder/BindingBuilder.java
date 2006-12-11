@@ -173,8 +173,13 @@ public abstract class BindingBuilder {
         
         WSSecEncryptedKey encrKey = new WSSecEncryptedKey();
         if(token.getInclusion().equals(Constants.INCLUDE_NEVER)) {
-            //Use thumbprint
-            encrKey.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+            if(rpd.getWss11() != null) {
+                //Use thumbprint
+                encrKey.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+            } else {
+                //Use SKI
+                encrKey.setKeyIdentifierType(WSConstants.SKI_KEY_IDENTIFIER);
+            }
         } else {
             encrKey.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
         }
@@ -201,8 +206,13 @@ public abstract class BindingBuilder {
         
         log.debug("Token inclusion: " + token.getInclusion());
         if(token.getInclusion().equals(Constants.INCLUDE_NEVER)) {
-            //Use thumbprint
-            sig.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+            if(rpd.getWss11() != null) {
+                //Use thumbprint
+                sig.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+            } else {
+                //Use SKI
+                sig.setKeyIdentifierType(WSConstants.SKI_KEY_IDENTIFIER);
+            }
         } else {
             sig.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
         }
