@@ -14,9 +14,9 @@ public class AsyncCallback<T> implements AsyncHandler<T> {
         try {
             value = response.get();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            exception = e;
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            exception = e;
         }
     }
     

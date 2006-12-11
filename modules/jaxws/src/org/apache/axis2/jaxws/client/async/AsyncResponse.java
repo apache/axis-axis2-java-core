@@ -95,11 +95,10 @@ public class AsyncResponse implements Response {
         latch.await();
         
         if (hasFault()) {
-            throw new ExecutionException(fault);
+            throw new ExecutionException(ExceptionFactory.makeWebServiceException(fault));
         }
         if (response == null) {
-            WebServiceException wse = new WebServiceException("null response");
-            throw new ExecutionException(wse);
+            throw new ExecutionException(ExceptionFactory.makeWebServiceException("null response"));
         }
         
         // TODO: Check the type of the object to make sure it corresponds with
@@ -119,11 +118,10 @@ public class AsyncResponse implements Response {
         latch.await(timeout, unit);
         
         if (hasFault()) {
-            throw new ExecutionException(fault);
+            throw new ExecutionException(ExceptionFactory.makeWebServiceException(fault));
         }
         if (response == null) {
-            WebServiceException wse = new WebServiceException("null response");
-            throw new ExecutionException(wse);
+            throw new ExecutionException(ExceptionFactory.makeWebServiceException("null response"));
         }
         
         // TODO: Check the type of the object to make sure it corresponds with

@@ -18,11 +18,14 @@
  */
 package org.apache.axis2.jaxws.dispatch;
 
+import java.net.UnknownHostException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 
@@ -249,4 +252,91 @@ public class StringDispatch extends TestCase {
         System.out.println(">> Invoking one-way Dispatch");
         dispatch.invokeOneWay(DispatchTestConstants.sampleSoapMessage);
 	}
+    
+    
+    public void testSyncPayloadMode_badHostName() {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.BADURL);
+        Dispatch<String> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                String.class, Service.Mode.PAYLOAD);
+        
+        // Invoke the Dispatch
+        Throwable ttemp = null;
+        try {
+            System.out.println(">> Invoking sync Dispatch");
+            String response = dispatch.invoke(DispatchTestConstants.sampleBodyContent);
+        } catch (Throwable t) {
+            assertTrue(t instanceof WebServiceException);
+            assertTrue(t.getCause() instanceof UnknownHostException);
+            ttemp = t;
+        }
+        assertNotNull(ttemp);
+
+    }
+    
+    public void testAsyncCallbackMessageMode_badHostName() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.BADURL);
+        Dispatch<String> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                String.class, Service.Mode.MESSAGE);
+
+        // Create the callback for async responses
+        AsyncCallback<String> callback = new AsyncCallback<String>();
+        
+        System.out.println(">> Invoking async (callback) Dispatch with Message Mode");
+        Future<?> monitor = dispatch.invokeAsync(DispatchTestConstants.sampleSoapMessage, callback);
+    
+        while (!monitor.isDone()) {
+            System.out.println(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        if (callback.hasError()) {
+            Throwable t = callback.getError();
+            assertTrue(t instanceof ExecutionException);
+            assertTrue(t.getCause() instanceof WebServiceException);
+            assertTrue(t.getCause().getCause() instanceof UnknownHostException);
+        } else {
+            fail("Should have retrieved an UnknownHostException from callback");
+        }
+    }
+    
+    public void testAsyncPollingPayloadMode_badHostName() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.BADURL);
+        Dispatch<String> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                String.class, Service.Mode.PAYLOAD);
+
+        System.out.println(">> Invoking async (polling) Dispatch");
+        Response<String> asyncResponse = dispatch.invokeAsync(DispatchTestConstants.sampleBodyContent);
+            
+        while (!asyncResponse.isDone()) {
+            System.out.println(">> Async invocation still not complete");
+            Thread.sleep(1000);
+        }
+        
+        Throwable ttemp = null;
+        try {
+            asyncResponse.get();
+        } catch (Throwable t) {
+            assertTrue(t instanceof ExecutionException);
+            assertTrue(t.getCause() instanceof WebServiceException);
+            assertTrue(t.getCause().getCause() instanceof UnknownHostException);
+            ttemp = t;
+        }
+        assertNotNull(ttemp);
+    }
+    
 }
