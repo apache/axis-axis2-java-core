@@ -27,6 +27,7 @@ import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -62,7 +63,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
 
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
-        AxisService service = null;
+        AxisService axisService = null;
 
         if (toEPR != null) {
             if (toEPR.hasAnonymousAddress()) {
@@ -87,11 +88,18 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                 AxisConfiguration registry =
                         messageContext.getConfigurationContext().getAxisConfiguration();
 
-                return registry.getService(serviceName.getLocalPart());
+                axisService = registry.getService(serviceName.getLocalPart());
+
+                // If the axisService is not null we get the binding that the request came to add
+                // add it as a property to the messageContext
+                if (axisService != null) {
+                    String endpointName = values[0].substring(values[0].indexOf(".")+1);
+                    messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME, endpointName);
+                }
             }
         }
 
-        return service;
+        return axisService;
     }
 
     public void initDispatcher() {

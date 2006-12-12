@@ -214,9 +214,7 @@ public abstract class Stub {
     protected void addPropertyToOperationClient(OperationClient operationClient,
                                                 String propertyKey,
                                                 Object propertyValue){
-        Options options = new Options();
-        options.setProperty(propertyKey,propertyValue);
-        operationClient.setOptions(options);
+        operationClient.getOptions().setProperty(propertyKey,propertyValue);
     }
 
     protected void addPropertyToOperationClient(OperationClient operationClient,

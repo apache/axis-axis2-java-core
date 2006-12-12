@@ -23,6 +23,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -65,7 +66,16 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
                 AxisConfiguration registry =
                         messageContext.getConfigurationContext().getAxisConfiguration();
 
-                return registry.getService(values[0]);
+                AxisService axisService = registry.getService(values[0]);
+
+                // If the axisService is not null we get the binding that the request came to add
+                // add it as a property to the messageContext
+                if (axisService != null) {
+                    String endpointName = values[0].substring(values[0].indexOf(".")+1);
+                    messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME, endpointName);
+                }
+
+                return axisService;
             } else {
                 log.debug("Attempted to check for Service using target endpoint URI, but the service fragment was missing");
                 return null;

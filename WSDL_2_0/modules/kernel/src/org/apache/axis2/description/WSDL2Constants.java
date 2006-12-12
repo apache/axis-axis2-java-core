@@ -44,7 +44,8 @@ public interface WSDL2Constants {
     String MESSAGE_LABEL = "messageLabel";
     String ATTRIBUTE_ELEMENT = "element";
 
-    String BINDING_LOCAL_NAME = "binding ";
+    String BINDING_LOCAL_NAME = "binding";
+    String ENDPOINT_LOCAL_NAME = "endpoint";
     String SOAP_BINDING_PREFIX = "SOAPBinding";
     String HTTP_PROTOCAL = "http://www.w3.org/2003/05/soap/bindings/HTTP";
     String SERVICE_LOCAL_NAME = "service";
