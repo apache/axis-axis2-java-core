@@ -45,6 +45,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class RESTSender extends AbstractHTTPSender {
     private static final Log log = LogFactory.getLog(RESTSender.class);
@@ -146,42 +148,88 @@ public class RESTSender extends AbstractHTTPSender {
     }
 
     /**
-     * This will be used to support http location. User can set set of param lists and those will be
-     * appended to the url.
+     * This will be used to support http location. User will create an OMElement to be plugged in to
+     * SOAP body. Then he has to name the parameters that should go in the url. This method will extract
+     * those parameters from the body first child and append to the url.
+     * <p/>
+     * In addition to that, user can set a URL template, like ?firstName={FirstName}. In this case,
+     * first name must be taken from the body and will replace the url.
      *
      * @param messageContext
      * @param urlString
      * @return - the URL after appending the properties
      */
-    private String appendParametersToURL(MessageContext messageContext, String urlString) {
+    protected String appendParametersToURL(MessageContext messageContext, String urlString, String queryPart) {
         try {
             OMElement firstElement = messageContext.getEnvelope().getBody().getFirstElement();
 
+            // first process the situ where user had explicitly put some params to go in the URL
             ArrayList httpLocationParams = (ArrayList) messageContext.getProperty(
                     Constants.Configuration.URL_HTTP_LOCATION_PARAMS_LIST);
 
             URL url = new URL(urlString);
             String path = url.getPath();
 
-            for (int i = 0; i < httpLocationParams.size(); i++) {
-                String httpLocationParam = (String) httpLocationParams.get(i);
-                OMElement httpURLParam = firstElement.getFirstChildWithName(new QName(httpLocationParam));
-                if (httpURLParam != null) {
-                    path += httpURLParam.getText();
+            if (httpLocationParams != null) {
+                for (int i = 0; i < httpLocationParams.size(); i++) {
+                    String httpLocationParam = (String) httpLocationParams.get(i);
+                    OMElement httpURLParam = firstElement.getFirstChildWithName(new QName(httpLocationParam));
+                    if (httpURLParam != null) {
+                        path += "/" + httpURLParam.getText();
+                        httpURLParam.detach();
+                    }
                 }
             }
 
-            String query = url.getQuery();
-            if (query != null && !"".equals(query)) {
-                return path + "?" + query;
-            } else {
-                return path;
+            if (queryPart != null && queryPart.length() > 0) {
+                if (queryPart.startsWith("?")) {
+                    path = urlString + queryPart;
+                } else {
+                    path = urlString + "?" + queryPart;
+                }
             }
+
+            // now let's process URL templates.
+            String patternString = "\\{[A-Z0-9a-z._%-]+\\}";
+            Pattern pattern = Pattern.compile(patternString);
+
+            StringBuffer buffer = new StringBuffer(path);
+
+            Matcher matcher = pattern.matcher(buffer);
+
+            while (matcher.find()) {
+                String match = matcher.group();
+
+                // Get indices of matching string
+                int start = matcher.start();
+                int end = matcher.end();
+
+                CharSequence charSequence = match.subSequence(1, match.length() - 1);
+
+                buffer.delete(start, end);
+                buffer.insert(start, getOMElementValue(charSequence.toString(), firstElement));
+
+            }
+
+            return buffer.toString();
+
+
         } catch (MalformedURLException e) {
             log.error("Error in processing POST request", e);
         }
 
         return null;
+    }
+
+    private String getOMElementValue(String elementName, OMElement parentElement) {
+        OMElement httpURLParam = parentElement.getFirstChildWithName(new QName(elementName));
+
+        if (httpURLParam != null) {
+            return httpURLParam.getText();
+        }
+
+        return null;
+
     }
 
     private void sendViaGet(MessageContext msgContext, URL url)
@@ -193,13 +241,9 @@ public class RESTSender extends AbstractHTTPSender {
         }
 
         String urlString = url.getFile();
-        urlString = appendParametersToURL(msgContext, urlString);
+        urlString = appendParametersToURL(msgContext, urlString, param);
 
-        if (param != null && param.length() > 0) {
-            getMethod.setPath(urlString + "?" + param);
-        } else {
-            getMethod.setPath(urlString);
-        }
+        getMethod.setPath(urlString);
 
         // Serialization as "application/x-www-form-urlencoded"
         String charEncoding =
@@ -273,11 +317,9 @@ public class RESTSender extends AbstractHTTPSender {
             reqData = createRequest(msgContext, dataout);
             String pathString = url.getPath();
 
-            appendParametersToURL(msgContext, pathString);
+            String urlString = appendParametersToURL(msgContext, pathString, reqData.urlRequest);
 
-            postMethod.setPath(pathString + ((reqData.urlRequest) != null
-                    ? ("?" + reqData.urlRequest)
-                    : ""));
+            postMethod.setPath(urlString);
 
             if (reqData.bodyRequest == null) {
                 reqData.bodyRequest = "0";
