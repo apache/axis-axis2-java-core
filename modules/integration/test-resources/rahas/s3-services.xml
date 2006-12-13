@@ -3,7 +3,7 @@
 	<module ref="rampart"/>
 	<module ref="rahas"/>
 
-	<parameter locked="false" name="ServiceClass">org.apache.axis2.security.sc.Service</parameter>
+	<parameter locked="false" name="ServiceClass">org.apache.rahas.Service</parameter>
 
 	<operation name="echo">
 		<messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
