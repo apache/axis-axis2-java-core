@@ -4,14 +4,12 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.namespace.Constants;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.net.URL;
@@ -96,11 +94,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
                 String schemaString = writer.toString();
 
                 if (!"".equals(schemaString)) {
-                    XMLStreamReader xmlReader = StAXUtils
-                            .createXMLStreamReader(new ByteArrayInputStream(schemaString.getBytes()));
-
-                    StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
-                    wsdlTypes.addChild(staxOMBuilder.getDocumentElement());
+                    wsdlTypes.addChild(XMLUtils.toOM(new ByteArrayInputStream(schemaString.getBytes())));
                 }
             }
         }

@@ -1,13 +1,17 @@
 package org.apache.axis2.description;
 
-import org.apache.axiom.om.*;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMNode;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.axis2.util.PolicyUtil;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.neethi.Policy;
@@ -18,11 +22,14 @@ import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -178,13 +185,8 @@ public class AxisService2OM implements Java2WSDLConstants {
                 schema.write(writer);
                 String schemaString = writer.toString();
                 if (!"".equals(schemaString)) {
-                    XMLStreamReader xmlReader = StAXUtils
-                            .createXMLStreamReader(new StringReader(
-                                    schemaString));
-
-                    StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac,
-                            xmlReader);
-                    wsdlTypes.addChild(staxOMBuilder.getDocumentElement());
+                    wsdlTypes.addChild(XMLUtils.toOM(new StringReader(
+                                    schemaString)));
                 }
             }
         }

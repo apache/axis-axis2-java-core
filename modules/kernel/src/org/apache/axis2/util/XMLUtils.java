@@ -19,6 +19,9 @@ package org.apache.axis2.util;
 import com.ibm.wsdl.Constants;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.w3c.dom.Attr;
@@ -41,6 +44,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -53,6 +57,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -531,5 +536,36 @@ public class XMLUtils {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             return factory.newDocumentBuilder().parse(bais).getDocumentElement();
+    }
+
+
+    /**
+     * Converts a given inputstream to an OMNode
+     *
+     * @param inputStream
+     * @return
+     * @throws javax.xml.stream.XMLStreamException
+     */
+    public static OMNode toOM(InputStream inputStream) throws XMLStreamException {
+        XMLStreamReader xmlReader = StAXUtils
+                .createXMLStreamReader(inputStream);
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
+        return staxOMBuilder.getDocumentElement();
+    }
+
+    /**
+     * Converts a given Reader to an OMNode
+     *
+     * @param reader
+     * @return
+     * @throws XMLStreamException
+     */
+    public static OMNode toOM(Reader reader) throws XMLStreamException {
+        XMLStreamReader xmlReader = StAXUtils
+                .createXMLStreamReader(reader);
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
+        return staxOMBuilder.getDocumentElement();
     }
 }

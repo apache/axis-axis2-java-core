@@ -16,9 +16,9 @@
 
 
 package org.apache.axis2.deployment.repository.util;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentConstants;
@@ -39,6 +39,7 @@ import org.apache.axis2.description.WSDLToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.namespace.Constants;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,6 +57,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 public class ArchiveReader implements DeploymentConstants {
     private static final Log log = LogFactory.getLog(ArchiveReader.class);
 
@@ -290,7 +292,7 @@ public class ArchiveReader implements DeploymentConstants {
                         // lets check the namespace of the root element and decide. But since we are
                         // using axiom (dude, you are becoming handy here :)), we will not build the
                         // whole thing.
-                        OMNamespace documentElementNS = new StAXOMBuilder(in).getDocumentElement().getNamespace();
+                        OMNamespace documentElementNS = ((OMElement)XMLUtils.toOM(in)).getNamespace();
                         if (documentElementNS != null) {
                             WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
                             if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getNamespaceURI())) {
@@ -343,7 +345,7 @@ public class ArchiveReader implements DeploymentConstants {
                 // lets check the namespace of the root element and decide. But since we are
                 // using axiom (dude, you are becoming handy here :)), we will not build the
                 // whole thing.
-                OMNamespace documentElementNS = new StAXOMBuilder(in).getDocumentElement().getNamespace();
+                OMNamespace documentElementNS = ((OMElement)XMLUtils.toOM(in)).getNamespace();
                 if (documentElementNS != null) {
                     WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
                     if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getNamespaceURI())) {

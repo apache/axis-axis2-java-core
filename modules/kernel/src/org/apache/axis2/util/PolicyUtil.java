@@ -16,18 +16,7 @@
 
 package org.apache.axis2.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.neethi.Constants;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyComponent;
@@ -35,6 +24,13 @@ import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.PolicyReference;
 import org.apache.woden.internal.util.dom.DOM2Writer;
 import org.w3c.dom.Element;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 public class PolicyUtil {
 
@@ -89,10 +85,7 @@ public class PolicyUtil {
         }
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        return OMXMLBuilderFactory.createStAXOMBuilder(
-                OMAbstractFactory.getOMFactory(),
-                XMLInputFactory.newInstance().createXMLStreamReader(bais))
-                .getDocumentElement();
+        return (OMElement) XMLUtils.toOM(bais);
 
     }
 
@@ -108,10 +101,7 @@ public class PolicyUtil {
         writer.flush();
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        return OMXMLBuilderFactory.createStAXOMBuilder(
-                OMAbstractFactory.getOMFactory(),
-                XMLInputFactory.newInstance().createXMLStreamReader(bais))
-                .getDocumentElement();
+        return (OMElement) XMLUtils.toOM(bais);
     }
 
     public static PolicyComponent getPolicyComponentFromOMElement(

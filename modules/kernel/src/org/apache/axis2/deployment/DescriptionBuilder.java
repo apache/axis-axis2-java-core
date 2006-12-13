@@ -16,20 +16,23 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.ParameterInclude;
+import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,7 +42,6 @@ import org.apache.neethi.PolicyReference;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -85,14 +87,8 @@ public class DescriptionBuilder implements DeploymentConstants {
      *
      */
     public OMElement buildOM() throws XMLStreamException {
-        XMLStreamReader xmlReader = StAXUtils
-                .createXMLStreamReader(descriptionStream);
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-        StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
-        OMElement element = staxOMBuilder.getDocumentElement();
-
+        OMElement element = (OMElement) XMLUtils.toOM(descriptionStream);
         element.build();
-
         return element;
     }
 
