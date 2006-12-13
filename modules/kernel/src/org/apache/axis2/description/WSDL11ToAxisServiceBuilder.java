@@ -60,6 +60,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     protected static final Log log = LogFactory
             .getLog(WSDL11ToAxisServiceBuilder.class);
+    private static final boolean isTraceEnabled = log.isTraceEnabled();
 
     protected String portName;
 
@@ -1724,8 +1725,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 SOAP12Operation soapOperation = (SOAP12Operation) wsdl4jElement;
                 if (description instanceof AxisOperation) {
                     AxisOperation axisOperation = (AxisOperation) description;
+                    
+                    if(isTraceEnabled){
+                        log.trace("copyExtensibleElements:: AxisOperation "+axisOperation);
+                    }
                     if (soapOperation.getStyle() != null) {
                         axisOperation.setStyle(soapOperation.getStyle());
+                    }
+                    if(isTraceEnabled){
+                        log.trace("copyExtensibleElements:: setSoapAction "+soapOperation.getSoapActionURI());
                     }
                     axisOperation.setSoapAction(soapOperation
                             .getSoapActionURI());
@@ -1734,8 +1742,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 SOAPOperation soapOperation = (SOAPOperation) wsdl4jElement;
                 if (description instanceof AxisOperation) {
                     AxisOperation axisOperation = (AxisOperation) description;
+                    
+                    if(isTraceEnabled){
+                        log.trace("copyExtensibleElements:: AxisOperation "+axisOperation);
+                    }
                     if (soapOperation.getStyle() != null) {
                         axisOperation.setStyle(soapOperation.getStyle());
+                    }
+                    if(isTraceEnabled){
+                        log.trace("copyExtensibleElements:: setSoapAction "+soapOperation.getSoapActionURI());
                     }
                     axisOperation.setSoapAction(soapOperation
                             .getSoapActionURI());
