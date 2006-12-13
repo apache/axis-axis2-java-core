@@ -72,12 +72,12 @@
 	<copy file="src/META-INF/services/org.apache.neethi.builders.AssertionBuilder"
 	    tofile="target/temp-mar/META-INF/services/org.apache.neethi.builders.AssertionBuilder" overwrite="true" />
 
-        <jar jarfile="target/rampart-${rampart_version}.mar" basedir="target/temp-mar/">
+        <jar jarfile="target/rampart-${rampart_module_version}.mar" basedir="target/temp-mar/">
             <include name="**/*"/>
         </jar>
 
-        <copy file="target/rampart-${rampart_version}.mar" tofile="target/modules/rampart-${rampart_version}.mar"/>
-        <copy file="target/rampart-${rampart_version}.mar" tofile="${maven.repo.local}/org.apache.axis2/mars/rampart-${rampart_version}.mar"/>
+        <copy file="target/rampart-${rampart_module_version}.mar" tofile="target/modules/rampart-${rampart_module_version}.mar"/>
+        <copy file="target/rampart-${rampart_module_version}.mar" tofile="${maven.repo.local}/org.apache.axis2/mars/rampart-${rampart_module_version}.mar"/>
 		
         <delete includeEmptyDirs="true">
             <fileset dir="target/temp-mar"/>
@@ -155,9 +155,9 @@
                 <ant:include name="**/oasisOpen/**/*.class"/>
                 <ant:include name="**/xmlmime/**/*.class"/>
                 <ant:include name="**/PWCallback.class"/>
-               
+                <ant:include name="**/InteropScenarioClient.class"/>
             </ant:fileset>
-    </ant:move>
+        </ant:move>
 
         <delete includeEmptyDirs="true">
             <fileset dir="${basedir}/target/classes/org/apache/axis2/oasis/"/>
@@ -199,9 +199,10 @@
         <copy file="interop/interop2.jks" 
             tofile="${class.dir}/interop2.jks" overwrite="yes"/>
         
-    <jar jarfile="target/PingPort.aar" basedir="target/interop/classes">
+    		<jar jarfile="target/PingPort.aar" basedir="target/interop/classes">
             <include name="**/*"/>
         </jar>
+      	
      </j:if>
     </postGoal>
 
@@ -210,6 +211,14 @@
         <copy toDir="target/classes/META-INF/services" overwrite="yes">
             <fileset dir="src/META-INF/services" />
         </copy>
+        <j:if test="${context.getVariable('maven.test.skip') != 'true'}">
+			<delete includeEmptyDirs="true">
+				<fileset dir="target/classes/org/xmlsoap/"/>
+				<fileset dir="target/classes/org/oasis_open/"/>
+				<fileset dir="target/classes/org/w3/"/>
+				<fileset file="target/classes/org/apache/axis2/security/InteropScenarioClient.class"/>
+			</delete>
+        	</j:if>
     </preGoal>
 	
 </project>

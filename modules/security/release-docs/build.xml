@@ -15,10 +15,11 @@
  ! See the License for the specific language governing permissions and
  ! limitations under the License.
  !-->
+
 <project basedir="." default="setup">
 
-	<property name="lib.dir" value="../lib"/>
-	<property name="modules.dir" value="../"/>
+	<property name="lib.dir" value="lib"/>
+	<property name="modules.dir" value="."/>
 	
 	<property environment="env"/>
     	
@@ -32,6 +33,11 @@
    		<property name="axis2.modules.dir" value="${env.AXIS2_HOME}/repository/modules/"/>
    		<property name="axis2.lib.dir" value="${env.AXIS2_HOME}/lib"/>
 		
+		<!-- Delete exising axiom jars -->
+		<delete file="${axis2.lib.dir}/axiom-api-1.2.jar"/>
+		<delete file="${axis2.lib.dir}/axiom-impl-1.2.jar"/>
+		<delete file="${axis2.lib.dir}/axiom-dom-1.2.jar"/>
+
 		<copy todir="${axis2.lib.dir}">
 	        <fileset dir="${lib.dir}">
 	                <include name="**/*.jar"/>

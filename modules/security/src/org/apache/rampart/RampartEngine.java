@@ -19,23 +19,14 @@ package org.apache.rampart;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.rampart.policy.RampartPolicyData;
 import org.apache.rampart.util.Axis2Util;
 import org.apache.rampart.util.RampartUtil;
 import org.apache.ws.secpolicy.WSSPolicyException;
-import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityEngine;
-import org.apache.ws.security.WSSecurityEngineResult;
 import org.apache.ws.security.WSSecurityException;
-import org.apache.ws.security.message.token.Timestamp;
 import org.apache.ws.security.util.WSSecurityUtil;
 
-import java.math.BigInteger;
-import java.security.cert.X509Certificate;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Vector;
 
 public class RampartEngine {
@@ -45,8 +36,14 @@ public class RampartEngine {
     RampartException, WSSecurityException, AxisFault {
         
         RampartMessageData rmd = new RampartMessageData(msgCtx, false);
+        
+
+        //If there is no policy information or if the message is a fault
         RampartPolicyData rpd = rmd.getPolicyData();
-        if(rpd == null) {
+        if(rpd == null || 
+                WSSecurityUtil.findElement(rmd.getDocument().getDocumentElement(), 
+                        "Fault", 
+                        rmd.getSoapConstants().getEnvelopeURI()) != null) {
             SOAPEnvelope env = Axis2Util.getSOAPEnvelopeFromDOOMDocument(rmd.getDocument());
 
             //Convert back to llom since the inflow cannot use llom
@@ -54,6 +51,7 @@ public class RampartEngine {
             Axis2Util.useDOOM(false);
             return null;
         }
+        
         Vector results = null;
         
         WSSecurityEngine engine = new WSSecurityEngine();

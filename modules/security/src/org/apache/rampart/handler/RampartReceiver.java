@@ -26,7 +26,6 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.Handler;
 import org.apache.rampart.RampartEngine;
 import org.apache.rampart.RampartException;
-import org.apache.rampart.util.Axis2Util;
 import org.apache.ws.secpolicy.WSSPolicyException;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityException;
@@ -56,6 +55,10 @@ public class RampartReceiver implements Handler {
 
     public void init(HandlerDescription handlerdesc) {
         this.handlerDesc = handlerdesc;
+    }
+
+    public void flowComplete(MessageContext msgContext)
+    {
     }
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
@@ -119,9 +122,6 @@ public class RampartReceiver implements Handler {
 
     }
 
-    public void flowComplete(MessageContext msgContext)
-    {
-    }
     
     public HandlerDescription getHandlerDesc() {
         return this.handlerDesc;

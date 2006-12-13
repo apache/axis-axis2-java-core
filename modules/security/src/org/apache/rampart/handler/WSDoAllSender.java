@@ -57,6 +57,9 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+/**
+ * @deprecated
+ */
 public class WSDoAllSender extends WSDoAllHandler {
     
     private static final Log log = LogFactory.getLog(WSDoAllSender.class);

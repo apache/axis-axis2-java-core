@@ -86,7 +86,7 @@ public class RampartUtil {
     /**
      * @param msgContext
      * @param rpd
-     * @return
+     * @return The <code>CallbackHandler</code> instance
      * @throws RampartException
      */
     public static CallbackHandler getPasswordCB(MessageContext msgContext, RampartPolicyData rpd) throws RampartException {
@@ -172,7 +172,7 @@ public class RampartUtil {
      * from the rampart configuration assertion
      * 
      * @param config
-     * @return
+     * @return The <code>Crypto</code> instance to be used for encryption
      * @throws RampartException
      */
     public static Crypto getEncryptionCrypto(RampartConfig config, ClassLoader loader)
@@ -208,7 +208,7 @@ public class RampartUtil {
      * from the rampart configuration assertion
      * 
      * @param config
-     * @return
+     * @return The <code>Crypto</code> instance to be used for signature
      * @throws RampartException
      */
     public static Crypto getSignatureCrypto(RampartConfig config, ClassLoader loader)
@@ -231,7 +231,7 @@ public class RampartUtil {
     /**
      * figureout the key identifier of a give X509Token
      * @param token
-     * @return
+     * @return The key identifier of a give X509Token
      * @throws RampartException
      */
     public static int getKeyIdentifier(X509Token token) throws RampartException {
@@ -251,7 +251,7 @@ public class RampartUtil {
     /**
      * Process a give issuer address element and return the address.
      * @param issuerAddress
-     * @return
+     * @return The address of an issuer address element
      * @throws RampartException If the issuer address element is malformed.
      */
     public static String processIssuerAddress(OMElement issuerAddress) 
@@ -320,7 +320,7 @@ public class RampartUtil {
      * Obtain a security context token.
      * @param rmd
      * @param secConvTok
-     * @return
+     * @return Return the SecurityContextidentifier of the token
      * @throws TrustException
      * @throws RampartException
      */
@@ -372,7 +372,7 @@ public class RampartUtil {
      * Obtain an issued token.
      * @param rmd
      * @param issuedToken
-     * @return
+     * @return The identifier of the issued token
      * @throws RampartException
      */
     public static String getIssuedToken(RampartMessageData rmd,
@@ -408,7 +408,7 @@ public class RampartUtil {
      * @param issuerEpr
      * @param action
      * @param issuerPolicy
-     * @return
+     * @return Return the identifier of the obtained token
      * @throws RampartException
      */
     public static String getToken(RampartMessageData rmd, OMElement rstTemplate,
@@ -581,7 +581,7 @@ public class RampartUtil {
     /**
      * Creates the unique (reproducible) id for to hold the context identifier
      * of the message exchange.
-     * @return
+     * @return Id to hold the context identifier in the message context
      */
     public static String getContextIdentifierKey(MessageContext msgContext) {
         return msgContext.getAxisService().getName();
@@ -590,7 +590,7 @@ public class RampartUtil {
     
     /**
      * Returns the map of security context token identifiers
-     * @return
+     * @return the map of security context token identifiers
      */
     public static Hashtable getContextMap(MessageContext msgContext) {
         //Fist check whether its there

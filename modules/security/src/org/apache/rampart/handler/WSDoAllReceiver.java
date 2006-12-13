@@ -52,6 +52,9 @@ import java.security.cert.X509Certificate;
 import java.util.Iterator;
 import java.util.Vector;
 
+/**
+ * @deprecated
+ */
 public class WSDoAllReceiver extends WSDoAllHandler {
 
     private static final Log log = LogFactory.getLog(WSDoAllReceiver.class);

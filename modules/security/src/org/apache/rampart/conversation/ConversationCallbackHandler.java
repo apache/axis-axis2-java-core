@@ -28,6 +28,7 @@ import java.io.IOException;
 /**
  * This is ths callback handler used to extract he secure conversation
  * session key for a given context identifier
+ * @deprecated 
  */
 public class ConversationCallbackHandler implements CallbackHandler {
 

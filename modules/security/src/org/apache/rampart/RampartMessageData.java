@@ -254,7 +254,8 @@ public class RampartMessageData {
                 MessageContext inMsgCtx;
                 if (opCtx != null
                         && (inMsgCtx = opCtx
-                                .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null) {
+                                .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)) != null
+                                && msgContext.getProperty(WSHandlerConstants.RECV_RESULTS) == null) {
                     msgContext.setProperty(WSHandlerConstants.RECV_RESULTS, 
                             inMsgCtx.getProperty(WSHandlerConstants.RECV_RESULTS));
                     
@@ -278,8 +279,10 @@ public class RampartMessageData {
 
             this.customClassLoader = msgCtx.getAxisService().getClassLoader();
             
-            this.secHeader = new WSSecHeader();
-            secHeader.insertSecurityHeader(this.document);
+            if(this.policyData != null) {
+                this.secHeader = new WSSecHeader();
+                secHeader.insertSecurityHeader(this.document);
+            }
             
         } catch (TrustException e) {
             throw new RampartException("errorInExtractingMsgProps", e);
@@ -565,7 +568,7 @@ public class RampartMessageData {
     
     /**
      * @param msgCtx
-     * @return
+     * @return The key to store/pickup policy of an operation
      */
     public static String getOperationPolicyKey(MessageContext msgCtx) {
         if(msgCtx.getAxisOperation() != null) {

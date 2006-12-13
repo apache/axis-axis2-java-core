@@ -176,6 +176,12 @@ public class X509Token extends Token {
             writer.writeEndElement();
         }
         
+        if(isDerivedKeys()) {
+            // <sp:RequireDerivedKeys/>
+            writer.writeStartElement(prefix, Constants.REQUIRE_DERIVED_KEYS.getLocalPart(), namespaceURI);
+            writer.writeEndElement();
+        }
+        
         // </wsp:Policy>
         writer.writeEndElement();
         

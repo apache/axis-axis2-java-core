@@ -553,7 +553,7 @@ public class SAMLTokenIssuer implements TokenIssuer {
     /**
      * Create an ephemeral key
      *
-     * @return
+     * @return The generated key as a byte array
      * @throws TrustException
      */
     protected byte[] generateEphemeralKey(int keySize) throws TrustException {

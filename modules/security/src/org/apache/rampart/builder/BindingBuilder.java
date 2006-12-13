@@ -71,7 +71,6 @@ public abstract class BindingBuilder {
     
     /**
      * @param rmd
-     * @param doc
      */
     protected void addTimestamp(RampartMessageData rmd) {
         log.debug("Adding timestamp");
@@ -97,9 +96,7 @@ public abstract class BindingBuilder {
     /**
      * Add a UsernameToken to the security header
      * @param rmd
-     * @param rpd
-     * @param doc
-     * @return 
+     * @return The <code>WSSecUsernameToken</code> instance
      * @throws RampartException
      */
     protected WSSecUsernameToken addUsernameToken(RampartMessageData rmd) throws RampartException {
@@ -176,8 +173,13 @@ public abstract class BindingBuilder {
         
         WSSecEncryptedKey encrKey = new WSSecEncryptedKey();
         if(token.getInclusion().equals(Constants.INCLUDE_NEVER)) {
-            //Use thumbprint
-            encrKey.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+            if(rpd.getWss11() != null) {
+                //Use thumbprint
+                encrKey.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+            } else {
+                //Use SKI
+                encrKey.setKeyIdentifierType(WSConstants.SKI_KEY_IDENTIFIER);
+            }
         } else {
             encrKey.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
         }
@@ -204,8 +206,13 @@ public abstract class BindingBuilder {
         
         log.debug("Token inclusion: " + token.getInclusion());
         if(token.getInclusion().equals(Constants.INCLUDE_NEVER)) {
-            //Use thumbprint
-            sig.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+            if(rpd.getWss11() != null) {
+                //Use thumbprint
+                sig.setKeyIdentifierType(WSConstants.THUMBPRINT_IDENTIFIER);
+            } else {
+                //Use SKI
+                sig.setKeyIdentifierType(WSConstants.SKI_KEY_IDENTIFIER);
+            }
         } else {
             sig.setKeyIdentifierType(WSConstants.BST_DIRECT_REFERENCE);
         }
@@ -381,7 +388,7 @@ public abstract class BindingBuilder {
         return endSuppTokMap;
     }
     /**
-     * @param sigSuppTokMap
+     * @param tokenMap
      * @param sigParts
      * @throws RampartException
      */
@@ -537,8 +544,7 @@ public abstract class BindingBuilder {
      * Get hold of the token from the token storage
      * @param rmd
      * @param tokenId
-     * @param tok
-     * @return
+     * @return token from the token storage
      * @throws RampartException
      */
     protected org.apache.rahas.Token getToken(RampartMessageData rmd, 

@@ -33,7 +33,7 @@ public class PWCBHandler implements CallbackHandler {
             //When the server side need to authenticate the user
             WSPasswordCallback pwcb = (WSPasswordCallback)callbacks[i];
             if (pwcb.getUsage() == WSPasswordCallback.USERNAME_TOKEN_UNKNOWN) {
-                if(pwcb.getIdentifer().equals("bob") && pwcb.getPassword().equals("bobPW")) {
+                if(pwcb.getIdentifer().equals("alice") && pwcb.getPassword().equals("bobPW")) {
                     return;
                 } else {
                     throw new UnsupportedCallbackException(callbacks[i], "check failed");

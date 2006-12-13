@@ -399,7 +399,7 @@ public class TrustUtil {
     /**
      * Create an ephemeral key
      *
-     * @return
+     * @return The generated ephemeral key
      * @throws TrustException
      */
     protected byte[] generateEphemeralKey(int keySize) throws TrustException {
@@ -416,7 +416,7 @@ public class TrustUtil {
     /**
      * Create an ephemeral key
      *
-     * @return
+     * @return The generated ephemeral key
      * @throws TrustException
      */
     protected byte[] generateEphemeralKey(byte[] reqEnt,

@@ -43,6 +43,7 @@ import java.util.Properties;
 
 /**
  * Configuration manager for Ramapart-SecConv
+ * @deprecated
  */
 public class ConversationConfiguration {
     
@@ -277,7 +278,7 @@ public class ConversationConfiguration {
 
     /**
      * @param msgCtx
-     * @return
+     * @return The configuration parameter from the given message context
      */
     public static Parameter getParameter(MessageContext msgCtx) {
         Parameter param = msgCtx.getParameter(SC_CONFIG);
@@ -300,7 +301,7 @@ public class ConversationConfiguration {
 
     /**
      * Generate the Axis2 parameter representing ConversationConfiguration
-     * @return
+     * @return The Axis2 parameter representing ConversationConfiguration
      */
     public Parameter getParameter() {
         Parameter param = new Parameter();
