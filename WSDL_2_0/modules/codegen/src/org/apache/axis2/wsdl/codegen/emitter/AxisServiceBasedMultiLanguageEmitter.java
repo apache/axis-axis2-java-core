@@ -7,6 +7,7 @@ import org.apache.axis2.wsdl.HTTPHeaderMessage;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.SOAPModuleMessage;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.writer.*;
@@ -208,6 +209,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
     private Object getBindingPropertyFromMessage(String name, QName qName, String key) {
+
+        if (name.equalsIgnoreCase(WSDL2Constants.ATTR_WSOAP_MODULE) && qName.getLocalPart().equalsIgnoreCase("echostring")){
+            System.out.println("");
+        }
 
         Object property = null;
         // Get the correct AxisBindingOperation coresponding to the AxisOperation
@@ -605,7 +610,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         doc.appendChild(rootElement);
 
         //////////////////////////////////////////////////////////
-//        System.out.println(DOM2Writer.nodeToString(rootElement));
+        System.out.println(DOM2Writer.nodeToString(rootElement));
         ////////////////////////////////////////////////////////////
         return doc;
     }
@@ -1889,6 +1894,34 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 axisOperation));
 
         setTransferCoding(axisOperation, methodElement, doc);
+        
+        if (axisBinding.getType().equals(WSDL2Constants.URI_WSDL2_HTTP)) {
+            
+            String property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
+                        axisOperation.getName());
+            if (property != null) {
+            methodElement.appendChild(generateOptionParamComponent(doc,"WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR", "\"" + property + "\""));
+            }
+
+            property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_METHOD,
+                        axisOperation.getName());
+            if (property != null) {
+            methodElement.appendChild(generateOptionParamComponent(doc,"WSDL2Constants.ATTR_WHTTP_METHOD", "\"" + property + "\""));
+            }
+
+            property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_CODE,
+                        axisOperation.getName());
+            if (property != null) {
+            methodElement.appendChild(generateOptionParamComponent(doc,"WSDL2Constants.ATTR_WHTTP_CODE", "\"" + property + "\""));
+            }
+
+            property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION,
+                        axisOperation.getName());
+            if (property != null) {
+            methodElement.appendChild(generateOptionParamComponent(doc,"WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION", "\"" + property + "\""));
+            }
+
+        }
         return methodElement;
     }
 
@@ -2185,6 +2218,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             List parameterElementList = getParameterElementList(doc, headerParameterQNameList, WSDLConstants.SOAP_HEADER);
             parameterElementList.addAll(getParameterElementListForHttpHeader(doc, (ArrayList) getBindingPropertyFromMessage(WSDL2Constants.ATTR_WHTTP_HEADER, operation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_IN), WSDLConstants.HTTP_HEADER));
+            parameterElementList.addAll(getParameterElementListForSOAPModules(doc, (ArrayList)getBindingPropertyFromMessage(WSDL2Constants.ATTR_WSOAP_MODULE, operation.getName(), WSDLConstants.WSDL_MESSAGE_DIRECTION_IN)));
 
             for (int i = 0; i < parameterElementList.size(); i++) {
                 inputElt.appendChild((Element) parameterElementList.get(i));
@@ -2638,6 +2672,28 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                 addAttribute(doc, "type", typeMappingStr, param);
                 addAttribute(doc, "location", location, param);
+                parameterElementList.add(param);
+            }
+        }
+
+        return parameterElementList;
+    }
+
+    protected List getParameterElementListForSOAPModules(Document doc, List parameters) {
+
+        List parameterElementList = new ArrayList();
+
+        if ((parameters != null) && !parameters.isEmpty()) {
+            int count = parameters.size();
+
+            for (int i = 0; i < count; i++) {
+                Element param = doc.createElement("param");
+                SOAPModuleMessage soapModuleMessage = (SOAPModuleMessage) parameters.get(i);
+
+                // header name is to set the header value
+                addAttribute(doc, "uri", soapModuleMessage.getUri(), param);
+
+                addAttribute(doc, "location", "wsoap_module", param);
                 parameterElementList.add(param);
             }
         }
