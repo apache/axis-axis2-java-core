@@ -43,6 +43,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLConstants;
 
@@ -66,6 +67,9 @@ public class MessageContextBuilder {
                 inMessageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION));
         newmsgCtx.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
                 inMessageContext.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES));
+
+        newmsgCtx.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+                inMessageContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
 
         // Setting the charater set encoding
         newmsgCtx.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,

@@ -1900,25 +1900,25 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             String property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
                         axisOperation.getName());
             if (property != null) {
-            methodElement.appendChild(generateOptionParamComponent(doc,"WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR", "\"" + property + "\""));
+            methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR", "\"" + property + "\""));
             }
 
             property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_METHOD,
                         axisOperation.getName());
             if (property != null) {
-            methodElement.appendChild(generateOptionParamComponent(doc,"WSDL2Constants.ATTR_WHTTP_METHOD", "\"" + property + "\""));
+            methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_METHOD", "\"" + property + "\""));
             }
 
             property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_CODE,
                         axisOperation.getName());
             if (property != null) {
-            methodElement.appendChild(generateOptionParamComponent(doc,"WSDL2Constants.ATTR_WHTTP_CODE", "\"" + property + "\""));
+            methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_CODE", "\"" + property + "\""));
             }
 
             property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION,
                         axisOperation.getName());
             if (property != null) {
-            methodElement.appendChild(generateOptionParamComponent(doc,"WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION", "\"" + property + "\""));
+            methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.Constants.Configuration.CONTENT_TYPE", "\"" + property + "\""));
             }
 
         }
