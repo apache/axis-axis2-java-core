@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
@@ -308,7 +309,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     
     //TODO: Need to make the default number of threads configurable
     private Executor getDefaultExecutor(){
-        return Executors.newFixedThreadPool(20);
+        return Executors.newFixedThreadPool(20, new JAXWSThreadFactory());
     }
 
     private <T> JAXWSClientContext<T> createClientContext(EndpointDescription epDesc, Class<T> clazz, Mode mode){
@@ -362,4 +363,23 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     			clazz == Source.class || 
     			clazz == SOAPMessage.class);
     }
+}
+/**
+ * Factory to create threads in the ThreadPool Executor.  We provide a factory so 
+ * the threads can be set as daemon threads so that they do not prevent the JVM from 
+ * exiting normally when the main client thread is finished.
+ *
+ */
+class JAXWSThreadFactory implements ThreadFactory {
+    private static int groupNumber = 0;
+    private int threadNumber = 0;
+    // We put the threads into a unique thread group only for ease of identifying them
+    private ThreadGroup threadGroup = new ThreadGroup("JAX-WS Default Executor Group " + groupNumber++);
+    public Thread newThread(Runnable r) {
+        threadNumber++;
+        Thread returnThread = new Thread(threadGroup, r);
+        returnThread.setDaemon(true);
+        return returnThread;
+    }
+    
 }
