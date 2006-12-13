@@ -116,12 +116,10 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
             list.add(words[i]);
         }
         
-        // Step 7: lowercase each word
-        // Step 8: make into and an appropriate java word
+        // Step 7: make into and an appropriate java word
         for (int i =0; i<list.size(); i++) {
             String word = list.get(i);
-            word = word.toLowerCase();
-            
+
             // Convert non-java words to underscore.
             // TODO: Need to do this for all chars..not just hyphens
             word = replace(word, "-", "_");
@@ -135,7 +133,7 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
             list.set(i, word);
         }
         
-        // Step 9: Concatenate and return
+        // Step 8: Concatenate and return
         String name = "";
         for (int i =0; i<list.size(); i++) {
             if (i == 0) {
