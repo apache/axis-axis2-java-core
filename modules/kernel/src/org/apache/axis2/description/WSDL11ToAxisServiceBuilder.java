@@ -1654,59 +1654,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             if (wsdl4jElement instanceof UnknownExtensibilityElement) {
                 UnknownExtensibilityElement unknown = (UnknownExtensibilityElement) (wsdl4jElement);
-
-                if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown
-                        .getElementType())) {
-
-                    Policy policy = (Policy) PolicyUtil
-                            .getPolicyComponent(unknown.getElement());
-                    addPolicy(description, originOfExtensibilityElements,
-                            policy);
-
-                } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE
-                        .equals(unknown.getElementType())) {
-
-                    PolicyReference policyReference = (PolicyReference) PolicyUtil
-                            .getPolicyComponent(unknown.getElement());
-                    addPolicyRef(description, originOfExtensibilityElements,
-                            policyReference);
-
-                } else if (AddressingConstants.Final.WSAW_USING_ADDRESSING
-                        .equals(unknown.getElementType())
-                        || AddressingConstants.Submission.WSAW_USING_ADDRESSING
-                        .equals(unknown.getElementType())) {
-                    // Read the wsaw:UsingAddressing flag from the WSDL. It is
-                    // only valid on the Port or Binding
-                    // so only recognise it as en extensibility elemtn of one of
-                    // those.
-                    if (originOfExtensibilityElements.equals(PORT)
-                            || originOfExtensibilityElements.equals(BINDING)) {
-                        if (Boolean.TRUE.equals(unknown.getRequired())) {
-                            axisService
-                                    .setWSAddressingFlag(AddressingConstants.ADDRESSING_REQUIRED);
-                        } else {
-                            axisService
-                                    .setWSAddressingFlag(AddressingConstants.ADDRESSING_OPTIONAL);
-                        }
-                    }
-                } else if (AddressingConstants.Final.WSAW_ANONYMOUS
-                        .equals(unknown.getElementType())) {
-                    if (originOfExtensibilityElements.equals(BINDING_OPERATION)) {
-                        AxisOperation axisOperation = (AxisOperation) description;
-                        if (unknown.getElement().getFirstChild() != null
-                                && unknown.getElement().getFirstChild()
-                                .getNodeType() == Node.TEXT_NODE) {
-                            String anonymousValue = unknown.getElement()
-                                    .getFirstChild().getNodeValue();
-                            AddressingHelper.setAnonymousParameterValue(
-                                    axisOperation, anonymousValue);
-                        }
-                    }
-                } else {
-                    // Ignore this element - it is a totally unknown element
-                    // and we don't care!
-                }
-
+                processUnknownExtensibilityElement(unknown, description, originOfExtensibilityElements);
+                
                 // WSDL4J has all the SOAP 1.1 and SOAP 1.2 Items built in. So we can check
                 // the items directly
             } else if (wsdl4jElement instanceof SOAP12Address) {
@@ -1848,6 +1797,75 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
     }
 
+    private void processUnknownExtensibilityElement(UnknownExtensibilityElement unknown,
+            AxisDescription description,
+            String originOfExtensibilityElements) throws AxisFault {
+        if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown
+                .getElementType())) {
+            if(isTraceEnabled){
+                log.trace("processUnknownExtensibilityElement:: PolicyElement found "+unknown);
+            }
+            Policy policy = (Policy) PolicyUtil
+                    .getPolicyComponent(unknown.getElement());
+            addPolicy(description, originOfExtensibilityElements,
+                    policy);
+
+        } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE
+                .equals(unknown.getElementType())) {
+            if(isTraceEnabled){
+                log.trace("processUnknownExtensibilityElement:: PolicyReference found "+unknown);
+            }
+            PolicyReference policyReference = (PolicyReference) PolicyUtil
+                    .getPolicyComponent(unknown.getElement());
+            addPolicyRef(description, originOfExtensibilityElements,
+                    policyReference);
+
+        } else if (AddressingConstants.Final.WSAW_USING_ADDRESSING
+                .equals(unknown.getElementType())
+                || AddressingConstants.Submission.WSAW_USING_ADDRESSING
+                .equals(unknown.getElementType())) {
+            if(isTraceEnabled){
+                log.trace("processUnknownExtensibilityElement:: wsaw:UsingAddressing found "+unknown);
+            }
+            // Read the wsaw:UsingAddressing flag from the WSDL. It is
+            // only valid on the Port or Binding
+            // so only recognise it as en extensibility elemtn of one of
+            // those.
+            if (originOfExtensibilityElements.equals(PORT)
+                    || originOfExtensibilityElements.equals(BINDING)) {
+                if (Boolean.TRUE.equals(unknown.getRequired())) {
+                    axisService
+                            .setWSAddressingFlag(AddressingConstants.ADDRESSING_REQUIRED);
+                } else {
+                    axisService
+                            .setWSAddressingFlag(AddressingConstants.ADDRESSING_OPTIONAL);
+                }
+            }
+        } else if (AddressingConstants.Final.WSAW_ANONYMOUS
+                .equals(unknown.getElementType())) {
+            if(isTraceEnabled){
+                log.trace("processUnknownExtensibilityElement:: wsaw:Anonymous found "+unknown);
+            }
+            if (originOfExtensibilityElements.equals(BINDING_OPERATION)) {
+                AxisOperation axisOperation = (AxisOperation) description;
+                if (unknown.getElement().getFirstChild() != null
+                        && unknown.getElement().getFirstChild()
+                        .getNodeType() == Node.TEXT_NODE) {
+                    String anonymousValue = unknown.getElement()
+                            .getFirstChild().getNodeValue();
+                    AddressingHelper.setAnonymousParameterValue(
+                            axisOperation, anonymousValue);
+                }
+            }
+        } else {
+            // Ignore this element - it is a totally unknown element
+            // and we don't care!
+            if(isTraceEnabled){
+                log.trace("processUnknownExtensibilityElement:: Unknown Extensibility Element found "+unknown);
+            }
+        }
+    }
+    
     /**
      * Add a policy
      *
