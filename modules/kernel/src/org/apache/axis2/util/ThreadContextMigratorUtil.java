@@ -66,6 +66,11 @@ public class ThreadContextMigratorUtil
   public static void performMigrationToThread(String threadContextMigratorListID, MessageContext msgContext)
   throws AxisFault
   {
+    if (msgContext == null)
+    {
+      return;
+    }
+      
     List migratorList = (List)msgContext.getConfigurationContext().getProperty(threadContextMigratorListID);
     
     if (migratorList != null)
@@ -89,6 +94,11 @@ public class ThreadContextMigratorUtil
    */
   public static void performThreadCleanup(String threadContextMigratorListID, MessageContext msgContext)
   {
+    if (msgContext == null)
+    {
+      return;
+    }
+      
     List migratorList = (List)msgContext.getConfigurationContext().getProperty(threadContextMigratorListID);
     
     if (migratorList != null)
@@ -114,6 +124,11 @@ public class ThreadContextMigratorUtil
   public static void performMigrationToContext(String threadContextMigratorListID, MessageContext msgContext)
   throws AxisFault
   {
+    if (msgContext == null)
+    {
+      return;
+    }
+      
     List migratorList = (List)msgContext.getConfigurationContext().getProperty(threadContextMigratorListID);
 
     if (migratorList != null)
@@ -137,6 +152,11 @@ public class ThreadContextMigratorUtil
    */
   public static void performContextCleanup(String threadContextMigratorListID, MessageContext msgContext)
   {
+    if (msgContext == null)
+    {
+      return;
+    }
+      
     List migratorList = (List)msgContext.getConfigurationContext().getProperty(threadContextMigratorListID);
 
     if (migratorList != null)
