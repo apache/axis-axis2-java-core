@@ -63,10 +63,15 @@ public class MessageContext {
     }
     
     public MessageContext(org.apache.axis2.context.MessageContext mc) throws MessageException {
-        axisMsgCtx = mc;
         properties = new HashMap<String, Object>();
         
-        message = MessageUtils.getMessageFromMessageContext(mc);
+        if (mc != null) {
+            axisMsgCtx = mc;
+            message = MessageUtils.getMessageFromMessageContext(mc);
+        }
+        else { 
+            axisMsgCtx = new org.apache.axis2.context.MessageContext();
+        }        
     }
     
     public InvocationContext getInvocationContext() {

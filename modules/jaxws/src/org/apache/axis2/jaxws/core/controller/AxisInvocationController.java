@@ -80,7 +80,7 @@ public class AxisInvocationController extends InvocationController {
     private static boolean debug = log.isDebugEnabled();
     
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
      * @see org.apache.axis2.jaxws.core.controller.InvocationController#invoke(org.apache.axis2.jaxws.core.InvocationContext)
      */
     public MessageContext doInvoke(MessageContext request) {
@@ -130,18 +130,16 @@ public class AxisInvocationController extends InvocationController {
             // Collect the response MessageContext and envelope
             axisResponseMsgCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             response = new MessageContext(axisResponseMsgCtx);
-         
-            /*
-             * If the Message object is still null, then it's possible that a
-             * local AxisFault was thrown and we need to save it for later throwing
-             * We do not want to create a message and go through the whole handler or
-             * XMLFault processing because it's unnecessary.
-             * 
-             * Same is true if we get a valid non-fault server response but some jaxws
-             * client processing (a handler, perhaps) throws an exception.
-             * 
-             * If the response message itself is a fault message, let it pass through.
-             */
+            
+            // If the Message object is still null, then it's possible that a
+            // local AxisFault was thrown and we need to save it for later throwing
+            // We do not want to create a message and go through the whole handler or
+            // XMLFault processing because it's unnecessary.
+            // 
+            // Same is true if we get a valid non-fault server response but some jaxws
+            // client processing (a handler, perhaps) throws an exception.
+            // 
+            // If the response message itself is a fault message, let it pass through.
             if ((faultexception != null) && ((response.getMessage() == null)
                     || (!response.getMessage().isFault()))) {
                 MessageFactory factory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
