@@ -23,8 +23,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Method;
 
@@ -42,11 +40,9 @@ import java.lang.reflect.Method;
 public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
         implements MessageReceiver {
 
-    private static final Log log = LogFactory.getLog(RawXMLINOnlyMessageReceiver.class);
-
-    private Method findOperation(AxisOperation op, Class ImplClass) {
+    private Method findOperation(AxisOperation op, Class implClass) {
         String methodName = op.getName().getLocalPart();
-        Method[] methods = ImplClass.getMethods();
+        Method[] methods = implClass.getMethods();
 
         for (int i = 0; i < methods.length; i++) {
             if (methods[i].getName().equals(methodName) &&
@@ -74,10 +70,10 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
             Object obj = getTheImplementationObject(msgContext);
 
             // find the WebService method
-            Class ImplClass = obj.getClass();
+            Class implClass = obj.getClass();
 
-            AxisOperation op = msgContext.getOperationContext().getAxisOperation();
-            Method method = findOperation(op, ImplClass);
+            AxisOperation op = msgContext.getAxisOperation();
+            Method method = findOperation(op, implClass);
 
             if (method != null) {
                 method.invoke(

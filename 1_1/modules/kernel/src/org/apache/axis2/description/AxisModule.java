@@ -37,12 +37,12 @@ import java.net.URL;
  * <p>Handler are registered once they are available. They are available to all services if axis2.xml
  * has a module ref="." or available to a single service if services.xml have module ref=".."</p>
  */
-public class AxisModule implements FlowInclude, ParameterInclude {
+public class AxisModule implements ParameterInclude {
 
     /**
      * Field flowInclude
      */
-    private final FlowInclude flowInclude = new FlowIncludeImpl();
+    private final FlowInclude flowInclude = new FlowInclude();
 
     /**
      * Field parameters

@@ -18,58 +18,85 @@
 package org.apache.axis2.description;
 
 /**
- * Interface FlowInclude
+ * Class FlowIncludeImpl
  */
-public interface FlowInclude {
+public class FlowInclude  {
+
+    /**
+     * Field fault
+     */
+    private Flow In_fault;
+    private Flow Out_fault;
+
+    /**
+     * Field in
+     */
+    private Flow in;
+
+    /**
+     * Field out
+     */
+    private Flow out;
 
     /**
      * Method getFaultInFlow.
      *
      * @return Returns Flow.
      */
-    public Flow getFaultInFlow();
+    public Flow getFaultInFlow() {
+        return In_fault;
+    }
 
-    public Flow getFaultOutFlow();
+    public Flow getFaultOutFlow() {
+        return this.Out_fault;
+    }
 
     /**
      * Method getInFlow.
      *
      * @return Returns Flow.
      */
-    public Flow getInFlow();
+    public Flow getInFlow() {
+        return in;
+    }
 
     /**
      * Method getOutFlow.
      *
      * @return Returns Flow.
      */
-    public Flow getOutFlow();
+    public Flow getOutFlow() {
+        return out;
+    }
 
     /**
      * Method setFaultInFlow.
      *
-     * @param faultFlow
+     * @param flow
      */
-    public void setFaultInFlow(Flow faultFlow);
+    public void setFaultInFlow(Flow flow) {
+        this.In_fault = flow;
+    }
 
-    /**
-     * Method setFaultOutFlow.
-     *
-     * @param faultFlow
-     */
-    public void setFaultOutFlow(Flow faultFlow);
+    public void setFaultOutFlow(Flow faultFlow) {
+        this.Out_fault = faultFlow;
+    }
 
     /**
      * Method setInFlow.
      *
-     * @param inFlow
+     * @param flow
      */
-    public void setInFlow(Flow inFlow);
+    public void setInFlow(Flow flow) {
+        this.in = flow;
+    }
 
     /**
      * Method setOutFlow.
      *
-     * @param outFlow
+     * @param flow
      */
-    public void setOutFlow(Flow outFlow);
+    public void setOutFlow(Flow flow) {
+        this.out = flow;
+    }
 }

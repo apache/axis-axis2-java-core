@@ -44,9 +44,6 @@ public abstract class AxisOperation extends AxisDescription
     private static final Log log = LogFactory.getLog(AxisOperation.class);
     private int mep = WSDL20_2004Constants.MEP_CONSTANT_INVALID;
 
-    public static final String SOAP_ACTION = "soapaction";
-
-
     // to store engaged modules
     private ArrayList engagedModules = new ArrayList();
 
@@ -336,20 +333,15 @@ public abstract class AxisOperation extends AxisDescription
                                                  ServiceContext serviceContext)
             throws AxisFault {
         OperationContext operationContext;
-
         if (null == msgContext.getRelatesTo()) {
-
             // Its a new incoming message so get the factory to create a new
             // one
             operationContext = new OperationContext(this, serviceContext);
         } else {
-
             // So this message is part of an ongoing MEP
             ConfigurationContext configContext = msgContext.getConfigurationContext();
-
             operationContext =
                     configContext.getOperationContext(msgContext.getRelatesTo().getValue());
-
             if (null == operationContext) {
                 throw new AxisFault(Messages.getMessage("cannotCorrelateMsg",
                         this.name.toString(), msgContext.getRelatesTo().getValue()));
@@ -477,14 +469,11 @@ public abstract class AxisOperation extends AxisDescription
 
     // to check whether a given parameter is locked
     public boolean isParameterLocked(String parameterName) {
-
         // checking the locked value of parent
         boolean locked = false;
-
         if (getParent() != null) {
             locked = getParent().isParameterLocked(parameterName);
         }
-
         if (locked) {
             return true;
         } else {

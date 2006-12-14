@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
@@ -45,7 +46,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
 
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
-        QName operationName = null;
+        QName operationName ;
         
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
 
@@ -68,7 +69,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      * @see org.apache.axis2.engine.AbstractDispatcher#findService(org.apache.axis2.context.MessageContext)
      */
     public AxisService findService(MessageContext messageContext) throws AxisFault {
-        String serviceName = null;
+        String serviceName ;
         
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
 
@@ -83,14 +84,15 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
                             "Checking for Service using SOAP message body's first child's namespace : "
                                     + filePart);
                 }
+                ConfigurationContext configurationContext = messageContext.getConfigurationContext();
                 String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
-                        messageContext.getConfigurationContext().getServiceContextPath());
+                        configurationContext.getServiceContextPath());
 
                 if (values[0] != null) {
                     serviceName = values[0];
 
                     AxisConfiguration registry =
-                            messageContext.getConfigurationContext().getAxisConfiguration();
+                            configurationContext.getAxisConfiguration();
 
                     return registry.getService(serviceName);
                 }
