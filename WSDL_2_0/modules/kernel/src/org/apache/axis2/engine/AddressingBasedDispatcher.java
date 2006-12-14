@@ -18,6 +18,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
@@ -28,6 +29,8 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.AxisEndpoint;
+import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -55,7 +58,11 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         String action = messageContext.getWSAAction();
 
         if (action != null) {
-            return service.getOperationByAction(action);
+            AxisOperation axisOperation = service.getOperationByAction(action);
+            AxisEndpoint axisEndpoint = service.getEndpoint((String) messageContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
+            AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisEndpoint.getBinding().getChild(axisOperation.getName());
+            messageContext.setProperty(Constants.AXIS_BINDING_OPERATION,axisBindingOperation);
+            return axisOperation;
         }
 
         return null;

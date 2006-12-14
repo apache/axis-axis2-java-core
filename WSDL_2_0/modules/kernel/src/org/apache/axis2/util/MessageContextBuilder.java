@@ -70,6 +70,7 @@ public class MessageContextBuilder {
 
         newmsgCtx.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
                 inMessageContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
+        newmsgCtx.setProperty(Constants.AXIS_BINDING_OPERATION,inMessageContext.getProperty(Constants.AXIS_BINDING_OPERATION));
 
         // Setting the charater set encoding
         newmsgCtx.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,

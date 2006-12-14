@@ -18,11 +18,15 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.AxisEndpoint;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,7 +57,11 @@ public class RequestURIOperationDispatcher extends AbstractDispatcher {
             if ((values.length >= 2) && (values[1] != null)) {
                 QName operationName = new QName(values[1]);
                 log.debug("Checking for Operation using QName(target endpoint URI fragment) : " + operationName);
-                return service.getOperation(operationName);
+                AxisOperation axisOperation = service.getOperation(operationName);
+                AxisEndpoint axisEndpoint = service.getEndpoint((String) messageContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
+                AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisEndpoint.getBinding().getChild(axisOperation.getName());
+                messageContext.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
+                return axisOperation;
             } else {
                 log.debug("Attempted to check for Operation using target endpoint URI, but the operation fragment was missing");
                 return null;

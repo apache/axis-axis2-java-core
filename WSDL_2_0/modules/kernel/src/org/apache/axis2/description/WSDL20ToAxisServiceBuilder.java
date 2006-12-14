@@ -681,7 +681,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION, httpBindingOperationExtensions.getHttpInputSerialization());
             URI httpLocation = httpBindingOperationExtensions.getHttpLocation();
             if (httpLocation != null) {
-                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocation);
+                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocation.toString());
             }
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_METHOD, httpBindingOperationExtensions.getHttpMethod());
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_OUTPUT_SERIALIZATION, httpBindingOperationExtensions.getHttpOutputSerialization());
