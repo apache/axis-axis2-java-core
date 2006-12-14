@@ -79,11 +79,13 @@ public abstract class AxisDescription implements ParameterInclude,
 
     public Parameter getParameter(String name) {
         Parameter parameter = parameterInclude.getParameter(name);
-        if (parameter == null && parent != null) {
-            return parent.getParameter(name);
-        } else {
-            return parameter;
+        if(parameter!=null){
+            return  parameter;
         }
+        if(parent != null) {
+            return parent.getParameter(name);
+        }
+        return null;
     }
 
     public Object getParameterValue(String name) {

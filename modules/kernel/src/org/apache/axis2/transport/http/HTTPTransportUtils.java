@@ -160,8 +160,12 @@ public class HTTPTransportUtils {
     private static final int VERSION_SOAP11 = 1;
     private static final int VERSION_SOAP12 = 2;
 
-    public static void processHTTPPostRequest(MessageContext msgContext, InputStream in,
-                                              OutputStream out, String contentType, String soapActionHeader, String requestURI)
+    public static void processHTTPPostRequest(MessageContext msgContext,
+                                              InputStream in,
+                                              OutputStream out,
+                                              String contentType,
+                                              String soapActionHeader,
+                                              String requestURI)
             throws AxisFault {
 
         int soapVersion = VERSION_UNKNOWN;

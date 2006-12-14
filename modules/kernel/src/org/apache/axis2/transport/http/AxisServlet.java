@@ -62,7 +62,6 @@ import java.util.Map;
 public class AxisServlet extends HttpServlet implements TransportListener {
 
     private static final Log log = LogFactory.getLog(AxisServlet.class);
-    private static final long serialVersionUID = -2085869393709833372L;
     public static final String CONFIGURATION_CONTEXT = "CONFIGURATION_CONTEXT";
     public static final String SESSION_ID = "SessionId";
     protected transient ConfigurationContext configContext;
@@ -104,10 +103,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setFrom(new EndpointReference(req.getRemoteAddr()));
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,
                 getTransportHeaders(req));
-        msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, req.getRequestURL().toString());
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
-//        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, servletConfig.getServletContext());
         return msgContext;
     }
 
@@ -247,7 +244,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
             try {
                 // adding ServletContext into msgContext;
-                out = res.getOutputStream();
                 HTTPTransportUtils.processHTTPPostRequest(msgContext, req.getInputStream(), out,
                         req.getContentType(), req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
                         req.getRequestURL().toString());

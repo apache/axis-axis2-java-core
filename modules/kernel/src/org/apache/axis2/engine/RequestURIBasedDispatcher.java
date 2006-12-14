@@ -20,6 +20,7 @@ package org.apache.axis2.engine;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
@@ -84,12 +85,13 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
             }
             String filePart = toEPR.getAddress();
             //REVIEW: (nagy) Parsing the RequestURI will also give us the operationName if present, so we could conceivably store it in the MessageContext, but doing so and retrieving it is probably no faster than simply reparsing the URI
+            ConfigurationContext configurationContext = messageContext.getConfigurationContext();
             String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
-                    messageContext.getConfigurationContext().getServiceContextPath());
+                    configurationContext.getServiceContextPath());
 
             if ((values.length >= 1) && (values[0] != null)) {
                 AxisConfiguration registry =
-                        messageContext.getConfigurationContext().getAxisConfiguration();
+                        configurationContext.getAxisConfiguration();
 
                 return registry.getService(values[0]);
             } else {
