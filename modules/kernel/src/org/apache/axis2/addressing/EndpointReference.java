@@ -57,6 +57,7 @@ public class EndpointReference implements Serializable {
 
     private String name;
     private String address;
+    private ArrayList addressAttributes;
     private ArrayList metaData;
     private Map referenceParameters;
     private ArrayList extensibleElements;
@@ -119,6 +120,14 @@ public class EndpointReference implements Serializable {
         this.address = address;
     }
 
+    public ArrayList getAddressAttributes(){
+        return addressAttributes;
+    }
+    
+    public void setAddressAttributes(ArrayList al){
+        addressAttributes = al;
+    }
+    
     /**
      * hasAnonymousAddress
      * 
@@ -266,7 +275,19 @@ public class EndpointReference implements Serializable {
      * @deprecated use {@link org.apache.axis2.addressing.EndpointReferenceHelper#fromOM(OMElement)} instead.
      */
     public void fromOM(OMElement eprOMElement) {
-        setAddress(eprOMElement.getFirstChildWithName(new QName("Address")).getText());
+        OMElement addressElement = eprOMElement.getFirstChildWithName(new QName("Address"));
+        setAddress(addressElement.getText());
+        Iterator allAddrAttributes = addressElement.getAllAttributes();
+        if (addressAttributes == null) {
+            addressAttributes = new ArrayList();
+        }
+
+        while (allAddrAttributes.hasNext()) {
+            OMAttribute attribute = (OMAttribute) allAddrAttributes.next();
+            addressAttributes.add(attribute);
+        }
+        
+        
         OMElement refParamElement = eprOMElement.getFirstChildWithName(new QName(AddressingConstants.EPR_REFERENCE_PARAMETERS));
 
         if (refParamElement != null) {
@@ -327,6 +348,14 @@ public class EndpointReference implements Serializable {
             OMNamespace wsaNS = fac.createOMNamespace(AddressingConstants.Final.WSA_NAMESPACE, AddressingConstants.WSA_DEFAULT_PREFIX);
             OMElement addressE = fac.createOMElement(AddressingConstants.EPR_ADDRESS, wsaNS, epr);
             addressE.setText(address);
+            
+            if (addressAttributes != null) {
+                Iterator attrIter = addressAttributes.iterator();
+                while (attrIter.hasNext()) {
+                    OMAttribute omAttributes = (OMAttribute) attrIter.next();
+                    addressE.addAttribute(omAttributes);
+                }
+            }
             
             if (this.metaData != null) {
                 OMElement metadataE = fac.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, epr);

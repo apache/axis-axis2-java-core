@@ -15,6 +15,7 @@
 */
 package org.apache.axis2.addressing;
 
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -187,6 +188,15 @@ public class EndpointReferenceHelper {
             String address = epr.getAddress();
             addressE.setText(address);
             
+            ArrayList addressAttributes = epr.getAddressAttributes();
+            if (addressAttributes != null) {
+                Iterator attrIter = addressAttributes.iterator();
+                while (attrIter.hasNext()) {
+                    OMAttribute omAttributes = (OMAttribute) attrIter.next();
+                    addressE.addAttribute(omAttributes);
+                }
+            }
+            
             List metaData = epr.getMetaData();
             if (metaData != null && AddressingConstants.Final.WSA_NAMESPACE.equals(addressingNamespace)) {
                 OMElement metadataE = factory.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, eprElement);
@@ -240,6 +250,13 @@ public class EndpointReferenceHelper {
                 //We need to identify the address element again in order to ensure
                 //that it is not included with the extensibility elements.
                 epr.setAddress(eprChildElement.getText());
+                Iterator allAddrAttributes = eprChildElement.getAllAttributes();
+                ArrayList addressAttributes = new ArrayList();
+                while (allAddrAttributes.hasNext()) {
+                    OMAttribute attribute = (OMAttribute) allAddrAttributes.next();
+                    addressAttributes.add(attribute);
+                }
+                epr.setAddressAttributes(addressAttributes);
             }
             else if (map.get(AddressingConstants.EPR_REFERENCE_PARAMETERS).equals(qname)) {
                 Iterator iterator = eprChildElement.getChildElements();

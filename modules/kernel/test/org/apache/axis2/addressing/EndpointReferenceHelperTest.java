@@ -54,12 +54,21 @@ public class EndpointReferenceHelperTest extends TestCase {
         epr.addReferenceParameter(rp1Qname,"rp1");
         epr.addReferenceParameter(rp2Qname,"rp2");
         
+        ArrayList addressAttributes = new ArrayList();
+        addressAttributes.add(attr1);
+        addressAttributes.add(attr2);
+        epr.setAddressAttributes(addressAttributes);
+        
         OMElement om = EndpointReferenceHelper.toOM(omf, epr, new QName("http://nsurl","localName","prefix"), AddressingConstants.Final.WSA_NAMESPACE);
         
         //Test deserialize using fromOM(OMElement)
         EndpointReference deser = EndpointReferenceHelper.fromOM(om);
         
         assertEquals(epr.getAddress(),deser.getAddress());
+        ArrayList addrAttrs = deser.getAddressAttributes();
+        assertEquals(attr1,addrAttrs.get(0));
+        assertEquals(attr2,addrAttrs.get(1));
+        
         ArrayList attrs = deser.getAttributes();
         assertEquals(attr1,attrs.get(0));
         assertEquals(attr2,attrs.get(1));
@@ -81,6 +90,10 @@ public class EndpointReferenceHelperTest extends TestCase {
         EndpointReferenceHelper.fromOM(deser, om, AddressingConstants.Final.WSA_NAMESPACE);
         
         assertEquals(epr.getAddress(),deser.getAddress());
+        addrAttrs = deser.getAddressAttributes();
+        assertEquals(attr1,addrAttrs.get(0));
+        assertEquals(attr2,addrAttrs.get(1));
+        
         attrs = deser.getAttributes();
         assertEquals(attr1,attrs.get(0));
         assertEquals(attr2,attrs.get(1));
@@ -132,6 +145,11 @@ public class EndpointReferenceHelperTest extends TestCase {
         epr.addReferenceParameter(rp1Qname,"rp1");
         epr.addReferenceParameter(rp2Qname,"rp2");
         
+        ArrayList addressAttributes = new ArrayList();
+        addressAttributes.add(attr1);
+        addressAttributes.add(attr2);
+        epr.setAddressAttributes(addressAttributes);
+        
         OMElement om = EndpointReferenceHelper.toOM(omf, epr, new QName("http://nsurl","localName","prefix"), AddressingConstants.Submission.WSA_NAMESPACE);
         
         //Add some reference properties.
@@ -148,6 +166,10 @@ public class EndpointReferenceHelperTest extends TestCase {
         EndpointReference deser = EndpointReferenceHelper.fromOM(om);
         
         assertEquals(epr.getAddress(),deser.getAddress());
+        ArrayList addrAttrs = deser.getAddressAttributes();
+        assertEquals(attr1,addrAttrs.get(0));
+        assertEquals(attr2,addrAttrs.get(1));
+        
         ArrayList attrs = deser.getAttributes();
         assertEquals(attr1,attrs.get(0));
         assertEquals(attr2,attrs.get(1));
@@ -173,6 +195,10 @@ public class EndpointReferenceHelperTest extends TestCase {
         EndpointReferenceHelper.fromOM(deser, om, AddressingConstants.Submission.WSA_NAMESPACE);
         
         assertEquals(epr.getAddress(),deser.getAddress());
+        addrAttrs = deser.getAddressAttributes();
+        assertEquals(attr1,addrAttrs.get(0));
+        assertEquals(attr2,addrAttrs.get(1));
+        
         attrs = deser.getAttributes();
         assertEquals(attr1,attrs.get(0));
         assertEquals(attr2,attrs.get(1));
