@@ -125,8 +125,11 @@ public class EndpointReference implements Serializable {
      * @return true if address is 'Anonymous URI' from either supported addressing version
      */
     public boolean hasAnonymousAddress(){
+        // TODO davidillsley 2006-12-14 Find a way of supporting the WS-RM Anon when
+        // Sandesha is engaged and not supporting it when it's not.
         boolean result  = (AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(address) ||
-                           AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(address));
+                           AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(address) ||
+                           (address != null && address.startsWith("http://docs.oasis-open.org/ws-rx/wsrm/200608/anonymous?id=")));
         if(log.isTraceEnabled()){
             log.trace("hasAnonymousAddress: "+address+" is Anonymous: "+result);
         }

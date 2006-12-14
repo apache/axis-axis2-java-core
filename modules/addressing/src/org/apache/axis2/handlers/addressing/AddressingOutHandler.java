@@ -302,9 +302,9 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         else if (!isFinalAddressingNamespace && eprCopy.hasNoneAddress()) {
             return; //Omit the header.
         }
-        else if (eprCopy.hasAnonymousAddress()) {
-            eprCopy.setAddress(anonymous);
-        }
+//        else if (eprCopy.hasAnonymousAddress()) {
+//            eprCopy.setAddress(anonymous);
+//        }
 
         OMElement soapHeaderBlock = EndpointReferenceHelper.toOM(envelope.getOMFactory(), 
                                         eprCopy, 
