@@ -35,6 +35,9 @@ public class Echo {
         log.info("echo Service Called");
     }
 
+    public void echoOMElementNoResponse(OMElement omEle) {
+        log.info("echoOMElementNoResponse service called.");
+    }
 
     public OMElement echoOMElement(OMElement omEle) {
     	omEle.buildWithAttachments();

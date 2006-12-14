@@ -106,6 +106,19 @@
     <!--<parameter name="addressingPara" locked="false">N/A</parameter>-->
     <!--</moduleConfig>-->
 
+    <!--
+    <module ref="rampart"/>
+    <parameter name="OutflowSecurity">
+      <action>
+        <items>Signature</items>
+        <user>client</user>
+        <passwordCallbackClass>org.apache.axis2.jms.PWCBHandler</passwordCallbackClass>
+        <signaturePropFile>client.properties</signaturePropFile>
+        <signatureKeyIdentifier>DirectReference</signatureKeyIdentifier>
+      </action>
+    </parameter>
+    -->
+
     <!-- ================================================= -->
     <!-- Phases  -->
     <!-- ================================================= -->
@@ -153,6 +166,7 @@
         <!--these phase will run irrespective of the service-->
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
+        <phase name="Security"/>
     </phaseOrder>
     <phaseOrder type="InFaultFlow">
         <phase name="PreDispatch"/>

@@ -105,6 +105,16 @@
     <!--<parameter name="addressingPara" locked="false">N/A</parameter>-->
     <!--</moduleConfig>-->
 
+    <!--
+    <module ref="rampart"/>
+
+    <parameter name="InflowSecurity">
+        <action>
+            <items>Signature</items>
+            <signaturePropFile>service.properties</signaturePropFile>
+        </action>
+    </parameter>     
+    -->
     <!-- ================================================= -->
     <!-- Phases  -->
     <!-- ================================================= -->
@@ -113,11 +123,11 @@
          <phase name="Transport">
             <handler name="RequestURIBasedDispatcher"
                      class="org.apache.axis2.engine.RequestURIBasedDispatcher">
-                <order phase="Dispatch"/>
+                <order phase="Transport"/>
             </handler>
             <handler name="SOAPActionBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
-                <order phase="Dispatch"/>
+                <order phase="Transport"/>
             </handler>
         </phase>
         <phase name="Security"/>
@@ -138,7 +148,7 @@
             </handler>
             <handler name="InstanceDispatcher"
                      class="org.apache.axis2.engine.InstanceDispatcher">
-                <order phase="PostDispatch"/>
+                <order phase="Dispatch"/>
             </handler>
         </phase>
         <!--  System pre defined phases       -->
@@ -152,6 +162,7 @@
         <!--these phase will run irrespective of the service-->
         <phase name="PolicyDetermination"/>
         <phase name="MessageOut"/>
+        <phase name="Security"/>
     </phaseOrder>
     <phaseOrder type="InFaultFlow">
         <phase name="PreDispatch"/>
