@@ -116,7 +116,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         } catch (AxisFault axisFault) {
             log.info(axisFault.getMessage());
         }
-
     }
 
     /**

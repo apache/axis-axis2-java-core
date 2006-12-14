@@ -225,6 +225,7 @@ public class RESTSender extends AbstractHTTPSender {
         OMElement httpURLParam = parentElement.getFirstChildWithName(new QName(elementName));
 
         if (httpURLParam != null) {
+            httpURLParam.detach();
             return httpURLParam.getText();
         }
 
