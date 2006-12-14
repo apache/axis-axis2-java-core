@@ -17,8 +17,7 @@ package org.apache.axis2.transport.http.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.OMNodeEx;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -30,8 +29,8 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.RequestURIBasedDispatcher;
-import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchemaElement;
@@ -39,7 +38,6 @@ import org.apache.ws.commons.schema.XmlSchemaElement;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 
 /**
@@ -184,34 +182,25 @@ public class RESTUtil {
             // I'm assuming here that the user is sending this data according to the schema.
             if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_TEXT_XML, contentType)) {
 
-                // If charset is not specified
-                XMLStreamReader xmlreader;
-                if (TransportUtils.getCharSetEncoding(contentType) == null) {
-                    xmlreader = StAXUtils.createXMLStreamReader(inputStream, MessageContext.DEFAULT_CHAR_SET_ENCODING);
-
-                    // Set the encoding scheme in the message context
-                    msgCtxt.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                            MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                String charSetEnc;
+                if (Builder.getCharSetEncoding(contentType) == null) {
+                    // If charset is not specified
+                    charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
                 } else {
-
                     // get the type of char encoding
-                    String charSetEnc = TransportUtils.getCharSetEncoding(contentType);
-
-                    xmlreader = StAXUtils.createXMLStreamReader(inputStream,
-                            charSetEnc);
-
-                    // Setting the value in msgCtx
-                    msgCtxt.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+                    charSetEnc = Builder.getCharSetEncoding(contentType);
                 }
+                // Setting the value in msgCtx
+                msgCtxt.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
 
-                OMNodeEx documentElement = (OMNodeEx) new StAXOMBuilder(xmlreader).getDocumentElement();
+                StAXBuilder builder = Builder.getBuilder(inputStream, charSetEnc, null);
+                OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
                 documentElement.setParent(null);
                 body.addChild(documentElement);
 
                 // if the media type is multipart/related, get help from Axis2 :)
-            } else
-            if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType)) {
-                body.addChild(TransportUtils.selectBuilderForMIME(msgCtxt,
+            } else if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType)) {
+                body.addChild(Builder.getAttachmentsBuilder(msgCtxt,
                         inputStream,
                         contentType, false).getDocumentElement());
             }

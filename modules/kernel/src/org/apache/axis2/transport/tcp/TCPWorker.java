@@ -17,10 +17,8 @@
 
 package org.apache.axis2.transport.tcp;
 
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -30,12 +28,12 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -82,8 +80,7 @@ public class TCPWorker implements Runnable {
 
                 // create the SOAP Envelope
                 Reader in = new InputStreamReader(socket.getInputStream());
-                XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in);
-                StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, null);
+                OMXMLParserWrapper builder = Builder.getBuilder(in);
                 SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
 
                 msgContext.setEnvelope(envelope);

@@ -17,21 +17,19 @@ package org.apache.axis2.transport.jms;
 
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.util.Builder;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -40,7 +38,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -163,7 +160,7 @@ public class JMSUtils {
                     return
                         new ByteArrayInputStream(
                             txtMsg.getText().getBytes(
-                            TransportUtils.getCharSetEncoding(contentType)));
+                            Builder.getCharSetEncoding(contentType)));
                 } else {
                     return
                         new ByteArrayInputStream(txtMsg.getText().getBytes());
@@ -294,65 +291,23 @@ public class JMSUtils {
         throws XMLStreamException {
 
         SOAPEnvelope envelope = null;
-        StAXBuilder builder = null;
-
+        StAXBuilder builder;
         String contentType = JMSUtils.getProperty(message, JMSConstants.CONTENT_TYPE);
 
-        if (contentType != null) {
-            if (contentType.indexOf(
+        if (contentType != null && contentType.indexOf(
                 HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
-                // It is MTOM
-                builder = TransportUtils.selectBuilderForMIME(
-                    msgContext, in, contentType,true);
-                envelope = (SOAPEnvelope) builder.getDocumentElement();
-
-            } else {
-                // Figure out the char set encoding and create the reader
-                XMLStreamReader xmlreader;
-
-                // If charset is not specified
-                if (TransportUtils.getCharSetEncoding(contentType) == null) {
-                    xmlreader = StAXUtils.createXMLStreamReader(in,
-                                                                MessageContext.DEFAULT_CHAR_SET_ENCODING);
-
-                    // Set the encoding scheme in the message context
-                    msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                                           MessageContext.DEFAULT_CHAR_SET_ENCODING);
-
-                } else {
-                    // get the type of char encoding
-                    String charSetEnc = TransportUtils.getCharSetEncoding(contentType);
-                    xmlreader = StAXUtils.createXMLStreamReader(in, charSetEnc);
-
-                    // Setting the value in msgCtx
-                    msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
-                }
-
-                if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
-                    // it is SOAP 1.2
-                    builder = new StAXSOAPModelBuilder(xmlreader,
-                                                       SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-                    envelope = (SOAPEnvelope) builder.getDocumentElement();
-                } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
-                    // SOAP 1.1
-                    builder =  new StAXSOAPModelBuilder(xmlreader,
-                                                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-                    envelope = (SOAPEnvelope) builder.getDocumentElement();
-                }
-            }
-        }
-
-        if (builder == null) {
-            XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in,
-                                                                        MessageContext.DEFAULT_CHAR_SET_ENCODING);
+            builder = Builder.getAttachmentsBuilder(
+                    msgContext, in, contentType, true);
+            envelope = (SOAPEnvelope) builder.getDocumentElement();
+        } else {
+            String charSetEnc = Builder.getCharSetEncoding(contentType);
+            String soapNS = Builder.getEnvelopeNamespace(contentType);
+            builder = Builder.getBuilder(in, charSetEnc, soapNS);
 
             // Set the encoding scheme in the message context
-            msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                                   MessageContext.DEFAULT_CHAR_SET_ENCODING);
-            builder = new StAXSOAPModelBuilder(
-                xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-            envelope = (SOAPEnvelope) builder.getDocumentElement();
+            msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
         }
+        envelope = (SOAPEnvelope) builder.getDocumentElement();
 
         String charEncOfMessage = builder.getDocument().getCharsetEncoding();
         String charEncOfTransport = ((String) msgContext.getProperty(

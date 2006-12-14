@@ -17,14 +17,7 @@
 
 package org.apache.axis2.client;
 
-import java.util.ArrayList;
-
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -33,6 +26,8 @@ import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.i18n.Messages;
+
+import java.util.ArrayList;
 
 /**
  * Base class for generated client stubs. This defines several client API
@@ -80,20 +75,6 @@ public abstract class Stub {
      */
     protected static SOAPEnvelope createEnvelope(Options options) throws SOAPProcessingException {
         return getFactory(options.getSoapVersionURI()).getDefaultEnvelope();
-    }
-
-    /**
-     * Read a root element from the parser.
-     * TODO generated stub code should use this method
-     * 
-     * @param reader
-     * @return root element
-     */
-    protected static OMElement getElementFromReader(XMLStreamReader reader) {
-        StAXOMBuilder builder =
-                OMXMLBuilderFactory.createStAXOMBuilder(OMAbstractFactory.getOMFactory(), reader);
-
-        return builder.getDocumentElement();
     }
 
     /**

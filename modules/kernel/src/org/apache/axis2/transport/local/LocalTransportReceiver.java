@@ -17,10 +17,8 @@
 
 package org.apache.axis2.transport.local;
 
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -29,13 +27,11 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.util.Builder;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -71,9 +67,8 @@ public class LocalTransportReceiver {
             msgCtx.setServerSide(true);
             msgCtx.setProperty(MessageContext.TRANSPORT_OUT, sender.getResponse());
 
-            XMLStreamReader reader = StAXUtils.createXMLStreamReader(
-                    new BufferedReader(new InputStreamReader(in)));
-            StAXBuilder builder = new StAXSOAPModelBuilder(reader, null);
+            InputStreamReader streamReader = new InputStreamReader(in);
+            OMXMLParserWrapper builder = Builder.getBuilder(streamReader);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
 
             msgCtx.setEnvelope(envelope);

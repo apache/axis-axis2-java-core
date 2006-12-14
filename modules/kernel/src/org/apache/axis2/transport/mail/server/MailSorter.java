@@ -17,18 +17,17 @@
 package org.apache.axis2.transport.mail.server;
 
 import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.transport.mail.Constants;
-import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.transport.mail.Constants;
+import org.apache.axis2.util.Builder;
+import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,7 +35,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
@@ -116,8 +114,6 @@ public class MailSorter {
             log.info("message[" + message + "]");
 
             ByteArrayInputStream bais = new ByteArrayInputStream(message.getBytes());
-            XMLStreamReader reader =
-                    StAXUtils.createXMLStreamReader(bais);
             String soapNamespaceURI = "";
 
             if (mimeMessage.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
@@ -127,7 +123,8 @@ public class MailSorter {
                 soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
             }
 
-            StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
+            StAXBuilder builder = Builder.getBuilder(bais, null, soapNamespaceURI);
+
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
 
             msgContext.setEnvelope(envelope);

@@ -21,10 +21,11 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.*;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.AxisFault;
@@ -36,13 +37,12 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.Handler.InvocationResponse;
-import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -195,108 +195,51 @@ public class HTTPTransportUtils {
             SOAPEnvelope envelope = null;
             StAXBuilder builder = null;
 
-            if (contentType != null) {
+            // get the type of char encoding
+            String charSetEnc = Builder.getCharSetEncoding(contentType);
+            if(charSetEnc == null){
+                charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+            }
+            // Setting the value in msgCtx
+            msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
 
+            String soapNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            if (contentType != null) {
                 if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
                     soapVersion = VERSION_SOAP12;
+                    soapNS = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+                    processContentTypeForAction(contentType, msgContext);
                 } else if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
                     soapVersion = VERSION_SOAP11;
+                    soapNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
                 }
                 if (JavaUtils.indexOfIgnoreCase(contentType, HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
                     // It is MIME (MTOM or SwA)
-                    builder = TransportUtils.selectBuilderForMIME(msgContext, in, contentType,true);
+                    builder = Builder.getAttachmentsBuilder(msgContext, in, contentType, true);
                     envelope = (SOAPEnvelope) builder.getDocumentElement();
-                } else {
-                    XMLStreamReader xmlreader;
+                } else if (soapVersion == VERSION_SOAP11) {
+                    // Deployment configuration parameter
+                    Parameter enable =
+                            msgContext.getParameter(Constants.Configuration.ENABLE_REST);
 
-                    // Figure out the char set encoding and create the reader
+                    if ((soapActionHeader == null) && (enable != null)) {
+                        if (Constants.VALUE_TRUE.equals(enable.getValue())) {
+                            // If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
+                            // the SOAP Action is absent it is rest !!
+                            msgContext.setDoingREST(true);
 
-                    // If charset is not specified
-                    if (TransportUtils.getCharSetEncoding(contentType) == null) {
-                        xmlreader = StAXUtils.createXMLStreamReader(in,
-                                                                    MessageContext.DEFAULT_CHAR_SET_ENCODING);
+                            SOAPFactory soapFactory = new SOAP11Factory();
+                            envelope = soapFactory.getDefaultEnvelope();
 
-                        // Set the encoding scheme in the message context
-                        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                                               MessageContext.DEFAULT_CHAR_SET_ENCODING);
-                    } else {
-
-                        // get the type of char encoding
-                        String charSetEnc = TransportUtils.getCharSetEncoding(contentType);
-
-                        xmlreader = StAXUtils.createXMLStreamReader(in,
-                                                                    charSetEnc);
-
-                        // Setting the value in msgCtx
-                        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
-                    }
-
-                    if (soapVersion == VERSION_SOAP12) {
-                        //Check for action header and set it in as soapAction in MessageContext
-                        int index = contentType.indexOf("action");
-                        if (index > -1) {
-                            String transientString = contentType.substring(index, contentType.length());
-                            int equal = transientString.indexOf("=");
-                            int firstSemiColon = transientString.indexOf(";");
-                            String soapAction; // This will contain "" in the string
-                            if (firstSemiColon > -1) {
-                                soapAction = transientString.substring(equal + 1, firstSemiColon);
-                            } else {
-                                soapAction = transientString.substring(equal + 1, transientString.length());
-                            }
-                            if ((soapAction != null) && soapAction.startsWith("\"")
-                                && soapAction.endsWith("\"")) {
-                                soapAction = soapAction
-                                        .substring(1, soapAction.length() - 1);
-                            }
-                            msgContext.setSoapAction(soapAction);
-
-                        }
-
-                        // it is SOAP 1.2
-                        builder =
-                                new StAXSOAPModelBuilder(xmlreader,
-                                                         SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-                        envelope = (SOAPEnvelope) builder.getDocumentElement();
-                    } else if (soapVersion == VERSION_SOAP11) {
-                        /**
-                         * Configuration via Deployment
-                         */
-                        Parameter enable =
-                                msgContext.getParameter(Constants.Configuration.ENABLE_REST);
-
-                        if ((soapActionHeader == null) && (enable != null)) {
-                            if (Constants.VALUE_TRUE.equals(enable.getValue())) {
-
-                                // If the content Type is text/xml (BTW which is the SOAP 1.1 Content type ) and
-                                // the SOAP Action is absent it is rest !!
-                                msgContext.setDoingREST(true);
-
-                                SOAPFactory soapFactory = new SOAP11Factory();
-
-                                builder = new StAXOMBuilder(xmlreader);
-                                builder.setOMBuilderFactory(soapFactory);
-                                envelope = soapFactory.getDefaultEnvelope();
-                                envelope.getBody().addChild(builder.getDocumentElement());
-                            }
-                        } else {
-                            builder = new StAXSOAPModelBuilder(
-                                    xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-                            envelope = (SOAPEnvelope) builder.getDocumentElement();
+                            builder = Builder.getBuilder(soapFactory, in, charSetEnc);
+                            envelope.getBody().addChild(builder.getDocumentElement());
                         }
                     }
                 }
             }
 
             if (builder == null) {
-                XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in,
-                                                                            MessageContext.DEFAULT_CHAR_SET_ENCODING);
-
-                // Set the encoding scheme in the message context
-                msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                                       MessageContext.DEFAULT_CHAR_SET_ENCODING);
-                builder = new StAXSOAPModelBuilder(
-                        xmlreader, SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+                builder = Builder.getBuilder(in, charSetEnc, soapNS);
                 envelope = (SOAPEnvelope) builder.getDocumentElement();
             }
 
@@ -346,6 +289,29 @@ public class HTTPTransportUtils {
             if ((msgContext.getEnvelope() == null) && soapVersion != VERSION_SOAP11) {
                 msgContext.setEnvelope(new SOAP12Factory().getDefaultEnvelope());
             }
+        }
+    }
+
+    private static void processContentTypeForAction(String contentType, MessageContext msgContext) {
+        //Check for action header and set it in as soapAction in MessageContext
+        int index = contentType.indexOf("action");
+        if (index > -1) {
+            String transientString = contentType.substring(index, contentType.length());
+            int equal = transientString.indexOf("=");
+            int firstSemiColon = transientString.indexOf(";");
+            String soapAction; // This will contain "" in the string
+            if (firstSemiColon > -1) {
+                soapAction = transientString.substring(equal + 1, firstSemiColon);
+            } else {
+                soapAction = transientString.substring(equal + 1, transientString.length());
+            }
+            if ((soapAction != null) && soapAction.startsWith("\"")
+                && soapAction.endsWith("\"")) {
+                soapAction = soapAction
+                        .substring(1, soapAction.length() - 1);
+            }
+            msgContext.setSoapAction(soapAction);
+
         }
     }
 

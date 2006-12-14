@@ -21,12 +21,10 @@ import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
 import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -38,19 +36,24 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.threadpool.DefaultThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.mail.*;
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.URLName;
 import javax.mail.internet.MimeMessage;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
@@ -294,10 +297,10 @@ public class SimpleMailListener implements Runnable, TransportListener {
                         String soapNamespaceURI = "";
 
                         /* Set the Charactorset Encoding */
-                        if (TransportUtils.getCharSetEncoding(part.getContentType()) != null) {
+                        if (Builder.getCharSetEncoding(part.getContentType()) != null) {
                             msgContext.setProperty(
                                     org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING,
-                                    TransportUtils.getCharSetEncoding(
+                                    Builder.getCharSetEncoding(
                                             part.getContentType()));
                         } else {
                             msgContext.setProperty(
@@ -318,9 +321,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
                         if (contentDescription != null) {
                             msgContext.setTo(new EndpointReference(contentDescription));
                         }
-
-                        XMLStreamReader reader =
-                                StAXUtils.createXMLStreamReader(part.getInputStream());
 
                         if (part.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE)
                             > -1) {
@@ -356,7 +356,8 @@ public class SimpleMailListener implements Runnable, TransportListener {
                                     "MailWorker found a message other than text/xml or application/soap+xml");
                         }
 
-                        StAXBuilder builder = new StAXSOAPModelBuilder(reader, soapNamespaceURI);
+                        InputStream inputStream = part.getInputStream();
+                        OMXMLParserWrapper builder = Builder.getBuilder(inputStream, null, soapNamespaceURI);
                         SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
                         msgContext.setEnvelope(envelope);
                     }
