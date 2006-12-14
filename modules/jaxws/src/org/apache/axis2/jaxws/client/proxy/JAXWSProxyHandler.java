@@ -165,11 +165,16 @@ public class JAXWSProxyHandler extends BindingProvider implements
             }
         }
         
-        // Configure the SOAPAction.
+        // Only configure the SOAPAction if it hasn't already been
+        // set by the client.
         String action = operationDesc.getAction();
-        if (action != null) {
+        if (action != null && requestContext.get(BindingProvider.SOAPACTION_URI_PROPERTY) == null) {
             getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, action);
         }
+        
+        // Before we invoke, copy all of the properties from the client request
+        // context to the MessageContext
+        request.getProperties().putAll(getRequestContext());
         
 		requestIC.setRequestMessageContext(request);
 		InvocationController controller = new AxisInvocationController();
