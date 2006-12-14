@@ -25,15 +25,24 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
     public void engage(CodeGenConfiguration configuration) {
         String packageName = configuration.getPackageName();
         if (packageName == null || URLProcessor.DEFAULT_PACKAGE.equals(packageName)) {
-            //use the target namespace from the axis service to form a package
-            //name
-            packageName = URLProcessor.makePackageName(
-                    configuration.getAxisService().getTargetNamespace()
-            );
+
+            //use the target namespace from the axis service to form a package name
+            String targetNameSpace = configuration.getAxisService().getTargetNamespace();
+
+            // if this target name space exists in the ns2p then we have to get that package
+            if ((configuration.getUri2PackageNameMap() != null) &&
+                    configuration.getUri2PackageNameMap().containsKey(targetNameSpace.trim())) {
+                packageName = (String) configuration.getUri2PackageNameMap().get(targetNameSpace);
+            } else {
+                // i.e. user have not given any ns2p information for this name space
+                packageName = URLProcessor.makePackageName(configuration.getAxisService().getTargetNamespace());
+            }
+
         }
 
-        if (null == packageName || "".equals(packageName))
+        if ((packageName == null) || "".equals(packageName)){
             packageName = URLProcessor.DEFAULT_PACKAGE;
+        }
 
         configuration.setPackageName(packageName.toLowerCase());
 

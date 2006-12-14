@@ -402,6 +402,7 @@ public class ExtensionUtility {
             }
         }
 
+
         // add the custom package name
         if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.PACKAGE)) {
             String packageName = (String) propertyMap.get(SchemaConstants.SchemaCompilerArguments.PACKAGE);
@@ -410,6 +411,9 @@ public class ExtensionUtility {
             }
 
         }
+
+        // set the package namespace to uri details
+        options.setNs2PackageMap(configuration.getUri2PackageNameMap());
 
         //add custom mapper package name
         if (propertyMap.containsKey(SchemaConstants.SchemaCompilerArguments.MAPPER_PACKAGE)) {
