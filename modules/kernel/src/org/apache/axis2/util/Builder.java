@@ -161,62 +161,10 @@ public class Builder {
 			throws OMException, XMLStreamException, FactoryConfigurationError {
 		StAXBuilder builder = null;
 
-		Object cacheAttachmentProperty = msgContext
-				.getProperty(Constants.Configuration.CACHE_ATTACHMENTS);
-		String cacheAttachmentString = null;
-		boolean fileCacheForAttachments;
+        Attachments attachments = createAttachment(msgContext, inStream, contentTypeString);
+		String charSetEncoding = getCharSetEncoding(attachments.getSOAPPartContentType());
 
-		if (cacheAttachmentProperty != null
-				&& cacheAttachmentProperty instanceof String) {
-			cacheAttachmentString = (String) cacheAttachmentProperty;
-			fileCacheForAttachments = (Constants.VALUE_TRUE
-					.equals(cacheAttachmentString));
-		} else {
-			Parameter parameter_cache_attachment = msgContext
-					.getParameter(Constants.Configuration.CACHE_ATTACHMENTS);
-			cacheAttachmentString = (parameter_cache_attachment != null) ? (String) parameter_cache_attachment
-					.getValue()
-					: null;
-		}
-		fileCacheForAttachments = (Constants.VALUE_TRUE
-				.equals(cacheAttachmentString));
-
-		String attachmentRepoDir = null;
-		String attachmentSizeThreshold = null;
-
-		if (fileCacheForAttachments) {
-			Object attachmentRepoDirProperty = msgContext
-					.getProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR);
-
-			if (attachmentRepoDirProperty != null) {
-				attachmentRepoDir = (String) attachmentRepoDirProperty;
-			} else {
-				Parameter attachmentRepoDirParameter = msgContext
-						.getParameter(Constants.Configuration.ATTACHMENT_TEMP_DIR);
-				attachmentRepoDir = (attachmentRepoDirParameter != null) ? (String) attachmentRepoDirParameter
-						.getValue()
-						: null;
-			}
-
-			Object attachmentSizeThresholdProperty = msgContext
-					.getProperty(Constants.Configuration.FILE_SIZE_THRESHOLD);
-			if (attachmentSizeThresholdProperty != null
-					&& attachmentSizeThresholdProperty instanceof String) {
-				attachmentSizeThreshold = (String) attachmentSizeThresholdProperty;
-			} else {
-				Parameter attachmentSizeThresholdParameter = msgContext
-						.getParameter(Constants.Configuration.FILE_SIZE_THRESHOLD);
-				attachmentSizeThreshold = attachmentSizeThresholdParameter
-						.getValue().toString();
-			}
-		}
-
-		Attachments attachments = new Attachments(inStream, contentTypeString,
-				fileCacheForAttachments, attachmentRepoDir,
-				attachmentSizeThreshold);
-		String charSetEncoding = getCharSetEncoding(attachments
-				.getSOAPPartContentType());
-		XMLStreamReader streamReader;
+        XMLStreamReader streamReader;
 
 		if ((charSetEncoding == null)
 				|| "null".equalsIgnoreCase(charSetEncoding)) {
@@ -286,6 +234,63 @@ public class Builder {
 
 		return builder;
 	}
+
+    private static Attachments createAttachment(MessageContext msgContext, InputStream inStream, String contentTypeString) {
+        Object cacheAttachmentProperty = msgContext
+                .getProperty(Constants.Configuration.CACHE_ATTACHMENTS);
+        String cacheAttachmentString = null;
+        boolean fileCacheForAttachments;
+
+        if (cacheAttachmentProperty != null
+                && cacheAttachmentProperty instanceof String) {
+            cacheAttachmentString = (String) cacheAttachmentProperty;
+            fileCacheForAttachments = (Constants.VALUE_TRUE
+                    .equals(cacheAttachmentString));
+        } else {
+            Parameter parameter_cache_attachment = msgContext
+                    .getParameter(Constants.Configuration.CACHE_ATTACHMENTS);
+            cacheAttachmentString = (parameter_cache_attachment != null) ? (String) parameter_cache_attachment
+                    .getValue()
+                    : null;
+        }
+        fileCacheForAttachments = (Constants.VALUE_TRUE
+                .equals(cacheAttachmentString));
+
+        String attachmentRepoDir = null;
+        String attachmentSizeThreshold = null;
+
+        if (fileCacheForAttachments) {
+            Object attachmentRepoDirProperty = msgContext
+                    .getProperty(Constants.Configuration.ATTACHMENT_TEMP_DIR);
+
+            if (attachmentRepoDirProperty != null) {
+                attachmentRepoDir = (String) attachmentRepoDirProperty;
+            } else {
+                Parameter attachmentRepoDirParameter = msgContext
+                        .getParameter(Constants.Configuration.ATTACHMENT_TEMP_DIR);
+                attachmentRepoDir = (attachmentRepoDirParameter != null) ? (String) attachmentRepoDirParameter
+                        .getValue()
+                        : null;
+            }
+
+            Object attachmentSizeThresholdProperty = msgContext
+                    .getProperty(Constants.Configuration.FILE_SIZE_THRESHOLD);
+            if (attachmentSizeThresholdProperty != null
+                    && attachmentSizeThresholdProperty instanceof String) {
+                attachmentSizeThreshold = (String) attachmentSizeThresholdProperty;
+            } else {
+                Parameter attachmentSizeThresholdParameter = msgContext
+                        .getParameter(Constants.Configuration.FILE_SIZE_THRESHOLD);
+                attachmentSizeThreshold = attachmentSizeThresholdParameter
+                        .getValue().toString();
+            }
+        }
+
+        Attachments attachments = new Attachments(inStream, contentTypeString,
+                fileCacheForAttachments, attachmentRepoDir,
+                attachmentSizeThreshold);
+        return attachments;
+    }
 
     public static StAXBuilder getBuilder(Reader in) throws XMLStreamException {
         XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in);
