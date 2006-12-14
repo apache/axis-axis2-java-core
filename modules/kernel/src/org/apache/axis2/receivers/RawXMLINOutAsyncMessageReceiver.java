@@ -41,9 +41,9 @@ import java.lang.reflect.Method;
  */
 public class RawXMLINOutAsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
 
-    private Method findOperation(AxisOperation op, Class ImplClass) {
+    private Method findOperation(AxisOperation op, Class implClass) {
         String methodName = op.getName().getLocalPart();
-        Method[] methods = ImplClass.getMethods();
+        Method[] methods = implClass.getMethods();
 
         for (int i = 0; i < methods.length; i++) {
             if (methods[i].getName().equals(methodName) &&
@@ -73,10 +73,10 @@ public class RawXMLINOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRe
             Object obj = getTheImplementationObject(msgContext);
 
             // find the WebService method
-            Class ImplClass = obj.getClass();
+            Class implClass = obj.getClass();
 
-            AxisOperation opDesc = msgContext.getOperationContext().getAxisOperation();
-            Method method = findOperation(opDesc, ImplClass);
+            AxisOperation opDesc = msgContext.getAxisOperation();
+            Method method = findOperation(opDesc, implClass);
 
             if (method != null) {
                 OMElement result = (OMElement) method.invoke(

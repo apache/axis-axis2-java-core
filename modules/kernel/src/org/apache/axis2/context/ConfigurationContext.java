@@ -119,7 +119,7 @@ public class ConfigurationContext extends AbstractContext {
                 if (serviceGroupContext == null) {
                     AxisServiceGroup axisServiceGroup = messageContext.getAxisServiceGroup();
                     if (axisServiceGroup == null) {
-                        axisServiceGroup = (AxisServiceGroup) messageContext.getAxisService().getParent();
+                        axisServiceGroup = (AxisServiceGroup) axisService.getParent();
                     }
                     serviceGroupContext = new ServiceGroupContext(messageContext.getConfigurationContext(),
                             axisServiceGroup);
@@ -134,7 +134,7 @@ public class ConfigurationContext extends AbstractContext {
                 serviceGroupContext =
                         getServiceGroupContext(serviceGroupContextId, messageContext);
                 serviceContext =
-                        serviceGroupContext.getServiceContext(messageContext.getAxisService());
+                        serviceGroupContext.getServiceContext(axisService);
             } else {
 
                 // either the key is null or no SGC is found from the give key
@@ -144,10 +144,10 @@ public class ConfigurationContext extends AbstractContext {
                 }
 
                 if (messageContext.getAxisService() != null) {
-                    AxisServiceGroup axisServiceGroup = (AxisServiceGroup) messageContext.getAxisService().getParent();
+                    AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
 
                     serviceGroupContext = new ServiceGroupContext(this, axisServiceGroup);
-                    serviceContext = serviceGroupContext.getServiceContext(messageContext.getAxisService());
+                    serviceContext = serviceGroupContext.getServiceContext(axisService);
 
                     // set the serviceGroupContextID
                     serviceGroupContext.setId(serviceGroupContextId);
@@ -191,13 +191,13 @@ public class ConfigurationContext extends AbstractContext {
      * @param messageID
      * @param mepContext
      */
-    public synchronized void registerOperationContext(String messageID,
+    public void registerOperationContext(String messageID,
                                                       OperationContext mepContext) {
         mepContext.setKey(messageID);
         this.operationContextMap.put(messageID, mepContext);
     }
 
-    public synchronized void registerServiceGroupContext(ServiceGroupContext serviceGroupContext) {
+    public void registerServiceGroupContext(ServiceGroupContext serviceGroupContext) {
         String id = serviceGroupContext.getId();
 
         if (serviceGroupContextMap.get(id) == null) {
@@ -210,7 +210,7 @@ public class ConfigurationContext extends AbstractContext {
         cleanupServiceGroupContexts();
     }
 
-    public synchronized void addServiceGroupContextintoApplicatoionScopeTable(
+    public void addServiceGroupContextintoApplicatoionScopeTable(
             ServiceGroupContext serviceGroupContext) {
         applicationSessionServiceGroupContextTable.put(
                 serviceGroupContext.getDescription().getServiceGroupName(), serviceGroupContext);
@@ -247,22 +247,19 @@ public class ConfigurationContext extends AbstractContext {
         return null;
     }
 
-    public synchronized ServiceGroupContext getServiceGroupContext(String serviceGroupContextId,
+    public ServiceGroupContext getServiceGroupContext(String serviceGroupContextId,
                                                                    MessageContext msgContext) {
-        ServiceGroupContext serviceGroupContext = null;
-        if (serviceGroupContextMap != null) {
+        ServiceGroupContext serviceGroupContext;
             serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
             if (serviceGroupContext != null) {
                 serviceGroupContext.touch();
             }
-        }
         if (serviceGroupContext == null
-                && msgContext != null
                 && msgContext.getSessionContext() != null) {
             serviceGroupContext = msgContext.getSessionContext().getServiceGroupContext(
                     serviceGroupContextId);
         }
-        if (serviceGroupContext == null && msgContext != null) {
+        if (serviceGroupContext == null) {
             AxisService axisService = msgContext.getAxisService();
             if (axisService != null) {
                 AxisServiceGroup asg = (AxisServiceGroup) axisService.getParent();
@@ -324,7 +321,6 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     private void cleanupServiceGroupContexts() {
-        synchronized (serviceGroupContextMap) {
             long currentTime = new Date().getTime();
             Iterator sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
             while (sgCtxtMapKeyIter.hasNext()) {
@@ -338,7 +334,6 @@ public class ConfigurationContext extends AbstractContext {
                 }
             }
         }
-    }
 
     public ListenerManager getListenerManager() {
         return listenerManager;

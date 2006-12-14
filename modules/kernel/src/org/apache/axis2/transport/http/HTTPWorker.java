@@ -178,7 +178,7 @@ public class HTTPWorker implements Worker {
                     if (schema != null) {
                         EntityTemplate entity = new EntityTemplate(new ContentProducer() {
 
-                            public void writeTo(final OutputStream outstream) throws IOException {
+                            public void writeTo(final OutputStream outstream) {
                                 schema.write(outstream);
                             }
 

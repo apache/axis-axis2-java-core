@@ -65,7 +65,7 @@ public class RegistryTest extends AbstractTestCase {
         assertEquals(p, parmInclude.getParameter(key));
     }
 
-    public void testFlowIncludeTest(FlowInclude flowInclude) {
+    public void testFlowIncludeTest(AxisModule flowInclude) {
         Flow flow1 = new Flow();
         Flow flow2 = new Flow();
         Flow flow3 = new Flow();
@@ -81,7 +81,6 @@ public class RegistryTest extends AbstractTestCase {
 
     public void testHandlers() throws AxisFault {
         Handler handler = new AbstractHandler() {
-            private static final long serialVersionUID = 196289132377245632L;
 
 			public InvocationResponse invoke(MessageContext msgContext)  {
                 return InvocationResponse.CONTINUE;        

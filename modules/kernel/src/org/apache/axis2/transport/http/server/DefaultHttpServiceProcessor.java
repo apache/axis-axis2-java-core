@@ -176,7 +176,6 @@ public class DefaultHttpServiceProcessor extends HttpServiceProcessor {
             msgContext.setTransportOut(transportOut);
             msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
             msgContext.setServerSide(true);
-            msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, reqline.getUri());
 
             // set the transport Headers
             HashMap headerMap = new HashMap();

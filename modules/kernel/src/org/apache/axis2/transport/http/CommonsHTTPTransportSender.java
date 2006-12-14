@@ -23,7 +23,6 @@ import org.apache.axiom.om.impl.MIMEOutputUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -266,8 +265,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             }
         }
 
-        format.setDoOptimize(msgContext.isDoingMTOM());
-        format.setDoingSWA(msgContext.isDoingSwA());
         format.setAutoCloseWriter(true);
         if (!(msgContext.isDoingMTOM()) & (msgContext.isDoingSwA())
                 & !(msgContext.isDoingREST())) {

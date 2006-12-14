@@ -101,8 +101,6 @@ public class InstanceDispatcher extends AbstractHandler {
                         msgContext);
             }
         }
-        // setting myEPR
-        String transportURL = (String) msgContext.getProperty(Constants.Configuration.TRANSPORT_IN_URL);
         if (serviceContext != null) {
             serviceContext.setMyEPR(msgContext.getTo());
         }

@@ -71,7 +71,7 @@ public class MessageContext extends AbstractContext {
 
     public static final String TRANSPORT_HEADERS = "TRANSPORT_HEADERS";
 
-    public Attachments attachments = new Attachments();
+    public Attachments attachments;
 
     /**
      * Field TRANSPORT_OUT
@@ -1174,10 +1174,16 @@ public class MessageContext extends AbstractContext {
     }
 
     public Attachments getAttachmentMap() {
+        if (attachments == null) {
+            attachments = new Attachments();
+        }
         return attachments;
     }
 
     public void addAttachment(String contentID, DataHandler dataHandler) {
+        if (attachments == null) {
+            attachments = new Attachments();
+        }
         attachments.addDataHandler(contentID, dataHandler);
     }
 
@@ -1188,6 +1194,9 @@ public class MessageContext extends AbstractContext {
     }
 
     public DataHandler getAttachment(String contentID) {
+        if (attachments == null) {
+            attachments = new Attachments();
+        }
         return attachments.getDataHandler(contentID);
     }
 }

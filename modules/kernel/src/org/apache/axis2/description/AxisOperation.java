@@ -44,9 +44,6 @@ public abstract class AxisOperation extends AxisDescription
     private static final Log log = LogFactory.getLog(AxisOperation.class);
     private int mep = WSDL20_2004Constants.MEP_CONSTANT_INVALID;
 
-    public static final String SOAP_ACTION = "soapaction";
-
-
     // to store engaged modules
     private ArrayList engagedModules = new ArrayList();
 

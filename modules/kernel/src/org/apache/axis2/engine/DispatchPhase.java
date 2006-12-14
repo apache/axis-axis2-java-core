@@ -1,7 +1,6 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.context.MessageContext;
@@ -31,8 +30,6 @@ import java.util.List;
 */
 
 public class DispatchPhase extends Phase {
-
-    private static final long serialVersionUID = -6596799621473224363L;
 
     public DispatchPhase() {
     }
