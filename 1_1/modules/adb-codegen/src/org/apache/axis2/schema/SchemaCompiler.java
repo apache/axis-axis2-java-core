@@ -241,7 +241,13 @@ public class SchemaCompiler {
                 if(nsp == null) {
                     nsp = URLProcessor.DEFAULT_PACKAGE;
                 }
-                writer.registerExtensionMapperPackageName(URLProcessor.makePackageName(nsp));
+                 // if this name space exists in the ns2p list then we use it.
+                if ((options.getNs2PackageMap() != null)
+                        && (options.getNs2PackageMap().containsKey(nsp))){
+                    writer.registerExtensionMapperPackageName((String) options.getNs2PackageMap().get(nsp));
+                } else {
+                   writer.registerExtensionMapperPackageName(URLProcessor.makePackageName(nsp));
+                }
             }
             // second round - call the schema compiler one by one
             for (int i = 0; i < schemalist.size(); i++) {
