@@ -15,7 +15,6 @@
 */
 package org.apache.axis2.description;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
@@ -34,16 +33,12 @@ import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.CallbackReceiver;
-import org.apache.axis2.util.UUIDGenerator;
-import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
-public class OutInAxisOperation extends InOutAxisOperation {
+public class OutInAxisOperation extends TwoChannelAxisOperation {
     public OutInAxisOperation() {
         super();
         setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_OUT_IN);
@@ -94,53 +89,11 @@ public class OutInAxisOperation extends InOutAxisOperation {
 /**
  * MEP client for moi.
  */
-class OutInAxisOperationClient implements OperationClient {
-
-    private AxisOperation axisOp;
-
-    protected ServiceContext sc;
-
-    protected Options options;
-
-    protected OperationContext oc;
-
-    protected Callback callback;
-
-    /*
-     * indicates whether the MEP execution has completed (and hence ready for
-     * resetting)
-     */
-    boolean completed;
+class OutInAxisOperationClient extends OperationClient {
 
     OutInAxisOperationClient(OutInAxisOperation axisOp, ServiceContext sc,
                              Options options) {
-        this.axisOp = axisOp;
-        this.sc = sc;
-        this.options = options;
-        this.completed = false;
-        this.oc = sc.createOperationContext(axisOp);
-    }
-
-    /**
-     * Sets the options that should be used for this particular client. This
-     * resets the entire set of options to use the new options - so you'd lose
-     * any option cascading that may have been set up.
-     *
-     * @param options the options
-     */
-    public void setOptions(Options options) {
-        this.options = options;
-    }
-
-    /**
-     * Returns the options used by this client. If you want to set a single
-     * option, then the right way is to call getOptions() and set specific
-     * options.
-     *
-     * @return Returns the options, which will never be null.
-     */
-    public Options getOptions() {
-        return options;
+        super(axisOp, sc, options);
     }
 
     /**
@@ -177,30 +130,6 @@ class OutInAxisOperationClient implements OperationClient {
         this.callback = callback;
     }
 
-    /**
-     * Create a message ID for the given message context if needed. If user gives an option with
-     * MessageID then just copy that into MessageContext , and with that there can be multiple
-     * message with same MessageID unless user call setOption for each invocation.
-     * <p/>
-     * If user want to give message ID then the better way is to set the message ID in the option and
-     * call setOption for each invocation then the right thing will happen.
-     * <p/>
-     * If user does not give a message ID then the new one will be created and set that into Message
-     * Context.
-     *
-     * @param mc the message context whose id is to be set
-     */
-    private void setMessageID(MessageContext mc) {
-        // now its the time to put the parameters set by the user in to the
-        // correct places and to the
-        // if there is no message id still, set a new one.
-        String messageId = options.getMessageId();
-        if (messageId == null || "".equals(messageId)) {
-            messageId = UUIDGenerator.getUUID();
-        }
-        mc.setMessageID(messageId);
-    }
-
 
     /**
      * Executes the MEP. What this does depends on the specific MEP client. The
@@ -227,30 +156,7 @@ class OutInAxisOperationClient implements OperationClient {
         if (mc == null) {
             throw new AxisFault(Messages.getMessage("outmsgctxnull"));
         }
-        //setting AxisMessage
-        mc.setAxisMessage(axisOp.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
-        if (mc.getSoapAction() == null || "".equals(mc.getSoapAction())) {
-            mc.setSoapAction(options.getAction());
-        }
-        mc.setOptions(options);
-
-        // do Target Resolution
-        TargetResolver targetResolver = cc.getAxisConfiguration().getTargetResolverChain();
-        if(targetResolver != null){
-            targetResolver.resolveTarget(mc);
-        }
-
-        // if the transport to use for sending is not specified, try to find it
-        // from the URL
-        TransportOutDescription transportOut = options.getTransportOut();
-        if (transportOut == null) {
-            EndpointReference toEPR = (options.getTo() != null) ? options
-                    .getTo() : mc.getTo();
-            transportOut = ClientUtils.inferOutTransport(cc
-                    .getAxisConfiguration(), toEPR, mc);
-        }
-        mc.setTransportOut(transportOut);
-
+        prepareMessageContext(cc, mc);
 
         if (options.getTransportIn() == null && mc.getTransportIn() == null) {
             mc.setTransportIn(ClientUtils.inferInTransport(cc
@@ -259,7 +165,6 @@ class OutInAxisOperationClient implements OperationClient {
             mc.setTransportIn(options.getTransportIn());
         }
 
-        addReferenceParameters(mc);
         if (options.isUseSeparateListener()) {
             CallbackReceiver callbackReceiver = (CallbackReceiver) axisOp
                     .getMessageReceiver();
@@ -322,24 +227,6 @@ class OutInAxisOperationClient implements OperationClient {
         }
     }
 
-    private void addReferenceParameters(MessageContext msgctx) {
-        EndpointReference to = msgctx.getTo();
-        if (options.isManageSession()) {
-            EndpointReference tepr = sc.getTargetEPR();
-            if (tepr != null) {
-                Map map = tepr.getAllReferenceParameters();
-                if (map != null) {
-                    Iterator valuse = map.values().iterator();
-                    while (valuse.hasNext()) {
-                        Object refparaelement = valuse.next();
-                        if (refparaelement instanceof OMElement) {
-                            to.addReferenceParameter((OMElement) refparaelement);
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * @param msgctx
@@ -393,33 +280,6 @@ class OutInAxisOperationClient implements OperationClient {
             }
         }
         return responseMessageContext;
-    }
-
-    /**
-     * Resets the MEP client to a clean status after the MEP has completed. This
-     * is how you can reuse a MEP client. NOTE: this does not reset the options;
-     * only the internal state so the client can be used again.
-     *
-     * @throws AxisFault if reset is called before the MEP client has completed an
-     *                   interaction.
-     */
-    public void reset() throws AxisFault {
-        if (!completed) {
-            throw new AxisFault(Messages.getMessage("cannotreset"));
-        }
-        oc = null;
-        completed = false;
-    }
-
-    public void complete(MessageContext msgCtxt) throws AxisFault {
-        TransportOutDescription trsout = msgCtxt.getTransportOut();
-        if (trsout != null) {
-            trsout.getSender().cleanup(msgCtxt);
-        }
-    }
-
-    public OperationContext getOperationContext() {
-        return oc;
     }
 
     /**
