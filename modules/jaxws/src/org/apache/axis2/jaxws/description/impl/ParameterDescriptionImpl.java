@@ -38,10 +38,18 @@ import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
  */
 class ParameterDescriptionImpl implements ParameterDescription, ParameterDescriptionJava, ParameterDescriptionWSDL {
     private OperationDescription parentOperationDescription;
+    // The Class representing the parameter.  Note that for a Generic, including the JAX-WS Holder<T> Generic, 
+    // this represents the raw type of the Generic (e.g. List for List<T> or Holder for Holder<T>).
     private Class parameterType;
-    private ParameterizedType parameterGenericType;
+    // For the JAX-WS Generic Holder<T> (e.g. Holder<Foo>), this will be the actual type argument (e.g. Foo).  For 
+    // any other parameter (including other Generics), this will be null. 
+    // Note that since JAX-WS Holder<T> only supports a single actual type T (not multiple types such as <K,V>)
+    private Class parameterHolderActualType;
+    
     // 0-based number of the parameter in the argument list
     private int parameterNumber = -1;
+    // The Parameter Description Composite used to build the ParameterDescription
+    private ParameterDescriptionComposite paramDescComposite;
 
     // ANNOTATION: @WebMethod
     private WebParam            webParamAnnotation;
@@ -59,23 +67,24 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
         this.parameterType = parameterType;
         
         // The Type argument could be a Type (if the parameter is a Paramaterized Generic) or
-        // just a Class (if it is not).  We only need to keep track of Paramaterized Type information. 
-        if (ParameterizedType.class.isInstance(parameterGenericType)) {   
-            this.parameterGenericType = (ParameterizedType) parameterGenericType;
+        // just a Class (if it is not).  If it JAX-WS Holder<T> parameterized type, then get the 
+        // actual parameter type and hang on to that, too.
+        if (ParameterizedType.class.isInstance(parameterGenericType)) {
+            this.parameterHolderActualType = getGenericParameterActualType((ParameterizedType) parameterGenericType);
         }
         findWebParamAnnotation(parameterAnnotations);
     }
     
     ParameterDescriptionImpl(int parameterNumber, ParameterDescriptionComposite pdc, OperationDescription parent) {
+        this.paramDescComposite = pdc;
         this.parameterNumber = parameterNumber;
         this.parentOperationDescription = parent;
         this.parameterType = pdc.getParameterTypeClass();
-        
-        
-        if (ParameterizedType.class.isInstance(pdc.getParameterGenericType())) {   
-            this.parameterGenericType = (ParameterizedType) pdc.getParameterGenericType();
+        // If this is a JAX-WS Holder<T>, then get the Class for the actual type T also.
+        if (pdc.isHolderType()) {
+            this.parameterHolderActualType = pdc.getHolderActualTypeClass();
         }
-
+        
         webParamAnnotation = pdc.getWebParamAnnot();
         
         //TODO: Need to build the schema map. Need to add logic to add this parameter
@@ -105,16 +114,43 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
         return parentOperationDescription;
     }
     
+    /**
+     * Returns the class associated with the parameter.  Note that for the JAX-WS Holder<T> type, you can use
+     * getParameterActualType() to get the class associated with T.
+     */
     public Class getParameterType() {
         return parameterType;
     }
     
     /**
-     * For a non-Holder type, returns the parameter class.  For a Holder<T> type, returns the class of T
+     * For a non-Holder type, returns the parameter class.  For a Holder<T> type, returns the class of T.
      * @return
      */
     public Class getParameterActualType() {
-        if (isHolderType() && parameterGenericType != null) {
+        if (parameterHolderActualType != null) {
+            return parameterHolderActualType;
+        }
+        else {
+            return parameterType;
+        }
+    }
+    /**
+     * TEMPORARY METHOD!  For a JAX-WS Holder<T> this returns the class associated with <T>.
+     * For a Holder<Generic<...>>, it returns the class associated with Generic.  If the type
+     * is not a JAX-WS Holder, return a null.
+     * 
+     * This method SHOULD BE REMOVED when the description layer is refactored to use only DBC 
+     * and not Java reflection directly.
+     * @param parameterGenericType
+     * @return
+     */
+    // TODO: Remove this method when code refactored to only use DBC.
+    private Class getGenericParameterActualType(ParameterizedType parameterGenericType) {
+        Class returnClass = null;
+        // If this is a JAX-WS Holder type, then get the actual type.  Note that we can't use the
+        // isHolderType method yet because the class variable it is going to check (parameterHolderActualType)
+        // hasn't been initialized yet.
+        if (parameterGenericType != null && parameterGenericType.getRawType() == javax.xml.ws.Holder.class) {
             
             // REVIEW:
             // Do we want to add a getParameterActualGenericType that would return Type
@@ -125,27 +161,30 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
             // OperationDesc.getResultActualType
             
             // For types of Holder<T>, return the class associated with T
+            // For types of Holder<Generic<K,V>>, return class associated with Generic 
             Type type = parameterGenericType.getActualTypeArguments()[0];
             if (type != null && ParameterizedType.class.isInstance(type)) {
                 return (Class) ((ParameterizedType) type).getRawType();
             }
             return (Class) type;
         }
-        else {
-            return parameterType;
-        }
-            
+        
+        return returnClass;
     }
-    
+
+    /**
+     * Answer whether this ParameterDescription represents a JAX-WS Holder<T> type.
+     */
     public boolean isHolderType() {
+        // If this is a JAX-WS Holder<T> type, then we set the the class of the actual
+        // parameter <T> in the constructor.  Otherwise, that is null.
         // Holder types are defined by JSR-224 JAX-WS 2.0, Sec 2.3.3, pg 16
-        boolean returnValue = false;
-        if (parameterGenericType != null && ParameterizedType.class.isInstance(parameterGenericType)) {   
-            if (parameterGenericType.getRawType() == javax.xml.ws.Holder.class) {
-                returnValue = true;
-            }
+        if (parameterHolderActualType != null) {
+            return true;
         }
-        return returnValue;
+        else {
+            return false;
+        }
     }
 
     // =====================================
