@@ -59,6 +59,7 @@ public class EndpointReference implements Serializable {
     private String address;
     private ArrayList addressAttributes;
     private ArrayList metaData;
+    private ArrayList metaDataAttributes;
     private Map referenceParameters;
     private ArrayList extensibleElements;
     private ArrayList attributes;
@@ -126,6 +127,14 @@ public class EndpointReference implements Serializable {
     
     public void setAddressAttributes(ArrayList al){
         addressAttributes = al;
+    }
+    
+    public ArrayList getMetadataAttributes(){
+        return metaDataAttributes;
+    }
+    
+    public void setMetadataAttributes(ArrayList al){
+        metaDataAttributes = al;
     }
     
     /**
@@ -253,6 +262,10 @@ public class EndpointReference implements Serializable {
      */
     public String toString() {
         StringBuffer buffer = new StringBuffer("Address: " + address);
+        
+        if(addressAttributes != null){
+            buffer.append(", Address Attributes: ").append(addressAttributes);
+        }
         
         if (metaData != null)
             buffer.append(", Metadata: ").append(metaData);

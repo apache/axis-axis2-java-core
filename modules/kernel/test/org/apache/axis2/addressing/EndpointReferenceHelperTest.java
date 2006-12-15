@@ -59,6 +59,11 @@ public class EndpointReferenceHelperTest extends TestCase {
         addressAttributes.add(attr2);
         epr.setAddressAttributes(addressAttributes);
         
+        ArrayList metadataAttributes = new ArrayList();
+        metadataAttributes.add(attr1);
+        metadataAttributes.add(attr2);
+        epr.setMetadataAttributes(metadataAttributes);
+        
         OMElement om = EndpointReferenceHelper.toOM(omf, epr, new QName("http://nsurl","localName","prefix"), AddressingConstants.Final.WSA_NAMESPACE);
         
         //Test deserialize using fromOM(OMElement)
@@ -76,6 +81,9 @@ public class EndpointReferenceHelperTest extends TestCase {
         ArrayList metadata = deser.getMetaData();
         assertEquals(md1, metadata.get(0));
         assertEquals(md2, metadata.get(1));
+        ArrayList mdAttrs = deser.getMetadataAttributes();
+        assertEquals(attr1,mdAttrs.get(0));
+        assertEquals(attr2,mdAttrs.get(1));
         
         ArrayList extelts = deser.getExtensibleElements();
         assertEquals(ext1,extelts.get(0));
@@ -101,6 +109,9 @@ public class EndpointReferenceHelperTest extends TestCase {
         metadata = deser.getMetaData();
         assertEquals(md1, metadata.get(0));
         assertEquals(md2, metadata.get(1));
+        mdAttrs = deser.getMetadataAttributes();
+        assertEquals(attr1,mdAttrs.get(0));
+        assertEquals(attr2,mdAttrs.get(1));
         
         extelts = deser.getExtensibleElements();
         assertEquals(ext1,extelts.get(0));

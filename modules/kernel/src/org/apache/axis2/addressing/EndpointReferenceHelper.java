@@ -204,8 +204,19 @@ public class EndpointReferenceHelper {
                     OMElement omElement = (OMElement) metaData.get(i);
                     metadataE.addChild(ElementHelper.importOMElement(omElement, factory));
                 }
+                
+                ArrayList metadataAttributes = epr.getMetadataAttributes();
+                if (metadataAttributes != null) {
+                    Iterator attrIter = metadataAttributes.iterator();
+                    while (attrIter.hasNext()) {
+                        OMAttribute omAttributes = (OMAttribute) attrIter.next();
+                        metadataE.addAttribute(omAttributes);
+                    }
+                }
             }
 
+            
+            
             Map referenceParameters = epr.getAllReferenceParameters();
             if (referenceParameters != null) {
                 OMElement refParameterElement = factory.createOMElement(AddressingConstants.EPR_REFERENCE_PARAMETERS, wsaNS, eprElement);
@@ -255,6 +266,7 @@ public class EndpointReferenceHelper {
                 while (allAddrAttributes.hasNext()) {
                     OMAttribute attribute = (OMAttribute) allAddrAttributes.next();
                     addressAttributes.add(attribute);
+                    System.out.println("fromOM attr: "+attribute);
                 }
                 epr.setAddressAttributes(addressAttributes);
             }
@@ -272,6 +284,13 @@ public class EndpointReferenceHelper {
                     OMNode node = (OMNode) iterator.next();
                     epr.addMetaData(node);
                 }
+                Iterator allMDAttributes = eprChildElement.getAllAttributes();
+                ArrayList metadataAttributes = new ArrayList();
+                while (allMDAttributes.hasNext()) {
+                    OMAttribute attribute = (OMAttribute) allMDAttributes.next();
+                    metadataAttributes.add(attribute);
+                }
+                epr.setMetadataAttributes(metadataAttributes);
             }
             else if (!isFinalAddressingNamespace &&
                     map.get(AddressingConstants.Submission.EPR_REFERENCE_PROPERTIES).equals(qname)) {
