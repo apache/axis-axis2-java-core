@@ -658,6 +658,95 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
 
     /**
+         * add the qNames of the operation fault message names to faultMessages Mep
+         *
+         * @param operationFaultMessages
+         * @param faultMessagesToMep
+         */
+
+        private void addFaultMessages(List operationFaultMessages, Set faultMessagesToMep) {
+
+            AxisMessage faultMessage;
+            for (Iterator iter = operationFaultMessages.iterator(); iter.hasNext();) {
+                faultMessage = (AxisMessage) iter.next();
+                faultMessagesToMep.add(faultMessage.getElementQName());
+            }
+
+        }
+
+        /**
+         * A util method that returns a unique list of faults for a given mep
+         *
+         * @param doc
+         * @return DOM element
+         */
+        protected Element getUniqueListofFaultsofMep(Document doc, String mep) {
+
+            //  list to keep fault message qnames for this mep
+            Set faultListForMep = new HashSet();
+
+            Iterator iter = this.axisService.getOperations();
+            AxisOperation axisOperation;
+
+            for (; iter.hasNext();) {
+                axisOperation = (AxisOperation) iter.next();
+                if (mep == null) {
+                    // add the fault messages
+                    addFaultMessages(axisOperation.getFaultMessages(),faultListForMep);
+                } else {
+                    if (mep.equals(axisOperation.getMessageExchangePattern())){
+                       // add the fault messages
+                       addFaultMessages(axisOperation.getFaultMessages(),faultListForMep);
+                    }
+                }
+            }
+
+            Element rootElement = doc.createElement("fault-list");
+            Element faultElement;
+            QName key;
+            Iterator iterator = faultListForMep.iterator();
+            while (iterator.hasNext()) {
+                faultElement = doc.createElement("fault");
+                key = (QName) iterator.next();
+
+                //as for the name of a fault, we generate an exception
+                addAttribute(doc, "name",
+                        (String) fullyQualifiedFaultClassNameMap.get(key),
+                        faultElement);
+                addAttribute(doc, "shortName",
+                        (String) faultClassNameMap.get(key),
+                        faultElement);
+
+                //the type represents the type that will be wrapped by this
+                //name
+                String typeMapping =
+                        this.mapper.getTypeMappingName(key);
+                addAttribute(doc, "type", (typeMapping == null)
+                        ? ""
+                        : typeMapping, faultElement);
+                String attribValue = (String) instantiatableMessageClassNames.
+                        get(key);
+
+                addAttribute(doc, "instantiatableType",
+                        attribValue == null ? "" : attribValue,
+                        faultElement);
+
+                // add an extra attribute to say whether the type mapping is
+                // the default
+                if (mapper.getDefaultMappingName().equals(typeMapping)) {
+                    addAttribute(doc, "default", "yes", faultElement);
+                }
+                addAttribute(doc, "value", getParamInitializer(typeMapping),
+                        faultElement);
+
+
+                rootElement.appendChild(faultElement);
+            }
+            return rootElement;
+        }
+
+
+    /**
      * Adds the endpoint to the document.
      *
      * @param doc
@@ -1595,7 +1684,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         loadOperations(doc, rootElement, null);
 
         //attach a list of faults
-        rootElement.appendChild(getUniqueListofFaults(doc));
+        rootElement.appendChild(getUniqueListofFaultsofMep(doc,mep));
 
         doc.appendChild(rootElement);
         return doc;
