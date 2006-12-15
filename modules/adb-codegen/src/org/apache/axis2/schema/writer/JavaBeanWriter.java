@@ -317,7 +317,7 @@ public class JavaBeanWriter implements BeanWriter {
 
     private String getPackage(String namespaceURI) {
         String basePackageName;
-        if (ns2packageNameMap.containsKey(namespaceURI)) {
+        if ((ns2packageNameMap != null) && ns2packageNameMap.containsKey(namespaceURI)) {
             basePackageName = (String) ns2packageNameMap.get(namespaceURI);
         } else {
             basePackageName = URLProcessor.makePackageName(namespaceURI);
