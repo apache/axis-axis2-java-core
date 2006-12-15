@@ -30,6 +30,7 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.RequestURIBasedDispatcher;
+import org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.SchemaUtil;

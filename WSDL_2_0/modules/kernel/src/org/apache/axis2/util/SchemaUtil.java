@@ -90,14 +90,16 @@ public class SchemaUtil {
      * @param soapFactory
      * @throws AxisFault
      */
+
     public static SOAPEnvelope handleMediaTypeURLEncoded(MessageContext msgCtxt,
                                                          HttpServletRequest request,
                                                          XmlSchemaElement xmlSchemaElement,
                                                          SOAPFactory soapFactory) throws AxisFault {
 
-        Map requestParameterMap = request.getParameterMap();
         SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
         SOAPBody body = soapEnvelope.getBody();
+
+        Map requestParameterMap = request.getParameterMap();
 
         if (xmlSchemaElement == null) {
             // if there is no schema its piece of cake !! add these to the soap body in any order you like.
@@ -129,7 +131,8 @@ public class SchemaUtil {
             }
             OMElement bodyFirstChild = soapFactory.createOMElement(bodyFirstChildQName, body);
 
-            // we handle only GET and POST methods. Do a sanity check here, first
+            // we handle only GET and POST methods. Do a sanity check here, first.
+
             String httpMethod = request.getMethod();
             if (org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_POST.equals(httpMethod)
                     || (org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_GET.equals(httpMethod)))
@@ -154,7 +157,7 @@ public class SchemaUtil {
                         // create a variable wit the default as "&"
                         String queryParameterSeparator = "&";
 
-                        Map httpLocationParameterMap = new HashMap(1);
+                        MultipleEntryHashMap httpLocationParameterMap = new MultipleEntryHashMap();
                         if (axisBindingOperation != null) {
 
                             // now check whether we have a query parameter separator defined in this
@@ -170,11 +173,9 @@ public class SchemaUtil {
 
                             // parameter names can be different from the element name in the schema, due
                             // to http location. Let's filter the parameter names from it.
-                            httpLocationParameterMap = createHttpLocationParameterMap(httpLocation, queryParameterSeparator);
+                            httpLocationParameterMap = createHttpLocationParameterMap(httpLocation, queryParameterSeparator, request);
 
                         }
-
-                        Map parameterMap = request.getParameterMap();
 
                         while (iterator.hasNext()) {
                             XmlSchemaElement innerElement = (XmlSchemaElement) iterator.next();
@@ -187,19 +188,27 @@ public class SchemaUtil {
                                 name = mappingParamName;
                             }
 
-                            String[] parameterValuesArray = (String[]) parameterMap.get(name);
+                            String[] parameterValuesArray = (String[]) requestParameterMap.get(name);
+                            String value = null;
                             if (parameterValuesArray != null &&
                                     !"".equals(parameterValuesArray[0]) && parameterValuesArray[0] != null)
                             {
-                                OMNamespace ns = (qName == null || qName.getNamespaceURI() == null || qName.getNamespaceURI().length() == 0) ?
-                                        null :
-                                        soapFactory.createOMNamespace(qName.getNamespaceURI(), null);
-                                soapFactory.createOMElement(name, ns,
-                                        bodyFirstChild).setText(parameterValuesArray[0]);
-                            } else {
+                                value = parameterValuesArray[0];
+
+                            } else if (httpLocationParameterMap.get(name) != null) {
+
+                                value = (String) httpLocationParameterMap.get(name);
+
+                            } else if (xmlSchemaElement.getMinOccurs() != 0) {
                                 throw new AxisFault("Required element " + qName +
                                         " defined in the schema can not be found in the request");
                             }
+
+                            OMNamespace ns = (qName == null || qName.getNamespaceURI() == null || qName.getNamespaceURI().length() == 0) ?
+                                    null :
+                                    soapFactory.createOMNamespace(qName.getNamespaceURI(), null);
+                            soapFactory.createOMElement(name, ns,
+                                    bodyFirstChild).setText(value);
                         }
                     }
                 }
@@ -223,16 +232,31 @@ public class SchemaUtil {
      * @param httpLocation
      * @param queryParameterSeparator
      */
-    protected static Map createHttpLocationParameterMap(String httpLocation, String queryParameterSeparator) {
+    protected static MultipleEntryHashMap createHttpLocationParameterMap(String httpLocation,
+                                                                         String queryParameterSeparator,
+                                                                         HttpServletRequest request) {
 
-        Map httpLocationParameterMap = new HashMap();
-        // if there is a questions mark in the front, remove it
-        if (httpLocation.startsWith("?")) {
-            httpLocation = httpLocation.substring(1, httpLocation.length());
+        MultipleEntryHashMap httpLocationParameterMap = new MultipleEntryHashMap();
+
+        // let's handle query parameters and the path separately
+        String[] urlParts = httpLocation.split("\\?");
+        String templatedPath = urlParts[0];
+
+        if (urlParts.length > 1) {
+            String templatedQueryParams = urlParts[1];
+            // first extract parameters from the query part
+            extractParametersFromQueryPart(templatedQueryParams, queryParameterSeparator, httpLocationParameterMap, request.getParameterMap());
         }
 
-// now let's tokenize the string with query parameter separator
-        String[] nameValuePairs = httpLocation.split(queryParameterSeparator);
+        // now let's do the difficult part, extract parameters from the path element.
+        extractParametersFromPath(templatedPath, httpLocationParameterMap, request.getRequestURL());
+
+        return httpLocationParameterMap;
+    }
+
+    protected static void extractParametersFromQueryPart(String templatedQueryParams, String queryParameterSeparator, MultipleEntryHashMap httpLocationParameterMap, Map parameterMap) {
+        // now let's tokenize the string with query parameter separator
+        String[] nameValuePairs = templatedQueryParams.split(queryParameterSeparator);
         for (int i = 0; i < nameValuePairs.length; i++) {
             StringBuffer buffer = new StringBuffer(nameValuePairs[i]);
             // this name value pair will be either name=value or
@@ -241,12 +265,84 @@ public class SchemaUtil {
             if (buffer.indexOf("{") > 0 && buffer.indexOf("}") > 0) {
                 String parameterName = buffer.substring(0, buffer.indexOf("="));
                 String schemaElementName = buffer.substring(buffer.indexOf("=") + 2, buffer.length() - 1);
-                httpLocationParameterMap.put(schemaElementName, parameterName);
+                httpLocationParameterMap.put(schemaElementName, parameterMap.get(parameterName));
+            }
+
+        }
+    }
+
+    /**
+     * Here is what I will try to do here. I will first try to identify the location of the first
+     * template element in the request URI. I am trying to deduce the location of that location
+     * using the httpLocation element of the binding (it is passed in to this
+     * method).
+     * If there is a contant part in the httpLocation, then I will identify it. For this, I get
+     * the index of {, from httpLocation param, and whatever to the left of it is the contant part.
+     * Then I search for this constant part inside the url. This will give us the access to the first
+     * template parameter.
+     * To find the end of this parameter, we need to get the index of the next constant, from
+     * httpLocation attribute. Likewise we keep on discovering parameters.
+     * <p/>
+     * Assumptions :
+     * 1. User will always append the value of httpLocation to the address given in the
+     * endpoint.
+     * 2. I was talking about the constants in the httpLocation. Those constants will not occur,
+     * to a reasonable extend, before the constant we are looking for.
+     *
+     * @param templatedPath
+     * @param httpLocationParameterMap
+     */
+    protected static void extractParametersFromPath(String templatedPath, MultipleEntryHashMap httpLocationParameterMap, StringBuffer requestURIBuffer) {
+
+
+        if (templatedPath != null && !"".equals(templatedPath) && templatedPath.indexOf("{") > -1) {
+            StringBuffer pathTemplate = new StringBuffer(templatedPath);
+
+            // this will hold the index, from which we need to process the request URI
+            int startIndex = 0;
+            int templateStartIndex = 0;
+            int templateEndIndex = 0;
+            int indexOfNextConstant = 0;
+
+            while (startIndex < requestURIBuffer.length()) {
+                // this will always hold the starting index of a template parameter
+                templateStartIndex = pathTemplate.indexOf("{", templateStartIndex);
+
+                if (templateStartIndex > 0) {
+                    // get the preceding constant part from the template
+                    String constantPart = pathTemplate.substring(templateEndIndex + 1, templateStartIndex);
+
+                    // get the index of the end of this template param
+                    templateEndIndex = pathTemplate.indexOf("}", templateStartIndex);
+
+                    String parameterName = pathTemplate.substring(templateStartIndex + 1, templateEndIndex);
+                    // next try to find the next constant
+                    templateStartIndex = pathTemplate.indexOf("{", templateEndIndex);
+
+                    int endIndexOfConstant = requestURIBuffer.indexOf(constantPart, indexOfNextConstant) + constantPart.length();
+
+                    if (templateEndIndex == pathTemplate.length() - 1 || templateStartIndex == -1) {
+
+                        constantPart = pathTemplate.substring(templateEndIndex + 1, pathTemplate.length());
+                        indexOfNextConstant = requestURIBuffer.indexOf(constantPart, endIndexOfConstant);
+
+                        httpLocationParameterMap.put(parameterName, requestURIBuffer.substring(endIndexOfConstant, indexOfNextConstant));
+                        startIndex = requestURIBuffer.length();
+                    } else {
+
+                        // this is the next constant from the template
+                        constantPart = pathTemplate.substring(templateEndIndex + 1, templateStartIndex);
+
+                        indexOfNextConstant = requestURIBuffer.indexOf(constantPart, endIndexOfConstant);
+                        httpLocationParameterMap.put(parameterName, requestURIBuffer.substring(endIndexOfConstant, indexOfNextConstant));
+                        startIndex = indexOfNextConstant;
+
+                    }
+
+                }
 
             }
 
         }
-
-        return httpLocationParameterMap;
     }
 }
