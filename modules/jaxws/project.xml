@@ -21,7 +21,7 @@
 	<extend>../../etc/project.xml</extend>
 	
 	<name>Apache Axis 2.0 - JAX-WS</name>
-	<id>jaxws</id>
+	<id>axis2-jaxws</id>
 	<groupId>org.apache.axis2</groupId>
 	<description>JAX-WS implementation using Axis 2.0</description>
 	
@@ -279,17 +279,9 @@
             </properties>
         </dependency>
          <dependency>
-            <groupId>org.apache.ws.commons.neethi</groupId>
-            <artifactId>neethi</artifactId>
-            <version>1.0.1</version>
-            <properties>
-                <module>true</module>
-            </properties>
-        </dependency>
-	<dependency>
             <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>
-            <version>2.0</version>
+            <version>${neethi.version}</version>
             <properties>
                 <module>true</module>
             </properties>
