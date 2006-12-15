@@ -229,7 +229,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // copy the documentation element content to the description
             Element documentationElement = wsdl4jDefinition
                     .getDocumentationElement();
-            if (documentationElement != null) {
+            if ((documentationElement != null) && (documentationElement.getFirstChild() != null)) {
                 Node firstChild = documentationElement.getFirstChild();
                 String serviceDes;
                 if (firstChild.getNodeType() == Node.TEXT_NODE) {
