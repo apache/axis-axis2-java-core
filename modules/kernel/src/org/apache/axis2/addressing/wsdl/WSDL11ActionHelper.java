@@ -39,7 +39,10 @@ import org.apache.commons.logging.LogFactory;
 public class WSDL11ActionHelper {
 	
 	private static final Log log = LogFactory.getLog(WSDL11ActionHelper.class);
-	
+	private static final QName submissionWSAWNS = new QName(AddressingConstants.Submission.WSA_NAMESPACE, AddressingConstants.WSA_ACTION);
+    private static final QName finalWSANS       = new QName(AddressingConstants.Final.WSA_NAMESPACE, AddressingConstants.WSA_ACTION);
+    private static final QName finalWSAWNS      = new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION);
+    
 	/**
 	 * getActionFromInputElement
 	 * @param def the wsdl:definitions which contains the wsdl:portType
@@ -93,10 +96,15 @@ public class WSDL11ActionHelper {
 
     private static String getWSAWActionExtensionAttribute(AttributeExtensible ae){
     	// Search first for a wsaw:Action using the submission namespace
-    	Object attribute = ae.getExtensionAttribute(new QName(AddressingConstants.Submission.WSA_NAMESPACE, AddressingConstants.WSA_ACTION));
-    	// Then if that did no exist one using the w3c namespace
-    	if(attribute ==null){
-    		attribute = ae.getExtensionAttribute(new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION));
+    	Object attribute = ae.getExtensionAttribute(submissionWSAWNS);
+    	// Then if that did not exist one using the w3c namespace
+    	if(attribute == null){
+    		attribute = ae.getExtensionAttribute(finalWSAWNS);
+        }
+        // Then finally if that did not exist, try the 2005/08 NS
+        // (Included here because it's needed for Apache Muse)
+        if(attribute == null){
+            attribute = ae.getExtensionAttribute(finalWSANS);
         }
     	
     	// wsdl4j may return a String, QName or a List of either
@@ -117,15 +125,15 @@ public class WSDL11ActionHelper {
     		attribute = qn.getLocalPart();
     	}
     	
-    	if(!(attribute instanceof String)){
+    	if((attribute instanceof String)) {
+    		String result = (String)attribute;
+    		log.trace(result);
+    		return result;
+    	} else {
     		if(log.isTraceEnabled()){
     			log.trace("No wsaw:Action attribute found");
     		}
     		return null;
-    	}else{
-    		String result = (String)attribute;
-    		log.trace(result);
-    		return result;
     	}
     }
 }
