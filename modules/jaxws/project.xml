@@ -159,9 +159,19 @@
             <artifactId>axis2-saaj</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-        <dependency>
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-saaj-api</artifactId>
+			<version>${pom.currentVersion}</version>
+		</dependency>
+		<dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-saaj</artifactId>
+            <version>${pom.currentVersion}</version>
+        </dependency>
+		<dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-jaxws-api</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>
