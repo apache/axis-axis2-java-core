@@ -499,11 +499,13 @@
                 <ant:include name="**"/>
                 <ant:exclude name="**servlet**"/>
                 <ant:exclude name="ant*.jar"/>
+                <ant:exclude name="spring*.jar"/>
             </ant:lib>
             <ant:lib dir="${war_dep_cache}">
                 <ant:include name="**"/>
                 <ant:exclude name="**servlet**"/>
                 <ant:exclude name="ant*.jar"/>
+                <ant:exclude name="spring*.jar"/>
             </ant:lib>
             <ant:classes dir="modules/kernel/conf">
                 <ant:include name="*.properties"/>
