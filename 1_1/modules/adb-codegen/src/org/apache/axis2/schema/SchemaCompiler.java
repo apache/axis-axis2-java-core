@@ -1738,13 +1738,16 @@ public class SchemaCompiler {
         if(simpleType.getQName() != null) {
             // Must do this up front to support recursive types
             fullyQualifiedClassName = writer.makeFullyQualifiedClassName(simpleType.getQName());
+            // we put the qname to processed type map it is only named type
+            // otherwise we have to any way process that element.
+            processedTypemap.put(simpleType.getQName(), fullyQualifiedClassName);
         } else {
             fullyQualifiedClassName = writer.makeFullyQualifiedClassName(xsElt.getQName());
             simpleType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME,
                     new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart()));
         }
         
-        processedTypemap.put(simpleType.getQName(), fullyQualifiedClassName);
+
 
         //register that in the schema metainfo bag
         simpleType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
