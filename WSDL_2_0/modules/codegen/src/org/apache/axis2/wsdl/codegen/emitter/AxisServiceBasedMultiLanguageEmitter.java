@@ -740,6 +740,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     attribValue == null ? "" : attribValue,
                     faultElement);
 
+            String exceptionName = key.getLocalPart();
+            addAttribute(doc, "localname",
+                    exceptionName == null ? "" : exceptionName,
+                    faultElement);
+
             // add an extra attribute to say whether the type mapping is
             // the default
             if (mapper.getDefaultMappingName().equals(typeMapping)) {
