@@ -116,7 +116,6 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
     }
 
 
-
     /**
      * Writes the Skel.
      *
@@ -499,7 +498,6 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         addAttribute(doc, "type", typeMappingStr, paramElement);
         addAttribute(doc, "caps-type", typeMappingStr.toUpperCase(), paramElement);
 
-
         //adds the short type
         addShortType(paramElement,paramType);
 
@@ -557,74 +555,79 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
         return paramElement;  //*/
     }
     /**
-         * @param doc
-         * @param operation
-         * @param param
-         */
-        protected void addCSpecifcAttributes(Document doc, AxisOperation operation, Element param) {
-            String typeMappingStr;
-            Map typeMap = CTypeInfo.getTypeMap();
-            Iterator typeMapIterator = typeMap.keySet().iterator();
+     * @param doc
+     * @param operation
+     * @param param
+     */
+    protected void addCSpecifcAttributes(Document doc, AxisOperation operation, Element param, String messageType) {
+        String typeMappingStr;
+        Map typeMap = CTypeInfo.getTypeMap();
+        Iterator typeMapIterator = typeMap.keySet().iterator();
+        AxisMessage message;
 
-            AxisMessage message = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            QName typeMapping = message.getElementQName();
+        if (messageType.equals(WSDLConstants.MESSAGE_LABEL_IN_VALUE))
+            message = operation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        else
+            message = operation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
 
-            String paramType = this.mapper.getTypeMappingName(message.getElementQName());
-            if (doc == null || paramType == null || param == null) {
-                return;
-            }
+        QName typeMapping = message.getElementQName();
 
-            if (message != null) {
-                String type = this.mapper.getTypeMappingName(message.getElementQName());
-                typeMappingStr = (type == null)
-                        ? ""
-                        : type;
-            } else {
-                 typeMappingStr = "";
-            }
+        String paramType = this.mapper.getTypeMappingName(message.getElementQName());
+        if (doc == null || paramType == null || param == null) {
+            return;
+        }
 
-            addAttribute(doc, "caps-type", paramType.toUpperCase(), param);
-            boolean isOurs = true;
-            while (typeMapIterator.hasNext()) {
-                if (typeMapIterator.next().equals(typeMapping)) {
-                    isOurs = false;
-                    break;
-                }
-            }
+        if (message != null) {
+            String type = this.mapper.getTypeMappingName(message.getElementQName());
+            typeMappingStr = (type == null)
+                    ? ""
+                    : type;
+        } else {
+            typeMappingStr = "";
+        }
 
-            if (isOurs && !paramType.equals("") && !paramType.equals("void") &&
-                    !paramType.equals("org.apache.axiom.om.OMElement") &&
-                    !typeMappingStr.equals(C_DEFAULT_TYPE)) {
-                addAttribute(doc, "ours", "yes", param);
+        addAttribute(doc, "caps-type", paramType.toUpperCase(), param);
+        boolean isOurs = true;
+        while (typeMapIterator.hasNext()) {
+            if (typeMapIterator.next().equals(typeMapping)) {
+                isOurs = false;
+                break;
             }
         }
 
-        /**
-         * @param doc
-         * @param operation
-         * @return Returns the parameter element.
-         */
-        protected Element[] getInputParamElement(Document doc, AxisOperation operation) {
-            Element[] param = super.getInputParamElement(doc, operation);
-            for (int i = 0; i < param.length; i++) {
-                addCSpecifcAttributes(doc, operation, param[i]);
-            }
+        if (isOurs && !paramType.equals("") && !paramType.equals("void") &&
+                !paramType.equals("org.apache.axiom.om.OMElement") &&
+                !typeMappingStr.equals(C_DEFAULT_TYPE)) {
+            addAttribute(doc, "ours", "yes", param);
+        }
+    }
 
-            return param;
+    /**
+     * @param doc
+     * @param operation
+     * @return Returns the parameter element.
+     */
+    protected Element[] getInputParamElement(Document doc, AxisOperation operation) {
+        Element[] param = super.getInputParamElement(doc, operation);
+        for (int i = 0; i < param.length; i++) {
+            addCSpecifcAttributes(doc, operation, param[i], WSDLConstants.MESSAGE_LABEL_IN_VALUE);
         }
 
-        /**
-         * @param doc
-         * @param operation
-         * @return Returns Element.
-         */
-        protected Element getOutputParamElement(Document doc, AxisOperation operation) {
-            Element param = super.getOutputParamElement(doc, operation);
-            addCSpecifcAttributes(doc, operation, param);
+        return param;
+    }
 
-            return param;
-        }
-    
+    /**
+     * @param doc
+     * @param operation
+     * @return Returns Element.
+     */
+    protected Element getOutputParamElement(Document doc, AxisOperation operation) {
+        Element param = super.getOutputParamElement(doc, operation);
+        addCSpecifcAttributes(doc, operation, param, WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+
+        return param;
+    }
+
     /**
      * Gets the output directory for source files.
      *
