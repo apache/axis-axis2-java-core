@@ -307,7 +307,7 @@
                 <soap:body use="literal"/>
             </output>
             <fault name="SimpleFault">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault"  use="literal"/>
             </fault>
             <soap:operation soapAction="http://soapinterop.org/r4/groupg/"/>
         </operation>
@@ -320,7 +320,7 @@
                 <soap:body use="literal"/>
             </output>
             <fault name="SimpleFault">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault" use="literal"/>
             </fault>
             <soap:operation soapAction="http://soapinterop.org/r4/groupg/"/>
         </operation>
@@ -333,7 +333,7 @@
                 <soap:body use="literal"/>
             </output>
             <fault name="SimpleFault">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault" use="literal"/>
             </fault>
             <soap:operation soapAction="http://soapinterop.org/r4/groupg/"/>
         </operation>
@@ -346,13 +346,13 @@
                 <soap:body use="literal"/>
             </output>
             <fault name="SimpleFault1">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault1" use="literal"/>
             </fault>
             <fault name="SimpleFault2">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault2" use="literal"/>
             </fault>
             <fault name="SimpleFault3">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault3" use="literal"/>
             </fault>
             <soap:operation soapAction="http://soapinterop.org/r4/groupg/"/>
         </operation>
@@ -365,13 +365,13 @@
                 <soap:body use="literal"/>
             </output>
             <fault name="SimpleFault1">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault1" use="literal"/>
             </fault>
             <fault name="SimpleFault2">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault2" use="literal"/>
             </fault>
             <fault name="SimpleFault3">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault3" use="literal"/>
             </fault>
             <soap:operation soapAction="http://soapinterop.org/r4/groupg/"/>
         </operation>
@@ -384,10 +384,10 @@
                 <soap:body use="literal"/>
             </output>
             <fault name="SimpleFault1">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault1" use="literal"/>
             </fault>
             <fault name="SimpleFault2">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault2" use="literal"/>
             </fault>
             <soap:operation soapAction="http://soapinterop.org/r4/groupg/"/>
         </operation>
@@ -400,10 +400,10 @@
                 <soap:body use="literal"/>
             </output>
             <fault name="SimpleFault1">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault1" use="literal"/>
             </fault>
             <fault name="SimpleFault2">
-                <soap:fault use="literal"/>
+                <soap:fault name="SimpleFault2" use="literal"/>
             </fault>
             <soap:operation soapAction="http://soapinterop.org/r4/groupg/"/>
         </operation>
