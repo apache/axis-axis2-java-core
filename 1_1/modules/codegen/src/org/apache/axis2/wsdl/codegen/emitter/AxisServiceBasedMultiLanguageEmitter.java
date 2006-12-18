@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
+import org.apache.woden.internal.util.dom.DOM2Writer;
 //import org.apache.woden.internal.util.dom.DOM2Writer;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -1656,7 +1657,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         methodElement = doc.createElement("method");
         String localPart = axisOperation.getName().getLocalPart();
 
-        addAttribute(doc, "name", localPart, methodElement);
+        addAttribute(doc, "name", JavaUtils.xmlNameToJava(localPart), methodElement);
         addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
         addAttribute(doc, "style", axisOperation.getStyle(), methodElement);
         addAttribute(doc, "dbsupportname", portTypeName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
