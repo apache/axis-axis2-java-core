@@ -59,13 +59,7 @@ import java.io.Writer;
 import java.io.StringWriter;
 import java.io.StringReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Framework-linked code used by XMLBeans data binding support. This is accessed
@@ -484,18 +478,30 @@ public class CodeGenerationUtility {
             if (systemId.startsWith("project://local/")) {
                 systemId = systemId.substring("project://local/".length());
             }
+
+            StringTokenizer pathElements = new StringTokenizer(systemId, File.separator);
+            Stack pathElementStack = new Stack();
+            while (pathElements.hasMoreTokens()) {
+                String pathElement = pathElements.nextToken();
+                if (".".equals(pathElement)) {
+                } else if ("..".equals(pathElement)) {
+                    if (!pathElementStack.isEmpty())
+                        pathElementStack.pop();
+                } else {
+                    pathElementStack.push(pathElement);
+                }
+            }
+            StringBuffer pathBuilder = new StringBuffer();
+            for (Iterator iter = pathElementStack.iterator(); iter.hasNext();) {
+                pathBuilder.append(File.separator + iter.next());
+            }
+            systemId = pathBuilder.toString();
+
             log.info("Resolving schema with publicId [" + publicId + "] and systemId [" + systemId + "]");
             try {
                 for (int i = 0; i < schemas.length; i++) {
                     XmlSchema schema = schemas[i];
-                    boolean found = false;
-                    if (systemId.indexOf('/') == -1 && schema.getSourceURI() != null && schema.getSourceURI().endsWith(systemId))
-                    {
-                        found = true;
-                    } else if (schema.getSourceURI() != null && schema.getSourceURI().equals(systemId)) {
-                        found = true;
-                    }
-                    if (found) {
+                     if (schema.getSourceURI() != null && schema.getSourceURI().endsWith(systemId)) {
                         try {
                             return new InputSource(getSchemaAsReader(schemas[i]));
                         } catch (IOException e) {
