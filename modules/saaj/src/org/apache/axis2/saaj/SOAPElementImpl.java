@@ -171,9 +171,11 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         if (namespaceURI == null) {
             throw new SOAPException("Namespace not declared for the give prefix: " + prefix);
         }
+        
         SOAPElementImpl childEle =
-                new SOAPElementImpl((ElementImpl) getOwnerDocument().createElementNS(namespaceURI,
-                                                                                     localName));
+            new SOAPElementImpl((ElementImpl) getOwnerDocument().
+                    createElementNS(namespaceURI, prefix + ":" + localName));
+        
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
         childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
         element.appendChild(childEle.element);
