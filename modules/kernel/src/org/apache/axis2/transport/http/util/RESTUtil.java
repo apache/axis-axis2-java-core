@@ -180,7 +180,11 @@ public class RESTUtil {
             // irrespective of the schema, if the media type is text/xml, all the information
             // should be in the body.
             // I'm assuming here that the user is sending this data according to the schema.
-            if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_TEXT_XML, contentType)) {
+            if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType)) {
+                body.addChild(Builder.getAttachmentsBuilder(msgCtxt,
+                        inputStream,
+                        contentType, false).getDocumentElement());
+            }else if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_TEXT_XML, contentType)) {
 
                 String charSetEnc;
                 if (Builder.getCharSetEncoding(contentType) == null) {
@@ -197,13 +201,7 @@ public class RESTUtil {
                 OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
                 documentElement.setParent(null);
                 body.addChild(documentElement);
-
-                // if the media type is multipart/related, get help from Axis2 :)
-            } else if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType)) {
-                body.addChild(Builder.getAttachmentsBuilder(msgCtxt,
-                        inputStream,
-                        contentType, false).getDocumentElement());
-            }
+            } 
 
             return soapEnvelope;
 
