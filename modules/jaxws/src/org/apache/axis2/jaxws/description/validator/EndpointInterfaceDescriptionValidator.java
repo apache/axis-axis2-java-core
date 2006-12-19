@@ -20,17 +20,12 @@ package org.apache.axis2.jaxws.description.validator;
 
 import java.util.List;
 
-import javax.wsdl.Binding;
-import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 
-import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.OperationDescription;
-import org.apache.axis2.jaxws.description.validator.Validator.ValidationLevel;
 
 /**
  * 

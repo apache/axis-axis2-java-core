@@ -22,7 +22,6 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.spi.ServiceDelegate;
 
-
 public class Provider extends javax.xml.ws.spi.Provider {
 
     @Override

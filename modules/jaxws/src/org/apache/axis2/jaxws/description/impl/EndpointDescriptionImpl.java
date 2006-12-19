@@ -16,7 +16,6 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -65,6 +64,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 /**
  * @see ../EndpointDescription
  *

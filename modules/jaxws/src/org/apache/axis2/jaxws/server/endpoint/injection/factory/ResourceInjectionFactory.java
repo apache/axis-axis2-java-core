@@ -25,7 +25,6 @@ import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.impl.ResourceInjectionException;
 import org.apache.axis2.jaxws.server.endpoint.injection.impl.WebServiceContextInjectorImpl;
 
-
 public class ResourceInjectionFactory {
 
 	/**

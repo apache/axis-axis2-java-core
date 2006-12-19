@@ -17,8 +17,6 @@
 
 package org.apache.axis2.jaxws.util;
 
-import javax.xml.namespace.QName;
-
 public class Constants {
     public static final String URI_WSDL_SOAP11 = "http://schemas.xmlsoap.org/wsdl/soap/";
     public static final String URI_WSDL_SOAP12 = "http://schemas.xmlsoap.org/wsdl/soap12/";

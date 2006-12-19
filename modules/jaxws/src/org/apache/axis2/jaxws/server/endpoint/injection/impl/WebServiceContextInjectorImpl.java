@@ -18,10 +18,6 @@
  */
 package org.apache.axis2.jaxws.server.endpoint.injection.impl;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -37,7 +33,6 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.server.endpoint.injection.WebServiceContextInjector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 
 public class WebServiceContextInjectorImpl implements WebServiceContextInjector {
 	private static final Log log = LogFactory.getLog(WebServiceContextInjectorImpl.class);

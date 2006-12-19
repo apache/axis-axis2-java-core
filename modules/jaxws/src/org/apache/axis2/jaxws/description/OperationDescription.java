@@ -19,12 +19,11 @@ package org.apache.axis2.jaxws.description;
 
 import java.lang.reflect.Method;
 
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
+
 /**
  * An OperationDescripton corresponds to a method on an SEI.  That SEI could be explicit
  * (i.e. WebService.endpointInterface=sei.class) or implicit (i.e. public methods on the service implementation

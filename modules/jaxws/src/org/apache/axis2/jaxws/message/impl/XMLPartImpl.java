@@ -16,19 +16,11 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMText;
-import org.apache.axis2.jaxws.message.Attachment;
-import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
-import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;

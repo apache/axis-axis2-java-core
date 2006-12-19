@@ -24,12 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.jaxws.i18n.Messages;
-
 
 /**
  * Utilities to convert to/from xsd:list String to Object[]/List values.

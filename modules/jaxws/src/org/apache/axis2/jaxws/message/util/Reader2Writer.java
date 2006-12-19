@@ -19,7 +19,6 @@ package org.apache.axis2.jaxws.message.util;
 import java.io.StringWriter;
 import java.util.Iterator;
 
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;

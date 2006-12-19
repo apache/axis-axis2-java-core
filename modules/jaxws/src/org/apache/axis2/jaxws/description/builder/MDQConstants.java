@@ -17,10 +17,7 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.wsdl.WSDLConstants;
-
 
 public class MDQConstants {
 

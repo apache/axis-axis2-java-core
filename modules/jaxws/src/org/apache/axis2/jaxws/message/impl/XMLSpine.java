@@ -18,18 +18,15 @@ package org.apache.axis2.jaxws.message.impl;
 
 import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.Block;
-import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
-import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 
 /**

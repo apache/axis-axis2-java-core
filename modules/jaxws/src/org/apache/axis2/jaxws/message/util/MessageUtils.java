@@ -53,11 +53,8 @@ import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.transport.http.TransportHeaders;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
-
 
 /**
  * Miscellaneous Utilities that may be useful inside and outside the Message

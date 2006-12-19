@@ -16,7 +16,6 @@ import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.schema.SchemaImport;
 
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.marshaller.impl.DocLitBareMethodMarshallerImpl;
 import org.apache.axis2.jaxws.util.JavaUtils;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.wsdl.SchemaReader;

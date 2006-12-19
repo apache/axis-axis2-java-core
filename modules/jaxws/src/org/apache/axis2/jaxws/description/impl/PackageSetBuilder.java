@@ -22,12 +22,10 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
-import javax.wsdl.xml.WSDLWriter;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.axis2.jaxws.ExceptionFactory;

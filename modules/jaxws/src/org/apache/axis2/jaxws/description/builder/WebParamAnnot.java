@@ -18,8 +18,6 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-import javax.jws.WebParam.Mode;
-
 public class WebParamAnnot implements javax.jws.WebParam{
 
 	private String 	name;

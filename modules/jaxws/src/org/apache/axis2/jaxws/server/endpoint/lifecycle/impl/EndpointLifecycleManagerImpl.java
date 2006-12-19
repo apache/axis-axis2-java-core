@@ -43,7 +43,6 @@ import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
 	private static final String WEBSERVICE_MESSAGE_CONTEXT = "javax.xml.ws.WebServiceContext";
 	private static final Log log = LogFactory.getLog(EndpointLifecycleManagerImpl.class);

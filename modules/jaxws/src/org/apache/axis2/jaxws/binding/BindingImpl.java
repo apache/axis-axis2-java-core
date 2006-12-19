@@ -25,7 +25,6 @@ import java.util.Set;
 import javax.xml.ws.Binding;
 import javax.xml.ws.handler.Handler;
 
-
 /**
  * @author rott
  * classes that would normally "implement javax.xml.ws.Binding"

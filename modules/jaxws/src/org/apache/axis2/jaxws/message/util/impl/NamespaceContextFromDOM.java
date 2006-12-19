@@ -26,7 +26,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-
 /**
  * Namespace information available at the current scope.
  * Utility class for XMLStreamReaderFromDOM

@@ -17,7 +17,6 @@
 package org.apache.axis2.jaxws.message.attachments;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 

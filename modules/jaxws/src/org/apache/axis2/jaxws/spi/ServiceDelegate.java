@@ -21,9 +21,7 @@ package org.apache.axis2.jaxws.spi;
 
 import java.lang.reflect.Proxy;
 import java.net.URL;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -35,8 +33,8 @@ import javax.xml.transform.Source;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
@@ -51,7 +49,6 @@ import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
-import org.apache.axis2.jaxws.description.impl.PortInfoImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 

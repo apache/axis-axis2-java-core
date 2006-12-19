@@ -29,7 +29,6 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 
-
 public class JAXWSClientContext<T> {
     private EndpointDescription endpointDesc = null;
     private Mode serviceMode = null;

@@ -39,7 +39,6 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 public class RPCLitMethodMarshaller implements MethodMarshaller {
 
     private static Log log = LogFactory.getLog(RPCLitMethodMarshaller.class);

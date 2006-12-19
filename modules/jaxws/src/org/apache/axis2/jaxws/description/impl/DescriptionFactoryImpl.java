@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.description.impl;
 /**
  * 
  */
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,10 +32,10 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
-import org.apache.axis2.jaxws.description.validator.ServiceDescriptionValidator;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.validator.ServiceDescriptionValidator;
 
 /**
  * Creates the JAX-WS metadata descritpion hierachy from some combinations of

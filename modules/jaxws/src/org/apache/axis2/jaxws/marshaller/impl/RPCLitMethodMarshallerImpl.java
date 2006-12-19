@@ -2,9 +2,7 @@ package org.apache.axis2.jaxws.marshaller.impl;
 
 import javax.xml.ws.WebServiceException;
 
-import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 

@@ -27,7 +27,6 @@ import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
-import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;

@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 
-
 /**
  * The JAXBWrapper tool is used to create a JAXB Object from a series of child objects (wrap) or
  * get the child objects from a JAXB Object (unwrap)

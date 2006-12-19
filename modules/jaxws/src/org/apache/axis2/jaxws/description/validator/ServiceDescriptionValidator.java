@@ -18,9 +18,6 @@
  */
 package org.apache.axis2.jaxws.description.validator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionJava;

@@ -21,7 +21,6 @@ package org.apache.axis2.jaxws.description.validator;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.OperationDescriptionJava;
 import org.apache.axis2.jaxws.description.OperationDescriptionWSDL;
-import org.apache.axis2.jaxws.description.validator.Validator.ValidationLevel;
 
 /**
  * 

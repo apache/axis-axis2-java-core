@@ -16,7 +16,6 @@
  */
 package org.apache.axis2.jaxws.message.util.impl;
 
-import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;

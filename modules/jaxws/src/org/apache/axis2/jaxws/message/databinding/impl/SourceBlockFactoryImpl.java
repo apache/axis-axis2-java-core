@@ -24,7 +24,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
-import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
 
 /**

@@ -20,7 +20,7 @@ package org.apache.axis2.jaxws.description.builder;
 import java.lang.annotation.Annotation;
 
 import javax.xml.ws.Service;
- 
+
 public class ServiceModeAnnot implements javax.xml.ws.ServiceMode{
 	
 	private Service.Mode value = Service.Mode.PAYLOAD;

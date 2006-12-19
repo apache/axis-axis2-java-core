@@ -17,12 +17,10 @@
 package org.apache.axis2.jaxws.impl;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.jaxws.AxisCallback;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -30,8 +28,6 @@ import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
-
-
 
 /**
  * The AsyncListener is responsible for holding the callback that was passed

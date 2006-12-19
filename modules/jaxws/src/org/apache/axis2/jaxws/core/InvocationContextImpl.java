@@ -23,7 +23,6 @@ import javax.xml.ws.handler.Handler;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
-import org.apache.axis2.jaxws.impl.AsyncListener;
 
 /**
  * An implementation of the InvocationContext interface.

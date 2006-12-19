@@ -31,8 +31,6 @@ import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.client.ServiceClient;

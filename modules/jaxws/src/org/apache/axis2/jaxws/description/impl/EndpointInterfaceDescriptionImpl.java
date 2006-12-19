@@ -26,7 +26,6 @@ import java.util.List;
 
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
@@ -35,7 +34,6 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionWSDL;

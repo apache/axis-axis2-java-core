@@ -19,8 +19,6 @@ package org.apache.axis2.jaxws.message.databinding.impl;
 import java.io.StringReader;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;

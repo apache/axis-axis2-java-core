@@ -16,10 +16,7 @@
  */
 package org.apache.axis2.jaxws.marshaller;
 
-import javax.jws.WebParam.Mode;
-
 import org.apache.axis2.jaxws.description.ParameterDescription;
-
 
 /**
  * Stores Method Parameter as Name and Value. Method Parameter can be an input Method Parameter or output Method parameter.

@@ -27,7 +27,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;

@@ -21,7 +21,6 @@ package org.apache.axis2.jaxws.description.impl;
 import java.lang.reflect.Constructor;
 import java.util.StringTokenizer;
 
-import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
 
 import org.apache.axis2.jaxws.description.FaultDescription;

@@ -16,16 +16,6 @@
 
 package org.apache.axis2.jaxws.description.builder;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.net.URL;
-
-import javax.jws.HandlerChain;
-import javax.xml.namespace.QName;
-
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.jaxws.ExceptionFactory;
-
 import java.lang.annotation.Annotation;
 
 public class HandlerChainAnnot implements javax.jws.HandlerChain{

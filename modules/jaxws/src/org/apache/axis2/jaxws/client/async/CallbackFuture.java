@@ -18,7 +18,6 @@
  */
 package org.apache.axis2.jaxws.client.async;
 
-import java.lang.SuppressWarnings;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;

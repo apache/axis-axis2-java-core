@@ -20,8 +20,8 @@ package org.apache.axis2.jaxws.description;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
-import javax.jws.WebResult;
 import javax.jws.WebParam.Mode;
+import javax.jws.WebResult;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;

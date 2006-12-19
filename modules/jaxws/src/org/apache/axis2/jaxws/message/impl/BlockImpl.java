@@ -31,7 +31,6 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.marshaller.impl.MethodMarshallerImpl;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.XMLPart;

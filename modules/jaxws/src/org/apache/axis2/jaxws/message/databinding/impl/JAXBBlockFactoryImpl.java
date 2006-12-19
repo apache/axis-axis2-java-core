@@ -16,7 +16,6 @@
  */
 package org.apache.axis2.jaxws.message.databinding.impl;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

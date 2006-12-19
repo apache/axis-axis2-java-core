@@ -19,10 +19,7 @@ package org.apache.axis2.jaxws.server;
 
 import javax.xml.ws.WebServiceException;
 
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants.Configuration;
-import org.apache.axis2.client.Options;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -33,14 +30,12 @@ import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextImpl;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 
 /**
  * The JAXWSMessageReceiver is the entry point, from the server's perspective,

@@ -23,7 +23,6 @@ import java.security.Principal;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-
 public class WebServiceContextImpl implements WebServiceContext {
 
 	private MessageContext soapMessageContext;

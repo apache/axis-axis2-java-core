@@ -26,7 +26,6 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.MessageInternalException;
 
-
 /**
  * Reader
  * In many situations, you want the ability to reset an XMLStreamReader.

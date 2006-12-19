@@ -17,9 +17,7 @@
 
 package org.apache.axis2.jaxws.util;
 
-
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -34,15 +32,10 @@ import javax.wsdl.Port;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
-
-import org.apache.axis2.AxisFault;
-
-
 
 public class WSDL4JWrapper implements WSDLWrapper {
     

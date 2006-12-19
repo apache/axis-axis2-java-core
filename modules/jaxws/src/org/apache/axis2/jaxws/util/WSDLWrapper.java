@@ -17,7 +17,6 @@
 
 package org.apache.axis2.jaxws.util;
 
-
 import java.net.URL;
 import java.util.ArrayList;
 

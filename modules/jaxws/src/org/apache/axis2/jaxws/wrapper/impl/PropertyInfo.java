@@ -19,7 +19,6 @@ package org.apache.axis2.jaxws.wrapper.impl;
 
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -29,7 +28,6 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.ConvertUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 
 /**
  * A PropertyInfo is constructed with a PropertyDescriptor and

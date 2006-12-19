@@ -25,7 +25,6 @@ import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.handler.ProtectedMessageContext;
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
 
-
 public class MessageContextFactory {
 
 	public MessageContextFactory() {

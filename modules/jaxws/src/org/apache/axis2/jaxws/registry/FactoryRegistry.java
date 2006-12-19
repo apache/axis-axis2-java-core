@@ -20,7 +20,6 @@ package org.apache.axis2.jaxws.registry;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.OMBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.SOAPEnvelopeBlockFactoryImpl;

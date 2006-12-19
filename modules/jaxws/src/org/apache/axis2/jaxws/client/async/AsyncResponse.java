@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.xml.ws.Response;
-import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;

@@ -18,8 +18,6 @@ package org.apache.axis2.jaxws.server.dispatcher;
 
 import java.lang.reflect.Method;
 
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
 import javax.xml.ws.soap.SOAPBinding;
 
@@ -32,10 +30,8 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
-import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

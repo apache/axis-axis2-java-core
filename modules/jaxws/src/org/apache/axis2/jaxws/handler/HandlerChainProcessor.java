@@ -1,7 +1,6 @@
 package org.apache.axis2.jaxws.handler;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.WebServiceException;
@@ -13,7 +12,6 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
-
 
 public class HandlerChainProcessor {
 

@@ -17,42 +17,33 @@
  * under the License.
  */
 package org.apache.axis2.jaxws.marshaller.impl.alt;
- 
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Future;
 
-import javax.xml.bind.JAXBContext;
+import javax.jws.WebParam.Mode;
+import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Holder;
-import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
-import org.apache.axis2.jaxws.marshaller.impl.MethodMarshallerImpl;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
-import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
@@ -61,13 +52,9 @@ import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.axis2.jaxws.util.ConvertUtils;
-import org.apache.axis2.jaxws.util.JavaUtils;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import javax.jws.WebParam.Mode;
-import javax.jws.soap.SOAPBinding.Style;
-
 
 /**
  * Static Utilty Classes used by the MethodMarshaller implementations in the alt package.

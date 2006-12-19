@@ -25,8 +25,6 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointDescriptionWSDL;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
-import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
-import org.apache.axis2.jaxws.description.validator.Validator.ValidationLevel;
 
 /**
  * 

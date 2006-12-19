@@ -28,7 +28,7 @@ import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.jaxws.util.Constants;
+
 /**
  * An EndpointDescription corresponds to a particular Service Implementation. It
  * can correspond to either either a client to that impl or the actual service

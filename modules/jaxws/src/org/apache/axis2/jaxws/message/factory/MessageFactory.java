@@ -16,7 +16,6 @@
  */
 package org.apache.axis2.jaxws.message.factory;
 
-import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;

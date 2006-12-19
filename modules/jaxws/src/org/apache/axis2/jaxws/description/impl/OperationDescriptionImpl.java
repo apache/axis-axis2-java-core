@@ -29,8 +29,8 @@ import java.util.concurrent.Future;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
-import javax.jws.WebResult;
 import javax.jws.WebParam.Mode;
+import javax.jws.WebResult;
 import javax.jws.soap.SOAPBinding;
 import javax.jws.soap.SOAPBinding.ParameterStyle;
 import javax.xml.namespace.QName;
@@ -58,7 +58,6 @@ import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 /**

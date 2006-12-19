@@ -51,7 +51,6 @@ import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
 
     private static Log log = LogFactory.getLog(DocLitWrappedMethodMarshaller.class);

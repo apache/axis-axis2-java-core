@@ -6,6 +6,7 @@ package org.apache.axis2.jaxws.wsdl;
 import java.util.Set;
 
 import javax.wsdl.Definition;
+
 /**
  * Schema Reader interface is used to read schema from wsdl and derive appropriate package names from targetnamespace.
  * The algorithm for deriving reading packages names from schema is as follows:

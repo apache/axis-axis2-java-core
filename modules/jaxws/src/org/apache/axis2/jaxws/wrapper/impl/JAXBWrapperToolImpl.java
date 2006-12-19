@@ -18,7 +18,6 @@
 package org.apache.axis2.jaxws.wrapper.impl;
 
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -28,12 +27,10 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElement;
 
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
-
 
 public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 

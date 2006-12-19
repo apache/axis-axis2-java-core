@@ -17,9 +17,6 @@
 
 package org.apache.axis2.jaxws.util;
 
-import java.io.BufferedWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;

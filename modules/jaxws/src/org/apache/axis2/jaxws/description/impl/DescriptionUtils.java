@@ -20,7 +20,6 @@ package org.apache.axis2.jaxws.description.impl;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;

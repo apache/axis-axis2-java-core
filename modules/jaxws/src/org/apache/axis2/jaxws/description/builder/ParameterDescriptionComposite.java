@@ -4,7 +4,6 @@
 package org.apache.axis2.jaxws.description.builder;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.i18n.Messages;
 
 public class ParameterDescriptionComposite {
     private static String JAXWS_HOLDER_CLASS = "javax.xml.ws.Holder";

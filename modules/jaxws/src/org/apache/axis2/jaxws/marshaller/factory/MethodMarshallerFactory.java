@@ -18,9 +18,6 @@ package org.apache.axis2.jaxws.marshaller.factory;
 
 import javax.jws.soap.SOAPBinding;
 
-import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.OperationDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.DocLitBareMethodMarshallerImpl;
 import org.apache.axis2.jaxws.marshaller.impl.DocLitWrappedMethodMarshallerImpl;
@@ -28,8 +25,6 @@ import org.apache.axis2.jaxws.marshaller.impl.RPCLitMethodMarshallerImpl;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitBareMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitWrappedMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.RPCLitMethodMarshaller;
-import org.apache.axis2.jaxws.message.Protocol;
-
 
 /**
  * The MethodMarshallerFactory creates a Doc/Lit Wrapped, Doc/Lit Bare or RPC Marshaller using SOAPBinding information
