@@ -60,4 +60,9 @@ public abstract class SOAPConnection {
      * @throws SOAPException if there is a SOAP error
      */
     public abstract void close() throws SOAPException;
+
+    public SOAPMessage get(Object obj)
+            throws SOAPException {
+        throw new UnsupportedOperationException();
+    }
 }

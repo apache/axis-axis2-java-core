@@ -208,4 +208,41 @@ public interface SOAPFault extends SOAPBodyElement {
      *         specified
      */
     public abstract Locale getFaultStringLocale();
+
+    public abstract void addFaultReasonText(java.lang.String s,
+                        java.util.Locale locale)
+                        throws SOAPException;
+
+    public abstract void appendFaultSubcode(javax.xml.namespace.QName qname)
+                        throws SOAPException;
+
+    public abstract javax.xml.namespace.QName getFaultCodeAsQName();
+
+    public abstract java.lang.String getFaultNode();
+
+    public abstract java.util.Iterator getFaultReasonLocales()
+            throws SOAPException;
+
+    public abstract java.lang.String getFaultReasonText(java.util.Locale locale)
+            throws SOAPException;
+
+    public abstract java.util.Iterator getFaultReasonTexts()
+            throws SOAPException;
+
+    public abstract java.lang.String getFaultRole();
+
+    public abstract java.util.Iterator getFaultSubcodes();
+
+    public abstract boolean hasDetail();
+
+    public abstract void removeAllFaultSubcodes();
+
+    public abstract void setFaultCode(javax.xml.namespace.QName qname)
+            throws SOAPException;
+
+    public abstract void setFaultNode(java.lang.String s)
+            throws SOAPException;
+
+    public abstract void setFaultRole(java.lang.String s)
+            throws SOAPException;
 }

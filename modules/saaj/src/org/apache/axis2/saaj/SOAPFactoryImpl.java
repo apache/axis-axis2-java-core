@@ -26,6 +26,8 @@ import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPFault;
+import javax.xml.namespace.QName;
 
 /**
  * 
@@ -138,5 +140,13 @@ public class SOAPFactoryImpl extends SOAPFactory {
      */
     public Name createName(String localName) throws SOAPException {
         return new PrefixedQName(null, localName, null);
+    }
+
+    public SOAPFault createFault() throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public SOAPFault createFault(String s, QName qname) throws SOAPException {
+        return null;  //TODO - Not yet implemented
     }
 }

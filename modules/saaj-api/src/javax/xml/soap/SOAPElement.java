@@ -17,6 +17,8 @@ package javax.xml.soap;
 
 import java.util.Iterator;
 
+import javax.xml.namespace.QName;
+
 /**
  * An object representing the contents in a
  * <code>SOAPBody</code> object, the contents in a <code>SOAPHeader</code>
@@ -306,4 +308,28 @@ public interface SOAPElement extends javax.xml.soap.Node, org.w3c.dom.Element {
      *         <code>SOAPElement</code> object
      */
     public abstract Iterator getVisibleNamespacePrefixes();
+
+    public abstract SOAPElement addAttribute(javax.xml.namespace.QName qname,
+                             java.lang.String s)
+            throws SOAPException;
+
+    public abstract SOAPElement addChildElement(javax.xml.namespace.QName qname)
+            throws SOAPException;
+
+    public abstract javax.xml.namespace.QName createQName(java.lang.String s,
+                                          java.lang.String s1)
+            throws SOAPException;
+
+    public abstract java.util.Iterator getAllAttributesAsQNames();
+
+    public abstract java.lang.String getAttributeValue(javax.xml.namespace.QName qname);
+
+    public abstract java.util.Iterator getChildElements(QName name);
+
+    public abstract javax.xml.namespace.QName getElementQName();
+
+    boolean removeAttribute(javax.xml.namespace.QName qname);
+
+    public abstract SOAPElement setElementQName(javax.xml.namespace.QName qname)
+            throws SOAPException;
 }

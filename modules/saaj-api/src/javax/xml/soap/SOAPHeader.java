@@ -150,4 +150,19 @@ public interface SOAPHeader extends SOAPElement {
      *         <code>SOAPHeader</code>
      */
     public abstract Iterator extractAllHeaderElements();
+
+    public abstract SOAPHeaderElement addHeaderElement(javax.xml.namespace.QName qname)
+                                   throws SOAPException;
+    
+    public abstract SOAPHeaderElement addNotUnderstoodHeaderElement(javax.xml.namespace.QName qname)
+                                                throws SOAPException;
+
+    public abstract SOAPHeaderElement addUpgradeHeaderElement(java.util.Iterator iterator)
+                                          throws SOAPException;
+
+    public abstract SOAPHeaderElement addUpgradeHeaderElement(java.lang.String[] as)
+                                          throws SOAPException;
+
+    public abstract SOAPHeaderElement addUpgradeHeaderElement(java.lang.String s)
+                                          throws SOAPException;
 }

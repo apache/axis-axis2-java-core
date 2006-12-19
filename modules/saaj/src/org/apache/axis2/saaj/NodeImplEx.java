@@ -43,7 +43,6 @@ import javax.xml.soap.SOAPException;
 public abstract class NodeImplEx extends NodeImpl implements Node {
 
     /**
-     * @param ownerDocument
      * @param factory
      */
     protected NodeImplEx(OMFactory factory) {

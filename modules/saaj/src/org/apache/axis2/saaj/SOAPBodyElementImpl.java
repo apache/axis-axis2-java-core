@@ -15,12 +15,15 @@
  */
 package org.apache.axis2.saaj;
 
+import java.util.Iterator;
+
 import org.apache.axiom.om.impl.dom.ElementImpl;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
+import javax.xml.namespace.QName;
 
 public class SOAPBodyElementImpl extends SOAPElementImpl implements SOAPBodyElement {
 
@@ -36,5 +39,41 @@ public class SOAPBodyElementImpl extends SOAPElementImpl implements SOAPBodyElem
             throw new IllegalArgumentException("Parent is not a SOAPBody");
         }
         this.parentElement = parent;
+    }
+
+    public SOAPElement addAttribute(QName qname, String s) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public SOAPElement addChildElement(QName qname) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public QName createQName(String s, String s1) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public Iterator getAllAttributesAsQNames() {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public String getAttributeValue(QName qname) {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public Iterator getChildElements(QName name) {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public QName getElementQName() {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public boolean removeAttribute(QName qname) {
+        return false;  //TODO - Not yet implemented
+    }
+
+    public SOAPElement setElementQName(QName qname) throws SOAPException {
+        return null;  //TODO - Not yet implemented
     }
 }

@@ -389,6 +389,11 @@ public abstract class SOAPMessage {
                 "getProperty must be overridden in subclasses of SOAPMessage");
     }
 
+    public abstract AttachmentPart getAttachment(SOAPElement soapelement)
+        throws SOAPException;
+
+    public abstract void removeAttachments(MimeHeaders mimeheaders);
+
     /**
      * Specifies the character type encoding for the SOAP Message.
      */

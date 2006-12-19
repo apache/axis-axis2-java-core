@@ -80,4 +80,14 @@ public interface SOAPHeaderElement extends SOAPElement {
      *         <CODE>false</CODE> otherwise
      */
     public abstract boolean getMustUnderstand();
+
+    public abstract void setRole(String s)
+        throws SOAPException;
+
+    public abstract String getRole();
+
+    public abstract void setRelay(boolean flag)
+        throws SOAPException;
+
+    public abstract boolean getRelay();
 }

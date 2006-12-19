@@ -24,6 +24,9 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.MimeHeaders;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -345,6 +348,14 @@ public class SOAPMessageImpl extends SOAPMessage {
      */
     public Object getProperty(String property) throws SOAPException {
         return props.get(property);
+    }
+
+    public AttachmentPart getAttachment(SOAPElement soapelement) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public void removeAttachments(MimeHeaders mimeheaders) {
+        //TODO - Not yet implemented
     }
 
     /**

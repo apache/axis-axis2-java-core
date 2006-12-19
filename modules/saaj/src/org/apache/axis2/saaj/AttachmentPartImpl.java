@@ -31,6 +31,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
 /**
@@ -402,6 +403,30 @@ public class AttachmentPartImpl extends AttachmentPart {
      */
     public Iterator getNonMatchingMimeHeaders(String names[]) {
         return mimeHeaders.getNonMatchingHeaders(names);
+    }
+
+    public InputStream getBase64Content() throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public InputStream getRawContent() throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public byte[] getRawContentBytes() throws SOAPException {
+        return new byte[0];  //TODO - Not yet implemented
+    }
+
+    public void setBase64Content(InputStream inputstream, String s) throws SOAPException {
+        //TODO - Not yet implemented
+    }
+
+    public void setRawContent(InputStream inputstream, String s) throws SOAPException {
+        //TODO - Not yet implemented
+    }
+
+    public void setRawContentBytes(byte[] abyte0, int i, int j, String s) throws SOAPException {
+        //TODO - Not yet implemented
     }
 
     /**

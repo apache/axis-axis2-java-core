@@ -144,6 +144,33 @@ public abstract class SOAPFactory {
         }
     }
 
+    public static SOAPFactory newInstance(String s) throws SOAPException {
+
+        try {
+            return (SOAPFactory) Class.forName(s).newInstance();
+        } catch (Exception exception) {
+            throw new SOAPException("Unable to create SOAP Factory: "
+                    + exception.getMessage());
+        }
+    }
+
+    public SOAPElement createElement(org.w3c.dom.Element element)
+                          throws SOAPException {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public SOAPElement createElement(javax.xml.namespace.QName qname)
+                          throws SOAPException {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public abstract SOAPFault createFault()
+                               throws SOAPException;
+
+    public abstract SOAPFault createFault(java.lang.String s,
+                                      javax.xml.namespace.QName qname)
+                               throws SOAPException;
+
     private static final String SF_PROPERTY = "javax.xml.soap.SOAPFactory";
 
     private static final String DEFAULT_SF =

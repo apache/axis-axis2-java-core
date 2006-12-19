@@ -434,4 +434,27 @@ public abstract class AttachmentPart {
      *         object.
      */
     public abstract Iterator getNonMatchingMimeHeaders(String names[]);
+
+    public abstract java.io.InputStream getBase64Content()
+                                              throws SOAPException;
+
+    public abstract java.io.InputStream getRawContent()
+                                           throws SOAPException;
+
+    public abstract byte[] getRawContentBytes()
+                                   throws SOAPException;
+
+    public abstract void setBase64Content(java.io.InputStream inputstream,
+                                          java.lang.String s)
+            throws SOAPException;
+
+    public abstract void setRawContent(java.io.InputStream inputstream,
+                                       java.lang.String s)
+            throws SOAPException;
+
+    public abstract void setRawContentBytes(byte[] abyte0,
+                                            int i,
+                                            int j,
+                                            java.lang.String s)
+            throws SOAPException;
 }

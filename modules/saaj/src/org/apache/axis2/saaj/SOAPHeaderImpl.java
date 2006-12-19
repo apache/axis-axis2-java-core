@@ -238,6 +238,26 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         return elements.iterator();
     }
 
+    public SOAPHeaderElement addHeaderElement(QName qname) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public SOAPHeaderElement addNotUnderstoodHeaderElement(QName qname) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public SOAPHeaderElement addUpgradeHeaderElement(Iterator iterator) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public SOAPHeaderElement addUpgradeHeaderElement(String[] as) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public SOAPHeaderElement addUpgradeHeaderElement(String s) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
     public SOAPElement addTextNode(String text) throws SOAPException {
         throw new UnsupportedOperationException("Cannot add text node to SOAPHeader");
     }

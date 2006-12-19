@@ -42,6 +42,7 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+import javax.xml.soap.SOAPElement;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
@@ -1232,5 +1233,29 @@ public class SOAPPartImpl extends SOAPPart {
     public Object getUserData(String arg0) {
         // TODO TODO
         throw new UnsupportedOperationException("TODO");
+    }
+
+    public String getValue() {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public void setParentElement(SOAPElement parent) throws SOAPException {
+        //TODO - Not yet implemented
+    }
+
+    public SOAPElement getParentElement() {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public void detachNode() {
+        //TODO - Not yet implemented
+    }
+
+    public void recycleNode() {
+        //TODO - Not yet implemented
+    }
+
+    public void setValue(String value) {
+        //TODO - Not yet implemented
     }
 }

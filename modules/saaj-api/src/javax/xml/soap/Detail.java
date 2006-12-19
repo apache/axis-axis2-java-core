@@ -18,6 +18,8 @@ package javax.xml.soap;
 
 import java.util.Iterator;
 
+import javax.xml.namespace.QName;
+
 /**
  * A container for <code>DetailEntry</code> objects. <code>DetailEntry</code>
  * objects give detailed error information that is application-specific and
@@ -65,4 +67,7 @@ public interface Detail extends SOAPFaultElement {
      *         objects in this <code>Detail</code> object
      */
     public abstract Iterator getDetailEntries();
+
+    public abstract DetailEntry addDetailEntry(QName qname)
+        throws SOAPException;
 }

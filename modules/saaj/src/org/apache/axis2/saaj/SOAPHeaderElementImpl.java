@@ -98,6 +98,22 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
         return this.headerElem.getMustUnderstand();
     }
 
+    public void setRole(String s) throws SOAPException {
+        //TODO - Not yet implemented
+    }
+
+    public String getRole() {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public void setRelay(boolean flag) throws SOAPException {
+        //TODO - Not yet implemented
+    }
+
+    public boolean getRelay() {
+        return false;  //TODO - Not yet implemented
+    }
+
     public void setParentElement(SOAPElement parent) throws SOAPException {
         if (!(parent instanceof SOAPHeader)) {
             throw new IllegalArgumentException("Parent is not a SOAPHeader");

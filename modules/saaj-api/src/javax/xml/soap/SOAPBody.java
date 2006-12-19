@@ -127,4 +127,19 @@ public interface SOAPBody extends SOAPElement {
      * @throws SOAPException if the <code>Document</code> cannot be added
      */
     public abstract SOAPBodyElement addDocument(Document document) throws SOAPException;
+
+    public abstract SOAPBodyElement addBodyElement(javax.xml.namespace.QName qname)
+                               throws SOAPException;
+
+    public abstract SOAPFault addFault(javax.xml.namespace.QName qname,
+                   java.lang.String s)
+                   throws SOAPException;
+
+    public abstract SOAPFault addFault(javax.xml.namespace.QName qname,
+                   java.lang.String s,
+                   java.util.Locale locale)
+                   throws SOAPException;
+
+    public abstract org.w3c.dom.Document extractContentAsDocument()
+                                              throws SOAPException;
 }

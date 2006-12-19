@@ -237,6 +237,62 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         return this.faultReasonLocale;
     }
 
+    public void addFaultReasonText(String s, Locale locale) throws SOAPException {
+        //TODO - Not yet implemented
+    }
+
+    public void appendFaultSubcode(QName qname) throws SOAPException {
+        //TODO - Not yet implemented
+    }
+
+    public QName getFaultCodeAsQName() {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public String getFaultNode() {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public Iterator getFaultReasonLocales() throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public String getFaultReasonText(Locale locale) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public Iterator getFaultReasonTexts() throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public String getFaultRole() {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public Iterator getFaultSubcodes() {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public boolean hasDetail() {
+        return false;  //TODO - Not yet implemented
+    }
+
+    public void removeAllFaultSubcodes() {
+        //TODO - Not yet implemented
+    }
+
+    public void setFaultCode(QName qname) throws SOAPException {
+        //TODO - Not yet implemented
+    }
+
+    public void setFaultNode(String s) throws SOAPException {
+        //TODO - Not yet implemented
+    }
+
+    public void setFaultRole(String s) throws SOAPException {
+        //TODO - Not yet implemented
+    }
+
     public Iterator getChildElements(Name name) {
         QName qName = new QName(name.getURI(), name.getLocalName());
         return getChildren(element.getChildrenWithName(qName));

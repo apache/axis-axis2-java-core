@@ -166,6 +166,16 @@ public abstract class MessageFactory {
                                               InputStream inputstream)
             throws IOException, SOAPException;
 
+    public static MessageFactory newInstance(String s)
+            throws SOAPException {
+        try {
+            return (MessageFactory) Class.forName(s).newInstance();
+        } catch (Exception exception) {
+            throw new SOAPException("Unable to create message factory for SOAP: "
+                    + exception.getMessage());
+        }
+    }
+
     private static final String DEFAULT_MESSAGE_FACTORY =
             "org.apache.axis2.saaj.MessageFactoryImpl";
 

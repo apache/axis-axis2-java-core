@@ -56,7 +56,7 @@ import java.util.Iterator;
  * The <CODE>SOAPPart</CODE> method <CODE>getEnvelope</CODE> can
  * be used to retrieve the <CODE>SOAPEnvelope</CODE> object.</P>
  */
-public abstract class SOAPPart implements org.w3c.dom.Document {
+public abstract class SOAPPart implements javax.xml.soap.Node, org.w3c.dom.Document {
 
     public SOAPPart() {
     }

@@ -377,6 +377,42 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         return returnList.iterator();
     }
 
+    public SOAPElement addAttribute(QName qname, String s) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public SOAPElement addChildElement(QName qname) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public QName createQName(String s, String s1) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public Iterator getAllAttributesAsQNames() {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public String getAttributeValue(QName qname) {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public Iterator getChildElements(QName name) {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public QName getElementQName() {
+        return null;  //TODO - Not yet implemented
+    }
+
+    public boolean removeAttribute(QName qname) {
+        return false;  //TODO - Not yet implemented
+    }
+
+    public SOAPElement setElementQName(QName qname) throws SOAPException {
+        return null;  //TODO - Not yet implemented
+    }
+
     /* (non-Javadoc)
       * @see javax.xml.soap.SOAPElement#removeAttribute(javax.xml.soap.Name)
       */
