@@ -20,18 +20,15 @@ create both services and clients "from scratch", so to speak.</p>
 
     <ul>
       <li><a href="userguide.html#whatis">What is Axis2</a></li>
-      <li><a href="userguide.html#underhood">What's under the
-      hood?</a></li>
+      <li><a href="userguide.html#underhood">What's under the hood?</a></li>
       <li><a href="userguide.html#handlessoap">How Axis2 handles SOAP
         messages</a></li>
-      <li><a href="userguide.html#distributions">Axis2
-      distributions</a></li>
+      <li><a href="userguide.html#distributions">Axis2 distributions</a></li>
       <li><a href="userguide.html#sbd">The Axis2 Standard Binary
         Distribution</a></li>
       <li><a href="userguide.html#hierarchy">Axis2.war Directory
-        hierarchy</a></li>
-      <li><a href="userguide.html#docs">Axis2 Documents
-      Distribution</a></li>
+      hierarchy</a></li>
+      <li><a href="userguide.html#docs">Axis2 Documents Distribution</a></li>
       <li><a href="userguide.html#clients">Axis2 and clients</a></li>
     </ul>
   </li>
@@ -209,6 +206,10 @@ place the services.xml file in it.</p>
 
 <p>Create the .aar file by typing: jar cvf SampleService.aar ./*</p>
 
+<p>Deploy the SampleService.aar file by using the <a
+href="webadminguide.html">Web Administration application</a> or by copying it
+to the Axis2 services directory.</p>
+
 <p>Now you can create a client class that accesses the service directly (see
 Code Listing 10).</p>
 
@@ -230,7 +231,7 @@ public class SampleClient {
 
        private static EndpointReference targetEPR = 
              new EndpointReference(
-               "http://localhost:8080/axis2/services/SampleService");
+               "http://localhost:8080/axis2/services/UserGuideSampleService");
 
         public static OMElement greetUserPayload(String personToGreet) {
             OMFactory fac = OMAbstractFactory.getOMFactory();
@@ -277,6 +278,10 @@ the client interacts with the service, the Options class enables you to
 create inheritance relationships between Options objects, so that if a
 property is not found in the current Options object used, the client can
 check the parent Options object of the current Options object.</p>
+
+<p>Compile and run the above SampleClient.java. Make sure to have all axis2
+libraries in your class path. If all has gone well, 'Hello, John' will be
+shown as the output in the console.</p>
 <a name="deploypojo"></a>
 
 <h2>Deploying Plain Old Java Objects (POJOs)</h2>
