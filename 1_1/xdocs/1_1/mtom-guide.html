@@ -821,15 +821,9 @@ support Content Location based referencing of MIME parts.</p>
     attachment</strong></li>
 </ul>
 <source><pre>public class SwA {
-    private OperationContext operationContext;
-
     public SwA() {
     }
-
-    public void setOperationContext(OperationContext oc) throws AxisFault {
-        operationContext = oc;
-    }
-
+    
     public void uploadAttachment(OMElement omEle) throws AxisFault {
         OMElement child = (OMElement) omEle.getFirstOMChild();
         OMAttribute attr = child.getAttribute(new QName("href"));
@@ -841,7 +835,8 @@ support Content Location based referencing of MIME parts.</p>
             contentID = contentID.substring(4);
         }
         
-        Attachments attachment = (Attachments) (operationContext.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE)).getAttachmentMap();
+        MessageContext msgCtx = MessageContext.getCurrentMessageContext();
+        Attachments attachment = msgCtx.getAttachmentMap();
         DataHandler dataHandler = attachment.getDataHandler(contentID);
         ...........
     }
