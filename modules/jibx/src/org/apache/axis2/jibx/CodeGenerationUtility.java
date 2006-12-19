@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,6 +37,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
@@ -61,6 +63,7 @@ import org.jibx.binding.model.ValidationContext;
 import org.jibx.runtime.JiBXException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Framework-linked code used by JiBX data binding support. This is accessed via
@@ -293,9 +296,10 @@ public class CodeGenerationUtility {
             // collect all the top-level mapping and format definitions
             Map elementMap = new HashMap();
             Map complexTypeMap = new HashMap();
+            Map bindingMap = new HashMap();
             if (binding != null) {
                 collectTopLevelComponents(binding, null, elementMap,
-                    complexTypeMap, simpleTypeMap);
+                    complexTypeMap, simpleTypeMap, bindingMap);
             }
             
             // make sure classes will be generated for abstract mappings
@@ -305,7 +309,7 @@ public class CodeGenerationUtility {
             
             // force off inappropriate option (set by error in options handling)
             codeGenConfig.setPackClasses(false);
-
+            
             // configure handling for all operations of service
             codeGenConfig.setTypeMapper(new NamedParameterTypeMapper());
             Iterator operations = codeGenConfig.getAxisService().getOperations();
@@ -316,6 +320,8 @@ public class CodeGenerationUtility {
             Set objins = new HashSet();
             Set objouts = new HashSet();
             Set objfaults = new HashSet();
+            Map nsMap = new HashMap();
+            ArrayList wrappers = new ArrayList();
             while (operations.hasNext()) {
                 
                 // get the basic operation information
@@ -328,11 +334,23 @@ public class CodeGenerationUtility {
                     if (inmsg == null) {
                         throw new RuntimeException("Expected input message not found for operation " + op.getName());
                     }
+                    ArrayList headers = inmsg.getSoapHeaders();
+                    for (int i = 0; i < headers.size(); i++) {
+                        SOAPHeaderMessage header = (SOAPHeaderMessage)headers.get(i);
+                        mappedclass = mapMessage(header, elementMap);
+                        objins.add(mappedclass);
+                    }
                 }
                 if (WSDLUtil.isOutputPresentForMEP(mep)) {
                     outmsg = op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                     if (outmsg == null) {
                         throw new RuntimeException("Expected output message not found for operation " + op.getName());
+                    }
+                    ArrayList headers = outmsg.getSoapHeaders();
+                    for (int i = 0; i < headers.size(); i++) {
+                        SOAPHeaderMessage header = (SOAPHeaderMessage)headers.get(i);
+                        mappedclass = mapMessage(header, elementMap);
+                        objouts.add(mappedclass);
                     }
                 }
                 if (unwrap) {
@@ -344,10 +362,14 @@ public class CodeGenerationUtility {
                     dbmethod.setAttribute("method-name", op.getName().getLocalPart());
                     Set nameset = new HashSet(s_reservedWords);
                     if (inmsg != null) {
-                        dbmethod.appendChild(unwrapMessage(inmsg, false, simpleTypeMap, complexTypeMap, typeMappedClassMap, nameset, doc));
+                        Element wrapper = unwrapMessage(inmsg, false, simpleTypeMap, complexTypeMap, typeMappedClassMap, bindingMap, nameset, nsMap, doc);
+                        dbmethod.appendChild(wrapper);
+                        wrappers.add(wrapper);
                     }
                     if (outmsg != null) {
-                        dbmethod.appendChild(unwrapMessage(outmsg, true, simpleTypeMap, complexTypeMap, typeMappedClassMap, nameset, doc));
+                        Element wrapper = unwrapMessage(outmsg, true, simpleTypeMap, complexTypeMap, typeMappedClassMap, bindingMap, nameset, nsMap, doc);
+                        dbmethod.appendChild(wrapper);
+                        wrappers.add(wrapper);
                     }
                     
                     // save unwrapping information for use in code generation
@@ -376,7 +398,131 @@ public class CodeGenerationUtility {
                 }
             }
             
-            // add type usage information as service parameter
+            // check for default namespace usage within bindings or wrappers
+            //  (meaning we can't declare a conflicting default namespace)
+            Collection prefixes = nsMap.values();
+            boolean dfltns = prefixes.contains("");
+            boolean wrapdflt = false;
+            if (!dfltns) {
+                for (int i = 0; i < wrappers.size(); i++) {
+                    Element wrapper = (Element)wrappers.get(i);
+                    if ("true".equals(wrapper.getAttribute("uses-default"))) {
+                        wrapdflt = true;
+                        break;
+                    }
+                }
+            }
+            
+            // find a prefix that we can use where needed for extra namespace
+            String xtrapref = "";
+            if (dfltns || wrapdflt) {
+                xtrapref = "_";
+                int index = 0;
+                while (prefixes.contains(xtrapref)) {
+                    xtrapref = "_" + index++;
+                }
+            }
+            
+            // for each wrapper (input and output), determine what additional
+            //  namespaces need to be declared, what prefix is to be used for
+            //  the wrapper element, and what prefix to be used for each child
+            //  element
+            for (int i = 0; i < wrappers.size(); i++) {
+                Element wrapper = (Element)wrappers.get(i);
+                boolean addns = false;
+                String ns = wrapper.getAttribute("ns");
+                String prefix = "";
+                if ("true".equals(wrapper.getAttribute("need-namespaces"))) {
+                    
+                    // check extra definition needed for wrapper namespace
+                    if (!"".equals(ns)) {
+                        if (dfltns || wrapdflt) {
+                            
+                            // need a namespace, can't be default, get or set it
+                            prefix = (String)nsMap.get(ns);
+                            if (prefix == null) {
+                                prefix = xtrapref;
+                                addns = true;
+                            }
+                            
+                        } else {
+                            
+                            // just make the wrapper namespace the default
+                            prefix = "";
+                            addns = true;
+                            
+                        }
+                    }
+                    wrapper.setAttribute("prefix", prefix);
+                    
+                    // set prefixes for child elements of wrapper
+                    Node node = wrapper.getFirstChild();
+                    while (node != null) {
+                        if (node.getNodeType() == Node.ELEMENT_NODE) {
+                            Element element = (Element)node;
+                            String lname = element.getNodeName();
+                            if ("parameter-element".equals(lname) || "return-element".equals(lname)) {
+                                String childns = element.getAttribute("ns");
+                                if ("".equals(childns)) {
+                                    element.setAttribute("prefix", "");
+                                } else if (ns.equals(childns)) {
+                                    element.setAttribute("prefix", prefix);
+                                } else {
+                                    String childprefix = (String)nsMap.get(childns);
+                                    if (childprefix == null) {
+                                        throw new RuntimeException("Unable to set namespace " +
+                                            childns + " for child element");
+                                    }
+                                    element.setAttribute("prefix", childprefix);
+                                }
+                            }
+                        }
+                        node = node.getNextSibling();
+                    }
+                    
+                } else {
+                    
+                    // check extra definition needed for wrapper namespace
+                    if (!"".equals(ns)) {
+                        
+                        // just make the wrapper namespace the default
+                        prefix = "";
+                        addns = true;
+                        
+                    }
+                    wrapper.setAttribute("prefix", prefix);
+                    
+                    // set prefixes for child elements of wrapper
+                    Node node = wrapper.getFirstChild();
+                    while (node != null) {
+                        if (node.getNodeType() == Node.ELEMENT_NODE) {
+                            Element element = (Element)node;
+                            String lname = element.getNodeName();
+                            if ("parameter-element".equals(lname) || "return-element".equals(lname)) {
+                                String childns = element.getAttribute("ns");
+                                if ("".equals(childns)) {
+                                    element.setAttribute("prefix", "");
+                                } else if (ns.equals(childns)) {
+                                    element.setAttribute("prefix", prefix);
+                                } else {
+                                    throw new RuntimeException("Unable to set namespace " +
+                                        childns + " for child element");
+                                }
+                            }
+                        }
+                        node = node.getNextSibling();
+                    }
+                    
+                }
+                if (addns) {
+                    Element addedns = doc.createElement("extra-namespace");
+                    addedns.setAttribute("ns", ns);
+                    addedns.setAttribute("prefix", prefix);
+                    wrapper.appendChild(addedns);
+                }
+            }
+            
+            // add type usage information for binding initialization
             List details = new ArrayList();
             Element bindinit = doc.createElement("initialize-binding");
             if (!typeMappedClassMap.isEmpty()) {
@@ -398,6 +544,16 @@ public class CodeGenerationUtility {
                 mappedclass = "";
             }
             bindinit.setAttribute("bound-class", mappedclass);
+            
+            // include binding namespaces in initialization data
+            for (Iterator iter = nsMap.keySet().iterator(); iter.hasNext();) {
+                String ns = (String)iter.next();
+                String prefix = (String)nsMap.get(ns);
+                Element detail = doc.createElement("binding-namespace");
+                detail.setAttribute("ns", ns);
+                detail.setAttribute("prefix", prefix);
+                bindinit.appendChild(detail);
+            }
             details.add(bindinit);
             
             // add details for all objects used as inputs/outputs/faults
@@ -465,13 +621,17 @@ public class CodeGenerationUtility {
      * @param simpleTypeMap binding formats
      * @param complexTypeMap binding mappings
      * @param typeMappedClassMap map from type qname to index
+     * @param bindingMap map from mapping components to containing binding
+     * definition
      * @param nameset parameter variable names used in method
+     * @param nsmap mapr from URI to prefix for namespaces to be defined on
+     * wrapper element
      * @param doc document used for DOM components
      * @return detailed description element for code generation
      */
     private Element unwrapMessage(AxisMessage msg, boolean isout,
         Map simpleTypeMap, Map complexTypeMap, Map typeMappedClassMap,
-        Set nameset, Document doc) {
+        Map bindingMap, Set nameset, Map nsmap, Document doc) {
         
         // find the schema definition for this message element
         QName qname = msg.getElementQName();
@@ -492,6 +652,9 @@ public class CodeGenerationUtility {
         // dig down to the sequence
         List partNameList = new ArrayList();
         String wrappertype = "";
+        boolean nons = qname.getNamespaceURI().length() == 0;
+        boolean dfltns = false;
+        boolean complex = false;
         if (type instanceof XmlSchemaComplexType) {
             XmlSchemaComplexType ctype = (XmlSchemaComplexType)type;
             if (ctype.getAttributes().getCount() != 0) {
@@ -530,6 +693,7 @@ public class CodeGenerationUtility {
                 // add element to output with details of this element handling
                 Element param = doc.createElement(isout ? "return-element" : "parameter-element");
                 QName itemname = element.getQName();
+                nons = nons || itemname.getNamespaceURI().length() == 0;
                 param.setAttribute("ns", itemname.getNamespaceURI());
                 param.setAttribute("name", itemname.getLocalPart());
                 param.setAttribute("java-name", toJavaName(itemname.getLocalPart(), nameset));
@@ -571,6 +735,7 @@ public class CodeGenerationUtility {
                 } else {
                     
                     // complex type translates to abstract mapping in binding
+                    complex = true;
                     MappingElement mapping = (MappingElement)complexTypeMap.get(typename);
                     if (mapping == null) {
                         throw new RuntimeException("Cannot unwrap element " +
@@ -586,6 +751,28 @@ public class CodeGenerationUtility {
                     param.setAttribute("form", "complex");
                     param.setAttribute("type-index", tindex.toString());
                     
+                    // merge contained namespace definitions into set for operation
+                    Iterator citer = mapping.topChildIterator();
+                    while (citer.hasNext()) {
+                        ElementBase child = (ElementBase)citer.next();
+                        if (child.type() == ElementBase.NAMESPACE_ELEMENT) {
+                            dfltns = mapNamespace((NamespaceElement)child, dfltns, nsmap);
+                        } else {
+                           break;
+                        }
+                    }
+                    
+                    // also merge namespace definitions from binding
+                    BindingElement binding = (BindingElement)bindingMap.get(mapping);
+                    citer = binding.topChildIterator();
+                    while (citer.hasNext()) {
+                        ElementBase child = (ElementBase)citer.next();
+                        if (child.type() == ElementBase.NAMESPACE_ELEMENT) {
+                            dfltns = mapNamespace((NamespaceElement)child, dfltns, nsmap);
+                        } else if (child.type() != ElementBase.INCLUDE_ELEMENT) {
+                           break;
+                        }
+                    }
                 }
                 param.setAttribute("java-type", javatype);
                 boolean isobj = !s_primitiveSet.contains(javatype);
@@ -612,12 +799,23 @@ public class CodeGenerationUtility {
                 codeGenConfig.getTypeMapper().addTypeMappingName(partqname, fulltype);
             }
             
+            // check namespace prefix usage
+            if (nons && dfltns) {
+                throw new RuntimeException("Cannot unwrap element " + qname +
+                    ": no-namespace element(s) conflict with default namespace use in binding");
+            }
+            wrapdetail.setAttribute("uses-default", Boolean.toString(nons));
+            
+            // set flag for namespace declarations needed on wrapper
+            wrapdetail.setAttribute("need-namespaces", Boolean.toString(complex));
+            
         } else if (type != null) {
             throw new RuntimeException("Cannot unwrap element " + qname +
                 ": not a complexType definition");
         }
         if (wrapdetail.getFirstChild() == null) {
             wrapdetail.setAttribute("empty", "true");
+            wrapdetail.setAttribute("need-namespaces", "false");
             wrappertype = "";
         } else {
             wrapdetail.setAttribute("empty", "false");
@@ -647,6 +845,33 @@ public class CodeGenerationUtility {
         // return the unwrapping details
         return wrapdetail;
     }
+
+    /**
+     * Add mapping from namespace URI to prefix. In the case where multiple
+     * prefixes are used with a single URI, this will preserve the last
+     * non-empty prefix for that URI.
+     * 
+     * @param ns namespace definition
+     * @param dfltns flag for default namespace used in binding
+     * @param nsmap map from namespace URIs to prefixes
+     * @return flag for default namespace used in binding
+     */
+    private boolean mapNamespace(NamespaceElement ns, boolean dfltns, Map nsmap) {
+        String prefix = ns.getPrefix();
+        if (prefix == null) {
+            prefix = "";
+        }
+        String prior = (String)nsmap.get(ns.getUri());
+        if (prior != null) {
+            if (prefix.length() == 0) {
+                return dfltns;
+            } else if (prior.length() == 0) {
+                dfltns = false;
+            }
+        }
+        nsmap.put(ns.getUri(), prefix);
+        return dfltns || prefix.length() == 0;
+    }
     
     private static String toJavaName(String name, Set nameset) {
         StringBuffer buff = new StringBuffer(name.length());
@@ -674,6 +899,18 @@ public class CodeGenerationUtility {
         if (qname == null) {
             throw new RuntimeException("No element reference in message " + msg.getName());
         }
+        return mapQName(qname, complexTypeMap);
+    }
+    
+    private String mapMessage(SOAPHeaderMessage msg, Map complexTypeMap) {
+        QName qname = msg.getElement();
+        if (qname == null) {
+            throw new RuntimeException("No element reference in header");
+        }
+        return mapQName(qname, complexTypeMap);
+    }
+    
+    private String mapQName(QName qname, Map complexTypeMap) throws RuntimeException {
         Object obj = complexTypeMap.get(qname);
         if (obj == null) {
             throw new RuntimeException("No mapping defined for element " + qname);
@@ -697,10 +934,12 @@ public class CodeGenerationUtility {
      * components of binding
      * @param simpleTypeMap map from type names to format definition components
      * of binding
+     * @param bindingMap map from mapping components to containing binding
+     * definition
      */
     private static void collectTopLevelComponents(BindingElement binding,
-        String dns, Map elementMap, Map complexTypeMap,
-        Map simpleTypeMap) {
+        String dns, Map elementMap, Map complexTypeMap, Map simpleTypeMap,
+        Map bindingMap) {
         
         // check default namespace set at top level of binding
         String defaultns = findDefaultNS(binding.topChildIterator(), dns);
@@ -713,16 +952,18 @@ public class CodeGenerationUtility {
                 // recurse to process included binding definitions
                 IncludeElement include = (IncludeElement)child;
                 collectTopLevelComponents(include.getBinding(), defaultns,
-                    elementMap, complexTypeMap, simpleTypeMap);
+                    elementMap, complexTypeMap, simpleTypeMap, bindingMap);
                 
             } else if (child.type() == ElementBase.FORMAT_ELEMENT) {
                 
                 // register named formats as simple type conversions
                 FormatElement format = (FormatElement)child;
                 registerElement(format.getQName(), format, simpleTypeMap);
+                bindingMap.put(format, binding);
                 
             } else if (child.type() == ElementBase.MAPPING_ELEMENT) {
                 MappingElement mapping = (MappingElement)child;
+                bindingMap.put(mapping, binding);
                 if (mapping.isAbstract()) {
                     
                     // register named abstract mappings as complex type conversions
@@ -802,6 +1043,8 @@ public class CodeGenerationUtility {
          */
         public boolean visit(IncludeElement node) {
             try {
+                // force creation of defintions context for containing binding
+                m_context.getFormatDefinitions();
                 node.prevalidate(m_context);
             } catch (Throwable t) {
                 m_context.addFatal("Error during validation: " +
