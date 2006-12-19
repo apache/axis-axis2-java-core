@@ -23,6 +23,7 @@ import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
@@ -101,6 +102,37 @@ public class PrefixesTest extends TestCase {
                 if (childElementIter == null) return;
                 validateBody(childElementIter);
             }
+        }
+    }
+
+    public void testAttrPrifix() {
+        try {
+            MessageFactory fac = MessageFactory.newInstance();
+
+            SOAPMessage msg = fac.createMessage();
+            SOAPEnvelope env = msg.getSOAPPart().getEnvelope();
+            SOAPHeader header = msg.getSOAPHeader();
+            
+            Name name = env.createName("Local","pre1", "http://test1");
+            SOAPElement local = header.addChildElement(name);
+
+            Name name2 = env.createName("Local1","pre1", "http://test1");
+            SOAPElement local2 = local.addChildElement(name2);
+
+            Name aName = env.createName("attrib","pre1", "http://test1");
+            local2.addAttribute(aName, "value");
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            msg.writeTo(baos);
+            
+            String xml = new String(baos.toByteArray());
+            
+            assertTrue(xml.indexOf("xmlns:http://test1") == -1);
+            assertTrue(xml.indexOf("pre1:attrib=\"value\"") > 0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
         }
     }
 }

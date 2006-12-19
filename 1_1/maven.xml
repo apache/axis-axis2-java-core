@@ -1174,7 +1174,6 @@
     <!-- ================================================================ -->
     <!--- Create Rampart Java Docs -->
     <!-- ================================================================ -->
-	aaf
     <goal name="rampart-javadocs">
         <ant:javadoc packagenames="org.apache.rampart.*, org.apache.rahas.*,org.apache.ws.secpolicy.*"
                      defaultexcludes="yes"
