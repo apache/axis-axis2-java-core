@@ -516,30 +516,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 for (Iterator faultKeys = bindingFaultsMap.keySet().iterator(); faultKeys
                         .hasNext();) {
                     Object faultMapKey = faultKeys.next();
-                    BindingFault bindingFault = (BindingFault) bindingFaultsMap.get(faultMapKey);
-                    // accoding to the ws-basic profile and the wsdl 1.1 spec wsdl:fault element must have an
-                    // soap:fault extensibility element with the name attribute.
-                    String faultMappingName = null;
-                    Object nextElement;
-                    for (Iterator iter = bindingFault.getExtensibilityElements().iterator();
-                            iter.hasNext();){
-                       nextElement = iter.next();
-                       if (nextElement instanceof SOAP12Fault){
-                           SOAP12Fault soapFault = (SOAP12Fault) nextElement;
-                           faultMappingName = soapFault.getName();
-                       } else if (nextElement instanceof SOAPFault){
-                           SOAPFault soapFault = (SOAPFault) nextElement;
-                           faultMappingName = soapFault.getName();
-                       }
-                    }
-
-                    if (faultMappingName == null){
-                        throw new AxisFault("the fault binding " + bindingFault.getName()
-                                + " soap:fault element must be present and it should have an " +
-                                "name attribute to map to the wsdl:fault element.");
-                    }
-
-                    Fault wsdl4jFault = wsdl4jOperation.getFault(faultMappingName);
+                    BindingFault bindingFault = (BindingFault) bindingFaultsMap
+                            .get(faultMapKey);
+                    Fault wsdl4jFault = wsdl4jOperation.getFault(bindingFault
+                            .getName());
                     if (wsdl4jFault == null || wsdl4jFault.getMessage().getParts().size() == 0) {
                         throw new AxisFault("fault \"" + bindingFault.getName()
                                 + "\" not found in the Operation "
