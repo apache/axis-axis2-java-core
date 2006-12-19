@@ -16,11 +16,14 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPConstants;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -104,6 +107,7 @@ import java.io.InputStream;
  */
 public class MessageFactoryImpl extends MessageFactory {
 
+    protected String soapVersion = SOAPConstants.SOAP_1_1_PROTOCOL;
     /**
      * Creates a new <CODE>SOAPMessage</CODE> object with the
      * default <CODE>SOAPPart</CODE>, <CODE>SOAPEnvelope</CODE>,
@@ -124,9 +128,16 @@ public class MessageFactoryImpl extends MessageFactory {
      * @throws SOAPException if a SOAP error occurs
      */
     public SOAPMessage createMessage() throws SOAPException {
-        final SOAPEnvelopeImpl soapEnvelope =
-                new SOAPEnvelopeImpl((org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)
-                        new SOAP11Factory().getDefaultEnvelope());
+        SOAPEnvelopeImpl soapEnvelope;
+        if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
+            soapEnvelope =
+                    new SOAPEnvelopeImpl((org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)
+                            new SOAP12Factory().getDefaultEnvelope());
+        } else {
+            soapEnvelope =
+                    new SOAPEnvelopeImpl((org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)
+                            new SOAP11Factory().getDefaultEnvelope());
+        }
         SOAPMessageImpl soapMessage = new SOAPMessageImpl(soapEnvelope);
         soapMessage.setSaveRequired();
         return soapMessage;
@@ -162,4 +173,7 @@ public class MessageFactoryImpl extends MessageFactory {
         return soapMessage;
     }
 
+    public void setSOAPVersion(String soapVersion){
+        this.soapVersion = soapVersion;    
+    }
 }

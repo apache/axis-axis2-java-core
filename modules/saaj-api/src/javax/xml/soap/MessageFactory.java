@@ -17,6 +17,8 @@ package javax.xml.soap;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * <P>A factory for creating <CODE>SOAPMessage</CODE> objects.</P>
@@ -168,7 +170,20 @@ public abstract class MessageFactory {
 
     public static MessageFactory newInstance(String s)
             throws SOAPException {
-            return newInstance();
+        MessageFactory factory = newInstance();
+        if(factory.getClass().getName().equals(DEFAULT_MESSAGE_FACTORY)){
+            try {
+                Method m = factory.getClass().getMethod("setSOAPVersion", new Class[]{String.class});
+                m.invoke(factory, new Object[]{s});
+            } catch (IllegalAccessException e) {
+                throw new SOAPException(e);
+            } catch (InvocationTargetException e) {
+                throw new SOAPException(e);
+            } catch (NoSuchMethodException e) {
+                throw new SOAPException(e);
+            }
+        }
+        return factory;
     }
 
     private static final String DEFAULT_MESSAGE_FACTORY =
