@@ -20,7 +20,6 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.apache.axis2.jaxws.anytype.tests.AnyTypeTests;
 import org.apache.axis2.jaxws.attachments.MTOMSerializationTests;
 import org.apache.axis2.jaxws.client.ClientConfigTests;
@@ -29,7 +28,6 @@ import org.apache.axis2.jaxws.client.PropertyValueTests;
 import org.apache.axis2.jaxws.client.ProxySoapActionTests;
 import org.apache.axis2.jaxws.databinding.BindingToProtocolTests;
 import org.apache.axis2.jaxws.description.AnnotationDescriptionTests;
-import org.apache.axis2.jaxws.description.AnnotationProviderImplDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests;
 import org.apache.axis2.jaxws.description.AnnotationServiceImplWithDBCTests;
 import org.apache.axis2.jaxws.description.GetDescFromBindingProvider;
@@ -41,9 +39,6 @@ import org.apache.axis2.jaxws.description.ValidateWSDLTests;
 import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
 import org.apache.axis2.jaxws.description.WrapperPackageTests;
-import org.apache.axis2.jaxws.description.builder.DescriptionBuilderTests;
-import org.apache.axis2.jaxws.description.builder.ParameterParsingTests;
-import org.apache.axis2.jaxws.description.impl.ServiceDescriptionImplTests;
 import org.apache.axis2.jaxws.dispatch.DispatchTestSuite;
 import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
@@ -80,7 +75,6 @@ import org.apache.axis2.jaxws.sample.NonWrapTests;
 import org.apache.axis2.jaxws.sample.ParallelAsyncTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
-import org.apache.log4j.BasicConfigurator;
 
 public class JAXWSTest extends TestCase {
     
@@ -115,13 +109,9 @@ public class JAXWSTest extends TestCase {
         
         suite.addTestSuite(ServiceAnnotationTests.class);
         suite.addTestSuite(WSDLTests.class);
-        suite.addTestSuite(DescriptionBuilderTests.class);
-        suite.addTestSuite(ParameterParsingTests.class);
-        suite.addTestSuite(ServiceDescriptionImplTests.class);
         suite.addTestSuite(WSDLDescriptionTests.class);
         suite.addTestSuite(AnnotationDescriptionTests.class);
         suite.addTestSuite(AnnotationServiceImplDescriptionTests.class);
-        suite.addTestSuite(AnnotationProviderImplDescriptionTests.class);
         suite.addTestSuite(AnnotationServiceImplWithDBCTests.class);
         suite.addTestSuite(PartialWSDLTests.class);
         suite.addTestSuite(ValidateWSDLTests.class);
