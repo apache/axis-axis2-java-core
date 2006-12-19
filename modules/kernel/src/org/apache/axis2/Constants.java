@@ -219,6 +219,12 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String ADDRESSING_ACTION = "WS-Addressing:Action";
     public static final String HTTP_FRONTEND_HOST_URL = "httpFrontendHostUrl";
     public static final String DEFAULT_REST_PATH = "rest";
+    
+    /**
+     * Field Builder Selector
+     */
+    public static final String BUILDER_SELECTOR = "builderselector";
+
 
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";

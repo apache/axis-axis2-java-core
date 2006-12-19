@@ -1,34 +1,37 @@
 package org.apache.axis2.util;
 
-import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.impl.builder.XOPAwareStAXOMBuilder;
-import org.apache.axiom.om.impl.MTOMConstants;
-import org.apache.axiom.om.util.StAXUtils;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PushbackInputStream;
+import java.io.Reader;
+import java.util.HashMap;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axiom.attachments.Attachments;
-import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.impl.MTOMConstants;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.builder.XOPAwareStAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.parsers.FactoryConfigurationError;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.PushbackInputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import org.apache.axis2.transport.http.HTTPConstants;
 
 public class Builder {
     public static final int BOM_SIZE = 4;
@@ -36,19 +39,11 @@ public class Builder {
     public static StAXBuilder getPOXBuilder(InputStream inStream, String charSetEnc, String soapNamespaceURI) throws XMLStreamException {
         StAXBuilder builder;
         SOAPEnvelope envelope;
+        SOAPFactory soapFactory = new SOAP11Factory();
         XMLStreamReader xmlreader =
                 StAXUtils.createXMLStreamReader(inStream, charSetEnc);
-        SOAPFactory soapFactory = new SOAP11Factory();
-
         builder = new StAXOMBuilder(xmlreader);
         builder.setOMBuilderFactory(soapFactory);
-        envelope = soapFactory.getDefaultEnvelope();
-        envelope.getBody().addChild(builder.getDocumentElement());
-
-        // We now have the message inside an envolope. However, this is
-        // only an OM; We need to build a SOAP model from it.
-
-        builder = new StAXSOAPModelBuilder(envelope.getXMLStreamReader(), soapNamespaceURI);
         return builder;
     }
 
@@ -160,16 +155,17 @@ public class Builder {
 			InputStream inStream, String contentTypeString, boolean isSOAP)
 			throws OMException, XMLStreamException, FactoryConfigurationError {
 		StAXBuilder builder = null;
+		XMLStreamReader streamReader;
 
         Attachments attachments = createAttachment(msgContext, inStream, contentTypeString);
 		String charSetEncoding = getCharSetEncoding(attachments.getSOAPPartContentType());
-
-        XMLStreamReader streamReader;
 
 		if ((charSetEncoding == null)
 				|| "null".equalsIgnoreCase(charSetEncoding)) {
 			charSetEncoding = MessageContext.UTF_8;
 		}
+		msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+				charSetEncoding);
 
 		try {
 			streamReader = StAXUtils.createXMLStreamReader(getReader(
@@ -178,42 +174,25 @@ public class Builder {
 			throw new XMLStreamException(e);
 		}
 
-		msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-				charSetEncoding);
-
-		/*
-		 * Put a reference to Attachments Map in to the message context For
-		 * backword compatibility with Axis2 1.0
-		 */
+		
+		//  Put a reference to Attachments Map in to the message context For
+		// backword compatibility with Axis2 1.0 
 		msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
 
-		/*
-		 * Setting the Attachments map to new SwA API
-		 */
+		// Setting the Attachments map to new SwA API
 		msgContext.setAttachmentMap(attachments);
 
-		String soapEnvelopeNamespaceURI = null;
-		if (contentTypeString.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
-			soapEnvelopeNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-		} else if (contentTypeString
-				.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
-			soapEnvelopeNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-		}
+		String soapEnvelopeNamespaceURI = getEnvelopeNamespace(contentTypeString);
 
 		if (isSOAP) {
 			if (attachments.getAttachmentSpecType().equals(
-					MTOMConstants.MTOM_TYPE)
-					& null != soapEnvelopeNamespaceURI) {
-
-				/*
-				 * Creates the MTOM specific MTOMStAXSOAPModelBuilder
-				 */
+					MTOMConstants.MTOM_TYPE)) {
+				//Creates the MTOM specific MTOMStAXSOAPModelBuilder
 				builder = new MTOMStAXSOAPModelBuilder(streamReader,
 						attachments, soapEnvelopeNamespaceURI);
 
 			} else if (attachments.getAttachmentSpecType().equals(
-					MTOMConstants.SWA_TYPE)
-					& null != soapEnvelopeNamespaceURI) {
+					MTOMConstants.SWA_TYPE)) {
 				builder = new StAXSOAPModelBuilder(streamReader,
 						soapEnvelopeNamespaceURI);
 			}
@@ -320,4 +299,40 @@ public class Builder {
         builder = new StAXOMBuilder(soapFactory, xmlreader);
         return builder;
     }
+    
+    /**
+     * Initial work for a builder selector which selects the builder for a given message format based on the the content type of the recieved message.
+     * content-type to builder mapping can be specified through the Axis2.xml.
+     * @param contentType
+     * @param msgContext
+     * @return the builder registered against the given content-type
+     * @throws AxisFault
+     */
+    public static StAXBuilder getBuilderFromSelector(String contentType, MessageContext msgContext) throws AxisFault {
+    	HashMap map= (HashMap)msgContext.getConfigurationContext().getProperty(Constants.BUILDER_SELECTOR);
+    	String builderClassName=null;
+    	
+    	if(map!=null)
+    	builderClassName = (String)map.get(contentType);
+  
+    	if (builderClassName==null)
+    	{
+    		//fall back if there aren't any builders registered for this content type
+    		return null;
+    	}
+    	try {
+			Class builderClass = Loader.loadClass(builderClassName);
+			StAXBuilder builder = (StAXBuilder) builderClass.newInstance();
+			builder.setOMBuilderFactory(OMAbstractFactory.getOMFactory());
+			return builder;
+		} catch (ClassNotFoundException e) {
+			throw new AxisFault("Specified Builder class cannot be found.", e);
+		} catch (InstantiationException e) {
+			throw new AxisFault(
+					"Cannot instantiate the specified Builder Class.", e);
+		} catch (IllegalAccessException e) {
+			throw new AxisFault(
+					"Cannot instantiate the specified Builder Class.", e);
+		}
+	}
 }
