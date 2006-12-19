@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 
 /**
  * An OperationDescripton corresponds to a method on an SEI.  That SEI could be explicit
@@ -109,8 +108,6 @@ public interface OperationDescription {
     public String getResponseWrapperLocalName();
     
     public String[] getParamNames();
-    
-    public MethodMarshaller getMarshaller(boolean isClient);
     
     // TODO: These should return Enums defined on this interface, not from the Annotation
     public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle();

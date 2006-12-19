@@ -20,10 +20,10 @@
 	<pomVersion>3</pomVersion>
 	<extend>../../etc/project.xml</extend>
 	
-	<name>Apache Axis 2.0 - JAX-WS</name>
-	<id>axis2-jaxws</id>
+	<name>Apache Axis 2.0 - Metadata</name>
+	<id>axis2-metadata</id>
 	<groupId>org.apache.axis2</groupId>
-	<description>JAX-WS implementation using Axis 2.0</description>
+	<description>JSR-181 and JSR-224 Annotations Processing</description>
 	
 	<!-- ========== -->
     <!-- Developers -->
@@ -172,11 +172,6 @@
 		<dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws-api</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-		<dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-metadata</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
         <dependency>

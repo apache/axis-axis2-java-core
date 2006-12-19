@@ -40,7 +40,7 @@
         
     	<ant:echo>Generating java from echo.xsd</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
-        	<jvmarg line="${maven.junit.jvmargs}"/>
+        	<jvmarg line="${maven.junit.jvmargs2}"/>
         	<classpath refid="maven.dependency.classpath"/>
         	<classpath location="${compiled.classes.dir}"/>
             <arg line="-d ${schema.generated.src.dir} -quiet  ${schema.source.dir}/echo.xsd"/>
@@ -48,7 +48,7 @@
 
     	<ant:echo>Generating java from stock1.xsd</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
-        	<jvmarg line="${maven.junit.jvmargs}"/>
+        	<jvmarg line="${maven.junit.jvmargs2}"/>
         	<classpath refid="maven.dependency.classpath"/>
         	<classpath location="${compiled.classes.dir}"/>
             <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock1.xsd"/>
@@ -56,7 +56,7 @@
 
     	<ant:echo>Generating java from stock2.xsd</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
-        	<jvmarg line="${maven.junit.jvmargs}"/>
+        	<jvmarg line="${maven.junit.jvmargs2}"/>
         	<classpath refid="maven.dependency.classpath"/>
         	<classpath location="${compiled.classes.dir}"/>
             <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/stock2.xsd"/>
@@ -64,7 +64,7 @@
 
     	<ant:echo>Generating java from samplemtom.xsd</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
-        	<jvmarg line="${maven.junit.jvmargs}"/>
+        	<jvmarg line="${maven.junit.jvmargs2}"/>
         	<classpath refid="maven.dependency.classpath"/>
         	<classpath location="${compiled.classes.dir}"/>
             <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/samplemtom.xsd"/>
@@ -72,7 +72,7 @@
 
     	<ant:echo>Generating java from ProxyDocLitWrapped.wsdl</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    		<jvmarg line="${maven.junit.jvmargs}"/>
+    		<jvmarg line="${maven.junit.jvmargs2}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.proxy.doclitwrapped -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitWrapped.wsdl"/>
@@ -80,7 +80,7 @@
 
     	<ant:echo>Generating java from ProxyDocLitnonWrapped.wsdl</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
-			<jvmarg line="${maven.junit.jvmargs}"/>
+			<jvmarg line="${maven.junit.jvmargs2}"/>
 			<classpath refid="maven.dependency.classpath"/>
 			<classpath location="${compiled.classes.dir}"/>
 			<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitnonWrapped.wsdl"/>
@@ -88,7 +88,7 @@
 
     	<ant:echo>Generating java from RPCLit.wsdl</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
-			<jvmarg line="${maven.junit.jvmargs}"/>
+			<jvmarg line="${maven.junit.jvmargs2}"/>
 			<classpath refid="maven.dependency.classpath"/>
 			<classpath location="${compiled.classes.dir}"/>
 			<arg line="-d ${schema.generated.src.dir} -p org.test.proxy.rpclit -quiet -wsdl ${wsdl.source.dir}/RPCLit.wsdl"/>
@@ -96,7 +96,7 @@
     	
 		<ant:echo>Generating java from gorilla_dlw.wsdl</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
-			<jvmarg line="${maven.junit.jvmargs}"/>
+			<jvmarg line="${maven.junit.jvmargs2}"/>
 			<classpath refid="maven.dependency.classpath"/>
 			<classpath location="${compiled.classes.dir}"/>
 			<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/gorilla_dlw.wsdl"/>
@@ -104,7 +104,7 @@
 
        	<ant:echo>Generating java from SOAP12Echo.wsdl</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
-   			<jvmarg line="${maven.junit.jvmargs}"/>
+   			<jvmarg line="${maven.junit.jvmargs2}"/>
    			<classpath refid="maven.dependency.classpath"/>
    			<classpath location="${compiled.classes.dir}"/>
    			<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAP12Echo.wsdl"/>
@@ -112,14 +112,14 @@
     	
     	<ant:echo>Generating java from AddNumbers.wsdl</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	   	<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl"/>
     	</java>
     	<ant:echo>Generating java from async_doclitwr.wsdl</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	   	<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/async_doclitwr.wsdl"/>
@@ -127,7 +127,7 @@
 
     	<ant:echo>Generating java from FaultyWebService.wsdl</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/FaultyWebService.wsdl"/>
@@ -135,7 +135,7 @@
 
     	<ant:echo>Generating java from FaultsService.wsdl</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/FaultsService.wsdl"/>
@@ -143,7 +143,7 @@
 
     	<ant:echo>Generating java from jaxbsource</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -p org.test.dispatch.jaxbsource ${schema.source.dir}/jaxbsource.xsd"/>
@@ -151,7 +151,7 @@
 
     	<ant:echo>Generating java from doclit_nonwrap.wsdl for javabean endpoint support</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    		<jvmarg line="${maven.junit.jvmargs}"/>
+    		<jvmarg line="${maven.junit.jvmargs2}"/>
     		<classpath refid="maven.dependency.classpath"/>
     		<classpath location="${compiled.classes.dir}"/>
     		<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclit_nonwrap.wsdl"/>
@@ -159,7 +159,7 @@
 
     	<ant:echo>Generating java from doclitwrap.wsdl for javabean endpoint support</ant:echo>
 		<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-			<jvmarg line="${maven.junit.jvmargs}"/>
+			<jvmarg line="${maven.junit.jvmargs2}"/>
 			<classpath refid="maven.dependency.classpath"/>
 			<classpath location="${compiled.classes.dir}"/>
 			<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitwrap.wsdl"/>
@@ -167,7 +167,7 @@
 
     	<ant:echo>Generating java from doclitbare.wsdl for javabean endpoint support</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
-            <jvmarg line="${maven.junit.jvmargs}"/>
+            <jvmarg line="${maven.junit.jvmargs2}"/>
             <classpath refid="maven.dependency.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
             <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitbare.wsdl"/>
@@ -175,7 +175,7 @@
 
     	<ant:echo>Generating java from EchoMessage.wsdl for javabean endpoint support</ant:echo>
    	    <java classname="com.sun.tools.xjc.Driver" fork="true"> 
-   	        <jvmarg line="${maven.junit.jvmargs}"/>
+   	        <jvmarg line="${maven.junit.jvmargs2}"/>
    	        <classpath refid="maven.dependency.classpath"/>
    	        <classpath location="${compiled.classes.dir}"/>
    	        <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/EchoMessage.wsdl"/>
@@ -183,7 +183,7 @@
 
     	<ant:echo>Generating java from resourceinjection.wsdl for javabean endpoint Resource Injection support</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/resourceinjection.wsdl"/>
@@ -191,7 +191,7 @@
     	
     	<ant:echo>Generating java from AnyType.wsdl for javabean endpoint AnyType support</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AnyType.wsdl"/>
@@ -199,7 +199,7 @@
 
     	<ant:echo>Generating java from WSDLMultiTests.wsdl</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/WSDLMultiTests.wsdl"/>
@@ -207,7 +207,7 @@
     	 
     	<ant:echo>Generating java from Polymorphic shapes.wsdl for javabean endpoint support</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/shapes.wsdl"/>
@@ -215,7 +215,7 @@
     	
     	<ant:echo>Generating java from SOAPActionTest.wsdl</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
-    	    <jvmarg line="${maven.junit.jvmargs}"/>
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
     	    <classpath refid="maven.dependency.classpath"/>
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAPActionTest.wsdl"/>
@@ -711,16 +711,4 @@
             </ant:sourcepath>
         </ant:javadoc>
     </goal>
-	
-	    <postGoal name="java:jar-resources">
-	      <tstamp>
-	        <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en"/>
-	      </tstamp>
-	      <replace dir="${maven.build.dest}/org/apache/axis2/jaxws/i18n">
-	        <include name="resource*.properties"/>
-	        <replacefilter token="#today#" value="${build.time}"/>
-	        <replacefilter token="#axisVersion#" value="${pom.currentVersion}"/>
-	      </replace> 
-	    </postGoal>
-
 </project>

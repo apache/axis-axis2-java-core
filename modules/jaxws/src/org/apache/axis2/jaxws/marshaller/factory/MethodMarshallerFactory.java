@@ -25,6 +25,7 @@ import org.apache.axis2.jaxws.marshaller.impl.RPCLitMethodMarshallerImpl;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitBareMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitWrappedMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.RPCLitMethodMarshaller;
+import org.apache.axis2.jaxws.description.OperationDescription;
 
 /**
  * The MethodMarshallerFactory creates a Doc/Lit Wrapped, Doc/Lit Bare or RPC Marshaller using SOAPBinding information
@@ -80,4 +81,60 @@ public class MethodMarshallerFactory {
 		}
 		return null;
 	}
+
+    public static MethodMarshaller getMarshaller(OperationDescription op, boolean isClient) {
+
+        MethodMarshaller marshaller = null;
+        if (isClient) {
+                if (op.getSoapBindingStyle() == SOAPBinding.Style.DOCUMENT) {
+                    marshaller = createDocLitMethodMarshaller(op, isClient);
+                } else if (op.getSoapBindingStyle() == SOAPBinding.Style.RPC) {
+                    marshaller = createRPCLitMethodMarshaller(isClient);
+                }
+        } else { // SERVER
+                if (op.getSoapBindingStyle() == SOAPBinding.Style.DOCUMENT) {
+                    marshaller = createDocLitMethodMarshaller(op, isClient);
+                } else if (op.getSoapBindingStyle() == SOAPBinding.Style.RPC) {
+                    marshaller = createRPCLitMethodMarshaller(isClient);
+                }
+        }
+        return marshaller;
+    }
+
+    private static MethodMarshaller createDocLitMethodMarshaller(OperationDescription op, boolean isClient){
+        SOAPBinding.ParameterStyle parameterStyle = null;
+        if(isDocLitBare(op)){
+            parameterStyle = SOAPBinding.ParameterStyle.BARE;
+        }
+        if(isDocLitWrapped(op)){
+            parameterStyle = SOAPBinding.ParameterStyle.WRAPPED;
+        }
+        return createMethodMarshaller(SOAPBinding.Style.DOCUMENT, parameterStyle, isClient);
+    }
+
+    private static MethodMarshaller createRPCLitMethodMarshaller(boolean isClient){
+        return createMethodMarshaller(SOAPBinding.Style.RPC, SOAPBinding.ParameterStyle.WRAPPED, isClient);
+    }
+
+    protected static boolean isDocLitBare(OperationDescription op){
+        SOAPBinding.ParameterStyle methodParamStyle = op.getSoapBindingParameterStyle();
+        if(methodParamStyle!=null){
+            return methodParamStyle == SOAPBinding.ParameterStyle.BARE;
+        }
+        else{
+            SOAPBinding.ParameterStyle SEIParamStyle = op.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
+            return SEIParamStyle == SOAPBinding.ParameterStyle.BARE;
+        }
+    }
+
+    protected static boolean isDocLitWrapped(OperationDescription op){
+        SOAPBinding.ParameterStyle methodParamStyle = op.getSoapBindingParameterStyle();
+        if(methodParamStyle!=null){
+            return methodParamStyle == SOAPBinding.ParameterStyle.WRAPPED;
+        }
+        else{
+            SOAPBinding.ParameterStyle SEIParamStyle = op.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
+            return SEIParamStyle == SOAPBinding.ParameterStyle.WRAPPED;
+        }
+    }
 }

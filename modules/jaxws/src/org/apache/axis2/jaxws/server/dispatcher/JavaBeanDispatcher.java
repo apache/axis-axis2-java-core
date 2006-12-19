@@ -30,6 +30,7 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
+import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.commons.logging.Log;
@@ -189,38 +190,8 @@ public class JavaBeanDispatcher extends JavaDispatcher {
 		if(styleOnMethod!=null && styleOnSEI!=styleOnMethod){
 			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr2"));
 		}
-        return operationDesc.getMarshaller(false);
-		
-		/*
-		MethodMarshallerFactory cf = (MethodMarshallerFactory) FactoryRegistry.getFactory(MethodMarshallerFactory.class);
-		
-		if(styleOnSEI == javax.jws.soap.SOAPBinding.Style.DOCUMENT){
-			return createDocLitMessageConvertor(cf, operationDesc);
-		}
-		if(styleOnSEI == javax.jws.soap.SOAPBinding.Style.RPC){
-			return createRPCLitMessageConvertor(cf);
-			
-		}
-		return null;
-        */
+        return MethodMarshallerFactory.getMarshaller(operationDesc, false);
     }
-    
-    /*
-    private MethodMarshaller createDocLitMessageConvertor(MethodMarshallerFactory cf, OperationDescription operationDesc){
-		ParameterStyle parameterStyle = null;
-		if(isDocLitBare(endpointDesc, operationDesc)){
-			parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.BARE;
-		}
-		if(isDocLitWrapped(endpointDesc, operationDesc)){
-			parameterStyle = javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
-		}
-        return cf.createMethodMarshaller(Style.DOCUMENT, parameterStyle, false);
-	}
-	
-	private MethodMarshaller createRPCLitMessageConvertor(MethodMarshallerFactory cf){
-        return cf.createMethodMarshaller(Style.RPC, ParameterStyle.WRAPPED, false);
-	}
-	*/
     
     public Method getJavaMethod(MessageContext mc, Class serviceImplClass) {
 		 QName opName = mc.getOperationName();

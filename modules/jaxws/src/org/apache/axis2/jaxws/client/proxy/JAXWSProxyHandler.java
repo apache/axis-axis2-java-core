@@ -40,6 +40,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.commons.logging.Log;
@@ -287,7 +288,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
         
         OperationDescription operationDesc = endpointDesc.getEndpointInterfaceDescription().getOperation(method);
         
-		Message message = operationDesc.getMarshaller(true).marshalRequest(args, operationDesc);
+		Message message = MethodMarshallerFactory.getMarshaller(operationDesc, true).marshalRequest(args, operationDesc);
 		
 		if (log.isDebugEnabled()) {
             log.debug("Objects converted to Message");
@@ -314,7 +315,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
             log.debug("Converting Message to Response Object");
         }
 		if (responseMsg.isFault()) {
-		    Object object = operationDesc.getMarshaller(false).demarshalFaultResponse(responseMsg, operationDesc);
+		    Object object = MethodMarshallerFactory.getMarshaller(operationDesc, false).demarshalFaultResponse(responseMsg, operationDesc);
 		    if (log.isDebugEnabled()) {
 		        log.debug("Message Converted to response Throwable.  Throwing back to client.");
 		    }
@@ -324,7 +325,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		    // use the factory, it'll throw the right thing:
 		    throw ExceptionFactory.makeWebServiceException(responseContext.getLocalException());
 		}
-		Object object = operationDesc.getMarshaller(false).demarshalResponse(responseMsg, args, operationDesc);
+		Object object = MethodMarshallerFactory.getMarshaller(operationDesc, false).demarshalResponse(responseMsg, args, operationDesc);
 		if (log.isDebugEnabled()) {
             log.debug("Message Converted to response Object");
         }
