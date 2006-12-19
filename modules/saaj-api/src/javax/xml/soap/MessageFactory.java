@@ -168,12 +168,7 @@ public abstract class MessageFactory {
 
     public static MessageFactory newInstance(String s)
             throws SOAPException {
-        try {
-            return (MessageFactory) Class.forName(s).newInstance();
-        } catch (Exception exception) {
-            throw new SOAPException("Unable to create message factory for SOAP: "
-                    + exception.getMessage());
-        }
+            return newInstance();
     }
 
     private static final String DEFAULT_MESSAGE_FACTORY =
