@@ -359,8 +359,8 @@ Distribution</b></h3>
            - SampleService.class</pre>
 
 <p>Finally, deploy the service by copying the SampleService directory to the
-webapps/axis2/WEB-INF/services directory on the servlet engine. You can check to make
-sure that it's been properly deployed by checking <a
+webapps/axis2/WEB-INF/services directory on the servlet engine. You can check
+to make sure that it's been properly deployed by checking <a
 href="http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices">http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices</a>.</p>
 <a name="deployrun"></a>
 
@@ -399,27 +399,29 @@ Distribution</a> does not include the WSDL2Java utility. Once you've got it
 downloaded and unpacked, make sure that you set the AXIS2_HOME variable to
 point to the location in which you've unpacked it.</p>
 
-<p>Now you are ready to generate the actual service. To keep things neat,
-create a new directory and change to it. The WSDL file is the same one
-referenced in <a href="userguide-creatingclients.html#generating">Generating
-Clients</a> and includes four operations: NoParameters,
-TwoWayOneParameterEcho, MultipleParametersAddItem, and DoInOnly. To generate
-the service, use the WSDL2Java utility, as in Code Listing 14.</p>
+<p>Now you are ready to generate the actual service. The WSDL file is the
+same one referenced in <a
+href="userguide-creatingclients.html#generating">Generating Clients</a> and
+includes four operations: NoParameters, TwoWayOneParameterEcho,
+MultipleParametersAddItem, and DoInOnly. To generate the service, use the
+WSDL2Java utility, as in Code Listing 14.</p>
 
 <h3>Code Listing 14 - Using the WSDL2Java Utility to Generate the Service</h3>
 <pre>java org.apache.axis2.wsdl.WSDL2Java -uri 
 file:///C:/apps/axis2/samples/zSample/Axis2UserGuide.wsdl -p 
-org.apache.axis2.axis2userguide -d adb -s -wv 1.1 -ss -sd</pre>
+org.apache.axis2.axis2userguide -o target_directory_name -d adb -s -wv 1.1 -ss -sd </pre>
 
 <p>This statement tells the utility you want to create a service out of the
 operations in the file Axis2UserGuide.wsdl, and that the Java classes
 generated should be in the org.apache.axis2.axis2userguide package (-p). (You
-should see the appropriate directories created.) It also indicates that you
-want to use the Axis2 DataBinding Framework, or ADB (-d), to generate only
-synchronous, or blocking code (-s), and to generate server-side code (-ss) as
-opposed to a client, including the services.xml service descriptor file
-(-sd). It also specifies version 1.1 for the WSDL file (-wv). 
-</p>
+should see the appropriate directories . Keeping things neat these
+directories will be created in the "target_directcory_name" dierctory
+specified in the code listing 14. If this directory does not exist, it will
+be created) It also indicates that you want to use the Axis2 DataBinding
+Framework, or ADB (-d), to generate only synchronous, or blocking code (-s),
+and to generate server-side code (-ss) as opposed to a client, including the
+services.xml service descriptor file (-sd). It also specifies version 1.1 for
+the WSDL file (-wv).</p>
 
 <p>At this point, you should see three new items in your chosen directory:
 the build.xml file, which includes instructions for Ant, the src directory,
