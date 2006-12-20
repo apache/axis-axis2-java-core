@@ -4,7 +4,8 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
   <title>Axis2/Java 1.1 Documentation Home</title>
-  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
+  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
+  media="all">
 </head>
 
 <body lang="en">
@@ -34,35 +35,55 @@ standalone Web services engine and as part of a J2EE compliant servlet
 container, not forgetting the instructions on how to write Web services and
 Web services client using Apache Axis2.</p>
 <ul>
-  <li><a href="userguide.html#introduction">Introduction</a>- Outlines the
-    overall direction of the User's guide itself, with a high level
-    introduction on Axis2</li>
-  <li><a href="installationguide.html">Download and Installation</a>-Will
-    list the different distribution packages offered by Axis2, and
-    installation methods for standalone and as part of a J2EE servlet
-    container.</li>
-  <li><a href="userguide.html#ws_codegen">Creating a new Web Service with
-    Code Generation</a> -Axis2 provides two ways to create new Web Services,
-    using code generation and using XML based primary APIs. This section
-    explains how to start from a WSDL, and create a new Service with code
-    generation</li>
-  <li><a href="xmlbased-server.html">Writing Web Services Using Axis2's
-    Primary APIs</a> -Explains how to create new Web Services using XML based
-    primary API</li>
-  <li><a href="userguide.html#client">Writing a Web Service Client with Code
-    Generation </a>-Axis2 also provides a more complex, yet powerful XML
-    based client API which is intended for advanced users. However, if you
-    are a new user we recommend using the code generation approach presented
-    below</li>
-  <li><a href="dii.html">Writing Web Service Clients Using Axis2's Primary
-    APIs</a>- This section presents complex yet powerful XML based client API
-    which is intended for advanced users to write Web services clients</li>
-  <li><a href="userguide.html#config">Configuring Axis2</a>-Axis2
-    configuration is based on a repository and standard archives formats.
-    Here you will find details on how to configure Axis2. You will also find
-    reference documents that lead to greater detail in this area.</li>
-  <li><a href="pojoguide.html">POJO Web Services using Apache Axis2</a>-This guide will show you how to create a Plain Old Java Object (POJO) to deploy using Apache Axis2 on Apache Tomcat. POJOs are fast to build and easy to maintain, meaning you'll save a lot of time building and debugging your code</li>
-  <li><a href="quickstartguide.html">Axis2 Quick Start Guide</a>-The purpose of this guide is to get you started creating services and clients using Axis2 as quickly as possible. It demonstrates how to create Web services using a variety of different technologies.</</li>
+  <li><a href="userguide.html#intro">Introduction</a>- This opening document
+    gives you an introduction to what Axis2 is, the life cycle of a Web
+    services messages, how Axis2 handles SOAP Messages and also includes
+    basic description on Axis2 distributions and how Axis2 behaves as part of
+    a Web application or as a standalone client that is not part of a J2EE
+    application.</li>
+  <li><a href="installationguide.html">Download and Installation</a>- Will
+    list the different distribution packages offered by Axis2, and in-depth
+    instructions on installation methods for standalone and as part of a J2EE
+    servlet container.</li>
+  <li><a href="userguide-installingtesting.html">Testing Client Code</a> -
+    The best way to make sure that your system is running Axis2 is to install
+    and test both a service and a client. This document describes this
+    process easy to understand steps.</li>
+  <li><a href="userguide-introtoservices.html">Introduction to Services</a> -
+    The term "Web services" can apply to a number of different ways to send
+    information back and forth, but this guide focuses on the sending and
+    receiving of SOAP messages and Message Exchange Patterns (MEPs).</li>
+  <li><a href="userguide-creatingclients.html">Creating Clients from WSDL</a>
+    - When it comes to creating a Web service client, you can do it manually
+    as described in the next document,, but in most cases you have a Web
+    Service Description Language (WSDL) definition that describes the
+    messages clients should send and expect to receive. Axis2 provides
+    several ways to use this definition to automatically generate a client.
+    This document explains just how to create a client using WSDL
+  definitions.</li>
+  <li><a href="userguide-buildingservices.html">Building Services from
+    Scratch</a> - Now that you know how to use Axis2 to generate clients from
+    WSDL as described in the document before,, this document digs a little
+    deeper, showing you how to create services, and how to create both
+    services and clients "from scratch", so to speak.</li>
+  <li><a href="userguide-samples.html">Samples</a> - The Axis2 Standard
+    Distribution provides a number of samples you can use as a guide for
+    implementing specific features and capabilities. These services are
+    listed in this document with basic introductions.</li>
+  <li><a href="userguide-forfurtherstudy.html">For Further Study</a> - This
+    section lists resource documents for further study.
+    <ul>
+      <li><a href="pojoguide.html">POJO Web Services using Apache
+        Axis2</a>-This guide will show you how to create a Plain Old Java
+        Object (POJO) to deploy using Apache Axis2 on Apache Tomcat. POJOs
+        are fast to build and easy to maintain, meaning you'll save a lot of
+        time building and debugging your code</li>
+      <li><a href="quickstartguide.html">Axis2 Quick Start Guide</a>-The
+        purpose of this guide is to get you started creating services and
+        clients using Axis2 as quickly as possible. It demonstrates how to
+        create Web services using a variety of different technologies.</></li>
+    </ul>
+  </li>
 </ul>
 Also see our <a href="../faq.html">FAQ page</a> to answer those common
 questions in mind.
@@ -139,35 +160,76 @@ Binding, Security, REST Web services on a detailed manner.</p>
 
 <p><strong>Axis2 Tools:</strong></p>
 <ul>
-  <li><a href="../tools/1_1/CodegenToolReference.html">Code Generator Tool Guide for Command Line &amp; Ant Task</a>-Lists command
-    line &amp; Ant task references. How to build file using custom Ant task
-    and invoking Code Generator from Ant</li>
+  <li><a href="../tools/1_1/CodegenToolReference.html">Code Generator Tool
+    Guide for Command Line &amp; Ant Task</a>-Lists command line &amp; Ant
+    task references. How to build file using custom Ant task and invoking
+    Code Generator from Ant</li>
   <li><a href="../tools/1_1/eclipse/wsdl2java-plugin.html">Code Generator
-    Wizard Guide for Eclipse Plug-in</a>-Explains the usage of the code generator
-    eclipse plug-in for WSDL2Java and/or Java2WSDL operations</li>
+    Wizard Guide for Eclipse Plug-in</a>-Explains the usage of the code
+    generator eclipse plug-in for WSDL2Java and/or Java2WSDL operations</li>
   <li><a href="../tools/1_1/eclipse/servicearchiver-plugin.html">Service
-    Archive Generator Wizard Guide for Eclipse Plug-in</a>- Describes functionality
-    of eclipse plugin service archive generator tool</li>
+    Archive Generator Wizard Guide for Eclipse Plug-in</a>- Describes
+    functionality of eclipse plugin service archive generator tool</li>
   <li><a href="../tools/1_1/idea/Idea_plug-in_userguide.html">Code Generator
-    Wizard Guide for IntelliJ IDEA Plug-in</a>- Guide on the usage of IDEA code
-    generation plug-in to create service archives and generate java class
-    files from WSDL files</li>
-    <li><a href="../tools/1_1/maven-plugins/maven-aar-plugin.html">Maven2 AAR Plug-in Guide</a> - Guid to generate an Axis 2 service file (AAR file) using the maven plug-in.</li>
-<li><a href="../tools/1_1/maven-plugins/maven-java2wsdl-plugin.html">Maven2 Java2WSDL Plug-in Guide</a> - Guide to using Java2WSDL Maven 2 Plug-in that takes as input a Java class and generates a WSDL, which describes a Web service for invoking the classes methods</li>  
-<li><a href="../tools/1_1/maven-plugins/maven-wsdl2code-plugin.html">Maven2 WSDL2Code Plug-in Guide</a> - Guide to using this plugin that takes as input a WSDL and generates client and server stubs for calling or implementing a Web service matching the WSDL.</li>
+    Wizard Guide for IntelliJ IDEA Plug-in</a>- Guide on the usage of IDEA
+    code generation plug-in to create service archives and generate java
+    class files from WSDL files</li>
+  <li><a href="../tools/1_1/maven-plugins/maven-aar-plugin.html">Maven2 AAR
+    Plug-in Guide</a> - Guide to generate an Axis 2 service file (AAR file)
+    using the maven plug-in.</li>
+  <li><a href="../tools/1_1/maven-plugins/maven-java2wsdl-plugin.html">Maven2
+    Java2WSDL Plug-in Guide</a> - Guide to using Java2WSDL Maven 2 Plug-in
+    that takes as input a Java class and generates a WSDL, which describes a
+    Web service for invoking the classes methods</li>
+  <li><a href="../tools/1_1/maven-plugins/maven-wsdl2code-plugin.html">Maven2
+    WSDL2Code Plug-in Guide</a> - Guide to using this plugin that takes as
+    input a WSDL and generates client and server stubs for calling or
+    implementing a Web service matching the WSDL.</li>
 </ul>
 
 <h2>Apache Axis2 Developers</h2>
 <ul>
+  <li><a href="adv-userguide.html">Advance User's Guide</a>- This is a quick
+    start user's guide for more experienced users and developers on how to
+    install, create Web services and Web service clients using Axis2.
+    <ul>
+      <li><a href="adv-userguide.html#introduction">Introduction</a>-
+        Outlines the overall direction of the User's guide itself, with a
+        high level introduction on Axis2</li>
+      <li><a href="installationguide.html">Download and Installation</a>-Will
+        list the different distribution packages offered by Axis2, and
+        installation methods for standalone and as part of a J2EE servlet
+        container.</li>
+      <li><a href="adv-userguide.html#ws_codegen">Creating a new Web Service
+        with Code Generation</a> -Axis2 provides two ways to create new Web
+        Services, using code generation and using XML based primary APIs.
+        This section explains how to start from a WSDL, and create a new
+        Service with code generation</li>
+      <li><a href="xmlbased-server.html">Writing Web Services Using Axis2's
+        Primary APIs</a> -Explains how to create new Web Services using XML
+        based primary API</li>
+      <li><a href="adv-userguide.html#client">Writing a Web Service Client
+        with Code Generation </a>-Axis2 also provides a more complex, yet
+        powerful XML based client API which is intended for advanced users.
+        However, if you are a new user we recommend using the code generation
+        approach presented below</li>
+      <li><a href="dii.html">Writing Web Service Clients Using Axis2's
+        Primary APIs</a>- This section presents complex yet powerful XML
+        based client API which is intended for advanced users to write Web
+        services clients</li>
+      <li><a href="adv-userguide.html#config">Configuring Axis2</a>-Axis2
+        configuration is based on a repository and standard archives formats.
+        Here you will find details on how to configure Axis2. You will also
+        find reference documents that lead to greater detail in this
+      area.</li>
+    </ul>
+  </li>
   <li><a href="Axis2ArchitectureGuide.html">Axis2 Architecture
     Guide</a>-Introduction to Axis2's modular architecture</li>
   <!--<li><a href="api/index.html">Online Java Docs</a>-Java API
   documentation</li>-->
   <li><a href="http://ws.apache.org/axis2/1_1/api/index.html">Online Java
     Docs</a>-Java API  documentation</li>
-  <!--<li><a href="advance-userguide.html">Advanced User Guide</a>- This is a
-  quick start guide for more experienced users and developers on how to
-  install, create Web services and Web service clients using Axis2.</li>-->
   <li><a href="../refLib.html">Reference Library</a>-This document provides
     additional information to developers on WS-* specifications, Java
     language specifications, Subversion (SVN) control etc.</li>
