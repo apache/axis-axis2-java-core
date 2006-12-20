@@ -1416,7 +1416,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
             if (dbc.getCustomWsdlGenerator() != null) {
             	
             	wsdlComposite = 
-            		dbc.getCustomWsdlGenerator().generateWsdl((String)axisService.getParameterValue(MDQConstants.SERVICE_CLASS));
+            		dbc.getCustomWsdlGenerator().generateWsdl((String)axisService.getParameterValue(MDQConstants.SERVICE_CLASS), getBindingType());
  
             	if (wsdlComposite != null) {
             		wsdlComposite.setWsdlFileName((this.getAnnoWebServiceServiceName() + ".wsdl").toLowerCase());
