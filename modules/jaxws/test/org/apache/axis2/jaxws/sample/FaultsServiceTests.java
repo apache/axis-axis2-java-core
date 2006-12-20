@@ -5,21 +5,19 @@ package org.apache.axis2.jaxws.sample;
 
 import javax.xml.ws.BindingProvider;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.faultsservice.BaseFault_Exception;
-import org.test.polymorphicfaults.BaseFault;
-import org.test.polymorphicfaults.ComplexFault;
-import org.test.polymorphicfaults.DerivedFault1;
 import org.apache.axis2.jaxws.sample.faultsservice.ComplexFault_Exception;
-import org.test.polymorphicfaults.DerivedFault2;
 import org.apache.axis2.jaxws.sample.faultsservice.DerivedFault1_Exception;
 import org.apache.axis2.jaxws.sample.faultsservice.DerivedFault2_Exception;
 import org.apache.axis2.jaxws.sample.faultsservice.FaultsService;
 import org.apache.axis2.jaxws.sample.faultsservice.FaultsServicePortType;
 import org.apache.axis2.jaxws.sample.faultsservice.InvalidTickerFault_Exception;
 import org.apache.axis2.jaxws.sample.faultsservice.SimpleFault;
-
-import junit.framework.TestCase;
-
+import org.test.polymorphicfaults.BaseFault;
+import org.test.polymorphicfaults.ComplexFault;
+import org.test.polymorphicfaults.DerivedFault1;
+import org.test.polymorphicfaults.DerivedFault2;
 
 public class FaultsServiceTests extends TestCase {
     

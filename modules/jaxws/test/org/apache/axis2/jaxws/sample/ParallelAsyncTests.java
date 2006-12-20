@@ -10,7 +10,6 @@ import javax.xml.ws.Response;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncPort;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncService;
 import org.test.parallelasync.CustomAsyncResponse;

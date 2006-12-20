@@ -19,6 +19,16 @@ package org.apache.axis2.jaxws.provider.soapmsg;
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 
+import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.Detail;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.Name;
+import javax.xml.soap.Node;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
@@ -26,18 +36,6 @@ import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.Detail;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.Name;
-import javax.xml.soap.Node;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPMessage;
 
 @WebServiceProvider()
 @ServiceMode(value=Service.Mode.MESSAGE)

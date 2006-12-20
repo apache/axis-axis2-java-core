@@ -23,9 +23,6 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 
-import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType;
-
-
 public class ResourceInjectionTestImpl4 {
 
 	

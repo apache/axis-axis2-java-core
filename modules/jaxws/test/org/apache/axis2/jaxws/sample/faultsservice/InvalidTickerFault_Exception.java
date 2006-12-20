@@ -1,9 +1,7 @@
 
 package org.apache.axis2.jaxws.sample.faultsservice;
 
-import org.test.polymorphicfaults.*;
 import javax.xml.ws.WebFault;
-
 
 /**
  * This is an example of a legacy exception (InvalidTickerFault) which may be the result of a JAX-RPC emission.

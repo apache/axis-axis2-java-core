@@ -19,12 +19,8 @@
 package org.apache.axis2.jaxws.description.builder;
 
 import javax.jws.WebParam.Mode;
-import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
-
-import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
-import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
 
 /**
  * Directly test the Description classes built via annotations without a WSDL file.

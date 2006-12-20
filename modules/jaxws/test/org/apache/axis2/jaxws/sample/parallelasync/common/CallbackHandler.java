@@ -25,8 +25,6 @@ import java.util.concurrent.TimeoutException;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 
-import org.apache.axis2.jaxws.sample.parallelasync.common.Constants;
-
 /**
  * Generic Async callback handler. The get method emulates Response.get by
  * throwning an exception if one is received. 

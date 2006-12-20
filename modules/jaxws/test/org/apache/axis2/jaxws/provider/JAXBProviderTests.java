@@ -16,7 +16,7 @@
  */
 package org.apache.axis2.jaxws.provider;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.File;
 
 import javax.activation.DataHandler;

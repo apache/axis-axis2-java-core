@@ -16,15 +16,11 @@
  */
 package org.apache.axis2.jaxws.provider;
 
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
-
-import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
 
 public class StringProviderTests extends ProviderTestCase {
 

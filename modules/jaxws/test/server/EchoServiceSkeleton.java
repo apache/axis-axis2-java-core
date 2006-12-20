@@ -6,8 +6,6 @@
  */
 package server;
 
-import server.EchoStringResponse;
-
 /**
  *  EchoServiceSkeleton java skeleton for the axisService
  */

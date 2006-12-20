@@ -16,13 +16,11 @@
  */
 package org.apache.axis2.jaxws.exception;
 
-import org.apache.axis2.jaxws.ExceptionFactory;
 import javax.xml.ws.ProtocolException;
-import javax.xml.ws.http.HTTPException;
-import org.apache.axis2.jaxws.message.MessageException;
-import org.apache.axis2.jaxws.message.MessageInternalException;
-import junit.framework.TestCase;
 import javax.xml.ws.WebServiceException;
+
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.ExceptionFactory;
 
 /**
  * Tests the ExceptionFactory

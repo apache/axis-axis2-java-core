@@ -22,7 +22,6 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.proxy.soap12.Echo;
 import org.apache.axis2.jaxws.proxy.soap12.SOAP12EchoService;
 

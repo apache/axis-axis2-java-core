@@ -22,9 +22,8 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 
-import org.apache.axis2.jaxws.BindingProvider;
-
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.BindingProvider;
 
 public class BasicAuthSecurityTests extends TestCase {
 

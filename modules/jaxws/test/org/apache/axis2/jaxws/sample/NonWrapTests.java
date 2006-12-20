@@ -6,14 +6,14 @@ package org.apache.axis2.jaxws.sample;
 import java.util.concurrent.Future;
 
 import javax.xml.ws.Holder;
+
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapService;
 import org.test.sample.nonwrap.ObjectFactory;
 import org.test.sample.nonwrap.ReturnType;
 import org.test.sample.nonwrap.TwoWay;
 import org.test.sample.nonwrap.TwoWayHolder;
-
-import junit.framework.TestCase;
 
 public class NonWrapTests extends TestCase {
 

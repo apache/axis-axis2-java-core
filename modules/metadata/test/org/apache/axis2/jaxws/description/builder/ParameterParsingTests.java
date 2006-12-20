@@ -18,7 +18,6 @@
  */
 package org.apache.axis2.jaxws.description.builder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.ws.Holder;

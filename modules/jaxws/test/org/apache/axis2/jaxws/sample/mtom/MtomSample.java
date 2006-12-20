@@ -7,6 +7,7 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
+
 import org.test.mtom.ImageDepot;
 
 @WebService(name = "MtomSample", 

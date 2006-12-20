@@ -6,10 +6,8 @@ package org.apache.axis2.jaxws.sample;
 import javax.xml.ws.BindingProvider;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.sample.doclitbare.sei.BareDocLitService;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.DocLitBarePortType;
-
 
 public class BareTests extends TestCase {
 	

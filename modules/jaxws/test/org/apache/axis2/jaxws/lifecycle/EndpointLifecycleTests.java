@@ -18,13 +18,11 @@
  */
 package org.apache.axis2.jaxws.lifecycle;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.resourceinjection.ResourceInjectionPortTypeImpl;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
-
-import junit.framework.TestCase;
-
 
 public class EndpointLifecycleTests extends TestCase {
 	Object endpointInstance = new ResourceInjectionPortTypeImpl();

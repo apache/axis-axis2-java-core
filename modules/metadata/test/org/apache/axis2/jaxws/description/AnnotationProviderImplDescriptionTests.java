@@ -26,8 +26,6 @@ import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
 
-import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
-
 import junit.framework.TestCase;
 
 public class AnnotationProviderImplDescriptionTests extends TestCase {

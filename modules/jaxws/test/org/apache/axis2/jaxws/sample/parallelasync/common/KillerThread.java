@@ -21,7 +21,6 @@ package org.apache.axis2.jaxws.sample.parallelasync.common;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.xml.ws.Service;
 

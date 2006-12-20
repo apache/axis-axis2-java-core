@@ -16,9 +16,8 @@
  */
 package org.apache.axis2.jaxws.framework;
 
-import org.apache.axis2.jaxws.util.SimpleServer;
-
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.util.SimpleServer;
 
 public class StopServer extends TestCase {
 

@@ -1,6 +1,6 @@
 package org.apache.axis2.jaxws.attachments;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
@@ -12,7 +12,6 @@ import javax.imageio.stream.ImageInputStream;
 import javax.xml.bind.JAXBContext;
 
 import junit.framework.TestCase;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;

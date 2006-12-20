@@ -16,13 +16,14 @@
  */
 package org.apache.axis2.jaxws.provider;
 
-import javax.activation.DataSource;
-import java.awt.Image;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import javax.activation.DataSource;
 
 /**
  * An impl class for javax.activation.DataSource interface.

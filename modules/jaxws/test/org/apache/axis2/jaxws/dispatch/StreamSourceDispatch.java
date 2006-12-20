@@ -32,7 +32,6 @@ import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 
 /**

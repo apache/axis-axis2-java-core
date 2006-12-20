@@ -28,12 +28,11 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.ws.axis2.tests.EchoPort;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -43,12 +42,12 @@ public class PortSelectionTests extends TestCase {
     private static String VALID_SERVICE_LOCALPART_3 = "AddNumbersService3";
     
     public void testServiceDescPortSelectionMethods() {
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL("WSDLMultiTests.wsdl");
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");
 
         QName serviceQN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_3);
         Service service = Service.create(wsdlURL, serviceQN);
         assertNotNull(service);
-        ServiceDelegate serviceDelegate = DescriptionTestUtils.getServiceDelegate(service);
+        ServiceDelegate serviceDelegate = DescriptionTestUtils2.getServiceDelegate(service);
         assertNotNull(serviceDelegate);
         ServiceDescription serviceDesc = serviceDelegate.getServiceDescription();
         assertNotNull(serviceDesc);
@@ -72,7 +71,7 @@ public class PortSelectionTests extends TestCase {
     
     public void testPortSelection() {
         // Test the Service.getPort call
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL("WSDLMultiTests.wsdl");
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");
 
         QName serviceQN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_3);
         Service service = Service.create(wsdlURL, serviceQN);
@@ -104,7 +103,7 @@ public class PortSelectionTests extends TestCase {
     }
     
     public void testInvalidPortSelection() {
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL("WSDLMultiTests.wsdl");
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");
 
         QName serviceQN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_3);
         Service service = Service.create(wsdlURL, serviceQN);

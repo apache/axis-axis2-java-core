@@ -31,17 +31,15 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
+import junit.framework.TestCase;
 import org.test.dispatch.jaxbsource.Invoke;
 import org.test.dispatch.jaxbsource.ObjectFactory;
 
-import junit.framework.TestCase;
-
-
 /*
- * This is a test case for Invoking Dispatch with a JAXBSource.
- * test uses JAXB Objects from org.test.dispatch.jaxbsource package, create a request of JAXBSource type
- * and invokes the service endpoint and reads the response of type Source. Assert failure if response not received.
- */
+* This is a test case for Invoking Dispatch with a JAXBSource.
+* test uses JAXB Objects from org.test.dispatch.jaxbsource package, create a request of JAXBSource type
+* and invokes the service endpoint and reads the response of type Source. Assert failure if response not received.
+*/
 
 
 public class JAXBSourceDispatch extends TestCase {

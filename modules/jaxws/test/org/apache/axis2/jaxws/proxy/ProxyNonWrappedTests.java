@@ -27,14 +27,12 @@ import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.DocLitnonWrappedProxy;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.ProxyDocLitUnwrappedService;
 import org.test.proxy.doclitnonwrapped.Invoke;
 import org.test.proxy.doclitnonwrapped.ObjectFactory;
 import org.test.proxy.doclitnonwrapped.ReturnType;
-
-
-import junit.framework.TestCase;
 
 /**
  * This test cases will use proxy NON wrapped wsdl to invoke methods

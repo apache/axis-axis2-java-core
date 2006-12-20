@@ -18,11 +18,9 @@
  */
 package org.apache.axis2.jaxws.anytype.tests;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessagePortType;
 import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessageService;
-
-import junit.framework.TestCase;
-
 
 public class AnyTypeTests extends TestCase {
 	

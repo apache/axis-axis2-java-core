@@ -26,7 +26,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import junit.framework.TestCase;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
@@ -38,8 +37,6 @@ import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-
-import test.EchoString;
 import test.EchoStringResponse;
 import test.ObjectFactory;
 

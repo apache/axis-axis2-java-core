@@ -25,12 +25,11 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
+import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.ws.axis2.tests.EchoPort;
-
-import junit.framework.TestCase;
 
 /**
  * Test that the EndpointDescription can be gotten from
@@ -38,7 +37,7 @@ import junit.framework.TestCase;
  * gotten from the EndpointDesc.  Note that the BindingProvider class is NOT
  * the jaxws API one; it is the internal implementation BindingProvider class.
  */
-public class GetDescFromBindingProvider extends TestCase {
+public class GetDescFromBindingProviderTests extends TestCase {
     
     private static final String wsdlSOAPAddress = "http://localhost:8080/axis2/services/EchoService";
     
@@ -46,7 +45,7 @@ public class GetDescFromBindingProvider extends TestCase {
         String namespaceURI = "http://ws.apache.org/axis2/tests";
         String localPart = "EchoService";
 
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL();
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL();
         assertNotNull(wsdlURL);
         
         Service service = Service.create(wsdlURL, new QName(namespaceURI, localPart));
@@ -73,7 +72,7 @@ public class GetDescFromBindingProvider extends TestCase {
         String namespaceURI = "http://ws.apache.org/axis2/tests";
         String localPart = "EchoService";
 
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL();
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL();
         assertNotNull(wsdlURL);
         
         Service service = Service.create(wsdlURL, new QName(namespaceURI, localPart));
@@ -100,7 +99,7 @@ public class GetDescFromBindingProvider extends TestCase {
         String namespaceURI = "http://ws.apache.org/axis2/tests";
         String localPart = "EchoService";
 
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL();
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL();
         assertNotNull(wsdlURL);
         
         Service service = Service.create(wsdlURL, new QName(namespaceURI, localPart));

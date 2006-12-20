@@ -31,7 +31,7 @@ import org.apache.axis2.jaxws.spi.ServiceDelegate;
 /**
  * 
  */
-public class DescriptionTestUtils {
+public class DescriptionTestUtils2 {
     
     /*
      * ========================================================================

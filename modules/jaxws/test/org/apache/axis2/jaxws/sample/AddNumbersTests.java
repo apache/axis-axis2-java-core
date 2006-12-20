@@ -21,7 +21,6 @@ package org.apache.axis2.jaxws.sample;
 import javax.xml.ws.BindingProvider;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersService;
 

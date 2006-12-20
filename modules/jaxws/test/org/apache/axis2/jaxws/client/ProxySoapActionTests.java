@@ -18,10 +18,9 @@
  */
 package org.apache.axis2.jaxws.client;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.client.soapaction.BookStore;
 import org.apache.axis2.jaxws.client.soapaction.BookStoreService;
-
-import junit.framework.TestCase;
 
 /**
  * A suite of SOAPAction related tests for the dynamic proxy client 

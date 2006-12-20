@@ -21,13 +21,11 @@ package org.apache.axis2.jaxws.injection;
 import javax.xml.ws.WebServiceContext;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType;
 import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionService;
 import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectionFactory;
-
 
 public class ResourceInjectionTests extends TestCase {
 

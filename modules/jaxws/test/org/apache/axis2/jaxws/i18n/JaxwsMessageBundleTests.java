@@ -16,7 +16,6 @@
  */
 package org.apache.axis2.jaxws.i18n;
 
-import org.apache.axis2.jaxws.i18n.Messages;
 import junit.framework.TestCase;
 
 /**

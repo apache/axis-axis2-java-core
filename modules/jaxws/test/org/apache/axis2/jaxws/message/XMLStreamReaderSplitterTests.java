@@ -21,22 +21,14 @@ import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBIntrospector;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
-import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.message.util.XMLStreamReaderSplitter;
-import org.apache.axis2.jaxws.registry.FactoryRegistry;
-
-import test.EchoString;
-import test.ObjectFactory;
-
-import junit.framework.TestCase;
 
 /**
  * Tests XMLStreamReaderSplitter

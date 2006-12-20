@@ -1,6 +1,6 @@
 package org.apache.axis2.jaxws.sample;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.File;
 
 import javax.activation.DataHandler;
@@ -16,7 +16,6 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;

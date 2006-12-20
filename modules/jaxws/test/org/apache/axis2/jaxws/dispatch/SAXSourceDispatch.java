@@ -31,7 +31,6 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.xml.sax.InputSource;
 

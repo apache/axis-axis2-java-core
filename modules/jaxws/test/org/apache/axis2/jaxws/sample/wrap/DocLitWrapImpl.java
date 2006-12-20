@@ -7,8 +7,6 @@ import javax.jws.WebService;
 import javax.xml.ws.Holder;
 
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
-import org.test.sample.nonwrap.ObjectFactory;
-import org.test.sample.nonwrap.ReturnType;
 import org.test.sample.wrap.FinancialOperation;
 import org.test.sample.wrap.Header;
 import org.test.sample.wrap.HeaderPart0;

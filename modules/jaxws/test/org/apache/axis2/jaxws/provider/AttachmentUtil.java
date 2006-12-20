@@ -16,14 +16,14 @@
  */
 package org.apache.axis2.jaxws.provider;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.OutputStream;
+import java.util.Iterator;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.OutputStream;
-import java.util.Iterator;
 
 /**
  * This will serve as a helper class for attachments utility methods. All methods

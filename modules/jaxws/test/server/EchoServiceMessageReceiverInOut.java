@@ -8,8 +8,6 @@
          */
         package server;
 
-import server.EchoServiceSkeleton;
-
         /**
          *  EchoServiceMessageReceiverInOut message receiver
          */

@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.wsdl.WSDLException;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapePortType;
 import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapeService;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;

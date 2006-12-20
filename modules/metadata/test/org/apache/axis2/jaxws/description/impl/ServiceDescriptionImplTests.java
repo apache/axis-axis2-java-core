@@ -26,10 +26,8 @@ import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
 
-import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.description.impl.ServiceDescriptionImpl;
-
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 
 /**
  * This test validates the error checking and internal functioning of the

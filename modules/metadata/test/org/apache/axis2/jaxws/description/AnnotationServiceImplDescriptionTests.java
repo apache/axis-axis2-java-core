@@ -29,10 +29,8 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.ws.axis2.tests.EchoPort;
 import org.apache.ws.axis2.tests.EchoServiceImplWithSEI;
 

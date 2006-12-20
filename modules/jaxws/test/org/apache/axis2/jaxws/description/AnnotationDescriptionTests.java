@@ -23,9 +23,8 @@ import java.lang.reflect.Method;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
-import org.apache.axis2.jaxws.spi.ServiceDelegate;
-
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 /**
  * Directly test the Description classes built via annotations without a WSDL file.
@@ -45,7 +44,7 @@ public class AnnotationDescriptionTests extends TestCase {
         String namespaceURI= "http://ws.apache.org/axis2/tests";
         String localPart = "EchoServiceAnnotated";
         Service service = Service.create(null,  new QName(namespaceURI, localPart));
-        ServiceDelegate serviceDelegate = DescriptionTestUtils.getServiceDelegate(service);
+        ServiceDelegate serviceDelegate = DescriptionTestUtils2.getServiceDelegate(service);
         ServiceDescription serviceDescription = serviceDelegate.getServiceDescription();
         String portLocalPart = "EchoServiceAnnotatedPort";
         QName portQName = new QName(namespaceURI, portLocalPart);

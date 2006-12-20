@@ -27,11 +27,10 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
-import org.apache.axis2.jaxws.spi.ServiceDelegate;
-
-import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
 
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
+import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 public class ServiceTests extends TestCase {
     private static String VALID_SERVICE_NAMESPACE = "http://org/test/addnumbers";
@@ -46,7 +45,7 @@ public class ServiceTests extends TestCase {
     private static String VALID_PORT_S2P4 = "AddNumbersPortS2P4";
 
     public void testInvalidServiceNamespace() {
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL("WSDLMultiTests.wsdl");
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");
         QName invalidServiceQN = new QName("invalidServiceNamespace", VALID_SERVICE_LOCALPART_1);
         try {
             Service invalidService = Service.create(wsdlURL, invalidServiceQN);
@@ -60,7 +59,7 @@ public class ServiceTests extends TestCase {
         }
     }
     public void testInvalidServiceLocalPart() {
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL("WSDLMultiTests.wsdl");
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");
         QName invalidServiceQN = new QName(VALID_SERVICE_NAMESPACE, "invalidServiceName");
         try {
             Service invalidService = Service.create(wsdlURL, invalidServiceQN);
@@ -75,7 +74,7 @@ public class ServiceTests extends TestCase {
     }
     
     public void testValidSameService() {
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL("WSDLMultiTests.wsdl");
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");
         
         QName validService1QN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_1);
         Service validService1 = Service.create(wsdlURL, validService1QN);
@@ -88,7 +87,7 @@ public class ServiceTests extends TestCase {
     }
 
     public void testValidMultiServices() {
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL("WSDLMultiTests.wsdl");
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");
         
         QName validService1QN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_1);
         Service validService1 = Service.create(wsdlURL, validService1QN);
@@ -102,12 +101,12 @@ public class ServiceTests extends TestCase {
     }
     
     public void testGetServiceDeclaredPorts() {
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL("WSDLMultiTests.wsdl");
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");
 
         QName service1QN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_1);
         Service service1 = Service.create(wsdlURL, service1QN);
         assertNotNull(service1);
-        ServiceDelegate service1Delegate = DescriptionTestUtils.getServiceDelegate(service1);
+        ServiceDelegate service1Delegate = DescriptionTestUtils2.getServiceDelegate(service1);
         assertNotNull (service1Delegate);
         ServiceDescription service1Desc = service1Delegate.getServiceDescription();
         assertNotNull(service1Desc);
@@ -120,7 +119,7 @@ public class ServiceTests extends TestCase {
         QName service2QN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_2);
         Service service2 = Service.create(wsdlURL, service2QN);
         assertNotNull(service2);
-        ServiceDelegate service2Delegate = DescriptionTestUtils.getServiceDelegate(service2);
+        ServiceDelegate service2Delegate = DescriptionTestUtils2.getServiceDelegate(service2);
         assertNotNull (service2Delegate);
         ServiceDescription service2Desc = service2Delegate.getServiceDescription();
         assertNotNull(service2Desc);
@@ -132,12 +131,12 @@ public class ServiceTests extends TestCase {
     }
 
     public void testGetServiceAddedPorts() {
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL("WSDLMultiTests.wsdl");
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");
 
         QName service1QN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_1);
         Service service1 = Service.create(wsdlURL, service1QN);
         assertNotNull(service1);
-        ServiceDelegate service1Delegate = DescriptionTestUtils.getServiceDelegate(service1);
+        ServiceDelegate service1Delegate = DescriptionTestUtils2.getServiceDelegate(service1);
         assertNotNull (service1Delegate);
         ServiceDescription service1Desc = service1Delegate.getServiceDescription();
         assertNotNull(service1Desc);
@@ -154,7 +153,7 @@ public class ServiceTests extends TestCase {
         QName service2QN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_2);
         Service service2 = Service.create(wsdlURL, service2QN);
         assertNotNull(service2);
-        ServiceDelegate service2Delegate = DescriptionTestUtils.getServiceDelegate(service2);
+        ServiceDelegate service2Delegate = DescriptionTestUtils2.getServiceDelegate(service2);
         assertNotNull (service2Delegate);
         ServiceDescription service2Desc = service2Delegate.getServiceDescription();
         assertNotNull(service2Desc);
@@ -170,12 +169,12 @@ public class ServiceTests extends TestCase {
     }
     
     public void testGetServiceDeclaredPortsAfterGetPort() {
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL("WSDLMultiTests.wsdl");
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");
 
         QName service1QN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_1);
         Service service1 = Service.create(wsdlURL, service1QN);
         assertNotNull(service1);
-        ServiceDelegate service1Delegate = DescriptionTestUtils.getServiceDelegate(service1);
+        ServiceDelegate service1Delegate = DescriptionTestUtils2.getServiceDelegate(service1);
         assertNotNull (service1Delegate);
         ServiceDescription service1Desc = service1Delegate.getServiceDescription();
         assertNotNull(service1Desc);
@@ -197,7 +196,7 @@ public class ServiceTests extends TestCase {
         QName service2QN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_2);
         Service service2 = Service.create(wsdlURL, service2QN);
         assertNotNull(service2);
-        ServiceDelegate service2Delegate = DescriptionTestUtils.getServiceDelegate(service2);
+        ServiceDelegate service2Delegate = DescriptionTestUtils2.getServiceDelegate(service2);
         assertNotNull (service2Delegate);
         ServiceDescription service2Desc = service2Delegate.getServiceDescription();
         assertNotNull(service2Desc);
@@ -223,7 +222,7 @@ public class ServiceTests extends TestCase {
         QName service1QN = new QName(VALID_SERVICE_NAMESPACE, "DynamicService1");
         Service service1 = Service.create(null, service1QN);
         assertNotNull(service1);
-        ServiceDelegate service1Delegate = DescriptionTestUtils.getServiceDelegate(service1);
+        ServiceDelegate service1Delegate = DescriptionTestUtils2.getServiceDelegate(service1);
         assertNotNull (service1Delegate);
         ServiceDescription service1Desc = service1Delegate.getServiceDescription();
         assertNotNull(service1Desc);
@@ -246,7 +245,7 @@ public class ServiceTests extends TestCase {
     }
     
     public void testCreateDispatchWSDL() {
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL("WSDLMultiTests.wsdl");
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");
 
         QName service1QN = new QName(VALID_SERVICE_NAMESPACE, VALID_SERVICE_LOCALPART_1);
         Service service1 = Service.create(wsdlURL, service1QN);

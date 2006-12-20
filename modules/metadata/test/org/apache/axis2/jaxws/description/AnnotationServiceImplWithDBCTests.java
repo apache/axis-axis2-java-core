@@ -21,29 +21,16 @@ package org.apache.axis2.jaxws.description;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.jws.Oneway;
-import javax.jws.WebMethod;
 import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.ws.Holder;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
-
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
-import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
+import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
+import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
 import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
-import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
-import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
-import org.apache.ws.axis2.tests.EchoPort;
-import org.apache.ws.axis2.tests.EchoServiceImplWithSEI;
+import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
 
 /**
  * Tests the creation of the Description classes based on 

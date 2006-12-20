@@ -17,7 +17,9 @@
 package org.apache.axis2.jaxws.provider;
 
 import java.io.File;
+
 import javax.xml.namespace.QName;
+
 import junit.framework.TestCase;
 
 public abstract class ProviderTestCase extends TestCase {

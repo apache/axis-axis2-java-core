@@ -18,13 +18,11 @@
 
 package org.apache.axis2.jaxws.description;
 
-import java.lang.reflect.Field;
 import java.net.URL;
 
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-import javax.xml.ws.Service;
 
 /**
  * 

@@ -22,8 +22,8 @@ import java.net.URL;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
-import javax.jws.WebService;
 import javax.jws.WebParam.Mode;
+import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.ws.Dispatch;
@@ -33,10 +33,9 @@ import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.ws.axis2.tests.EchoPort;
-
-import junit.framework.TestCase;
 
 /**
  * Directly test the Description classes built with a WSDL file.
@@ -57,10 +56,10 @@ public class WSDLDescriptionTests extends TestCase {
         // flows
         String namespaceURI = VALID_NAMESPACE;
         String localPart = "EchoService";
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL();
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL();
         assertNotNull(wsdlURL);
         service = Service.create(wsdlURL, new QName(namespaceURI, localPart));
-        serviceDelegate = DescriptionTestUtils.getServiceDelegate(service);
+        serviceDelegate = DescriptionTestUtils2.getServiceDelegate(service);
         serviceDescription = serviceDelegate.getServiceDescription();
     }
     

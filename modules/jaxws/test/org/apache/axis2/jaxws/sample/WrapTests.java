@@ -4,14 +4,14 @@
 package org.apache.axis2.jaxws.sample;
 
 import javax.xml.ws.Holder;
+
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
 import org.test.sample.wrap.Header;
 import org.test.sample.wrap.HeaderPart0;
 import org.test.sample.wrap.HeaderPart1;
 import org.test.sample.wrap.HeaderResponse;
-
-import junit.framework.TestCase;
 
 public class WrapTests extends TestCase {
 

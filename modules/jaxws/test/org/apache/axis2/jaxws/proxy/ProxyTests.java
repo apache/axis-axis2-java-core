@@ -29,7 +29,6 @@ import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.DocLitWrappedProxy;
 import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.ProxyDocLitWrappedService;
 import org.test.proxy.doclitwrapped.ReturnType;

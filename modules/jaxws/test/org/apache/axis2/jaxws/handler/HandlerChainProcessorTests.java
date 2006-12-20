@@ -25,7 +25,6 @@ import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.soap.SOAPHandler;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.core.MessageContext;
 
 /*

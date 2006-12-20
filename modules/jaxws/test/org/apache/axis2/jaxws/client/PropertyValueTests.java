@@ -24,8 +24,8 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
+import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 

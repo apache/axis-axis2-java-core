@@ -26,13 +26,12 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service.Mode;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.client.soapaction.BookStoreService;
 import org.apache.axis2.jaxws.client.soapaction.GetPriceResponseType;
 import org.apache.axis2.jaxws.client.soapaction.GetPriceType;
 import org.apache.axis2.jaxws.client.soapaction.ObjectFactory;
-
-import junit.framework.TestCase;
 
 /**
  * A suite of SOAPAction related tests for the dispatch client 

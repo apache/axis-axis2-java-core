@@ -18,13 +18,10 @@
  */
 package org.apache.axis2.jaxws.proxy;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -35,14 +32,11 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
-import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.proxy.rpclit.RPCLitImpl;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
-import org.test.proxy.rpclit.ObjectFactory;
-import org.test.proxy.rpclit.Enum;
 import org.test.proxy.rpclit.ComplexAll;
-
-import junit.framework.TestCase;
+import org.test.proxy.rpclit.Enum;
 
 public class RPCProxyTests extends TestCase {
 

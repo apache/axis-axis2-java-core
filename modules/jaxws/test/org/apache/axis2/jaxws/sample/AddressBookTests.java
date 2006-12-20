@@ -25,7 +25,6 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.jaxws.sample.addressbook.AddEntry;
 import org.apache.axis2.jaxws.sample.addressbook.AddEntryResponse;
 import org.apache.axis2.jaxws.sample.addressbook.AddressBook;

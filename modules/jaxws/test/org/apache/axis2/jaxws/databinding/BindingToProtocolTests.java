@@ -18,18 +18,9 @@
  */
 package org.apache.axis2.jaxws.databinding;
 
-import java.net.URL;
-
 import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
-
-import org.apache.axis2.jaxws.description.DescriptionTestUtils;
-import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.message.Protocol;
-import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 /**
  * A suite of tests for reading the binding from a WSDL file and

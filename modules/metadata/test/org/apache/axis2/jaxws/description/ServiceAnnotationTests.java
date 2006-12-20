@@ -3,8 +3,6 @@ package org.apache.axis2.jaxws.description;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceProvider;
 
-import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
-
 import junit.framework.TestCase;
 
 public class ServiceAnnotationTests extends TestCase {

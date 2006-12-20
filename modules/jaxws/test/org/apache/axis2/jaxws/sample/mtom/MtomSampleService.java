@@ -1,8 +1,7 @@
 package org.apache.axis2.jaxws.sample.mtom;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;

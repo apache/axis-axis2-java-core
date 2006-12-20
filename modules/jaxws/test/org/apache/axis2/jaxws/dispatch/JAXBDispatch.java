@@ -23,7 +23,6 @@ import java.util.concurrent.Future;
 import javax.xml.bind.JAXBContext;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 import test.EchoString;

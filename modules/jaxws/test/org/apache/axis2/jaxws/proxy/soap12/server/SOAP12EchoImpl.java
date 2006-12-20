@@ -20,9 +20,9 @@ package org.apache.axis2.jaxws.proxy.soap12.server;
 
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
+import javax.xml.ws.Service.Mode;
 import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
 
 @ServiceMode(Mode.MESSAGE)

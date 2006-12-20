@@ -24,9 +24,8 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
-import org.apache.axis2.jaxws.spi.ServiceDelegate;
-
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 /**
  * Tests building a ServiceDescription using WSDL and the JAXWS Service API.  
@@ -42,12 +41,12 @@ public class WSDLTests extends TestCase {
  
         String namespaceURI= "http://ws.apache.org/axis2/tests";
         String localPart = "EchoService";
-        URL wsdlURL = DescriptionTestUtils.getWSDLURL();
+        URL wsdlURL = DescriptionTestUtils2.getWSDLURL();
         assertNotNull(wsdlURL);
         service = Service.create(wsdlURL, new QName(namespaceURI, localPart));
         assertNotNull("Service not created", service);
 
-        serviceDelegate = DescriptionTestUtils.getServiceDelegate(service);
+        serviceDelegate = DescriptionTestUtils2.getServiceDelegate(service);
         assertNotNull("ServiceDelegate not created", serviceDelegate);
         
         ServiceDescription serviceDescription = serviceDelegate.getServiceDescription();
@@ -63,7 +62,7 @@ public class WSDLTests extends TestCase {
         String namespaceURI= "http://ws.apache.org/axis2/tests";
         String localPart = "BADEchoService";
         try {
-            URL wsdlURL = DescriptionTestUtils.getWSDLURL();
+            URL wsdlURL = DescriptionTestUtils2.getWSDLURL();
             assertNotNull(wsdlURL);
             service = Service.create(wsdlURL, new QName(namespaceURI, localPart));
             fail("Exception should have been thrown for invalid Service name");

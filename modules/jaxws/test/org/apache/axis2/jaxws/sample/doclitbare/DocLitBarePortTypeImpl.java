@@ -4,8 +4,8 @@
 package org.apache.axis2.jaxws.sample.doclitbare;
 
 import javax.jws.WebParam;
-import javax.jws.WebService;
 import javax.jws.WebParam.Mode;
+import javax.jws.WebService;
 import javax.xml.ws.Holder;
 
 import org.apache.axis2.jaxws.sample.doclitbare.sei.DocLitBarePortType;

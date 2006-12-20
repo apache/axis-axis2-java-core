@@ -13,11 +13,13 @@
 
 package org.apache.axis2.jaxws.sample.faultsservice;
 
-import org.test.polymorphicfaults.*;
-import javax.xml.ws.Holder;
-import javax.xml.ws.WebServiceException;
 import javax.jws.WebService;
+import javax.xml.ws.Holder;
 
+import org.test.polymorphicfaults.BaseFault;
+import org.test.polymorphicfaults.ComplexFault;
+import org.test.polymorphicfaults.DerivedFault1;
+import org.test.polymorphicfaults.DerivedFault2;
 
 /**
  * This class provides server side implementation for the 

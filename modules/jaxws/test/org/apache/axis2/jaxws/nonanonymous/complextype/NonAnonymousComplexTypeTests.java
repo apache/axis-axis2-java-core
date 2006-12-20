@@ -5,10 +5,9 @@ package org.apache.axis2.jaxws.nonanonymous.complextype;
 
 import javax.xml.ws.WebServiceException;
 
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessagePortType;
 import org.apache.axis2.jaxws.nonanonymous.complextype.sei.EchoMessageService;
-
-import junit.framework.TestCase;
 
 public class NonAnonymousComplexTypeTests extends TestCase {
 
