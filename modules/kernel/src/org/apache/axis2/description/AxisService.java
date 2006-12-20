@@ -522,10 +522,6 @@ public class AxisService extends AxisDescription {
 
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
-            if (moduleImpl != null) {
-                // notyfying module for service engagement
-                moduleImpl.engageNotify(axisOperation);
-            }
             axisOperation.engageModule(axisModule, axisConfig);
         }
         engagedModules.add(axisModule);
