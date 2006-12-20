@@ -35,42 +35,55 @@ standalone Web services engine and as part of a J2EE compliant servlet
 container, not forgetting the instructions on how to write Web services and
 Web services client using Apache Axis2.</p>
 <ul>
-  <li><a href="userguide.html#intro">Introduction</a>- Outlines the overall
-    direction of the User's guide itself, with a high level introduction on
-    Axis2</li>
-  <li><a href="installationguide.html">Download and Installation</a>-Will
-    list the different distribution packages offered by Axis2, and
-    installation methods for standalone and as part of a J2EE servlet
-    container.</li>
-  <!--<li><a href="userguide.html#ws_codegen">Creating a new Web Service with
-  Code Generation</a> -Axis2 provides two ways to create new Web Services,
-  using code generation and using XML based primary APIs. This section
-  explains how to start from a WSDL, and create a new Service with code
-  generation</li>
-  <li><a href="xmlbased-server.html">Writing Web Services Using Axis2's
-  Primary APIs</a> -Explains how to create new Web Services using XML based
-  primary API</li>
-  <li><a href="userguide.html#client">Writing a Web Service Client with Code
-  Generation </a>-Axis2 also provides a more complex, yet powerful XML
-  based client API which is intended for advanced users. However, if you
-  are a new user we recommend using the code generation approach presented
-  below</li>
-  <li><a href="dii.html">Writing Web Service Clients Using Axis2's Primary
-  APIs</a>- This section presents complex yet powerful XML based client API
-  which is intended for advanced users to write Web services clients</li>
-  <li><a href="userguide.html#config">Configuring Axis2</a>-Axis2
-  configuration is based on a repository and standard archives formats.
-  Here you will find details on how to configure Axis2. You will also find
-  reference documents that lead to greater detail in this area.</li>-->
-  <li><a href="pojoguide.html">POJO Web Services using Apache Axis2</a>-This
-    guide will show you how to create a Plain Old Java Object (POJO) to
-    deploy using Apache Axis2 on Apache Tomcat. POJOs are fast to build and
-    easy to maintain, meaning you'll save a lot of time building and
-    debugging your code</li>
-  <li><a href="quickstartguide.html">Axis2 Quick Start Guide</a>-The purpose
-    of this guide is to get you started creating services and clients using
-    Axis2 as quickly as possible. It demonstrates how to create Web services
-    using a variety of different technologies.</></li>
+  <li><a href="userguide.html#intro">Introduction</a>- This opening document
+    gives you an introduction to what Axis2 is, the life cycle of a Web
+    services messages, how Axis2 handles SOAP Messages and also includes
+    basic description on Axis2 distributions and how Axis2 behaves as part of
+    a Web application or as a standalone client that is not part of a J2EE
+    application.</li>
+  <li><a href="installationguide.html">Download and Installation</a>- Will
+    list the different distribution packages offered by Axis2, and in-depth
+    instructions on installation methods for standalone and as part of a J2EE
+    servlet container.</li>
+  <li><a href="userguide-installingtesting.html">Testing Client Code</a> -
+    The best way to make sure that your system is running Axis2 is to install
+    and test both a service and a client. This document describes this
+    process easy to understand steps.</li>
+  <li><a href="userguide-introtoservices.html">Introduction to Services</a> -
+    The term "Web services" can apply to a number of different ways to send
+    information back and forth, but this guide focuses on the sending and
+    receiving of SOAP messages and Message Exchange Patterns (MEPs).</li>
+  <li><a href="userguide-creatingclients.html">Creating Clients from WSDL</a>
+    - When it comes to creating a Web service client, you can do it manually
+    as described in the next document,, but in most cases you have a Web
+    Service Description Language (WSDL) definition that describes the
+    messages clients should send and expect to receive. Axis2 provides
+    several ways to use this definition to automatically generate a client.
+    This document explains just how to create a client using WSDL
+  definitions.</li>
+  <li><a href="userguide-buildingservices.html">Building Services from
+    Scratch</a> - Now that you know how to use Axis2 to generate clients from
+    WSDL as described in the document before,, this document digs a little
+    deeper, showing you how to create services, and how to create both
+    services and clients "from scratch", so to speak.</li>
+  <li><a href="userguide-samples.html">Samples</a> - The Axis2 Standard
+    Distribution provides a number of samples you can use as a guide for
+    implementing specific features and capabilities. These services are
+    listed in this document with basic introductions.</li>
+  <li><a href="userguide-forfurtherstudy.html">For Further Study</a> - This
+    section lists resource documents for further study.
+    <ul>
+      <li><a href="pojoguide.html">POJO Web Services using Apache
+        Axis2</a>-This guide will show you how to create a Plain Old Java
+        Object (POJO) to deploy using Apache Axis2 on Apache Tomcat. POJOs
+        are fast to build and easy to maintain, meaning you'll save a lot of
+        time building and debugging your code</li>
+      <li><a href="quickstartguide.html">Axis2 Quick Start Guide</a>-The
+        purpose of this guide is to get you started creating services and
+        clients using Axis2 as quickly as possible. It demonstrates how to
+        create Web services using a variety of different technologies.</></li>
+    </ul>
+  </li>
 </ul>
 Also see our <a href="../faq.html">FAQ page</a> to answer those common
 questions in mind.
@@ -162,7 +175,7 @@ Binding, Security, REST Web services on a detailed manner.</p>
     code generation plug-in to create service archives and generate java
     class files from WSDL files</li>
   <li><a href="../tools/1_1/maven-plugins/maven-aar-plugin.html">Maven2 AAR
-    Plug-in Guide</a> - Guid to generate an Axis 2 service file (AAR file)
+    Plug-in Guide</a> - Guide to generate an Axis 2 service file (AAR file)
     using the maven plug-in.</li>
   <li><a href="../tools/1_1/maven-plugins/maven-java2wsdl-plugin.html">Maven2
     Java2WSDL Plug-in Guide</a> - Guide to using Java2WSDL Maven 2 Plug-in
