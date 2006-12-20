@@ -41,7 +41,7 @@ import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
@@ -543,7 +543,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     private boolean isRESTRequest(HttpServletRequest request) {
         String contentType = request.getContentType();
         String soapActionHeader = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
-
+//possible bug.. 
         return ((soapActionHeader == null) ||
                 (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1));
     }

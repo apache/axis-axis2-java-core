@@ -17,7 +17,7 @@
 package org.apache.rampart.conversation;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.util.Base64;
+import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.util.Loader;
 import org.apache.rahas.RahasConstants;
 import org.apache.rahas.Token;

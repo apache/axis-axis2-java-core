@@ -1,15 +1,12 @@
 package org.apache.axis2.databinding.utils.reader;
 
-import org.apache.axis2.databinding.utils.Constants;
-import org.apache.axis2.databinding.utils.ConverterUtil;
-import org.apache.axis2.util.Base64;
-
-import javax.xml.namespace.QName;
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.Location;
 import javax.activation.DataHandler;
-import java.io.InputStream;
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
+import javax.xml.stream.Location;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.axis2.databinding.utils.ConverterUtil;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

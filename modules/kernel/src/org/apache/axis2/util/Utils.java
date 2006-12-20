@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;

@@ -28,7 +28,7 @@ import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.SessionUtils;
-import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
 import org.apache.commons.logging.Log;

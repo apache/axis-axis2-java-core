@@ -38,7 +38,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.databinding.types.Duration;
 import org.apache.axis2.databinding.utils.ConverterUtil;
-import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.savan.SavanConstants;
 import org.apache.savan.SavanException;
 import org.apache.savan.SavanMessageContext;

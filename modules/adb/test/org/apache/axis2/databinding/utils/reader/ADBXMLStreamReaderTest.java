@@ -1,35 +1,35 @@
 package org.apache.axis2.databinding.utils.reader;
 
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.apache.axis2.util.StreamWrapper;
-import org.apache.axis2.util.Base64;
-import org.apache.axis2.databinding.utils.Constants;
-import org.apache.axis2.databinding.ADBBean;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.om.impl.serialize.StreamingOMSerializer;
-import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.xml.sax.SAXException;
-import org.w3c.dom.Document;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import javax.activation.DataHandler;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.impl.serialize.StreamingOMSerializer;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.ADBBean;
+import org.apache.axis2.databinding.utils.Constants;
+import org.apache.axiom.om.util.Base64;
+import org.apache.axis2.util.StreamWrapper;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

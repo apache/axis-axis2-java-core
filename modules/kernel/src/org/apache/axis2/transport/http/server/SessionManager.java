@@ -38,7 +38,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.engine.DependencyManager;
-import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

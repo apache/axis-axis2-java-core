@@ -26,7 +26,7 @@ import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axiom.om.util.UUIDGenerator;
 
 import javax.xml.namespace.QName;
 

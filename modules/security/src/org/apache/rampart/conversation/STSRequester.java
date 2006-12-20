@@ -16,6 +16,8 @@
 
 package org.apache.rampart.conversation;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axis2.AxisFault;
@@ -26,7 +28,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.util.Base64;
+import org.apache.axiom.om.util.Base64;
 import org.apache.rahas.RahasConstants;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
@@ -36,8 +38,6 @@ import org.apache.rampart.util.Axis2Util;
 import org.apache.ws.security.conversation.ConversationConstants;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.w3c.dom.Element;
-
-import javax.xml.namespace.QName;
 
 /**
  * @deprecated

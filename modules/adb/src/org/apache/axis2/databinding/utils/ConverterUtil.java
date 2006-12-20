@@ -1,19 +1,5 @@
 package org.apache.axis2.databinding.utils;
 
-import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axiom.attachments.utils.IOUtils;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.i18n.ADBMessages;
-import org.apache.axis2.databinding.types.*;
-import org.apache.axis2.util.Base64;
-
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -22,7 +8,56 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.TimeZone;
+
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.attachments.utils.IOUtils;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.i18n.ADBMessages;
+import org.apache.axis2.databinding.types.Day;
+import org.apache.axis2.databinding.types.Duration;
+import org.apache.axis2.databinding.types.Entities;
+import org.apache.axis2.databinding.types.Entity;
+import org.apache.axis2.databinding.types.HexBinary;
+import org.apache.axis2.databinding.types.IDRef;
+import org.apache.axis2.databinding.types.IDRefs;
+import org.apache.axis2.databinding.types.Id;
+import org.apache.axis2.databinding.types.Language;
+import org.apache.axis2.databinding.types.Month;
+import org.apache.axis2.databinding.types.MonthDay;
+import org.apache.axis2.databinding.types.NCName;
+import org.apache.axis2.databinding.types.NMToken;
+import org.apache.axis2.databinding.types.NMTokens;
+import org.apache.axis2.databinding.types.Name;
+import org.apache.axis2.databinding.types.NegativeInteger;
+import org.apache.axis2.databinding.types.NonNegativeInteger;
+import org.apache.axis2.databinding.types.NonPositiveInteger;
+import org.apache.axis2.databinding.types.NormalizedString;
+import org.apache.axis2.databinding.types.Notation;
+import org.apache.axis2.databinding.types.PositiveInteger;
+import org.apache.axis2.databinding.types.Time;
+import org.apache.axis2.databinding.types.Token;
+import org.apache.axis2.databinding.types.URI;
+import org.apache.axis2.databinding.types.UnsignedByte;
+import org.apache.axis2.databinding.types.UnsignedInt;
+import org.apache.axis2.databinding.types.UnsignedLong;
+import org.apache.axis2.databinding.types.UnsignedShort;
+import org.apache.axis2.databinding.types.Year;
+import org.apache.axis2.databinding.types.YearMonth;
+import org.apache.axiom.om.util.Base64;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

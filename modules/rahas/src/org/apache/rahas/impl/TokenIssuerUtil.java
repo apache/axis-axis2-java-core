@@ -15,12 +15,15 @@
  */
 package org.apache.rahas.impl;
 
+import java.security.SecureRandom;
+
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.Base64;
+import org.apache.rahas.RahasConstants;
 import org.apache.rahas.RahasData;
 import org.apache.rahas.Token;
 import org.apache.rahas.TrustException;
 import org.apache.rahas.TrustUtil;
-import org.apache.rahas.RahasConstants;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.components.crypto.Crypto;
@@ -29,11 +32,8 @@ import org.apache.ws.security.conversation.ConversationException;
 import org.apache.ws.security.conversation.dkalgo.P_SHA1;
 import org.apache.ws.security.message.WSSecEncryptedKey;
 import org.apache.ws.security.util.WSSecurityUtil;
-import org.apache.axis2.util.Base64;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import java.security.SecureRandom;
 
 /**
  * 
@@ -142,7 +142,7 @@ public class TokenIssuerUtil {
                 OMElement binSecElem = TrustUtil.createBinarySecretElement(wstVersion,
                                                                            reqProofTokElem,
                                                                            null);
-                binSecElem.setText(org.apache.axis2.util.Base64.encode(secret));
+                binSecElem.setText(Base64.encode(secret));
                 token.setSecret(secret);
             } else {
                 throw new IllegalArgumentException(config.proofKeyType);

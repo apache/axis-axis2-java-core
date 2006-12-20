@@ -16,10 +16,12 @@
 
 package org.apache.rahas;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axis2.util.Base64;
+import org.apache.axiom.om.util.Base64;
 import org.apache.neethi.Policy;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
@@ -27,8 +29,6 @@ import org.apache.ws.secpolicy.Constants;
 import org.apache.ws.security.WSConstants;
 import org.apache.ws.security.util.WSSecurityUtil;
 import org.opensaml.XML;
-
-import javax.xml.namespace.QName;
 
 public class RahasSAMLTokenUTForHoKV1205Test extends TestClient {
 

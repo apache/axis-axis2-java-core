@@ -23,6 +23,7 @@ import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.om.util.StAXUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
