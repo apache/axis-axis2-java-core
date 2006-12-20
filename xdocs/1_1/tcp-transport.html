@@ -39,7 +39,7 @@ alternatives available for dispatching in the Axis2 environment:</p>
 <ol>
   <li>Use the name space URI of the first child element of SOAPBody.
     (SOAPMessageBodyBasedDispatcher).</li>
-  <li>Enable WS-Addressing. In the case of version 1.1 release Addressing is
+  <li>Enable WS-Addressing. In the case of version 1.1 and 1.1.1 releases Addressing is
     default (SOAPActionBasedDispatcher).</li>
 </ol>
 
@@ -68,12 +68,10 @@ OMElement payload = ...
 ServiceClient serviceClient = new ServiceClient();
 Options options = new Options();
 options.setTo(targetEPR);
-<!--options.useSeperateListener(false);-->
-<!--commented off as their is an error--- "The method useSeperateListener(boolean)is undefined for the type Options">
+<!--options.useSeperateListener(false);--><!--commented off as their is an error: "The method useSeperateListener(boolean)is undefined for the type Options"-->
 serviceClient.setOptions(options);
 
-OMElement response =
-        serviceClient.sendReceive(payload);
+OMElement response = serviceClient.sendReceive(payload);
 </pre>
 </source>
 <p>The transport that should be invoked is inferred from the targetEPR
@@ -97,7 +95,7 @@ automatically available.</p>
 
 <p>In order to run the TCPClient.java, addressing should be engaged both in the 
 client and server sides. In client side, you can engage addressing by copying 
-the addressing-1.1.mar (AXIS2_HOME/repository/module) to AXIS2_HOME/lib directory.</p>
+the addressing-1.1.1.mar (AXIS2_HOME/repository/module) to AXIS2_HOME/lib directory.</p>
 
 <a name="components"></a>
 <h2>Transport Components</h2>
