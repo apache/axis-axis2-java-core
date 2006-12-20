@@ -37,6 +37,11 @@ import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
+import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
+import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
+import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
+import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.ws.axis2.tests.EchoPort;
 import org.apache.ws.axis2.tests.EchoServiceImplWithSEI;
 
@@ -60,7 +65,7 @@ public class AnnotationServiceImplWithDBCTests extends TestCase {
     	//all necessary associated DBC's possibly including SEI and superclasses
     	HashMap<String, DescriptionBuilderComposite> dbcMap = new HashMap<String,DescriptionBuilderComposite>();
     	
-    	DescriptionBuilderComposite dbc = DescriptionTestUtils.buildDBCNoEndpointInterface();
+    	DescriptionBuilderComposite dbc = buildDBCNoEndpointInterface();
         
     	dbcMap.put(dbc.getClassName(), dbc);
 
@@ -132,6 +137,68 @@ public class AnnotationServiceImplWithDBCTests extends TestCase {
     //    return (new EndpointInterfaceDescription()); 
     //	//return testEndpointInterfaceDesc;
     //}
+
+    static public DescriptionBuilderComposite buildDBCNoEndpointInterface() {
+
+    	//Create a WebServiceAnnot
+        String WSName = "EchoServiceAnnotated";
+        String WSTargetNamespace = "http://description.jaxws.axis2.apache.org/";
+        String WSServiceName = "EchoServiceName";
+        //String WSWsdlLocation = "http://EchoService/wsdl";
+        String WSWsdlLocation = "";
+        String WSEndpointInterface = "";
+        String WSPortName = "EchoServiceAnnotatedPort";
+
+    	WebServiceAnnot webServiceAnnot =
+			WebServiceAnnot.createWebServiceAnnotImpl(
+					WSName,
+					WSTargetNamespace,
+					WSServiceName,
+					WSWsdlLocation,
+					WSEndpointInterface,
+					WSPortName);
+
+    	//Create a WebMethodAnnot
+    	String operationName = "echoStringMethod";
+        String action = "urn:EchoStringMethod";
+        boolean exclude = false;
+
+    	WebMethodAnnot webMethodAnnot = WebMethodAnnot.createWebMethodAnnotImpl();
+    	webMethodAnnot.setOperationName(operationName);
+    	webMethodAnnot.setAction(action);
+    	webMethodAnnot.setExclude(exclude);
+
+    	//Create the WebParamAnnot
+    	String WPName = "arg0";
+        String WPPartName = "sku";
+        String WPTargetNamespace = "http://description.jaxws.axis2.apache.org/";
+    	WebParam.Mode WPMode = WebParam.Mode.IN;
+        boolean WPHeader = true;
+
+    	WebParamAnnot webParamAnnot = WebParamAnnot.createWebParamAnnotImpl();
+    	webParamAnnot.setName(WPName);
+    	webParamAnnot.setPartName(WPPartName);
+    	webParamAnnot.setMode(WPMode);
+    	webParamAnnot.setTargetNamespace(WPTargetNamespace);
+    	webParamAnnot.setHeader(WPHeader);
+
+    	//Build up the the DBC and all necessary composites
+    	ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
+    	pdc.setParameterType("java.lang.String");
+    	pdc.setWebParamAnnot(webParamAnnot);
+
+    	MethodDescriptionComposite mdc = new MethodDescriptionComposite();
+       	mdc.setWebMethodAnnot(webMethodAnnot);
+    	mdc.setMethodName(operationName);
+    	mdc.addParameterDescriptionComposite(pdc,0);
+
+    	DescriptionBuilderComposite dbc = new DescriptionBuilderComposite();
+    	dbc.setClassName("org.apache.axis2.samples.EchoServiceAnnotated");
+    	dbc.setWebServiceAnnot(webServiceAnnot);
+    	dbc.addMethodDescriptionComposite(mdc);
+
+    	return dbc;
+    }
 }
 
 
