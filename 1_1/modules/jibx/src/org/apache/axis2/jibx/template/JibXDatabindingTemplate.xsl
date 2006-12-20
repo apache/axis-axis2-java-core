@@ -134,10 +134,15 @@
     
       <!-- returning an array of values -->
       <xsl:when test="out-wrapper/@empty='false' and out-wrapper/return-element/@array='true'">
+        <xsl:variable name="wrapper-uri" select="out-wrapper/@ns"/>
+        <xsl:variable name="wrapper-prefix" select="out-wrapper/@prefix"/>
               envelope = factory.getDefaultEnvelope();
-              org.apache.axiom.om.OMElement wrapper = factory.createOMElement("<xsl:value-of select='out-wrapper/@name'/>", "<xsl:value-of select='out-wrapper/@ns'/>", "<xsl:value-of select='out-wrapper/@prefix'/>");
+              org.apache.axiom.om.OMElement wrapper = factory.createOMElement("<xsl:value-of select='out-wrapper/@name'/>", "<xsl:value-of select='$wrapper-uri'/>", "<xsl:value-of select='$wrapper-prefix'/>");
+        <xsl:if test="string-length(normalize-space($wrapper-prefix)) = 0">
+            wrapper.declareDefaultNamespace("<xsl:value-of select='$wrapper-uri'/>");
+        </xsl:if>
         <xsl:if test="out-wrapper/@need-namespaces='true'">
-              addMappingNamespaces(factory, wrapper);
+              addMappingNamespaces(factory, wrapper, "<xsl:value-of select='$wrapper-uri'/>", "<xsl:value-of select='$wrapper-prefix'/>");
         </xsl:if>
         <xsl:if test="count(out-wrapper/extra-namespace) &gt; 0">
               wrapper.declareNamespace(factory.createOMNamespace("<xsl:value-of select='out-wrapper/extra-namespace/@ns'/>", "<xsl:value-of select='out-wrapper/extra-namespace/@prefix'/>"));
@@ -201,10 +206,15 @@
     
       <!-- returning a single value -->
       <xsl:when test="out-wrapper/@empty='false'">
+        <xsl:variable name="wrapper-uri" select="out-wrapper/@ns"/>
+        <xsl:variable name="wrapper-prefix" select="out-wrapper/@prefix"/>
               envelope = factory.getDefaultEnvelope();
-              org.apache.axiom.om.OMElement wrapper = factory.createOMElement("<xsl:value-of select='out-wrapper/@name'/>", "<xsl:value-of select='out-wrapper/@ns'/>", "<xsl:value-of select='out-wrapper/@prefix'/>");
+              org.apache.axiom.om.OMElement wrapper = factory.createOMElement("<xsl:value-of select='out-wrapper/@name'/>", "<xsl:value-of select='$wrapper-uri'/>", "<xsl:value-of select='$wrapper-prefix'/>");
+        <xsl:if test="string-length(normalize-space($wrapper-prefix)) = 0">
+            wrapper.declareDefaultNamespace("<xsl:value-of select='$wrapper-uri'/>");
+        </xsl:if>
         <xsl:if test="out-wrapper/@need-namespaces='true'">
-              addMappingNamespaces(factory, wrapper);
+              addMappingNamespaces(factory, wrapper, "<xsl:value-of select='$wrapper-uri'/>", "<xsl:value-of select='$wrapper-prefix'/>");
         </xsl:if>
         <xsl:if test="count(out-wrapper/extra-namespace) &gt; 0">
               wrapper.declareNamespace(factory.createOMNamespace("<xsl:value-of select='out-wrapper/extra-namespace/@ns'/>", "<xsl:value-of select='out-wrapper/extra-namespace/@prefix'/>"));
@@ -371,8 +381,11 @@
                 org.apache.axiom.soap.SOAPEnvelope env = createEnvelope(_operationClient.getOptions());
                 org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
                 org.apache.axiom.om.OMElement wrapper = factory.createOMElement("<xsl:value-of select='in-wrapper/@name'/>", "<xsl:value-of select='in-wrapper/@ns'/>", "<xsl:value-of select='in-wrapper/@prefix'/>");
+    <xsl:if test="string-length(normalize-space(in-wrapper/@prefix)) = 0">
+                wrapper.declareDefaultNamespace("<xsl:value-of select='in-wrapper/@ns'/>");
+    </xsl:if>
     <xsl:if test="in-wrapper/@need-namespaces='true'">
-                addMappingNamespaces(factory, wrapper);
+                addMappingNamespaces(factory, wrapper, "<xsl:value-of select='in-wrapper/@ns'/>", "<xsl:value-of select='in-wrapper/@prefix'/>");
     </xsl:if>
     <xsl:if test="count(in-wrapper/extra-namespace) &gt; 0">
                 wrapper.declareNamespace(factory.createOMNamespace("<xsl:value-of select='in-wrapper/extra-namespace/@ns'/>", "<xsl:value-of select='in-wrapper/extra-namespace/@prefix'/>"));
@@ -560,7 +573,7 @@
   <!-- Convert the current value to an element. -->
   <xsl:template name="serialize-value-to-child">
     <xsl:choose>
-      <xsl:when test="@java-type='String' and @serializer=''">
+      <xsl:when test="@java-type='java.lang.String' and @serializer=''">
         child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>");
         child.setText(<xsl:call-template name="parameter-or-array-item"/>);
       </xsl:when>
@@ -745,13 +758,15 @@
             throw new IllegalArgumentException("Namespace " + uri + " not found in binding directory information");
         }
         
-        private static void addMappingNamespaces(org.apache.axiom.soap.SOAPFactory factory, org.apache.axiom.om.OMElement wrapper) {
+        private static void addMappingNamespaces(org.apache.axiom.soap.SOAPFactory factory, org.apache.axiom.om.OMElement wrapper, String nsuri, String nspref) {
             String[] nss = bindingFactory.getNamespaces();
             for (int i = 0; i &lt; bindingNamespaceIndexes.length; i++) {
                 int index = bindingNamespaceIndexes[i];
                 String uri = nss[index];
                 String prefix = bindingNamespacePrefixes[i];
-                wrapper.declareNamespace(factory.createOMNamespace(uri, prefix));
+                if (!nsuri.equals(uri) || !nspref.equals(prefix)) {
+                    wrapper.declareNamespace(factory.createOMNamespace(uri, prefix));
+                }
             }
         }
         
@@ -856,7 +871,7 @@
   <!-- Convert the current element into a value. -->
   <xsl:template name="deserialize-element-value">
     <xsl:choose>
-      <xsl:when test="@java-type='String' and @deserializer=''">
+      <xsl:when test="@java-type='java.lang.String' and @deserializer=''">
         uctx.parseElementText("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>")
       </xsl:when>
       <xsl:when test="@form='simple' and @deserializer=''">
