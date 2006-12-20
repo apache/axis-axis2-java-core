@@ -18,7 +18,6 @@
 
 package org.apache.axis2.jaxws.description;
 
-import java.lang.reflect.Field;
 import java.net.URL;
 
 import javax.jws.WebMethod;

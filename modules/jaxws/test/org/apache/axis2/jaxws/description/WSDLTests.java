@@ -18,14 +18,12 @@
 
 package org.apache.axis2.jaxws.description;
 
-import java.lang.reflect.Field;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 import junit.framework.TestCase;

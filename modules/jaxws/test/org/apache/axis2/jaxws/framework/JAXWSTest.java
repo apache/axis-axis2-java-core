@@ -29,7 +29,6 @@ import org.apache.axis2.jaxws.client.ProxySoapActionTests;
 import org.apache.axis2.jaxws.databinding.BindingToProtocolTests;
 import org.apache.axis2.jaxws.description.AnnotationDescriptionTests;
 import org.apache.axis2.jaxws.description.GetDescFromBindingProvider;
-import org.apache.axis2.jaxws.description.PartialWSDLTests;
 import org.apache.axis2.jaxws.description.PortSelectionTests;
 import org.apache.axis2.jaxws.description.ServiceAnnotationTests;
 import org.apache.axis2.jaxws.description.ServiceTests;
@@ -109,7 +108,6 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(WSDLTests.class);
         suite.addTestSuite(WSDLDescriptionTests.class);
         suite.addTestSuite(AnnotationDescriptionTests.class);
-        suite.addTestSuite(PartialWSDLTests.class);
         suite.addTestSuite(ValidateWSDLTests.class);
         suite.addTestSuite(GetDescFromBindingProvider.class);
         suite.addTestSuite(WrapperPackageTests.class);
