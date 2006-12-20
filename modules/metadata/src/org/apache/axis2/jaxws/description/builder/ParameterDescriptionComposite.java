@@ -284,19 +284,30 @@ public class ParameterDescriptionComposite {
 	}
     
     private static final String INT_PRIMITIVE = "int";
+    private static final String INT_PRIMITIVE_ENCODING = "I";
     private static final String BYTE_PRIMITIVE = "byte";
+    private static final String BYTE_PRIMITIVE_ENCODING = "B";
     private static final String CHAR_PRIMITIVE = "char";
+    private static final String CHAR_PRIMITIVE_ENCODING = "C";
     private static final String SHORT_PRIMITIVE = "short";
+    private static final String SHORT_PRIMITIVE_ENCODING = "S";
     private static final String BOOLEAN_PRIMITIVE = "boolean";
+    private static final String BOOLEAN_PRIMITIVE_ENCODING = "Z";
     private static final String LONG_PRIMITIVE = "long";
+    private static final String LONG_PRIMITIVE_ENCODING = "J";
     private static final String FLOAT_PRIMITIVE = "float";
+    private static final String FLOAT_PRIMITIVE_ENCODING = "F";
     private static final String DOUBLE_PRIMITIVE = "double";
+    private static final String DOUBLE_PRIMITIVE_ENCODING = "D";
     private static final String VOID_PRIMITIVE = "void";
+    // REVIEW: This may not be the correct encoding for Void
+    private static final String VOID_PRIMITIVE_ENCODING = "V";
 
     /**
      * For primitives, return the appropriate primitive class.  Note that arrays of primitives are
      * handled differently, like arrays of objects.  Only non-array primitives are processed by this
-     * method.
+     * method.  This method understands both the typical primitive declaration (e.g. "int") and the
+     * encoding used as for arrays (e.g. "I").
      * @param classType
      * @return
      */
@@ -304,23 +315,23 @@ public class ParameterDescriptionComposite {
 		
 		Class paramClass = null;
 
-		if (INT_PRIMITIVE.equals(classType)) {
+		if (INT_PRIMITIVE.equals(classType) || INT_PRIMITIVE_ENCODING.equals(classType)) {
 			paramClass = int.class;
-		} else if (BYTE_PRIMITIVE.equals(classType)) {
+		} else if (BYTE_PRIMITIVE.equals(classType)|| BYTE_PRIMITIVE_ENCODING.equals(classType)) {
 			paramClass = byte.class;
-		} else if (CHAR_PRIMITIVE.equals(classType)) {
+		} else if (CHAR_PRIMITIVE.equals(classType)|| CHAR_PRIMITIVE_ENCODING.equals(classType)) {
 			paramClass = char.class;
-		} else if (SHORT_PRIMITIVE.equals(classType)) {
+		} else if (SHORT_PRIMITIVE.equals(classType)|| SHORT_PRIMITIVE_ENCODING.equals(classType)) {
 			paramClass = short.class;
-		} else if (BOOLEAN_PRIMITIVE.equals(classType)) {
+		} else if (BOOLEAN_PRIMITIVE.equals(classType)|| BOOLEAN_PRIMITIVE_ENCODING.equals(classType)) {
 			paramClass = boolean.class;
-		} else if (LONG_PRIMITIVE.equals(classType)) {
+		} else if (LONG_PRIMITIVE.equals(classType) || LONG_PRIMITIVE_ENCODING.equals(classType)) {
 			paramClass = long.class;
-		} else if (FLOAT_PRIMITIVE.equals(classType)) {
+		} else if (FLOAT_PRIMITIVE.equals(classType)|| FLOAT_PRIMITIVE_ENCODING.equals(classType)) {
 			paramClass = float.class;
-		} else if (DOUBLE_PRIMITIVE.equals(classType)) {
+		} else if (DOUBLE_PRIMITIVE.equals(classType)|| DOUBLE_PRIMITIVE_ENCODING.equals(classType)) {
 			paramClass = double.class;
-		} else if (VOID_PRIMITIVE.equals(classType)) {
+		} else if (VOID_PRIMITIVE.equals(classType)|| VOID_PRIMITIVE_ENCODING.equals(classType)) {
 			paramClass = void.class;
 		}
 		return paramClass;
@@ -339,28 +350,28 @@ public class ParameterDescriptionComposite {
         String encoding = null;
         
         if (BOOLEAN_PRIMITIVE.equals(primitiveType)) {
-            encoding = "Z";
+            encoding = BOOLEAN_PRIMITIVE_ENCODING;
         }
         else if (BYTE_PRIMITIVE.equals(primitiveType)) {
-            encoding = "B";
+            encoding = BYTE_PRIMITIVE_ENCODING;
         }
         else if (CHAR_PRIMITIVE.equals(primitiveType)) {
-            encoding = "C";
+            encoding = CHAR_PRIMITIVE_ENCODING;
         }
         else if (DOUBLE_PRIMITIVE.equals(primitiveType)) {
-            encoding = "D";
+            encoding = DOUBLE_PRIMITIVE_ENCODING;
         }
         else if (FLOAT_PRIMITIVE.equals(primitiveType)) {
-            encoding = "F";
+            encoding = FLOAT_PRIMITIVE_ENCODING;
         }
         else if (INT_PRIMITIVE.equals(primitiveType)) {
-            encoding = "I";
+            encoding = INT_PRIMITIVE_ENCODING;
         }
         else if (LONG_PRIMITIVE.equals(primitiveType)) {
-            encoding = "J";
+            encoding = LONG_PRIMITIVE_ENCODING;
         }
         else if (SHORT_PRIMITIVE.equals(primitiveType)) {
-            encoding = "S";
+            encoding = SHORT_PRIMITIVE_ENCODING;
         }
         return encoding;
     }

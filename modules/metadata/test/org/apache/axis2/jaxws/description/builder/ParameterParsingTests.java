@@ -100,9 +100,22 @@ public class ParameterParsingTests extends TestCase {
         assertEquals(List.class, pdc.getHolderActualTypeClass());
     }
     
+    public void testPrimitivesEncoded() {
+        String[] primitivesToTest = {"Z", "B", "C", "D", "F", "I", "J", "S", "V"};
+        Class[] primitiveClasses = {boolean.class, byte.class, char.class, double.class, float.class, int.class, long.class, short.class, void.class};
+        
+        for (int i = 0; i < primitivesToTest.length; i++) {
+            assertFalse(ParameterDescriptionComposite.isHolderType(primitivesToTest[i]));
+            assertNull(ParameterDescriptionComposite.getRawType(primitivesToTest[i]));
+            ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
+            pdc.setParameterType(primitivesToTest[i]);
+            assertEquals(primitiveClasses[i], pdc.getParameterTypeClass());
+        }
+    }
+    
     public void testPrimitives() {
-        String[] primitivesToTest = {"boolean", "byte", "char", "double", "float", "int", "long", "short"};
-        Class[] primitiveClasses = {boolean.class, byte.class, char.class, double.class, float.class, int.class, long.class, short.class};
+        String[] primitivesToTest = {"boolean", "byte", "char", "double", "float", "int", "long", "short", "void"};
+        Class[] primitiveClasses = {boolean.class, byte.class, char.class, double.class, float.class, int.class, long.class, short.class, void.class};
         
         for (int i = 0; i < primitivesToTest.length; i++) {
             assertFalse(ParameterDescriptionComposite.isHolderType(primitivesToTest[i]));
