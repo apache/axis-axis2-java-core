@@ -403,9 +403,9 @@
         <version>2.2</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.woden</groupId>
-        <artifactId>woden</artifactId>
-        <version>1.0.0M6</version>
+      <groupId>incubator-woden</groupId>
+      <artifactId>woden</artifactId>
+        <version>1.0.0M6</version> 
         <exclusions>
           <!-- Woden 1.0.0M6 uses Axiom 1.1.1 -->
           <exclusion>
