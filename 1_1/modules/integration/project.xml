@@ -32,16 +32,7 @@
             <artifactId>axis2-kernel</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-security</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-secpolicy</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
@@ -103,11 +94,6 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-tools</artifactId>
-            <version>${pom.currentVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-rahas</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
 
