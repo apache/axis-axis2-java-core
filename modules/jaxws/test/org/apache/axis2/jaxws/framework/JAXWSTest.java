@@ -30,9 +30,7 @@ import org.apache.axis2.jaxws.databinding.BindingToProtocolTests;
 import org.apache.axis2.jaxws.description.AnnotationDescriptionTests;
 import org.apache.axis2.jaxws.description.GetDescFromBindingProvider;
 import org.apache.axis2.jaxws.description.PortSelectionTests;
-import org.apache.axis2.jaxws.description.ServiceAnnotationTests;
 import org.apache.axis2.jaxws.description.ServiceTests;
-import org.apache.axis2.jaxws.description.ValidateWSDLTests;
 import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
 import org.apache.axis2.jaxws.description.WrapperPackageTests;
@@ -104,11 +102,9 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(MTOMSerializationTests.class);
         suite.addTestSuite(BindingToProtocolTests.class);
         
-        suite.addTestSuite(ServiceAnnotationTests.class);
         suite.addTestSuite(WSDLTests.class);
         suite.addTestSuite(WSDLDescriptionTests.class);
         suite.addTestSuite(AnnotationDescriptionTests.class);
-        suite.addTestSuite(ValidateWSDLTests.class);
         suite.addTestSuite(GetDescFromBindingProvider.class);
         suite.addTestSuite(WrapperPackageTests.class);
         suite.addTestSuite(ServiceTests.class);
