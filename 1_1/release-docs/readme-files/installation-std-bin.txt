@@ -12,7 +12,7 @@
   Download and unpack the Axis2 Standard Binary Distribution into a convenient 
   location so that the distribution resides in its own directory. Set an 
   environment variables AXIS2_HOME to the pathname of the extracted directory 
-  of Axis2 (Eg: /opt/axis2-1.1).
+  of Axis2 (Eg: /opt/axis2-1.1.1).
 
 
 2. Starting up Axis2 Standalone Server
