@@ -33,7 +33,6 @@ import org.apache.axis2.jaxws.description.PortSelectionTests;
 import org.apache.axis2.jaxws.description.ServiceTests;
 import org.apache.axis2.jaxws.description.WSDLDescriptionTests;
 import org.apache.axis2.jaxws.description.WSDLTests;
-import org.apache.axis2.jaxws.description.WrapperPackageTests;
 import org.apache.axis2.jaxws.dispatch.DispatchTestSuite;
 import org.apache.axis2.jaxws.dispatch.SOAP12Dispatch;
 import org.apache.axis2.jaxws.exception.ExceptionFactoryTests;
@@ -106,7 +105,6 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(WSDLDescriptionTests.class);
         suite.addTestSuite(AnnotationDescriptionTests.class);
         suite.addTestSuite(GetDescFromBindingProvider.class);
-        suite.addTestSuite(WrapperPackageTests.class);
         suite.addTestSuite(ServiceTests.class);
         suite.addTestSuite(PortSelectionTests.class);
         
