@@ -210,6 +210,14 @@
 					<include>**/*.xsl</include>
 				</includes>
 			</resource>
+			<resource>
+      <directory>../../</directory>
+      <targetPath>META-INF</targetPath>
+      <includes>
+        <include>NOTICE.txt</include>
+        <include>LICENSE.txt</include>
+      </includes>
+   </resource>
 		</resources>
 	<unitTest>
 	  <resources>

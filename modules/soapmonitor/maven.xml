@@ -33,6 +33,8 @@
         
         <copy file="../../LICENSE.txt"
             tofile="target/temp-mar/META-INF/LICENSE.txt" overwrite="true"/>
+        <copy file="../../NOTICE.txt"
+            tofile="target/temp-mar/META-INF/LICENSE.txt" overwrite="true"/>
 
         <jar jarfile="target/soapmonitor-${soapmonitor_version}.mar" basedir="target/temp-mar/">
             <include name="**/*"/>
