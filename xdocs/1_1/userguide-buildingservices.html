@@ -296,20 +296,21 @@ Listing 11.</p>
 public class SampleService {
 
     public void doInOnly(){
-      //Process here
+     return; 
     } 
      
     public String noParameters(){
-      //Process here
+      return "Hello";
     } 
     
     public String twoWayOneParameterEcho(String toEcho){
-      //Process here
+      return toEcho;
     } 
     
     public boolean multipleParametersAdd(float price, int itemId, 
                              String description, String itemName){
-      //Process here
+      //Code to handle the logic
+	    	return true;
     } 
  
 }</pre>
@@ -338,7 +339,7 @@ following shown in Code Listing 12.</p>
 
 <p>This file makes the InOnly and InOut MEPs available to the service and
 tells Axis2 which class to call; operations must match method names. In other
-words, Axis2 automatically sents a call to the multipleParametersAdd
+words, Axis2 automatically sends a call to the multipleParametersAdd
 operation to the
 org.apache.axis2.axis2userguide.SampleService.multipleParametersAdd()
 method.</p>
@@ -358,7 +359,7 @@ Distribution</b></h3>
            - SampleService.class</pre>
 
 <p>Finally, deploy the service by copying the SampleService directory to the
-webapps/axis2/services directory on the servlet engine. You can check to make
+webapps/axis2/WEB-INF/services directory on the servlet engine. You can check to make
 sure that it's been properly deployed by checking <a
 href="http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices">http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices</a>.</p>
 <a name="deployrun"></a>
@@ -417,7 +418,8 @@ should see the appropriate directories created.) It also indicates that you
 want to use the Axis2 DataBinding Framework, or ADB (-d), to generate only
 synchronous, or blocking code (-s), and to generate server-side code (-ss) as
 opposed to a client, including the services.xml service descriptor file
-(-sd).</p>
+(-sd). It also specifies version 1.1 for the WSDL file (-wv). 
+</p>
 
 <p>At this point, you should see three new items in your chosen directory:
 the build.xml file, which includes instructions for Ant, the src directory,
