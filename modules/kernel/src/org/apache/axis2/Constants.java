@@ -192,6 +192,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String RESPONSE_WRITTEN = "CONTENT_WRITTEN";
     //To have a floag if the replyTo is not annon one
     public static final String DIFFERENT_EPR = "DIFFERENT_EPR";
+    
+    /**
+     * This can be set in the MessageContext to give an response code the transport should use when sending it out.
+     */
+    public static final String RESPONSE_CODE = "RESPONSE_CODE";
 
     /**
      * Transport Info

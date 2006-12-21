@@ -18,6 +18,7 @@ package org.apache.axis2.transport;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.Handler.InvocationResponse;
 
 /**
  * This interface represents a control object for a Request/Response transport.
@@ -30,10 +31,17 @@ import org.apache.axis2.context.MessageContext;
  */
 public interface RequestResponseTransport
 {
+	
   /*This is the name of the property that is to be stored on the
     MessageContext*/
   public static final String TRANSPORT_CONTROL
     = "RequestResponseTransportControl";
+  
+  /**
+   * If this property is set to true in a message transport will call the awaitResponse method
+   * of the RequestResponseTransport instead of returning. The value should be a Boolean object.
+   */
+  public static final String HOLD_RESPONSE = "HoldResponse";
 
   /**
    * Notify the transport that a message should be acknowledged at this time.
@@ -60,4 +68,55 @@ public interface RequestResponseTransport
    * should release anyone who is blocked on a awaitResponse().
    */
   public void signalResponseReady();
+  
+  /**
+   * This gives the current status of an RequestResponseTransport object.  
+   * @return
+   */
+  public RequestResponseTransportStatus getStatus ();
+  
+  /**
+   * Used to give the current status of the RequestResponseTransport object.
+   */
+  public class RequestResponseTransportStatus {
+	  /**
+	   * Transport is in its initial stage.
+	   */
+	  public static RequestResponseTransportStatus INITIAL = new RequestResponseTransportStatus (1);
+	  
+	  /**
+	   * awaitResponse has been called.
+	   */
+	  public static RequestResponseTransportStatus WAITING = new RequestResponseTransportStatus (2);
+	  
+	  /**
+	   * 'signalResponseReady' has been called.
+	   */
+	  public static RequestResponseTransportStatus SIGNALLED = new RequestResponseTransportStatus (3);
+	  
+	  private int value;
+	  
+	  private RequestResponseTransportStatus (int value) {
+		  this.value = value;
+	  }
+	  
+      public int hashCode()
+      {
+        return value;
+      }
+      
+      public boolean equals(Object obj) {
+        if( !(obj instanceof RequestResponseTransportStatus) ) {
+            return false;
+        }
+        final RequestResponseTransportStatus instance = (RequestResponseTransportStatus)obj;
+        return (value==instance.value);
+      }
+	  
+      public String toString() {
+    	  return Integer.toString(value);
+      }
+      
+  }
+  
 }

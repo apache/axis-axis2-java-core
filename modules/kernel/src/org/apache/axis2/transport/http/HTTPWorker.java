@@ -242,7 +242,9 @@ public class HTTPWorker implements Worker {
                     soapAction,
                     uri);
 
-            if (pi.equals(InvocationResponse.SUSPEND))
+            Boolean holdResponse = (Boolean) msgContext.getProperty(RequestResponseTransport.HOLD_RESPONSE);
+            
+            if (pi.equals(InvocationResponse.SUSPEND) ||  (holdResponse!=null && Boolean.TRUE.equals(holdResponse)))
             {
               try
               {
@@ -284,7 +286,9 @@ public class HTTPWorker implements Worker {
 
     class SimpleHTTPRequestResponseTransport implements RequestResponseTransport
     {
+    	
       private CountDownLatch responseReadySignal = new CountDownLatch(1);
+      RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
       
       public void acknowledgeMessage(MessageContext msgContext) throws AxisFault
       {
@@ -292,15 +296,21 @@ public class HTTPWorker implements Worker {
         signalResponseReady();
       }
       
-      public void awaitResponse()
-      throws InterruptedException
+      public void awaitResponse() throws InterruptedException
       {
-        responseReadySignal.await();
+    	  status = RequestResponseTransportStatus.WAITING;
+    	  responseReadySignal.await();
       }
       
       public void signalResponseReady()
       {
-        responseReadySignal.countDown();
+    	  status = RequestResponseTransportStatus.SIGNALLED;
+    	  responseReadySignal.countDown();
       }
+
+      public RequestResponseTransportStatus getStatus() {
+		return status;
+      }
+      
     }
 }

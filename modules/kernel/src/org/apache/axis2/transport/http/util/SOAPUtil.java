@@ -74,7 +74,11 @@ public class SOAPUtil {
                                     + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
             if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
-                response.setStatus(HttpServletResponse.SC_ACCEPTED);
+            	Integer statusCode = (Integer) msgContext.getProperty(Constants.RESPONSE_CODE);
+            	if (statusCode!=null) 
+            		response.setStatus(statusCode.intValue());
+            	else
+            		response.setStatus(HttpServletResponse.SC_ACCEPTED);
             }
 
             boolean closeReader = true;

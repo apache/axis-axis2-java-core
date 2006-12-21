@@ -37,6 +37,7 @@ import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.RequestResponseTransport.RequestResponseTransportStatus;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
@@ -552,6 +553,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     {
       private HttpServletResponse response;
       private CountDownLatch responseReadySignal = new CountDownLatch(1);
+      RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
       
       ServletRequestResponseTransport(HttpServletResponse response)
       {
@@ -581,13 +583,21 @@ public class AxisServlet extends HttpServlet implements TransportListener {
       throws InterruptedException
       {
         log.debug("Blocking servlet thread -- awaiting response");
+  	  	status = RequestResponseTransportStatus.WAITING;
         responseReadySignal.await();
       }
       
       public void signalResponseReady()
       {
         log.debug("Signalling response available");
+  	    status = RequestResponseTransportStatus.SIGNALLED;
         responseReadySignal.countDown();
       }
+
+	public RequestResponseTransportStatus getStatus() {
+		return status;
+	}
+      
+      
     }
 }
