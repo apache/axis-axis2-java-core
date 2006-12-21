@@ -29,9 +29,9 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
   <li>General
     <ul>
       <li><a href="#a1">I'm having a problem using Axis2. What should I do?</a></li>
-      <li><a href="#a2">What is OMElement, What does it represents?</a></li>
-      <li><a href="#a3">Integration security tests fail with JDK 1.5<br>
-        </a></li>
+      <!--li><a href="#a2">What is OMElement, What does it represents?</a></li-->
+      <li><a href="#a3">Integration security tests fail with JDK 1.5</a></li>
+       <li><a href="#a4">Axis2 is not working with Java 6</a></li>
         
     </ul>
   </li>
@@ -108,6 +108,15 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
     <p>NOTE: For Windows XP the correct version can be found using 'java
     -version'. The correct file is JRE (typically c:\Program
     Files\Java\jre&lt;version&gt;\lib\security\java.security.</p>
+  </li>
+    <li><a name="a4"></a><strong>Axis2 is not working with Java 6</strong><br>
+
+    <p>You have to copy the stax-api jar in the axis2 distribution
+     into your JRE's endorsed directory (see info on endorsed directory
+     here -<a href="http://java.sun.com/j2se/1.4.2/docs/guide/standards/">
+     http://java.sun.com/j2se/1.4.2/docs/guide/standards/</a>).</p>
+    <p>This issue can also be resolved by copying the stax-api jar to tomcat's 
+    common/endorsed folder, when deploying Axis2 in tomcat,</p>
   </li>
 </ol>
 
