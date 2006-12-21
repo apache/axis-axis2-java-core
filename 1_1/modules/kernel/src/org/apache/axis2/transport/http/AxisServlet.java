@@ -41,6 +41,7 @@ import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.soap.SOAP12Constants;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -535,8 +536,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         String contentType = request.getContentType();
         String soapActionHeader = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
 
-        return ((soapActionHeader == null) ||
+        if (contentType != null && contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1)
+        {
+        	return false;
+        }else {
+        	return ((soapActionHeader == null) ||
                 (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1));
+        }
     }
     
     class ServletRequestResponseTransport implements RequestResponseTransport
