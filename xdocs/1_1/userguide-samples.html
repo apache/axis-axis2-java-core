@@ -3,7 +3,7 @@
   <meta http-equiv="content-type" content="">
   <title>Apache Axis2 User's Guide- The Samples</title>
   <link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
-  media="all" />
+  media="all">
 </head>
 
 <body lang="en">
@@ -77,6 +77,10 @@ services are listed in this section.</p>
         href="userguide-samples.html#services"><strong>Services</strong></a></li>
       <li><a href="userguide-samples.html#wsdl"><strong>Sample WSDL
         files</strong></a></li>
+      <li><a href="userguide-samples.html#quickstart"><strong>Quick Start
+        Guide</strong></a></li>
+      <li><a href="userguide-samples.html#pojoguide"><strong>POJO
+        Guide</strong></a></li>
       <li><a href="userguide-samples.html#others"><strong>Other
         Samples</strong></a></li>
     </ul>
@@ -85,7 +89,7 @@ services are listed in this section.</p>
 </ul>
 <a name="clients"></a>
 
-<h2>Clients (in samples/userguide/src/userguide/clients):</h2>
+<h2>Clients (in samples/userguide/src/clients):</h2>
 
 <p>EchoBlockingClient.java: A basic example of the send/receive MEP.</p>
 
@@ -133,13 +137,57 @@ module.</p>
 actions.</p>
 <a name="wsdl"></a>
 
-<h2>Sample WSDL files (in samples/wsdl):</h2>
+<h2>Sample WSDL files (in samples):</h2>
 
 <p>Axis2SampleDocLit.wsdl: Demonstrates the use of the Document/Literal WSDL
 pattern, rather than RPC.</p>
 
 <p>perf.wsdl: Demonstrates the use of array values as input values.</p>
-<a name="other"></a>
+<a name="quickstart"></a>
+
+<h2>Quick Start Guide samples (in samples)</h2>
+
+<p>These are the samples used in the <a href="quickstartguide.html">Axis2
+Quick Start Guide</a>.</p>
+
+<p><strong>quickstart</strong>- Here we are deploying a POJO after writing a
+services.xml and creating an aar. We also test the gePrice and update methods
+using a browser.</p>
+
+<p><strong>quickstartadb</strong> - In this sample, we are deploying an ADB
+generated service. The service is tested using generated client stubs.</p>
+
+<p><strong>quickstartaxiom</strong>- Here we are deploying an AXIOM based
+POJO service after writing a services.xml and creating an aar. We also test
+successful deployment using an AXIOM based client.</p>
+
+<p><strong>quickstartjibx</strong> - In this sample, we are deploying a JiBX
+generated service. The service is tested using generated client stubs.</p>
+
+<p><strong>quickstartxmlbeans</strong> - We are deploying an XMLBEANS
+generated service in this sample. The service is tested using generated
+client stubs.</p>
+
+<a name="pojoguide"></a>
+
+
+<h2>POJO Guide Samples (in samples)</h2>
+
+<p>These samples are used in the '<a href="pojoguide.html">POJO Web Services
+using Apache Axis2</a>' document.</p>
+
+<p></p>
+
+<p><strong>pojoguide</strong> - This sample shows how to expose a Java class
+as a web service. The WeatherService Java class provides methods to get and
+set a Weather type Java objects. The client uses RPCServiceClient to invoke
+those two methods just as Java object method invocation.</p>
+
+<p><strong>pojoguidespring</strong> - This sample shows how to expose the
+getters and setters of WeatherSpringService that takes Weather type Java
+Object as the argument and the return type. It uses the Spring framework to
+initialize the weather property of the WeatherSpringService.</p>
+<a id="others"></a>
 
 <h2>Other samples (in samples):</h2>
 <!--<p><strong>amazonqs</strong>: Uses the Amazon Queue Service to store and
@@ -150,13 +198,13 @@ their definition in WSDL, enabling exception processing in the client.</p>
 <!--<p><strong>googlesearch</strong>: Creates a GUI-based application making use
 of Google Web Services asynchronously.</p>-->
 
-<p><strong>googlespellcheck</strong>: Demonstrates both synchronous and
+<p><strong>googleSpellcheck</strong>: Demonstrates both synchronous and
 non-synchronous use of the Google Web Service in a GUI.</p>
 
 <p><strong>mtom</strong>: Demonstrates the use of MTOM and SOAP with
 Attachments to send binary files to a service.</p>
 
-<p><strong>soapwithattachments</strong>: Demonstrates the capabilities and
+<p><strong>saopwithattachments</strong>: Demonstrates the capabilities and
 power of SOAP with Attachment support and the Attachment API of Axis2.</p>
 
 <p><strong>pojo</strong>: Example POJO (Plain Old Java Object) Web service.
@@ -175,7 +223,7 @@ code with Castor.</p>
 <p><strong>version</strong>: A very simple service that simply outputs the
 Axis2 version.</p>
 
-<p><strong>yahoorestsearch</strong>: Complete example of the use of a REST
+<p><strong>yahoorestearch</strong>: Complete example of the use of a REST
 service rather than a SOAP service.</p>
 
 <p><strong>See Next Section</strong> - <a
