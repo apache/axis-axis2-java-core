@@ -139,7 +139,7 @@ href="http://www.w3.org/2002/ws/desc/">http://www.w3.org/2002/ws/desc/</a>
   <li>If you have not done it already, <a href="http://ws.apache.org/axis2/download/1_1_1/download.cgi#std-bin">download</a> and unpack the
     Apache Axis2 Standard Distribution.</li>
   <li>Create the client stub with the following command:
-    <pre>%AXIS2_HOME%\bin\WSDL2Java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s</pre>
+    <pre>%AXIS2_HOME%\bin\wsdl2java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s</pre>
   </li>
   <li>Create the client (for example, Client.java), a Java application that
     uses the generated stub, and save it in the
@@ -169,7 +169,7 @@ these classes and their methods. To generate the client, issue the following
 command in Code Listing 6.</p>
 
 <h3><b>Code Listing 6 - Generating the Client</b></h3>
-<pre>%AXIS2_HOME%\bin\WSDL2Java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s</pre>
+<pre>%AXIS2_HOME%\bin\wsdl2java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s</pre>
 
 <p>This command analyzes the WSDL file and creates the stub in the package
 org.apache.axis2.axis2userguide. The options specify that you want the ADB

@@ -243,7 +243,7 @@ your client, execute the following steps:</p>
   <li>Remove the xsd2jibx-related *.jar files from your CLASSPATH and add the
     Axis2 jar files back onto it. Execute the following command to generate
     the stubs:
-    <pre>%AXIS2_HOME%\bin\WSDL2Java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d jibx -Ebindingfile org\apache\axis2\axis2userguide\binding.xml -s</pre>
+    <pre>%AXIS2_HOME%\bin\wsdl2java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d jibx -Ebindingfile org\apache\axis2\axis2userguide\binding.xml -s</pre>
   </li>
   <li>Create the client file in the org/apache/axis2/axis2userguide
   directory.</li>
@@ -374,7 +374,7 @@ files back onto it. Execute command in Code Listing 3 to generate the
 stubs.</p>
 
 <p><b>Code Listing 3: Generating the stubs</b></p>
-<pre>%AXIS2_HOME%\bin\WSDL2Java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d jibx -Ebindingfile org\apache\axis2\axis2userguide\binding.xml -s</pre>
+<pre>%AXIS2_HOME%\bin\wsdl2java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d jibx -Ebindingfile org\apache\axis2\axis2userguide\binding.xml -s</pre>
 
 <p>Create the client file, Client.java, in the
 org/apache/axis2/axis2userguide directory. Add the following code in Code
