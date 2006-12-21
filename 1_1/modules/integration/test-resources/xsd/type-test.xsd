@@ -1,66 +1,19 @@
 <?xml version="1.0" ?>
 <!--
-/*
- * Copyright 2001-2004 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
- -->
-<!-- 
-1st Draft release (27/10/2005)
-1. Removed all Meter and Revenue specific objects.
-2. Renamed all "ED" to "Meter".
-3. Moved <DayLastPurchase> element from <CustDetail> complex type to a new complex type <CustVendDetail>. <CustVendDetail> extends <CustDetail>.	
-4. Added generic STS business rule exceptions.
-5. Removed <header> enumeration.
-6. Created abstract <DeviceID> and <EANDeviceID> as a extension.
-7. Replaced <Token> with <CreditTokenTx> for <VerifyResp>.
-8. <ClientStatus> now associated with <BaseVendResp>.
-9.<CustVendDetail> now associated with <BaseVendResp>
-10. Removed <CreditUpdate> from <ClientStatus>.
-11. Login and Logout message pairs removed.
-28/10/2005	
-12. <CreditStatus> removed, <availCredit> element added to <ClientStatus>.
-13. <ean> changed to an attribute.
-14. <terminalID> <id> changed to attribute.
-15. <msgID> changed to attribute.
-16. <MsgIDUniqueNumber> datatype change"postiveInteger"
-7/11/2005
-17. <header> renamed to <dispHeader> and made optional.'
-18. corrected naming convention for <Currency>.
-10/11/2005
-19. Added <respDateTime> to <BaseResp>.	
-20. Renamed <CustomerIdentifier> to <CustIdentifier>.	
-21. Rename <customerMsg> to <custMsg>
-22. <TAX>, <amt> made mandatory.
-23. <XMLVendFault> renamed to <XMLVendFaultEx>.
-24. <LastestKRNEx> corrected to <LatestKRNEx>
-16/11/2005
-25. Added <desc> to <MeterSpecificTokenIssue> complex type.
-26. Added the following <CreditVendTokenIssue> specialisations, <SaleTokenIssue>, <FBETokenIssue>, <MCTTokenIssue> and <FreeToKenIssue>. This enables more than one type of token to be returned.
-27. Updated <KCTokenIssue> to be a specialisation of <MeterSpecificEngTokenIssue> and not <MeterSpecificTokenIssue>.
-28. <Currency>, <value> changed to an attribute.
-29. <UtilityDetail>, all sub elements made attributes.
-30. <VendorDetail>, all sub elements made attributes.
-31. Created <Units> complex type, update <CreditTokenIssue> with it.
-32. <CustDetail>, all sub elements made attributes.
-33. <CustVendDetail> sub elements made attributes.
-34. <MeterDetail>, <ExtMeterDetail>, <MeterType>, sub element made attributes.	
-35. <track2Data> made "required" in <ExtMeterDetail> complex type.
-36. <KCTData>, sub elements made attributes.
-22/11/2005	
-37. <MSNO> regular expression updated to (\S){3,13} 	
--->
+  ~ Copyright 2004,2005 The Apache Software Foundation.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema"
 	targetNamespace="http://www.nrs.eskom.co.za/xmlvend/base/2.0/schema"
 	xmlns:i0="http://www.nrs.eskom.co.za/xmlvend/base/2.0/schema" elementFormDefault="qualified"
