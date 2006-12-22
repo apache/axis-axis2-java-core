@@ -658,7 +658,7 @@ public class SchemaCompiler {
                     //set a name
                     referenceSchemaType.setName(generatedTypeName.getLocalPart());
 
-                    writeComplexType((XmlSchemaComplexType)referenceSchemaType,
+                    String javaclassName =  writeComplexType((XmlSchemaComplexType) referenceSchemaType,
                             (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(referencedElement)
                     );
                     //remove the reference from the anon list since we named the type
@@ -667,10 +667,8 @@ public class SchemaCompiler {
 
                     //processedAnonymousComplexTypesMap.remove(referencedElement);
 
-                    //add this to the processed ref type map
-                    String fullyQualifiedClassName = writer.makeFullyQualifiedClassName(generatedTypeName);
-                    processedTypemap.put(generatedTypeName, fullyQualifiedClassName);
-                    this.processedElementRefMap.put(referenceEltQName, fullyQualifiedClassName);
+                    processedTypemap.put(generatedTypeName, javaclassName);
+                    this.processedElementRefMap.put(referenceEltQName, javaclassName);
                 }
             }
             // schema type name is present but not the schema type object
@@ -930,10 +928,11 @@ public class SchemaCompiler {
      * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
      * @throws SchemaCompilationException
      */
-    private void writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder)
+    private String writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException {
-        writer.write(complexType, processedTypemap, metaInfHolder);
+        String javaClassName = writer.write(complexType, processedTypemap, metaInfHolder);
         processedTypeMetaInfoMap.put(complexType.getQName(),metaInfHolder);
+        return javaClassName;
     }
 
     /**
