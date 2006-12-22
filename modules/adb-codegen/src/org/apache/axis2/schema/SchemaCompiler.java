@@ -6,57 +6,14 @@ import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
-import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.SchemaUtil;
+import org.apache.axis2.util.URLProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaAll;
-import org.apache.ws.commons.schema.XmlSchemaAny;
-import org.apache.ws.commons.schema.XmlSchemaAnyAttribute;
-import org.apache.ws.commons.schema.XmlSchemaAttribute;
-import org.apache.ws.commons.schema.XmlSchemaChoice;
-import org.apache.ws.commons.schema.XmlSchemaComplexContent;
-import org.apache.ws.commons.schema.XmlSchemaComplexContentExtension;
-import org.apache.ws.commons.schema.XmlSchemaComplexContentRestriction;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaContent;
-import org.apache.ws.commons.schema.XmlSchemaContentModel;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaInclude;
-import org.apache.ws.commons.schema.XmlSchemaLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxExclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxInclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinExclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinInclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
-import org.apache.ws.commons.schema.XmlSchemaObjectTable;
-import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaPatternFacet;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContent;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContentExtension;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContentRestriction;
-import org.apache.ws.commons.schema.XmlSchemaSimpleType;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeList;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeUnion;
-import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -658,8 +615,8 @@ public class SchemaCompiler {
                     //set a name
                     referenceSchemaType.setName(generatedTypeName.getLocalPart());
 
-                    writeComplexType((XmlSchemaComplexType)referenceSchemaType,
-                            (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(referencedElement)
+                    String javaclassName =  writeComplexType((XmlSchemaComplexType) referenceSchemaType,
+                            (BeanWriterMetaInfoHolder) processedAnonymousComplexTypesMap.get(referencedElement)
                     );
                     //remove the reference from the anon list since we named the type
                     // DEEPAL :- We can not remove the entry from the hashtable ,
@@ -667,10 +624,8 @@ public class SchemaCompiler {
 
                     //processedAnonymousComplexTypesMap.remove(referencedElement);
 
-                    //add this to the processed ref type map
-                    String fullyQualifiedClassName = writer.makeFullyQualifiedClassName(generatedTypeName);
-                    processedTypemap.put(generatedTypeName, fullyQualifiedClassName);
-                    this.processedElementRefMap.put(referenceEltQName, fullyQualifiedClassName);
+                    processedTypemap.put(generatedTypeName, javaclassName);
+                    this.processedElementRefMap.put(referenceEltQName, javaclassName);
                 }
             }
             // schema type name is present but not the schema type object
@@ -930,10 +885,11 @@ public class SchemaCompiler {
      * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
      * @throws SchemaCompilationException
      */
-    private void writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder)
+    private String writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException {
-        writer.write(complexType, processedTypemap, metaInfHolder);
-        processedTypeMetaInfoMap.put(complexType.getQName(),metaInfHolder);
+        String javaClassName = writer.write(complexType, processedTypemap, metaInfHolder);
+        processedTypeMetaInfoMap.put(complexType.getQName(), metaInfHolder);
+        return javaClassName;
     }
 
     /**
