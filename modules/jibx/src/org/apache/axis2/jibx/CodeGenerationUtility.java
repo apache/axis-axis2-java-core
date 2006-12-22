@@ -649,7 +649,7 @@ public class CodeGenerationUtility {
         wrapdetail.setAttribute("ns", qname.getNamespaceURI());
         wrapdetail.setAttribute("name", qname.getLocalPart());
         
-        // dig down to the sequence
+        // dig down to the complexType particle
         List partNameList = new ArrayList();
         String wrappertype = "";
         boolean nons = qname.getNamespaceURI().length() == 0;
@@ -662,152 +662,164 @@ public class CodeGenerationUtility {
                     qname + ": attributes not allowed on type to be unwrapped");
             }
             XmlSchemaParticle particle = ctype.getParticle();
-            if (!(particle instanceof XmlSchemaSequence)) {
-                throw new RuntimeException("Cannot unwrap element " +
-                    qname + ": type to be unwrapped must be a sequence");
-            }
-            if (particle.getMinOccurs() != 1 || particle.getMaxOccurs() != 1) {
-                throw new RuntimeException("Cannot unwrap element " +
-                    qname + ": contained sequence must have minOccurs='1' and maxOccurs='1'");
-            }
-            XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
-            
-            // add child param element matching each child of wrapper element
-            QName opName = ((AxisOperation)msg.getParent()).getName();
-            XmlSchemaObjectCollection items = sequence.getItems();
-            for (Iterator iter = items.getIterator(); iter.hasNext();) {
+            if (particle != null) {
                 
-                // check that child item obeys the unwrapping rules
-                XmlSchemaParticle item = (XmlSchemaParticle)iter.next();
-                if (!(item instanceof XmlSchemaElement)) {
+                // if there's a particle present, it must be a sequence
+                if (!(particle instanceof XmlSchemaSequence)) {
                     throw new RuntimeException("Cannot unwrap element " +
-                        qname + ": only element items allowed in seqence");
+                        qname + ": type to be unwrapped must be a sequence");
                 }
-                XmlSchemaElement element = (XmlSchemaElement)item;
-                QName typename = element.getSchemaTypeName();
-                if (typename == null) {
+                if (particle.getMinOccurs() != 1 || particle.getMaxOccurs() != 1) {
                     throw new RuntimeException("Cannot unwrap element " +
-                        qname + ": all elements in contained sequence must reference a named type");
+                        qname + ": contained sequence must have minOccurs='1' and maxOccurs='1'");
                 }
+                XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
                 
-                // add element to output with details of this element handling
-                Element param = doc.createElement(isout ? "return-element" : "parameter-element");
-                QName itemname = element.getQName();
-                nons = nons || itemname.getNamespaceURI().length() == 0;
-                param.setAttribute("ns", itemname.getNamespaceURI());
-                param.setAttribute("name", itemname.getLocalPart());
-                param.setAttribute("java-name", toJavaName(itemname.getLocalPart(), nameset));
-                param.setAttribute("nillable", Boolean.toString(element.isNillable()));
-                param.setAttribute("optional", Boolean.toString(element.getMinOccurs() == 0));
-                boolean isarray = element.getMaxOccurs() > 1;
-                param.setAttribute("array", Boolean.toString(isarray));
-                String javatype;
-                if (element.getSchemaType() instanceof XmlSchemaSimpleType) {
+                // add child param element matching each child of wrapper element
+                QName opName = ((AxisOperation)msg.getParent()).getName();
+                XmlSchemaObjectCollection items = sequence.getItems();
+                boolean first = true;
+                for (Iterator iter = items.getIterator(); iter.hasNext();) {
                     
-                    // simple type translates to format element in binding
-                    FormatElement format = (FormatElement)simpleTypeMap.get(typename);
-                    if (format == null) {
+                    // check that child item obeys the unwrapping rules
+                    XmlSchemaParticle item = (XmlSchemaParticle)iter.next();
+                    if (!(item instanceof XmlSchemaElement)) {
                         throw new RuntimeException("Cannot unwrap element " +
-                            qname + ": no format definition found for type " +
-                            typename + " (used by element " + itemname + ')');
+                            qname + ": only element items allowed in seqence");
                     }
-                    javatype = format.getTypeName();
-                    param.setAttribute("form", "simple");
-                    param.setAttribute("serializer", format.getSerializerName());
-                    param.setAttribute("deserializer", format.getDeserializerName());
-                    
-                    // convert primitive types to wrapper types for nillable
-                    if (element.isNillable() && s_wrapperMap.containsKey(javatype)) {
-                        param.setAttribute("wrapped-primitive", "true");
-                        param.setAttribute("value-method", javatype + "Value");
-                        javatype = (String)s_wrapperMap.get(javatype);
-                    } else {
-                        param.setAttribute("wrapped-primitive", "false");
-                        String dflt = element.getDefaultValue();
-                        if (dflt == null) {
-                            dflt = format.getDefaultText();
-                        }
-                        if (dflt != null) {
-                            param.setAttribute("default", dflt);
-                        }
-                    }
-                    
-                } else {
-                    
-                    // complex type translates to abstract mapping in binding
-                    complex = true;
-                    MappingElement mapping = (MappingElement)complexTypeMap.get(typename);
-                    if (mapping == null) {
+                    XmlSchemaElement element = (XmlSchemaElement)item;
+                    QName typename = element.getSchemaTypeName();
+                    if (typename == null) {
                         throw new RuntimeException("Cannot unwrap element " +
-                            qname + ": no abstract mapping definition found for type " +
-                            typename + " (used by element " + itemname + ')');
+                            qname + ": all elements in contained sequence must reference a named type");
                     }
-                    Integer tindex = (Integer)typeMappedClassMap.get(typename);
-                    if (tindex == null) {
-                        tindex = new Integer(typeMappedClassMap.size());
-                        typeMappedClassMap.put(typename, tindex);
+                    if (first) {
+                        first = false;
+                    } else if (isout) {
+                        throw new RuntimeException("Cannot unwrap element " +
+                            qname + ": only one child element allowed in sequence for wrapped output");
                     }
-                    javatype = mapping.getClassName();
-                    param.setAttribute("form", "complex");
-                    param.setAttribute("type-index", tindex.toString());
                     
-                    // merge contained namespace definitions into set for operation
-                    Iterator citer = mapping.topChildIterator();
-                    while (citer.hasNext()) {
-                        ElementBase child = (ElementBase)citer.next();
-                        if (child.type() == ElementBase.NAMESPACE_ELEMENT) {
-                            dfltns = mapNamespace((NamespaceElement)child, dfltns, nsmap);
+                    // add element to output with details of this element handling
+                    Element param = doc.createElement(isout ? "return-element" : "parameter-element");
+                    QName itemname = element.getQName();
+                    nons = nons || itemname.getNamespaceURI().length() == 0;
+                    param.setAttribute("ns", itemname.getNamespaceURI());
+                    param.setAttribute("name", itemname.getLocalPart());
+                    param.setAttribute("java-name", toJavaName(itemname.getLocalPart(), nameset));
+                    param.setAttribute("nillable", Boolean.toString(element.isNillable()));
+                    param.setAttribute("optional", Boolean.toString(element.getMinOccurs() == 0));
+                    boolean isarray = element.getMaxOccurs() > 1;
+                    param.setAttribute("array", Boolean.toString(isarray));
+                    String javatype;
+                    if (element.getSchemaType() instanceof XmlSchemaSimpleType) {
+                        
+                        // simple type translates to format element in binding
+                        FormatElement format = (FormatElement)simpleTypeMap.get(typename);
+                        if (format == null) {
+                            throw new RuntimeException("Cannot unwrap element " +
+                                qname + ": no format definition found for type " +
+                                typename + " (used by element " + itemname + ')');
+                        }
+                        javatype = format.getTypeName();
+                        param.setAttribute("form", "simple");
+                        param.setAttribute("serializer", format.getSerializerName());
+                        param.setAttribute("deserializer", format.getDeserializerName());
+                        
+                        // convert primitive types to wrapper types for nillable
+                        if (element.isNillable() && s_wrapperMap.containsKey(javatype)) {
+                            param.setAttribute("wrapped-primitive", "true");
+                            param.setAttribute("value-method", javatype + "Value");
+                            javatype = (String)s_wrapperMap.get(javatype);
                         } else {
-                           break;
+                            param.setAttribute("wrapped-primitive", "false");
+                            String dflt = element.getDefaultValue();
+                            if (dflt == null) {
+                                dflt = format.getDefaultText();
+                            }
+                            if (dflt != null) {
+                                param.setAttribute("default", dflt);
+                            }
+                        }
+                        
+                    } else {
+                        
+                        // complex type translates to abstract mapping in binding
+                        complex = true;
+                        MappingElement mapping = (MappingElement)complexTypeMap.get(typename);
+                        if (mapping == null) {
+                            throw new RuntimeException("Cannot unwrap element " +
+                                qname + ": no abstract mapping definition found for type " +
+                                typename + " (used by element " + itemname + ')');
+                        }
+                        Integer tindex = (Integer)typeMappedClassMap.get(typename);
+                        if (tindex == null) {
+                            tindex = new Integer(typeMappedClassMap.size());
+                            typeMappedClassMap.put(typename, tindex);
+                        }
+                        javatype = mapping.getClassName();
+                        param.setAttribute("form", "complex");
+                        param.setAttribute("type-index", tindex.toString());
+                        
+                        // merge contained namespace definitions into set for operation
+                        Iterator citer = mapping.topChildIterator();
+                        while (citer.hasNext()) {
+                            ElementBase child = (ElementBase)citer.next();
+                            if (child.type() == ElementBase.NAMESPACE_ELEMENT) {
+                                dfltns = mapNamespace((NamespaceElement)child, dfltns, nsmap);
+                            } else {
+                               break;
+                            }
+                        }
+                        
+                        // also merge namespace definitions from binding
+                        BindingElement binding = (BindingElement)bindingMap.get(mapping);
+                        citer = binding.topChildIterator();
+                        while (citer.hasNext()) {
+                            ElementBase child = (ElementBase)citer.next();
+                            if (child.type() == ElementBase.NAMESPACE_ELEMENT) {
+                                dfltns = mapNamespace((NamespaceElement)child, dfltns, nsmap);
+                            } else if (child.type() != ElementBase.INCLUDE_ELEMENT) {
+                               break;
+                            }
                         }
                     }
+                    param.setAttribute("java-type", javatype);
+                    boolean isobj = !s_primitiveSet.contains(javatype);
+                    String fulltype = javatype;
+                    if (isarray) {
+                        fulltype += "[]";
+                        isobj = false;
+                    }
+                    param.setAttribute("object", Boolean.toString(isobj));
+                    if (isout) {
+                        wrappertype = fulltype;
+                    } else {
+                        wrappertype = "java.lang.Object";
+                    }
+                    wrapdetail.appendChild(param);
                     
-                    // also merge namespace definitions from binding
-                    BindingElement binding = (BindingElement)bindingMap.get(mapping);
-                    citer = binding.topChildIterator();
-                    while (citer.hasNext()) {
-                        ElementBase child = (ElementBase)citer.next();
-                        if (child.type() == ElementBase.NAMESPACE_ELEMENT) {
-                            dfltns = mapNamespace((NamespaceElement)child, dfltns, nsmap);
-                        } else if (child.type() != ElementBase.INCLUDE_ELEMENT) {
-                           break;
-                        }
-                    }
+                    // this magic code comes from org.apache.axis2.wsdl.codegen.extension.SchemaUnwrapperExtension
+                    //  it's used here to fit into the ADB-based code generation model
+                    QName partqname = WSDLUtil.getPartQName(opName.getLocalPart(),
+                        WSDLConstants.INPUT_PART_QNAME_SUFFIX, itemname.getLocalPart());
+                    partNameList.add(partqname);
+                    
+                    // add type mapping so we look like ADB
+                    codeGenConfig.getTypeMapper().addTypeMappingName(partqname, fulltype);
                 }
-                param.setAttribute("java-type", javatype);
-                boolean isobj = !s_primitiveSet.contains(javatype);
-                String fulltype = javatype;
-                if (isarray) {
-                    fulltype += "[]";
-                    isobj = false;
-                }
-                param.setAttribute("object", Boolean.toString(isobj));
-                if (isout) {
-                    wrappertype = fulltype;
-                } else {
-                    wrappertype = "java.lang.Object";
-                }
-                wrapdetail.appendChild(param);
                 
-                // this magic code comes from org.apache.axis2.wsdl.codegen.extension.SchemaUnwrapperExtension
-                //  it's used here to fit into the ADB-based code generation model
-                QName partqname = WSDLUtil.getPartQName(opName.getLocalPart(),
-                    WSDLConstants.INPUT_PART_QNAME_SUFFIX, itemname.getLocalPart());
-                partNameList.add(partqname);
+                // check namespace prefix usage
+                if (nons && dfltns) {
+                    throw new RuntimeException("Cannot unwrap element " + qname +
+                        ": no-namespace element(s) conflict with default namespace use in binding");
+                }
+                wrapdetail.setAttribute("uses-default", Boolean.toString(nons));
                 
-                // add type mapping so we look like ADB
-                codeGenConfig.getTypeMapper().addTypeMappingName(partqname, fulltype);
+                // set flag for namespace declarations needed on wrapper
+                wrapdetail.setAttribute("need-namespaces", Boolean.toString(complex));
+                
             }
-            
-            // check namespace prefix usage
-            if (nons && dfltns) {
-                throw new RuntimeException("Cannot unwrap element " + qname +
-                    ": no-namespace element(s) conflict with default namespace use in binding");
-            }
-            wrapdetail.setAttribute("uses-default", Boolean.toString(nons));
-            
-            // set flag for namespace declarations needed on wrapper
-            wrapdetail.setAttribute("need-namespaces", Boolean.toString(complex));
             
         } else if (type != null) {
             throw new RuntimeException("Cannot unwrap element " + qname +
