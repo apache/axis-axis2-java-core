@@ -206,7 +206,7 @@ engine knows where to place the handler in different "flows" ( inFlow,
 outFlow, etc.). Following xml lines show the respective changes made to the
 "axis2.xml" in order to deploy this logging module in the Axis2 engine. This
 is an extract of the phase section of "axis2.xml".</p>
-<pre>&lt;!-- ================================================= --&gt;
+<p><pre>&lt;!-- ================================================= --&gt;
 &lt;!-- Phases --&gt;
 &lt;!-- ================================================= --&gt;
 
@@ -242,7 +242,7 @@ is an extract of the phase section of "axis2.xml".</p>
         &lt;!--  System pre defined phases       --&gt;
         &lt;!--   After Postdispatch phase module author or service author can add any phase he wants      --&gt;
         &lt;phase name="OperationInPhase"/&gt;
-        &lt;phase name="<span style="color: rgb(36, 193, 19);">loggingPhase</span>"/&gt;
+		&lt;phase name="<span style="color: rgb(36, 193, 19);">loggingPhase</span>"/&gt;
     &lt;/phaseOrder&gt;
     &lt;phaseOrder type="outflow"&gt;
         &lt;!--      user can add his own phases to this area  --&gt;
@@ -265,7 +265,7 @@ is an extract of the phase section of "axis2.xml".</p>
         &lt;phase name="PolicyDetermination"/&gt;
         &lt;phase name="MessageOut"/&gt;
     &lt;/phaseOrder&gt;
-    </pre>
+    </pre></p>
 
 <p>The text in green, the custom phase "loggingPhase" is placed in all the
 flows, hence that phase will be called in all the message flows in the
@@ -289,7 +289,7 @@ but with the similar operations.</p>
 "<strong>Axis2_HOME/samples/userguide/src/userguide/example2</strong>"
 directory. The simple changes that we have done to "services.xml' are shown
 in green in the following lines of xml.</p>
-<pre>&lt;service name="<span style="color: rgb(36, 193, 19);">MyServiceWithModule</span>"&gt;
+<p><pre>&lt;service name="<span style="color: rgb(36, 193, 19);">MyServiceWithModule</span>"&gt;
     &lt;description&gt;
     This is a sample Web service with a logging module engaged.
     &lt;/description&gt;
@@ -301,7 +301,7 @@ in green in the following lines of xml.</p>
     &lt;operation name="ping"&gt;
     &lt;messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/&gt;
     &lt;/operation&gt;
-&lt;/service&gt;</pre>
+&lt;/service&gt;</pre></p>
 
 <p>In this example we have changed the service name (the implementation class
 is very similar to what we have used earlier although it is in a different
