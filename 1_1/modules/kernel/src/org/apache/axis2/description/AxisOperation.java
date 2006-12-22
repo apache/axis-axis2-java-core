@@ -387,19 +387,26 @@ public abstract class AxisOperation extends AxisDescription
 
         if (WSDL20_2004Constants.MEP_URI_IN_OUT.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_IN_OUT;
-        } else if (WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mepURI)) {
+        } else
+        if (WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY;
-        } else if (WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
+        } else
+        if (WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_IN_OPTIONAL_OUT;
-        } else if (WSDL20_2004Constants.MEP_URI_OUT_IN.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mepURI)) {
+        } else
+        if (WSDL20_2004Constants.MEP_URI_OUT_IN.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_OUT_IN;
-        } else if (WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(mepURI)) {
+        } else
+        if (WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_OUT_ONLY;
-        } else if (WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
+        } else
+        if (WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_OUT_OPTIONAL_IN;
-        } else if (WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
+        } else
+        if (WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY;
-        } else if (WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
+        } else
+        if (WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
             temp = WSDL20_2004Constants.MEP_CONSTANT_ROBUST_OUT_ONLY;
         }
 
@@ -518,7 +525,7 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     /**
-     * 
+     *
      */
     public OperationClient createClient(ServiceContext sc, Options options) {
         throw new UnsupportedOperationException(Messages.getMessage("mepnotyetimplemented", mepURI));
@@ -536,22 +543,12 @@ public abstract class AxisOperation extends AxisDescription
         faultMessages.add(faultMessage);
     }
 
-    public String getSoapAction() {
-        return soapAction;
-    }
-
     public void setSoapAction(String soapAction) {
         this.soapAction = soapAction;
     }
 
     public String getInputAction() {
-        String result = this.soapAction;
-        if (result == null || "".equals(result)) {
-            if (wsamappingList != null && !wsamappingList.isEmpty()) {
-                result = wsamappingList.get(0).toString();
-            }
-        }
-        return result;
+        return soapAction;
     }
 
     public String getOutputAction() {
