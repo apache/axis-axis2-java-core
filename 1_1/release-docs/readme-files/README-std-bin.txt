@@ -14,12 +14,13 @@ The lib directory contains;
 3. axis2-codegen-@axisVersion@.jar
 4. axis2-java2wsdl-@axisVersion@.jar
 5. axis2-jibx-@axisVersion@.jar
-6. axis2-kernel-@axisVersion@.jar
-7. axis2-spring-@axisVersion@.jar
-8. axis2-tools-@axisVersion@.jar
-9. axis2-xmlbeans-@axisVersion@.jar
-10. axis2-saaj-@axisVersion@.jar
-11. axis2-soapmonitor-@axisVersion@.jar
+6. axis2-jaxbri-@axisVersion@.jar
+7. axis2-kernel-@axisVersion@.jar
+8. axis2-spring-@axisVersion@.jar
+9. axis2-tools-@axisVersion@.jar
+10. axis2-xmlbeans-@axisVersion@.jar
+11. axis2-saaj-@axisVersion@.jar
+12. axis2-soapmonitor-@axisVersion@.jar
 
 and all 3rd party distributable dependencies of the above jars.
 
