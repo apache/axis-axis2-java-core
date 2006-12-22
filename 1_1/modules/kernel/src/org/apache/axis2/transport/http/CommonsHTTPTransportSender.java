@@ -298,7 +298,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                     soapActionString = messageContext.getWSAAction();
                     if (messageContext.getAxisOperation() != null && ((soapActionString == null) || (soapActionString.length() == 0))) {
                         // last option is to get it from the axis operation
-                        soapActionString = messageContext.getAxisOperation().getInputAction();
+                        soapActionString = messageContext.getAxisOperation().getSoapAction();
                     }
                 }
 

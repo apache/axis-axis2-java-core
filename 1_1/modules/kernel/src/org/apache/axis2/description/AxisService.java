@@ -381,7 +381,7 @@ public class AxisService extends AxisDescription {
             axisOperation.setMessageReceiver(
                     loadDefaultMessageReceiver(axisOperation.getMessageExchangePattern(), this));
         }
-        if (axisOperation.getInputAction() == null) {
+        if (axisOperation.getSoapAction() == null) {
             axisOperation.setSoapAction("urn:" + axisOperation.getName().getLocalPart());
         }
         addChild(axisOperation);
@@ -406,7 +406,7 @@ public class AxisService extends AxisDescription {
 
         mapActionToOperation(operationName, axisOperation);
 
-        String action = axisOperation.getInputAction();
+        String action = axisOperation.getSoapAction();
         if (action.length() > 0) {
             mapActionToOperation(action, axisOperation);
         }
