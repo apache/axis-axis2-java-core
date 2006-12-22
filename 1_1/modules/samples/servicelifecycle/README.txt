@@ -39,7 +39,7 @@ And then follow the instructions as mentioned in the console.
 
 Advanced Guide
 ==============
-For more details kindly see doc/servicelifecycleguide.html
+For more details kindly see docs/servicelifecycleguide.html
 
 Help
 ====
