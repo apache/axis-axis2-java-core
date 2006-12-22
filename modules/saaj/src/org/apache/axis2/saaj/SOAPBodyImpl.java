@@ -16,12 +16,15 @@
 package org.apache.axis2.saaj;
 
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.NamespaceImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11FaultImpl;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12FaultImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -154,7 +157,13 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
         if (isBodyElementAdded) {
             throw new SOAPException("A SOAPBodyElement has been already added to this SOAPBody");
         }
-        SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody, (SOAPFactory)this.element.getOMFactory());
+        SOAPFactory omFactory = (SOAPFactory) this.element.getOMFactory();
+        org.apache.axiom.soap.SOAPFault fault;
+        if(omFactory instanceof SOAP11Factory) {
+            fault = new SOAP11FaultImpl(omSOAPBody,  omFactory);
+        } else {
+            fault = new SOAP12FaultImpl(omSOAPBody,  omFactory);
+        }
         SOAPFaultImpl saajSOAPFault = new SOAPFaultImpl(fault);
         ((NodeImpl) omSOAPBody.getFault()).setUserData(SAAJ_NODE, saajSOAPFault, null);
         return saajSOAPFault;
@@ -413,8 +422,14 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
                 // silently replace node, as per saaj 1.2 spec
                 if (domNode instanceof ElementImpl) {
                     if (omSOAPBody.hasFault()) {
-                        SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody,
-                                (SOAPFactory) this.element.getOMFactory());
+
+                        SOAPFactory omFactory = (SOAPFactory) this.element.getOMFactory();
+                        org.apache.axiom.soap.SOAPFault fault;
+                        if(omFactory instanceof SOAP11Factory) {
+                            fault = new SOAP11FaultImpl(omSOAPBody,  omFactory);
+                        } else {
+                            fault = new SOAP12FaultImpl(omSOAPBody,  omFactory);
+                        }
                         SOAPFaultImpl saajSOAPFault = new SOAPFaultImpl(fault);
                         ((NodeImpl) omSOAPBody.getFault()).setUserData(SAAJ_NODE, saajSOAPFault, null);
                         childElements.add(saajSOAPFault);

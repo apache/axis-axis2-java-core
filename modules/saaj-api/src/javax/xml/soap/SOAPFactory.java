@@ -15,6 +15,9 @@
  */
 package javax.xml.soap;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * <code>SOAPFactory</code> is a factory for creating various objects
  * that exist in the SOAP XML tree.
@@ -145,13 +148,20 @@ public abstract class SOAPFactory {
     }
 
     public static SOAPFactory newInstance(String s) throws SOAPException {
-
-        try {
-            return (SOAPFactory) Class.forName(s).newInstance();
-        } catch (Exception exception) {
-            throw new SOAPException("Unable to create SOAP Factory: "
-                    + exception.getMessage());
+        SOAPFactory factory = newInstance();
+        if (factory.getClass().getName().equals(DEFAULT_SF)) {
+            try {
+                Method m = factory.getClass().getMethod("setSOAPVersion", new Class[]{String.class});
+                m.invoke(factory, new Object[]{s});
+            } catch (IllegalAccessException e) {
+                throw new SOAPException(e);
+            } catch (InvocationTargetException e) {
+                throw new SOAPException(e);
+            } catch (NoSuchMethodException e) {
+                throw new SOAPException(e);
+            }
         }
+        return factory;
     }
 
     public SOAPElement createElement(org.w3c.dom.Element element)

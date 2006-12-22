@@ -18,6 +18,8 @@ package javax.xml.soap;
 
 import javax.xml.transform.dom.DOMResult;
 
+import org.w3c.dom.*;
+
 public class SAAJResult extends DOMResult {
 
     public SAAJResult()
@@ -39,6 +41,14 @@ public class SAAJResult extends DOMResult {
     }
 
     public javax.xml.soap.Node getResult() {
-        return (javax.xml.soap.Node) super.getNode().getFirstChild();
+        org.w3c.dom.Node node = super.getNode();
+        if(node instanceof SOAPPart){
+            try {
+                return ((SOAPPart)node).getEnvelope();
+            } catch (SOAPException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return (javax.xml.soap.Node) node.getFirstChild();
     }
 }

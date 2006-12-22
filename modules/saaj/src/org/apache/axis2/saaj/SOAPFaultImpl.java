@@ -22,6 +22,7 @@ import org.apache.axiom.soap.SOAPFaultReason;
 import org.apache.axiom.soap.SOAPFaultRole;
 import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPFaultValue;
+import org.apache.axiom.soap.SOAPFaultDetail;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
@@ -29,6 +30,8 @@ import org.apache.axiom.soap.impl.dom.soap11.SOAP11FaultDetailImpl;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11FaultReasonImpl;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11FaultRoleImpl;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11FaultTextImpl;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12FaultDetailImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -186,8 +189,15 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
                                     "Please remove the existing Detail element before " +
                                     "calling addDetail()");
         }
-        SOAP11FaultDetailImpl omDetail = new SOAP11FaultDetailImpl(this.fault,
-                (SOAPFactory) this.element.getOMFactory());
+        SOAPFaultDetail omDetail;
+        SOAPFactory factory = (SOAPFactory) this.element.getOMFactory();
+        if (factory instanceof SOAP11Factory) {
+            omDetail = new SOAP11FaultDetailImpl(this.fault,
+                    factory);
+        } else {
+            omDetail = new SOAP12FaultDetailImpl(this.fault,
+                    factory);
+        }
         Detail saajDetail = new DetailImpl(omDetail);
         ((NodeImpl) fault.getDetail()).setUserData(SAAJ_NODE, saajDetail, null);
         isDetailAdded = true;

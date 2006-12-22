@@ -21,6 +21,8 @@ import org.apache.axiom.om.impl.dom.NodeImpl;
 import org.apache.axiom.om.impl.dom.TextImpl;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11BodyImpl;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderImpl;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12HeaderImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -154,10 +156,18 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
     public SOAPHeader addHeader() throws SOAPException {
         org.apache.axiom.soap.SOAPHeader header = omSOAPEnvelope.getHeader();
         if (header == null) {
-            header = new SOAP11HeaderImpl(omSOAPEnvelope,
-                    (SOAPFactory) this.element.getOMFactory());
-            SOAPHeaderImpl saajSOAPHeader = new SOAPHeaderImpl(header);
-            saajSOAPHeader.setParentElement(this);
+            SOAPHeaderImpl saajSOAPHeader;
+            if(this.element.getOMFactory() instanceof SOAP11Factory) {
+                header = new SOAP11HeaderImpl(omSOAPEnvelope,
+                        (SOAPFactory) this.element.getOMFactory());
+                saajSOAPHeader = new SOAPHeaderImpl(header);
+                saajSOAPHeader.setParentElement(this);
+            } else {
+                header = new SOAP12HeaderImpl(omSOAPEnvelope,
+                        (SOAPFactory) this.element.getOMFactory());
+                saajSOAPHeader = new SOAPHeaderImpl(header);
+                saajSOAPHeader.setParentElement(this);
+            }
             ((NodeImpl) omSOAPEnvelope.getHeader()).setUserData(SAAJ_NODE, saajSOAPHeader, null);
             return saajSOAPHeader;
         } else {
