@@ -24,7 +24,7 @@
   <!--read in project properties, including library versions-->
   <property file="etc/project.properties"/>
 
-  
+  <property environment="env"/>
   
   <target name="default">
 
@@ -33,20 +33,36 @@
   <target name="init" >
     <!--macro for maven -->
     <property name="maven.commoncmd" value="--emacs" />
-    <condition property="maven.line" 
+
+    <condition property="maven.executable" value="cmd.exe">
+      <os family="windows" />
+    </condition>
+
+    <condition property="maven.line1" value="/c ${env.MAVEN_HOME}/bin/maven.bat">
+      <os family="windows" />
+    </condition>
+
+    <condition property="maven.line2" 
         value="--offline ${maven.commoncmd}">
       <istrue value="${offline}"/>
     </condition>
-
-    <condition property="maven.executable" value="maven.bat">
-      <os family="windows" />
+    
+    <condition property="maven.line3" 
+        value="-Dmaven.test.skip=true">
+      <istrue value="${skip}"/>
     </condition>
+
     <property name="maven.executable" value="maven" />
+	<property name="maven.line1" value="" />
+	<property name="maven.line2" value="" />
+	<property name="maven.line3" value="" />
 
     <property name="maven.line" value="${maven.commoncmd}" />
     <presetdef name="maven">
       <exec failonerror="true" executable="${maven.executable}">
-       <arg line="${maven.line}" />
+       <arg line="${maven.line1}" />
+       <arg line="${maven.line2}" />
+       <arg line="${maven.line3}" />
       </exec>
     </presetdef>
 
@@ -79,6 +95,13 @@
     </maven>
   </target>
 
+  <target name="jar" depends="init"
+      description="run jar target">
+    <maven>
+      <arg value="jar"/>
+    </maven>
+  </target>
+
   <target name="dist" depends="init"
       description="make a distribution">
     <maven>
@@ -89,13 +112,15 @@
       description="make a distribution, skip testing">
     <maven>
       <arg value="-Dmaven.test.skip=true" />
+      <arg value="-o" />
+      <arg value="jar" />
     </maven>
   </target>
 
-  <target name="create-lib" unless="jars.present" depends="init"
+  <target name="download-libs" unless="jars.present" depends="init"
       description="creates the libraries">
     <maven>
-      <arg value="create-lib" />
+      <arg value="download-libs" />
     </maven>
   </target>
 
@@ -201,7 +226,7 @@
     description="locally installed"
     depends="dist-lite,m2-install" />
 
-  <target name="quick" depends="create-lib"
+  <target name="quick" depends="download-libs"
       description="make a distribution">
     <mkdir dir="${basedir}/target/classes/"/>
     <path id="classpath">
