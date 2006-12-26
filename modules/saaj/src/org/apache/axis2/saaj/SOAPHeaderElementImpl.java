@@ -99,11 +99,11 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
     }
 
     public void setRole(String s) throws SOAPException {
-        //TODO - Not yet implemented
+        this.headerElem.setRole(s);
     }
 
     public String getRole() {
-        return null;  //TODO - Not yet implemented
+        return this.headerElem.getRole();
     }
 
     public void setRelay(boolean flag) throws SOAPException {

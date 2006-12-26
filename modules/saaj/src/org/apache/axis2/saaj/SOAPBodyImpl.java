@@ -226,8 +226,14 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
      * @throws SOAPException if there is a SOAP error
      */
     public SOAPFault addFault(Name faultCode, String faultString, Locale locale) throws SOAPException {
-        SOAP11FaultImpl fault = new SOAP11FaultImpl(omSOAPBody, new Exception(
-                faultString), (SOAPFactory) this.element.getOMFactory());
+        org.apache.axiom.soap.SOAPFault fault;
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+            fault = new SOAP11FaultImpl(omSOAPBody, new Exception(
+                    faultString), (SOAPFactory) this.element.getOMFactory());
+        } else {
+            fault = new SOAP12FaultImpl(omSOAPBody, new Exception(
+                    faultString), (SOAPFactory) this.element.getOMFactory());
+        }
         SOAPFaultImpl faultImpl = new SOAPFaultImpl(fault);
         faultImpl.setFaultCode(faultCode);
         if (locale != null) {
@@ -284,19 +290,19 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
     }
 
     public SOAPBodyElement addBodyElement(QName qname) throws SOAPException {
-        return null;  //TODO - Not yet implemented
+        return null;  //TODO: Fixme.
     }
 
     public SOAPFault addFault(QName qname, String s) throws SOAPException {
-        return null;  //TODO - Not yet implemented
+        return null;  //TODO: Fixme.
     }
 
     public SOAPFault addFault(QName qname, String s, Locale locale) throws SOAPException {
-        return null;  //TODO - Not yet implemented
+        return null;  //TODO: Fixme.
     }
 
     public Document extractContentAsDocument() throws SOAPException {
-        return null;  //TODO - Not yet implemented
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     private javax.xml.soap.Node toSAAJNode(org.w3c.dom.Node node,
@@ -365,42 +371,6 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
     public Iterator getChildElements(Name name) {
         QName qName = new QName(name.getURI(), name.getLocalName());
         return getChildren(element.getChildrenWithName(qName));
-    }
-
-    public SOAPElement addAttribute(QName qname, String s) throws SOAPException {
-        return null;  //TODO - Not yet implemented
-    }
-
-    public SOAPElement addChildElement(QName qname) throws SOAPException {
-        return null;  //TODO - Not yet implemented
-    }
-
-    public QName createQName(String s, String s1) throws SOAPException {
-        return null;  //TODO - Not yet implemented
-    }
-
-    public Iterator getAllAttributesAsQNames() {
-        return null;  //TODO - Not yet implemented
-    }
-
-    public String getAttributeValue(QName qname) {
-        return null;  //TODO - Not yet implemented
-    }
-
-    public Iterator getChildElements(QName name) {
-        return null;  //TODO - Not yet implemented
-    }
-
-    public QName getElementQName() {
-        return null;  //TODO - Not yet implemented
-    }
-
-    public boolean removeAttribute(QName qname) {
-        return false;  //TODO - Not yet implemented
-    }
-
-    public SOAPElement setElementQName(QName qname) throws SOAPException {
-        return null;  //TODO - Not yet implemented
     }
 
     public Iterator getChildElements() {

@@ -138,22 +138,22 @@ public abstract class NodeImplEx extends NodeImpl implements Node {
     }
 
     public TypeInfo getSchemaTypeInfo() {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public void setIdAttribute(String name, boolean isId) throws DOMException {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public void setIdAttributeNS(String namespaceURI, String localName, boolean isId) throws DOMException {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public void setIdAttributeNode(Attr idAttr, boolean isId) throws DOMException {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 

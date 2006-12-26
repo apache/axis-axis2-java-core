@@ -260,7 +260,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     }
 
     public SOAPHeaderElement addHeaderElement(QName qname) throws SOAPException {
-        return null;  //TODO - Not yet implemented
+        return (SOAPHeaderElement) addChildElement(qname.getLocalPart(), qname.getPrefix(), qname.getNamespaceURI());
     }
 
     public SOAPHeaderElement addNotUnderstoodHeaderElement(QName qname) throws SOAPException {

@@ -406,15 +406,38 @@ public class AttachmentPartImpl extends AttachmentPart {
     }
 
     public InputStream getBase64Content() throws SOAPException {
-        return null;  //TODO - Not yet implemented
+        try {
+            if (dataHandler == null) {
+                return null;
+            }
+            return dataHandler.getInputStream();
+        } catch (IOException e) {
+            throw new SOAPException(e);
+        }
     }
 
     public InputStream getRawContent() throws SOAPException {
-        return null;  //TODO - Not yet implemented
+        try {
+            if (dataHandler == null) {
+                return null;
+            }
+            return dataHandler.getInputStream();
+        } catch (IOException e) {
+            throw new SOAPException(e);
+        }
     }
 
     public byte[] getRawContentBytes() throws SOAPException {
-        return new byte[0];  //TODO - Not yet implemented
+        if (dataHandler == null) {
+            return null;
+        }
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        try {
+            dataHandler.writeTo(bout);
+        } catch (Exception ex) {
+            throw new SOAPException(ex);
+        }
+        return bout.toByteArray();
     }
 
     public void setBase64Content(InputStream inputstream, String s) throws SOAPException {

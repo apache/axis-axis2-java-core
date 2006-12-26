@@ -105,17 +105,17 @@ public class TextImplEx extends NodeImplEx implements Text {
     }
 
     public boolean isElementContentWhitespace() {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public String getWholeText() {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public org.w3c.dom.Text replaceWholeText(String content) throws DOMException {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 

@@ -704,72 +704,72 @@ public class SOAPPartImpl extends SOAPPart {
     }
 
     public String getInputEncoding() {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public String getXmlEncoding() {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public boolean getXmlStandalone() {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public void setXmlStandalone(boolean xmlStandalone) throws DOMException {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public String getXmlVersion() {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public void setXmlVersion(String xmlVersion) throws DOMException {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public boolean getStrictErrorChecking() {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public void setStrictErrorChecking(boolean strictErrorChecking) {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public String getDocumentURI() {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public void setDocumentURI(String documentURI) {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public Node adoptNode(Node source) throws DOMException {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public DOMConfiguration getDomConfig() {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public void normalizeDocument() {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public Node renameNode(Node n, String namespaceURI, String qualifiedName) throws DOMException {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
@@ -1176,62 +1176,62 @@ public class SOAPPartImpl extends SOAPPart {
      */
 
     public String getBaseURI() {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public short compareDocumentPosition(Node arg0) throws DOMException {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public String getTextContent() throws DOMException {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public void setTextContent(String arg0) throws DOMException {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public boolean isSameNode(Node arg0) {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public String lookupPrefix(String arg0) {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public boolean isDefaultNamespace(String arg0) {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public String lookupNamespaceURI(String arg0) {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public boolean isEqualNode(Node arg0) {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public Object getFeature(String arg0, String arg1) {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public Object setUserData(String arg0, Object arg1, UserDataHandler arg2) {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
     public Object getUserData(String arg0) {
-        // TODO TODO
+        // TODO - Fixme.
         throw new UnsupportedOperationException("TODO");
     }
 
