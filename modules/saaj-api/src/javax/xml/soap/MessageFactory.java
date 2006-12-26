@@ -170,20 +170,7 @@ public abstract class MessageFactory {
 
     public static MessageFactory newInstance(String s)
             throws SOAPException {
-        MessageFactory factory = newInstance();
-        if(factory.getClass().getName().equals(DEFAULT_MESSAGE_FACTORY)){
-            try {
-                Method m = factory.getClass().getMethod("setSOAPVersion", new Class[]{String.class});
-                m.invoke(factory, new Object[]{s});
-            } catch (IllegalAccessException e) {
-                throw new SOAPException(e);
-            } catch (InvocationTargetException e) {
-                throw new SOAPException(e);
-            } catch (NoSuchMethodException e) {
-                throw new SOAPException(e);
-            }
-        }
-        return factory;
+        return SAAJMetaFactory.getInstance().newMessageFactory(s);
     }
 
     private static final String DEFAULT_MESSAGE_FACTORY =

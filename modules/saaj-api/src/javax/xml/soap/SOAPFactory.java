@@ -148,20 +148,7 @@ public abstract class SOAPFactory {
     }
 
     public static SOAPFactory newInstance(String s) throws SOAPException {
-        SOAPFactory factory = newInstance();
-        if (factory.getClass().getName().equals(DEFAULT_SF)) {
-            try {
-                Method m = factory.getClass().getMethod("setSOAPVersion", new Class[]{String.class});
-                m.invoke(factory, new Object[]{s});
-            } catch (IllegalAccessException e) {
-                throw new SOAPException(e);
-            } catch (InvocationTargetException e) {
-                throw new SOAPException(e);
-            } catch (NoSuchMethodException e) {
-                throw new SOAPException(e);
-            }
-        }
-        return factory;
+        return SAAJMetaFactory.getInstance().newSOAPFactory(s);
     }
 
     public SOAPElement createElement(org.w3c.dom.Element element)
