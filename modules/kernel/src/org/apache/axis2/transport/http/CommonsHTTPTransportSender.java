@@ -344,8 +344,4 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             throw new AxisFault(e);
         }
     }
-
-    public void writeMessageWithToOutPutStream(MessageContext msgContext,
-                                               OutputStream out) {
-    }
 }

@@ -72,10 +72,8 @@ public class HTTPTransportUtils {
             String operation = values[1];
             SOAPFactory soapFactory = new SOAP11Factory();
             SOAPEnvelope envelope = soapFactory.getDefaultEnvelope();
-//            OMNamespace omNs = soapFactory.createOMNamespace(values[0], "services");
             OMNamespace omNs = soapFactory.createOMNamespace(service.getSchematargetNamespace(),
                                                              service.getSchematargetNamespacePrefix());
-            //OMNamespace defualtNs = new OMNamespaceImpl("", null, soapFactory);
             soapFactory.createOMNamespace(service.getSchematargetNamespace(),
                                           service.getSchematargetNamespacePrefix());
             OMElement opElement = soapFactory.createOMElement(operation, omNs);

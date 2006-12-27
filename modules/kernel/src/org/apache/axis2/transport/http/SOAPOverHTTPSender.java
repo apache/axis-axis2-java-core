@@ -16,33 +16,22 @@
 
 package org.apache.axis2.transport.http;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.zip.GZIPOutputStream;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.MIMEOutputUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
 
 public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
@@ -66,8 +55,8 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         }
 
         postMethod.setPath(url.getPath());
-        postMethod.setRequestEntity(new AxisSOAPRequestEntity(dataout, chunked, msgContext,
-                charEncoding, soapActionString));
+        postMethod.setRequestEntity(new SOAPRequestEntity(dataout, chunked, msgContext,
+                charEncoding, soapActionString, format, isAllowedRetry));
 
         if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
             postMethod.setContentChunked(true);
@@ -147,144 +136,5 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         throw new AxisFault(Messages.getMessage("transportError",
                 String.valueOf(postMethod.getStatusCode()), postMethod.getResponseBodyAsString()));
-    }
-
-    public class AxisSOAPRequestEntity implements RequestEntity {
-        private boolean doingMTOM = false;
-        private boolean doingSWA = false;
-        private byte[] bytes;
-        private String charSetEnc;
-        private boolean chunked;
-        private OMElement element;
-        private MessageContext msgCtxt;
-        private String soapActionString;
-
-        public AxisSOAPRequestEntity(OMElement element, boolean chunked, MessageContext msgCtxt,
-                                     String charSetEncoding, String soapActionString) {
-            this.element = element;
-            this.chunked = chunked;
-            this.msgCtxt = msgCtxt;
-            this.doingMTOM = msgCtxt.isDoingMTOM();
-            this.doingSWA =  msgCtxt.isDoingSwA();
-            this.charSetEnc = charSetEncoding;
-            this.soapActionString = soapActionString;
-        }
-
-        private void handleOMOutput(OutputStream out, boolean doingMTOM)
-                throws XMLStreamException {
-            format.setDoOptimize(doingMTOM);
-			format.setDoingSWA(doingSWA);
-
-			if (!doingMTOM & doingSWA) {
-				 StringWriter bufferedSOAPBody = new StringWriter();
-				if (isAllowedRetry) {
-					element.serialize(bufferedSOAPBody, format);
-				} else {
-					element.serializeAndConsume(bufferedSOAPBody, format);
-				}
-				MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,out,msgCtxt.getAttachmentMap(), format);
-			} else {
-				if (isAllowedRetry) {
-					element.serialize(out, format);
-				} else {
-					element.serializeAndConsume(out, format);
-				}
-			}
-        }
-
-        public byte[] writeBytes() throws AxisFault {
-            try {
-                ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-
-                if (!doingMTOM) {
-                	// why are we creating a new OMOutputFormat
-                    OMOutputFormat format2 = new OMOutputFormat();
-					format2.setCharSetEncoding(charSetEnc);
-					if (doingSWA) {
-			            StringWriter bufferedSOAPBody = new StringWriter();
-			            element.serializeAndConsume(bufferedSOAPBody,format2);
-						MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,bytesOut,msgCtxt.getAttachmentMap(), format2);
-					} else {
-						element.serializeAndConsume(bytesOut, format2);
-					}
-                    return bytesOut.toByteArray();
-                } else {
-                    format.setCharSetEncoding(charSetEnc);
-                    format.setDoOptimize(true);
-                    element.serializeAndConsume(bytesOut, format);
-
-                    return bytesOut.toByteArray();
-                }
-            } catch (XMLStreamException e) {
-                throw new AxisFault(e);
-            } catch (FactoryConfigurationError e) {
-                throw new AxisFault(e);
-            }
-        }
-
-        public void writeRequest(OutputStream out) throws IOException {
-            Object gzip = msgCtxt.getOptions().getProperty(HTTPConstants.MC_GZIP_REQUEST);
-            if(gzip != null && JavaUtils.isTrueExplicitly(gzip) && chunked) {
-                out = new GZIPOutputStream(out);
-            }
-            try {
-                if (chunked) {
-                    this.handleOMOutput(out, doingMTOM);
-                } else {
-                    if (bytes == null) {
-                        bytes = writeBytes();
-                    }
-
-                    out.write(bytes);
-                }
-
-                if(out instanceof GZIPOutputStream){
-                    ((GZIPOutputStream)out).finish();
-                }
-                out.flush();
-            } catch (XMLStreamException e) {
-                throw new AxisFault(e);
-            } catch (FactoryConfigurationError e) {
-                throw new AxisFault(e);
-            } catch (IOException e) {
-                throw new AxisFault(e);
-            }
-        }
-
-        public long getContentLength() {
-            try {
-                if (chunked) {
-                    return -1;
-                } else {
-                    if (bytes == null) {
-                        bytes = writeBytes();
-                    }
-
-                    return bytes.length;
-                }
-            } catch (AxisFault e) {
-                return -1;
-            }
-        }
-
-        public String getContentType() {            
-        	String encoding = format.getCharSetEncoding();
-            String contentType = format.getContentType();
-
-            if (encoding != null) {
-                contentType += "; charset=" + encoding;
-            }
-
-            // action header is not mandated in SOAP 1.2. So putting it, if available
-            if (!msgCtxt.isSOAP11() && (soapActionString != null)
-                    && !"".equals(soapActionString.trim()) && ! "\"\"".equals(soapActionString.trim())) {
-                contentType = contentType + ";action=\"" + soapActionString + "\";";
-            }
-            return contentType;
-        }
-
-        public boolean isRepeatable() {
-            return true;
-        }
     }
 }
