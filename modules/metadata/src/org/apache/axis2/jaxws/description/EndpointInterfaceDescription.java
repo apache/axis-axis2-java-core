@@ -56,7 +56,36 @@ public interface EndpointInterfaceDescription {
     public abstract String getTargetNamespace();
     
     public abstract OperationDescription getOperation(Method seiMethod);
+    /**
+     * Returns all the operations matching the operation QName associated with
+     * this endpoint description. Note that if the SEI or service implementation
+     * (and thus the implicit SEI) contained JAX-WS client side async operations
+     * then they will also be returned. Use getDispatchableOperations() to
+     * return an array of operations that does not include the JAX-WS client
+     * side async operations.
+     * @see #getDispatchableOperation(QName operationQName)
+     * 
+     * @param operationQName
+     * @return
+     */
     public abstract OperationDescription[] getOperation(QName operationQName);
+    /**
+     * Returns all the dispatchable operations matching the operation QName.  A dispatchable
+     * operation is one that is NOT a JAX-WS client-side async method invocation.  That is, 
+     * method signatures of the follogin forms are filtered out of this list:
+     *   javax.xml.ws.Response<T> method(...)
+     *   java.util.concurrent.Future<?> method(..., javax.xml.ws.AsyncHandler<T>)
+     *
+     * These methods are filtered because a common use case is to use the same SEI on both the
+     * client and service implementation side, generating both the client and service implemntation code from
+     * that SEI.  If that SEI happens to contain the client-side-only 
+     * JAX-WS methods, they should be ingored on the service implemenation side.  To return all
+     * the operations, use getOperation(QName).
+     * @see #getOperation(QName operationQName)
+     * @param operationQName
+     * @return
+     */
+    public abstract OperationDescription[] getDispatchableOperation(QName operationQName);
     public abstract OperationDescription getOperation(String operationName);
     public abstract OperationDescription[] getOperations();
     public abstract OperationDescription[] getOperationForJavaMethod(String javaMethodName);

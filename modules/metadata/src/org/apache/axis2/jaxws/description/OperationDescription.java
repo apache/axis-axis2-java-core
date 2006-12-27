@@ -68,14 +68,39 @@ public interface OperationDescription {
     
     public String getJavaMethodName();
     public String[] getJavaParameters();
+    // TODO: Fix up the difference between getSEIMethod and getMethodFromServiceImpl when java reflection is removed.
+    /**
+     * Client side and non-DBC service side only! Return the SEI method for which a service.getPort(Class SEIClass) created
+     * the EndpointDescriptionInterface and the associated OperationDescriptions.  Returns null on the
+     * service implementation side. 
+     * @return
+     */
     public Method getSEIMethod();
+    /**
+     * Service implementation side only!  Given a service implementation class, find the method
+     * on that class that corresponds to this operation description.  This is necessary because on
+     * the service impl side, the OperationDescriptions can be built using byte-scanning and without the
+     * class actually having been loaded.
+     * @param serviceImpl
+     * @return
+     */
+    public Method getMethodFromServiceImpl(Class serviceImpl);
+    
+    /**
+     * Answer if this operation corresponds to the JAX-WS Client-only async methods.  These methods
+     * are of the form:
+     *   javax.xml.ws.Response<T> method(...)
+     *   java.util.concurrent.Future<?> method(..., javax.xml.ws.AsyncHandler<T>)
+     *
+     * @return
+     */
+    public boolean isJAXWSAsyncClientMethod(); 
     
     public QName getName();
     public String getOperationName();
     public String getAction();
     public boolean isOneWay();
     public boolean isExcluded();
-    public boolean isAsync();
     public boolean isOperationReturningResult();
 
     public String getResultName();
@@ -86,15 +111,21 @@ public interface OperationDescription {
     
     
     /**
-     * Return the Class of the type
+     * Return the Class of the return type.  For JAX-WS async returns of
+     * type Response<T> or AsyncHandler<T>, the class associated with Response
+     * or AsyncHanler respectively is returned.  To get the class associated with 
+     * <T>
+     * @see getResultActualType()
      * @return Class
      */
     public Class getResultType();
     
     /**
-     * Return the actual Class of the type.
-     * This method returns the actual Class that may be embedded
-     * inside a Response or Callback
+     * Return the actual Class of the type.  For a JAX-WS async return
+     * type of Response<T> or AsyncHandler<T>, the class associated with <T>
+     * is returned.  For non-JAX-WS async returns, the class associated with the 
+     * return type is returned.  Note that for a Generic return type, such as 
+     * List<Foo>, the class associated with List will be returned.
      * @return actual Class
      */
     public Class getResultActualType();

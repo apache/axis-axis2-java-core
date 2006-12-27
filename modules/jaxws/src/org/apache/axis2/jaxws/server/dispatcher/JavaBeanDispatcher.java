@@ -149,21 +149,19 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         EndpointDescription ed = eds[0];
         EndpointInterfaceDescription eid = ed.getEndpointInterfaceDescription();
         
-        OperationDescription[] ops = eid.getOperation(mc.getOperationName());
-        String methodName = mc.getOperationName().getLocalPart();
-        for (OperationDescription op:ops) {
-        	Method method = op.getSEIMethod();
-        	if (method.getName().equals(methodName)) {
-        		if (log.isDebugEnabled()) {
-                    log.debug("wsdl operation: " + op.getName());
-                    log.debug("   java method: " + op.getJavaMethodName());
-                }
-        		return op;
-        	}
-        			
+        OperationDescription[] ops = eid.getDispatchableOperation(mc.getOperationName());
+        // TODO: Implement signature matching.  Currently only matching on the wsdl:OperationName is supported.
+        //       That means that overloading of wsdl operations is not supported (although that's not supported in 
+        //       WSDL 1.1 anyway).
+        if (ops == null || ops.length == 0) {
+            // TODO: RAS & NLS
+            throw ExceptionFactory.makeWebServiceException("No operation found.  WSDL Operation name: " + mc.getOperationName());
+        }
+        if (ops.length > 1) {
+            // TODO: RAS & NLS
+            throw ExceptionFactory.makeWebServiceException("More than one operation found. Overloaded WSDL operations are not supported.  WSDL Operation name: " + mc.getOperationName());
         }
         OperationDescription op = ops[0];
-        
         if (log.isDebugEnabled()) {
             log.debug("wsdl operation: " + op.getName());
             log.debug("   java method: " + op.getJavaMethodName());
@@ -193,31 +191,20 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         return MethodMarshallerFactory.getMarshaller(operationDesc, false);
     }
     
-    public Method getJavaMethod(MessageContext mc, Class serviceImplClass) {
-		 QName opName = mc.getOperationName();
-		 
-	        if (opName == null)
-	            // TODO: NLS
-	            throw ExceptionFactory.makeWebServiceException("Operation name was not set");
-	        
-	        String localPart = opName.getLocalPart();
-	        Method[] methods = serviceImplClass.getMethods();
-	        for (int i = 0; i < methods.length; ++i) {
-	        	String webMethodName = mc.getOperationDescription().getOperationName();
-	            if (localPart.equals(methods[i].getName())){
-	                return methods[i];
-	            }
-	            if(webMethodName.equals(methods[i].getName())){
-	            	return methods[i];
-	            }
-	            
-	        }
-	        
-	        if (log.isDebugEnabled()) {
-	            log.debug("No Java method found for the operation");
-	        }
-	        // TODO: NLS
-	        throw ExceptionFactory.makeWebServiceException(Messages.getMessage("JavaBeanDispatcherErr1"));
+    private Method getJavaMethod(MessageContext mc, Class serviceImplClass) {
+        
+        OperationDescription opDesc = mc.getOperationDescription();
+        if (opDesc == null) {
+            // TODO: NLS
+            throw ExceptionFactory.makeWebServiceException("Operation Description was not set");
+        }
+        
+        Method returnMethod = opDesc.getMethodFromServiceImpl(serviceImplClass);
+        if (returnMethod == null) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("JavaBeanDispatcherErr1"));
+        }
+        
+        return returnMethod;
 	}
     /*
     protected boolean isDocLitBare(EndpointDescription endpointDesc, OperationDescription operationDesc){

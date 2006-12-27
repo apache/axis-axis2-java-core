@@ -163,7 +163,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
     }
 
     public String customAsync(String request) {
-        return request;
+        return request + "from customAsync method";
     }
 
     public String another(String request) {
@@ -213,7 +213,7 @@ public class DocLitWrappedPortImpl implements AsyncPort {
 
     public String remapped(String request) {
         // TODO Auto-generated method stub
-        return null;
+        return request;
     }
 
     public Future<?> remappedAsync(String request, AsyncHandler<CustomAsyncResponse> asyncHandler) {

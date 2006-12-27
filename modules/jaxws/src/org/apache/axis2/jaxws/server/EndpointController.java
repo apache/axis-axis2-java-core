@@ -22,6 +22,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -140,9 +141,11 @@ public class EndpointController {
         
         //Check to see if we've already created a ServiceDescription for this
         //service before trying to create a new one. 
-        if (axisSvc.getParameter("JAXWS_SERVICE_DESCRIPTION") != null) {
-            Parameter param = axisSvc.getParameter("JAXWS_SERVICE_DESCRIPTION");
-            ServiceDescription sd = (ServiceDescription) param.getValue();
+        
+        if (axisSvc.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER) != null) {
+            Parameter param = axisSvc.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
+            
+            ServiceDescription sd = ((EndpointDescription) param.getValue()).getServiceDescription();
             return sd;
         }
         else {

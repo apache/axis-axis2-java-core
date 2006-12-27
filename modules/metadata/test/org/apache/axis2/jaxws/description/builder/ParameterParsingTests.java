@@ -36,16 +36,16 @@ public class ParameterParsingTests extends TestCase {
         pdc.setParameterType(holderInputString);
         assertEquals("javax.xml.ws.Holder<java.lang.Object>", pdc.getParameterType());
         
-        assertTrue(ParameterDescriptionComposite.isHolderType(holderInputString));
+        assertTrue(DescriptionBuilderUtils.isHolderType(holderInputString));
         assertTrue(pdc.isHolderType());
-        String holderResultString = ParameterDescriptionComposite.getRawType(holderInputString);
+        String holderResultString = DescriptionBuilderUtils.getRawType(holderInputString);
         assertEquals("javax.xml.ws.Holder", holderResultString);
         holderResultString = pdc.getRawType();
         assertEquals("javax.xml.ws.Holder", holderResultString);
         javax.xml.ws.Holder validateHolder = new javax.xml.ws.Holder();
         assertEquals(validateHolder.getClass(), pdc.getParameterTypeClass());
               
-        String actualTypeResult = ParameterDescriptionComposite.getHolderActualType(holderInputString);
+        String actualTypeResult = DescriptionBuilderUtils.getHolderActualType(holderInputString);
         assertEquals("java.lang.Object", actualTypeResult);
         actualTypeResult = pdc.getHolderActualType();
         assertEquals("java.lang.Object", actualTypeResult);
@@ -104,8 +104,8 @@ public class ParameterParsingTests extends TestCase {
         Class[] primitiveClasses = {boolean.class, byte.class, char.class, double.class, float.class, int.class, long.class, short.class, void.class};
         
         for (int i = 0; i < primitivesToTest.length; i++) {
-            assertFalse(ParameterDescriptionComposite.isHolderType(primitivesToTest[i]));
-            assertNull(ParameterDescriptionComposite.getRawType(primitivesToTest[i]));
+            assertFalse(DescriptionBuilderUtils.isHolderType(primitivesToTest[i]));
+            assertNull(DescriptionBuilderUtils.getRawType(primitivesToTest[i]));
             ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
             pdc.setParameterType(primitivesToTest[i]);
             assertEquals(primitiveClasses[i], pdc.getParameterTypeClass());
@@ -117,8 +117,8 @@ public class ParameterParsingTests extends TestCase {
         Class[] primitiveClasses = {boolean.class, byte.class, char.class, double.class, float.class, int.class, long.class, short.class, void.class};
         
         for (int i = 0; i < primitivesToTest.length; i++) {
-            assertFalse(ParameterDescriptionComposite.isHolderType(primitivesToTest[i]));
-            assertNull(ParameterDescriptionComposite.getRawType(primitivesToTest[i]));
+            assertFalse(DescriptionBuilderUtils.isHolderType(primitivesToTest[i]));
+            assertNull(DescriptionBuilderUtils.getRawType(primitivesToTest[i]));
             ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
             pdc.setParameterType(primitivesToTest[i]);
             assertEquals(primitiveClasses[i], pdc.getParameterTypeClass());

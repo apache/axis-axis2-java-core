@@ -71,15 +71,60 @@ public class MethodDescriptionComposite {
 	public String getMethodName() {
 		return methodName;
 	}
-
-	/**
+    /**
+     * Returns the String descrbing this method result type.  Note that this string is unparsed.  For example, if
+     * it represents a java.util.List<my.package.Foo>, then that excact string will be returned,
+     * i.e. "java.util.List<my.package.Foo>".  You can use other methods on this object to retrieve parsed values
+     * for Generics and Holders.
+     * 
 	 * @return Returns the returnType
 	 */
 	public String getReturnType() {
 		return returnType;
 	}
 
-	/**
+    /**
+     * Returns the class associated with the method result type.  Note that if the resturn type a generic (such as
+     * java.util.List<my.package.Foo>) then the class associated with the raw type is returned (i.e. java.util.List).
+     * 
+     * There are other methods that return the class for the actual type for certain JAX-WS specific generics such
+     * as Response<T> 
+     * 
+     * @return Returns the parameterTypeClass.
+     */
+	public Class getReturnTypeClass() {
+        Class returnTypeClass = null;
+        String fullReturnType = getReturnType();
+        if (fullReturnType != null) {
+            returnTypeClass = DescriptionBuilderUtils.getPrimitiveClass(fullReturnType);
+            if (returnTypeClass == null) {
+                // If this is a Generic, we need to load the class associated with the Raw Type, 
+                // i.e. for List<Foo>, we want to load List. Othwerise, load the type directly. 
+                String classToLoad = null;
+                if (DescriptionBuilderUtils.getRawType(fullReturnType) != null) {
+                    classToLoad = DescriptionBuilderUtils.getRawType(fullReturnType);
+                }
+                else {
+                    classToLoad = fullReturnType; 
+                }
+                returnTypeClass = loadClassFromMDC(classToLoad);
+            }
+        }
+        
+        return returnTypeClass;
+    }
+    private Class loadClassFromMDC(String classToLoad) {
+        Class returnClass = null;
+        ClassLoader classLoader = null;
+        
+        if (getDescriptionBuilderCompositeRef() != null){
+            classLoader = getDescriptionBuilderCompositeRef().getClassLoader();
+        }
+        returnClass = DescriptionBuilderUtils.loadClassFromComposite(classToLoad, classLoader);
+        return returnClass;
+    }
+
+    /**
 	 * @return returns whether this is OneWay
 	 */
 	public boolean isOneWay() {

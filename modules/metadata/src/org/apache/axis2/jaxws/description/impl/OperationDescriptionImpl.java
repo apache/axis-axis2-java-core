@@ -1148,39 +1148,50 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
      * @see org.apache.axis2.jaxws.description.OperationDescription#getResultType()
      */
     public Class getResultType() {
-        Method seiMethod = this.getSEIMethod();
-        return seiMethod.getReturnType();
+
+        if (!isDBC()) {
+            Method seiMethod = this.getSEIMethod();
+            return seiMethod.getReturnType();           
+        } 
+        else {
+            return methodComposite.getReturnTypeClass();
+        }
     }
 
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.description.OperationDescription#getResultActualType()
      */
     public Class getResultActualType() {
-        
-        // REVIEW:
-        // Do we want to add a getParameterActualGenericType that would return Type
-        // instead of Class ?
-        
-        // NOTE
-        // If you change this code, please remember to change 
-        // ParameterDescription.getParameterActualType
+        // TODO: Fix this!  it isn't doing the right thing for DBC as noted below with FIXME comments
+        //       This is used to marshall the rsp on the service (dbc) and demarshall on the client (reflection)
+        //       But we shouldn't get an async OpDesc on the service since getDispatchableOperation(QN) removes them.
         
        Class returnType = getResultType();
-       if(isAsync()){
+       if(isJAXWSAsyncClientMethod()){
            //pooling implementation
            if(Response.class == returnType){
-               Type type = seiMethod.getGenericReturnType();
-               ParameterizedType pType = (ParameterizedType) type;
-               Type aType = pType.getActualTypeArguments()[0];
-               if (aType != null && ParameterizedType.class.isInstance(aType)) {
-                   return (Class) ((ParameterizedType) aType).getRawType();
-               }
-               return (Class) aType;    
+               if (!isDBC()) {
+                   Type type = seiMethod.getGenericReturnType();
+                   ParameterizedType pType = (ParameterizedType) type;
+                   Type aType = pType.getActualTypeArguments()[0];
+                   if (aType != null && ParameterizedType.class.isInstance(aType)) {
+                       return (Class) ((ParameterizedType) aType).getRawType();
+                   }
+                   return (Class) aType;
+               } else {
+                 // FIXME: This doesn't work for DBC.  That's OK for now because DBC isn't used on the client side
+                 //        yet; the client is all Java Reflection.  On the Service side, the Async methods are not used.
+                 //        This needs to return T for Response<T>, or List for Response<List<T>>>
+                 return returnType;  
+               }   
            }
            //Callback Implementation
            else{
-               Type[] type = seiMethod.getGenericParameterTypes();
-               Class parameters[]= seiMethod.getParameterTypes();
+               // FIXME: This doesn't work for DBC.  That's OK for now because DBC isn't used on the client side
+               //        yet; the client is all Java Reflection.  On the Service side, the Async methods are not used.
+               //        This needs to find and return T for AsyncHandler<T>, or List for AsyncHandler<List<T>>>
+               Type[] type = getGenericParameterTypes();
+               Class parameters[]= getParameterTypes();
                int i=0;
                for(Class param:parameters){
                    if(AsyncHandler.class.isAssignableFrom(param)){
@@ -1194,23 +1205,111 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                    i++;
                }
            }
-           
        }
        
        return returnType;  
     }
 
-    /**
-     * @param operationDesc
-     * @return if asyc operation
-     */
-    public boolean isAsync(){
-        Method method = this.getSEIMethod();
-        if(method == null){
-            return false;
-        }
-        String methodName = method.getName();
-        Class returnType = method.getReturnType();
-        return methodName.endsWith("Async") && (returnType.isAssignableFrom(Response.class) || returnType.isAssignableFrom(Future.class));
+    
+    private Type[] getGenericParameterTypes() {
+       if (isDBC()) {
+           // FIXME: This doesn't work for DBC.  That's OK for now because DBC isn't used on the client side
+           //        yet; the client is all Java Reflection.  On the Service side, the Async methods are not used.
+           //        And this method is only used to parse out the JAX-WS Async parameter types to find 
+           //        AsyncHandler<T>.  The problem with the code that was removed is that a Type can not be
+           //        instantiated, so we can't new up a Type inside the PDC.
+           throw new UnsupportedOperationException("OperationDescriptionImpl.getParameterActualGenericType not supported for DBC");
+//           Type [] type = new Type[parameterDescriptions.length];
+//           for (int i=0; i < parameterDescriptions.length; i++){
+//               type[i] = ((ParameterDescriptionImpl) parameterDescriptions[i]).getParameterActualGenericType();
+//           }
+//           return type;
+       } else {
+           Type [] type = seiMethod.getGenericParameterTypes();
+           return type;
+       }
     }
+    
+    private Class[] getParameterTypes() {
+       if (isDBC()) {
+           Class [] parameters = new Class[parameterDescriptions.length];
+           for (int i=0; i < parameterDescriptions.length; i++){
+               parameters[i] = parameterDescriptions[i].getParameterType();
+           }
+           return parameters;
+       } else {
+           Class [] parameters = seiMethod.getParameterTypes();
+           return parameters;
+       }
+    }
+    /*
+     * (non-Javadoc)
+     * @see org.apache.axis2.jaxws.description.OperationDescription#isJAXWSAsyncClientMethod()
+     */
+    public boolean isJAXWSAsyncClientMethod() {
+        boolean answer = false;
+        String methodName = null;
+        String returnTypeName = null;
+        if (isDBC()) {
+            methodName = getMethodDescriptionComposite().getMethodName();
+            returnTypeName = getMethodDescriptionComposite().getReturnType();
+        }
+        else {
+            Method method = this.getSEIMethod();
+            if(method != null) {
+                methodName = method.getName();
+                returnTypeName = method.getReturnType().getName();
+            }
+        }
+        if (methodName != null && returnTypeName != null) {
+            // REVIEW: Not sure the method MUST end with "Async"; I think it can be customized.
+            answer = methodName.endsWith("Async") 
+                     && (returnTypeName.equals(Response.class.getName()) || returnTypeName.equals(Future.class.getName()));
+        }
+        return answer;
+    }
+
+    public Method getMethodFromServiceImpl(Class serviceImpl) {
+        Method serviceImplMethod = null;
+        
+        // TODO: This doesn't support overloaded methods in the service impl  This is
+        //       DIFFERENT than overloaded WSDL operations (which aren't supported).  We
+        //       MUST support overloaded service impl methods as long as they have different
+        //       wsdl operation names.  For example:
+        //  ServiceImple Class          SEI Class
+        //                              @WebMethod.name = Foo1
+        //  void foo()                  void foo()
+        //                              @WebMethod.name = Foo2
+        //  void foo(int)               void foo(int)
+        //                              @WebMethod.name = Foo3
+        //  void foo(String)            void foo(String)
+        //
+        //  There will be two OpDescs, Foo1 and Foo2; the incoming wsdl operation will correctly identify
+        //  which OpDesc.  However, to return the correct service impl method, we need to compare the
+        //  signatures, not just the method names.
+        
+        Method[] methods = serviceImpl.getMethods();
+        String opDescMethodName = getJavaMethodName();
+        ParameterDescription[] paramDesc = getParameterDescriptions();
+        // TODO: As noted above, a full signature is necessary, not just number of params
+        int numberOfParams = 0;
+        if (paramDesc != null) {
+            numberOfParams = paramDesc.length;
+        }
+        
+        // Loop through all the methods on the service impl and find the method that maps
+        // to this OperationDescripton
+        for (Method checkMethod : methods) {
+            if (checkMethod.getName().equals(opDescMethodName)) {
+                Class[] methodParams = checkMethod.getParameterTypes();
+                // TODO: As noted above, a full signature is necessary, not just number of params
+                if (methodParams.length == numberOfParams) {
+                    serviceImplMethod = checkMethod;
+                    break;
+                }
+            }
+        }
+        
+        return serviceImplMethod;
+    } 
 }

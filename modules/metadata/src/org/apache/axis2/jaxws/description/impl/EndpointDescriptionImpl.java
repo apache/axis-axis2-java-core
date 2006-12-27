@@ -775,12 +775,30 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
                 // Note the namespace is not included on the WSDL Port.
                 if (wsdlPort.getName().equals(portQName.getLocalPart())) {
                     
-                	// Create the Endpoint Interface Description based on the WSDL.
-                    endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl(this);
+                    // Build the EndpointInterface based on the specified SEI if there is one
+                    // or on the service impl class (i.e. an implicit SEI).
+                    if (getServiceDescriptionImpl().isDBCMap()) {
+                        String seiClassName = getAnnoWebServiceEndpointInterface();
+                        if (DescriptionUtils.isEmpty(seiClassName)) {
+                            // No SEI specified, so use the service impl as an implicit SEI
+                            endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl(composite, true, this);
+                        } else {
+                            // Otherwise, build the EID based on the SEI composite
+                            endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl( 
+                                        getServiceDescriptionImpl().getDBCMap().get(seiClassName), 
+                                        false, 
+                                        this);
+                        }
+
+                    }
+                    else {
+                        // Create the Endpoint Interface Description based on the WSDL.
+                        endpointInterfaceDescription = new EndpointInterfaceDescriptionImpl(this);
  
-                    // Update the EndpointInterfaceDescription created with WSDL with information from the
-                    // annotations in the SEI
-                    ((EndpointInterfaceDescriptionImpl) endpointInterfaceDescription).updateWithSEI(implOrSEIClass);
+                        // Update the EndpointInterfaceDescription created with WSDL with information from the
+                        // annotations in the SEI
+                        ((EndpointInterfaceDescriptionImpl) endpointInterfaceDescription).updateWithSEI(implOrSEIClass);
+                    }
                     wsdlPortFound = true;
                 }
             }

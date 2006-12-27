@@ -287,7 +287,7 @@ public interface AsyncPort {
      * @return
      *     returns java.lang.String
      */
-    @WebMethod(action = "http://org/test/parallelasync/customAsync")
+    @WebMethod(operationName = "realCustomAsync", action = "http://org/test/parallelasync/customAsync")
     @WebResult(name = "response", targetNamespace = "")
     @RequestWrapper(localName = "customAsync", targetNamespace = "http://org/test/parallelasync", className = "org.test.parallelasync.CustomAsync")
     @ResponseWrapper(localName = "customAsyncResponse", targetNamespace = "http://org/test/parallelasync", className = "org.test.parallelasync.CustomAsyncResponse")
