@@ -15,6 +15,12 @@
  */
 package org.apache.axis2.transport.http.util;
 
+import java.io.IOException;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.OMNodeEx;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
@@ -34,11 +40,6 @@ import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  *

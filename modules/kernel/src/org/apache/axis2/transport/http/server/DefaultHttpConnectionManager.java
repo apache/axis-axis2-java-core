@@ -33,13 +33,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpServerConnection;
 import org.apache.http.params.HttpParams;
-
-import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 
 public class DefaultHttpConnectionManager implements HttpConnectionManager {
 

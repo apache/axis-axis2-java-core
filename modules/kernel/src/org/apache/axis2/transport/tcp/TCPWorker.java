@@ -17,6 +17,14 @@
 
 package org.apache.axis2.transport.tcp;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.net.Socket;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
@@ -32,13 +40,6 @@ import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.net.Socket;
 
 /**
  * This Class is the work hoarse of the TCP request, this process the incomming SOAP Message.

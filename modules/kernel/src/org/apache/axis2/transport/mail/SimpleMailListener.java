@@ -17,6 +17,23 @@
 
 package org.apache.axis2.transport.mail;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Properties;
+
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.URLName;
+import javax.mail.internet.MimeMessage;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
 import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
 import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
@@ -41,22 +58,6 @@ import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.threadpool.DefaultThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.URLName;
-import javax.mail.internet.MimeMessage;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Properties;
 
 /**
  * This is the implementation for Mail Listener in Axis2. It has the full capability

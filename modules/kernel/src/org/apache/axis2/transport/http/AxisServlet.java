@@ -17,8 +17,24 @@
 
 package org.apache.axis2.transport.http;
 
-import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.SocketException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
+
+import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
@@ -33,33 +49,16 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.engine.Handler.InvocationResponse;
+import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.transport.RequestResponseTransport.RequestResponseTransportStatus;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.SocketException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Class AxisServlet

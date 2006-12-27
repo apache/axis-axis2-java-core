@@ -22,8 +22,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class MailWorker implements Runnable {
     private ConfigurationContext configContext = null;

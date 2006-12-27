@@ -17,21 +17,14 @@
 
 package org.apache.axis2.transport.http;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.AxisDescription;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.transport.TransportListener;
-import org.apache.axis2.util.ExternalPolicySerializer;
-import org.apache.neethi.Policy;
-import org.apache.neethi.PolicyRegistry;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.axiom.attachments.utils.IOUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,14 +35,21 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import org.apache.axiom.attachments.utils.IOUtils;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.description.AxisDescription;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.util.ExternalPolicySerializer;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyRegistry;
+import org.apache.ws.commons.schema.XmlSchema;
 
 public class ListingAgent extends AbstractAgent {
 

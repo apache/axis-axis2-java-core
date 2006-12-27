@@ -17,10 +17,19 @@
 
 package org.apache.axis2.transport.http;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -41,15 +50,6 @@ import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
 
 public class HTTPTransportUtils {
 

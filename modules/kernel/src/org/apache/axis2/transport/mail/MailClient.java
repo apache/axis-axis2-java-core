@@ -16,8 +16,8 @@
 
 package org.apache.axis2.transport.mail;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.IOException;
+import java.util.Properties;
 
 import javax.mail.Authenticator;
 import javax.mail.Flags;
@@ -29,8 +29,9 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.util.Properties;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class MailClient extends Authenticator {
     public static final int SHOW_MESSAGES = 1;

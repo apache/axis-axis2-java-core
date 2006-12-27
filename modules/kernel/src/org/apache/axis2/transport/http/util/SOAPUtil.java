@@ -15,21 +15,22 @@
  */
 package org.apache.axis2.transport.http.util;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.transport.http.HTTPTransportUtils;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.HTTPTransportUtils;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *

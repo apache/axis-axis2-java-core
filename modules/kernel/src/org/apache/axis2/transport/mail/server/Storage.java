@@ -17,9 +17,10 @@
 
 package org.apache.axis2.transport.mail.server;
 
-import javax.mail.internet.MimeMessage;
 import java.util.ArrayList;
 import java.util.Hashtable;
+
+import javax.mail.internet.MimeMessage;
 
 public class Storage {
     private Hashtable users = new Hashtable();

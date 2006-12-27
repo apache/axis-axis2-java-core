@@ -15,10 +15,10 @@
 */
 package org.apache.axis2.transport.jms;
 
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
-
-import javax.xml.namespace.QName;
 
 public class JMSConstants {
 

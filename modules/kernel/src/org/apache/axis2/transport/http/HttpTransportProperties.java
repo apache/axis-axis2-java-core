@@ -16,12 +16,12 @@ package org.apache.axis2.transport.http;
  * limitations under the License.
  */
 
-import org.apache.commons.httpclient.HttpVersion;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.auth.AuthPolicy;
-
 import java.util.List;
 import java.util.Properties;
+
+import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.auth.AuthPolicy;
+import org.apache.commons.httpclient.auth.AuthScope;
 
 /**
  * Utility bean for setting transport properties in runtime.

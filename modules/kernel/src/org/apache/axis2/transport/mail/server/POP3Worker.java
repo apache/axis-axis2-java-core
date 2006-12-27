@@ -17,12 +17,6 @@
 
 package org.apache.axis2.transport.mail.server;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.axis2.transport.mail.Constants;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +25,13 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
+import org.apache.axis2.transport.mail.Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class POP3Worker extends Thread {
 	private static final Log log = LogFactory.getLog(POP3Worker.class);

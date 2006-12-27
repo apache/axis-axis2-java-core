@@ -17,17 +17,6 @@
 
 package org.apache.axis2.transport.mail.server;
 
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.transport.mail.Constants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -36,6 +25,18 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Properties;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
+
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.transport.mail.Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class SMTPWorker extends Thread {
     private BufferedReader reader = null;

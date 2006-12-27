@@ -18,7 +18,6 @@ package org.apache.axis2.transport;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.engine.Handler.InvocationResponse;
 
 /**
  * This interface represents a control object for a Request/Response transport.

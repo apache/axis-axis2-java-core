@@ -17,10 +17,17 @@
 
 package org.apache.axis2.transport.mail;
 
-import org.apache.axis2.AxisFault;
-
-import javax.mail.*;
 import java.util.Properties;
+
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
+import javax.mail.Session;
+import javax.mail.Store;
+import javax.mail.URLName;
+
+import org.apache.axis2.AxisFault;
 
 public class EmailReceiver {
 

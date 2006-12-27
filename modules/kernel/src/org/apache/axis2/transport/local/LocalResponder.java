@@ -17,23 +17,18 @@
 
 package org.apache.axis2.transport.local;
 
+import java.io.OutputStream;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.transport.AbstractTransportSender;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMOutputFormat;
-
-import java.io.OutputStream;
 
 /**
  * LocalResponder

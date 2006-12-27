@@ -35,8 +35,8 @@ import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.Constants;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -44,8 +44,8 @@ import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.MessageContextBuilder;
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -57,7 +57,6 @@ import org.apache.http.HttpVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.StatusLine;
 import org.apache.http.UnsupportedHttpVersionException;
-import org.apache.http.impl.DefaultHttpServerConnection;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.ResponseConnControl;

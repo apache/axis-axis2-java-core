@@ -17,6 +17,13 @@
 
 package org.apache.axis2.transport.local;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
@@ -28,12 +35,6 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.util.Builder;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class LocalTransportReceiver {
     public static ConfigurationContext CONFIG_CONTEXT;

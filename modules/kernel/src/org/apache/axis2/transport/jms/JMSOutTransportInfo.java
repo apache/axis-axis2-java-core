@@ -15,9 +15,7 @@
 */
 package org.apache.axis2.transport.jms;
 
-import org.apache.axis2.transport.OutTransportInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.Hashtable;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -25,7 +23,10 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
-import java.util.Hashtable;
+
+import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The JMS OutTransportInfo

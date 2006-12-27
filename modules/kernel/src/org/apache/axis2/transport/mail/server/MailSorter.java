@@ -16,6 +16,14 @@
 
 package org.apache.axis2.transport.mail.server;
 
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -30,13 +38,6 @@ import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.xml.namespace.QName;
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
 
 /**
  * This class will be used to sort the messages into normal messages and mails

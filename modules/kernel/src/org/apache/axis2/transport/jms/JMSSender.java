@@ -15,11 +15,25 @@
 */
 package org.apache.axis2.transport.jms;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.jms.BytesMessage;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
@@ -27,11 +41,6 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.jms.*;
-import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * The TransportSender for JMS

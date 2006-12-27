@@ -32,7 +32,6 @@ package org.apache.axis2.transport.http.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

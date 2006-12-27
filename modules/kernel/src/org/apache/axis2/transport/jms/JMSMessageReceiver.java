@@ -15,20 +15,26 @@
 */
 package org.apache.axis2.transport.jms;
 
+import java.io.InputStream;
+
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.Queue;
+import javax.jms.Topic;
+import javax.naming.Context;
+import javax.xml.stream.XMLStreamException;
+
 import edu.emory.mathcs.backport.java.util.concurrent.Executor;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.jms.*;
-import javax.naming.Context;
-import javax.xml.stream.XMLStreamException;
-import java.io.InputStream;
 
 /**
  * This is the actual receiver which listens for and accepts JMS messages, and

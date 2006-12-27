@@ -15,8 +15,8 @@
  */
 package org.apache.axis2.transport.mail;
 
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeBodyPart;
 
 /**
  * The main purpose of this class is to encode mime body part with

@@ -25,7 +25,6 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;

@@ -17,12 +17,20 @@
 
 package org.apache.axis2.transport.http;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.MIMEOutputUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -32,18 +40,11 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class CommonsHTTPTransportSender extends AbstractHandler implements TransportSender {
 

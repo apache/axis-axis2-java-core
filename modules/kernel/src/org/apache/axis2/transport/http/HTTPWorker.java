@@ -16,8 +16,12 @@
 
 package org.apache.axis2.transport.http;
 
-import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
+import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -31,16 +35,19 @@ import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.server.OutputBuffer;
 import org.apache.axis2.transport.http.server.Worker;
-import org.apache.http.*;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
+import org.apache.http.MethodNotSupportedException;
+import org.apache.http.StatusLine;
 import org.apache.http.entity.ContentProducer;
 import org.apache.http.entity.EntityTemplate;
 import org.apache.http.entity.StringEntity;
 import org.apache.ws.commons.schema.XmlSchema;
-
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 public class HTTPWorker implements Worker {
 
