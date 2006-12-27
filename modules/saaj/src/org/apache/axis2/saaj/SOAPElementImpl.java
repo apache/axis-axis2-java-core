@@ -377,12 +377,17 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         return returnList.iterator();
     }
 
-    public SOAPElement addAttribute(QName qname, String s) throws SOAPException {
-        return null;  //TODO: Fixme.
+    public SOAPElement addAttribute(QName name, String value) throws SOAPException {
+        if (name.getNamespaceURI() == null || name.getNamespaceURI().trim().length() == 0) {
+            element.setAttribute(name.getLocalPart(), value);
+        } else {
+            element.setAttributeNS(name.getNamespaceURI(), name.getPrefix() + ":" + name.getLocalPart(), value);
+        }
+        return this;
     }
 
     public SOAPElement addChildElement(QName qname) throws SOAPException {
-        return null;  //TODO: Fixme.
+        return addChildElement(qname.getLocalPart(), qname.getPrefix()  , qname.getNamespaceURI());
     }
 
     public QName createQName(String s, String s1) throws SOAPException {
@@ -394,19 +399,40 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     public String getAttributeValue(QName qname) {
-        return null;  //TODO: Fixme.
+        //This method is waiting on the finalization of the name for a method
+        //in OMElement that returns a OMAttribute from an input QName
+        final OMAttribute attribute = element.getAttribute(new QName(qname.getNamespaceURI(),
+                                                                     qname.getLocalPart(),
+                                                                     qname.getPrefix()));
+        if (attribute == null) {
+            return null;
+        }
+        return attribute.getAttributeValue();
     }
 
     public Iterator getChildElements(QName name) {
-        return null;  //TODO: Fixme.
+        QName qName = new QName(name.getNamespaceURI(), name.getLocalPart());
+        Iterator childIter = element.getChildrenWithName(qName);
+        Collection childElements = new ArrayList();
+        while (childIter.hasNext()) {
+            childElements.add(toSAAJNode((org.w3c.dom.Node) childIter.next()));
+        }
+        return childElements.iterator();
     }
 
     public QName getElementQName() {
         return null;  //TODO: Fixme.
     }
 
-    public boolean removeAttribute(QName qname) {
-        return false;  //TODO: Fixme.
+    public boolean removeAttribute(QName name) {
+        org.apache.axiom.om.OMAttribute attr = element.getAttribute(new QName(name.getNamespaceURI(),
+                                                                                   name.getLocalPart(),
+                                                                                   name.getPrefix()));
+        if (attr != null) {
+            element.removeAttribute(attr);
+            return true;
+        }
+        return false;
     }
 
     public SOAPElement setElementQName(QName qname) throws SOAPException {

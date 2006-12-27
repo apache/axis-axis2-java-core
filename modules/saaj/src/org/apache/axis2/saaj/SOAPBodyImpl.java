@@ -290,7 +290,7 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
     }
 
     public SOAPBodyElement addBodyElement(QName qname) throws SOAPException {
-        return null;  //TODO: Fixme.
+        return (SOAPBodyElement) addChildElement(qname);
     }
 
     public SOAPFault addFault(QName qname, String s) throws SOAPException {
