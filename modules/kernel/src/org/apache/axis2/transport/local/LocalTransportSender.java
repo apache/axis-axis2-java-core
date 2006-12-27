@@ -18,9 +18,20 @@
 package org.apache.axis2.transport.local;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.transport.AbstractTransportSender;
+import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.http.HTTPTransportUtils;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,33 +39,78 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class LocalTransportSender extends AbstractTransportSender {
+public class LocalTransportSender extends AbstractHandler implements TransportSender {
 	
-    private static final long serialVersionUID = -5245866514826025561L;
 	private ByteArrayOutputStream out;
     private ByteArrayOutputStream response;
 
-    public LocalTransportSender() {
+    public void init(ConfigurationContext confContext, TransportOutDescription transportOut)
+            throws AxisFault {
+    }
+
+    public void stop() {
     }
 
     public void cleanup(MessageContext msgContext) throws AxisFault {
     }
 
-    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
-                                                                   OutputStream out)
-            throws AxisFault {
-        throw new UnsupportedOperationException();
+    protected OutputStream getResponse() {
+        return response;
+    }
+
+    /**
+     * Method invoke
+     *
+     * @param msgContext
+     * @throws AxisFault
+     */
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+
+        // Check for the REST behaviour, if you desire rest beahaviour
+        // put a <parameter name="doREST" value="true"/> at the axis2.xml
+        msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
+        msgContext.setDoingSwA(HTTPTransportUtils.doWriteSwA(msgContext));
+
+        OutputStream out;
+        EndpointReference epr = null;
+
+        if (msgContext.getTo() != null && !msgContext.getTo().hasAnonymousAddress()) {
+            epr = msgContext.getTo();
+        }
+
+        if (epr != null) {
+            if (!epr.hasNoneAddress()) {
+                out = new ByteArrayOutputStream();
+                TransportUtils.writeMessage(msgContext, out);
+                finalizeSendWithToAddress(msgContext, out);
+            }
+        } else {
+            out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
+
+            if (out != null) {
+                TransportUtils.writeMessage(msgContext, out);
+            } else {
+                throw new AxisFault(
+                        "Both the TO and Property MessageContext.TRANSPORT_OUT is Null, No where to send");
+            }
+        }
+
+        // TODO fix this, we do not set the value if the operation context is
+        // not available
+        if (msgContext.getOperationContext() != null) {
+            msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,
+                    Constants.VALUE_TRUE);
+        }
+        return InvocationResponse.CONTINUE;
     }
 
     public void finalizeSendWithToAddress(MessageContext msgContext, OutputStream out)
             throws AxisFault {
         try {
             InputStream in = new ByteArrayInputStream(this.out.toByteArray());
-
             response = new ByteArrayOutputStream();
 
             LocalTransportReceiver localTransportReceiver = new LocalTransportReceiver(this);
-
             localTransportReceiver.processMessage(in, msgContext.getTo());
             in.close();
             out.close();
@@ -63,40 +119,5 @@ public class LocalTransportSender extends AbstractTransportSender {
         } catch (IOException e) {
             throw new AxisFault(e);
         }
-    }
-
-    /*
-     *  (non-Javadoc)
-     * @see org.apache.axis2.transport.AbstractTransportSender#openTheConnection(org.apache.axis2.addressing.EndpointReference)
-     */
-    protected OutputStream openTheConnection(EndpointReference epr, MessageContext msgContext)
-            throws AxisFault {
-
-        out = new ByteArrayOutputStream();
-
-        return out;
-    }
-
-    /*
-     *  (non-Javadoc)
-     * @see org.apache.axis2.transport.AbstractTransportSender#startSendWithOutputStreamFromIncomingConnection(org.apache.axis2.context.MessageContext, java.io.Writer)
-     */
-    public OutputStream startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
-                                                                        OutputStream out)
-            throws AxisFault {
-        throw new UnsupportedOperationException();
-    }
-
-    public OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out)
-            throws AxisFault {
-        return out;
-    }
-
-    OutputStream getResponse() {
-        return response;
-    }
-
-    public void stop() {
-       
     }
 }

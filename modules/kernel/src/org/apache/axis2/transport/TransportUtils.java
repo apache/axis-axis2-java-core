@@ -18,6 +18,7 @@
 package org.apache.axis2.transport;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -25,6 +26,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -172,4 +174,34 @@ public class TransportUtils {
         }
 		return envelope;
 	}
+
+
+    public static void writeMessage(MessageContext msgContext, OutputStream out) throws AxisFault {
+        SOAPEnvelope envelope = msgContext.getEnvelope();
+        OMElement outputMessage = envelope;
+
+        if ((envelope != null) && msgContext.isDoingREST()) {
+            outputMessage = envelope.getBody().getFirstElement();
+        }
+
+        if (outputMessage != null) {
+            try {
+                OMOutputFormat format = new OMOutputFormat();
+
+                // Pick the char set encoding from the msgContext
+                String charSetEnc =
+                        (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+
+                format.setDoOptimize(false);
+                format.setDoingSWA(false);
+                format.setCharSetEncoding(charSetEnc);
+                outputMessage.serializeAndConsume(out, format);
+                out.flush();
+            } catch (Exception e) {
+                throw new AxisFault(e);
+            }
+        } else {
+            throw new AxisFault(Messages.getMessage("outMessageNull"));
+        }
+    }
 }

@@ -18,11 +18,21 @@
 package org.apache.axis2.transport.tcp;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.AbstractTransportSender;
+import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.transport.TransportUtils;
+import org.apache.axis2.transport.http.HTTPTransportUtils;
 import org.apache.axis2.util.URL;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -32,19 +42,16 @@ import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-public class TCPTransportSender extends AbstractTransportSender {
-
-    private static final long serialVersionUID = -6780125098288186598L;
-
-    /**
-     * Field out
-     */
+public class TCPTransportSender extends AbstractHandler implements TransportSender {
     protected Writer out;
-
-    /**
-     * Field socket
-     */
     private Socket socket;
+
+    public void init(ConfigurationContext confContext, TransportOutDescription transportOut)
+            throws AxisFault {
+    }
+
+    public void stop() {
+    }
 
     public void cleanup(MessageContext msgContext) throws AxisFault {
         try {
@@ -56,18 +63,55 @@ public class TCPTransportSender extends AbstractTransportSender {
         }
     }
 
-    public void finalizeSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
-                                                                   OutputStream out) {
-    }
+    /**
+     * Method invoke
+     *
+     * @param msgContext
+     * @throws AxisFault
+     */
+    public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
 
-    public void finalizeSendWithToAddress(MessageContext msgContext, OutputStream out)
-            throws AxisFault {
-        try {
-            socket.shutdownOutput();
-            msgContext.setProperty(MessageContext.TRANSPORT_IN, socket.getInputStream());
-        } catch (IOException e) {
-            throw new AxisFault(e);
+        // Check for the REST behaviour, if you desire rest beahaviour
+        // put a <parameter name="doREST" value="true"/> at the axis2.xml
+        msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
+        msgContext.setDoingSwA(HTTPTransportUtils.doWriteSwA(msgContext));
+
+        OutputStream out;
+        EndpointReference epr = null;
+
+        if (msgContext.getTo() != null && !msgContext.getTo().hasAnonymousAddress()) {
+            epr = msgContext.getTo();
         }
+
+        if (epr != null) {
+            if (!epr.hasNoneAddress()) {
+                out = openTheConnection(epr, msgContext);
+                TransportUtils.writeMessage(msgContext, out);
+                try {
+                    socket.shutdownOutput();
+                    msgContext.setProperty(MessageContext.TRANSPORT_IN, socket.getInputStream());
+                } catch (IOException e) {
+                    throw new AxisFault(e);
+                }
+            }
+        } else {
+            out = (OutputStream) msgContext.getProperty(MessageContext.TRANSPORT_OUT);
+
+            if (out != null) {
+                TransportUtils.writeMessage(msgContext, out);
+            } else {
+                throw new AxisFault(
+                        "Both the TO and Property MessageContext.TRANSPORT_OUT is Null, No where to send");
+            }
+        }
+
+        // TODO fix this, we do not set the value if the operation context is
+        // not available
+        if (msgContext.getOperationContext() != null) {
+            msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,
+                    Constants.VALUE_TRUE);
+        }
+        return InvocationResponse.CONTINUE;
     }
 
     protected OutputStream openTheConnection(EndpointReference toURL, MessageContext msgContext)
@@ -91,31 +135,5 @@ public class TCPTransportSender extends AbstractTransportSender {
         } else {
             throw new AxisFault(Messages.getMessage("canNotBeNull", "Can not Be Null"));
         }
-    }
-
-    public OutputStream startSendWithOutputStreamFromIncomingConnection(MessageContext msgContext,
-                                                                        OutputStream out)
-            throws AxisFault {
-        return out;
-    }
-
-    public OutputStream startSendWithToAddress(MessageContext msgContext, OutputStream out) {
-        return out;
-    }
-
-    /**
-     * Method writeTransportHeaders
-     *
-     * @param out
-     * @param url
-     * @param msgContext
-     * @throws IOException
-     */
-    protected void writeTransportHeaders(Writer out, URL url, MessageContext msgContext,
-                                         int contentLength)
-            throws IOException {
-    }
-
-    public void stop() {
     }
 }
