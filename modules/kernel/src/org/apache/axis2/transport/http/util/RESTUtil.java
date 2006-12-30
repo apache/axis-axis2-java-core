@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.OMNodeEx;
+import org.apache.axiom.om.impl.builder.OMBuilder;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -198,7 +199,7 @@ public class RESTUtil {
                 // Setting the value in msgCtx
                 msgCtxt.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
 
-                StAXBuilder builder = Builder.getBuilder(inputStream, charSetEnc, null);
+                OMBuilder builder = Builder.getBuilder(inputStream, charSetEnc, null);
                 OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
                 documentElement.setParent(null);
                 body.addChild(documentElement);

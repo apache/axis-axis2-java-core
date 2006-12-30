@@ -134,6 +134,17 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             if (defaultModuleVerionElement != null) {
                 processDefaultModuleVersions(defaultModuleVerionElement);
             }
+            
+            // process MessageBuilders
+            OMElement messageBuildersElement = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_BUILDERS));
+            if (messageBuildersElement != null) {
+                HashMap builderSelector = processMessageBuilders(messageBuildersElement);
+                Iterator keys = builderSelector.keySet().iterator();
+                while (keys.hasNext()) {
+                    String key = (String) keys.next();
+                    axisConfig.addMessageBuilder(key, (String) builderSelector.get(key));
+                }
+            }
 
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);

@@ -39,6 +39,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import org.apache.axiom.om.OMXMLParserWrapper;
+import org.apache.axiom.om.impl.builder.OMBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -358,7 +359,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
                         }
 
                         InputStream inputStream = part.getInputStream();
-                        OMXMLParserWrapper builder = Builder.getBuilder(inputStream, null, soapNamespaceURI);
+                        OMBuilder builder = Builder.getBuilder(inputStream, null, soapNamespaceURI);
                         SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
                         msgContext.setEnvelope(envelope);
                     }

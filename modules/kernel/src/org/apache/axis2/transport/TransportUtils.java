@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.impl.builder.OMBuilder;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -114,7 +115,7 @@ public class TransportUtils {
 			InputStream inStream, String soapNamespaceURI, boolean isMIME,
 			String contentType, String charSetEnc) throws AxisFault,
 			OMException, XMLStreamException, FactoryConfigurationError {
-    	StAXBuilder builder;
+    	OMBuilder builder;
 		OMElement documentElement;
 		if (isMIME) {
 			msgContext.setDoingMTOM(true);
@@ -124,12 +125,11 @@ public class TransportUtils {
 		} else if (msgContext.isDoingREST()) {
 			builder = Builder.getPOXBuilder(inStream,
 					charSetEnc, soapNamespaceURI);
-		} else {
-			builder = Builder.getBuilderFromSelector(contentType, msgContext);
-			if (builder == null) {
-				builder = Builder.getBuilder(inStream, charSetEnc,
-						soapNamespaceURI);
-			}
+		} else if (soapNamespaceURI!=null){
+				builder = Builder.getBuilder(inStream, charSetEnc,soapNamespaceURI);
+		}else
+		{
+			builder = Builder.getBuilderFromSelector(contentType, inStream, msgContext);
 		}
 		
 		documentElement = builder.getDocumentElement();
@@ -148,11 +148,11 @@ public class TransportUtils {
 			// We now have the message inside an envelope. However, this is
 			// only an OM; We need to build a SOAP model from it.
 			builder = new StAXSOAPModelBuilder(intermediateEnvelope
-					.getXMLStreamReader(), soapNamespaceURI);
+					.getXMLStreamReader(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 			envelope = (SOAPEnvelope) builder.getDocumentElement();
 		}
 
-		String charsetEncoding = builder.getDocument().getCharsetEncoding();
+		String charsetEncoding = builder.getCharsetEncoding();
 		if ((charsetEncoding != null)
 				&& !"".equals(charsetEncoding)
 				&& (msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING) != null)

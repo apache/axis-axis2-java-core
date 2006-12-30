@@ -24,6 +24,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.xml.namespace.QName;
 
+import org.apache.axiom.om.impl.builder.OMBuilder;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -124,7 +125,7 @@ public class MailSorter {
                 soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
             }
 
-            StAXBuilder builder = Builder.getBuilder(bais, null, soapNamespaceURI);
+            OMBuilder builder = Builder.getBuilder(bais, null, soapNamespaceURI);
 
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
 

@@ -16,8 +16,19 @@
 
 package org.apache.axis2.deployment;
 
+import java.io.InputStream;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -39,15 +50,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.PolicyReference;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import java.io.InputStream;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * This class does the common tasks for all *Builder class.
@@ -198,14 +200,71 @@ public class DescriptionBuilder implements DeploymentConstants {
 
         return receiver;
     }
+    
+    /**
+	 * Processes the message builders specified in axis2.xml or services.xml.
+	 * 
+	 * @param messageBuildersElement
+	 */
+	protected HashMap processMessageBuilders(OMElement messageBuildersElement)
+			throws DeploymentException {
+		HashMap builderSelector = new HashMap();
+		Iterator msgBuilders = messageBuildersElement
+				.getChildrenWithName(new QName(TAG_MESSAGE_BUILDER));
+		while (msgBuilders.hasNext()) {
+			OMElement msgBuilderElement = (OMElement) msgBuilders.next();
+			final OMElement tempMsgBuilder = msgBuilderElement;
+			String builderClassName = null;
+			try {
+				builderClassName = findAndValidateBuilderClass(tempMsgBuilder);
+			} catch (PrivilegedActionException e) {
+				throw (DeploymentException) e.getException();
+			}
+			OMAttribute contentTypeAtt = msgBuilderElement
+					.getAttribute(new QName(TAG_CONTENT_TYPE));
+			builderSelector.put(contentTypeAtt.getAttributeValue(),
+					builderClassName);
+		}
+		return builderSelector;
+	}
+
+	protected String findAndValidateBuilderClass(final OMElement tempMsgBuilder)
+			throws PrivilegedActionException {
+		return (String) org.apache.axis2.java.security.AccessController
+				.doPrivileged(new PrivilegedExceptionAction() {
+					public Object run()
+							throws org.apache.axis2.deployment.DeploymentException {
+						OMAttribute builderName = tempMsgBuilder
+								.getAttribute(new QName(TAG_CLASS_NAME));
+						String className = builderName.getAttributeValue();
+						StAXBuilder builder = null;
+
+						try {
+							Class builderClass;
+
+							if ((className != null) && !"".equals(className)) {
+								builderClass = Loader.loadClass(Thread.currentThread()
+										.getContextClassLoader(), className);
+							}
+						} catch (ClassNotFoundException e) {
+							throw new DeploymentException(
+									Messages.getMessage(DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_BUILDER,
+													"ClassNotFoundException",className), e);
+						}
+						return className;
+					}
+				});
+	}
 
     /**
-     * Processes flow elements in services.xml .
-     *
-     * @param flowelement <code>OMElement</code>
-     * @return Returns Flow.
-     * @throws DeploymentException <code>DeploymentException</code>
-     */
+	 * Processes flow elements in services.xml .
+	 * 
+	 * @param flowelement
+	 *            <code>OMElement</code>
+	 * @return Returns Flow.
+	 * @throws DeploymentException
+	 *             <code>DeploymentException</code>
+	 */
     protected Flow processFlow(OMElement flowelement, ParameterInclude parent)
             throws DeploymentException {
         Flow flow = new Flow();

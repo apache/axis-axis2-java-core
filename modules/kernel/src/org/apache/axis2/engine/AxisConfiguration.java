@@ -92,6 +92,8 @@ public class AxisConfiguration extends AxisDescription {
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
 
     private HashMap messageReceivers;
+    
+    private HashMap messageBuilders;
 
     private ClassLoader moduleClassLoader;
 
@@ -123,6 +125,7 @@ public class AxisConfiguration extends AxisDescription {
         engagedModules = new ArrayList();
         globalModuleList = new ArrayList();
         messageReceivers = new HashMap();
+        messageBuilders = new HashMap();
         outPhases = new ArrayList();
         inFaultPhases = new ArrayList();
         outFaultPhases = new ArrayList();
@@ -147,12 +150,17 @@ public class AxisConfiguration extends AxisDescription {
         messageReceivers.put(mepURL, messageReceiver);
     }
 
+	public void addMessageBuilder(String mepURL,
+			String messageBuilder) {
+		messageBuilders.put(mepURL, messageBuilder);
+	}
+
     /**
-     * Method addModule.
-     *
-     * @param module
-     * @throws AxisFault
-     */
+	 * Method addModule.
+	 * 
+	 * @param module
+	 * @throws AxisFault
+	 */
     public void addModule(AxisModule module) throws AxisFault {
         module.setParent(this);
         notifyObservers(AxisEvent.MODULE_DEPLOY, module);
@@ -548,6 +556,15 @@ public class AxisConfiguration extends AxisDescription {
 
     public MessageReceiver getMessageReceiver(String mepURL) {
         return (MessageReceiver) messageReceivers.get(mepURL);
+    }
+    
+    /**
+     * A user can specify content-type to builder mapping in the Axis2.xml. 
+     * @param contentType
+     * @return the configured builder class name against the given content type.
+     */
+    public String getMessageBuilder(String contentType) {
+        return (String) messageBuilders.get(contentType);
     }
 
     /**

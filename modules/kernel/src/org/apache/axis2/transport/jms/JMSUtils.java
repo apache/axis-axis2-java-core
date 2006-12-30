@@ -30,6 +30,7 @@ import javax.jms.TextMessage;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.impl.builder.OMBuilder;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -292,7 +293,7 @@ public class JMSUtils {
         throws XMLStreamException {
 
         SOAPEnvelope envelope = null;
-        StAXBuilder builder;
+        OMBuilder builder;
         String contentType = JMSUtils.getProperty(message, JMSConstants.CONTENT_TYPE);
 
         if (contentType != null && contentType.indexOf(
@@ -310,7 +311,7 @@ public class JMSUtils {
         }
         envelope = (SOAPEnvelope) builder.getDocumentElement();
 
-        String charEncOfMessage = builder.getDocument().getCharsetEncoding();
+        String charEncOfMessage = builder.getCharsetEncoding();
         String charEncOfTransport = ((String) msgContext.getProperty(
             Constants.Configuration.CHARACTER_SET_ENCODING));
 

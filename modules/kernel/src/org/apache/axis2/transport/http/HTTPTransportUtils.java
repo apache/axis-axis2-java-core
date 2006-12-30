@@ -198,7 +198,7 @@ public class HTTPTransportUtils {
             // Setting the value in msgCtx
             msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
 
-            String soapNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            String soapNS = null;
             if (contentType != null) {
 				if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
 					soapVersion = VERSION_SOAP12;

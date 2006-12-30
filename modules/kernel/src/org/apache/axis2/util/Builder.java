@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.Reader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -16,6 +18,7 @@ import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMConstants;
+import org.apache.axiom.om.impl.builder.OMBuilder;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.builder.XOPAwareStAXOMBuilder;
@@ -29,6 +32,7 @@ import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -277,8 +281,8 @@ public class Builder {
         return builder;
     }
 
-    public static StAXBuilder getBuilder(InputStream inStream, String charSetEnc, String soapNamespaceURI) throws XMLStreamException {
-        StAXBuilder builder;
+    public static OMBuilder getBuilder(InputStream inStream, String charSetEnc, String soapNamespaceURI) throws XMLStreamException {
+        OMBuilder builder;
         XMLStreamReader xmlreader;
         if(charSetEnc == null) {
             xmlreader = StAXUtils.createXMLStreamReader(inStream);
@@ -293,7 +297,7 @@ public class Builder {
         return builder;
     }
 
-    public static StAXBuilder getBuilder(SOAPFactory soapFactory, InputStream in, String charSetEnc) throws XMLStreamException {
+    public static OMBuilder getBuilder(SOAPFactory soapFactory, InputStream in, String charSetEnc) throws XMLStreamException {
         StAXBuilder builder;
         XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in, charSetEnc);
         builder = new StAXOMBuilder(soapFactory, xmlreader);
@@ -308,31 +312,42 @@ public class Builder {
      * @return the builder registered against the given content-type
      * @throws AxisFault
      */
-    public static StAXBuilder getBuilderFromSelector(String contentType, MessageContext msgContext) throws AxisFault {
-    	HashMap map= (HashMap)msgContext.getConfigurationContext().getProperty(Constants.BUILDER_SELECTOR);
-    	String builderClassName=null;
-    	
-    	if(map!=null)
-    	builderClassName = (String)map.get(contentType);
-  
-    	if (builderClassName==null)
-    	{
-    		//fall back if there aren't any builders registered for this content type
-    		return null;
-    	}
-    	try {
-			Class builderClass = Loader.loadClass(builderClassName);
-			StAXBuilder builder = (StAXBuilder) builderClass.newInstance();
-			builder.setOMBuilderFactory(OMAbstractFactory.getOMFactory());
-			return builder;
-		} catch (ClassNotFoundException e) {
-			throw new AxisFault("Specified Builder class cannot be found.", e);
-		} catch (InstantiationException e) {
-			throw new AxisFault(
-					"Cannot instantiate the specified Builder Class.", e);
-		} catch (IllegalAccessException e) {
-			throw new AxisFault(
-					"Cannot instantiate the specified Builder Class.", e);
+    public static OMBuilder getBuilderFromSelector(String contentType,
+			InputStream inputStream, MessageContext msgContext) throws AxisFault {
+		String builderClassName = msgContext.getConfigurationContext()
+				.getAxisConfiguration().getMessageBuilder(contentType);
+
+		if (builderClassName != null) {
+			try {
+				Class builderClass = Loader.loadClass(builderClassName);
+				Constructor constructor = builderClass
+						.getConstructor(new Class[] { InputStream.class });
+				OMBuilder builder = (OMBuilder) constructor
+						.newInstance(new Object[] { inputStream });
+				return builder;
+			} catch (ClassNotFoundException e) {
+				throw new AxisFault("Specified Builder class ("
+						+ builderClassName + ") cannot be found.", e);
+			} catch (InstantiationException e) {
+				throw new AxisFault("Cannot instantiate the specified Builder Class  : "
+								+ builderClassName + ".", e);
+			} catch (IllegalAccessException e) {
+				throw new AxisFault("Cannot instantiate the specified Builder Class : "
+								+ builderClassName + ".", e);
+			} catch (SecurityException e) {
+				throw new AxisFault("Permission problem when instantiating the specified Builder Class : "
+								+ builderClassName + ".", e);
+			} catch (NoSuchMethodException e) {
+				throw new AxisFault("Required constructor is not found in the specified Builder Class : "
+								+ builderClassName + ".", e);
+			} catch (IllegalArgumentException e) {
+				throw new AxisFault("Required constructor is not found in the specified Builder Class : "
+								+ builderClassName + ".", e);
+			} catch (InvocationTargetException e) {
+				throw new AxisFault("Required constructor is not found in the specified Builder Class : "
+								+ builderClassName + ".", e);
+			}
 		}
+		return null;
 	}
 }
