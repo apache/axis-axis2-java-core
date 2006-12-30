@@ -131,6 +131,10 @@ public class TransportUtils {
 		{
 			builder = Builder.getBuilderFromSelector(contentType, inStream, msgContext);
 		}
+		if (builder==null)
+		{
+			throw new AxisFault("Cannot find a matching builder for the message. Unsupported Content Type.");
+		}
 		
 		documentElement = builder.getDocumentElement();
 		SOAPEnvelope envelope;
