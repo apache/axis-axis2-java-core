@@ -369,6 +369,10 @@
     </goal>
 
     <goal name="create-lib" prereqs="jar">
+        <attainGoal name="download-libs"/>
+    </goal>
+
+    <goal name="download-libs">
         <macros:copy-deps copyToDir="target/lib" mods="*"/>
     </goal>
 
