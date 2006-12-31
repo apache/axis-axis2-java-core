@@ -1899,10 +1899,18 @@
                                                 }
                                             }
                                             // call the converter utility  to convert and set the array
+                                            <xsl:choose>
+                                                <xsl:when test="$basePropertyType='java.lang.String'">
+                                                    object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
+                                                        <xsl:value-of select="$listName"/>.toArray(new <xsl:value-of select="$basePropertyType"/>[<xsl:value-of select="$listName"/>.size()]));
+                                                </xsl:when>
+                                                <xsl:otherwise>
                                             object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
                                                 org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
                                                     <xsl:value-of select="$basePropertyType"/>.class,
                                                     <xsl:value-of select="$listName"/>));
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                         </xsl:when>
                                         <!-- End of Array handling of ADB classes -->
 
@@ -1934,9 +1942,17 @@
 
                                              }
 
+                                            <xsl:choose>
+                                                <xsl:when test="$basePropertyType='java.lang.String'">
+                                                    object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
+                                                        <xsl:value-of select="$listName"/>.toArray(new <xsl:value-of select="$basePropertyType"/>[<xsl:value-of select="$listName"/>.size()]));
+                                                </xsl:when>
+                                                <xsl:otherwise>
                                              object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
                                                  org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
                                                      <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                         </xsl:when>
 
                                         <!-- End of Array handling of ADB classes -->
@@ -1981,10 +1997,17 @@
 
                                              }
 
+                                            <xsl:choose>
+                                                <xsl:when test="$basePropertyType='java.lang.String'">
+                                                    object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
+                                                        <xsl:value-of select="$listName"/>.toArray(new <xsl:value-of select="$basePropertyType"/>[<xsl:value-of select="$listName"/>.size()]));
+                                                </xsl:when>
+                                                <xsl:otherwise>
                                              object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
                                                  org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
                                                      <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
-
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                         </xsl:when>
 
                                         <!-- handling binary case -->
@@ -2082,10 +2105,17 @@
                                                     }
                                                 }
                                                 // call the converter utility  to convert and set the array
+                                            <xsl:choose>
+                                                <xsl:when test="$basePropertyType='java.lang.String'">
+                                                    object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
+                                                        <xsl:value-of select="$listName"/>.toArray(new <xsl:value-of select="$basePropertyType"/>[<xsl:value-of select="$listName"/>.size()]));
+                                                </xsl:when>
+                                                <xsl:otherwise>
                                                 object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
                                                     org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
-                                                        <xsl:value-of select="$basePropertyType"/>.class,
-                                                        <xsl:value-of select="$listName"/>));
+                                                            <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                         </xsl:when>
 
                                         <xsl:otherwise>
@@ -2129,9 +2159,17 @@
 
                                              }
 
+                                                 <xsl:choose>
+                                                     <xsl:when test="$basePropertyType='java.lang.String'">
+                                                         object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
+                                                             <xsl:value-of select="$listName"/>.toArray(new <xsl:value-of select="$basePropertyType"/>[<xsl:value-of select="$listName"/>.size()]));
+                                                     </xsl:when>
+                                                     <xsl:otherwise>
                                              object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
                                                  org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
                                                      <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+                                                     </xsl:otherwise>
+                                                 </xsl:choose>
 
                                         </xsl:when>
                                         <!-- End of Array handling of default class - that is the OMElement -->
@@ -2175,10 +2213,17 @@
                                                 }
                                             }
                                             // call the converter utility  to convert and set the array
+                                            <xsl:choose>
+                                                <xsl:when test="$basePropertyType='java.lang.String'">
+                                                    object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
+                                                        <xsl:value-of select="$listName"/>.toArray(new <xsl:value-of select="$basePropertyType"/>[<xsl:value-of select="$listName"/>.size()]));
+                                                </xsl:when>
+                                                <xsl:otherwise>
                                             object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
                                                 org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
-                                                    <xsl:value-of select="$basePropertyType"/>.class,
-                                                    <xsl:value-of select="$listName"/>));
+                                                            <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                         </xsl:otherwise>
                                         </xsl:choose>
                                         </xsl:otherwise>
@@ -3169,10 +3214,18 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                 }
                                             }
                                             // call the converter utility  to convert and set the array
+                                            <xsl:choose>
+                                                <xsl:when test="$basePropertyType='java.lang.String'">
+                                                    object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$listName"/>);
+
+                                                </xsl:when>
+                                                <xsl:otherwise>
                                             object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
                                                 org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
-                                                    <xsl:value-of select="$basePropertyType"/>.class,
-                                                    <xsl:value-of select="$listName"/>));
+                                                            <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                         </xsl:when>
 
                                         <!--Let's handle xs:any here-->
@@ -3209,9 +3262,18 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
                                              }
 
+                                            <xsl:choose>
+                                                <xsl:when test="$basePropertyType='java.lang.String'">
+                                                    object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$listName"/>);
+
+                                                </xsl:when>
+                                                <xsl:otherwise>
                                              object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
                                                  org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
                                                      <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                         </xsl:when>
 
 
@@ -3258,9 +3320,18 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
                                              }
 
+                                            <xsl:choose>
+                                                <xsl:when test="$basePropertyType='java.lang.String'">
+                                                    object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$listName"/>);
+
+                                                </xsl:when>
+                                                <xsl:otherwise>
                                              object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
                                                  org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
                                                      <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+
+                                                </xsl:otherwise>
+                                            </xsl:choose>
 
                                         </xsl:when>
                                         <!-- End of Array handling of default class - that is the OMElement -->
@@ -3290,10 +3361,18 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                 }
                                             }
                                             // call the converter utility  to convert and set the array
+                                            <xsl:choose>
+                                                <xsl:when test="$basePropertyType='java.lang.String'">
+                                                    object.set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$listName"/>);
+
+                                                </xsl:when>
+                                                <xsl:otherwise>
                                             object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$propertyType"/>)
                                                 org.apache.axis2.databinding.utils.ConverterUtil.convertToArray(
-                                                    <xsl:value-of select="$basePropertyType"/>.class,
-                                                    <xsl:value-of select="$listName"/>));
+                                                            <xsl:value-of select="$basePropertyType"/>.class,<xsl:value-of select="$listName"/>));
+
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                         </xsl:otherwise>
                                     </xsl:choose>
 
