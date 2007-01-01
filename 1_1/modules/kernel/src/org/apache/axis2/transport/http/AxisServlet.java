@@ -225,7 +225,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         MessageContext msgContext;
         OutputStream out = res.getOutputStream();
 
-        if (!disableREST && enableRESTInAxis2MainServlet && isRESTRequest(req)) {
+        String contentType = req.getContentType();
+
+        if (!disableREST && enableRESTInAxis2MainServlet && isRESTRequest(contentType, req)) {
             msgContext = createMessageContext(req, res);
             try {
                 new RESTUtil(configContext).processPostRequest(msgContext,
@@ -246,7 +248,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             try {
                 // adding ServletContext into msgContext;
                 HTTPTransportUtils.processHTTPPostRequest(msgContext, req.getInputStream(), out,
-                        req.getContentType(), req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
+                        contentType, req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
                         req.getRequestURL().toString());
 
                 Object contextWritten =
@@ -532,16 +534,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      *
      * @param request
      */
-    private boolean isRESTRequest(HttpServletRequest request) {
-        String contentType = request.getContentType();
-        String soapActionHeader = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
-
-        if (contentType != null && contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1)
-        {
-        	return false;
-        }else {
-        	return ((soapActionHeader == null) ||
-                (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1));
+    private boolean isRESTRequest(String contentType, HttpServletRequest request) {
+        if (contentType != null && contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+            return false;
+        } else {
+            String soapActionHeader = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
+            return ((soapActionHeader == null) ||
+                    (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1));
         }
     }
     
