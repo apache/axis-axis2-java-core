@@ -98,30 +98,28 @@ public class HTTPTransportUtils {
 
     public static boolean doWriteMTOM(MessageContext msgContext) {
         boolean enableMTOM = false;
-
-        if (msgContext.getParameter(Constants.Configuration.ENABLE_MTOM) != null) {
+        Parameter parameter = msgContext.getParameter(Constants.Configuration.ENABLE_MTOM);
+        if (parameter != null) {
             enableMTOM = JavaUtils.isTrueExplicitly(
-                    msgContext.getParameter(Constants.Configuration.ENABLE_MTOM).getValue());
+                    parameter.getValue());
         }
-
-        if (msgContext.getProperty(Constants.Configuration.ENABLE_MTOM) != null) {
-            enableMTOM = JavaUtils.isTrueExplicitly(
-                    msgContext.getProperty(Constants.Configuration.ENABLE_MTOM));
+        Object property = msgContext.getProperty(Constants.Configuration.ENABLE_MTOM);
+        if (property != null) {
+            enableMTOM = JavaUtils.isTrueExplicitly(property);
         }
         return enableMTOM;
     }
     
     public static boolean doWriteSwA(MessageContext msgContext) {
         boolean enableSwA = false;
-
-        if (msgContext.getParameter(Constants.Configuration.ENABLE_SWA) != null) {
+        Parameter parameter = msgContext.getParameter(Constants.Configuration.ENABLE_SWA);
+        if (parameter != null) {
             enableSwA = JavaUtils.isTrueExplicitly(
-                    msgContext.getParameter(Constants.Configuration.ENABLE_SWA).getValue());
+                    parameter.getValue());
         }
-
-        if (msgContext.getProperty(Constants.Configuration.ENABLE_SWA) != null) {
-            enableSwA = JavaUtils.isTrueExplicitly(
-                    msgContext.getProperty(Constants.Configuration.ENABLE_SWA));
+        Object property = msgContext.getProperty(Constants.Configuration.ENABLE_SWA);
+        if (property != null) {
+            enableSwA = JavaUtils.isTrueExplicitly(property);
         }
         return enableSwA;
     }
