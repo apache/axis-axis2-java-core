@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 public class AddressingHelper {
 
     private static final Log log = LogFactory.getLog(AddressingHelper.class);
+    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     /**
      * Returns true if the ReplyTo address does not match one of the supported
@@ -38,7 +39,7 @@ public class AddressingHelper {
     public static boolean isReplyRedirected(MessageContext messageContext) {
         EndpointReference replyTo = messageContext.getReplyTo();
         if (replyTo == null) {
-            if (log.isDebugEnabled()) {
+            if (isDebugEnabled) {
                 log.debug("isReplyRedirected: ReplyTo is null. Returning false");
             }
             return false;
@@ -58,7 +59,7 @@ public class AddressingHelper {
     public static boolean isFaultRedirected(MessageContext messageContext) {
         EndpointReference faultTo = messageContext.getFaultTo();
         if (faultTo == null) {
-            if (log.isDebugEnabled()) {
+            if (isDebugEnabled) {
                 log.debug("isReplyRedirected: FaultTo is null. Returning isReplyRedirected");
             }
             return isReplyRedirected(messageContext);
@@ -77,7 +78,7 @@ public class AddressingHelper {
         String value = "";
         if (axisOperation != null) {
             value = Utils.getParameterValue(axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME));
-            if (log.isDebugEnabled()) {
+            if (isDebugEnabled) {
                 log.debug("getAnonymousParameterValue: value: '" + value + "'");
             }
         }
@@ -98,7 +99,7 @@ public class AddressingHelper {
      */
     public static void setAnonymousParameterValue(AxisOperation axisOperation, String value) {
         if (value == null) {
-            if (log.isDebugEnabled()) {
+            if (isDebugEnabled) {
                 log.debug("setAnonymousParameterValue: value passed in is null. return");
             }
             return;
@@ -107,12 +108,12 @@ public class AddressingHelper {
         Parameter param = axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME);
         // If an existing parameter exists
         if (param != null) {
-            if (log.isDebugEnabled()) {
+            if (isDebugEnabled) {
                 log.debug("setAnonymousParameterValue: Parameter already exists");
             }
             // and is not locked
             if (!param.isLocked()) {
-                if (log.isDebugEnabled()) {
+                if (isDebugEnabled) {
                     log.debug("setAnonymousParameterValue: Parameter not locked. Setting value: " + value);
                 }
                 // set the value
@@ -120,7 +121,7 @@ public class AddressingHelper {
             }
         } else {
             // otherwise, if no Parameter exists
-            if (log.isDebugEnabled()) {
+            if (isDebugEnabled) {
                 log.debug("setAnonymousParameterValue: Parameter does not exist");
             }
             // Create new Parameter with correct name/value
@@ -128,7 +129,7 @@ public class AddressingHelper {
             param.setName(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME);
             param.setValue(value);
             try {
-                if (log.isDebugEnabled()) {
+                if (isDebugEnabled) {
                     log.debug("setAnonymousParameterValue: Adding parameter with value: " + value);
                 }
                 // and add it to the AxisOperation object
@@ -137,7 +138,7 @@ public class AddressingHelper {
                 // This should not happen. AxisFault is only ever thrown when a locked Parameter
                 // of the same name already exists and this should be dealt with by the outer
                 // if statement.
-                if (log.isDebugEnabled()) {
+                if (isDebugEnabled) {
                     log.debug("setAnonymousParameterValue: addParameter failed: " + af.getMessage());
                 }
             }
