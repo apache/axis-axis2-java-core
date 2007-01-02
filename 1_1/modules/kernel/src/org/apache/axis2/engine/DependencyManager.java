@@ -49,15 +49,9 @@ public class DependencyManager {
             // We can not call classToLoad.getDeclaredMethed() , since there
             //  can be insatnce where mutiple services extends using one class
             // just for init and other reflection methods
-            Method[] methods = classToLoad.getMethods();
-
-            for (int i = 0; i < methods.length; i++) {
-                if (SERVICE_INIT_METHOD.equals(methods[i].getName())
-                        && (methods[i].getParameterTypes().length == 1)
-                        && (methods[i].getParameterTypes()[0] == ServiceContext.class)) {
-                    methods[i].invoke(obj, new Object[]{serviceContext});
-                    break;
-                }
+            Method method = classToLoad.getMethod(SERVICE_INIT_METHOD, new Class[]{ServiceContext.class});
+            if (method != null) {
+                method.invoke(obj, new Object[]{serviceContext});
             }
         } catch (SecurityException e) {
             log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
@@ -71,6 +65,7 @@ public class DependencyManager {
         } catch (InvocationTargetException e) {
             log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
             throw new AxisFault(e);
+        } catch (NoSuchMethodException e) {
         }
     }
 
