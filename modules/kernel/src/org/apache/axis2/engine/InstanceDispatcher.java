@@ -48,6 +48,7 @@ public class InstanceDispatcher extends AbstractHandler {
      * @throws org.apache.axis2.AxisFault
      */
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+        String scope = msgContext.getAxisService().getScope();
         ServiceContext serviceContext = msgContext.getServiceContext();
 
         if ((msgContext.getOperationContext() != null)
@@ -58,11 +59,13 @@ public class InstanceDispatcher extends AbstractHandler {
             return InvocationResponse.CONTINUE;        
         }
 
-        // try to extract sgcId from the message
-        extractServiceGroupContextId(msgContext);
+        if(!Constants.SCOPE_APPLICATION.equals(scope)) {
+            // try to extract sgcId from the message
+            extractServiceGroupContextId(msgContext);
 
-        //trying to get service context from Session context
-        fillContextsFromSessionContext(msgContext);
+            //trying to get service context from Session context
+            fillContextsFromSessionContext(msgContext);
+        }
 
         AxisOperation axisOperation = msgContext.getAxisOperation();
 
