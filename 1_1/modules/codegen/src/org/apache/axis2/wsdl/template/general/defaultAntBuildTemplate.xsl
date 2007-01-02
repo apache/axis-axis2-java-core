@@ -33,6 +33,10 @@
             </xsl:choose>
 
             <xsl:comment>Auto generated ant build file</xsl:comment>
+            <property environment="env"/>
+            <property name="axis2.home">
+                <xsl:attribute name="value">${env.AXIS2_HOME}</xsl:attribute>
+            </property>
             <property name="project.base.dir">
                 <xsl:attribute name="value">.</xsl:attribute>
             </property>
