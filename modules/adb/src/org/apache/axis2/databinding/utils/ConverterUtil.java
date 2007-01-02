@@ -661,56 +661,65 @@ public class ConverterUtil {
         Object returnArray = Array.newInstance(baseArrayClass, listSize);
         if (int.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                if (objectList.get(i) != null) {
-                    Array.setInt(returnArray, i, Integer.parseInt(objectList.get(i).toString()));
+                Object o = objectList.get(i);
+                if (o != null) {
+                    Array.setInt(returnArray, i, Integer.parseInt(o.toString()));
                 }
             }
         } else if (float.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                if (objectList.get(i) != null) {
-                    Array.setFloat(returnArray, i, Float.parseFloat(objectList.get(i).toString()));
+                Object o = objectList.get(i);
+                if (o != null) {
+                    Array.setFloat(returnArray, i, Float.parseFloat(o.toString()));
                 }
             }
         } else if (short.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                if (objectList.get(i) != null) {
-                    Array.setShort(returnArray, i, Short.parseShort(objectList.get(i).toString()));
+                Object o = objectList.get(i);
+                if (o != null) {
+                    Array.setShort(returnArray, i, Short.parseShort(o.toString()));
                 }
             }
         } else if (byte.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                if (objectList.get(i) != null) {
-                    Array.setByte(returnArray, i, Byte.parseByte(objectList.get(i).toString()));
+                Object o = objectList.get(i);
+                if (o != null) {
+                    Array.setByte(returnArray, i, Byte.parseByte(o.toString()));
                 }
             }
         } else if (long.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                if (objectList.get(i) != null) {
-                    Array.setLong(returnArray, i, Long.parseLong(objectList.get(i).toString()));
+                Object o = objectList.get(i);
+                if (o != null) {
+                    Array.setLong(returnArray, i, Long.parseLong(o.toString()));
                 }
             }
         } else if (boolean.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                if (objectList.get(i) != null) {
-                    Array.setBoolean(returnArray, i, Boolean.getBoolean(objectList.get(i).toString()));
+                Object o = objectList.get(i);
+                if (o != null) {
+                    Array.setBoolean(returnArray, i, Boolean.getBoolean(o.toString()));
                 }
             }
         } else if (char.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                if (objectList.get(i) != null) {
-                    Array.setChar(returnArray, i, objectList.get(i).toString().toCharArray()[0]);
+                Object o = objectList.get(i);
+                if (o != null) {
+                    Array.setChar(returnArray, i, o.toString().toCharArray()[0]);
                 }
             }
         } else if (double.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                if (objectList.get(i) != null) {
-                    Array.setDouble(returnArray, i, Double.parseDouble(objectList.get(i).toString()));
+                Object o = objectList.get(i);
+                if (o != null) {
+                    Array.setDouble(returnArray, i, Double.parseDouble(o.toString()));
                 }
             }
         } else if (Calendar.class.equals(baseArrayClass)) {
             for (int i = 0; i < listSize; i++) {
-                if (objectList.get(i) != null) {
-                    Array.set(returnArray, i, convertToDateTime(objectList.get(i).toString()));
+                Object o = objectList.get(i);
+                if (o != null) {
+                    Array.set(returnArray, i, convertToDateTime(o.toString()));
                 }
             }
         } else {
