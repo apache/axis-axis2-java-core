@@ -249,7 +249,7 @@ with the class constructs, creating the RPCServiceClient and initializing the
 values of the Weather class within the Web service (See Code Listing 4).</p>
 
 <p><b>Code Listing 4: Setting the weather</b></p>
-<pre>package sample.pojo.rpcclient;
+<p><pre>package sample.pojo.rpcclient;
 
 import javax.xml.namespace.QName;
 
@@ -287,7 +287,7 @@ public class WeatherRPCClient {
         Object[] opSetWeatherArgs = new Object[] { w };
 
         serviceClient.invokeRobust(opSetWeather, opSetWeatherArgs);</b>
-...</pre>
+...</pre></p>
 
 <p>The most interesting code to note is in bold font. Notice the targetEPR
 variable you create, setting the endpoint reference to
@@ -302,7 +302,7 @@ invoke the Web service, which initializes the weather data (you'll verify
 this soon). Next you get back the weather data (see Code Listing 5).</p>
 
 <p><b>Code Listing 5: Getting the weather data</b></p>
-<pre>...
+<p><pre>...
         serviceClient.invokeRobust(opSetWeather, opSetWeatherArgs);
 
         // Getting the weather
@@ -321,7 +321,7 @@ this soon). Next you get back the weather data (see Code Listing 5).</p>
             System.out.println("Weather didn't initialize!");
             return;
         }</b>
-...</pre>
+...</pre></p>
 
 <p>First you set the operation in opGetWeather to getWeather. Then you create
 an empty argument list. Note this time you expect something back from the Web
@@ -333,7 +333,7 @@ setWeather. Now display the data to verify that it is indeed what you set it
 to (see Code Listing 6).</p>
 
 <p><b>Code Listing 6: Displaying the data</b></p>
-<pre>...
+<p><pre>...
             return;
         }
 
@@ -348,7 +348,7 @@ to (see Code Listing 6).</p>
                            result.getHowMuchRain());
         
     }</b>
-}</pre>
+}</pre></p>
 
 <p>You should receive the data shown in Code Listing 7.</p>
 
@@ -408,7 +408,7 @@ services.xml file. It's a bit longer this time because it instantiates two
 services in one file (see Code Listing 7).</p>
 
 <p><b>Code Listing 7: Defining the services: services.xml</b></p>
-<pre>&lt;serviceGroup&gt;
+<p><pre>&lt;serviceGroup&gt;
   &lt;service <b>name="SpringInit" 
 class="sample.spring.service.SpringInit</b>"&gt;
     &lt;description&gt;
@@ -444,7 +444,7 @@ org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier
       class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/&gt;
     &lt;/messageReceivers&gt;
   &lt;/service&gt;
-&lt;/serviceGroup&gt;</pre>
+&lt;/serviceGroup&gt;</pre></p>
 
 <p>You'll see a few familiar items in the above listing, and several changes.
 Once again, the items in bold are most important. The ServiceTCCL property
@@ -466,7 +466,7 @@ defined. For this example, you'll define three of them (see Code Listing
 
 <p><b>Code Listing 8: Defining the application context:
 applicationContext.xml</b></p>
-<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<p><pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
 "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
 
@@ -485,7 +485,7 @@ applicationContext.xml</b></p>
     &lt;property name="rain" value="false"/&gt;
     &lt;property name="howMuchRain" value="0.2"/&gt;
   &lt;/bean&gt;</b>
-&lt;/beans&gt;</pre>
+&lt;/beans&gt;</pre></p>
 
 <p>The first one is Axis2's hook into Spring's application context (needed
 since AAR deployment is quite different from regular WAR deployment). Next,
@@ -512,7 +512,7 @@ property is set in the serices.xml file). The only code worth mentioning in
 this class is shown in Code Listing 9.</p>
 
 <p><b>Code Listing 9: SpringInit's startUp method</b></p>
-<pre>    public void startUp(ConfigurationContext ignore,
+<p><pre>    public void startUp(ConfigurationContext ignore,
                         AxisService service) {
         <b>ClassLoader classLoader = service.getClassLoader();
         ClassPathXmlApplicationContext appCtx = new
@@ -525,7 +525,7 @@ this class is shown in Code Listing 9.</p>
             logger.debug("\n\nstartUp() set spring classloader " +
                          "via axisService.getClassLoader() ... ");
         }
-    }</pre>
+    }</pre></p>
 
 <p>Note that this method retrieves the Spring class loader, creates an
 application context with applicationContext.xml as the parameters. This new
