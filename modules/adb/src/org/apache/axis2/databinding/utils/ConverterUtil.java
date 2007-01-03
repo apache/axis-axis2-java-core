@@ -57,6 +57,7 @@ import org.apache.axis2.databinding.types.UnsignedLong;
 import org.apache.axis2.databinding.types.UnsignedShort;
 import org.apache.axis2.databinding.types.Year;
 import org.apache.axis2.databinding.types.YearMonth;
+import org.apache.axis2.databinding.ADBBean;
 import org.apache.axiom.om.util.Base64;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -761,24 +762,26 @@ public class ConverterUtil {
     private static void ConvertToArbitraryObjectArray(Object returnArray,
                                                       Class baseArrayClass,
                                                       List objectList) {
-        try {
-            for (int i = 0; i < objectList.size(); i++) {
-                Object o = objectList.get(i);
-                if (o == null) {
-                    Array.set(returnArray, i, getObjectForClass(
-                            baseArrayClass,
-                            null));
-                } else {
-                    Array.set(returnArray, i, getObjectForClass(
-                            baseArrayClass,
-                            o.toString()));
-                }
+        if(!(ADBBean.class.isAssignableFrom(baseArrayClass))) {
+            try {
+                for (int i = 0; i < objectList.size(); i++) {
+                    Object o = objectList.get(i);
+                    if (o == null) {
+                        Array.set(returnArray, i, getObjectForClass(
+                                baseArrayClass,
+                                null));
+                    } else {
+                        Array.set(returnArray, i, getObjectForClass(
+                                baseArrayClass,
+                                o.toString()));
+                    }
 
+                }
+                return;
+            } catch (Exception e) {
+                //oops! - this cannot be converted fall through and
+                //try the other alternative
             }
-            return;
-        } catch (Exception e) {
-            //oops! - this cannot be converted fall through and
-            //try the other alternative
         }
 
         try {
@@ -865,9 +868,7 @@ public class ConverterUtil {
             Object instance = clazz.newInstance();
             return parseMethod.invoke(instance, new Object[]{value});
         } catch (NoSuchMethodException e) {
-            throw new ObjectConversionException(
-                    ADBMessages.getMessage("converter.cannotConvert",
-                            clazz.getName()));
+            throw new ObjectConversionException(e);
         } catch (Exception e) {
             throw new ObjectConversionException(
                     ADBMessages.getMessage("converter.cannotGenerate",
