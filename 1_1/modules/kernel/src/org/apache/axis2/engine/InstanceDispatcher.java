@@ -48,7 +48,8 @@ public class InstanceDispatcher extends AbstractHandler {
      * @throws org.apache.axis2.AxisFault
      */
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-        String scope = msgContext.getAxisService().getScope();
+        AxisService service = msgContext.getAxisService();
+        String scope = service == null ? null : service.getScope();
         ServiceContext serviceContext = msgContext.getServiceContext();
 
         if ((msgContext.getOperationContext() != null)
