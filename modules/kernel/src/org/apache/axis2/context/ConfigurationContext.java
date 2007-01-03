@@ -63,7 +63,8 @@ public class ConfigurationContext extends AbstractContext {
     private String contextRoot = "axis2";
     private String servicePath = "services";
     private String restPath = Constants.DEFAULT_REST_PATH;
-    //To have your own context path
+
+    private String cachedServicePath = null;
 
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
         super(null);
@@ -156,25 +157,32 @@ public class ConfigurationContext extends AbstractContext {
                 }
             }
 
-            /**
-             * 1. Check the max scope of the service group , if it is grater than TransportSession
-             *    then need to store in configurationContext
-             * 2. Else need to store in SessionContext , and need to store both service context and
-             *    service group context
-             */
-            String maxScope = SessionUtils.calculateMaxScopeForServiceGroup(serviceGroupContext.getDescription());
-            if (Constants.SCOPE_SOAP_SESSION.equals(maxScope)) {
-                registerServiceGroupContext(serviceGroupContext);
-            } else if (Constants.SCOPE_TRANSPORT_SESSION.equals(maxScope)) {
-                if (sessionContext != null) {
-                    sessionContext.addServiceGroupContext(serviceGroupContext, serviceGroupContextId);
-                    sessionContext.addServiceContext(serviceContext);
+            // If the current axis service's scope is application. Then, whatever be the scope for
+            // the other services, the maxScope will be application. So no need to calculate the maxscope.
+            if (!Constants.SCOPE_APPLICATION.equals(axisService.getScope())) {
+                /**
+                 * 1. Check the max scope of the service group , if it is grater than TransportSession
+                 *    then need to store in configurationContext
+                 * 2. Else need to store in SessionContext , and need to store both service context and
+                 *    service group context
+                 */
+                String maxScope = SessionUtils.calculateMaxScopeForServiceGroup(serviceGroupContext.getDescription());
+                if (Constants.SCOPE_SOAP_SESSION.equals(maxScope)) {
+                    registerServiceGroupContext(serviceGroupContext);
+                } else if (Constants.SCOPE_TRANSPORT_SESSION.equals(maxScope)) {
+                    if (sessionContext != null) {
+                        sessionContext.addServiceGroupContext(serviceGroupContext, serviceGroupContextId);
+                        sessionContext.addServiceContext(serviceContext);
+                    }
                 }
-            }
-            messageContext.setServiceContext(serviceContext);
-            if (Constants.SCOPE_REQUEST.equals(maxScope)) {
-                messageContext.setServiceGroupContextId(null);
+                messageContext.setServiceContext(serviceContext);
+                if (Constants.SCOPE_REQUEST.equals(maxScope)) {
+                    messageContext.setServiceGroupContextId(null);
+                } else {
+                    messageContext.setServiceGroupContext(serviceGroupContext);
+                }
             } else {
+                messageContext.setServiceContext(serviceContext);
                 messageContext.setServiceGroupContext(serviceGroupContext);
             }
         }
@@ -376,6 +384,13 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     public String getServiceContextPath() {
+        if(cachedServicePath == null){
+            cachedServicePath = internalGetServiceContextPath();
+        }
+        return cachedServicePath;
+    }
+    
+    private String internalGetServiceContextPath() {
         String ctxRoot = getContextRoot().trim();
         String path = "/";
         if (!ctxRoot.equals("/")) {
