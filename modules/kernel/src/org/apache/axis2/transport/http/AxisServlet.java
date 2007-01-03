@@ -220,6 +220,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
 
+        res.setBufferSize(1024 * 8);
+
         initContextRoot(req);
 
         MessageContext msgContext;
