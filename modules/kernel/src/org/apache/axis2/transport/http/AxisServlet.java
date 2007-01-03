@@ -228,7 +228,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         MessageContext msgContext;
         OutputStream out = res.getOutputStream();
 
-        if (!disableREST && enableRESTInAxis2MainServlet && isRESTRequest(req)) {
+        String contentType = req.getContentType();
+        if (!disableREST && enableRESTInAxis2MainServlet && isRESTRequest(contentType, req)) {
             msgContext = createMessageContext(req, res);
             try {
                 new RESTUtil(configContext).processPostRequest(msgContext,
@@ -249,7 +250,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             try {
                 // adding ServletContext into msgContext;
                 InvocationResponse pi = HTTPTransportUtils.processHTTPPostRequest(msgContext, req.getInputStream(), out,
-                        req.getContentType(), req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
+                        contentType, req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
                         req.getRequestURL().toString());
 
                 if (pi.equals(InvocationResponse.SUSPEND))
@@ -540,8 +541,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      *
      * @param request
      */
-    private boolean isRESTRequest(HttpServletRequest request) {
-        String contentType = request.getContentType();
+    private boolean isRESTRequest(String contentType, HttpServletRequest request) {
         String soapActionHeader = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
 //possible bug.. 
         return ((soapActionHeader == null) ||
