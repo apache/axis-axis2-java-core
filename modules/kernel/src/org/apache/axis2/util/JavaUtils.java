@@ -71,7 +71,29 @@ public class JavaUtils {
      * @return Returns boolean.
      */
     public static boolean isJavaKeyword(String keyword) {
+        // None of the java keywords have uppercase characters
+        if(hasUpperCase(keyword)) {
+            return false;
+        }
         return (Arrays.binarySearch(keywords, keyword, englishCollator) >= 0);
+    }
+
+    /**
+     * Check if the word has any uppercase letters
+     * 
+     * @param word
+     * @return
+     */
+    public static boolean hasUpperCase(String word) {
+        if (word == null)
+            return false;
+        int len = word.length();
+        for (int i = 0; i < len; i++) {
+            if (Character.isUpperCase(word.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
