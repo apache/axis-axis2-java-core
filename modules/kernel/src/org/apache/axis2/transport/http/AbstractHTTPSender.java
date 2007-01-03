@@ -382,11 +382,17 @@ public abstract class AbstractHTTPSender {
                     }
                     agent.getState().setCredentials(new AuthScope(host, port, realm), creds);
                 } else {
-                    /*Credentials only for Digest and Basic Authentication*/
-                    creds = new UsernamePasswordCredentials(username, password);
-                    agent.getState().setCredentials(new AuthScope(AuthScope.ANY), creds);
+                    if (domain != null) {
+                        /*Credentials for NTLM Authentication when host is ANY_HOST*/
+                        creds = new NTCredentials(username, password, AuthScope.ANY_HOST, domain);
+                        agent.getState().setCredentials(
+                                new AuthScope(AuthScope.ANY_HOST, port, realm), creds);
+                    } else {
+                        /*Credentials only for Digest and Basic Authentication*/
+                        creds = new UsernamePasswordCredentials(username, password);
+                        agent.getState().setCredentials(new AuthScope(AuthScope.ANY), creds);
+                    }
                 }
-
                 /* Customizing the priority Order */
                 List schemes = authenticator.getAuthSchemes();
                 if (schemes != null && schemes.size() > 0) {
