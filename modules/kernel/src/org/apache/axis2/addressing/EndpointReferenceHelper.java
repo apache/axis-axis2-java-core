@@ -175,6 +175,10 @@ public class EndpointReferenceHelper {
             log.debug("toOM: Addressing namespace, " + addressingNamespace);
         }
         
+        if (addressingNamespace == null) {
+            throw new AxisFault("Addressing namespace cannot be null.");
+        }
+        
         if (qname.getPrefix() != null) {
             OMNamespace wrapNs = factory.createOMNamespace(qname.getNamespaceURI(), qname.getPrefix());
             if (factory instanceof SOAPFactory){
