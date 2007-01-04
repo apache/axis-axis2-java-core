@@ -118,7 +118,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         super.destroy();
         //stoping listner manager
         try {
-            configContext.getListenerManager().stop();
+            configContext.terminate();
         } catch (AxisFault axisFault) {
             log.info(axisFault.getMessage());
         }

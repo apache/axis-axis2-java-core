@@ -830,8 +830,7 @@ public class ServiceClient {
                 axisConfiguration.removeServiceGroup(serviceGroupName);
             }
         } else {
-            //Stopping listeners if you start any
-            configContext.getListenerManager().stop();
+            configContext.terminate();
         }
     }
 }

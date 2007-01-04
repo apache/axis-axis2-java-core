@@ -43,7 +43,7 @@ public class WSDLServiceBuilderTest extends TestCase {
     }
 
     protected void tearDown() throws AxisFault {
-        lm.stop();
+        configContext.terminate();
     }
 
     public void testWSDLClient() throws Exception {

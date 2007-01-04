@@ -105,10 +105,7 @@ public class UtilServer {
         } else {
             count--;
         }
-        ListenerManager listenerManager = receiver.getConfigurationContext().getListenerManager();
-        if (listenerManager != null) {
-            listenerManager.stop();
-        }
+        receiver.getConfigurationContext().terminate();
     }
 
     public static ConfigurationContext getConfigurationContext() {

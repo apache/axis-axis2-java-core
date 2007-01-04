@@ -93,11 +93,7 @@ public class UtilsTCPServer {
         } catch (AxisFault e) {
             log.error(e.getMessage(), e);
         }
-        ListenerManager listenerManager =
-                receiver.getConfigurationContext().getListenerManager();
-        if (listenerManager != null) {
-            listenerManager.stop();
-        }
+        receiver.getConfigurationContext().terminate();
     }
 
 }

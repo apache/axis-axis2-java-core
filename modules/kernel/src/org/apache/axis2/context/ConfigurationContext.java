@@ -19,13 +19,18 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.ListenerManager;
+import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.modules.Module;
+import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.SessionUtils;
 import org.apache.axiom.om.util.UUIDGenerator;
@@ -66,10 +71,14 @@ public class ConfigurationContext extends AbstractContext {
 
     private String cachedServicePath = null;
 
+    private Thread cleanupThread;
+
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
         super(null);
         this.axisConfiguration = axisConfiguration;
         initConfigContextTimeout(axisConfiguration);
+        cleanupThread = new CleanupThread(this);
+        Runtime.getRuntime().addShutdownHook(cleanupThread);
     }
 
     private void initConfigContextTimeout(AxisConfiguration axisConfiguration) {
@@ -363,7 +372,7 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-    public void cleanupContexts() {
+    private void cleanupContexts() {
         if (applicationSessionServiceGroupContextTable.size() > 0) {
             Iterator applicationScopeSgs =
                     applicationSessionServiceGroupContextTable.values().iterator();
@@ -383,6 +392,60 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
+    public void terminate()
+      throws AxisFault
+    {
+      Runtime.getRuntime().removeShutdownHook(cleanupThread);
+      performCleanup();
+    }
+        
+    private void performCleanup()
+      throws AxisFault
+    {
+      if (listenerManager != null)
+      {
+        listenerManager.stop();
+      }
+      
+      /*Stop the transport senders*/
+      HashMap transportOut = getAxisConfiguration().getTransportsOut();
+      if (transportOut.size() > 0) {
+          Iterator trsItr = transportOut.values().iterator();
+          while (trsItr.hasNext()) {
+              TransportOutDescription outDescription = (TransportOutDescription) trsItr.next();
+              TransportSender trsSededer = outDescription.getSender();
+              if (trsSededer != null) {
+                  trsSededer.stop();
+              }
+          }
+      }
+
+      /*Shut down the modules*/
+      HashMap modules = getAxisConfiguration().getModules();
+      if (modules != null) {
+          Iterator moduleitr = modules.values().iterator();
+          while (moduleitr.hasNext()) {
+              AxisModule axisModule = (AxisModule) moduleitr.next();
+              Module module = axisModule.getModule();
+              if (module != null) {
+                  module.shutdown(this);
+              }
+          }
+      }
+
+      cleanupContexts();
+      
+      /*Shut down the services*/
+      Iterator services = getAxisConfiguration().getServices().values().iterator();
+      while (services.hasNext()) {
+        AxisService axisService = (AxisService) services.next();
+        ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
+        if (serviceLifeCycle != null) {
+          serviceLifeCycle.shutDown(this, axisService);
+        }
+      }
+    }
+    
     public String getServiceContextPath() {
         if(cachedServicePath == null){
             cachedServicePath = internalGetServiceContextPath();
@@ -461,5 +524,27 @@ public class ConfigurationContext extends AbstractContext {
             serviceGroupContextTimoutInterval = serviceGroupContextTimoutIntervalParam.intValue();
         }
         return serviceGroupContextTimoutInterval;
+    }
+    
+    class CleanupThread extends Thread
+    {
+      ConfigurationContext configContext;
+      
+      public CleanupThread(ConfigurationContext configContext)
+      {
+        this.configContext = configContext;
+      }
+      
+      public void run()
+      {
+        try
+        {
+          configContext.performCleanup();
+        }
+        catch (AxisFault e)
+        {
+          e.printStackTrace();
+        }
+      }
     }
 }

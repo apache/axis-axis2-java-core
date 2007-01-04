@@ -117,7 +117,7 @@ public class EchoRawXMLMultipleTest extends UtilServerBasedTestCase implements T
             }
         }
         sender.cleanup();
-        configContext.getListenerManager().stop();
+        configContext.terminate();
         log.info("send the request");
 
     }
@@ -167,7 +167,7 @@ public class EchoRawXMLMultipleTest extends UtilServerBasedTestCase implements T
             }
         }
         sender.cleanup();
-        configContext.getListenerManager().stop();
+        configContext.terminate();
         log.info("send the request");
     }
 
@@ -185,7 +185,7 @@ public class EchoRawXMLMultipleTest extends UtilServerBasedTestCase implements T
             TestingUtils.campareWithCreatedOMElement(result);
         }
         sender.cleanup();
-        configContext.getListenerManager().stop();
+        configContext.terminate();
     }
 
     public void testEchoXMLMultipleDuelSync() throws Exception {
@@ -209,7 +209,7 @@ public class EchoRawXMLMultipleTest extends UtilServerBasedTestCase implements T
             TestingUtils.campareWithCreatedOMElement(result);
         }
         sender.cleanup();
-        configContext.getListenerManager().stop();
+        configContext.terminate();
     }
 
 

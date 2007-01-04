@@ -60,7 +60,7 @@ public class WSDLToAllServicesBuilderTest extends TestCase {
     }
 
     protected void tearDown() throws AxisFault {
-        lm.stop();
+        configContext.terminate();
     }
 
     private void checkResults(List axisServices, String expectedService[]) {
