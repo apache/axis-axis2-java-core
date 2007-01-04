@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.xml.ws.Dispatch;
+import javax.xml.ws.ProtocolException;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
@@ -57,6 +58,38 @@ public class StringDispatch extends TestCase {
         assertTrue(!response.contains("Body"));
         assertTrue(response.contains("echoStringResponse"));
 	}
+    
+    /**
+     * Invoke a sync Dispatch<String> in PAYLOAD mode
+     * Server response with exception.  Section 4.3.2
+     * says we should get a ProtocolException, not a
+     * WebServiceException.
+     */
+    public void testSyncPayloadMode_exception() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Initialize the JAX-WS client artifacts
+        Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
+        svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
+        Dispatch<String> dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                String.class, Service.Mode.PAYLOAD);
+        
+        // Invoke the Dispatch
+        System.out.println(">> Invoking sync Dispatch");
+        Exception e = null;
+        try {
+            // The _bad string passes "THROW EXCEPTION", which causes the echo function on the
+            // server to throw a RuntimeException.  We should get a ProtocolException here on the client
+            String response = dispatch.invoke(DispatchTestConstants.sampleBodyContent_bad);
+        } catch (Exception ex) {
+            e = ex;
+        }
+
+        assertNotNull("No exception received", e);
+        assertTrue("'e' should be of type ProtocolException", e instanceof ProtocolException);
+
+    }
     
     /**
      * Invoke a sync Dispatch<String> in MESSAGE mode

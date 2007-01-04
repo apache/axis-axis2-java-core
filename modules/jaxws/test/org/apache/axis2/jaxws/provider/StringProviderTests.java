@@ -19,8 +19,8 @@ package org.apache.axis2.jaxws.provider;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
+import javax.xml.ws.ProtocolException;
 import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
 
 public class StringProviderTests extends ProviderTestCase {
 
@@ -59,9 +59,7 @@ public class StringProviderTests extends ProviderTestCase {
             String re = dispatch.invoke("<invoke>throwException</invoke>");
         } catch (Exception e) {
             ex = e;
-            assertTrue(e instanceof WebServiceException);
-            String dfse = e.toString();
-            assertTrue(e.toString().equals("javax.xml.ws.WebServiceException: javax.xml.ws.WebServiceException: provider"));
+            assertTrue(e instanceof ProtocolException);
         }
         assertNotNull(ex);
     }

@@ -128,7 +128,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
             try {
                 if (responseMsg.isFault()) {
                     XMLFault fault = responseMsg.getXMLFault();
-                    throw ExceptionFactory.makeWebServiceException(fault.getReason().getText());
+                    // 4.3.2 conformance bullet 1 requires a ProtocolException here
+                    throw ExceptionFactory.makeProtocolException(fault.getReason().getText(), null);
                 }
                 else if (responseMsgCtx.getLocalException() != null) {
                     // use the factory, it'll throw the right thing:

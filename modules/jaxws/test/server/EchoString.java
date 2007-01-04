@@ -34,7 +34,9 @@
            * Auto generated getter method
            * @return java.lang.String
            */
-           public  java.lang.String getInput(){
+           public  java.lang.String getInput() {
+               if (localInput.equals("THROW EXCEPTION"))
+                   throw new RuntimeException("test exception");
                return localInput;
            }
 

@@ -40,6 +40,11 @@ public class DispatchTestConstants {
         "<ns1:input xmlns=\"http://test\">HELLO THERE!!!</ns1:input>" + 
         "</ns1:echoString>";
     
+    public static final String sampleBodyContent_bad = 
+        "<ns1:echoString xmlns:ns1=\"http://test\">" + 
+        "<ns1:input xmlns=\"http://test\">THROW EXCEPTION</ns1:input>" + 
+        "</ns1:echoString>";
+    
     public static final String sampleSoapMessage = 
         sampleSoapEnvelopeHeader +
         sampleBodyContent + 
