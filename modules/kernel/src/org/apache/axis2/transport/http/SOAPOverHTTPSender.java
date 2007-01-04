@@ -56,7 +56,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
         postMethod.setPath(url.getPath());
         postMethod.setRequestEntity(new SOAPRequestEntity(dataout, chunked, msgContext,
-                charEncoding, soapActionString, format, isAllowedRetry));
+                soapActionString, format, isAllowedRetry));
 
         if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
             postMethod.setContentChunked(true);

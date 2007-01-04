@@ -34,10 +34,7 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
 public class SOAPRequestEntity implements RequestEntity {
-    private boolean doingMTOM = false;
-    private boolean doingSWA = false;
     private byte[] bytes;
-    private String charSetEnc;
     private boolean chunked;
     private OMElement element;
     private MessageContext msgCtxt;
@@ -46,25 +43,20 @@ public class SOAPRequestEntity implements RequestEntity {
     private boolean isAllowedRetry;
 
     public SOAPRequestEntity(OMElement element, boolean chunked, MessageContext msgCtxt,
-                             String charSetEncoding, String soapActionString,
+                             String soapActionString,
                              OMOutputFormat format,
                              boolean isAllowedRetry) {
         this.element = element;
         this.chunked = chunked;
         this.msgCtxt = msgCtxt;
-        this.doingMTOM = msgCtxt.isDoingMTOM();
-        this.doingSWA = msgCtxt.isDoingSwA();
-        this.charSetEnc = charSetEncoding;
         this.soapActionString = soapActionString;
         this.format = format;
         this.isAllowedRetry = isAllowedRetry;
     }
 
-    private void handleOMOutput(OutputStream out, boolean doingMTOM)
+    private void handleOMOutput(OutputStream out)
             throws XMLStreamException {
-        format.setDoOptimize(doingMTOM);
-        format.setDoingSWA(doingSWA);
-        if (!doingMTOM & doingSWA) {
+        if (!(format.isOptimized()) & format.isDoingSWA()) {
             StringWriter bufferedSOAPBody = new StringWriter();
             if (isAllowedRetry) {
                 element.serialize(bufferedSOAPBody, format);
@@ -84,11 +76,11 @@ public class SOAPRequestEntity implements RequestEntity {
     public byte[] writeBytes() throws AxisFault {
         try {
             ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-            if (!doingMTOM) {
+            if (!format.isOptimized()) {
                 // why are we creating a new OMOutputFormat
                 OMOutputFormat format2 = new OMOutputFormat();
-                format2.setCharSetEncoding(charSetEnc);
-                if (doingSWA) {
+                format2.setCharSetEncoding(format.getCharSetEncoding());
+                if (format.isDoingSWA()) {
                     StringWriter bufferedSOAPBody = new StringWriter();
                     element.serializeAndConsume(bufferedSOAPBody, format2);
                     MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody, bytesOut, msgCtxt.getAttachmentMap(), format2);
@@ -97,8 +89,6 @@ public class SOAPRequestEntity implements RequestEntity {
                 }
                 return bytesOut.toByteArray();
             } else {
-                format.setCharSetEncoding(charSetEnc);
-                format.setDoOptimize(true);
                 element.serializeAndConsume(bytesOut, format);
                 return bytesOut.toByteArray();
             }
@@ -116,7 +106,7 @@ public class SOAPRequestEntity implements RequestEntity {
         }
         try {
             if (chunked) {
-                this.handleOMOutput(out, doingMTOM);
+                this.handleOMOutput(out);
             } else {
                 if (bytes == null) {
                     bytes = writeBytes();

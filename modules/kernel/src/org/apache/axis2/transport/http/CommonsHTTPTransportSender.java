@@ -139,35 +139,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         try {
             OMOutputFormat format = new OMOutputFormat();
-            String charSetEnc =
-                    (String) msgContext
-                            .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-
-            if (charSetEnc != null) {
-                format.setCharSetEncoding(charSetEnc);
-            } else {
-                OperationContext opctx = msgContext.getOperationContext();
-
-                if (opctx != null) {
-                    charSetEnc = (String) opctx
-                            .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-                }
-            }
-
-            /**
-             * If the char set enc is still not found use the default
-             */
-            if (charSetEnc == null) {
-                charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
-            }
-
             msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
             msgContext.setDoingSwA(HTTPTransportUtils.doWriteSwA(msgContext));
             msgContext.setDoingREST(HTTPTransportUtils.isDoingREST(msgContext));
             format.setSOAP11(msgContext.isSOAP11());
             format.setDoOptimize(msgContext.isDoingMTOM());
             format.setDoingSWA(msgContext.isDoingSwA());
-            format.setCharSetEncoding(charSetEnc);
+            format.setCharSetEncoding(HTTPTransportUtils.getCharSetEncoding(msgContext));
 
             // Trasnport URL can be different from the WSA-To. So processing
             // that now.
@@ -208,7 +186,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 if (msgContext.getProperty(MessageContext.TRANSPORT_OUT) != null) {
                     sendUsingOutputStream(msgContext, format, dataOut);
                 } else {
-                    throw new AxisFault("Both the TO and Property MessageContext.TRANSPORT_OUT is Null, No where to send");
+                    throw new AxisFault("Both the TO and MessageContext.TRANSPORT_OUT property are Null, No where to send");
                 }
             }
 

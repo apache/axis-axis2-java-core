@@ -30,7 +30,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
 public class RESTRequestEntity implements RequestEntity {
-    private boolean doingMTOM = false;
     private byte[] bytes;
     private String charSetEnc;
     private boolean chunked;
@@ -47,7 +46,6 @@ public class RESTRequestEntity implements RequestEntity {
         this.element = element;
         this.chunked = chunked;
         this.msgCtxt = msgCtxt;
-        this.doingMTOM = msgCtxt.isDoingMTOM();
         this.charSetEnc = charSetEncoding;
         this.soapActionString = soapActionString;
         this.format = format;
@@ -62,7 +60,7 @@ public class RESTRequestEntity implements RequestEntity {
     public byte[] writeBytes() throws AxisFault {
         try {
             ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-            if (!doingMTOM) {
+            if (!format.isOptimized()) {
                 OMOutputFormat format2 = new OMOutputFormat();
                 format2.setCharSetEncoding(charSetEnc);
                 element.serializeAndConsume(bytesOut, format2);
@@ -83,7 +81,7 @@ public class RESTRequestEntity implements RequestEntity {
     public void writeRequest(OutputStream out) throws IOException {
         try {
             if (chunked) {
-                this.handleOMOutput(out, doingMTOM);
+                this.handleOMOutput(out, format.isDoingSWA());
             } else {
                 if (bytes == null) {
                     bytes = writeBytes();
@@ -125,8 +123,7 @@ public class RESTRequestEntity implements RequestEntity {
         // action header is not mandated in SOAP 1.2. So putting it, if available
         if (!msgCtxt.isSOAP11() && (soapActionString != null)
                 && !"".equals(soapActionString.trim()) && !"\"\"".equals(soapActionString.trim())) {
-            contentType =
-                    contentType + ";action=\"" + soapActionString + "\";";
+            contentType =contentType + ";action=\"" + soapActionString + "\";";
         }
         return contentType;
     }

@@ -42,6 +42,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisEngine;
@@ -123,6 +124,34 @@ public class HTTPTransportUtils {
         }
         return enableSwA;
     }
+    
+    /**
+	 * Utility method to query CharSetEncoding. First look in the
+	 * MessageContext. If it's not there look in the OpContext. Use the defualt,
+	 * if it's not given in either contexts.
+	 * 
+	 * @param msgContext
+	 * @return CharSetEncoding
+	 */
+    public static String getCharSetEncoding(MessageContext msgContext) {
+		String charSetEnc = (String) msgContext
+				.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+
+		if (charSetEnc == null) {
+			OperationContext opctx = msgContext.getOperationContext();
+			if (opctx != null) {
+				charSetEnc = (String) opctx
+						.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+			}
+			/**
+			 * If the char set enc is still not found use the default
+			 */
+			if (charSetEnc == null) {
+				charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+			}
+		}
+		return charSetEnc;
+	}
 
     public static boolean processHTTPGetRequest(MessageContext msgContext,
                                                 OutputStream out, String soapAction, String requestURI,
