@@ -71,6 +71,15 @@ public interface AddressingConstants {
     
     public static final String ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS = "addMustUnderstandToAddressingHeaders";
     
+    /** A property pointing to an ArrayList of OMAttribute objects representing any attributes
+     * of the wsa:Action header.
+     */
+    public static final String ACTION_ATTRIBUTES = "actionAttributes";
+    /** A property pointing to an ArrayList of OMAttribute objects representing any attributes
+     * of the wsa:MessageID header.
+     */
+    public static final String MESSAGEID_ATTRIBUTES = "messageidAttributes";
+    
     /**
      * This property, if set to Boolean.TRUE, will mean that the addressing handler allows partially
      * ws-addressed messages to be sent even if they are then invalid rather than throwing a fault.
@@ -85,7 +94,7 @@ public interface AddressingConstants {
     // ======================== Common Faults ==============================
     public static final String FAULT_ACTION_NOT_SUPPORTED = "ActionNotSupported";
     public static final String FAULT_ACTION_NOT_SUPPORTED_REASON = "The [action] cannot be processed at the receiver.";
-
+    
     public interface Final {
 
         // ====================== Addressing 1.0 Final Version Constants ====================

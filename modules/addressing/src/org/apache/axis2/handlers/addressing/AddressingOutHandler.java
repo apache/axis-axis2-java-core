@@ -16,8 +16,10 @@
 
 package org.apache.axis2.handlers.addressing;
 
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.util.AttributeHelper;
 import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -40,6 +42,7 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -105,11 +108,8 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         // processing WSA FaultTo
         processFaultToEPR(messageContextOptions, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
 
-        String messageID = messageContextOptions.getMessageId();
-        if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, envelope,
-                addressingNamespaceObject, replaceHeaders)) {//optional
-            processStringInfo(messageID, WSA_MESSAGE_ID, envelope, addressingNamespaceObject);
-        }
+        // processing WSA MessageID
+        processMessageID(messageContextOptions, envelope, msgContext, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
 
         // processing WSA Action
         processWSAAction(messageContextOptions, envelope, msgContext, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
@@ -124,6 +124,21 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         processMustUnderstandProperty(envelope, msgContext, addressingNamespaceObject);
         
         return InvocationResponse.CONTINUE;
+    }
+
+    private void processMessageID(Options messageContextOptions, SOAPEnvelope envelope, MessageContext msgContext, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace) {
+        String messageID = messageContextOptions.getMessageId();
+        if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, envelope,
+                addressingNamespaceObject, replaceHeaders)) {//optional
+            OMElement oe = processStringInfo(messageID, WSA_MESSAGE_ID, envelope, addressingNamespaceObject);
+            ArrayList attributes = (ArrayList)messageContextOptions.getProperty(AddressingConstants.MESSAGEID_ATTRIBUTES);
+            if(attributes!= null && !attributes.isEmpty()){
+                Iterator attrIterator = attributes.iterator();
+                while(attrIterator.hasNext()){
+                    AttributeHelper.importOMAttribute((OMAttribute)attrIterator.next(), oe);
+                }
+            }
+        }
     }
 
     private void processWSAAction(Options messageContextOptions, SOAPEnvelope envelope,
@@ -170,7 +185,14 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                     log.trace("processWSAAction: Adding action to header: "+action);
                 }
                 // Otherwise just add the header
-                processStringInfo(action, WSA_ACTION, envelope, addressingNamespaceObject);
+                OMElement oe = processStringInfo(action, WSA_ACTION, envelope, addressingNamespaceObject);
+                ArrayList attributes = (ArrayList)messageContextOptions.getProperty(AddressingConstants.ACTION_ATTRIBUTES);
+                if(attributes!= null && !attributes.isEmpty()){
+                    Iterator attrIterator = attributes.iterator();
+                    while(attrIterator.hasNext()){
+                        AttributeHelper.importOMAttribute((OMAttribute)attrIterator.next(), oe);
+                    }
+                }
             }
         }
     }
@@ -267,6 +289,13 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             if (!"".equals(address) && address != null) {
                 SOAPHeaderBlock toHeaderBlock = envelope.getHeader().addHeaderBlock(WSA_TO, addressingNamespaceObject);
                 toHeaderBlock.setText(address);
+                if(epr.getAddressAttributes() != null){
+                    Iterator addressAttributes = epr.getAddressAttributes().iterator();
+                    while(addressAttributes.hasNext()){
+                        OMAttribute attr = (OMAttribute)addressAttributes.next();
+                        AttributeHelper.importOMAttribute(attr, toHeaderBlock);
+                    }
+                }
             }
             processToEPRReferenceInformation(referenceParameters, envelope.getHeader(), addressingNamespaceObject, isFinalAddressingNamespace);
         }

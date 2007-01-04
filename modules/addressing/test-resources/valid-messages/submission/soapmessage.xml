@@ -4,9 +4,9 @@
                   xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
                   xmlns:axis2="http://ws.apache.org/namespaces/axis2">
     <soapenv:Header xmlns:fabrikam="http://example.com/fabrikam">
-        <wsa:MessageID soapenv:mustUnderstand="0">
+        <wsa:MessageID axis2:AttrExt="123456789" soapenv:mustUnderstand="0">
             uuid:920C5190-0B8F-11D9-8CED-F22EDEEBF7E5</wsa:MessageID>
-        <wsa:To soapenv:mustUnderstand="0">http://localhost:8081/axis/services/BankPort</wsa:To>
+        <wsa:To axis2:AttrExt="123456789" soapenv:mustUnderstand="0">http://localhost:8081/axis/services/BankPort</wsa:To>
         <wsa:From axis2:AttrExt="123456789" soapenv:mustUnderstand="0" >
             <wsa:Address>
                 http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</wsa:Address>
@@ -18,7 +18,7 @@
             </wsa:ReferenceProperties>
             <axis2:EPRExt axis2:AttrExt="123456789">123456789</axis2:EPRExt>
         </wsa:From>
-        <wsa:Action>http://ws.apache.org/tests/action</wsa:Action>
+        <wsa:Action axis2:AttrExt="123456789">http://ws.apache.org/tests/action</wsa:Action>
         <wsa:ReplyTo axis2:AttrExt="123456789">
             <wsa:Address>http://example.com/fabrikam/acct</wsa:Address>
             <wsa:ReferenceParameters>

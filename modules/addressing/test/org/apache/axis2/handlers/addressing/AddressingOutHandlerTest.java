@@ -16,8 +16,11 @@
 
 package org.apache.axis2.handlers.addressing;
 
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.impl.llom.util.XMLComparator;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -28,6 +31,8 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.util.TestUtil;
+
+import com.ibm.xslt4j.bcel.generic.NEWARRAY;
 
 import javax.xml.namespace.QName;
 
@@ -68,6 +73,15 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         msgCtxt.setReplyTo(replyTo);
         msgCtxt.setEnvelope(defaultEnvelope);
         msgCtxt.setWSAAction("http://www.actions.org/action");
+        msgCtxt.setMessageID("urn:test:123");
+        
+        OMAttribute extAttr = OMAbstractFactory.getOMFactory().createOMAttribute("AttrExt", OMAbstractFactory.getOMFactory().createOMNamespace("http://ws.apache.org/namespaces/axis2", "axis2"), "123456789");
+        ArrayList al = new ArrayList();
+        al.add(extAttr);
+        
+        msgCtxt.setProperty(AddressingConstants.ACTION_ATTRIBUTES, al);
+        msgCtxt.setProperty(AddressingConstants.MESSAGEID_ATTRIBUTES, al);
+        
         outHandler.invoke(msgCtxt);
 
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder("eprTest.xml");

@@ -86,9 +86,11 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
             assertEquals("action header is not correct",
                     options.getAction(),
                     action);
+            assertActionHasExtensibilityAttribute(mc);
             assertEquals("message id header is not correct",
                     options.getMessageId().trim(),
                     messageID.trim());
+            assertMessageIDHasExtensibilityAttribute(mc);
 
             assertFullFromEPR(options.getFrom());
             assertFullFaultEPR(options.getFaultTo());
@@ -210,9 +212,11 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
     }
     
     private void assertToEPR(EndpointReference toEPR) {
+        System.out.println(toEPR);
         assertEquals("Address in To EPR is not valid",
         		toEPR.getAddress().trim(),
                 toAddress.trim());
+        assertEPRAddressHasExtensibilityAttribute(toEPR);
     }
     
     private void assertFullFromEPR(EndpointReference fromEPR) {
@@ -259,6 +263,54 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
     	}else{
     		fail("No ReferenceParameters found in EPR");
     	}
+    }
+    
+    private void assertActionHasExtensibilityAttribute(MessageContext mc){
+        boolean attributeFound=false;
+        ArrayList attributes = (ArrayList)mc.getProperty(AddressingConstants.ACTION_ATTRIBUTES);
+        if(attributes!=null){
+            Iterator iter = attributes.iterator();
+            while(iter.hasNext()){
+                OMAttribute oa = (OMAttribute)iter.next();
+                if(oa.getLocalName().equals("AttrExt")){
+                    attributeFound = true;
+                    assertEquals("Attribute value incorrectly deserialised",oa.getAttributeValue(),"123456789");
+                }
+            }
+        }
+        assertTrue("Extensibility attribute not found on Action", attributeFound);
+    }
+    
+    private void assertMessageIDHasExtensibilityAttribute(MessageContext mc){
+        boolean attributeFound=false;
+        ArrayList attributes = (ArrayList)mc.getProperty(AddressingConstants.MESSAGEID_ATTRIBUTES);
+        if(attributes!=null){
+            Iterator iter = attributes.iterator();
+            while(iter.hasNext()){
+                OMAttribute oa = (OMAttribute)iter.next();
+                if(oa.getLocalName().equals("AttrExt")){
+                    attributeFound = true;
+                    assertEquals("Attribute value incorrectly deserialised",oa.getAttributeValue(),"123456789");
+                }
+            }
+        }
+        assertTrue("Extensibility attribute not found on MessageID", attributeFound);
+    }
+    
+    private void assertEPRAddressHasExtensibilityAttribute(EndpointReference epr){
+        boolean attributeFound=false;
+        ArrayList attributes = epr.getAddressAttributes();
+        if(attributes!=null){
+            Iterator iter = attributes.iterator();
+            while(iter.hasNext()){
+                OMAttribute oa = (OMAttribute)iter.next();
+                if(oa.getLocalName().equals("AttrExt")){
+                    attributeFound = true;
+                    assertEquals("Attribute value incorrectly deserialised",oa.getAttributeValue(),"123456789");
+                }
+            }
+        }
+        assertTrue("Extensibility attribute not found on EPR Address", attributeFound);
     }
     
     private void assertEPRHasExtensibilityAttribute(EndpointReference epr){

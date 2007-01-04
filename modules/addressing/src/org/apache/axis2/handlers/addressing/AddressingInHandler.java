@@ -151,8 +151,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
                 } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreFaultTo) {
                     extractFaultToEPRInformation(soapHeaderBlock, namespace, messageContext);
                 } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName()) && !ignoreMessageID) {
-                    messageContextOptions.setMessageId(soapHeaderBlock.getText());
-                    soapHeaderBlock.setProcessed();
+                    extractMessageIDInformation(soapHeaderBlock, addressingNamespace, messageContext);
                 } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
                     extractActionInformation(soapHeaderBlock, namespace, messageContext);
                 } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
@@ -283,6 +282,17 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         epr = new EndpointReference(soapHeaderBlock.getText());
         messageContextOptions.setTo(epr);
 
+        // check for address attributes
+        Iterator addressAttributes = soapHeaderBlock.getAllAttributes(); 
+        if(addressAttributes != null && addressAttributes.hasNext()){
+            ArrayList attributes = new ArrayList();
+            while(addressAttributes.hasNext()){
+                OMAttribute attr = (OMAttribute)addressAttributes.next();
+                attributes.add(attr);
+            }
+            epr.setAddressAttributes(attributes);
+        }
+        
         // check for reference parameters
         extractToEprReferenceParameters(epr, header, namespace);
         soapHeaderBlock.setProcessed();
@@ -324,9 +334,25 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             messageContextOptions.setAction(wsaAction);            
         }
         
+        ArrayList attributes = extractAttributesFromSOAPHeaderBlock(soapHeaderBlock);
+        if(attributes!=null){
+            messageContext.setProperty(AddressingConstants.ACTION_ATTRIBUTES, attributes);
+        }
+        
         soapHeaderBlock.setProcessed();        
     }
 
+    private void extractMessageIDInformation(SOAPHeaderBlock soapHeaderBlock, String addressingNamespace, MessageContext messageContext) throws AxisFault {
+        messageContext.getOptions().setMessageId(soapHeaderBlock.getText());
+        
+        ArrayList attributes = extractAttributesFromSOAPHeaderBlock(soapHeaderBlock);
+        if(attributes!=null){
+            messageContext.setProperty(AddressingConstants.MESSAGEID_ATTRIBUTES, attributes);
+        }
+        
+        soapHeaderBlock.setProcessed();    
+    }
+    
     /**
      * Given the soap header block, this should extract the information within EPR.
      *
@@ -343,5 +369,18 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             }
             AddressingFaultsHelper.triggerMissingAddressInEPRFault(messageContext, headerBlock.getLocalName());
         }
+    }
+    
+    private ArrayList extractAttributesFromSOAPHeaderBlock(SOAPHeaderBlock soapHeaderBlock){
+        Iterator actionAttributes = soapHeaderBlock.getAllAttributes(); 
+        if(actionAttributes != null && actionAttributes.hasNext()){
+            ArrayList attributes = new ArrayList();
+            while(actionAttributes.hasNext()){
+                OMAttribute attr = (OMAttribute)actionAttributes.next();
+                attributes.add(attr);
+            }
+            return attributes;
+        }
+        return null;
     }
 }

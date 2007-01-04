@@ -1,5 +1,5 @@
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-	<soapenv:Header xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing">
+	<soapenv:Header xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:axis2="http://ws.apache.org/namespaces/axis2">
 		<wsa:Reference4>Value 400</wsa:Reference4>
 		<wsa:Reference1>Value 100</wsa:Reference1>
 		<wsa:Reference0>Value 0</wsa:Reference0>
@@ -11,7 +11,8 @@
 				http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous
 			</wsa:Address>
 		</wsa:ReplyTo>
-		<wsa:Action>http://www.actions.org/action</wsa:Action>
+		<wsa:Action axis2:AttrExt="123456789">http://www.actions.org/action</wsa:Action>
+		<wsa:MessageID axis2:AttrExt="123456789">urn:test:123</wsa:MessageID>
 	</soapenv:Header>
 	<soapenv:Body />
 </soapenv:Envelope>
