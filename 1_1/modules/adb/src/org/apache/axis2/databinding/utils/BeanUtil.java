@@ -178,14 +178,22 @@ public class BeanUtil {
 
                     }
                 } else {
-                    if (typeTable != null) {
-                        QName qNamefortheType = typeTable.getQNamefortheType(ptype.getName());
-                        object.add(new QName(qNamefortheType.getNamespaceURI(),
-                                propDesc.getName(), qNamefortheType.getPrefix()));
-                    } else {
+
+                    if (elemntNameSpace != null) {
+                        object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                                propDesc.getName(), elemntNameSpace.getPrefix()));
+                    } else{
                         object.add(new QName(beanName.getNamespaceURI(),
                                 propDesc.getName(), beanName.getPrefix()));
                     }
+//                    if (typeTable != null) {
+//                        QName qNamefortheType = typeTable.getQNamefortheType(ptype.getName());
+//                        object.add(new QName(qNamefortheType.getNamespaceURI(),
+//                                propDesc.getName(), qNamefortheType.getPrefix()));
+//                    } else {
+//                        object.add(new QName(beanName.getNamespaceURI(),
+//                                propDesc.getName(), beanName.getPrefix()));
+//                    }
                     Object value = propDesc.getReadMethod().invoke(beanObject,
                             null);
                     object.add(value);
