@@ -35,6 +35,7 @@ import javax.xml.namespace.QName;
 import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
@@ -545,9 +546,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      */
     private boolean isRESTRequest(String contentType, HttpServletRequest request) {
         String soapActionHeader = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
-//possible bug.. 
-        return ((soapActionHeader == null) ||
+        if (contentType != null && contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1)
+        {
+        	return false;
+        }else {
+        	return ((soapActionHeader == null) ||
                 (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1));
+        }
     }
     
     class ServletRequestResponseTransport implements RequestResponseTransport
