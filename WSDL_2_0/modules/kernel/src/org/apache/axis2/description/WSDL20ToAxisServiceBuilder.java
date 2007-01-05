@@ -20,6 +20,7 @@ import org.apache.woden.wsdl20.extensions.http.HTTPBindingFaultExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingOperationExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingMessageReferenceExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPHeader;
+import org.apache.woden.wsdl20.extensions.http.HTTPLocation;
 import org.apache.woden.wsdl20.extensions.soap.*;
 import org.apache.woden.wsdl20.xml.*;
 import org.apache.ws.commons.schema.XmlSchema;
@@ -508,7 +509,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingOperation.setProperty(WSDL2Constants.ATTR_WSOAP_MEP,
                         soapMep.toString());
             }
-            URI httpLocation = soapBindingOperationExtensions.getHttpLocation();
+            HTTPLocation httpLocation = soapBindingOperationExtensions.getHttpLocation();
             if (httpLocation != null) {
                 axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION,
                         httpLocation.toString());
@@ -679,7 +680,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_FAULT_SERIALIZATION, httpBindingOperationExtensions.getHttpFaultSerialization());
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION, httpBindingOperationExtensions.getHttpInputSerialization());
-            URI httpLocation = httpBindingOperationExtensions.getHttpLocation();
+            HTTPLocation httpLocation = httpBindingOperationExtensions.getHttpLocation();
+
             if (httpLocation != null) {
                 axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocation.toString());
             }

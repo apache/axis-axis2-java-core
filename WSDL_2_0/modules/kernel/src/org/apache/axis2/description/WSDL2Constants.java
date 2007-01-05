@@ -52,6 +52,7 @@ public interface WSDL2Constants {
     
     String URI_HTTP_SOAP12 = "http://www.w3.org/2003/05/soap/bindings/HTTP";
     String URI_HTTP_SOAP11 = "http://www.w3.org/2006/01/soap11/bindings/HTTP";
+    String URI_WSOAP_MEP = "http://www.w3.org/2003/05/soap/mep/soap-response/";
 
     String ATTR_WSOAP_PROTOCOL = "wsoap:protocol";
     String ATTR_WSOAP_VERSION = "wsoap:version";

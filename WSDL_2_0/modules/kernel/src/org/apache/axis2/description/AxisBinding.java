@@ -63,7 +63,9 @@ public class AxisBinding extends AxisDescription{
             return obj;
         }
 
-        return null;
+        obj = WSDL20DefaultValueHolder.getDefaultValue(name);
+
+        return obj;
     }
 
     public QName getName() {
