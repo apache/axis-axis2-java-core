@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -253,7 +254,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
             try {
                 // adding ServletContext into msgContext;
-                InvocationResponse pi = HTTPTransportUtils.processHTTPPostRequest(msgContext, new BufferedInputStream(req.getInputStream()), out,
+                InvocationResponse pi = HTTPTransportUtils.processHTTPPostRequest(msgContext, new BufferedInputStream(req.getInputStream()), new BufferedOutputStream(out),
                         contentType, req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
                         req.getRequestURL().toString());
 
