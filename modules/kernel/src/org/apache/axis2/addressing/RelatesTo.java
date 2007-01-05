@@ -18,6 +18,7 @@
 package org.apache.axis2.addressing;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Class RelatesTo
@@ -36,6 +37,8 @@ public class RelatesTo implements Serializable {
      */
     private String value;
 
+    private ArrayList extensibilityAttributes = null;
+    
     /**
      * Constructor RelatesTo
      *
@@ -89,6 +92,14 @@ public class RelatesTo implements Serializable {
      */
     public void setValue(String value) {
         this.value = value;
+    }
+    
+    public ArrayList getExtensibilityAttributes() {
+        return extensibilityAttributes;
+    }
+
+    public void setExtensibilityAttributes(ArrayList extensibilityAttributes) {
+        this.extensibilityAttributes = extensibilityAttributes;
     }
     
     /*

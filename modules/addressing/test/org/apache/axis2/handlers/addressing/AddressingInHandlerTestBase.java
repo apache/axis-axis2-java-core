@@ -297,6 +297,22 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
         assertTrue("Extensibility attribute not found on MessageID", attributeFound);
     }
     
+    private void assertRelatesToHasExtensibilityAttribute(RelatesTo rt){
+        boolean attributeFound=false;
+        ArrayList attributes = rt.getExtensibilityAttributes();
+        if(attributes!=null){
+            Iterator iter = attributes.iterator();
+            while(iter.hasNext()){
+                OMAttribute oa = (OMAttribute)iter.next();
+                if(oa.getLocalName().equals("AttrExt")){
+                    attributeFound = true;
+                    assertEquals("Attribute value incorrectly deserialised",oa.getAttributeValue(),"123456789");
+                }
+            }
+        }
+        assertTrue("Extensibility attribute not found on RelatesTo", attributeFound);
+    }
+    
     private void assertEPRAddressHasExtensibilityAttribute(EndpointReference epr){
         boolean attributeFound=false;
         ArrayList attributes = epr.getAddressAttributes();
@@ -342,7 +358,8 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
     }
     
     private void assertRelationships(Options options) {
-    	assertNotNull(options.getRelatesTo());
+        assertNotNull(options.getRelatesTo());
+        assertRelatesToHasExtensibilityAttribute(options.getRelatesTo());
     	assertEquals(options.getRelatesTo().getValue(),"http://some.previous.message");
     	assertEquals(options.getRelatesTo(secondRelationshipType).getValue(),"http://identifier.of.other.message/");
 	}

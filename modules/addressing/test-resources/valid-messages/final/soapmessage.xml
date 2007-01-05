@@ -42,7 +42,7 @@
             </wsa:Metadata>
             <axis2:EPRExt axis2:AttrExt="123456789">123456789</axis2:EPRExt>
         </wsa:FaultTo>
-        <wsa:RelatesTo>http://some.previous.message</wsa:RelatesTo>
+        <wsa:RelatesTo axis2:AttrExt="123456789">http://some.previous.message</wsa:RelatesTo>
         <wsa:RelatesTo RelationshipType="http://some.custom.relationship">http://identifier.of.other.message/</wsa:RelatesTo>
     </soapenv:Header>
     <soapenv:Body>

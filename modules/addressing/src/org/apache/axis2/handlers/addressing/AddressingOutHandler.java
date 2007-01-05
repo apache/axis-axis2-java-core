@@ -242,6 +242,14 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                         relatesToHeader.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE,
                                 relationshipType,
                                 null);
+                        
+                        if(relatesTo[i].getExtensibilityAttributes() != null){
+                            Iterator attributes = relatesTo[i].getExtensibilityAttributes().iterator();
+                            while(attributes.hasNext()){
+                                OMAttribute oma = (OMAttribute)attributes.next();
+                                AttributeHelper.importOMAttribute(oma, relatesToHeader);
+                            }
+                        }
                     }
                 }
             }

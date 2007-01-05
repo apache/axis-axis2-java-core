@@ -226,6 +226,10 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         }
         
         RelatesTo relatesTo = new RelatesTo(address, relationshipTypeString);
+        
+        ArrayList attributes = extractAttributesFromSOAPHeaderBlock(soapHeaderBlock);
+        relatesTo.setExtensibilityAttributes(attributes);
+        
         messageContextOptions.addRelatesTo(relatesTo);
         
         // Completed processing of this header
