@@ -1103,7 +1103,8 @@ public class SchemaCompiler {
                                        XmlSchema parentSchema)
             throws SchemaCompilationException {
 
-        XmlSchemaType type = parentSchema.getTypeByName(baseTypeName);
+
+        XmlSchemaType type = getType(parentSchema,baseTypeName);
 
         BeanWriterMetaInfoHolder baseMetaInfoHolder = (BeanWriterMetaInfoHolder)
                 processedTypeMetaInfoMap.get(baseTypeName);
