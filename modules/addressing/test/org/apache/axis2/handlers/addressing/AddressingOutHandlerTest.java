@@ -32,8 +32,6 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.util.TestUtil;
 
-import com.ibm.xslt4j.bcel.generic.NEWARRAY;
-
 import javax.xml.namespace.QName;
 
 public class AddressingOutHandlerTest extends TestCase implements AddressingConstants {
