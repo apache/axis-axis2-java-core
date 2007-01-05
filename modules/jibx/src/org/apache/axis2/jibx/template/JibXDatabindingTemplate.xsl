@@ -94,6 +94,8 @@
                     new org.apache.axis2.jibx.JiBXDataSource(marshallable, bindingFactory);
                 org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace(bindingFactory.getElementNamespaces()[index], null);
                 return factory.createOMElement(source, bindingFactory.getElementNames()[index], namespace);
+            } else if (param == null) {
+                throw new RuntimeException("Cannot bind null value of type <xsl:value-of select="@type"/>");
             } else {
                 throw new RuntimeException("No JiBX &lt;mapping> defined for class <xsl:value-of select="@type"/>");
             }
