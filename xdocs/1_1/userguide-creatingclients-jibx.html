@@ -213,6 +213,31 @@ href="http://www.w3.org/2002/ws/desc/">http://www.w3.org/2002/ws/desc/</a>
 
 <h2>JIBX</h2>
 
+<p>The Axis2 WSDL2Java tool's JiBX extension supports unwrapping of suitable
+WSDLs in order to provide a very clean and intuitive API (see the
+<a href="jibx/jibx-unwrapped-example.html">JiBX unwrapped example</a>). In cases
+where the unwrapped parameters are all of simple types with Java equivalents you
+can just use the unwrapped support directly. For cases where the unwrapped
+parameters are more complex types, a JiBX binding definition can be used to
+define how the Java structures are to be converted to and from XML.</p>
+
+<p>The WSDL used for this example is <i>almost</i> wrapped doc/lit suitable
+for unwrapping with JiBX data binding. The only problem is the
+MultipleParametersAddItemResponseMessage, where the response element has two
+child elements. Only one child element can be present in an wrapped response, so
+this WSDL does not qualify. If you can structure your WSDL to use a wrapped
+structure you'll generally find this to be a cleaner and easier solution,
+especially when working with JiBX.</p>
+
+<p>Since the example used in this guide is not wrapped doc/lit, this section
+provides the current instructions for generating code and JiBX bindings from the
+schema. Doing so currently involves using an outdated tool from the JiBX
+project, the Xsd2Jibx tool. Xsd2Jibx is being replaced by a new tool which should
+make the process of generating a JiBX client much easier in the future. For
+updated information about the techniques used to work with JiBX in Axis2, see
+the <a href="http://www.sosnoski.com/jibx-wiki/space/axis2-jibx">JiBX Axis2 Wiki
+page</a>.</p>
+
 <p>JiBX is not part of the Apache project, so in order to use it to generate
 your clients, you will need to do some setup work to start with. To generate
 your client, execute the following steps:</p>
