@@ -1898,9 +1898,18 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         methodElement.appendChild(getFaultElement(doc,
                 axisOperation));
 
+        String mep = (String)getBindingPropertyFromOperation(WSDL2Constants.ATTR_WSOAP_MEP, axisOperation.getName());
+
+        if (WSDL2Constants.URI_WSOAP_MEP.equalsIgnoreCase(mep)) {
+            methodElement.appendChild(generateOptionParamComponent(doc, "org.apache.axis2.Constants.Configuration.ENABLE_REST", "true"));
+            methodElement.appendChild(generateOptionParamComponent(doc," Constants.Configuration.HTTP_METHOD", "\"" + org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET + "\""));
+       }
+
         setTransferCoding(axisOperation, methodElement, doc);
         
         if (axisBinding.getType().equals(WSDL2Constants.URI_WSDL2_HTTP)) {
+
+            methodElement.appendChild(generateOptionParamComponent(doc, "org.apache.axis2.Constants.Configuration.ENABLE_REST", "true"));
             
             String property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
                         axisOperation.getName());
