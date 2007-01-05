@@ -443,7 +443,7 @@
                axiom_element_t *current_element = NULL;-->
              </xsl:if>
             </xsl:for-each>
-            <xsl:if test="property and (not(property/@attribute) or property/@attribute='')">
+            <xsl:if test="property and (not(property/@attribute) or property/@attribute='' or property/@notattribute)">
                axiom_node_t *current_node = NULL;
                axiom_element_t *current_element = NULL;
             </xsl:if>
@@ -1271,7 +1271,7 @@
                axiom_element_t *current_element = NULL;-->
              </xsl:if>
             </xsl:for-each>
-            <xsl:if test="property and (not(property/@attribute) or property/@attribute='')">
+            <xsl:if test="property and (not(property/@attribute) or property/@attribute='' or property/@notattribute)">
                axiom_node_t *current_node = NULL;
                axiom_element_t *current_element = NULL;
             </xsl:if>

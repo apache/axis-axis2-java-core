@@ -44,6 +44,8 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.io.*;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
+
 /**
  * Java Bean writer for the schema compiler.
  */
@@ -498,6 +500,8 @@ public class CStructWriter implements BeanWriter {
 
             if (metainf.getAttributeStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "attribute", "yes", property);
+            }else{
+                XSLTUtils.addAttribute(model, "notattribute", "yes", property);
             }
 
             if (metainf.isNillable(name)) {
