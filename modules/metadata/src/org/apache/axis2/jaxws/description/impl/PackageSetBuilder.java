@@ -344,13 +344,14 @@ public class PackageSetBuilder {
     
     /**
      * Return the package associated with the class name.  The className may 
-     * not be specified (in which case a null Package is returned)
+     * not be specified (in which case a null Package is returned).
+     * if class has unnamed package return ""
      * @param className String (may be null or empty)
      * @return Package or null if problems occur
      */
     private static String getPackageFromClassName(String className) {
         Class clz = loadClass(className);
-        String pkg = (clz == null) ? null : clz.getPackage().getName();
+        String pkg = (clz == null) ? null :(clz.getPackage() == null) ? "" : clz.getPackage().getName();
         return pkg;
     }
     
