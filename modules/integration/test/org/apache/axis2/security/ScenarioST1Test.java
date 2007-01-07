@@ -16,16 +16,25 @@
 
 package org.apache.axis2.security;
 
+import org.apache.axis2.Constants;
+import org.apache.axis2.rpc.MultirefTest;
 import org.apache.rampart.handler.config.InflowConfiguration;
 import org.apache.rampart.handler.config.OutflowConfiguration;
 
 import java.util.Hashtable;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * SAML Scenario 1
  */
 public class ScenarioST1Test extends InteropTestBase {
 
+    public static Test suite() {
+        return getTestSetup2(new TestSuite(ScenarioST1Test.class),Constants.TESTING_PATH + SCENARIO_ST1_SERVICE_REPOSITORY);
+    }
+    
 	protected OutflowConfiguration getOutflowConfiguration() {
 		// TODO 
 		throw new UnsupportedOperationException("TODO");

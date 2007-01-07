@@ -16,20 +16,23 @@
 
 package org.apache.axis2.security;
 
-import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.integration.UtilServer;
-import org.apache.rampart.handler.config.InflowConfiguration;
-import org.apache.rampart.handler.config.OutflowConfiguration;
-import org.apache.ws.security.WSConstants;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 
-import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-public abstract class InteropTestBase extends TestCase {
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.rpc.MultirefTest;
+import org.apache.rampart.handler.config.InflowConfiguration;
+import org.apache.rampart.handler.config.OutflowConfiguration;
+import org.apache.ws.security.WSConstants;
+
+public abstract class InteropTestBase extends UtilServerBasedTestCase {
 
     protected static final String SCENARIO1_SERVICE_REPOSITORY =
             "scenario1_service_repo";
@@ -131,24 +134,7 @@ public abstract class InteropTestBase extends TestCase {
     public InteropTestBase(String arg0) {
         super(arg0);
     }
-
-    /**
-     * Each time an interop test is run the relevant service will be started
-     * with the given service repository
-     * <p/>
-     * set up the service
-     */
-    protected void setUp() throws Exception {
-        UtilServer.start(Constants.TESTING_PATH + getServiceRepo());
-    }
-
-    /**
-     * Cleanup
-     */
-    protected void tearDown() throws Exception {
-        UtilServer.stop();
-    }
-
+    
     /**
      * Do test
      */
