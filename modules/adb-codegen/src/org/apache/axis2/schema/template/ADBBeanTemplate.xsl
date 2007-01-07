@@ -959,18 +959,18 @@
                         <!-- handle non ADB arrays - Not any however -->
                         <xsl:when test="@array and not(@any)">
                              if (<xsl:value-of select="$varName"/>!=null) {
+                                   namespace = "<xsl:value-of select="$namespace"/>";
+                                   boolean emptyNamespace = namespace == null || namespace.length() == 0;
+                                   prefix =  emptyNamespace ? null : xmlWriter.getPrefix(namespace);
                                    for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
                                         <xsl:if test="@primitive">
-                                            namespace = "<xsl:value-of select="$namespace"/>";
-                                            if (! namespace.equals("")) {
-                                                prefix = xmlWriter.getPrefix(namespace);
-
+                                            if (!emptyNamespace) {
                                                 if (prefix == null) {
-                                                    prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                    String prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
-                                                    xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
-                                                    xmlWriter.writeNamespace(prefix, namespace);
-                                                    xmlWriter.setPrefix(prefix, namespace);
+                                                    xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace);
+                                                    xmlWriter.writeNamespace(prefix2, namespace);
+                                                    xmlWriter.setPrefix(prefix2, namespace);
 
                                                 } else {
                                                     xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
@@ -985,16 +985,13 @@
                                         </xsl:if>
                                         <xsl:if test="not(@primitive)">
                                             if (<xsl:value-of select="$varName"/>[i] != null){
-                                                namespace = "<xsl:value-of select="$namespace"/>";
-                                                if (! namespace.equals("")) {
-                                                    prefix = xmlWriter.getPrefix(namespace);
-
+                                                if (!emptyNamespace) {
                                                     if (prefix == null) {
-                                                        prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                        String prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
-                                                        xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
-                                                        xmlWriter.writeNamespace(prefix, namespace);
-                                                        xmlWriter.setPrefix(prefix, namespace);
+                                                        xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace);
+                                                        xmlWriter.writeNamespace(prefix2, namespace);
+                                                        xmlWriter.setPrefix(prefix2, namespace);
 
                                                     } else {
                                                         xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
