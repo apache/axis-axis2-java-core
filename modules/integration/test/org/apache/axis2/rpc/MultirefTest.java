@@ -16,18 +16,27 @@
 
 package org.apache.axis2.rpc;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -41,18 +50,13 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.rpc.client.RPCServiceClient;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-
-public class MultirefTest extends TestCase {
+public class MultirefTest extends UtilServerBasedTestCase{
 
     protected EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
@@ -72,14 +76,13 @@ public class MultirefTest extends TestCase {
     protected boolean finish = false;
     public static final String NAMESPACE = "http://rpc.axis2.apache.org/xsd";
 
-    protected void setUp() throws Exception {
-         UtilServer.start();
+    public static Test suite() {
+        return getTestSetup(new TestSuite(MultirefTest.class));
     }
 
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.unDeployClientService();
-         UtilServer.stop();
     }
 
     private void configureSystem(String opName) throws AxisFault {

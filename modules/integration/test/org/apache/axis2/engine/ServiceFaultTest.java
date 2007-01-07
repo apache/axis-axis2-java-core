@@ -16,6 +16,11 @@
 
 package org.apache.axis2.engine;
 
+import javax.xml.namespace.QName;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -34,8 +39,6 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
-import javax.xml.namespace.QName;
-
 /**
  * This test will make sure, faults thrown by services are handled properly.
  */
@@ -49,8 +52,11 @@ public class ServiceFaultTest extends UtilServerBasedTestCase implements TestCon
 
     private EndpointReference targetEPR;
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(ServiceFaultTest.class));
+    }
+    
     protected void setUp() throws Exception {
-        UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
                         FaultThrowingService.class.getName(),
@@ -61,7 +67,12 @@ public class ServiceFaultTest extends UtilServerBasedTestCase implements TestCon
 //                "http://127.0.0.1:5556"
                         + "/axis2/services/" + serviceName.getLocalPart() + "/" + operationName.getLocalPart());
     }
-
+    
+    protected void tearDown() throws Exception {
+        UtilServer.unDeployService(serviceName);
+        UtilServer.unDeployClientService();
+    }
+    
     /**
      * Service throws a fault from the service impl, by just creating an AxisFault from all the fault
      * information.
@@ -125,12 +136,4 @@ public class ServiceFaultTest extends UtilServerBasedTestCase implements TestCon
         omElement.setText(text);
         return omElement;
     }
-
-    protected void tearDown() throws Exception {
-        UtilServer.unDeployService(serviceName);
-        UtilServer.unDeployClientService();
-        UtilServer.stop();
-    }
-
-
 }
