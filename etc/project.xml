@@ -336,6 +336,16 @@
             <email/>
             <organization>Lanka Software Foundation / University of Moratuwa</organization>
         </contributor>
+        <contributor>
+            <name>Charitha Kankanamge</name>
+            <email>charitha AT WSO2.com</email>
+            <organization>WSO2</organization>
+        </contributor>
+        <contributor>
+            <name>Evanthika Amarasiri</name>
+            <email>evanthika AT WSO2.com</email>
+            <organization>WSO2</organization>
+        </contributor>
     </contributors>
     <!-- build information for the project -->
     <build>
