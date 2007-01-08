@@ -27,6 +27,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.transport.MessageFormatter;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -54,27 +55,23 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
-        postMethod.setPath(url.getPath());
-        postMethod.setRequestEntity(new SOAPRequestEntity(dataout, chunked, msgContext,
-                soapActionString, format, isAllowedRetry));
+        //Message Format Selector will come here
+		MessageFormatter messageFormatter = new SOAPMessageFormatter(
+				msgContext, soapActionString, format, url);
+		url = messageFormatter.getTargetAddress();
+		postMethod.setPath(url.getPath());
+		postMethod.setRequestEntity(new AxisRequestEntity(messageFormatter,
+				msgContext, chunked, isAllowedRetry));
 
-        if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
-            postMethod.setContentChunked(true);
-        }
+		if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
+			postMethod.setContentChunked(true);
+		}
 
-        if (msgContext.isSOAP11()) {
-            if ("".equals(soapActionString)){
-               //if the soap action is empty then we should add two ""
-               postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, "\"\"");
-            }else{
-                if (soapActionString != null && !soapActionString.startsWith("\"")) {  // SOAPAction string must be a quoted string
-                    soapActionString = "\"" + soapActionString + "\"";
-                }
-                postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapActionString);
-            }
-
-        } else {
-        }
+		String soapAction = messageFormatter.getSOAPAction();
+		if (soapAction!=null) {
+               postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
+        } 
+		
         //setting the cookie in the out path
         Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
         if (cookieString != null) {
