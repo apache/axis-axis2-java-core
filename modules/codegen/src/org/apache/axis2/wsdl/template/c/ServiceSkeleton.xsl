@@ -130,7 +130,11 @@
           * corresponding  method
           */
 
-          axiom_element_t *element = NULL;
+          axis2_op_ctx_t *operation_ctx = NULL;
+          axis2_op_t *operation = NULL;
+          axis2_qname_t *op_qname = NULL;
+          axis2_char_t *op_name = NULL;
+
           axiom_node_t *ret_node = NULL;
 
           <xsl:for-each select="method">
@@ -151,68 +155,63 @@
               <xsl:value-of select="$inputtype"/> input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/><xsl:if test="input/param/@ours"> = NULL</xsl:if>;
             </xsl:for-each>
           </xsl:for-each>
-          if (content_node)
-	      {
-            if (AXIOM_NODE_GET_NODE_TYPE(content_node, env) == AXIOM_ELEMENT)
-            {
-               element = (axiom_element_t *)AXIOM_NODE_GET_DATA_ELEMENT(content_node, env);
-               if (element)
-               {
-                  axis2_char_t *op_name = AXIOM_ELEMENT_GET_LOCALNAME(element, env);
-                  if (op_name)
-                  {
-                    <xsl:for-each select="method">
-                      <xsl:variable name="position"><xsl:value-of select="position()"/></xsl:variable>
-                      <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
-                      <xsl:variable name="method-name"><xsl:value-of select="@name"/></xsl:variable>
-                      <xsl:variable name="method-ns"><xsl:value-of select="@namespace"/> </xsl:variable>
-                      <xsl:variable name="outputCapsType"><xsl:value-of select="@output/param/@caps-type"/> </xsl:variable>
-                      <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"/></xsl:variable>
 
-                      if ( AXIS2_STRCMP(op_name, "<xsl:value-of select="@localpart"/>") == 0 )
-                      {
-                           <xsl:for-each select="input/param[@type!='']">
-                             input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/> = <xsl:choose>
-                                    <xsl:when test="@ours">
-                                       axis2_<xsl:value-of select="@type"/>_create( env);
-                                       AXIS2_<xsl:value-of select="@caps-type"/>_BUILD_OM(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, content_node );
-                                    </xsl:when>
-                                    <xsl:otherwise>content_node;</xsl:otherwise>
-                                  </xsl:choose>
-                             ret_val<xsl:value-of select="$position"/> =  <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/>(env,
-                                                        input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/> );
-                             if ( NULL == ret_val<xsl:value-of select="$position"/> )
-                             {
-                                AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "NULL returnted from the business logic from <xsl:value-of select="$method-name"/> "
-                                                    " %d :: %s", env->error->error_number,
-                                                    AXIS2_ERROR_GET_MESSAGE(env->error));
-                                return <xsl:value-of select="$method-prefix"/>_on_fault( svc_skeleton, env, NULL);
-                             }
-                             ret_node = <xsl:choose>
-                                    <xsl:when test="@ours">
-                                       AXIS2_<xsl:value-of select="@caps-type"/>_PARSE_OM(ret_val<xsl:value-of select="$position"/>, env, NULL );
-                                    </xsl:when>
-                                    <xsl:otherwise>ret_val<xsl:value-of select="$position"/>;</xsl:otherwise>
-                                    </xsl:choose>
-                              return ret_node;
-                           </xsl:for-each>
+          operation_ctx = AXIS2_MSG_CTX_GET_OP_CTX(msg_ctx, env);
+          operation = AXIS2_OP_CTX_GET_OP(operation_ctx, env);
+          op_qname = (axis2_qname_t *)AXIS2_OP_GET_QNAME(operation, env);
+          op_name = AXIS2_QNAME_GET_LOCALPART(op_qname, env);
 
-                          <!-- below was  prior to the databinding -->
-                          <!-- <xsl:if test="$outputtype!=''">return </xsl:if>
-                           <xsl:text> </xsl:text>
-                           <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/>(env <xsl:for-each select="input/param[@type!='']"> ,
-                                                content_node </xsl:for-each>);
-                           <xsl:if test="$outputtype=''">return NULL;</xsl:if> -->
+          if (op_name)
+          {
+            <xsl:for-each select="method">
+                <xsl:variable name="position"><xsl:value-of select="position()"/></xsl:variable>
+                <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
+                <xsl:variable name="method-name"><xsl:value-of select="@name"/></xsl:variable>
+                <xsl:variable name="method-ns"><xsl:value-of select="@namespace"/> </xsl:variable>
+                <xsl:variable name="outputCapsType"><xsl:value-of select="@output/param/@caps-type"/> </xsl:variable>
+                <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"/></xsl:variable>
 
-                      }
-                      </xsl:for-each>
-                  }
+                if ( AXIS2_STRCMP(op_name, "<xsl:value-of select="@localpart"/>") == 0 )
+                {
+                    <xsl:for-each select="input/param[@type!='']">
+                    input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/> = <xsl:choose>
+                        <xsl:when test="@ours">
+                        axis2_<xsl:value-of select="@type"/>_create( env);
+                        AXIS2_<xsl:value-of select="@caps-type"/>_BUILD_OM(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, content_node );
+                        </xsl:when>
+                        <xsl:otherwise>content_node;</xsl:otherwise>
+                        </xsl:choose>
+                    ret_val<xsl:value-of select="$position"/> =  <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/>(env,
+                                                input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/> );
+                    if ( NULL == ret_val<xsl:value-of select="$position"/> )
+                    {
+                        AXIS2_LOG_ERROR( env->log, AXIS2_LOG_SI, "NULL returnted from the business logic from <xsl:value-of select="$method-name"/> "
+                                        " %d :: %s", env->error->error_number,
+                                        AXIS2_ERROR_GET_MESSAGE(env->error));
+                        return <xsl:value-of select="$method-prefix"/>_on_fault( svc_skeleton, env, NULL);
+                    }
+                    ret_node = <xsl:choose>
+                                   <xsl:when test="@ours">
+                               AXIS2_<xsl:value-of select="@caps-type"/>_PARSE_OM(ret_val<xsl:value-of select="$position"/>, env, NULL );
+                                   </xsl:when>
+                                   <xsl:otherwise>ret_val<xsl:value-of select="$position"/>;</xsl:otherwise>
+                                </xsl:choose>
+                    return ret_node;
+                    </xsl:for-each>
+
+                    <!-- below was  prior to the databinding -->
+                    <!-- <xsl:if test="$outputtype!=''">return </xsl:if>
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="$svcop-prefix"/>_<xsl:value-of select="$method-name"/>(env <xsl:for-each select="input/param[@type!='']"> ,
+                                         content_node </xsl:for-each>);
+                     <xsl:if test="$outputtype=''">return NULL;</xsl:if> -->
+
                 }
+             </xsl:for-each>
              }
-          }
           printf("<xsl:value-of select="$skeletonname"/> service ERROR: invalid OM parameters in request\n");
           return content_node;
-        }
+    }
 
     axiom_node_t* AXIS2_CALL
     <xsl:value-of select="$method-prefix"/>_on_fault(axis2_svc_skeleton_t *svc_skeleton,
