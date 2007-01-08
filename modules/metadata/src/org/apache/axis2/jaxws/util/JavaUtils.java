@@ -77,6 +77,7 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
 	        }
         }
         String[] words = wordList.toArray(new String[0]);
+        
         // Now do step 2: Strip off the trailing "." (i.e. strip off .html)
         if(words !=null && words.length > 1 ){
 	        String lastWord = words[words.length-1];
@@ -113,16 +114,27 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
             list.add(words[i]);
         }
         
-        // Step 7: make into and an appropriate java word
+        // Step 7: lowercase each word
+        for (int i =0; i<list.size(); i++) {
+            String word = list.remove(i);
+            word = word.toLowerCase();
+            list.add(i, word);
+        }
+        
+        // Step 8: make into and an appropriate java word
         for (int i =0; i<list.size(); i++) {
             String word = list.get(i);
 
+            // 8a: Convert special characters to underscore
             // Convert non-java words to underscore.
             // TODO: Need to do this for all chars..not just hyphens
             word = replace(word, "-", "_");
+            
+            // 8b: Append _ to java keywords
             if (JavaUtils.isJavaKeyword(word)) {
                 word = word + "_";
             }
+            // 8c: prepend _ if first character cannot be the first character of a java identifier
             if (!Character.isJavaIdentifierPart(word.charAt(0)) ) {
                 word = "_" + word;
             }
@@ -130,7 +142,7 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
             list.set(i, word);
         }
         
-        // Step 8: Concatenate and return
+        // Step 9: Concatenate and return
         String name = "";
         for (int i =0; i<list.size(); i++) {
             if (i == 0) {

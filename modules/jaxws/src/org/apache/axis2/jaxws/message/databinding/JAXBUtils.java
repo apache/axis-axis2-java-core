@@ -96,59 +96,8 @@ public class JAXBUtils {
 		JAXBContext context = innerMap.get(contextPackages);
 		if (context == null) {
             synchronized(innerMap) {
-                try{
-                    // There are two ways to construct the context.
-                    // 1) USE A CONTEXTPATH, which is a string containing
-                    //    all of the packages separated by colons.
-                    // 2) USE A CLASS[], which is an array of all of the classes
-                    //    involved in the marshal/unmarshal.
-                    //   
-                    // There are pros/cons with both approaches.
-                    // USE A CONTEXTPATH: 
-                    //    Pros: preferred way of doing this.  
-                    //          performant
-                    //          most dynamic
-                    //    Cons: Each package in context path must have an ObjectFactory
-                    //        
-                    //
-                    // USE CLASS[]:
-                    //    Pros: Doesn't require ObjectFactory in each package
-                    //    Cons: Hard to set up, must account for JAX-WS classes, etc.
-                    //          Does not work if arrays of classes are needed
-                    //          slower
-                    //
-                    //  The following code attempts to build a context path.  It then
-                    //  choose one of the two constructions above (prefer USE A CONTEXT_PATH)
-                    //
-                    
-                    if (log.isDebugEnabled()) {
-                        log.debug("First try to create JAXBContext with contextPath");
-                    }
-                    if (useJAXBContextWithContextPath(contextPackages, cl)) {   
-                        context = createJAXBContextUsingContextPath(contextPackages, cl);
-                    }
-                    
-                    if (context == null) {
-                        // Unsuccessful, USE CLASS[]
-                        if (log.isDebugEnabled()) {
-                            log.debug("Unsuccessful.. Now attempting to create JAXBContext with Class[]");
-                        }
-                        Iterator<String> it = contextPackages.iterator();
-                        List<Class> fullList = new ArrayList<Class>();
-                        while (it.hasNext()) {
-                            String pkg = it.next();
-                    		fullList.addAll(getAllClassesFromPackage(pkg, cl));
-                    	}
-                    	Class[] classArray = fullList.toArray(new Class[0]);
-                        context = JAXBContext.newInstance(classArray);
-                    }
-                    if (log.isDebugEnabled()) {
-                        log.debug("Successfully created JAXBContext " + context.toString());
-                    }
-                    innerMap.put(contextPackages, context);	
-                }catch(ClassNotFoundException e){
-                	throw new JAXBException(e);
-                }
+                context = createJAXBContext(contextPackages, cl);
+                innerMap.put(contextPackages, context);	
                 if (log.isDebugEnabled()) {
                     log.debug("JAXBContext [created] for " + contextPackages.toString());
                 }
@@ -160,6 +109,134 @@ public class JAXBUtils {
         }
 		return context;
 	}
+    
+    /**
+     * Create a JAXBContext using the contextPackages
+     * @param contextPackages Set<String>
+     * @param cl ClassLoader
+     * @return JAXBContext
+     * @throws JAXBException
+     */
+    private static JAXBContext createJAXBContext(Set<String> contextPackages, ClassLoader cl) throws JAXBException {
+
+       JAXBContext context = null;
+       
+        // The contextPackages is a set of package names that are constructed using PackageSetBuilder.
+        // PackageSetBuilder gets the packages names from the following sources.
+        //   a) It walks the various annotations on the WebService collecting package names.
+        //   b) It walks the wsdl/schemas and builds package names for each target namespace.
+        //
+        // The combination of these two sources should produce all of the package names.
+        // -------------
+        // Note that (b) is necessary for the following case:
+        // An operation has a parameter named BASE.
+        // Object DERIVED is an extension of BASE and is defined in a different package/schema.
+        // In this case, there will not be any annotations on the WebService that reference DERIVED.
+        // The only way to find the package for DERIVED is to walk the schemas.
+        // -------------
+    
+        Iterator<String> it = contextPackages.iterator();
+        while(it.hasNext()) {
+            String p = it.next();
+            // Don't consider java and javax packages
+            // REVIEW: We might have to refine this
+            if (p.startsWith("java.") ||
+                p.startsWith("javax.")) {
+              it.remove();
+            }
+        }
+        
+        // There are two ways to construct the context.
+        // 1) USE A CONTEXTPATH, which is a string containing
+        //    all of the packages separated by colons.
+        // 2) USE A CLASS[], which is an array of all of the classes
+        //    involved in the marshal/unmarshal.
+        //   
+        // There are pros/cons with both approaches.
+        // USE A CONTEXTPATH: 
+        //    Pros: preferred way of doing this.  
+        //          performant
+        //          most dynamic
+        //    Cons: Each package in context path must have an ObjectFactory
+        //        
+        //
+        // USE CLASS[]:
+        //    Pros: Doesn't require ObjectFactory in each package
+        //    Cons: Hard to set up, must account for JAX-WS classes, etc.
+        //          Does not work if arrays of classes are needed
+        //          slower
+        //
+        //  The following code attempts to build a context path.  It then
+        //  choose one of the two constructions above (prefer USE A CONTEXT_PATH)
+        //
+        
+        // The packages are examined to see if they have ObjectFactory/package-info classes.
+        // Invalid packages are removed from the list
+        it = contextPackages.iterator();
+        boolean contextConstruction = true;
+        while(it.hasNext()) {
+            String p = it.next();
+            // See if this package has an ObjectFactory or package-info
+            if (checkPackage(p, cl)) {
+                // Flow to here indicates package can be used for CONTEXT construction
+                if (log.isDebugEnabled()) {
+                    log.debug("Package " + p + " contains an ObjectFactory or package-info class.");
+                }
+            } else {
+                // Flow to here indicates that the package is not valid for context construction.
+                // Perhaps the package is invalid.
+                if (log.isDebugEnabled()) {
+                    log.debug("Package " + p + " does not contain an ObjectFactory or package-info class.  Searching for JAXB classes");
+                }
+                List<Class> classes = null;
+                try {
+                    classes = getAllClassesFromPackage(p, cl);
+                    if (classes == null || classes.size() == 0) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Package " + p + " does not have any JAXB classes.  It is removed from the JAXB context path.");
+                        }
+                        it.remove();
+                    } else {
+                        // Classes are found in the package.  We cannot use the CONTEXT construction
+                        contextConstruction = false;
+                        if (log.isDebugEnabled()) {
+                            log.debug("Package " + p + " does not contain ObjectFactory, but it does contain other JAXB classes.");
+                        }
+                    }
+                } catch(Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Package " + p + " does not appear to be a valid package.  It is excluded.");
+                    }
+                    it.remove();
+                }               
+            }
+        }
+        
+        // CONTEXT construction
+        if (contextConstruction) {
+            context = createJAXBContextUsingContextPath(contextPackages, cl);
+        }
+        
+        // CLASS construction
+        if (context == null) {
+            it = contextPackages.iterator();
+            List<Class> fullList = new ArrayList<Class>();
+            while (it.hasNext()) {
+                String pkg = it.next();
+                try {
+                    fullList.addAll(getAllClassesFromPackage(pkg, cl));
+                } catch (ClassNotFoundException e) {
+                    throw new JAXBException(e);
+                }
+            }
+            Class[] classArray = fullList.toArray(new Class[0]);
+            context = JAXBContext.newInstance(classArray);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Successfully created JAXBContext " + context.toString());
+        }
+        return context;
+    }
 	
 	/**
 	 * Get the unmarshaller.  You must call releaseUnmarshaller to put it back into the pool
@@ -290,41 +367,35 @@ public class JAXBUtils {
 	}
     
     /**
-     * @param packages
+     * @param p Package
      * @param cl
-     * @return
+     * @return true if each package has a ObjectFactory class or package-info
      */
-    private static boolean useJAXBContextWithContextPath(Set<String> packages, ClassLoader cl) {
-        
-        // Each package must have 
-        Iterator<String> it = packages.iterator();
-        while(it.hasNext()) {
-            String p = it.next();
-            if (p.startsWith("java.") ||
-                    p.startsWith("javax.")) {
-                   ; // Assume that these packages don't need an object factory
-            } else {
-                try {
-                    Class cls = Class.forName(p + ".ObjectFactory",false, cl);
-                    if (cl == null) {
-                        return false;
-                    }
-                    // REVIEW: Do we need to check for .package-info
-                    //cls = Class.forName(p + ".package-info",false, cl);
-                    //if (cl == null) {
-                    //    return false;
-                    //}
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug(e);
-                    }
-                    return false;
-                }
-                
+	private static boolean checkPackage(String p, ClassLoader cl) {
+	    
+	    // Each package must have an ObjectFactory
+	    
+	    try {
+	        Class cls = Class.forName(p + ".ObjectFactory",false, cl);
+	        if (cls != null) {
+	            return true;
+	        }
+	    } catch (Exception e) {
+	        // Exception is thrown if class does not exist.  
+	    }
+	    
+        try {
+            Class cls = Class.forName(p + ".package-info",false, cl);
+            if (cls != null) {
+                return true;
             }
+        } catch (Exception e) {
+            // Exception is thrown if class does not exist.  
         }
-        return true;
+
+	    return false;
     }
+    
     /**
      * Create a JAXBContext using the contextpath approach
      * @param packages
@@ -339,15 +410,11 @@ public class JAXBUtils {
         Iterator<String> it = packages.iterator();
         while(it.hasNext()) {
             String p = it.next();
-            if (p.startsWith("java.") ||
-                p.startsWith("javax.")) {
-               ; // Assume that these packages don't have an object factory
-            } else {
-                if (contextpath.length() != 0) {
-                    contextpath +=":";
-                }
-                contextpath += p;
+            if (contextpath.length() != 0) {
+                contextpath +=":";
             }
+            contextpath += p;
+            
         }
         try {
             if (log.isDebugEnabled()) {
@@ -371,7 +438,7 @@ public class JAXBUtils {
      * @param pkg Package
      * @param ClassLoader cl
      * @return
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException if error occurs getting package
      */
     private static List<Class> getAllClassesFromPackage(String pkg, ClassLoader cl) throws ClassNotFoundException {
         if (pkg == null) {
@@ -406,7 +473,7 @@ public class JAXBUtils {
         // For every directory identified capture all the .class files
         for (File directory : directories) {
             if (log.isDebugEnabled()) {
-                log.debug("Adding classes from: " + directory.getName());
+                log.debug("  Adding JAXB classes from directory: " + directory.getName());
             }
             if (directory.exists()) {
                 // Get the list of the files contained in the package
@@ -453,11 +520,6 @@ public class JAXBUtils {
                         
                     }
                 }
-                
-                // REVIEW Load and add the common array classes
-                // Support of RPC list (and possibly other scenarios) requires that the array classes should also be present.
-                // This is a hack until we can determine how to get this information.
-                //addCommonArrayClasses(classes);
             }
         }
         return classes;
