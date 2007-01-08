@@ -51,6 +51,12 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
      */
     private void checkUsingAddressing(MessageContext msgContext)
             throws AxisFault {
+        if(msgContext.getAxisService() == null){
+            if (log.isTraceEnabled()){
+                log.trace("checkUsingAddressing: axisService null, cannot check UsingAddressing");
+            }
+            return;
+        }
         String addressingFlag = msgContext.getAxisService().getWSAddressingFlag();
         if (log.isTraceEnabled()){
             log.trace("checkUsingAddressing: WSAddressingFlag=" + addressingFlag);
