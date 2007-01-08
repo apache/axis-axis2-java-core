@@ -65,6 +65,16 @@ sevices.xml file. A sample service.xml file is available
 <a href="sec-conf/sample-services.xml">here</a>.
 
 <h3>Client Confiuration</h3>
+<p>On the client side, a policy object should be created and loaded into options. Creating the policy object can be done using a "policy.xml" file as follows.</p>
+	
+<pre>
+	//Creating the object
+  	StAXOMBuilder builder = new StAXOMBuilder(pathToPolicyfile);
+        Policy clientPolicy = PolicyEngine.getPolicy(builder.getDocumentElement());
+	//setting the object
+	Options options = new Options();
+        options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, clientPolicy);
+</pre>
 
 <h2>Rampart-1.0 Configuration</h2>
 
