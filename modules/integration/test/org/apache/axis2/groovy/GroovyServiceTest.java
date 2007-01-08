@@ -16,7 +16,10 @@
 
 package org.apache.axis2.groovy;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -31,6 +34,7 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.EchoRawXMLTest;
 import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -39,7 +43,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 
-public class GroovyServiceTest extends TestCase {
+public class GroovyServiceTest extends UtilServerBasedTestCase {
 
 
     private EndpointReference targetEPR =
@@ -51,30 +55,22 @@ public class GroovyServiceTest extends TestCase {
 
 
     public GroovyServiceTest() {
-        super(EchoRawXMLTest.class.getName());
+        super(GroovyServiceTest.class.getName());
     }
 
     public GroovyServiceTest(String testName) {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-        String repository = "target/groovyRepo";
-        UtilServer.start(repository);
+    public static Test suite() {
+        return getTestSetup2(new TestSuite(GroovyServiceTest.class),"target/groovyRepo");
     }
-
-    protected void tearDown() throws Exception {
-        UtilServer.unDeployService(serviceName);
-        UtilServer.stop();
-    }
-
-
+    
     public void testServiceExists() throws Exception {
         AxisService desc = UtilServer.getConfigurationContext().
                 getAxisConfiguration().getService(serviceName.getLocalPart());
         assertNotNull(desc);
     }
-
 
     public void testEchoXMLSync() throws Exception {
         OMElement payload = getpayLoad();
