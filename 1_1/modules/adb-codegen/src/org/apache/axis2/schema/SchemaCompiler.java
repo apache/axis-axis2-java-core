@@ -1045,7 +1045,30 @@ public class SchemaCompiler {
 
 
             //process the particle of this node
-            processParticle(extension.getParticle(),metaInfHolder,parentSchema);
+            if (extension.getParticle() != null){
+                processParticle(extension.getParticle(),metaInfHolder,parentSchema);
+            }
+
+            // process attributes
+            //process attributes - first look for the explicit attributes
+            XmlSchemaObjectCollection attribs = extension.getAttributes();
+            Iterator attribIterator = attribs.getIterator();
+            while (attribIterator.hasNext()) {
+                Object o = attribIterator.next();
+                if (o instanceof XmlSchemaAttribute) {
+                    processAttribute((XmlSchemaAttribute) o, metaInfHolder,parentSchema);
+
+                }
+            }
+
+            //process any attribute
+            //somehow the xml schema parser does not seem to pickup the any attribute!!
+            XmlSchemaAnyAttribute anyAtt = extension.getAnyAttribute();
+            if (anyAtt != null) {
+                processAnyAttribute(metaInfHolder,anyAtt);
+            }
+
+
             String className = findClassName(extension.getBaseTypeName(), false);
 
             if (!SchemaCompiler.DEFAULT_CLASS_NAME.equals(className)) {
@@ -1082,6 +1105,25 @@ public class SchemaCompiler {
 
             //process the particle of this node
             processParticle(restriction.getParticle(),metaInfHolder,parentSchema);
+
+             //process attributes - first look for the explicit attributes
+            XmlSchemaObjectCollection attribs = restriction.getAttributes();
+            Iterator attribIterator = attribs.getIterator();
+            while (attribIterator.hasNext()) {
+                Object o = attribIterator.next();
+                if (o instanceof XmlSchemaAttribute) {
+                    processAttribute((XmlSchemaAttribute) o, metaInfHolder,parentSchema);
+
+                }
+            }
+
+            //process any attribute
+            //somehow the xml schema parser does not seem to pickup the any attribute!!
+            XmlSchemaAnyAttribute anyAtt = restriction.getAnyAttribute();
+            if (anyAtt != null) {
+                processAnyAttribute(metaInfHolder,anyAtt);
+            }
+
             String className = findClassName(restriction.getBaseTypeName(), false);
 
             if (!SchemaCompiler.DEFAULT_CLASS_NAME.equals(className)) {
@@ -1104,7 +1146,11 @@ public class SchemaCompiler {
             throws SchemaCompilationException {
 
 
-        XmlSchemaType type = getType(parentSchema,baseTypeName);
+        XmlSchemaType type;
+        type = parentSchema.getTypeByName(baseTypeName);
+        if (type == null){
+            type = getType(parentSchema,baseTypeName);
+        }
 
         BeanWriterMetaInfoHolder baseMetaInfoHolder = (BeanWriterMetaInfoHolder)
                 processedTypeMetaInfoMap.get(baseTypeName);
