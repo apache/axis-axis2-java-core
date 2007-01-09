@@ -216,7 +216,8 @@ public class DescriptionBuilder implements DeploymentConstants {
 			final OMElement tempMsgBuilder = msgBuilderElement;
 			String builderClassName = null;
 			try {
-				builderClassName = findAndValidateBuilderClass(tempMsgBuilder);
+				builderClassName = findAndValidateSelectorClass(tempMsgBuilder,
+						DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_BUILDER);
 			} catch (PrivilegedActionException e) {
 				throw (DeploymentException) e.getException();
 			}
@@ -227,8 +228,35 @@ public class DescriptionBuilder implements DeploymentConstants {
 		}
 		return builderSelector;
 	}
+	
+    /**
+	 * Processes the message builders specified in axis2.xml or services.xml.
+	 * 
+	 * @param messageBuildersElement
+	 */
+	protected HashMap processMessageFormatters(OMElement messageFormattersElement)
+			throws DeploymentException {
+		HashMap messageFormatters = new HashMap();
+		Iterator msgFormatters = messageFormattersElement
+				.getChildrenWithName(new QName(TAG_MESSAGE_FORMATTER));
+		while (msgFormatters.hasNext()) {
+			OMElement msgFormatterElement = (OMElement) msgFormatters.next();
+			final OMElement tempMsgFormatter = msgFormatterElement;
+			String formatterClassName = null;
+			try {
+				formatterClassName = findAndValidateSelectorClass(tempMsgFormatter,DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_FORMATTER );
+			} catch (PrivilegedActionException e) {
+				throw (DeploymentException) e.getException();
+			}
+			OMAttribute contentTypeAtt = msgFormatterElement
+					.getAttribute(new QName(TAG_CONTENT_TYPE));
+			messageFormatters.put(contentTypeAtt.getAttributeValue(),
+					formatterClassName);
+		}
+		return messageFormatters;
+	}
 
-	protected String findAndValidateBuilderClass(final OMElement tempMsgBuilder)
+	protected String findAndValidateSelectorClass(final OMElement tempMsgBuilder, final String errorMsg)
 			throws PrivilegedActionException {
 		return (String) org.apache.axis2.java.security.AccessController
 				.doPrivileged(new PrivilegedExceptionAction() {
@@ -237,18 +265,15 @@ public class DescriptionBuilder implements DeploymentConstants {
 						OMAttribute builderName = tempMsgBuilder
 								.getAttribute(new QName(TAG_CLASS_NAME));
 						String className = builderName.getAttributeValue();
-						StAXBuilder builder = null;
-
 						try {
-							Class builderClass;
-
+							Class selectorClass;
 							if ((className != null) && !"".equals(className)) {
-								builderClass = Loader.loadClass(Thread.currentThread()
+								selectorClass = Loader.loadClass(Thread.currentThread()
 										.getContextClassLoader(), className);
 							}
 						} catch (ClassNotFoundException e) {
 							throw new DeploymentException(
-									Messages.getMessage(DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_BUILDER,
+									Messages.getMessage(errorMsg,
 													"ClassNotFoundException",className), e);
 						}
 						return className;

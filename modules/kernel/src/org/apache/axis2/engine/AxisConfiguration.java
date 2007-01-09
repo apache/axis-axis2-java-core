@@ -94,6 +94,8 @@ public class AxisConfiguration extends AxisDescription {
     private HashMap messageReceivers;
     
     private HashMap messageBuilders;
+    
+    private HashMap messageFormatters;
 
     private ClassLoader moduleClassLoader;
 
@@ -126,6 +128,7 @@ public class AxisConfiguration extends AxisDescription {
         globalModuleList = new ArrayList();
         messageReceivers = new HashMap();
         messageBuilders = new HashMap();
+        messageFormatters = new HashMap();
         outPhases = new ArrayList();
         inFaultPhases = new ArrayList();
         outFaultPhases = new ArrayList();
@@ -150,9 +153,27 @@ public class AxisConfiguration extends AxisDescription {
         messageReceivers.put(mepURL, messageReceiver);
     }
 
-	public void addMessageBuilder(String mepURL,
+	/**
+	 * Register a messageBuilder implementation against a content type.
+	 * This is used by Axis2 to support different message formats.
+	 * @param contentType
+	 * @param messageBuilder
+	 */
+	public void addMessageBuilder(String contentType,
 			String messageBuilder) {
-		messageBuilders.put(mepURL, messageBuilder);
+		messageBuilders.put(contentType, messageBuilder);
+	}
+	
+
+	/**
+	 * Register a messageFormatter implementation against a content type.
+	 * This is used by Axis2 to support serialization of different message formats.
+	 * @param contentType
+	 * @param messageFormatter
+	 */
+	public void addMessageFormatter(String contentType,
+			String messageFormatter) {
+		messageBuilders.put(contentType, messageFormatter);
 	}
 
     /**
@@ -559,12 +580,21 @@ public class AxisConfiguration extends AxisDescription {
     }
     
     /**
-     * A user can specify content-type to builder mapping in the Axis2.xml. 
-     * @param contentType
-     * @return the configured builder class name against the given content type.
-     */
+	 * @param contentType
+	 * @return the configured message builder implementation class name against
+	 *         the given content type.
+	 */
     public String getMessageBuilder(String contentType) {
         return (String) messageBuilders.get(contentType);
+    }
+    
+    /**
+	 * @param contentType
+	 * @return the configured message formatter implementation class name
+	 *         against the given content type.
+	 */
+    public String getMessageFormatter(String contentType) {
+        return (String) messageFormatters.get(contentType);
     }
 
     /**

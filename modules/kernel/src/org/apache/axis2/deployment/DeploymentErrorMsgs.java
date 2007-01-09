@@ -61,4 +61,5 @@ public class DeploymentErrorMsgs {
     public static final String TRANSPORT_SENDER_ERROR = "transportSenderError";
     public static final String XML_STREAM_EXCEPTION = "StreamException";
     public static final String ERROR_LOADING_MESSAGE_BUILDER = "errorloadingbuilder";
+    public static final String ERROR_LOADING_MESSAGE_FORMATTER = "errorloadingformatter";
 }

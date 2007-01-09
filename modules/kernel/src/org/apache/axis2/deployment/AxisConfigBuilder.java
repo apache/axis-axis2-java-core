@@ -145,6 +145,17 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     axisConfig.addMessageBuilder(key, (String) builderSelector.get(key));
                 }
             }
+            
+            // process MessageBuilders
+            OMElement messageFormattersElement = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_FORMATTERS));
+            if (messageFormattersElement != null) {
+                HashMap messageFormatters = processMessageFormatters(messageFormattersElement);
+                Iterator keys = messageFormatters.keySet().iterator();
+                while (keys.hasNext()) {
+                    String key = (String) keys.next();
+                    axisConfig.addMessageBuilder(key, (String) messageFormatters.get(key));
+                }
+            }
 
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);

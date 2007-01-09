@@ -68,7 +68,8 @@ public interface DeploymentConstants {
     String TAG_MESSAGE_BUILDERS = "messageBuilders"; //used to add pluggable support for diffrent wire formats
     String TAG_MESSAGE_BUILDER = "messageBuilder";
     String TAG_CONTENT_TYPE = "contentType";
-
+    String TAG_MESSAGE_FORMATTERS = "messageFormatters"; //used to add pluggable support for diffrent wire formats
+    String TAG_MESSAGE_FORMATTER = "messageFormatter";
 
     String TAG_FLOW_IN = "InFlow";         // inflow start tag
     String TAG_FLOW_OUT = "OutFlow";         // outflow start tag
