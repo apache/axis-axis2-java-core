@@ -99,7 +99,8 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
     }
 
     public void setRole(String s) throws SOAPException {
-        this.headerElem.setRole(s);
+    	//    		TODO - Not yet implemented
+
     }
 
     public String getRole() {

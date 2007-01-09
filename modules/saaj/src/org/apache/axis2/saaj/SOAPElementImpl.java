@@ -15,22 +15,9 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMContainer;
-import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.impl.dom.DocumentImpl;
-import org.apache.axiom.om.impl.dom.ElementImpl;
-import org.apache.axiom.om.impl.dom.NodeImpl;
-import org.apache.axiom.om.impl.dom.TextImpl;
-import org.w3c.dom.Attr;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
@@ -38,9 +25,26 @@ import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.stream.XMLStreamException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMContainer;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axiom.om.impl.dom.DocumentImpl;
+import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.om.impl.dom.NodeImpl;
+import org.apache.axiom.om.impl.dom.TextImpl;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.w3c.dom.Attr;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 
@@ -377,42 +381,62 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         return returnList.iterator();
     }
 
-    public SOAPElement addAttribute(QName name, String value) throws SOAPException {
-        if (name.getNamespaceURI() == null || name.getNamespaceURI().trim().length() == 0) {
-            element.setAttribute(name.getLocalPart(), value);
+    public SOAPElement addAttribute(QName qname, String value) throws SOAPException {
+    	//TODO - check
+        if (qname.getNamespaceURI() == null || qname.getNamespaceURI().trim().length() == 0) {
+            element.setAttribute(qname.getLocalPart(), value);
         } else {
-            element.setAttributeNS(name.getNamespaceURI(), name.getPrefix() + ":" + name.getLocalPart(), value);
+            element.setAttributeNS(qname.getNamespaceURI(), qname.getPrefix() + ":" + qname.getLocalPart(), value);
         }
         return this;
+        
     }
 
     public SOAPElement addChildElement(QName qname) throws SOAPException {
-        return addChildElement(qname.getLocalPart(), qname.getPrefix()  , qname.getNamespaceURI());
+    	//TODO - check
+        String prefix = qname.getPrefix();
+        return addChildElement(qname.getLocalPart(), "".equals(prefix) ? null : prefix  , qname.getNamespaceURI());
     }
 
-    public QName createQName(String s, String s1) throws SOAPException {
-        return null;  //TODO: Fixme.
+    public QName createQName(String localName, String prefix) throws SOAPException {
+    	//TODO - check
+    	QName qname = null;
+    	if(SOAPConstants.SOAP_1_1_PROTOCOL.equals(getSOAPVersion(this.element))){
+    		qname = new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,localName,prefix);   		
+    	}
+    	else if(SOAPConstants.SOAP_1_2_PROTOCOL.equals(getSOAPVersion(this.element))){
+    		qname = new QName(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,localName,prefix);
+    	}
+    	return qname;
     }
 
     public Iterator getAllAttributesAsQNames() {
-        return null;  //TODO: Fixme.
+    	//TODO - check,test ok
+    	final Iterator attribIter = element.getAllAttributes();
+        Collection attributesAsQNames = new ArrayList();
+        Attr attr;
+        QName qname;
+        while (attribIter.hasNext()) {
+			attr = (Attr) attribIter.next();
+			//Check : attr.getLocalName() | attr.getName()
+			qname = new QName(attr.getNamespaceURI(),attr.getName(),attr.getPrefix());
+			attributesAsQNames.add(qname);
+		}
+        return attributesAsQNames.iterator();
     }
 
     public String getAttributeValue(QName qname) {
-        //This method is waiting on the finalization of the name for a method
-        //in OMElement that returns a OMAttribute from an input QName
-        final OMAttribute attribute = element.getAttribute(new QName(qname.getNamespaceURI(),
-                                                                     qname.getLocalPart(),
-                                                                     qname.getPrefix()));
+    	//TODO - check,test ok
+        final OMAttribute attribute = element.getAttribute(qname);
         if (attribute == null) {
-            return null;
+        	return null;
         }
         return attribute.getAttributeValue();
     }
 
-    public Iterator getChildElements(QName name) {
-        QName qName = new QName(name.getNamespaceURI(), name.getLocalPart());
-        Iterator childIter = element.getChildrenWithName(qName);
+    public Iterator getChildElements(QName qname) {
+    	//TODO - check,test ok
+        Iterator childIter = element.getChildrenWithName(qname);
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
             childElements.add(toSAAJNode((org.w3c.dom.Node) childIter.next()));
@@ -421,22 +445,24 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     public QName getElementQName() {
-        return null;  //TODO: Fixme.
+    	//TODO - check
+        return element.getQName();
     }
 
-    public boolean removeAttribute(QName name) {
-        org.apache.axiom.om.OMAttribute attr = element.getAttribute(new QName(name.getNamespaceURI(),
-                                                                                   name.getLocalPart(),
-                                                                                   name.getPrefix()));
+    public boolean removeAttribute(QName qname) {
+    	//TODO - check
+        org.apache.axiom.om.OMAttribute attr = element.getAttribute(qname);
         if (attr != null) {
-            element.removeAttribute(attr);
-            return true;
+        	element.removeAttribute(attr);
+        	return true;
         }
         return false;
     }
 
-    public SOAPElement setElementQName(QName qname) throws SOAPException {
-        return null;  //TODO: Fixme.
+    public SOAPElement setElementQName(QName newName) throws SOAPException {
+        //TODO - check
+        this.element.setLocalName(newName.getLocalPart());
+        return this;
     }
 
     /* (non-Javadoc)
@@ -478,6 +504,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     /* (non-Javadoc)
       * @see javax.xml.soap.SOAPElement#setEncodingStyle(java.lang.String)
       */
+    
+    //TODO : jira issue
     public void setEncodingStyle(String encodingStyle) throws SOAPException {
         if (!encodingStyle.equals(SOAPConstants.URI_NS_SOAP_ENCODING)) {
             throw new IllegalArgumentException("Invalid Encoding style : " + encodingStyle);
@@ -770,4 +798,26 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     public NamedNodeMap getAttributes() {
         return element.getAttributes();
     }
+    
+    /**
+     * @param rootElement
+     * @return SOAP version of the element using SOAPConstants.SOAP_1_1_PROTOCOL
+     * 		   or SOAPConstants.SOAP_1_2_PROTOCOL
+     */
+    //TODO : check 
+    protected String getSOAPVersion(ElementImpl rootElement){
+    	OMNamespace omNamespace = rootElement.getNamespace();
+        if(omNamespace.getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI) &&
+        		omNamespace.getPrefix().equals(SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX))
+        {
+        	return SOAPConstants.SOAP_1_1_PROTOCOL;
+        }
+        else if(omNamespace.getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI) &&
+        		omNamespace.getPrefix().equals(SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX))
+        {
+        	return SOAPConstants.SOAP_1_2_PROTOCOL;
+        }
+    	return null;
+    }
+    
 }

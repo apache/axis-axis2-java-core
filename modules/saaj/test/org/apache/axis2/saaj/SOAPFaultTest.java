@@ -18,6 +18,7 @@ package org.apache.axis2.saaj;
 
 import junit.framework.TestCase;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
 import javax.xml.soap.MessageFactory;
@@ -33,8 +34,14 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
+
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
+import java.util.Locale;
 
 public class SOAPFaultTest extends TestCase {
 
@@ -305,4 +312,211 @@ public class SOAPFaultTest extends TestCase {
             fail("Unexpected Exception : " + e);
         }
     }
+    
+    //TODO : varify with azeez
+    public void _testAppendSubCode() {
+        try 
+        {
+            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+            SOAPMessage soapMessage = fac.createMessage();
+            SOAPPart soapPart = soapMessage.getSOAPPart();
+            SOAPEnvelope envelope = soapPart.getEnvelope();
+            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+            SOAPBody body = envelope.getBody();
+            SOAPFault soapFault = body.addFault();
+            QName qname = new QName("TestSubCode");
+            soapFault.appendFaultSubcode(qname);
+            soapMessage.saveChanges();
+        } catch (SOAPException e) {
+            fail("Unexpected Exception Occurred : " + e);
+        }
+    }
+    
+    public void _testGetFaultReasonTexts() {
+        try 
+        {
+            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+            
+            SOAPMessage soapMessage = fac.createMessage();
+            SOAPPart soapPart = soapMessage.getSOAPPart();
+            
+            SOAPEnvelope envelope = soapPart.getEnvelope();
+            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+            SOAPBody body = envelope.getBody();
+            SOAPFault soapFault = body.addFault();
+            soapFault.addFaultReasonText("myReason", new Locale("en"));
+            System.out.println("Adding second text");
+            soapFault.addFaultReasonText("de-myReason", new Locale("de"));
+            soapFault.addFaultReasonText("si-myReason", new Locale("si"));            
+            soapMessage.saveChanges();
+            Iterator reasonTexts = soapFault.getFaultReasonTexts(); 
+            while(reasonTexts.hasNext()){
+            	String reasonText = (String)reasonTexts.next();
+            	System.out.println(reasonText);
+            }
+            
+        } catch (Exception e) {
+            fail("Unexpected Exception : " + e);
+        }
+    }    
+    public void _testAddFaultReasonText1() {
+        try {
+            MessageFactory fac = MessageFactory.newInstance();
+            SOAPMessage soapMessage = fac.createMessage();
+            SOAPPart soapPart = soapMessage.getSOAPPart();
+            
+            SOAPEnvelope envelope = soapPart.getEnvelope();
+            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+            SOAPBody body = envelope.getBody();
+            SOAPFault soapFault = body.addFault();
+            soapFault.addFaultReasonText("myReason", Locale.ENGLISH);
+            soapMessage.saveChanges();
+
+        } catch (SOAPException e) {
+            fail("Unexpected Exception Occurred : " + e);
+        }
+    }
+
+    public void testAddFaultReasonText2() {
+        try {
+            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+            SOAPMessage soapMessage = fac.createMessage();
+            SOAPPart soapPart = soapMessage.getSOAPPart();
+            
+            SOAPEnvelope envelope = soapPart.getEnvelope();
+            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+            SOAPBody body = envelope.getBody();
+            SOAPFault soapFault = body.addFault();
+            soapFault.addFaultReasonText("myReason", new Locale("en"));
+            soapFault.addFaultReasonText("de-myReason", new Locale("de"));
+            soapFault.addFaultReasonText("si-myReason", new Locale("si"));            
+            soapMessage.saveChanges();
+
+        } catch (SOAPException e) {
+            fail("Unexpected Exception Occurred : " + e);
+        }
+    }
+    
+    public void testSetFaultRole() {
+        try 
+        {
+            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+            
+            SOAPMessage soapMessage = fac.createMessage();
+            SOAPPart soapPart = soapMessage.getSOAPPart();
+            
+            SOAPEnvelope envelope = soapPart.getEnvelope();
+            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+            SOAPBody body = envelope.getBody();
+            SOAPFault soapFault = body.addFault();
+            //soapFault.setFaultCode("mycode");
+
+            soapFault.setFaultRole("test");
+            soapMessage.saveChanges();
+
+        } catch (SOAPException e) {
+            fail("Unexpected Exception Occurred : " + e);
+        }
+    }
+
+    public void testSetFaultNode() {
+        try 
+        {
+            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+            
+            SOAPMessage soapMessage = fac.createMessage();
+            SOAPPart soapPart = soapMessage.getSOAPPart();
+            
+            SOAPEnvelope envelope = soapPart.getEnvelope();
+            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+            SOAPBody body = envelope.getBody();
+            SOAPFault soapFault = body.addFault();
+            soapFault.setFaultNode("test");
+            soapMessage.saveChanges();
+
+        } catch (SOAPException e) {
+            fail("Unexpected Exception Occurred : " + e);
+        }
+    }
+    public void _testGetFaultReasonText() {
+        try 
+        {
+            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+            
+            SOAPMessage soapMessage = fac.createMessage();
+            SOAPPart soapPart = soapMessage.getSOAPPart();
+            
+            SOAPEnvelope envelope = soapPart.getEnvelope();
+            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+            SOAPBody body = envelope.getBody();
+            SOAPFault soapFault = body.addFault();
+            soapFault.addFaultReasonText("myReason", new Locale("en"));
+            System.out.println("Adding second text");
+            soapFault.addFaultReasonText("de-myReason", new Locale("de"));
+            soapFault.addFaultReasonText("si-myReason", new Locale("si"));            
+            soapMessage.saveChanges();
+            
+            String faultReasonText = soapFault.getFaultReasonText(new Locale("si"));
+            System.out.println(faultReasonText);
+
+            faultReasonText = soapFault.getFaultReasonText(new Locale("ja"));
+            System.out.println(faultReasonText);
+            
+            
+        } catch (Exception e) {
+            fail("Unexpected Exception : " + e);
+        }
+    }    
+    
+    
+
+    public void _testGetFaultCodeAsQName() {
+        try 
+        {
+            //MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+            MessageFactory fac = MessageFactory.newInstance();
+            
+            SOAPMessage soapMessage = fac.createMessage();
+            SOAPPart soapPart = soapMessage.getSOAPPart();
+            
+            SOAPEnvelope envelope = soapPart.getEnvelope();
+            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+            SOAPBody body = envelope.getBody();
+            SOAPFault soapFault = body.addFault();
+            soapFault.addFaultReasonText("myReason", new Locale("en"));
+            soapFault.setFaultCode("mycode");
+            soapMessage.saveChanges();
+            
+            QName qname = soapFault.getFaultCodeAsQName();
+            assertNotNull(qname);
+            
+        } catch (Exception e) {
+            fail("Unexpected Exception : " + e);
+        }
+    }    
+
+    public void testHasDetail() {
+        try 
+        {
+            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+            //MessageFactory fac = MessageFactory.newInstance();
+            
+            SOAPMessage soapMessage = fac.createMessage();
+            SOAPPart soapPart = soapMessage.getSOAPPart();
+            
+            SOAPEnvelope envelope = soapPart.getEnvelope();
+            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+            SOAPBody body = envelope.getBody();
+            SOAPFault soapFault = body.addFault();
+            Detail detail = soapFault.addDetail();
+            detail.setAttribute("test", "myvalue");
+            System.out.println(soapFault.hasDetail());
+            soapMessage.saveChanges();
+            
+            
+        } catch (Exception e) {
+            fail("Unexpected Exception : " + e);
+        }
+    }    
+    
 }

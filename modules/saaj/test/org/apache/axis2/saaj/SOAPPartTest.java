@@ -144,4 +144,35 @@ public class SOAPPartTest extends TestCase {
             }
         }
     }
+    
+    public void _testInputEncoding() {
+        try {
+        	DOMSource domSource;
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document document = builder.parse(new File("test-resources" + File.separator + "soap-part.xml"));
+            domSource = new DOMSource(document);
+
+            SOAPMessage message = MessageFactory.newInstance().createMessage();
+
+            // Get the SOAP part and set its content to domSource
+            SOAPPart soapPart = message.getSOAPPart();
+            soapPart.setContent(domSource);
+            message.saveChanges();
+            
+            SOAPPart sp = message.getSOAPPart();
+            //sp.setContent(ssrc);
+
+            String inputEncoding = sp.getInputEncoding();
+            if (inputEncoding == null) {
+                fail("Input Encoding is null");
+            }
+            else{
+            	System.out.println(inputEncoding);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Unexpected Exception " + e);
+        }
+    }
+    
 }

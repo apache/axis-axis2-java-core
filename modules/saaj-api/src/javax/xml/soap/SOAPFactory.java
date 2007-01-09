@@ -15,8 +15,6 @@
  */
 package javax.xml.soap;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * <code>SOAPFactory</code> is a factory for creating various objects
@@ -147,8 +145,40 @@ public abstract class SOAPFactory {
         }
     }
 
-    public static SOAPFactory newInstance(String s) throws SOAPException {
-        return SAAJMetaFactory.getInstance().newSOAPFactory(s);
+    
+    /**
+     * Creates a new SOAPFactory object that is an instance of the specified implementation, this
+	 * method uses the SAAJMetaFactory to locate the implementation class and create the
+	 * SOAPFactory instance.
+	 * 
+     * @param protocol - a string constant representing the protocol of the specified SOAP factory
+     * implementation. May be either DYNAMIC_SOAP_PROTOCOL, DEFAULT_SOAP_PROTOCOL
+	 * (which is the same as) SOAP_1_1_PROTOCOL, or SOAP_1_2_PROTOCOL.
+	 * Returns: a new instance of a SOAPFactory
+
+     * @return javax.xml.soap.SOAPFactory
+     * @throws SOAPException - if there is an error creating the specified SOAPFactory
+     * @see <CODE>SAAJMetaFactory</CODE>
+     */
+    public static SOAPFactory newInstance(String protocol) throws SOAPException {
+    	//TODO : check, how to load from SAAJMetaFactory
+    	//this is what was here earlier
+    	// s == protocol
+        //return (SOAPFactory) Class.forName(s).newInstance();
+    	//Is returning classes from axiom correct?
+    	//what about DYNAMIC_SOAP_PROTOCOL?
+        try {
+        	if(SOAPConstants.DEFAULT_SOAP_PROTOCOL.equals(protocol) || SOAPConstants.SOAP_1_1_PROTOCOL.equals(protocol)){
+                return (SOAPFactory) Class.forName("org.apache.axis2.saaj.SOAPFactoryImpl").newInstance();
+        	}else if(SOAPConstants.SOAP_1_2_PROTOCOL.equals(protocol)) {
+        		return (SOAPFactory) Class.forName("org.apache.axis2.saaj.SOAPFactoryImpl").newInstance();
+        	}else{
+        		return null;
+        	}
+        } catch (Exception exception) {
+            throw new SOAPException("Unable to create SOAP Factory: "
+                    + exception.getMessage());
+        }
     }
 
     public SOAPElement createElement(org.w3c.dom.Element element)
@@ -156,16 +186,39 @@ public abstract class SOAPFactory {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+    
+    /**
+     * Creates a SOAPElement object initialized with the given QName object. The concrete 
+     * type of the return value will depend on the name given to the new SOAPElement. For instance, 
+     * a new SOAPElement with the name {http://www.w3.org/2003/05/soap-envelope}Envelope} Envelope
+     * would cause a SOAPEnvelope that supports SOAP 1.2 behavior to be created.
+	 * 
+     * @param qname - a QName object with the XML name for the new element
+     * @return the new SOAPElement object that was created
+     * @throws SOAPException - if there is an error in creating the SOAPElement object
+     */
     public SOAPElement createElement(javax.xml.namespace.QName qname)
                           throws SOAPException {
-        throw new UnsupportedOperationException("Not yet implemented");
+        //throw new UnsupportedOperationException("Not yet implemented");
+    	//TODO : check
+        String localName = qname.getLocalPart();
+        String prefix = qname.getPrefix();
+        String uri = qname.getNamespaceURI();
+
+        //TODO: WIP
+        
+        //OMElement omElement = DOOMAbstractFactory.getOMFactory().createOMElement(localName, uri, prefix);
+        return null;
+        //dependancy would create a cyclic reference
+        //return new SOAPElementImpl((ElementImpl) omElement);
+        
     }
 
     public abstract SOAPFault createFault()
                                throws SOAPException;
 
-    public abstract SOAPFault createFault(java.lang.String s,
-                                      javax.xml.namespace.QName qname)
+    public abstract SOAPFault createFault(java.lang.String reasonText,
+                                      javax.xml.namespace.QName faultCode)
                                throws SOAPException;
 
     private static final String SF_PROPERTY = "javax.xml.soap.SOAPFactory";

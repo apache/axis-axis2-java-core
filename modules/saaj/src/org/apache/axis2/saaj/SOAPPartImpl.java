@@ -15,10 +15,22 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.saaj.util.IDGenerator;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Iterator;
+
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.Source;
+
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
@@ -37,18 +49,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 import org.w3c.dom.UserDataHandler;
-
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.soap.SOAPElement;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.Source;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Iterator;
 
 public class SOAPPartImpl extends SOAPPart {
 
@@ -256,7 +256,6 @@ public class SOAPPartImpl extends SOAPPart {
      */
     public void setContent(Source source) throws SOAPException {
         this.source = source;
-
         //TODO: Need to fix the source handling stuff
     }
 
@@ -705,7 +704,9 @@ public class SOAPPartImpl extends SOAPPart {
 
     public String getInputEncoding() {
         // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    	//return ((DeferredDocumentImpl)(((DOMSource)this.source).getNode())).getInputEncoding();
+    	return this.envelope.getEncodingStyle();
+        //throw new UnsupportedOperationException("TODO");
     }
 
     public String getXmlEncoding() {

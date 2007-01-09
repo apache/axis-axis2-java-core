@@ -310,14 +310,13 @@ public interface SOAPElement extends javax.xml.soap.Node, org.w3c.dom.Element {
     public abstract Iterator getVisibleNamespacePrefixes();
 
     public abstract SOAPElement addAttribute(javax.xml.namespace.QName qname,
-                             java.lang.String s)
+                             java.lang.String value)
             throws SOAPException;
 
     public abstract SOAPElement addChildElement(javax.xml.namespace.QName qname)
             throws SOAPException;
 
-    public abstract javax.xml.namespace.QName createQName(java.lang.String s,
-                                          java.lang.String s1)
+    public abstract javax.xml.namespace.QName createQName(String localName, String prefix)
             throws SOAPException;
 
     public abstract java.util.Iterator getAllAttributesAsQNames();
@@ -330,6 +329,6 @@ public interface SOAPElement extends javax.xml.soap.Node, org.w3c.dom.Element {
 
     boolean removeAttribute(javax.xml.namespace.QName qname);
 
-    public abstract SOAPElement setElementQName(javax.xml.namespace.QName qname)
+    public abstract SOAPElement setElementQName(javax.xml.namespace.QName newName)
             throws SOAPException;
 }

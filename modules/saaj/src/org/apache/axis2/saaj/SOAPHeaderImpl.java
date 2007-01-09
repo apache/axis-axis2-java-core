@@ -18,10 +18,22 @@ package org.apache.axis2.saaj;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.om.impl.dom.NamespaceImpl;
+import org.apache.axiom.om.impl.dom.NodeImpl;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12HeaderBlockImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 import javax.xml.soap.Node;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
@@ -137,6 +149,16 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
      */
     public SOAPHeaderElement addHeaderElement(Name name) throws SOAPException {
         OMNamespace ns = new NamespaceImpl(name.getURI(), name.getPrefix());
+//        SOAPHeaderBlock headerBlock = null;
+//        if(SOAPConstants.SOAP_1_1_PROTOCOL.equals(getSOAPVersion(this.element))){
+//        	headerBlock = new SOAP11HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader,
+//        			(SOAPFactory)this.element.getOMFactory());
+//        }
+//        else if(SOAPConstants.SOAP_1_2_PROTOCOL.equals(getSOAPVersion(this.element))){
+//        	headerBlock = new SOAP12HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader,
+//        			(SOAPFactory)this.element.getOMFactory());
+//        }
+
         SOAPHeaderBlock headerBlock = null;
         if (this.element.getOMFactory() instanceof SOAP11Factory) {
             headerBlock = new SOAP11HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader,
@@ -145,6 +167,7 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
             headerBlock = new SOAP12HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader,
                     (SOAPFactory) this.element.getOMFactory());
         }
+        
         SOAPHeaderElementImpl soapHeaderElement = new SOAPHeaderElementImpl(headerBlock);
         element.setUserData(SAAJ_NODE, this, null);
         soapHeaderElement.element.setUserData(SAAJ_NODE, soapHeaderElement, null);

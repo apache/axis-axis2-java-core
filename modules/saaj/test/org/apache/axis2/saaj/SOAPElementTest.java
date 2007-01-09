@@ -15,9 +15,10 @@
  */
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
-import org.apache.axiom.om.impl.dom.NodeImpl;
+import java.util.Iterator;
+import java.util.List;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
 import javax.xml.soap.Node;
@@ -28,9 +29,12 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
-import java.util.Iterator;
-import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.apache.axiom.om.impl.dom.NodeImpl;
 
 public class SOAPElementTest extends TestCase {
 
@@ -379,4 +383,225 @@ public class SOAPElementTest extends TestCase {
         }
         return list;
     }
+    
+    
+    //sumedha
+    public void _testAddAttribute() {
+        assertNotNull(soapEle);
+        String value = "234.50";
+        try {
+            QName qname = new QName("http://sample.apache.org/trader","GetStockQuote","w");
+        	soapEle.addAttribute(qname, value);
+        	assertNull(soapEle);
+        } catch (SOAPException e) {
+            fail("Unexpected Exception " + e);
+        }
+    }
+    
+    /*
+     * test for addChildElement(QName qname)
+     */
+    public void testAddChildElement3() {
+        try 
+        {
+            QName qname = new QName("http://sample.apache.org/trader","GetStockQuote","w");
+            soapEle.addChildElement(qname);
+            assertNotNull(soapEle);
+            
+        } catch (Exception e) {
+            fail("Exception: " + e);
+        }
+    }
+    
+    
+    public void _testGetAllAttributesAsQNames() {
+        assertNotNull(soapEle);
+        String value1 = "234.50";
+        String value2 = "XYZ";
+        try {
+            QName qname = new QName("http://sample.apache.org/trader","GetStockQuote","w");
+            QName qname2 = new QName("http://sample.apache.org/trader","GetSymbol","w");            
+        	soapEle.addAttribute(qname2, value2);
+        	soapEle.addAttribute(qname,value1);
+        	
+        	Iterator attributes = soapEle.getAllAttributesAsQNames();
+        	while (attributes.hasNext()) {
+				QName qname3 = (QName) attributes.next();
+				assertEquals(qname3.getNamespaceURI(), "http://sample.apache.org/trader");
+			}
+        	assertNull(attributes);
+        } catch (SOAPException e) {
+            fail("Unexpected Exception " + e);
+        }
+    }
+    
+    public void testGetAttributeValue() {
+        assertNotNull(soapEle);
+        String value = "234.50";
+        try {
+            QName qname = new QName("http://sample.apache.org/trader","GetStockQuote","w");
+        	soapEle.addAttribute(qname, value);
+        	String valueReturned = soapEle.getAttributeValue(qname);
+        	assertEquals(value, valueReturned);
+        	
+        } catch (SOAPException e) {
+            fail("Unexpected Exception " + e);
+        }
+    }
+    
+
+    public void _testGetChildElements() {
+        try 
+        {
+            SOAPElement childEle1 =
+                    SOAPFactoryImpl.newInstance().createElement("Child1",
+                                                                "ch",
+                                                                "http://test.apache.org/");
+            SOAPElement childEle2 =
+                    SOAPFactoryImpl.newInstance().createElement("Child2",
+                                                                "ch",
+                                                                "http://test.apache.org/");
+            childEle1.addChildElement(childEle2);
+            soapEle.addChildElement(childEle1);
+
+            QName qname = new QName("http://test.apache.org/","Child1","ch");
+            Iterator childElements = soapEle.getChildElements(qname);
+            
+
+            int childCount = 0;
+            while(childElements.hasNext()){
+            	Node node = (Node)childElements.next();
+            	childCount++;
+            }
+            assertEquals(childCount, 2);
+        } catch (SOAPException e) {
+            fail("Unexpected Exception " + e);
+        }
+    }
+
+    //TODO : check with azeez, why is this failing
+    //TCK SOAPElement.getChildElementsTest1()
+    public void _testGetChildElements2() {
+    	try 
+    	{
+    		MessageFactory fact = MessageFactory.newInstance();
+    		SOAPMessage message = fact.createMessage();
+    		SOAPPart soapPart = message.getSOAPPart();
+    		SOAPEnvelope soapEnvelope = soapPart.getEnvelope();
+    		SOAPBody soapBody = soapEnvelope.getBody();
+
+    		Name name = soapEnvelope.createName("MyChild1");
+    		SOAPElement se = soapBody.addChildElement(name);
+    		Iterator childElementsCount = soapBody.getChildElements();
+    		Iterator childElements = soapBody.getChildElements();    		
+
+    		int childCount = 0;
+    		while(childElementsCount.hasNext()){
+    			Node node = (Node)childElementsCount.next();
+    			childCount++;
+    		}
+    		assertEquals(childCount, 1);
+    		SOAPElement se2 = (SOAPElement)childElements.next();
+    		if(!se.equals(se2)) {
+    			fail();
+    		} else {
+    			System.out.println("SOAPElement se = se2 (expected)");
+    		}
+
+    		Name n = se.getElementName();
+    		if (!n.equals(name)) {
+    			System.out.println("Name objects are not equal (unexpected)");
+    			System.out.println("getChildElement() did not return " +
+    					"correct Name object expected localName=" + 
+    					name.getLocalName() + ", got localName=" 
+    					+ n.getLocalName());
+    			fail();
+    		} else{
+    			System.out.println("Name objects are equal (expected)");
+    		}
+    	} catch (SOAPException e) {
+    		fail("Unexpected Exception " + e);
+    	}
+    }
+    
+    public void testGetChildElements3() {
+    	try 
+    	{
+    		MessageFactory fact = MessageFactory.newInstance();
+    		SOAPMessage message = fact.createMessage();
+    		SOAPPart soapPart = message.getSOAPPart();
+    		SOAPEnvelope soapEnvelope = soapPart.getEnvelope();
+    		SOAPBody soapBody = soapEnvelope.getBody();
+
+    		//Name name = soapEnvelope.createName("MyChild1");
+    		QName name = new QName("MyChild1");
+    		SOAPElement se = soapBody.addChildElement(name);
+    		Iterator childElementsCount = soapBody.getChildElements();
+    		Iterator childElements = soapBody.getChildElements();    		
+
+    		int childCount = 0;
+    		while(childElementsCount.hasNext()){
+    			Node node = (Node)childElementsCount.next();
+    			childCount++;
+    		}
+    		assertEquals(childCount, 1);
+    		SOAPElement se2 = (SOAPElement)childElements.next();
+    		if(!se.equals(se2)) {
+    			fail();
+    		} else {
+    			System.out.println("SOAPElement se = se2 (expected)");
+    		}
+
+    		QName n = se.getElementQName();
+    		if (!n.equals(name)) {
+    			System.out.println("Name objects are not equal (unexpected)");
+    			System.out.println("getChildElement() did not return " +
+    					"correct Name object expected localPart=" + 
+    					name.getLocalPart() + ", got localPart=" 
+    					+ n.getLocalPart());
+    			fail();
+    		} else{
+    			System.out.println("Name objects are equal (expected)");
+    		}
+    	} catch (SOAPException e) {
+    		fail("Unexpected Exception " + e);
+    	}
+    }
+    
+    public void _testRemoveAttribute2() {
+        try {
+            QName qname = new QName("http://child1.apache.org/","Child1","ch");
+            String value = "MyValue1";
+            soapEle.addAttribute(qname, value);
+            boolean b = soapEle.removeAttribute(qname);
+            assertTrue("removeAttribute() did not return true", b);
+            b = soapEle.removeAttribute(qname);
+            assertFalse("removeAttribute() did not return false", b);
+            assertNull(soapEle.getAttributeValue(qname));
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Exception: " + e);
+        }
+    }
+    
+    public void _testSetElementQName() {
+        try {
+            QName qname = new QName("http://child1.apache.org/","newName","ch");
+        	soapEle.setElementQName(qname);
+            assertNull(soapEle.getElementName().getLocalName(),"newName");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Exception: " + e);
+        }
+    }
+
+    public void testCreateQName() {
+        try {
+            QName qname = soapEle.createQName("qname","soapenv");
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Exception: " + e);
+        }
+    }
+    
 }

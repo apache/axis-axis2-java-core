@@ -168,9 +168,28 @@ public abstract class MessageFactory {
                                               InputStream inputstream)
             throws IOException, SOAPException;
 
-    public static MessageFactory newInstance(String s)
+    public static MessageFactory newInstance(String soapVersion)
             throws SOAPException {
-        return SAAJMetaFactory.getInstance().newMessageFactory(s);
+    	
+    	if(!(SOAPConstants.SOAP_1_1_PROTOCOL.equals(soapVersion) ||
+    			SOAPConstants.SOAP_1_2_PROTOCOL.equals(soapVersion))){
+    		throw new SOAPException("Invalid SOAP Protocol Version");
+    	}
+    	
+        MessageFactory factory = newInstance();
+        if(factory.getClass().getName().equals(DEFAULT_MESSAGE_FACTORY)){
+            try {
+                Method m = factory.getClass().getMethod("setSOAPVersion", new Class[]{String.class});
+                m.invoke(factory, new Object[]{soapVersion});
+            } catch (IllegalAccessException e) {
+                throw new SOAPException(e);
+            } catch (InvocationTargetException e) {
+                throw new SOAPException(e);
+            } catch (NoSuchMethodException e) {
+                throw new SOAPException(e);
+            }
+        }
+        return factory;
     }
 
     private static final String DEFAULT_MESSAGE_FACTORY =

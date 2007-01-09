@@ -15,20 +15,22 @@
  */
 package org.apache.axis2.saaj;
 
+import java.util.Locale;
+
+import javax.xml.namespace.QName;
+import javax.xml.soap.Detail;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPFault;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
-
-import javax.xml.soap.Detail;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.namespace.QName;
 
 /**
  * 
@@ -164,12 +166,31 @@ public class SOAPFactoryImpl extends SOAPFactory {
         return new PrefixedQName(null, localName, null);
     }
 
+    /**
+     * Creates a new default SOAPFault object
+	 * @return a SOAPFault object
+	 * @throws SOAPException - if there is a SOAP error 
+     */
     public SOAPFault createFault() throws SOAPException {
-        return null;  //TODO - Not yet implemented
+        //TODO - check
+    	return new SOAPFaultImpl(DOOMAbstractFactory.getSOAP11Factory().createSOAPFault());
     }
 
-    public SOAPFault createFault(String s, QName qname) throws SOAPException {
-        return null;  //TODO - Not yet implemented
+    /**
+	 * Creates a new SOAPFault object initialized with the given reasonText and faultCode
+     * @param
+     * reasonText - the ReasonText/FaultString for the fault
+     * faultCode - the FaultCode for the fault
+     * @return: a SOAPFault object
+     * @throws: SOAPException - if there is a SOAP error
+     */
+    public SOAPFault createFault(String reasonText, QName faultCode) throws SOAPException {
+        //TODO - check
+    	//using english as the default locale
+    	SOAPFault soapFault =  new SOAPFaultImpl(DOOMAbstractFactory.getSOAP11Factory().createSOAPFault());
+    	soapFault.setFaultCode(faultCode);
+    	soapFault.addFaultReasonText(reasonText, Locale.ENGLISH);
+    	return soapFault;
     }
 
     public void setSOAPVersion(String soapVersion){
