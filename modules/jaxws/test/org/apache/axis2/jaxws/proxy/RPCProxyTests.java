@@ -31,6 +31,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.proxy.rpclit.RPCLitImpl;
@@ -91,6 +92,22 @@ public class RPCProxyTests extends TestCase {
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
+        }
+    }
+    
+    /**
+     * Simple test that ensures that we can echo a string to an rpc/lit web service
+     */
+    public void testForNull() throws Exception {
+        try{ 
+            RPCLit proxy = getProxy();
+            String request = null;
+           
+            String response = proxy.testSimple(request);
+            fail("RPC/LIT should throw webserviceException when operation is invoked with null input parameter");
+        }catch(Exception e){ 
+            assertTrue(e instanceof WebServiceException);
+            System.out.println(e.getMessage());
         }
     }
     

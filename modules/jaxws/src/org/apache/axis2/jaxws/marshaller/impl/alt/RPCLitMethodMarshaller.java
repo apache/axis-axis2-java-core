@@ -30,6 +30,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
@@ -86,6 +87,22 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
             Set<String> packages = endpointDesc.getPackages();
+            
+            //Validate input parameters for operation and make sure no input parameters are null.
+            //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
+            //to a method then an implementation MUST throw WebServiceException.
+            if(pds.length > 0){
+            	if(signatureArguments == null){
+            		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RPCLitMethodMarshallerErr1"));
+            	}
+            	if(signatureArguments !=null){
+            		for(Object argument:signatureArguments){
+            			if(argument == null){
+            				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RPCLitMethodMarshallerErr1"));
+            			}
+            		}
+            	}
+            }
             
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
