@@ -195,13 +195,13 @@ class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/&gt;
     &lt;/operation&gt;
 &lt;/service&gt;</pre>
 
-<p>This document defines the service, what it's called by the <a
+<p>This document defines the service, what is called by the <a
 href="webadminguide.html">Web Administration Application</a>, and the class
 used to serve requests. For each operation, it defines the appropriate
 message receiver class.</p>
 
 <p>Create a new directory, META-INF, in the main directory for the class. (In
-this case, that's the same directory that contains the org directory) and
+this case, that's the same directory that contains the org directory) . Then
 place the services.xml file in it.</p>
 
 <p>Create the .aar file by typing: jar cvf SampleService.aar ./*</p>
@@ -360,8 +360,8 @@ Distribution</b></h3>
 
 <p>Finally, deploy the service by copying the SampleService directory to the
 webapps/axis2/WEB-INF/services directory on the servlet engine. You can check
-to make sure that it's been properly deployed by checking <a
-href="http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices">http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices</a>.</p>
+to make sure that it's been properly deployed by checking
+http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices.</p>
 <a name="deployrun"></a>
 
 <h2>Deploying and Running an Axis2 Service Created from WSDL</h2>
@@ -415,7 +415,7 @@ org.apache.axis2.axis2userguide -o target_directory_name -d adb -s -wv 1.1 -ss -
 operations in the file Axis2UserGuide.wsdl, and that the Java classes
 generated should be in the org.apache.axis2.axis2userguide package (-p). (You
 should see the appropriate directories . Keeping things neat these
-directories will be created in the "target_directcory_name" dierctory
+directories will be created in the "target_directory_name" dierctory
 specified in the code listing 14. If this directory does not exist, it will
 be created) It also indicates that you want to use the Axis2 DataBinding
 Framework, or ADB (-d), to generate only synchronous, or blocking code (-s),
@@ -567,8 +567,7 @@ tools. See the <a href="webadminguide.html">Web Administrator's Guide</a> for
 more information.)</p>
 
 <p>To verify that the service has been properly deployed, check the list of
-services at <a
-href="http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices">http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices</a>.</p>
+services at http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices.</p>
 
 <p><img alt="Checking the list of services" src="images/fig06.jpg" /></p>
 
