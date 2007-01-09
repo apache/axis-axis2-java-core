@@ -77,7 +77,7 @@ available or under development include:</p>
   <li><a
     href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wss"
     target="_blank">WS-Security</a> - Supported by <a
-    href="http://ws.apache.org/axis2/modules/index.html">Apache
+    href="http://ws.apache.org/axis2/modules/rampart/1_1/security-module.html">Apache
   Rampart</a></li>
   <li><a href="http://www.w3.org/Submission/ws-addressing/"
     target="_blank">WS-Addressing</a> -Module included as part of Axis2
@@ -259,20 +259,12 @@ target="_blank">Download Tool Plug-ins</a>]</p>
 
 <h2>Known Issues and Limitations</h2>
 <ul>
-  <li>JaxMe and JAXBRI data binding support is experimental</li>
-  <li>AXIS2-595: Hot re-deployment in Apache Tomcat has problems</li>
-  <li>Axis Data Binding (ADB) does not support the following construct(s):
-    <ol>
-      <li>AXIS2-983: Support for Simple Type Union and Simple Type List</li>
-      <li>AXIS2-1092: Support for xs:list inside an xs:simpleType</li>
-      <li>AXIS2-1093: Support for xs:union inside xs:simpleType</li>
-    </ol>
-  </li>
-  <li>No support yet for unwrapping of doc/lit WSDL files (in stub
-  generation)</li>
-  <li>No support yet for rpc/encoded style WSDL documents (in stub
-  generation)</li>
-  <li>Idea plugin shows random behavior when XMLBeans is used</li>
+   <li>ADB does not support unwrapping of response messages(coming in 1.2)</li>
+   <li>JSR 181/183 Annotation support (coming in 1.2)</li>
+   <li>JaxMe and JAXBRI data binding support is experimental</li>
+   <li>Simple Axis Server does not support POX/REST</li>
+   <li>RPC  Message Receiver does not validate request against the schema (AXIS2-1943)</li>
+   <li>Axis2 Idea plugin shows random behavior when XMLBeans is used</li>
 </ul>
 
 <h2>Archived News</h2>
