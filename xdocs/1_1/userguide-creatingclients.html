@@ -3,7 +3,7 @@
   <meta http-equiv="content-type" content="">
   <title>Apache Axis2 User's Guide- Creating Clients</title>
   <link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
-  media="all" />
+  media="all">
 </head>
 
 <body>
@@ -23,7 +23,7 @@ client.</p>
   <li><a href="userguide.html#intro">Introducing Axis2</a><br>
 
     <ul>
-      <li><a href="userguide.html#whatis">What is Axis2</a></li>
+      <li><a href="userguide.html#whatis">What is Axis2?</a></li>
       <li><a href="userguide.html#underhood">What's under the hood?</a></li>
       <li><a href="userguide.html#handlessoap">How Axis2 handles SOAP
         messages</a></li>
@@ -136,8 +136,9 @@ href="http://www.w3.org/2002/ws/desc/">http://www.w3.org/2002/ws/desc/</a>
 
 <p><b>The short story:</b></p>
 <ol>
-  <li>If you have not done it already, <a href="http://ws.apache.org/axis2/download/1_1_1/download.cgi#std-bin">download</a> and unpack the
-    Apache Axis2 Standard Distribution.</li>
+  <li>If you have not done it already, <a
+    href="http://ws.apache.org/axis2/download/1_1_1/download.cgi#std-bin">download</a>
+    and unpack the Apache Axis2 Standard Distribution.</li>
   <li>Create the client stub with the following command:
     <pre>%AXIS2_HOME%\bin\wsdl2java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s</pre>
   </li>
@@ -161,10 +162,10 @@ does not include the necessary utilities for generating code, such as
 WSDL2Java.</p>
 
 <p>In the ADB method of generating clients, all the functionality for the
-services are contained a single class called a stub. The stub contains inner
-classes corresponding to all of the necessary objects defined in the WSDL
-file, such as, in the case of this WSDL, DoInOnlyRequestMessage. Once you
-have the stub, you will be able to create a client by simply referring to
+services are contained in a single class called a stub. The stub contains
+inner classes corresponding to all of the necessary objects defined in the
+WSDL file, such as, in the case of this WSDL, DoInOnlyRequestMessage. Once
+you have the stub, you will be able to create a client by simply referring to
 these classes and their methods. To generate the client, issue the following
 command in Code Listing 6.</p>
 
