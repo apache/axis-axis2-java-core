@@ -140,6 +140,31 @@ public class ReturnTypeParsingTests extends TestCase {
 
         assertEquals(List.class, mdc.getReturnTypeClass());
     }
+    
+    public void testGenericArray() {
+        MethodDescriptionComposite mdc = new MethodDescriptionComposite();
+        mdc.setReturnType("java.util.List<java.lang.String[]>[]");
+        assertEquals("java.util.List<java.lang.String[]>[]",
+                mdc.getReturnType());
+        assertEquals(List[].class, mdc.getReturnTypeClass());
+    }
+
+    public void testGenericArrayMultiDimension() {
+        MethodDescriptionComposite mdc = new MethodDescriptionComposite();
+        mdc.setReturnType("java.util.List<org.apache.axis2.jaxws.description.builder.MyReturnTestObject>[][]");
+        assertEquals("java.util.List<org.apache.axis2.jaxws.description.builder.MyReturnTestObject>[][]",
+                mdc.getReturnType());
+        assertEquals(List[][].class, mdc.getReturnTypeClass());
+    }
+
+    public void testWildcardGenericArray() {
+        MethodDescriptionComposite mdc = new MethodDescriptionComposite();
+        mdc.setReturnType("java.util.List<?>[]");
+        assertEquals("java.util.List<?>[]",
+                mdc.getReturnType());
+        assertEquals(List[].class, mdc.getReturnTypeClass());
+    }
+    
 }
 
 class MyReturnTestObject {

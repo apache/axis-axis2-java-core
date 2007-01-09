@@ -50,14 +50,28 @@ class DescriptionBuilderUtils {
      * Returns a string representing the outermost generic raw type class, or null if the argument
      * is not a generic.  For example if the string "javax.xml.ws.Holder<my.package.MyObject>"
      * is passed in, the string "javax.xml.ws.Holder" will be returned.
+     * 
+     * Note that generic arrays are supported.  For example, for "Holder<List<String>[][]", the returned
+     * value will be "List[][]".
      * @param inputType
      * @return A string representing the generic raw type or null if there is no generic.
      */
     static String getRawType(String inputType) {
         String returnRawType = null;
         int leftBracket = inputType.indexOf("<");
-        if (leftBracket > 0 ) {
-            returnRawType = inputType.substring(0, leftBracket).trim();
+        int rightBracket = inputType.lastIndexOf(">");
+        if (leftBracket > 0 && rightBracket > 0 && rightBracket > leftBracket) {
+            String part1 = inputType.substring(0, leftBracket);
+            if ((rightBracket + 1) == inputType.length()) {
+                // There is nothing after the closing ">" we need to append to the raw type
+                returnRawType = part1;
+            }
+            else {
+                // Skip over the closing ">" then append the rest of the string to the raw type
+                // This would be an array declaration for example.
+                String part2 = inputType.substring(rightBracket + 1).trim();
+                returnRawType = part1 + part2;
+            }
         }
         return returnRawType;
     }
@@ -68,6 +82,11 @@ class DescriptionBuilderUtils {
      * If the actual type itself is a generic, then that raw type will be returned.  For 
      * example, "javax.xml.ws.Holder<java.util.List<my.package.MyObject>>" will return 
      * "java.util.List".
+     * 
+     * Note that Holders of Arrays and of Generic Arrays are also supported.  For example,
+     * for "javax.xml.ws.Holder<String[]>", return "String[]".  For an array of a generic,
+     * the array of the raw type is returned.  For example, for
+     * "javax.xml.ws.Holder<List<String>[][]>", return "List[][]".
      * 
      * Important note!  The JAX-WS Holder generic only supports a single actual type, i.e. 
      * the generic is javax.xml.ws.Holder<T>.  This method is not general purpose; it does not support 
@@ -82,7 +101,10 @@ class DescriptionBuilderUtils {
             int leftBracket = holderInputString.indexOf("<");
             int rightBracket = holderInputString.lastIndexOf(">");
             if (leftBracket > 0 && rightBracket > leftBracket + 1) {
+                // Get everything between the outermost "<" and ">"
                 String actualType = holderInputString.substring(leftBracket + 1, rightBracket).trim();
+                // If the holder contained a generic, then get the generic raw type (e.g. "List" for
+                // Holder<List<String>>).
                 String rawType = getRawType(actualType);
                 if (rawType != null) {
                     returnString = rawType;

@@ -184,10 +184,71 @@ public class ParameterParsingTests extends TestCase {
         ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
         pdc.setParameterType("javax.xml.ws.Holder<org.apache.axis2.jaxws.description.builder.MyObject[][]>");
         assertEquals("javax.xml.ws.Holder<org.apache.axis2.jaxws.description.builder.MyObject[][]>", pdc.getParameterType());
-        
         assertEquals(Holder.class, pdc.getParameterTypeClass());
         MyObject[][] validateMyObject = new MyObject[5][10];
         assertEquals(validateMyObject.getClass(), pdc.getHolderActualTypeClass());
+    }
+    
+    public void testHolderOfStringArray() {
+        ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
+        pdc.setParameterType("javax.xml.ws.Holder<java.lang.String[]>");
+        assertEquals("javax.xml.ws.Holder<java.lang.String[]>", pdc.getParameterType());
+        assertEquals(String[].class, pdc.getHolderActualTypeClass());
+    }
+    
+    public void testStringArray() {
+        ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
+        pdc.setParameterType("java.lang.String[]");
+        assertEquals("java.lang.String[]", pdc.getParameterType());
+        assertEquals(String[].class, pdc.getParameterTypeClass());
+    }
+    
+    public void testHolderOfGenericArray() {
+        ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
+        pdc.setParameterType("javax.xml.ws.Holder<java.util.List<java.lang.String>[]>");
+        assertEquals("javax.xml.ws.Holder<java.util.List<java.lang.String>[]>", pdc.getParameterType());
+        assertEquals(List[].class, pdc.getHolderActualTypeClass());
+    }
+
+    public void testHolderOfGenericArrayMultiDimension() {
+        ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
+        pdc.setParameterType("javax.xml.ws.Holder<java.util.List<java.lang.String>[][][]>");
+        assertEquals("javax.xml.ws.Holder<java.util.List<java.lang.String>[][][]>", pdc.getParameterType());
+        assertEquals(List[][][].class, pdc.getHolderActualTypeClass());
+    }
+
+    public void testHolderOfGenericWildcardArray() {
+        ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
+        pdc.setParameterType("javax.xml.ws.Holder<java.util.List<?>[]>");
+        assertEquals("javax.xml.ws.Holder<java.util.List<?>[]>", pdc.getParameterType());
+        assertEquals(List[].class, pdc.getHolderActualTypeClass());
+    }
+    
+    public void testGenericArray() {
+        ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
+        pdc.setParameterType("java.util.List<java.lang.String>[]");
+        assertEquals("java.util.List<java.lang.String>[]", pdc.getParameterType());
+        assertEquals(List[].class, pdc.getParameterTypeClass());
+    }
+    public void testGenericArrayMultiDimension() {
+        ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
+        pdc.setParameterType("java.util.List<java.lang.String>[][]");
+        assertEquals("java.util.List<java.lang.String>[][]", pdc.getParameterType());
+        assertEquals(List[][].class, pdc.getParameterTypeClass());
+    }
+    
+    public void testGenericWildCardArray() {
+        ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
+        pdc.setParameterType("java.util.List<?>[]");
+        assertEquals("java.util.List<?>[]", pdc.getParameterType());
+        assertEquals(List[].class, pdc.getParameterTypeClass());
+    }
+    
+    public void testGenericArrayOfStringArray() {
+        ParameterDescriptionComposite pdc = new ParameterDescriptionComposite();
+        pdc.setParameterType("java.util.List<java.lang.String[]>[]");
+        assertEquals("java.util.List<java.lang.String[]>[]", pdc.getParameterType());
+        assertEquals(List[].class, pdc.getParameterTypeClass());
     }
 }
 

@@ -19,6 +19,8 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -151,22 +153,34 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
         // isHolderType method yet because the class variable it is going to check (parameterHolderActualType)
         // hasn't been initialized yet.
         if (parameterGenericType != null && parameterGenericType.getRawType() == javax.xml.ws.Holder.class) {
-            
-            // REVIEW:
-            // Do we want to add a getParameterActualGenericType that would return Type
-            // instead of Class ?
-            
             // NOTE
             // If you change this code, please remember to change 
             // OperationDesc.getResultActualType
             
-            // For types of Holder<T>, return the class associated with T
-            // For types of Holder<Generic<K,V>>, return class associated with Generic 
             Type type = parameterGenericType.getActualTypeArguments()[0];
             if (type != null && ParameterizedType.class.isInstance(type)) {
-                return (Class) ((ParameterizedType) type).getRawType();
+                // For types of Holder<Generic<K,V>>, return class associated with Generic
+                returnClass = (Class) ((ParameterizedType) type).getRawType();
             }
-            return (Class) type;
+            else if (type != null && GenericArrayType.class.isInstance(type)) {
+                Type componentType = ((GenericArrayType) type).getGenericComponentType();
+                Class arrayClass = null;
+                if (ParameterizedType.class.isInstance(componentType)) {
+                    // For types of Holder<Generic<K,V>[]>, return class associated with Generic[]
+                    arrayClass = (Class) ((ParameterizedType) componentType).getRawType();
+                }
+                else {
+                    // For types of Holder<Object[]>, return class associated with Object[]
+                    arrayClass = (Class) componentType;
+                }
+                // REVIEW: This only works for a single dimension array!  Note that if this method is removed
+                //         when DBC is used, just make sure DBC supports multi-dim arrays
+                returnClass = Array.newInstance(arrayClass, 0).getClass();
+            }
+            else {
+                // For types of Holder<Object>, return the class associated with Object
+                returnClass = (Class) type;
+            }
         }
         
         return returnClass;
