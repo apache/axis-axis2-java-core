@@ -23,22 +23,23 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.*;
 
+import com.ibm.wsdl.util.xml.DOM2Writer;
 
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright 2004,2005 The Apache Software Foundation.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 /**
  * Java Bean writer for the schema compiler.
@@ -110,7 +111,7 @@ public class JavaBeanWriter implements BeanWriter {
     public void init(CompilerOptions options) throws SchemaCompilationException {
         try {
 	    modelMap = new HashMap();
-	    ns2packageNameMap = new HashMap();	
+	    ns2packageNameMap = new HashMap();
 
             initWithFile(options.getOutputLocation());
             packageName = options.getPackageName();
@@ -516,7 +517,9 @@ public class JavaBeanWriter implements BeanWriter {
     private void populateInfo(BeanWriterMetaInfoHolder metainf, Document model,
                               Element rootElt, ArrayList propertyNames, Map typeMap,
                               boolean isInherited) throws SchemaCompilationException {
-        if (metainf.getParent() != null) {
+        // we should add parent class details only if it is
+        // an extension
+        if (!metainf.isRestriction() && metainf.getParent() != null) {
             populateInfo(metainf.getParent(), model, rootElt, propertyNames,
                     typeMap, true);
         }
@@ -591,65 +594,6 @@ public class JavaBeanWriter implements BeanWriter {
             if (PrimitiveTypeFinder.isPrimitive(javaClassNameForElement)) {
                 XSLTUtils.addAttribute(model, "primitive", "yes", property);
             }
-            // add an attribute that says the type is default
-            if (metainf.getDefaultStatusForQName(name)) {
-                XSLTUtils.addAttribute(model, "default", "yes", property);
-            }
-
-            if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
-                XSLTUtils.addAttribute(model, "ours", "yes", property);
-            }
-
-            if (metainf.getAttributeStatusForQName(name)) {
-                XSLTUtils.addAttribute(model, "attribute", "yes", property);
-            }
-
-            if (metainf.isNillable(name)) {
-                XSLTUtils.addAttribute(model, "nillable", "yes", property);
-            }
-
-            if (metainf.getOptionalAttributeStatusForQName(name)) {
-                XSLTUtils.addAttribute(model, "optional", "yes", property);
-            }
-
-            String shortTypeName;
-            if (metainf.getSchemaQNameForQName(name) != null) {
-                // see whether the QName is a basetype
-                if (baseTypeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
-                    shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();
-                } else {
-                    shortTypeName = getShortTypeName(javaClassNameForElement);
-                }
-            } else {
-                shortTypeName = getShortTypeName(javaClassNameForElement);
-            }
-            XSLTUtils.addAttribute(model, "shorttypename", shortTypeName, property);
-
-            if (metainf.isRestriction() && missingQNames.contains(name)) {
-                //XSLTUtils.addAttribute(model, "restricted", "yes", property);
-                XSLTUtils.addAttribute(model, "removed", "yes", property);
-            }
-
-            if (isInherited) {
-                XSLTUtils.addAttribute(model, "inherited", "yes", property);
-            }
-
-            if (metainf.getAnyStatusForQName(name)) {
-                XSLTUtils.addAttribute(model, "any", "yes", property);
-            }
-
-            if (metainf.getBinaryStatusForQName(name)) {
-                XSLTUtils.addAttribute(model, "binary", "yes", property);
-            }
-
-            if (metainf.isSimple() || metainf.getSimpleStatusForQName(name)) {
-                XSLTUtils.addAttribute(model, "simple", "yes", property);
-            }
-
-            // put the min occurs count irrespective of whether it's an array or
-            // not
-            long minOccurs = metainf.getMinOccurs(name);
-            XSLTUtils.addAttribute(model, "minOccurs", minOccurs + "", property);
 
             //in the case the original element is an array but the derived one is not.
             if (parentMetaInf != null && metainf.isRestriction() && !missingQNames.contains(name) &&
@@ -664,92 +608,182 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "occuranceChanged", "yes", property);
             }
 
-            if (metainf.getArrayStatusForQName(name)) {
+            if (metainf.isRestriction() && missingQNames.contains(name)) {
+                //XSLTUtils.addAttribute(model, "restricted", "yes", property);
+                XSLTUtils.addAttribute(model, "removed", "yes", property);
+            }
 
-                XSLTUtils.addAttribute(model, "array", "yes", property);
+            if (isInherited) {
+                XSLTUtils.addAttribute(model, "inherited", "yes", property);
+            }
 
-                int endIndex = javaClassNameForElement.indexOf("[");
-                if (endIndex >= 0) {
-                    XSLTUtils.addAttribute(model, "arrayBaseType",
-                            javaClassNameForElement.substring(0, endIndex), property);
+            if ((parentMetaInf != null) && metainf.isRestriction() && !missingQNames.contains(name)){
+                // this element details should be there with the parent meta Inf
+                addAttributesToProperty(
+                    parentMetaInf,
+                    name,
+                    model,
+                    property,
+                    typeMap,
+                    javaClassNameForElement);
+
+            } else {
+                 addAttributesToProperty(
+                    metainf,
+                    name,
+                    model,
+                    property,
+                    typeMap,
+                    javaClassNameForElement);
+            }
+
+        }  // end of foo
+    }
+
+    private void addAttributesToProperty(BeanWriterMetaInfoHolder metainf,
+                                         QName name,
+                                         Document model,
+                                         Element property,
+                                         Map typeMap,
+                                         String javaClassNameForElement) {
+        // add an attribute that says the type is default
+        if (metainf.getDefaultStatusForQName(name)) {
+            XSLTUtils.addAttribute(model, "default", "yes", property);
+        }
+
+        if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
+            XSLTUtils.addAttribute(model, "ours", "yes", property);
+        }
+
+        if (metainf.getAttributeStatusForQName(name)) {
+            XSLTUtils.addAttribute(model, "attribute", "yes", property);
+        }
+
+        if (metainf.isNillable(name)) {
+            XSLTUtils.addAttribute(model, "nillable", "yes", property);
+        }
+
+        if (metainf.getOptionalAttributeStatusForQName(name)) {
+            XSLTUtils.addAttribute(model, "optional", "yes", property);
+        }
+
+        String shortTypeName;
+        if (metainf.getSchemaQNameForQName(name) != null) {
+            // see whether the QName is a basetype
+            if (baseTypeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
+                shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();
+            } else {
+                shortTypeName = getShortTypeName(javaClassNameForElement);
+            }
+        } else {
+            shortTypeName = getShortTypeName(javaClassNameForElement);
+        }
+        XSLTUtils.addAttribute(model, "shorttypename", shortTypeName, property);
+
+
+        if (metainf.getAnyStatusForQName(name)) {
+            XSLTUtils.addAttribute(model, "any", "yes", property);
+        }
+
+        if (metainf.getBinaryStatusForQName(name)) {
+            XSLTUtils.addAttribute(model, "binary", "yes", property);
+        }
+
+        if (metainf.isSimple() || metainf.getSimpleStatusForQName(name)) {
+            XSLTUtils.addAttribute(model, "simple", "yes", property);
+        }
+
+        // put the min occurs count irrespective of whether it's an array or
+        // not
+        long minOccurs = metainf.getMinOccurs(name);
+        XSLTUtils.addAttribute(model, "minOccurs", minOccurs + "", property);
+
+
+        if (metainf.getArrayStatusForQName(name)) {
+
+            XSLTUtils.addAttribute(model, "array", "yes", property);
+
+            int endIndex = javaClassNameForElement.indexOf("[");
+            if (endIndex >= 0) {
+                XSLTUtils.addAttribute(model, "arrayBaseType",
+                        javaClassNameForElement.substring(0, endIndex), property);
+            } else {
+                XSLTUtils.addAttribute(model, "arrayBaseType",
+                        javaClassNameForElement, property);
+            }
+
+            long maxOccurs = metainf.getMaxOccurs(name);
+            if (maxOccurs == Long.MAX_VALUE) {
+                XSLTUtils.addAttribute(model, "unbound", "yes", property);
+            } else {
+                XSLTUtils.addAttribute(model, "maxOccurs", maxOccurs + "", property);
+            }
+        }
+        if (metainf.isRestrictionBaseType(name)) {
+            XSLTUtils.addAttribute(model, "restrictionBaseType", "yes", property);
+        }
+
+        if (metainf.isExtensionBaseType(name)) {
+            XSLTUtils.addAttribute(model, "extensionBaseType", "yes", property);
+        }
+
+        if (metainf.isRestrictionBaseType(name) && metainf.getLengthFacet() != -1) {
+            XSLTUtils.addAttribute(model, "lenFacet", metainf.getLengthFacet() + "", property);
+        }
+
+        if (metainf.isRestrictionBaseType(name) && metainf.getMaxLengthFacet() != -1) {
+            XSLTUtils.addAttribute(model, "maxLenFacet", metainf.getMaxLengthFacet() + "", property);
+        }
+
+        if (metainf.isRestrictionBaseType(name) && metainf.getMinLengthFacet() != -1) {
+            XSLTUtils.addAttribute(model, "minLenFacet", metainf.getMinLengthFacet() + "", property);
+        }
+
+        if (metainf.isRestrictionBaseType(name) && metainf.getMaxExclusiveFacet() != null) {
+            XSLTUtils.addAttribute(model, "maxExFacet", metainf.getMaxExclusiveFacet() + "", property);
+        }
+
+        if (metainf.isRestrictionBaseType(name) && metainf.getMinExclusiveFacet() != null) {
+            XSLTUtils.addAttribute(model, "minExFacet", metainf.getMinExclusiveFacet() + "", property);
+        }
+
+        if (metainf.isRestrictionBaseType(name) && metainf.getMaxInclusiveFacet() != null) {
+            XSLTUtils.addAttribute(model, "maxInFacet", metainf.getMaxInclusiveFacet() + "", property);
+        }
+
+        if (metainf.isRestrictionBaseType(name) && metainf.getMinInclusiveFacet() != null) {
+            XSLTUtils.addAttribute(model, "minInFacet", metainf.getMinInclusiveFacet() + "", property);
+        }
+
+        if (!metainf.getEnumFacet().isEmpty()) {
+            boolean validJava = true;    // Assume all enum values are valid ids
+
+            Iterator iterator = metainf.getEnumFacet().iterator();
+            // Walk the values looking for invalid ids
+            while (iterator.hasNext()) {
+                String value = (String) iterator.next();
+                if (!JavaUtils.isJavaId(value)) {
+                    validJava = false;
+                }
+            }
+
+            int id = 0;
+            iterator = metainf.getEnumFacet().iterator();
+            while (iterator.hasNext()) {
+                Element enumFacet = XSLTUtils.addChildElement(model, "enumFacet", property);
+                String attribValue = (String) iterator.next();
+                XSLTUtils.addAttribute(model, "value", attribValue, enumFacet);
+                if (validJava) {
+                    XSLTUtils.addAttribute(model, "id", attribValue, enumFacet);
                 } else {
-                    XSLTUtils.addAttribute(model, "arrayBaseType",
-                            javaClassNameForElement, property);
-                }
-
-                long maxOccurs = metainf.getMaxOccurs(name);
-                if (maxOccurs == Long.MAX_VALUE) {
-                    XSLTUtils.addAttribute(model, "unbound", "yes", property);
-                } else {
-                    XSLTUtils.addAttribute(model, "maxOccurs", maxOccurs + "", property);
+                    id++;
+                    XSLTUtils.addAttribute(model, "id", "value" + id, enumFacet);
                 }
             }
-            if (metainf.isRestrictionBaseType(name)) {
-                XSLTUtils.addAttribute(model, "restrictionBaseType", "yes", property);
-            }
+        }
 
-            if (metainf.isExtensionBaseType(name)) {
-                XSLTUtils.addAttribute(model, "extensionBaseType", "yes", property);
-            }
-
-            if (metainf.isRestrictionBaseType(name) && metainf.getLengthFacet() != -1) {
-                XSLTUtils.addAttribute(model, "lenFacet", metainf.getLengthFacet() + "", property);
-            }
-
-            if (metainf.isRestrictionBaseType(name) && metainf.getMaxLengthFacet() != -1) {
-                XSLTUtils.addAttribute(model, "maxLenFacet", metainf.getMaxLengthFacet() + "", property);
-            }
-
-            if (metainf.isRestrictionBaseType(name) && metainf.getMinLengthFacet() != -1) {
-                XSLTUtils.addAttribute(model, "minLenFacet", metainf.getMinLengthFacet() + "", property);
-            }
-
-            if (metainf.isRestrictionBaseType(name) && metainf.getMaxExclusiveFacet() != null) {
-                XSLTUtils.addAttribute(model, "maxExFacet", metainf.getMaxExclusiveFacet() + "", property);
-            }
-
-            if (metainf.isRestrictionBaseType(name) && metainf.getMinExclusiveFacet() != null) {
-                XSLTUtils.addAttribute(model, "minExFacet", metainf.getMinExclusiveFacet() + "", property);
-            }
-
-            if (metainf.isRestrictionBaseType(name) && metainf.getMaxInclusiveFacet() != null) {
-                XSLTUtils.addAttribute(model, "maxInFacet", metainf.getMaxInclusiveFacet() + "", property);
-            }
-
-            if (metainf.isRestrictionBaseType(name) && metainf.getMinInclusiveFacet() != null) {
-                XSLTUtils.addAttribute(model, "minInFacet", metainf.getMinInclusiveFacet() + "", property);
-            }
-
-            if (!metainf.getEnumFacet().isEmpty()) {
-                boolean validJava = true;    // Assume all enum values are valid ids
-
-                Iterator iterator = metainf.getEnumFacet().iterator();
-                // Walk the values looking for invalid ids
-                while (iterator.hasNext()) {
-                    String value = (String) iterator.next();
-                    if (!JavaUtils.isJavaId(value)) {
-                        validJava = false;
-                    }
-                }
-
-                int id = 0;
-                iterator = metainf.getEnumFacet().iterator();
-                while (iterator.hasNext()) {
-                    Element enumFacet = XSLTUtils.addChildElement(model, "enumFacet", property);
-                    String attribValue = (String) iterator.next();
-                    XSLTUtils.addAttribute(model, "value", attribValue, enumFacet);
-                    if (validJava) {
-                        XSLTUtils.addAttribute(model, "id", attribValue, enumFacet);
-                    } else {
-                        id++;
-                        XSLTUtils.addAttribute(model, "id", "value" + id, enumFacet);
-                    }
-                }
-            }
-
-            if (metainf.isRestrictionBaseType(name) && metainf.getPatternFacet() != null) {
-                XSLTUtils.addAttribute(model, "patternFacet", metainf.getPatternFacet(), property);
-            }
+        if (metainf.isRestrictionBaseType(name) && metainf.getPatternFacet() != null) {
+            XSLTUtils.addAttribute(model, "patternFacet", metainf.getPatternFacet(), property);
         }
     }
 
@@ -781,11 +815,11 @@ public class JavaBeanWriter implements BeanWriter {
             }
         }
         //adding missing QNames to the end of list.
-        if (!missingQNames.isEmpty()) {
-            for (int i = 0; i < missingQNames.size(); i++) {
-                qName.add(missingQNames.get(i));
-            }
-        }
+//        if (!missingQNames.isEmpty()) {
+//            for (int i = 0; i < missingQNames.size(); i++) {
+//                qName.add(missingQNames.get(i));
+//            }
+//        }
 
     }
 
