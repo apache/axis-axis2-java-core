@@ -617,7 +617,7 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "inherited", "yes", property);
             }
 
-            if ((parentMetaInf != null) && metainf.isRestriction() && !missingQNames.contains(name)){
+            if ((parentMetaInf != null) && metainf.isRestriction() && missingQNames.contains(name)){
                 // this element details should be there with the parent meta Inf
                 addAttributesToProperty(
                     parentMetaInf,
