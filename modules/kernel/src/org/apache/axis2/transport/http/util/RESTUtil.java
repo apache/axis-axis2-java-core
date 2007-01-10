@@ -36,6 +36,7 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.RequestURIBasedDispatcher;
+import org.apache.axis2.engine.RequestURIOperationDispatcher ;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.SchemaUtil;
@@ -160,6 +161,11 @@ public class RESTUtil {
     private void dispatchAndVerify(MessageContext msgContext) throws AxisFault {
         RequestURIBasedDispatcher requestDispatcher = new RequestURIBasedDispatcher();
         requestDispatcher.invoke(msgContext);
+
+	RequestURIOperationDispatcher opDispatcher = new RequestURIOperationDispatcher();
+        opDispatcher.invoke(msgContext);
+
+
 
         // check for the dispatching result
         if (msgContext.getAxisService() == null || msgContext.getAxisOperation() == null) {
