@@ -1,0 +1,61 @@
+<savan-config>
+
+    <protocols>
+        <protocol>
+        	<name>eventing</name>
+        	<utilFactory>org.apache.savan.eventing.EventingUtilFactory</utilFactory>
+        	<mapping-rules>
+                <action>http://schemas.xmlsoap.org/ws/2004/08/eventing/Subscribe</action>
+                <action>http://schemas.xmlsoap.org/ws/2004/08/eventing/Renew</action>
+                <action>http://schemas.xmlsoap.org/ws/2004/08/eventing/GetStatus</action>
+                <action>http://schemas.xmlsoap.org/ws/2004/08/eventing/Unsubscribe</action>
+        	</mapping-rules>
+        	<defaultSubscriber>eventing-leaf</defaultSubscriber>
+        	<defaultFilter>empty</defaultFilter>
+        	<!--
+        	<parameters>
+        	    <parameter>
+        	        <name>eventing-topic-subscriber</name>
+        	        <value>eventing-topic</value>
+        	    </parameter>
+        	</parameters>
+        	-->
+        </protocol>
+    </protocols>
+    
+    <subscriberStores>
+    	<subscriberStore>
+    		<key>default</key>
+    		<class>org.apache.savan.storage.DefaultSubscriberStore</class>
+    	</subscriberStore>
+    </subscriberStores>
+    
+    <filters>
+        <filter>
+            <name>empty</name>
+    		<identifier>empty</identifier>
+    		<class>org.apache.savan.filters.EmptyFilter</class>
+    	</filter>
+    	<filter>
+    	    <name>xpath</name>
+    		<identifier>http://www.w3.org/TR/1999/REC-xpath-19991116</identifier>
+    		<class>org.apache.savan.filters.XPathBasedFilter</class>
+    	</filter>
+    </filters>
+    
+    <subscribers>
+    	<subscriber>
+    		<name>composite</name>
+    		<class>org.apache.savan.subscribers.CompositeSubscriber</class>
+    	</subscriber>
+    	<subscriber>
+    		<name>eventing-leaf</name>
+    		<class>org.apache.savan.eventing.subscribers.EventingLeafSubscriber</class>
+    	</subscriber>
+    	 <subscriber>
+    		<name>eventing-topic</name>
+    		<class>org.apache.savan.eventing.subscribers.EventingTopicSubscriber</class>
+    	</subscriber>
+    </subscribers>
+    
+</savan-config>
