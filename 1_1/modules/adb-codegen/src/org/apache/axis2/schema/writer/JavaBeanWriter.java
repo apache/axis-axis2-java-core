@@ -569,7 +569,14 @@ public class JavaBeanWriter implements BeanWriter {
             String xmlName = name.getLocalPart();
             XSLTUtils.addAttribute(model, "name", xmlName, property);
             XSLTUtils.addAttribute(model, "nsuri", name.getNamespaceURI(), property);
+
             String javaName = makeUniqueJavaClassName(propertyNames, xmlName);
+            // in a restriction if this element already there and array status have changed
+            // then we have to generate a new  name for this
+            if (parentMetaInf != null && metainf.isRestriction() && !missingQNames.contains(name) &&
+                    (parentMetaInf.getArrayStatusForQName(name) && !metainf.getArrayStatusForQName(name))) {
+                  javaName = makeUniqueJavaClassName(propertyNames, xmlName);
+            }
             XSLTUtils.addAttribute(model, "javaname", javaName, property);
 
             if (parentMetaInf != null && metainf.isRestriction() && missingQNames.contains(name)) {
@@ -815,11 +822,11 @@ public class JavaBeanWriter implements BeanWriter {
             }
         }
         //adding missing QNames to the end of list.
-//        if (!missingQNames.isEmpty()) {
-//            for (int i = 0; i < missingQNames.size(); i++) {
-//                qName.add(missingQNames.get(i));
-//            }
-//        }
+        if (!missingQNames.isEmpty()) {
+            for (int i = 0; i < missingQNames.size(); i++) {
+                qName.add(missingQNames.get(i));
+            }
+        }
 
     }
 
