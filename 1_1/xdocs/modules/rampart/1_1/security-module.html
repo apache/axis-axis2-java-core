@@ -16,8 +16,17 @@ configure Rampart module.</p>
 <h2>Content</h2>
 <ul>
   <li><a href="#intro">Introduction</a></li>
+    <li><a href="#1.1_config">Rampart-1.1 Configuration</a>
+	<ul>
+	<li><a href="#1.1_assetions">Rampart Specific Assertions</a></li>
+	<li><a href="#1.1_service_config">Service Configration</a></li>
+	<li><a href="#1.1_client_config">Client Confiuration</a></li>
+	</ul></li>
+  <li><a href="#1.0_config">Rampart-1.0 Configuration</a>
+  <ul>
   <li><a href="#outflowsecurity">OutflowSecurity Parameter</a></li>
   <li><a href="#inflowsecurity">InflowSecurity Parameter</a></li>
+  </ul></li>
   <li><a href="#references">References</a></li>
   <li><a href="#examples">Examples</a></li>
 </ul>
@@ -45,9 +54,9 @@ container such as Apache Tomcat.</p>
 The configuration parameters should be set in the service.xml file of the
 service. The client side config parameters should be set in the axis2.xml of
 the client's Axis2 repository.</p>
-
+<a id="1.1_config"></a>
 <h2>Rampart-1.1 Configuration</h2>
-
+<a id="1.1_assetions"></a>
 <h3>Rampart Specific Assertions</h3>
 
 <p>Rampart uses the standard WS-SecurityPolicy[2] assertions and also defines its own 
@@ -58,13 +67,13 @@ in WS-SecurityPolicy.</p>
 
 <p>The <strong>ramp:RampartConfig</strong> assertion must be available as a one of the top 
 level assertions of the policy as shown <a href="sec-conf/sample-policy.xml">here</a>.</p>
-
+<a id="1.1_service_config"></a>
 <h3>Service Configration</h3>
 
 To configure the service one will simply have to add the policy element into the 
 sevices.xml file. A sample service.xml file is available 
 <a href="sec-conf/sample-services.xml">here</a>.
-
+<a id="1.1_client_config"></a>
 <h3>Client Confiuration</h3>
 <p>On the client side, a policy object should be created and loaded into options. Creating the policy object can be done using a "policy.xml" file as follows.</p>
 	
@@ -76,13 +85,13 @@ sevices.xml file. A sample service.xml file is available
 	Options options = new Options();
         options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, clientPolicy);
 </pre>
-
+<a name="1.0_config"></a>
 <h2>Rampart-1.0 Configuration</h2>
 
 <p>Rampart module uses two parameters:</p>
 <ul>
-  <li>OutflowSecurity</li>
-  <li>InflowSecurity</li>
+  <li><a href="outflowsecurity">OutflowSecurity</a></li>
+  <li><a href="inflowsecurity">InflowSecurity</a></li>
 </ul>
 The configuration that can go in each of these parameters are described
 below: <a name="outflowsecurity"></a>
