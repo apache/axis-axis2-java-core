@@ -41,9 +41,9 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 
 
-public class EchoRawXMLMultipleTest extends UtilServerBasedTestCase implements TestConstants {
+public class EchoRawXMLMultipleASyncTest extends UtilServerBasedTestCase implements TestConstants {
 
-    private static final Log log = LogFactory.getLog(EchoRawXMLMultipleTest.class);
+    private static final Log log = LogFactory.getLog(EchoRawXMLMultipleASyncTest.class);
     protected QName transportName = new QName("http://localhost/my",
             "NullTransport");
 
@@ -54,16 +54,16 @@ public class EchoRawXMLMultipleTest extends UtilServerBasedTestCase implements T
 
     protected boolean finish = false;
 
-    public EchoRawXMLMultipleTest() {
+    public EchoRawXMLMultipleASyncTest() {
         super(EchoRawXMLTest.class.getName());
     }
 
-    public EchoRawXMLMultipleTest(String testName) {
+    public EchoRawXMLMultipleASyncTest(String testName) {
         super(testName);
     }
 
     public static Test suite() {
-        return getTestSetup(new TestSuite(EchoRawXMLMultipleTest.class));
+        return getTestSetup(new TestSuite(EchoRawXMLMultipleASyncTest.class));
     }
 
     protected void setUp() throws Exception {
@@ -170,47 +170,4 @@ public class EchoRawXMLMultipleTest extends UtilServerBasedTestCase implements T
         configContext.terminate();
         log.info("send the request");
     }
-
-    public void testEchoXMLMultipleSync() throws Exception {
-        OMElement payload = TestingUtils.createDummyOMElement();
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
-        ServiceClient sender = new ServiceClient(configContext, null);
-        sender.setOptions(options);
-        for (int i = 0; i < 5; i++) {
-            OMElement result = sender.sendReceive(payload);
-            TestingUtils.campareWithCreatedOMElement(result);
-        }
-        sender.cleanup();
-        configContext.terminate();
-    }
-
-    public void testEchoXMLMultipleDuelSync() throws Exception {
-        OMElement payload = TestingUtils.createDummyOMElement();
-        Options options = new Options();
-        options.setTo(targetEPR);
-
-        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        options.setUseSeparateListener(true);
-
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",
-                        "target/test-resources/integrationRepo/conf/axis2.xml");
-        ServiceClient sender = new ServiceClient(configContext, null);
-        options.setAction(Constants.AXIS2_NAMESPACE_URI + "/" + operationName.getLocalPart());
-        options.setAction("urn:echoOMElement");
-        sender.setOptions(options);
-
-        for (int i = 0; i < 5; i++) {
-            OMElement result = sender.sendReceive(payload);
-            TestingUtils.campareWithCreatedOMElement(result);
-        }
-        sender.cleanup();
-        configContext.terminate();
-    }
-
-
 }
