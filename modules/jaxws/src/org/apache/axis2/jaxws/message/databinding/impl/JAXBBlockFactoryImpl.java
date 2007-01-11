@@ -50,11 +50,13 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
 	public Block createFrom(OMElement omElement, Object context, QName qName) throws XMLStreamException, MessageException {
 		// The context for a JAXBFactory must be non-null and should be a JAXBBlockContext.
 		if (context == null) {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr1", "null"), null);
+		    // JAXWS spec 4.3.4 conformance requires a WebServiceException whose cause is JAXBException
+			throw ExceptionFactory.makeWebServiceException(new JAXBException(Messages.getMessage("JAXBBlockFactoryErr1", "null")));
 		} else if (context instanceof JAXBBlockContext) {
 			;
 		} else {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr1", context.getClass().getName()), null);
+		    // JAXWS spec 4.3.4 conformance requires a WebServiceException whose cause is JAXBException
+			throw ExceptionFactory.makeWebServiceException(new JAXBException(Messages.getMessage("JAXBBlockFactoryErr1", context.getClass().getName())));
 		}
 		return new JAXBBlockImpl(omElement, (JAXBBlockContext) context, qName, this);
 	}
@@ -67,18 +69,21 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
 		// The context must be non-null and should be a JAXBBlockContext.
 		// For legacy reasons, a JAXBContext is also supported (and wrapped into a JAXBBlockContext)
 		if (context == null) {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr1", "null"), null);
+            // JAXWS spec 4.3.4 conformance requires a WebServiceException whose cause is JAXBException
+            throw ExceptionFactory.makeWebServiceException(new JAXBException(Messages.getMessage("JAXBBlockFactoryErr1", "null")));
 		} else if (context instanceof JAXBBlockContext) {
 			;
 		} else {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr1", context.getClass().getName()), null);
+		    // JAXWS spec 4.3.4 conformance requires a WebServiceException whose cause is JAXBException
+			throw ExceptionFactory.makeWebServiceException(new JAXBException(Messages.getMessage("JAXBBlockFactoryErr1", context.getClass().getName())));
 		}
         
         // The business object must be either a JAXBElement or a block with an @XmlRootElement qname.  The best way
         // to verify this is to get the QName from the business object.
         QName bQName = XMLRootElementUtil.getXmlRootElementQName(businessObject);
         if (bQName == null) {
-            throw ExceptionFactory.makeMessageException(Messages.getMessage("JAXBBlockFactoryErr2", businessObject.getClass().getName()), null);
+            // JAXWS spec 4.3.4 conformance requires a WebServiceException whose cause is JAXBException
+            throw ExceptionFactory.makeWebServiceException(new JAXBException(Messages.getMessage("JAXBBlockFactoryErr2", businessObject.getClass().getName())));
         }
         
         // If the business obect qname does not match the parameter, use the business object qname

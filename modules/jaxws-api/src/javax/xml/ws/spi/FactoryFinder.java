@@ -22,10 +22,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Properties;
 
+import org.apache.axis2.java.security.AccessController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
