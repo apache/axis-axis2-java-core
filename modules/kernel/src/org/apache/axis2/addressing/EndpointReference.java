@@ -409,4 +409,148 @@ public class EndpointReference implements Serializable {
     }
 
 
+    /**
+     * Compares key parts of the state from the current instance of 
+     * this class with the specified instance to see if they are 
+     * equivalent. 
+     * <P>
+     * This differs from the java.lang.Object.equals() method in
+     * that the equals() method generally looks at both the 
+     * object identity (location in memory) and the object state
+     * (data).
+     * <P>
+     * 
+     * @param epr  The object to compare with
+     * @return TRUE if this object is equivalent with the specified object
+     *              that is, key fields match
+     *         FALSE, otherwise
+     */
+    public boolean isEquivalent(EndpointReference epr)
+    {
+        // NOTE: the input object is expected to exist (ie, be non-null)
+
+        if ((this.name != null) && (epr.getName() != null)) 
+        {
+            if (!this.name.equals(epr.getName()))
+            {
+                return false;
+            }
+        }
+        else if ((this.name == null) && (epr.getName() == null)) 
+        {
+            // continue
+        }
+        else
+        {
+            // mismatch
+            return false;
+        }
+
+
+        if ((this.address != null) && (epr.getAddress() != null))
+        {
+            if (!this.address.equals(epr.getAddress()))
+            {
+                return false;
+            }
+        }
+        else if ((this.address == null) && (epr.getAddress() == null))
+        {
+            // continue
+        }
+        else
+        {
+            // mismatch
+            return false;
+        }
+
+
+        // TODO: is a strict test ok to use? 
+
+        ArrayList eprMetaData = epr.getMetaData();
+
+        if ( (this.metaData != null) && (eprMetaData != null) )
+        {
+            if (!this.metaData.equals(eprMetaData))
+            {
+                // This is a strict test
+                // Returns true if and only if the specified object 
+                // is also a list, both lists have the same size, and 
+                // all corresponding pairs of elements in the two lists
+                // are equal, ie, two lists are defined to be equal if 
+                // they contain the same elements in the same order.
+
+                return false;
+            }
+        }
+        else if ((this.metaData == null) && (eprMetaData == null))
+        {
+            // keep going
+        }
+        else
+        {
+            // one of the lists is null
+            return false;
+        }
+
+
+
+        ArrayList eprExtensibleElements = epr.getExtensibleElements();
+
+        if ( (this.extensibleElements != null) && (eprExtensibleElements != null) )
+        {
+            if (!this.extensibleElements.equals(eprExtensibleElements))
+            {
+                // This is a strict test
+                // Returns true if and only if the specified object 
+                // is also a list, both lists have the same size, and 
+                // all corresponding pairs of elements in the two lists
+                // are equal, ie, two lists are defined to be equal if 
+                // they contain the same elements in the same order.
+
+                return false;
+            }
+        }
+        else if ((this.extensibleElements == null) && (eprExtensibleElements == null))
+        {
+            // keep going
+        }
+        else
+        {
+            // one of the lists is null
+            return false;
+        }
+
+
+
+        ArrayList eprAttributes = epr.getAttributes();
+
+        if ( (this.attributes != null) && (eprAttributes != null) )
+        {
+            if (!this.attributes.equals(eprAttributes))
+            {
+                // This is a strict test
+                // Returns true if and only if the specified object 
+                // is also a list, both lists have the same size, and 
+                // all corresponding pairs of elements in the two lists
+                // are equal, ie, two lists are defined to be equal if 
+                // they contain the same elements in the same order.
+
+                return false;
+            }
+        }
+        else if ((this.attributes == null) && (eprAttributes == null))
+        {
+            // keep going
+        }
+        else
+        {
+            // one of the lists is null
+            return false;
+        }
+
+        // TODO: check the Map referenceParameters for equivalency
+
+        return true;
+    }
 }

@@ -19,6 +19,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axiom.om.util.UUIDGenerator;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
@@ -27,6 +28,9 @@ public class InOutAxisOperation extends TwoChannelAxisOperation {
 
     public InOutAxisOperation() {
         super();
+        //setup a temporary name
+        QName tmpName = new QName(this.getClass().getName()+"_"+UUIDGenerator.getUUID());
+        this.setName(tmpName);
     }
 
     public InOutAxisOperation(QName name) {

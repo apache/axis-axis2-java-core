@@ -602,6 +602,7 @@
            <!-- MTOM enabled Repository -->
             <mkdir dir="target/test-resources/MTOM-enabledRepository"/>
             <mkdir dir="target/test-resources/MTOM-enabledRepository/conf"/>
+            <mkdir dir="target/test-resources/MTOM-enabledRepository/modules"/>
             <copy file="test-resources/mtom/MTOM-enabled-axis2.xml"
                   tofile="target/test-resources/MTOM-enabledRepository/conf/axis2.xml"/>
         	<copy file="../addressing/target/addressing-${addressing_version}.mar"

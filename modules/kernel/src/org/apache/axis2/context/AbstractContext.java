@@ -92,18 +92,38 @@ public abstract class AbstractContext {
             Boolean copyProperties = ((Boolean) properties.get(COPY_PROPERTIES));
 
             if ((copyProperties != null) && copyProperties.booleanValue()) {
-                Iterator iterator = properties.keySet().iterator();
-
-                while (iterator.hasNext()) {
-                    Object key = iterator.next();
-
-                    this.properties.put(key, properties.get(key));
-                }
+                mergeProperties(properties);
             } else {
                 this.properties = properties;
             }
         }
     }
+
+    /**                         
+     * This will do a copy of the given properties to the current properties
+     * table.
+     *
+     * @param props The table of properties to copy
+     */
+    public void mergeProperties(Map props) {
+        if (props != null)
+        {
+            Iterator iterator = props.keySet().iterator();
+
+            while (iterator.hasNext()) {
+                Object key = iterator.next();
+
+                if (this.properties == null)
+                {
+                    this.properties = new HashMap();
+                }
+
+                this.properties.put(key, props.get(key));
+            }
+
+        }
+    }
+
 
     /**
      * Store a property for message context
@@ -135,4 +155,7 @@ public abstract class AbstractContext {
         return lastTouchedTime;
     }
 
+    public void setLastTouchedTime(long t) {
+        lastTouchedTime = t;
+    }
 }

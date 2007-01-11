@@ -17,10 +17,12 @@
 
 package org.apache.axis2.description;
 
+import java.io.Serializable;
+
 /**
  * Class PhaseRule
  */
-public class PhaseRule {
+public class PhaseRule implements Serializable {
 
     /**
      * Field after

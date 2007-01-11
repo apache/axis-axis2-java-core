@@ -1,21 +1,3 @@
-package org.apache.axis2.client;
-
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.TransportListener;
-
-import javax.xml.namespace.QName;
-import java.util.*;
-
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
  *
@@ -31,6 +13,40 @@ import java.util.*;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.axis2.client;
+
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.util.MetaDataEntry;
+import org.apache.axis2.util.ObjectStateUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.io.ByteArrayOutputStream;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * Holder for operation client options. This is used by the other classes in
@@ -42,20 +58,61 @@ import java.util.*;
  * property inheritance, so that if a property is not set in one instance it
  * will check its parent for a setting.
  */
-public class Options {
+public class Options implements Externalizable {
 
+    /*
+     * setup for logging
+     */
+    private static final Log log = LogFactory.getLog(Options.class);
+
+    private static final String myClassName = "Options";
+
+    /**
+     * @serial The serialization version ID tracks the version of the class.
+     * If a class definition changes, then the serialization/externalization
+     * of the class is affected. If a change to the class is made which is
+     * not compatible with the serialization/externalization of the class,
+     * then the serialization version ID should be updated.
+     * Refer to the "serialVer" utility to compute a serialization
+     * version ID.
+     */
+    private static final long serialVersionUID = -8318751890845181507L;
+
+    /**
+     * @serial Tracks the revision level of a class to identify changes to the 
+     * class definition that are compatible to serialization/externalization.
+     * If a class definition changes, then the serialization/externalization
+     * of the class is affected. 
+     * Refer to the writeExternal() and readExternal() methods.
+     */
+    // supported revision levels, add a new level to manage compatible changes
+    private static final int REVISION_1 = 1;
+    // current revision level of this object
+    private static final int revisionID = REVISION_1;
+
+    
     /**
      * Default blocking timeout value.
      */
     public static final int DEFAULT_TIMEOUT_MILLISECONDS = 30 * 1000;
 
+
+    /**
+     * @serial parent
+     */
     private Options parent;
 
+
+    /**
+     * @serial properties
+     */
     private Map properties = new HashMap();
+
 
     // ==========================================================================
     //                  Parameters that can be set via Options
     // ==========================================================================
+
     private String soapVersionURI; // defaults to
     // SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
 
@@ -96,8 +153,43 @@ public class Options {
     private EndpointReference to;
 
     //To control , session management , default is set to true , if user wants he can set that to true
-    // There operation client will manage session using ServiceGroupID if it is there in the response
+    // The operation client will manage session using ServiceGroupID if it is there in the response
     private boolean manageSession = false;
+
+
+    //----------------------------------------------------------------
+    // MetaData for data to be restored in activate after readExternal
+    //----------------------------------------------------------------
+    
+    /**
+     * Indicates whether this object has been reconstituted
+     * and needs to have its object references reconciled
+     */
+    private transient boolean needsToBeReconciled = false;
+
+    /**
+     * The TransportOutDescription metadata will be used during
+     * activate to match up with an existing object
+     */
+    private transient MetaDataEntry metaTransportOut = null;
+    
+    /**
+     * The TransportInDescription metadata will be used during
+     * activate to match up with an existing object
+     */
+    private transient MetaDataEntry metaTransportIn = null;
+    
+    /**
+     * The TransportListener metadata will be used during
+     * activate to match up with an existing object, if possible
+     */
+    private transient MetaDataEntry metaListener = null;
+    
+    //----------------------------------------------------------------
+    // end MetaData section
+    //----------------------------------------------------------------
+
+
 
     /**
      * Default constructor
@@ -158,6 +250,13 @@ public class Options {
      * @return listener
      */
     public TransportListener getListener() {
+        if (needsToBeReconciled) {
+            if (log.isWarnEnabled()) {
+                log.warn(myClassName+":getListener(): ****WARNING**** Options.activate(configurationContext) needs to be invoked.");
+            }
+            //System.out.println(myClassName+":getListener(): ****WARNING**** Options.activate(configurationContext) needs to be invoked.");
+        }
+
         if (listener == null && parent != null) {
             return parent.getListener();
         }
@@ -170,6 +269,13 @@ public class Options {
      * @return transport information
      */
     public TransportInDescription getTransportIn() {
+        if (needsToBeReconciled) {
+            if (log.isWarnEnabled()) {
+                log.warn(myClassName+":getTransportIn(): ****WARNING**** Options.activate(configurationContext) needs to be invoked.");
+            }
+            //System.out.println(myClassName+":getTransportIn(): ****WARNING**** Options.activate(configurationContext) needs to be invoked.");
+        }
+
         if (transportIn == null && parent != null) {
             return parent.getTransportIn();
         }
@@ -215,6 +321,11 @@ public class Options {
      * @return copy of general properties
      */
     public Map getProperties() {
+        // make sure that the Options properties exists
+        if (this.properties == null) {
+            this.properties = new HashMap();
+        }
+
         if (parent == null) {
             return new HashMap(properties);
         } else {
@@ -231,6 +342,11 @@ public class Options {
      * @return the value related to this key. <code>null</code>, if not found.
      */
     public Object getProperty(String key) {
+        // make sure that the Options properties exists
+        if (this.properties == null) {
+            this.properties = new HashMap();
+        }
+
         Object myPropValue = properties.get(key);
         if (myPropValue == null && parent != null) {
             return parent.getProperty(key);
@@ -252,7 +368,10 @@ public class Options {
         if (relationships == null && parent != null) {
             return parent.getRelatesTo(type);
         }
-        for (int i = 0; relationships != null && i < relationships.size(); i++) {
+        if (relationships == null) {
+            return null;
+        }
+        for (int i = 0;i < relationships.size(); i++) {
             RelatesTo relatesTo = (RelatesTo) relationships.get(i);
             String relationshipType = relatesTo.getRelationshipType();
             if (relationshipType.equals(type)) {
@@ -273,7 +392,10 @@ public class Options {
         if (relationships == null && parent != null) {
             return parent.getRelatesTo();
         }
-        for (int i = 0; relationships != null && i < relationships.size(); i++) {
+        if (relationships == null) {
+            return null;
+        }
+        for (int i = 0;i < relationships.size(); i++) {
             RelatesTo relatesTo = (RelatesTo) relationships.get(i);
             String relationshipType = relatesTo.getRelationshipType();
             if (relationshipType.equals(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE)
@@ -327,6 +449,13 @@ public class Options {
      * @return description
      */
     public TransportOutDescription getTransportOut() {
+        if (needsToBeReconciled) {
+            if (log.isWarnEnabled()) {
+                log.warn(myClassName+":getTransportOut(): ****WARNING**** Options.activate(configurationContext) needs to be invoked.");
+            }
+            //System.out.println(myClassName+":getTransportOut(): ****WARNING**** Options.activate(configurationContext) needs to be invoked.");
+        }
+
         if (transportOut == null && parent != null) {
             return parent.getTransportOut();
         }
@@ -708,6 +837,10 @@ public class Options {
      * @param property
      */
     public void setProperty(String propertyKey, Object property) {
+        // make sure that the Options properties exists
+        if (this.properties == null) {
+            this.properties = new HashMap();
+        }
         properties.put(propertyKey, property);
     }
 
@@ -892,4 +1025,730 @@ public class Options {
     public void setManageSession(boolean manageSession) {
         this.manageSession = manageSession;
     }
+
+
+
+    /* ===============================================================
+     * Externalizable support 
+     * ===============================================================
+     */
+    
+    /**
+     * Save the contents of this object.
+     * <p>
+     * NOTE: Transient fields and static fields are not saved.
+     *
+     * @param out    The stream to write the object contents to
+     * 
+     * @exception IOException
+     */
+    public void writeExternal(ObjectOutput out) throws IOException
+    {
+        // write out contents of this object
+
+        // NOTES: For each item, where appropriate,
+        //        write out the following information, IN ORDER:
+        //           the class name
+        //           the active or empty flag
+        //           the data length, if appropriate
+        //           the data   
+
+        //---------------------------------------------------------
+        // in order to handle future changes to the message 
+        // context definition, be sure to maintain the 
+        // object level identifiers
+        //---------------------------------------------------------
+        // serialization version ID
+        out.writeLong(serialVersionUID);
+
+        // revision ID
+        out.writeInt(revisionID);
+
+        //---------------------------------------------------------
+        // various simple fields
+        //---------------------------------------------------------
+        out.writeLong(timeOutInMilliSeconds);
+
+        out.writeBoolean(manageSession);
+
+        // the following objects could be null
+        ObjectStateUtils.writeObject(out, isExceptionToBeThrownOnSOAPFault, "Options.isExceptionToBeThrownOnSOAPFault");
+        ObjectStateUtils.writeObject(out, useSeparateListener, "Options.useSeparateListener");
+
+
+        //---------------------------------------------------------
+        // various strings
+        //---------------------------------------------------------
+
+        // String soapVersionURI
+        ObjectStateUtils.writeString(out, soapVersionURI, "Options.soapVersionURI");
+
+        // String action
+        ObjectStateUtils.writeString(out, action, "Options.action");
+
+        // String transportInProtocol
+        ObjectStateUtils.writeString(out, transportInProtocol, "Options.transportInProtocol");
+
+        // String messageId
+        ObjectStateUtils.writeString(out, messageId, "Options.messageId");
+
+
+        //---------------------------------------------------------
+        // various objects
+        //---------------------------------------------------------
+
+        // EndpointReference faultTo
+        ObjectStateUtils.writeObject(out, faultTo, "Options.faultTo");
+
+        // EndpointReference from
+        ObjectStateUtils.writeObject(out, from, "Options.from");
+
+        // EndpointReference replyTo
+        ObjectStateUtils.writeObject(out, replyTo, "Options.replyTo");
+
+        // EndpointReference to
+        ObjectStateUtils.writeObject(out, to, "Options.to");
+
+
+        // TransportListener listener
+        if (listener != null)
+        {
+            metaListener = new MetaDataEntry(listener.getClass().getName(), null);
+        }
+        else
+        {
+            metaListener = null;
+        }
+        ObjectStateUtils.writeObject(out, metaListener, "Options.listener");
+
+
+        // TransportInDescription transportIn
+        if (transportIn != null)
+        {
+            metaTransportIn = new MetaDataEntry(null, transportIn.getName().toString());
+        }
+        else
+        {
+            metaTransportIn = null;
+        }
+        ObjectStateUtils.writeObject(out, metaTransportIn, "Options.transportIn");
+
+
+        // TransportOutDescription transportOut
+        if (transportOut != null)
+        {
+            metaTransportOut = new MetaDataEntry(null, transportOut.getName().toString());
+        }
+        else
+        {
+            metaTransportOut = null;
+        }
+        ObjectStateUtils.writeObject(out, metaTransportOut, "Options.transportOut");
+
+
+
+
+        //---------------------------------------------------------
+        // collections and lists
+        //---------------------------------------------------------
+
+        // List relationships, which is an array of RelatesTo objects 
+        ArrayList tmp = null;
+
+        if (relationships != null)
+        {
+            // make sure this is an array list
+            tmp = new ArrayList(relationships);
+        }
+
+        ObjectStateUtils.writeArrayList(out, tmp, "Options.relationships");
+
+        // ArrayList referenceParameters
+        ObjectStateUtils.writeArrayList(out, referenceParameters, "Options.referenceParameters");
+
+        //---------------------------------------------------------
+        // properties
+        //---------------------------------------------------------
+                                     
+        // HashMap properties
+        HashMap tmpHM = new HashMap(properties);
+
+        ObjectStateUtils.writeHashMap(out, tmpHM, "Options.properties");
+
+
+        //---------------------------------------------------------
+        // "nested"
+        //---------------------------------------------------------
+
+        // Options parent
+        ObjectStateUtils.writeObject(out, parent, "Options.parent");
+
+
+    }
+
+
+    /**
+     * Restore the contents of the MessageContext that was 
+     * previously saved. 
+     * <p> 
+     * NOTE: The field data must read back in the same order and type
+     * as it was written.  Some data will need to be validated when 
+     * resurrected.
+     *
+     * @param in    The stream to read the object contents from 
+     * 
+     * @exception IOException
+     * @exception ClassNotFoundException
+     */
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+    {
+        // serialization version ID
+        long suid = in.readLong();
+
+        // revision ID
+        int  revID = in.readInt();
+
+        // make sure the object data is in a version we can handle
+        if (suid != serialVersionUID)
+        {
+            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_SUID);
+        }
+
+        // make sure the object data is in a revision level we can handle
+        if (revID != REVISION_1)
+        {
+            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
+        }
+
+
+        //---------------------------------------------------------
+        // various simple fields
+        //---------------------------------------------------------
+        timeOutInMilliSeconds = in.readLong();
+
+        manageSession = in.readBoolean();
+
+        // the following objects could be null
+        Object tmp1 = ObjectStateUtils.readObject(in, "Options.isExceptionToBeThrownOnSOAPFault"); 
+        if (tmp1 != null)
+        {
+            isExceptionToBeThrownOnSOAPFault = (Boolean) tmp1;
+        }
+
+        Object tmp2 = ObjectStateUtils.readObject(in, "Options.useSeparateListener"); 
+        if (tmp2 != null)
+        {
+            useSeparateListener = (Boolean) tmp2;
+        }
+
+
+        //---------------------------------------------------------
+        // various strings
+        //---------------------------------------------------------
+
+        // String soapVersionURI
+        soapVersionURI = ObjectStateUtils.readString(in,"Options.soapVersionURI");
+
+        // String action
+        action = ObjectStateUtils.readString(in, "Options.action");
+
+        // String transportInProtocol
+        transportInProtocol = ObjectStateUtils.readString(in, "Options.transportInProtocol");
+
+        // String messageId
+        messageId = ObjectStateUtils.readString(in, "Options.messageId");
+
+
+        //---------------------------------------------------------
+        // various objects
+        //---------------------------------------------------------
+
+        // EndpointReference faultTo
+        faultTo = (EndpointReference) ObjectStateUtils.readObject(in, "Options.faultTo");
+
+        // EndpointReference from
+        from = (EndpointReference) ObjectStateUtils.readObject(in, "Options.from");
+
+        // EndpointReference replyTo
+        replyTo = (EndpointReference) ObjectStateUtils.readObject(in, "Options.replyTo");
+
+        // EndpointReference to
+        to = (EndpointReference) ObjectStateUtils.readObject(in, "Options.to");
+
+
+        // TransportListener listener
+        // is not usable until the meta data has been reconciled
+        listener = null;
+        metaListener = (MetaDataEntry) ObjectStateUtils.readObject(in, "Options.metaListener");
+
+        // TransportInDescription transportIn
+        // is not usable until the meta data has been reconciled
+        transportIn = null;
+        metaTransportIn = (MetaDataEntry) ObjectStateUtils.readObject(in, "Options.metaTransportIn");
+
+        // TransportOutDescription transportOut
+        // is not usable until the meta data has been reconciled
+        transportOut = null;
+        metaTransportOut = (MetaDataEntry) ObjectStateUtils.readObject(in, "Options.metaTransportOut");
+
+
+        //---------------------------------------------------------
+        // collections and lists
+        //---------------------------------------------------------
+
+        // List relationships, which is an array of RelatesTo objects 
+        ArrayList tmpAL1 = ObjectStateUtils.readArrayList(in, "Options.relationships");
+        if (tmpAL1 != null)
+        {
+            relationships = new ArrayList(tmpAL1);
+        }
+        else
+        {
+            relationships = null;
+        }
+
+        // ArrayList referenceParameters
+        ArrayList tmpAL2 = ObjectStateUtils.readArrayList(in, "Options.referenceParameters");
+        if (tmpAL2 != null)
+        {
+            referenceParameters = new ArrayList(tmpAL2);
+        }
+        else
+        {
+            referenceParameters = null;
+        }
+
+        //---------------------------------------------------------
+        // properties
+        //---------------------------------------------------------
+                                      
+        // HashMap properties
+        HashMap tmpHM = ObjectStateUtils.readHashMap(in, "Options.properties"); 
+
+        if (tmpHM != null)
+        {
+            properties = new HashMap(tmpHM);
+        }
+        else
+        {
+            properties = new HashMap();
+        }
+
+
+        //---------------------------------------------------------
+        // "nested"
+        //---------------------------------------------------------
+
+        // Options parent
+        Object tmpParent = ObjectStateUtils.readObject(in, "Options.parent"); 
+
+        if (tmpParent != null)
+        {
+            parent = (Options) tmpParent;
+        }
+        else
+        {
+            parent = null;
+        }
+
+        
+    }
+
+    /**
+     * This method checks to see if additional work needs to be
+     * done in order to complete the object reconstitution.
+     * Some parts of the object restored from the readExternal()
+     * cannot be completed until we have a configurationContext
+     * from the active engine. The configurationContext is used
+     * to help this object to plug back into the engine's
+     * configuration and deployment objects.
+     * 
+     * @param cc     The configuration context object representing the active configuration
+     */
+    public void activate(ConfigurationContext cc)
+    {
+        // see if there's any work to do
+        if (needsToBeReconciled == false)
+        {
+            // return quick
+            return;
+        }
+
+        // do a trace point
+        if (log.isTraceEnabled())
+        {
+            log.trace(myClassName+":activate():  BEGIN");
+        }
+        //System.out.println(myClassName+":activate():  BEGIN");
+
+
+        // use the supplied configuration context
+
+        // get the axis configuration 
+        AxisConfiguration axisConfig = cc.getAxisConfiguration();
+
+        // We previously saved metaTransportIn; restore it
+        if (metaTransportIn != null)
+        {
+            QName qin = metaTransportIn.getQName();
+            TransportInDescription tmpIn = null;
+            try
+            {
+                tmpIn = axisConfig.getTransportIn(qin);
+            }
+            catch (Exception exin)
+            {
+                // if a fault is thrown, log it and continue
+                log.warn(myClassName+"activate():  exception caught when getting the TransportInDescription ["+qin.toString()+"]  from the AxisConfiguration ["+exin.getClass().getName()+" : "+exin.getMessage()+"]");
+
+                //System.out.println(myClassName+"activate():  exception caught when getting the TransportInDescription ["+qin.toString()+"]  from the AxisConfiguration ["+exin.getClass().getName()+" : "+exin.getMessage()+"]");
+            }
+
+            if (tmpIn != null)
+            {
+                transportIn = tmpIn;
+            }
+            else
+            {
+                if (log.isTraceEnabled())
+                {
+                    log.trace(myClassName+"activate():  No TransportInDescription found for ["+qin.toString()+"]");
+                }
+
+                //System.out.println(myClassName+"activate():  No TransportInDescription found for ["+qin.toString()+"]");
+
+                transportIn = null;
+            }
+        }
+        else
+        {
+            if (log.isTraceEnabled())
+            {
+                log.trace(myClassName+"activate():  No TransportInDescription ");
+            }
+
+            //System.out.println(myClassName+"activate():  No TransportInDescription ");
+
+            transportIn = null;
+        }
+
+        // We previously saved metaTransportOut; restore it
+        if (metaTransportOut != null)
+        {
+            QName qout = metaTransportOut.getQName();
+            TransportOutDescription tmpOut = null;
+            try
+            {
+                tmpOut = axisConfig.getTransportOut(qout);
+            }
+            catch (Exception exout)
+            {
+                // if a fault is thrown, log it and continue
+                log.warn(myClassName+"activate():  exception caught when getting the TransportOutDescription ["+qout.toString()+"]  from the AxisConfiguration ["+exout.getClass().getName()+" : "+exout.getMessage()+"]");
+
+                //System.out.println(myClassName+"activate():  exception caught when getting the TransportOutDescription ["+qout.toString()+"]  from the AxisConfiguration ["+exout.getClass().getName()+" : "+exout.getMessage()+"]");
+            }
+
+            if (tmpOut != null)
+            {
+                transportOut = tmpOut;
+            }
+            else
+            {
+                if (log.isTraceEnabled())
+                {
+                    log.trace(myClassName+"activate():  No TransportOutDescription found for ["+qout.toString()+"]");
+                }
+
+                //System.out.println(myClassName+"activate():  No TransportOutDescription found for ["+qout.toString()+"]");
+
+
+                transportOut = null;
+            }
+        }
+        else
+        {
+            if (log.isTraceEnabled())
+            {
+                log.trace(myClassName+"activate():  No TransportOutDescription ");
+            }
+
+            //System.out.println(myClassName+"activate():  No TransportOutDescription ");
+
+            transportOut = null;
+        }
+
+
+
+        // We previously saved metaListener; restore it
+        if (metaListener != null)
+        {
+            // see if we can find an existing object
+            String listenerClass = metaListener.getClassName();
+            TransportListener tmpListener = ObjectStateUtils.findTransportListener(axisConfig, listenerClass);
+
+            if (log.isTraceEnabled())
+            {
+                log.trace(myClassName+"activate():  TransportListener found for ["+listenerClass+"] ");
+            }
+
+            //System.out.println(myClassName+"activate():  TransportListener found for ["+listenerClass+"] ");
+
+        }
+        else
+        {
+            listener = null;
+
+            if (log.isTraceEnabled())
+            {
+                log.trace(myClassName+"activate():  No TransportListener ");
+            }
+
+            //System.out.println(myClassName+"activate():  No TransportListener ");
+        }
+
+
+        //-------------------------------------------------------
+        // done, reset the flag
+        //-------------------------------------------------------
+        needsToBeReconciled = false;
+
+        if (log.isTraceEnabled())
+        {
+            log.trace(myClassName+":activate():  END");
+        }
+
+        //System.out.println(myClassName+":activate():  END");
+    }
+
+
+    /**
+     * Compares key parts of the state from the current instance of 
+     * this class with the specified instance to see if they are 
+     * equivalent. 
+     * <P>
+     * This differs from the java.lang.Object.equals() method in
+     * that the equals() method generally looks at both the 
+     * object identity (location in memory) and the object state
+     * (data).
+     * <P>
+     * 
+     * @param  obj  The object to compare with
+     * @return TRUE if this object is equivalent with the specified object
+     *              that is, key fields match
+     *         FALSE, otherwise
+     */
+    public boolean isEquivalent(Options obj)
+    {
+        // NOTE: the input object is expected to exist (ie, be non-null)
+
+        if (this.timeOutInMilliSeconds != obj.getTimeOutInMilliSeconds())
+        {
+            return false;
+        }
+
+        if (this.isExceptionToBeThrownOnSOAPFault.booleanValue() != obj.isExceptionToBeThrownOnSOAPFault())
+        {
+            return false;
+        }
+
+        if (this.useSeparateListener.booleanValue() != obj.isUseSeparateListener())
+        {
+            return false;
+        }
+
+        if (this.manageSession != obj.isManageSession())
+        {
+            return false;
+        }
+
+        // --------------------------------------------------------------------
+
+        if ((this.soapVersionURI != null) && (obj.getSoapVersionURI() != null))
+        {
+            if (!this.soapVersionURI.equals(obj.getSoapVersionURI()))
+            {
+                return false;
+            }
+        }
+        else if ((this.soapVersionURI == null) && (obj.getSoapVersionURI() == null))
+        {
+            // continue
+        }
+        else
+        {
+            // mismatch
+            return false;
+        }
+        
+        // --------------------------------------------------------------------
+
+        if ((this.action != null) && (obj.getAction() != null))
+        {
+            if (!this.action.equals(obj.getAction()))
+            {
+                return false;
+            }
+        }
+        else if ((this.action == null) && (obj.getAction() == null))
+        {
+            // continue
+        }
+        else
+        {
+            // mismatch
+            return false;
+        }
+        
+        // --------------------------------------------------------------------
+
+        if ((this.transportInProtocol != null) && (obj.getTransportInProtocol() != null))
+        {
+            if (!this.transportInProtocol.equals(obj.getTransportInProtocol()))
+            {
+                return false;
+            }
+        }
+        else if ((this.transportInProtocol == null) && (obj.getTransportInProtocol() == null))
+        {
+            // continue
+        }
+        else
+        {
+            // mismatch
+            return false;
+        }
+        
+        // --------------------------------------------------------------------
+
+        if ((this.messageId != null) && (obj.getMessageId() != null))
+        {
+            if (!this.messageId.equals(obj.getMessageId()))
+            {
+                return false;
+            }
+        }
+        else if ((this.messageId == null) && (obj.getMessageId() == null))
+        {
+            // continue
+        }
+        else
+        {
+            // mismatch
+            return false;
+        }
+        
+        // --------------------------------------------------------------------
+
+        if ((this.faultTo != null) && (obj.getFaultTo() != null))
+        {
+            if (!this.faultTo.isEquivalent(obj.getFaultTo()))
+            {
+                return false;
+            }
+        }
+        else if ((this.faultTo == null) && (obj.getFaultTo() == null))
+        {
+            // continue
+        }
+        else
+        {
+            // mismatch
+            return false;
+        }
+        
+        // --------------------------------------------------------------------
+
+        if ((this.from != null) && (obj.getFrom() != null))
+        {
+            if (!this.from.isEquivalent(obj.getFrom()))
+            {
+                return false;
+            }
+        }
+        else if ((this.from == null) && (obj.getFrom() == null))
+        {
+            // continue
+        }
+        else
+        {
+            // mismatch
+            return false;
+        }
+        
+        // --------------------------------------------------------------------
+
+        if ((this.replyTo != null) && (obj.getReplyTo() != null))
+        {
+            if (!this.replyTo.isEquivalent(obj.getReplyTo()))
+            {
+                return false;
+            }
+        }
+        else if ((this.replyTo == null) && (obj.getReplyTo() == null))
+        {
+            // continue
+        }
+        else
+        {
+            // mismatch
+            return false;
+        }
+        
+        // --------------------------------------------------------------------
+
+        if ((this.to != null) && (obj.getTo() != null))
+        {
+            if (!this.to.isEquivalent(obj.getTo()))
+            {
+                return false;
+            }
+        }
+        else if ((this.to == null) && (obj.getTo() == null))
+        {
+            // continue
+        }
+        else
+        {
+            // mismatch
+            return false;
+        }
+        
+        // --------------------------------------------------------------------
+
+        if ((this.properties != null) && (obj.getProperties() != null))
+        {
+            if (!this.properties.equals(obj.getProperties()))
+            {
+                // This is a strict test.
+                // Returns true if the given object is also a map 
+                // and the two maps represent the same mappings. 
+                return false;
+            }
+        }
+        else if ((this.properties == null) && (obj.getProperties() == null))
+        {
+            // continue
+        }
+        else
+        {
+            // mismatch
+            return false;
+        }
+        
+        // --------------------------------------------------------------------
+
+        // TODO: consider checking the following objects for equivalency
+        //        List relationships;
+        //        ArrayList referenceParameters;
+        //        TransportListener listener;
+        //        TransportInDescription transportIn;
+        //        TransportOutDescription transportOut;
+
+        // TODO: consider checking the parent objects for equivalency
+
+
+        return true;
+    }
+
 }

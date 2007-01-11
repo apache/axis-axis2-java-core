@@ -25,14 +25,19 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.TransportUtils;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
 import java.io.InputStream;
 
 public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
+
     public RobustOutOnlyAxisOperation() {
         super();
+        //setup a temporary name
+        QName tmpName = new QName(this.getClass().getName()+"_"+UUIDGenerator.getUUID());
+        this.setName(tmpName);
         setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY);
     }
 

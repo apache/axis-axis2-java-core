@@ -29,22 +29,36 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 public abstract class AxisOperation extends AxisDescription
         implements WSDLConstants {
+
     public static final String STYLE_RPC = "rpc";
     public static final String STYLE_MSG = "msg";
     public static final String STYLE_DOC = "doc";
+
     private static final Log log = LogFactory.getLog(AxisOperation.class);
+
+
+    /**
+     * message exchange pattern
+     */
     private int mep = WSDL20_2004Constants.MEP_CONSTANT_INVALID;
 
-    // to store engaged modules
+    /**
+     * list of engaged modules
+     */
     private ArrayList engagedModules = new ArrayList();
 
     // to hide control operation , operation which added by RM like module
@@ -53,7 +67,9 @@ public abstract class AxisOperation extends AxisDescription
 
     // to store mepURL
     private String mepURI;
+
     private MessageReceiver messageReceiver;
+
     private HashMap moduleConfigmap;
 
     // To store deploy-time module refs
@@ -69,11 +85,18 @@ public abstract class AxisOperation extends AxisDescription
 
     private String soapAction;
 
+
+    /**
+     * constructor
+     */
     public AxisOperation() {
         mepURI = WSDL20_2004Constants.MEP_URI_IN_OUT;
         modulerefs = new ArrayList();
         moduleConfigmap = new HashMap();
         faultMessages = new ArrayList();
+        //setup a temporary name
+        QName tmpName = new QName(this.getClass().getName()+"_"+UUIDGenerator.getUUID());
+        this.setName(tmpName);
     }
 
     public AxisOperation(QName name) {

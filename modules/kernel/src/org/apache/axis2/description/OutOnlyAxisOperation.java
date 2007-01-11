@@ -25,6 +25,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.xml.namespace.QName;
@@ -44,6 +45,9 @@ public class OutOnlyAxisOperation extends AxisOperation {
 
     public OutOnlyAxisOperation() {
         super();
+        //setup a temporary name
+        QName tmpName = new QName(this.getClass().getName()+"_"+UUIDGenerator.getUUID());
+        this.setName(tmpName);
         createMessage();
         setMessageExchangePattern(WSDL20_2004Constants.MEP_URI_OUT_ONLY);
     }

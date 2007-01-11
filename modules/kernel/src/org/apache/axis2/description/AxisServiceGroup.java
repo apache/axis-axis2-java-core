@@ -84,6 +84,15 @@ public class AxisServiceGroup extends AxisDescription {
     }
 
     public void addService(AxisService service) throws AxisFault {
+        if (service == null) {
+            return;
+        }
+
+        if (serviceGroupName == null) {
+            // setup a temporary name based on the first service under this group
+            serviceGroupName = new String(service.getName());
+        }
+
         service.setParent(this);
 
         AxisConfiguration axisConfig = (AxisConfiguration) getParent();
@@ -183,6 +192,9 @@ public class AxisServiceGroup extends AxisDescription {
     }
 
     public String getServiceGroupName() {
+        // Note: if the serviceGroupName is not set, then this could be null.
+        // If the serviceGroupName has not been set and a service is added to this group, 
+        // then the serviceGroupName will default to the name of the first service
         return serviceGroupName;
     }
 
@@ -204,6 +216,9 @@ public class AxisServiceGroup extends AxisDescription {
     }
 
     public Object getKey() {
+        // Note: if the serviceGroupName is not set, then this could be null.
+        // If the serviceGroupName has not been set and a service is added to this group, 
+        // then the serviceGroupName will default to the name of the first service
         return this.serviceGroupName;
     }
 
