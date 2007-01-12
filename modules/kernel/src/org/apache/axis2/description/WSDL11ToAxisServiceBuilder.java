@@ -1681,11 +1681,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     if (soapOperation.getStyle() != null) {
                         axisOperation.setStyle(soapOperation.getStyle());
                     }
+                    String soapActionURI = soapOperation.getSoapActionURI();
                     if(isTraceEnabled){
-                        log.trace("copyExtensibleElements:: setSoapAction "+soapOperation.getSoapActionURI());
+                        log.trace("copyExtensibleElements:: setSoapAction "+soapActionURI);
                     }
-                    axisOperation.setSoapAction(soapOperation
-                            .getSoapActionURI());
+                    axisOperation.setSoapAction(soapActionURI);
+                    if(soapActionURI != null){
+                        axisService.mapActionToOperation(soapActionURI, axisOperation);
+                    }
                 }
             } else if (wsdl4jElement instanceof SOAPOperation) {
                 SOAPOperation soapOperation = (SOAPOperation) wsdl4jElement;
@@ -1698,11 +1701,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     if (soapOperation.getStyle() != null) {
                         axisOperation.setStyle(soapOperation.getStyle());
                     }
+                    String soapActionURI = soapOperation.getSoapActionURI();
                     if(isTraceEnabled){
-                        log.trace("copyExtensibleElements:: setSoapAction "+soapOperation.getSoapActionURI());
+                        log.trace("copyExtensibleElements:: setSoapAction "+soapActionURI);
                     }
-                    axisOperation.setSoapAction(soapOperation
-                            .getSoapActionURI());
+                    axisOperation.setSoapAction(soapActionURI);
+                    if(soapActionURI != null){
+                        axisService.mapActionToOperation(soapActionURI, axisOperation);
+                    }
                 }
             } else if (wsdl4jElement instanceof SOAP12Header) {
                 SOAP12Header soapHeader = (SOAP12Header) wsdl4jElement;
