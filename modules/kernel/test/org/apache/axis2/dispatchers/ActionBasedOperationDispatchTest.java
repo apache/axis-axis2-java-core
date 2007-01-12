@@ -39,7 +39,7 @@ public class ActionBasedOperationDispatchTest extends TestCase {
         AxisOperation operation2 = new InOnlyAxisOperation(new QName("operation2"));
         ArrayList op2actions = new ArrayList();
         op2actions.add("urn:org.apache.axis2.dispatchers.test:operation2");
-        operation2.setWsamappingList(op1actions);
+        operation2.setWsamappingList(op2actions);
         
         as.addOperation(operation1);
         as.addOperation(operation2);
