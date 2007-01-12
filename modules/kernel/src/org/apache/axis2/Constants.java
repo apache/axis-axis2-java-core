@@ -235,16 +235,18 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_REST_THROUGH_GET = "restThroughGet";
 
-        // globally enable MTOM
+        //Attachment configurations
         public static final String ENABLE_MTOM = "enableMTOM";
         public static final String CACHE_ATTACHMENTS = "cacheAttachments";
         public static final String ATTACHMENT_TEMP_DIR = "attachmentDIR";
         public static final String FILE_SIZE_THRESHOLD = "sizeThreshold";
+        public static final String ENABLE_SWA = "enableSwA";
+        public static final String MIME_BOUNDARY = "mimeBoundary";
+        
+        
         public static final String HTTP_METHOD_GET = "GET";
         public static final String HTTP_METHOD = "HTTP_METHOD";
         public static final String HTTP_METHOD_POST = "POST";
-
-        public static final String ENABLE_SWA = "enableSwA";
 
         public static final String CONTENT_TYPE = "ContentType";
         public static final String IS_USING_SEPARATE_LISTENER = "IsUsingSeparateListener";
@@ -289,6 +291,12 @@ public class Constants extends org.apache.axis2.namespace.Constants {
          * its own manner.
          */
         public static final String USE_CUSTOM_LISTENER = "UseCustomListener";
+        
+        /**
+         * This is used to specify the message format which the message needs to be serializes.
+         * @see org.apache.axis2.transport.MessageFormatter
+         */
+        public static final String MESSAGE_TYPE = "messageType";
 
     }
 }

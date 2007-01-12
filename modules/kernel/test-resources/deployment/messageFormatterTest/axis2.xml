@@ -109,10 +109,10 @@
     <!-- ================================================= -->
     <!--Following content type to message formatter mapping can be used to implement support for different message -->
     <!--formats  serialization in Axis2. These message formats are expected to be resolved based on the content type. -->
-    <messageBuilders>
-        <messageBuilder contentType="application/soap+xml"
+    <messageFormatters>
+        <messageFormatter contentType="application/soap+xml"
                          class="org.apache.axis2.transport.http.SOAPMessageFormatter"/>
-    </messageBuilders>
+    </messageFormatters>
     <!-- ================================================= -->
     <!-- Transport Ins -->
     <!-- ================================================= -->

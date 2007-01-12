@@ -78,6 +78,9 @@ public class MessageContextBuilder {
         // Setting the charater set encoding
         newmsgCtx.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                 inMessageContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
+        //Setting the message type property
+        newmsgCtx.setProperty(Constants.Configuration.MESSAGE_TYPE,
+        		inMessageContext.getProperty(Constants.Configuration.MESSAGE_TYPE));
         newmsgCtx.setDoingREST(inMessageContext.isDoingREST());
 
         newmsgCtx.setOperationContext(inMessageContext.getOperationContext());

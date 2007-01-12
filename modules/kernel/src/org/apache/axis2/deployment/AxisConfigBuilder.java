@@ -146,14 +146,14 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 }
             }
             
-            // process MessageBuilders
+            // process MessageFormatters
             OMElement messageFormattersElement = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_FORMATTERS));
             if (messageFormattersElement != null) {
                 HashMap messageFormatters = processMessageFormatters(messageFormattersElement);
                 Iterator keys = messageFormatters.keySet().iterator();
                 while (keys.hasNext()) {
                     String key = (String) keys.next();
-                    axisConfig.addMessageBuilder(key, (String) messageFormatters.get(key));
+                    axisConfig.addMessageFormatter(key, (String) messageFormatters.get(key));
                 }
             }
 

@@ -19,6 +19,9 @@ package org.apache.axis2.transport;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -38,9 +41,13 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.SOAPMessageFormatter;
 import org.apache.axis2.util.Builder;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.Loader;
 
 public class TransportUtils {
 
@@ -206,5 +213,86 @@ public class TransportUtils {
         } else {
             throw new AxisFault(Messages.getMessage("outMessageNull"));
         }
+    }
+    
+    /**
+     * Initial work for a builder selector which selects the builder for a given message format based on the the content type of the recieved message.
+     * content-type to builder mapping can be specified through the Axis2.xml.
+     * @param contentType
+     * @param msgContext
+     * @return the builder registered against the given content-type
+     * @throws AxisFault
+     */
+    public static MessageFormatter getMessageFormatter(
+			MessageContext msgContext, String soapActionString,
+			OMOutputFormat format, URL targetURL) throws AxisFault {
+		MessageFormatter messageFormatter = null;
+		String messageFormatString = getMessageFormatterProperty(msgContext);
+		if (messageFormatString != null) {
+			String formatterClassName = msgContext.getConfigurationContext()
+					.getAxisConfiguration().getMessageFormatter(
+							messageFormatString);
+			if (formatterClassName != null) {
+				try {
+					Class formatterClass = Loader.loadClass(formatterClassName);
+					Constructor constructor = formatterClass
+							.getConstructor(new Class[] {MessageContext.class, String.class,
+									OMOutputFormat.class, URL.class});
+					messageFormatter = (MessageFormatter) constructor
+							.newInstance(new Object[] { msgContext,
+									soapActionString, format, targetURL });
+				} catch (ClassNotFoundException e) {
+					throw new AxisFault("Specified Builder class ("
+							+ formatterClassName + ") cannot be found.", e);
+				} catch (InstantiationException e) {
+					throw new AxisFault(
+							"Cannot instantiate the specified Builder Class  : "
+									+ formatterClassName + ".", e);
+				} catch (IllegalAccessException e) {
+					throw new AxisFault(
+							"Cannot instantiate the specified Builder Class : "
+									+ formatterClassName + ".", e);
+				} catch (SecurityException e) {
+					throw new AxisFault(
+							"Permission problem when instantiating the specified Builder Class : "
+									+ formatterClassName + ".", e);
+				} catch (NoSuchMethodException e) {
+					throw new AxisFault(
+							"Required constructor is not found in the specified Builder Class : "
+									+ formatterClassName + ".", e);
+				} catch (IllegalArgumentException e) {
+					throw new AxisFault(
+							"Required constructor is not found in the specified Builder Class : "
+									+ formatterClassName + ".", e);
+				} catch (InvocationTargetException e) {
+					throw new AxisFault(
+							"Required constructor is not found in the specified Builder Class : "
+									+ formatterClassName + ".", e);
+				}
+			}
+		}
+		if (messageFormatter == null) {
+			// Lets default to SOAP formatter
+			messageFormatter = new SOAPMessageFormatter(msgContext,
+					soapActionString, format, targetURL);
+		}
+		return messageFormatter;
+	}
+    
+    public static String getMessageFormatterProperty(MessageContext msgContext) {
+		String messageFormatterProperty = null;
+		Object property = msgContext
+				.getProperty(Constants.Configuration.MESSAGE_TYPE);
+		if (property != null) {
+			messageFormatterProperty = (String) property;
+		}
+		if (messageFormatterProperty == null) {
+			Parameter parameter = msgContext
+					.getParameter(Constants.Configuration.MESSAGE_TYPE);
+			if (parameter != null) {
+				messageFormatterProperty = (String) parameter.getValue();
+			}
+		}
+		return messageFormatterProperty;
     }
 }

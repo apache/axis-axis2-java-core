@@ -28,6 +28,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -55,8 +56,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
-        //Message Format Selector will come here
-		MessageFormatter messageFormatter = new SOAPMessageFormatter(
+		MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(
 				msgContext, soapActionString, format, url);
 		url = messageFormatter.getTargetAddress();
 		postMethod.setPath(url.getPath());

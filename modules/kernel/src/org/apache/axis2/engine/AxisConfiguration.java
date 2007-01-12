@@ -167,13 +167,14 @@ public class AxisConfiguration extends AxisDescription {
 
 	/**
 	 * Register a messageFormatter implementation against a content type.
-	 * This is used by Axis2 to support serialization of different message formats.
+	 * This is used by Axis2 to support serialization of messages to different 
+	 * message formats. (Eg: JSON)
 	 * @param contentType
 	 * @param messageFormatter
 	 */
 	public void addMessageFormatter(String contentType,
 			String messageFormatter) {
-		messageBuilders.put(contentType, messageFormatter);
+		messageFormatters.put(contentType, messageFormatter);
 	}
 
     /**

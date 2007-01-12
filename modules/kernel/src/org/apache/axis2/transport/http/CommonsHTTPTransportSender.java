@@ -139,6 +139,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         try {
             OMOutputFormat format = new OMOutputFormat();
+//            if (!msgContext.isDoingMTOM())
             msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
             msgContext.setDoingSwA(HTTPTransportUtils.doWriteSwA(msgContext));
             msgContext.setDoingREST(HTTPTransportUtils.isDoingREST(msgContext));
@@ -146,6 +147,12 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             format.setDoOptimize(msgContext.isDoingMTOM());
             format.setDoingSWA(msgContext.isDoingSwA());
             format.setCharSetEncoding(HTTPTransportUtils.getCharSetEncoding(msgContext));
+            
+            Object mimeBoundaryProperty = msgContext.getProperty(Constants.Configuration.MIME_BOUNDARY);
+			if (mimeBoundaryProperty != null)
+            {
+            	format.setMimeBoundary((String)mimeBoundaryProperty);
+            }
 
             // Trasnport URL can be different from the WSA-To. So processing
             // that now.

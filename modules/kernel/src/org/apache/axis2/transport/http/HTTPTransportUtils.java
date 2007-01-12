@@ -98,6 +98,11 @@ public class HTTPTransportUtils {
     }
 
     public static boolean doWriteMTOM(MessageContext msgContext) {
+        // check whether isDoingMTOM is already true in the message context
+//        if (msgContext.isDoingMTOM()) {
+//            return true;
+//        }
+        
         boolean enableMTOM = false;
         Parameter parameter = msgContext.getParameter(Constants.Configuration.ENABLE_MTOM);
         if (parameter != null) {
@@ -112,6 +117,10 @@ public class HTTPTransportUtils {
     }
     
     public static boolean doWriteSwA(MessageContext msgContext) {
+        // check whether isDoingSWA is already true in the message context
+//        if (msgContext.isDoingSwA()) {
+//            return true;
+//        }
         boolean enableSwA = false;
         Parameter parameter = msgContext.getParameter(Constants.Configuration.ENABLE_SWA);
         if (parameter != null) {
