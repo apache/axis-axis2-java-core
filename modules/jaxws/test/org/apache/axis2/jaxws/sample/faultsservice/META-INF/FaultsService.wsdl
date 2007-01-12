@@ -196,7 +196,7 @@
   <binding name="FaultsServiceSoapBinding" type="tns:FaultsServicePortType">
     <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="getQuote">
-      <soap:operation soapAction="" style="document"/>
+      <soap:operation style="document"/>
       <input>
         <soap:body use="literal" />
       </input>
@@ -221,7 +221,7 @@
     </operation>
     
     <operation name="throwFault">
-      <soap:operation soapAction="" style="document"/>
+      <soap:operation style="document"/>
       <input>
         <soap:body use="literal" />
       </input>
@@ -237,7 +237,7 @@
     </operation>
 
     <operation name="returnFault">
-      <soap:operation soapAction="" style="document"/>
+      <soap:operation style="document"/>
       <input>
         <soap:body use="literal" />
       </input>

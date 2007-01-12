@@ -297,7 +297,7 @@
 
 		<wsdl:operation name="twoWay">
 			<soap:operation
-				soapAction="http://wrap.sample.test.org/twoWayReturn" />
+				soapAction="http://wrap.sample.test.org/twoWay" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>
@@ -309,7 +309,7 @@
 		
 		<wsdl:operation name="invoke">
 			<soap:operation
-				soapAction="http://wrap.sample.test.org/twoWayReturn" />
+				soapAction="http://wrap.sample.test.org/invoke" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>

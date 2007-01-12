@@ -56,7 +56,7 @@
 
 		<wsdl:operation name="draw">			
 			<soap:operation
-				soapAction="http://sei.polymorphicshape.jaxws.axis2.apache.org/typesExtension" />
+				soapAction="http://sei.polymorphicshape.jaxws.axis2.apache.org/draw" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>
@@ -67,7 +67,7 @@
 		
 		<wsdl:operation name="draw3D">
 			<soap:operation
-				soapAction="http://sei.polymorphicshape.jaxws.axis2.apache.org/typesExtension" />
+				soapAction="http://sei.polymorphicshape.jaxws.axis2.apache.org/draw3D" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>

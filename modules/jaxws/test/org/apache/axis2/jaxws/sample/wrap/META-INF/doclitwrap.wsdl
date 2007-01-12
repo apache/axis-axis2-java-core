@@ -255,7 +255,7 @@
 
 		<wsdl:operation name="oneWayVoid">
 			<soap:operation
-				soapAction="http://wrap.sample.test.org/twoWayReturn" />
+				soapAction="http://wrap.sample.test.org/oneWayVoid" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>
@@ -263,7 +263,7 @@
 
 		<wsdl:operation name="oneWay">
 			<soap:operation
-				soapAction="http://wrap.sample.test.org/twoWayReturn" />
+				soapAction="http://wrap.sample.test.org/oneWay" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>
@@ -271,7 +271,7 @@
 
 		<wsdl:operation name="twoWayHolder">
 			<soap:operation
-				soapAction="http://wrap.sample.test.org/twoWayReturn" />
+				soapAction="http://wrap.sample.test.org/twoWayHolder" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>
@@ -297,7 +297,7 @@
 
 		<wsdl:operation name="twoWay">
 			<soap:operation
-				soapAction="http://wrap.sample.test.org/twoWayReturn" />
+				soapAction="http://wrap.sample.test.org/twoWay" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>
@@ -309,7 +309,7 @@
 		
 		<wsdl:operation name="invoke">
 			<soap:operation
-				soapAction="http://wrap.sample.test.org/twoWayReturn" />
+				soapAction="http://wrap.sample.test.org/invoke" />
 			<wsdl:input>
 				<soap:body use="literal" />
 			</wsdl:input>

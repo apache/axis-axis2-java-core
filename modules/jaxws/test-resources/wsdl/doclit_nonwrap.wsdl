@@ -150,21 +150,21 @@
 		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
 
 		<wsdl:operation name="oneWayVoid">
-			<soap:operation soapAction="http://nonwrap.sample.test.org/twoWayReturn" />
+			<soap:operation soapAction="http://nonwrap.sample.test.org/oneWayVoid" />
 			<wsdl:input>
 				<soap:body use="literal"  />
 			</wsdl:input>
 		</wsdl:operation>
 
 		<wsdl:operation name="oneWay">
-			<soap:operation soapAction="http://nonwrap.sample.test.org/twoWayReturn" />
+			<soap:operation soapAction="http://nonwrap.sample.test.org/oneWay" />
 			<wsdl:input>
 				<soap:body use="literal"  />
 			</wsdl:input>
 		</wsdl:operation>
 		
 		<wsdl:operation name="twoWayHolder">
-			<soap:operation soapAction="http://nonwrap.sample.test.org/twoWayReturn" />
+			<soap:operation soapAction="http://nonwrap.sample.test.org/twoWayHolder" />
 			<wsdl:input>
 				<soap:body use="literal"  />
 			</wsdl:input>
@@ -175,7 +175,7 @@
 		</wsdl:operation>
 		
 		<wsdl:operation name="twoWay">
-			<soap:operation soapAction="http://nonwrap.sample.test.org/twoWayReturn" />
+			<soap:operation soapAction="http://nonwrap.sample.test.org/twoWay" />
 			<wsdl:input>
 				<soap:body use="literal"  />
 			</wsdl:input>

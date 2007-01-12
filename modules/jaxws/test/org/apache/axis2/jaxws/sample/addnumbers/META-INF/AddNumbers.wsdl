@@ -74,7 +74,7 @@
 		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"
 			style="document" />
 		<operation name="addNumbers">
-			<soap:operation soapAction="" />
+			
 			<input>
 				<soap:body use="literal" />
 			</input>
@@ -86,7 +86,7 @@
 			</fault>
 		</operation>
 		<operation name="oneWayInt">
-			<soap:operation soapAction="" />
+			
 			<input>
 				<soap:body use="literal" />
 			</input>
