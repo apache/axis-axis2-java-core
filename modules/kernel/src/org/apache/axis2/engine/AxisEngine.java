@@ -171,8 +171,8 @@ public class AxisEngine {
               checkMustUnderstand(msgContext);
               
               MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
-
-              receiver.receive(msgContext);
+              if (receiver!=null)
+            	  receiver.receive(msgContext);
             }
             flowComplete(msgContext, true);
           }

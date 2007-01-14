@@ -66,15 +66,9 @@ public class TransportUtils {
 			}
 			Object contentType;
 			boolean isMIME = false;
-			OperationContext opContext = msgContext.getOperationContext();
 
-			if (opContext != null) {
-				contentType = opContext
-						.getProperty(HTTPConstants.MTOM_RECEIVED_CONTENT_TYPE);
-			} else {
-				throw new AxisFault(Messages
-						.getMessage("cannotBeNullOperationContext"));
-			}
+			contentType = msgContext.getProperty(HTTPConstants.MTOM_RECEIVED_CONTENT_TYPE);
+			
 			//TODO: we can improve this logic
 			if (contentType!=null){
 				isMIME=true;
@@ -83,7 +77,7 @@ public class TransportUtils {
 			String charSetEnc = (String) msgContext
 					.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 			if (charSetEnc == null) {
-				charSetEnc = (String) opContext
+				charSetEnc = (String) msgContext
 						.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 			}
 			if (charSetEnc == null) {

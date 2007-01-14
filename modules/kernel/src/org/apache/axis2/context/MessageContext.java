@@ -1343,7 +1343,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         this.setParent(operationContext);
 
         if (operationContext != null) {
-            if ((serviceContext != null) && (operationContext.getParent() == null)) {
+            if ((operationContext!=null) && (serviceContext != null) && (operationContext.getParent() == null)) {
                 operationContext.setParent(serviceContext);
             }
 
