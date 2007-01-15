@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -445,9 +448,17 @@ public class JAXBUtils {
             return new ArrayList<Class>();
         }   
         
-        // TODO This code does not work if the classes are in a jar !
+        ArrayList<Class> classes = new ArrayList<Class>();
+        //This will load classes from directory
+        classes.addAll(getClassesFromDirectory(pkg, cl));
+        //This will load classes from jar file.
+        classes.addAll(getClassesFromJarFile(pkg, cl));
         
-        // This will hold a list of directories matching the pckgname. There may be more than one if a package is split over multiple jars/paths
+        return classes;
+    }
+    
+    private static ArrayList<Class> getClassesFromDirectory(String pkg, ClassLoader cl)throws ClassNotFoundException{
+    	  // This will hold a list of directories matching the pckgname. There may be more than one if a package is split over multiple jars/paths
         String pckgname = pkg;
         ArrayList<File> directories = new ArrayList<File>();
         try {
@@ -525,6 +536,66 @@ public class JAXBUtils {
         return classes;
     }
     
+    private static ArrayList<Class> getClassesFromJarFile(String pkg, ClassLoader cl)throws ClassNotFoundException{
+    	ArrayList<Class> classes = new ArrayList<Class>();
+    	URLClassLoader ucl = (URLClassLoader)cl;
+        URL[] srcURL = ucl.getURLs();
+        String path = pkg.replace('.', '/');
+        //Read resources as URL from class loader.
+        for(URL url:srcURL){
+        	if("file".equals(url.getProtocol())){
+        		File f = new File(url.getPath());
+        		//If file is not of type directory then its a jar file
+        		if(f.exists() && !f.isDirectory()){
+        			try{
+	        			JarFile jf = new JarFile(f);
+	        			Enumeration<JarEntry> entries = jf.entries();
+	        			//read all entries in jar file
+	        			while(entries.hasMoreElements()){
+	        				JarEntry je = entries.nextElement();
+	        				String clazzName = je.getName();
+	        				if(clazzName.endsWith(".class")){
+	        					//We are only going to add the class that belong to the provided package.
+	        					String pathInfo = clazzName.substring(0,clazzName.lastIndexOf("/"));
+	        					if(pathInfo.equals(path)){
+	        						//Add to class list here.
+	        						clazzName = clazzName.substring (0, clazzName.length () - 6);
+	        	                    clazzName = clazzName.replace ('/', '.').replace ('\\', '.').replace (':', '.');
+
+	        						 try {
+	        	                            Class clazz = Class.forName(clazzName, 
+	        	                                    false, 
+	        	                                    Thread.currentThread().getContextClassLoader());
+	        	                            // Don't add any interfaces or JAXWS specific classes.  
+	        	                            // Only classes that represent data and can be marshalled 
+	        	                            // by JAXB should be added.
+	        	                            if(!clazz.isInterface()
+	        	                                    && ClassUtils.getDefaultPublicConstructor(clazz) != null
+	        	                                    && !ClassUtils.isJAXWSClass(clazz)){
+	        	                                if (log.isDebugEnabled()) {
+	        	                                    log.debug("Adding class: " + clazzName);
+	        	                                }
+	        	                                classes.add(clazz);
+	        	                                
+	        	                            }
+	        	                        } catch (Exception e) {
+	        	                            if (log.isDebugEnabled()) {
+	        	                                log.debug("Tried to load class " + clazzName + " while constructing a JAXBContext.  This class will be skipped.  Processing Continues." );
+	        	                                log.debug("  The reason that class could not be loaded:" + e.toString());
+	        	                            }
+	        	                            e.printStackTrace();
+	        	                        }
+	        					}
+	        				}
+	        			}
+        			}catch(IOException e){
+        				throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr4"));
+        			}
+        		}
+        	}
+        }
+    	return classes;
+    }
     private static  String[] commonArrayClasses = new String[] { 
         // primitives
         "boolean[]",
