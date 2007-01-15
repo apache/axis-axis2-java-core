@@ -108,6 +108,9 @@ public class MessageContextBuilder {
         
         // Simple response so set To to value of inbound ReplyTo
         newmsgCtx.setTo(inMessageContext.getReplyTo());
+        if(newmsgCtx.getTo() == null){
+            newmsgCtx.setTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
+        }
 
         // do Target Resolution
         TargetResolver targetResolver = newmsgCtx.getConfigurationContext().getAxisConfiguration().getTargetResolverChain();
@@ -203,7 +206,10 @@ public class MessageContextBuilder {
         } else {
             faultContext.setTo(processingContext.getReplyTo());
         }
-        
+        if(faultContext.getTo() == null){
+            faultContext.setTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
+        }
+
         // do Target Resolution
         TargetResolver targetResolver = faultContext.getConfigurationContext().getAxisConfiguration().getTargetResolverChain();
         if(targetResolver != null) {
