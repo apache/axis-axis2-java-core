@@ -293,6 +293,12 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String USE_CUSTOM_LISTENER = "UseCustomListener";
         
         /**
+        * If this is set to a Boolean 'true' value, then OutIn operations will always be treated
+        * as async. This is useful for modules that layer async behaviour on top of sync channels.
+        */
+        public static final String USE_ASYNC_OPERATIONS = "UseAsyncOperations";
+        
+        /**
          * This is used to specify the message format which the message needs to be serializes.
          * @see org.apache.axis2.transport.MessageFormatter
          */

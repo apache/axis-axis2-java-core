@@ -169,7 +169,18 @@ class OutInAxisOperationClient extends OperationClient {
             mc.setTransportIn(options.getTransportIn());
         }
 
-        if (options.isUseSeparateListener()) {
+        /**
+         * If a module has set the USE_ASYNC_OPERATIONS option then we override the behaviour
+         * for sync calls, and effectively USE_CUSTOM_LISTENER too. However we leave real
+         * async calls alone.
+         */
+        boolean useAsync = false;
+        if(!options.isUseSeparateListener()) {
+        	Boolean useAsyncOption = (Boolean) mc.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
+        	if(useAsyncOption != null) useAsync = useAsyncOption.booleanValue();
+        }
+        
+        if (useAsync || options.isUseSeparateListener()) {
             CallbackReceiver callbackReceiver = (CallbackReceiver) axisOp
                     .getMessageReceiver();
             callbackReceiver.addCallback(mc.getMessageID(), callback);
@@ -180,6 +191,7 @@ class OutInAxisOperationClient extends OperationClient {
              * response message.
              */
             Boolean useCustomListener = (Boolean) options.getProperty(Constants.Configuration.USE_CUSTOM_LISTENER);
+            if(useAsync) useCustomListener = Boolean.TRUE;
             if (useCustomListener==null || !useCustomListener.booleanValue()) {
 
                 EndpointReference replyToFromTransport = mc.getConfigurationContext().getListenerManager().

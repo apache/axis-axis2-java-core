@@ -20,6 +20,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.*;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
@@ -521,7 +522,17 @@ public class ServiceClient {
      */
     public OMElement sendReceive(QName operationQName, OMElement xmlPayload)
             throws AxisFault {
-        if (options.isUseSeparateListener()) {
+        /**
+         * If a module has set the USE_ASYNC_OPERATIONS option then we override the behaviour
+         * for sync calls. However we leave real async calls alone.
+         */
+        boolean useAsync = false;
+        if(!options.isUseSeparateListener()) {
+        	Boolean useAsyncOption = (Boolean) configContext.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
+        	if(useAsyncOption != null) useAsync = useAsyncOption.booleanValue();
+        }
+
+        if (useAsync || options.isUseSeparateListener()) {
 
             // Here we are trying to do a request-response invocation using two different channels for the request
             // and the response.
@@ -622,7 +633,18 @@ public class ServiceClient {
         // progamming model is non blocking
         mepClient.setCallback(callback);
         mepClient.addMessageContext(mc);
-        if (options.isUseSeparateListener()) {
+
+        /**
+         * If a module has set the USE_ASYNC_OPERATIONS option then we override the behaviour
+         * for sync calls. However we leave real async calls alone.
+         */
+        boolean useAsync = false;
+        if(!options.isUseSeparateListener()) {
+        	Boolean useAsyncOption = (Boolean) configContext.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
+        	if(useAsyncOption != null) useAsync = useAsyncOption.booleanValue();
+        }
+
+        if (useAsync || options.isUseSeparateListener()) {
             MessageReceiver messageReceiver = axisService.getOperation(operation).getMessageReceiver();
             if (messageReceiver == null || !(messageReceiver instanceof CallbackReceiver)) {
                 CallbackReceiver callbackReceiver = new CallbackReceiver();
