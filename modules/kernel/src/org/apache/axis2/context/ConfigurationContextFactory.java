@@ -18,10 +18,7 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.deployment.DeploymentEngine;
-import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.FileSystemConfigurator;
-import org.apache.axis2.deployment.URLBasedAxisConfigurator;
+import org.apache.axis2.deployment.*;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -41,6 +38,10 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class ConfigurationContextFactory {
 
@@ -251,11 +252,26 @@ public class ConfigurationContextFactory {
     }
 
     /**
-     * Gets the default configuration context by using the file system based AxisConfiguration.
+     * creates an empty configuration context.
      *
      * @return Returns ConfigurationContext.
      */
     public static ConfigurationContext createEmptyConfigurationContext() {
         return new ConfigurationContext(new AxisConfiguration());
+    }
+
+    /**
+     * Gets the default configuration context by using Axis2.xml in the classpath
+     *
+     * @return Returns ConfigurationContext.
+     */
+    public static ConfigurationContext createDefaultConfigurationContext() throws Exception {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        InputStream in = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+
+        AxisConfiguration axisConfig = new AxisConfiguration();
+        AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig);
+        builder.populateConfig();
+        return new ConfigurationContext(axisConfig);
     }
 }

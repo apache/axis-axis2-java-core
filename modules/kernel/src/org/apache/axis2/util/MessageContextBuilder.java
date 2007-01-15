@@ -426,7 +426,9 @@ public class MessageContextBuilder {
             sendStacktraceDetailsWithFaults = JavaUtils.isTrue(flagFromContext);
         }else{
             Parameter param = context.getParameter(Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS);
-            sendStacktraceDetailsWithFaults = JavaUtils.isTrue(param.getValue());    
+            if(param != null) {
+                sendStacktraceDetailsWithFaults = JavaUtils.isTrue(param.getValue());    
+            }
         }
 
         Object faultDetail = context.getProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME);
