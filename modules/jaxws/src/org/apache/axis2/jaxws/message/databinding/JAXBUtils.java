@@ -504,9 +504,7 @@ public class JAXBUtils {
                             // by JAXB should be added.
                             if(!clazz.isInterface()
                                     && ClassUtils.getDefaultPublicConstructor(clazz) != null
-                                    && !ClassUtils.isJAXWSClass(clazz) 
-                                    && !ClassUtils.isObjectFactory(clazz)
-                                    && !ClassUtils.isPackageInfo(clazz)){
+                                    && !ClassUtils.isJAXWSClass(clazz)){
                                 if (log.isDebugEnabled()) {
                                     log.debug("Adding class: " + file);
                                 }
@@ -571,9 +569,7 @@ public class JAXBUtils {
 	        	                            // by JAXB should be added.
 	        	                            if(!clazz.isInterface()
 	        	                                    && ClassUtils.getDefaultPublicConstructor(clazz) != null
-	        	                                    && !ClassUtils.isJAXWSClass(clazz) 
-	        	                                    && !ClassUtils.isObjectFactory(clazz)
-	        	                                    && !ClassUtils.isPackageInfo(clazz)){
+	        	                                    && !ClassUtils.isJAXWSClass(clazz)){
 	        	                                if (log.isDebugEnabled()) {
 	        	                                    log.debug("Adding class: " + clazzName);
 	        	                                }

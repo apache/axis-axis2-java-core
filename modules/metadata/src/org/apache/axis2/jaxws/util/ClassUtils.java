@@ -290,12 +290,5 @@ public class ClassUtils {
         return false;
     }
     
-    public static final boolean isObjectFactory(Class cls){
-    	return cls!=null && cls.getName().endsWith("ObjectFactory");
-    }
-    
-    public static final boolean isPackageInfo(Class cls){
-    	return cls!=null && cls.getName().endsWith("package-info");
-    }
 }
 
