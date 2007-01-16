@@ -19,8 +19,11 @@ package org.apache.axis2.jaxws.message.util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.Detail;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 
 import org.apache.axiom.om.OMElement;
@@ -41,11 +44,14 @@ import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultCode;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
+import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.util.SAAJFactory;
 
 /**
  * Collection of utilities used by the Message implementation to 
@@ -183,25 +189,168 @@ public class XMLFaultUtils {
 	}
     
     /**
+     * Create XMLFault
+     * @param soapFault
+     * @return xmlFault
+     * @throws MessageException
+     */
+    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault) throws MessageException {
+        Block[] detailBlocks = getDetailBlocks(soapFault);
+        return createXMLFault(soapFault, detailBlocks);
+    }
+    
+    /**
      * Create an XMLFault object from a SOAPFault and detail Blocks
      * @param soapFault
      * @param detailBlocks
      * @return
      */
+    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault, Block[] detailBlocks) throws MessageException {
+        
+        // The SOAPFault structure is modeled after SOAP 1.2.  
+        // Here is a sample comprehensive SOAP 1.2 fault which will help you understand the
+        // structure.
+        // <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+        //               xmlns:m="http://www.example.org/timeouts"
+        //               xmlns:xml="http://www.w3.org/XML/1998/namespace">
+        //   <env:Body>
+        //      <env:Fault>
+        //        <env:Code>
+        //          <env:Value>env:Sender</env:Value>
+        //          <env:Subcode>
+        //            <env:Value>m:MessageTimeout</env:Value>
+        //          </env:Subcode>
+        //        </env:Code>
+        //        <env:Reason>
+        //          <env:Text xml:lang="en">Sender Timeout</env:Text>
+        //          <env:Text xml:lang="de">Sender Timeout</env:Text>
+        //        </env:Reason>
+        //        <env:Node>http://my.example.org/Node</env:Node>
+        //        <env:Role>http://my.example.org/Role</env:Role>
+        //        <env:Detail>
+        //          <m:MaxTime>P5M</m:MaxTime>
+        //        </env:Detail>    
+        //      </env:Fault>
+        //   </env:Body>
+        // </env:Envelope>
+        
+        
+        // Get the code
+        // TODO what if this fails ?  Log a message and treat like a RECEIVER fault ?
+        QName codeQName = soapFault.getFaultCodeAsQName();
+        XMLFaultCode code = XMLFaultCode.fromQName(codeQName);
+        
+        // Get the primary reason text
+        // TODO what if this fails
+        String text = soapFault.getFaultString();
+        Locale locale = soapFault.getFaultStringLocale();
+        String lang = (locale == null) ? Locale.getDefault().getLanguage() : locale.getLanguage();
+        XMLFaultReason reason = new XMLFaultReason(text, lang);
+
+        // Construct the XMLFault from the required information (code, reason, detail blocks)
+        XMLFault xmlFault = new XMLFault(code, reason, detailBlocks);
+        
+        
+        
+        // Add the secondary fault information
+ 
+        // Get the SubCodes
+        /* REVIEW The following needs to be added
+         
+        SOAPFaultSubCode soapSubCode = soapCode.getSubCode();
+        if (soapSubCode != null) {
+            List<QName> list = new ArrayList<QName>();
+            
+            // Walk the nested sub codes and collect the qnames
+            while (soapSubCode != null) {
+                SOAPFaultValue soapSubCodeValue = soapSubCode.getValue();
+                QName qName = soapSubCodeValue.getTextAsQName();
+                list.add(qName);
+                soapSubCode = soapSubCode.getSubCode();
+            }
+            
+            // Put the collected sub code qnames onto the xmlFault
+            QName[] qNames = new QName[list.size()];
+            xmlFault.setSubCodes(list.toArray(qNames));
+        }
+        
+        // Get the secondary Reasons...the first reason was already saved as the primary reason
+        if (soapTexts.size() > 1) {
+            XMLFaultReason[] secondaryReasons = new XMLFaultReason[soapTexts.size() - 1];
+            for (int i= 1; i<soapTexts.size(); i++) {
+                SOAPFaultText soapReasonText = (SOAPFaultText) soapTexts.get(i);
+                secondaryReasons[i-1] = new XMLFaultReason(soapReasonText.getText(), 
+                                                           soapReasonText.getLang());
+            }
+            xmlFault.setSecondaryReasons(secondaryReasons);
+        }
+        
+        // Get the Node
+        SOAPFaultNode soapNode = soapFault.getNode();
+        if (soapNode != null) {
+            xmlFault.setNode(soapNode.getText());
+        }
+        
+        // Get the Role
+        SOAPFaultRole soapRole = soapFault.getRole();
+        if (soapRole != null) {
+            xmlFault.setRole(soapRole.getText());
+        }
+        */
+        return xmlFault;         
+    }
+    /**
+     * Create an XMLFault object from a SOAPFault and detail Blocks
+     * @param soapFault
+     * @param detailBlocks
+     * @return
+     */
+    /*
     public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault) throws MessageException {
+        
        // Convert the SOAPFault into an OM SOAPFault.  OMSOAP Fault already supports SOAP 1.2, so this makes the code easier to migrate
-       SAAJConverter converter = 
-           (SAAJConverter) FactoryRegistry.getFactory(SAAJConverter.class);
-       SOAPFault omSOAPFault = (SOAPFault) converter.toOM(soapFault);
+       
+       SAAJConverterFactory converterFactory = 
+           (SAAJConverterFactory) FactoryRegistry.getFactory(SAAJConverterFactory.class);
+       SAAJConverter converter = converterFactory.getSAAJConverter();
+       
+       javax.xml.soap.SOAPBody body = (javax.xml.soap.SOAPBody) soapFault.getParentElement();
+       javax.xml.soap.SOAPEnvelope env = (javax.xml.soap.SOAPEnvelope) body.getParentElement();
+       SOAPEnvelope omSOAPEnv = converter.toOM(env);
+       SOAPFault omSOAPFault = omSOAPEnv.getBody().getFault();
        Block[] detailBlocks = getDetailBlocks(omSOAPFault);
        XMLFault xmlFault = createXMLFault(omSOAPFault, detailBlocks);
+      
        return xmlFault;
     }
+    */
     
     private static Block[] getDetailBlocks(SOAPFault soapFault) throws MessageException {
         try {
             Block[] blocks = null;
             SOAPFaultDetail detail = soapFault.getDetail();
+            if (detail != null) {
+                // Create a block for each element
+                OMBlockFactory bf = (OMBlockFactory) FactoryRegistry.getFactory(OMBlockFactory.class);
+                ArrayList<Block> list = new ArrayList<Block>();
+                Iterator it = detail.getChildElements();
+                while (it.hasNext()) {
+                    OMElement om = (OMElement) it.next();
+                    Block b = bf.createFrom(om, null,om.getQName()); 
+                    list.add(b);
+                }
+                blocks = list.toArray(blocks);
+            }
+            return blocks;
+        } catch (Exception e) {
+            throw ExceptionFactory.makeMessageException(e);
+        }
+    }
+    
+    private static Block[] getDetailBlocks(javax.xml.soap.SOAPFault soapFault) throws MessageException {
+        try {
+            Block[] blocks = null;
+            Detail detail = soapFault.getDetail();
             if (detail != null) {
                 // Create a block for each element
                 OMBlockFactory bf = (OMBlockFactory) FactoryRegistry.getFactory(OMBlockFactory.class);
@@ -332,6 +481,119 @@ public class XMLFaultUtils {
             soapNode.setText(xmlFault.getNode());
         }
            
+        return soapFault;
+            
+    }
+    
+    
+    /**
+     * Create a SOAPFault representing the XMLFault.
+     * If there are 1 or more detail Blocks on the XMLFault, a SOAPFaultDetail is attached.
+     * @param xmlFault
+     * @param body
+     * @return SOAPFault (which is attached to body)
+     */
+    public static javax.xml.soap.SOAPFault createSAAJFault(XMLFault xmlFault, 
+                javax.xml.soap.SOAPBody body) throws SOAPException, MessageException {
+        
+        // Get the factory and create the soapFault
+        String protocolNS = body.getNamespaceURI();
+            
+        javax.xml.soap.SOAPFault soapFault = body.addFault();
+        
+        // The SOAPFault structure is modeled after SOAP 1.2.  
+        // Here is a sample comprehensive SOAP 1.2 fault which will help you understand the
+        // structure.
+        // <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+        //               xmlns:m="http://www.example.org/timeouts"
+        //               xmlns:xml="http://www.w3.org/XML/1998/namespace">
+        //   <env:Body>
+        //      <env:Fault>
+        //        <env:Code>
+        //          <env:Value>env:Sender</env:Value>
+        //          <env:Subcode>
+        //            <env:Value>m:MessageTimeout</env:Value>
+        //          </env:Subcode>
+        //        </env:Code>
+        //        <env:Reason>
+        //          <env:Text xml:lang="en">Sender Timeout</env:Text>
+        //          <env:Text xml:lang="de">Sender Timeout</env:Text>
+        //        </env:Reason>
+        //        <env:Node>http://my.example.org/Node</env:Node>
+        //        <env:Role>http://my.example.org/Role</env:Role>
+        //        <env:Detail>
+        //          <m:MaxTime>P5M</m:MaxTime>
+        //        </env:Detail>    
+        //      </env:Fault>
+        //   </env:Body>
+        // </env:Envelope>
+        
+        // Set the primary Code Value
+        QName soapValueQName = xmlFault.getCode().toQName(protocolNS);
+        soapFault.setFaultCode(soapValueQName);
+        
+        // Set the primary Reason Text
+        String reasonText = xmlFault.getReason().getText();
+        String reasonLang = xmlFault.getReason().getText();
+        Locale locale = (reasonLang != null && reasonLang.length() > 0) ?
+                new Locale(reasonLang) :
+                    Locale.getDefault();
+        soapFault.setFaultString(reasonText, locale);
+        
+        /*
+        // Set the Detail and contents of Detail
+        Block[] blocks = xmlFault.getDetailBlocks();
+        if (blocks != null && blocks.length > 0) {
+            SOAPFaultDetail detail = factory.createSOAPFaultDetail(soapFault);
+            if (!ignoreDetailBlocks) {
+                for (int i=0; i<blocks.length; i++) {
+                    // A Block implements OMDataSource.  So create OMSourcedElements
+                    // for each of the Blocks.
+                    OMSourcedElementImpl element = 
+                        new OMSourcedElementImpl(blocks[i].getQName(), factory, blocks[i]);
+                    detail.addChild(element);
+                }
+            }
+        }
+        
+        // Now set all of the secondary fault information
+        // Set the SubCodes
+        QName[] subCodes = xmlFault.getSubCodes();
+        if (subCodes != null && subCodes.length > 0) {
+           OMElement curr = soapCode;
+           for (int i=0; i<subCodes.length; i++) {
+               SOAPFaultSubCode subCode = (i==0) ?
+                       factory.createSOAPFaultSubCode((SOAPFaultCode)    curr) :
+                       factory.createSOAPFaultSubCode((SOAPFaultSubCode) curr);
+               SOAPFaultValue soapSubCodeValue = factory.createSOAPFaultValue(subCode);
+               soapSubCodeValue.setText(subCodes[i]);
+               curr = subCode;
+           }
+        }
+        
+        // Set the secondary reasons and languages
+        XMLFaultReason reasons[] = xmlFault.getSecondaryReasons();
+        if (reasons != null && reasons.length > 0) {
+            for (int i=0; i<reasons.length; i++) {
+                SOAPFaultText soapReasonText = factory.createSOAPFaultText(soapReason);
+                soapReasonText.setText(reasons[i].getText());
+                soapReasonText.setLang(reasons[i].getLang());
+            }
+        }
+        
+        // Set the Role
+        if (xmlFault.getRole() != null) {
+            SOAPFaultRole soapRole = factory.createSOAPFaultRole();
+            soapRole.setText(xmlFault.getRole());
+        }
+        
+        // Set the Node
+        if (xmlFault.getNode() != null) {
+            SOAPFaultNode soapNode = factory.createSOAPFaultNode();
+            soapNode.setText(xmlFault.getNode());
+        }
+           
+           */
         return soapFault;
             
     }

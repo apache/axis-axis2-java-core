@@ -24,6 +24,7 @@ import java.util.concurrent.Future;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Binding;
+import javax.xml.ws.ProtocolException;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
@@ -40,6 +41,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.XMLFault;
@@ -129,7 +131,8 @@ public abstract class BaseDispatch<T> extends BindingProvider
                 if (responseMsg.isFault()) {
                     XMLFault fault = responseMsg.getXMLFault();
                     // 4.3.2 conformance bullet 1 requires a ProtocolException here
-                    throw ExceptionFactory.makeProtocolException(fault.getReason().getText(), null);
+                    ProtocolException pe = MethodMarshallerUtils.createSystemException(responseMsg.getXMLFault(), responseMsg);
+                    throw  pe;
                 }
                 else if (responseMsgCtx.getLocalException() != null) {
                     // use the factory, it'll throw the right thing:

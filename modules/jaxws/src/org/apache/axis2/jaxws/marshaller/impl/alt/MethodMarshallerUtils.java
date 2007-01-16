@@ -29,10 +29,13 @@ import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFault;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Holder;
+import javax.xml.ws.ProtocolException;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
 
@@ -44,6 +47,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
+import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
@@ -59,7 +63,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Static Utilty Classes used by the MethodMarshaller implementations in the alt package.
  */
-class MethodMarshallerUtils  {
+public class MethodMarshallerUtils  {
 
     private static Log log = LogFactory.getLog(MethodMarshallerUtils.class);
     
@@ -534,19 +538,13 @@ class MethodMarshallerUtils  {
         Block[] detailBlocks = xmlfault.getDetailBlocks();
         
         
-        if ((operationDesc.getFaultDescriptions().length == 0) || (detailBlocks == null))  {
+        if ((operationDesc.getFaultDescriptions().length == 0) || 
+                (detailBlocks == null) || 
+                (detailBlocks.length > 1))  {
             // This is a system exception if the method does not throw a checked exception or if 
-            // there is nothing in the detail element.
-            // Shouldn't this create 
-            
-            // Create SystemException
-            // TODO shouldn't the exception capture the contents of the detail blocks
-            exception = createSystemException(xmlfault.getReason().getText());
-        } else {
-            
-            // TODO what if there are multiple blocks in the detail ?
-            // We should create a generic fault with the appropriate detail
-            
+            // the detail block is missing or contains multiple items.
+            exception = createSystemException(xmlfault, message);
+        } else {            
             // Get the JAXB object from the block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
             
@@ -573,6 +571,14 @@ class MethodMarshallerUtils  {
                 blockContext.setRPCType(rpcType);
                 
             }
+            
+            // TODO This code assumes that the block can be demarshalled as a 
+            // known JAXB object.  But what if a detail is flowed that we don't know how to handle.
+            // for example, what if the detail is a stack trace.  To be on the safe side, we should
+            // probably make a copy of the OMBlock and then throw create a SystemException if
+            // with the original detail if JAXB unmarshalling fails.
+            // (I agree that this would not be performant, but we are on an exception path)
+            //
             Block jaxbBlock = factory.createFrom(detailBlocks[0], blockContext);
             Object faultBeanObject = jaxbBlock.getBusinessObject(true); 
             
@@ -693,8 +699,44 @@ class MethodMarshallerUtils  {
      * @param message
      * @return
      */
-    private static Exception createSystemException(String message) {
-        return ExceptionFactory.makeWebServiceException(message);
+    public static ProtocolException createSystemException(XMLFault xmlFault, Message message) {
+        ProtocolException e = null;
+        Protocol protocol = message.getProtocol();
+        String text = xmlFault.getReason().getText();
+        if (protocol == Protocol.soap11 || protocol == Protocol.soap12) {
+            // Throw a SOAPFaultException
+            if (log.isDebugEnabled()) {
+                log.debug("Constructing SOAPFaultException for " + text);
+            }
+            try {
+                // The following set of instructions is used to avoid 
+                // some unimplemented methods in the Axis2 SAAJ implementation
+                SOAPEnvelope env = message.getAsSOAPEnvelope();
+                SOAPBody body = env.getBody();
+                SOAPFault soapFault = XMLFaultUtils.createSAAJFault(xmlFault, body);
+                e = new SOAPFaultException(soapFault);
+            } catch (Exception ex) {
+                // Exception occurred during exception processing.
+                // TODO Probably should do something better here
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception occurred during fault processing:", ex);
+                }
+                e = ExceptionFactory.makeProtocolException(text, null);
+            }
+        } else if (protocol == Protocol.rest) {
+            if (log.isDebugEnabled()) {
+                log.debug("Constructing ProtocolException for " + text);
+            }
+            // TODO Is there an explicit exception for REST
+            e = ExceptionFactory.makeProtocolException(text, null);
+        } else if (protocol == Protocol.unknown) {
+            // REVIEW What should happen if there is no protocol
+            if (log.isDebugEnabled()) {
+                log.debug("Constructing ProtocolException for " + text);
+            }
+            e = ExceptionFactory.makeProtocolException(text, null);
+        }
+        return e;
     }
     
     

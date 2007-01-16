@@ -130,7 +130,7 @@ public class SAAJFactory {
     private static Method getSOAPFactoryNewInstanceProtocolMethod() {
         if (soapFactoryNewInstanceProtocolMethod == null) {
             try {
-                soapFactoryNewInstanceProtocolMethod = MessageFactory.class.getMethod("newInstance", new Class[] {String.class});
+                soapFactoryNewInstanceProtocolMethod = SOAPFactory.class.getMethod("newInstance", new Class[] {String.class});
             } catch (Exception e) {
                 // TODO Might want to log this.
                 // Flow to here indicates that the installed SAAJ model does not support version 1.3

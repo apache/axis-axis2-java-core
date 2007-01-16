@@ -14,8 +14,16 @@
 package org.apache.axis2.jaxws.sample.faultsservice;
 
 import javax.jws.WebService;
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
+import javax.xml.soap.SOAPFault;
 import javax.xml.ws.Holder;
+import javax.xml.ws.soap.SOAPFaultException;
 
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axis2.saaj.SOAPEnvelopeImpl;
 import org.test.polymorphicfaults.BaseFault;
 import org.test.polymorphicfaults.ComplexFault;
 import org.test.polymorphicfaults.DerivedFault1;
@@ -91,10 +99,20 @@ System.out.println("\nIn getQuote(): " + tickerSymbol + "\n");
             df.setB(b); 
             df.setC(c); 
             throw new BaseFault_Exception("Server throws BaseFault_Exception", df);
+        } else if (b.equals("SOAPFaultException")) {
+            try {
+                SOAPFault soapFault = createSOAPFault();
+                soapFault.setFaultString("hello world");
+                QName faultCode = new QName("urn://sample", "faultCode");
+                soapFault.setFaultCode(faultCode);
+                soapFault.setFaultActor("actor");
+                throw new SOAPFaultException(soapFault);
+            } catch (SOAPException se) {}
+        } else if (b.equals("NPE")) {
+            throw new NullPointerException();
         }
         return 0;
     }
-
 
     /**
      * Returns a fault bean or throws a wrapper exception
@@ -117,5 +135,22 @@ System.out.println("\nIn getQuote(): " + tickerSymbol + "\n");
         df.setA(a + 1); 
         df.setB("Server: " + b); 
         throw new EqualFault("Server throws EqualFault", df);
+    }
+    
+    SOAPFault createSOAPFault() throws SOAPException {
+        SOAPFault soapFault = null;
+    
+        // REVIEW: The following does not work due to Axis2 SAAJ problems.
+        //
+        // SOAPFactory soapFactory = SOAPFactory.newInstance();
+        // SOAPFault soapFault = soapFactory.createFault();
+        
+        // Alternate Approach
+        org.apache.axiom.soap.SOAPFactory asf = DOOMAbstractFactory.getSOAP11Factory();
+        org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl axiomEnv = (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl) asf.createSOAPEnvelope();
+        javax.xml.soap.SOAPEnvelope env = new SOAPEnvelopeImpl(axiomEnv);
+        SOAPBody body = env.addBody();
+        soapFault = body.addFault();
+        return soapFault;
     }
 }

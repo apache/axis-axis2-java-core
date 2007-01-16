@@ -121,9 +121,9 @@ public class SAAJConverterImpl implements SAAJConverter {
 	public OMElement toOM(SOAPElement soapElement) throws MessageException {
 		// Get a XMLStreamReader backed by a SOAPElement tree
 		XMLStreamReader reader = new SOAPElementReader(soapElement);
-		// Get a OM Builder.  Passing null causes the version to be automatically triggered
-		StAXOMBuilder builder = new StAXOMBuilder(reader);  
-		// Create and return the OM Envelope
+		// Get a OM Builder.  
+        StAXOMBuilder builder = new StAXOMBuilder(reader);  
+		// Create and return the Element
 		OMElement om = builder.getDocumentElement();
 		return om;
 	}

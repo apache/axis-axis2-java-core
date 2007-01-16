@@ -3,7 +3,10 @@
  */
 package org.apache.axis2.jaxws.sample;
 
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPFault;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.faultsservice.BaseFault_Exception;
@@ -253,5 +256,65 @@ public class FaultsServiceTests extends TestCase {
         } catch (Exception e) {
             fail("Wrong exception thrown.  Expected DerivedFault1_Exception but received " + e.getClass());
         }
+    }
+    
+    /**
+     * Tests that that SOAPFaultException is thrown 
+     * The AXIS2 SAAJ Fault model contains problems, which 
+     * cause the following test to fail.
+     */
+    public void _testFaultsService9(){
+        Exception exception = null;
+        try{
+            FaultsServicePortType proxy = getProxy();
+            
+            // the invoke will throw an exception, if the test is performed right
+            int total = proxy.throwFault(2, "SOAPFaultException", 2);  // "SOAPFaultException" will cause service to throw SOAPFaultException
+            
+        }catch(SOAPFaultException e){
+            // Okay
+            exception = e;
+        } catch (Exception e) {
+            fail("Did not get a SOAPFaultException");
+        }
+        
+        System.out.println("----------------------------------");
+        
+        assertNotNull(exception);
+        SOAPFaultException sfe = (SOAPFaultException) exception;
+        SOAPFault soapFault = sfe.getFault();
+        assertTrue(soapFault != null);
+        assertTrue(soapFault.getFaultString().equals("hello world"));
+        QName faultCode = soapFault.getFaultCodeAsQName();
+        assertTrue(faultCode.getNamespaceURI().equals("urn://sample"));
+        assertTrue(faultCode.getLocalPart().equals("faultCode"));
+        assertTrue(soapFault.getFaultActor().equals("actor"));
+    }
+    
+    /**
+     * Tests that that SOAPFaultException (NPE) is thrown 
+     */
+    public void testFaultsService10(){
+        Exception exception = null;
+        try{
+            FaultsServicePortType proxy = getProxy();
+            
+            // the invoke will throw an exception, if the test is performed right
+            int total = proxy.throwFault(2, "NPE", 2);  // "NPE" will cause service to throw NPE System Exception
+            
+        }catch(SOAPFaultException e){
+            // Okay
+            exception = e;
+        } catch (Exception e) {
+            fail("Did not get a SOAPFaultException");
+        }
+        
+        System.out.println("----------------------------------");
+        
+        assertNotNull(exception);
+        SOAPFaultException sfe = (SOAPFaultException) exception;
+        SOAPFault soapFault = sfe.getFault();
+        assertTrue(soapFault != null);
+        assertTrue(soapFault.getFaultString().contains("NullPointerException"));
     }
 }
