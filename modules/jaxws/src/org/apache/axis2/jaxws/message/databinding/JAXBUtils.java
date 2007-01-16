@@ -504,7 +504,9 @@ public class JAXBUtils {
                             // by JAXB should be added.
                             if(!clazz.isInterface()
                                     && ClassUtils.getDefaultPublicConstructor(clazz) != null
-                                    && !ClassUtils.isJAXWSClass(clazz)){
+                                    && !ClassUtils.isJAXWSClass(clazz) 
+                                    && !ClassUtils.isObjectFactory(clazz)
+                                    && !ClassUtils.isPackageInfo(clazz)){
                                 if (log.isDebugEnabled()) {
                                     log.debug("Adding class: " + file);
                                 }
@@ -554,14 +556,12 @@ public class JAXBUtils {
 	        			while(entries.hasMoreElements()){
 	        				JarEntry je = entries.nextElement();
 	        				String clazzName = je.getName();
-	        				if(clazzName.endsWith(".class")){
-	        					//We are only going to add the class that belong to the provided package.
-	        					String pathInfo = clazzName.substring(0,clazzName.lastIndexOf("/"));
-	        					if(pathInfo.equals(path)){
-	        						//Add to class list here.
-	        						clazzName = clazzName.substring (0, clazzName.length () - 6);
-	        	                    clazzName = clazzName.replace ('/', '.').replace ('\\', '.').replace (':', '.');
-
+	        				if(clazzName!=null && clazzName.endsWith(".class")){
+		        				//Add to class list here.
+		        				clazzName = clazzName.substring (0, clazzName.length() - 6);
+		        	            clazzName = clazzName.replace ('/', '.').replace ('\\', '.').replace (':', '.');
+		        	            //We are only going to add the class that belong to the provided package.
+		        				if(clazzName.startsWith(pkg)){
 	        						 try {
 	        	                            Class clazz = Class.forName(clazzName, 
 	        	                                    false, 
@@ -571,7 +571,9 @@ public class JAXBUtils {
 	        	                            // by JAXB should be added.
 	        	                            if(!clazz.isInterface()
 	        	                                    && ClassUtils.getDefaultPublicConstructor(clazz) != null
-	        	                                    && !ClassUtils.isJAXWSClass(clazz)){
+	        	                                    && !ClassUtils.isJAXWSClass(clazz) 
+	        	                                    && !ClassUtils.isObjectFactory(clazz)
+	        	                                    && !ClassUtils.isPackageInfo(clazz)){
 	        	                                if (log.isDebugEnabled()) {
 	        	                                    log.debug("Adding class: " + clazzName);
 	        	                                }
