@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.namespace.QName;
@@ -205,32 +206,27 @@ public abstract class AbstractHTTPSender {
      */
     protected void obtainHTTPHeaderInformation(HttpMethodBase method,
                                                MessageContext msgContext) {
-        Header header =
-                method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+       	Map transportHeaders =  new CommonsTransportHeaders(method.getResponseHeaders());
+    	msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,transportHeaders);
+        Header header =method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
 
         if (header != null) {
-            HeaderElement[] headers = header.getElements();
-
-            for (int i = 0; i < headers.length; i++) {
-                NameValuePair charsetEnc =
-                        headers[i].getParameterByName(
-                                HTTPConstants.CHAR_SET_ENCODING);
-                OperationContext opContext = msgContext.getOperationContext();
-                String name = headers[i].getName();
-                if (name.equalsIgnoreCase(
-                        HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)) {
-                    if (opContext != null) {
-                        opContext.setProperty(
-                                HTTPConstants.MTOM_RECEIVED_CONTENT_TYPE,
-                                header.getValue());
-                    }
-                } else if (charsetEnc != null) {
-                    if (opContext != null) {
-                        opContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                                              charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
-                    }
-                }
-            }
+        	HeaderElement[] headers = header.getElements();
+        	OperationContext opContext = msgContext.getOperationContext();
+        	
+        	if (opContext != null) {
+        		opContext.setProperty(
+        				HTTPConstants.CONTENT_TYPE,header.getValue());
+        
+        	for (int i = 0; i < headers.length; i++) {
+        		NameValuePair charsetEnc =headers[i].getParameterByName(
+        				HTTPConstants.CHAR_SET_ENCODING);
+        		if (charsetEnc != null) {
+        				opContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+        						charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
+        		}
+        	}
+        	}
         }
 
         String sessionCookie = null;
@@ -268,25 +264,19 @@ public abstract class AbstractHTTPSender {
         obtainHTTPHeaderInformation(httpMethod, msgContext);
 
         InputStream in = httpMethod.getResponseBodyAsStream();
-
+        if (in == null) {
+            throw new AxisFault(Messages.getMessage("canNotBeNull", "InputStream"));
+        }
         Header contentEncoding =
                 httpMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_ENCODING);
         if (contentEncoding != null) {
             if (contentEncoding.getValue().
                     equalsIgnoreCase(HTTPConstants.COMPRESSION_GZIP)) {
-                in =
-                        new GZIPInputStream(in);
+                in =new GZIPInputStream(in);
             } else {
-                throw new AxisFault("HTTP :"
-                                    + "unsupported content-encoding of '"
-                                    + contentEncoding.getValue()
-                                    + "' found");
+                throw new AxisFault("HTTP :"+ "unsupported content-encoding of '"
+                                    + contentEncoding.getValue()+ "' found");
             }
-        }
-
-        if (in == null) {
-            throw new AxisFault(
-                    Messages.getMessage("canNotBeNull", "InputStream"));
         }
 
         if (msgContext.getOperationContext() != null) {

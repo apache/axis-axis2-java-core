@@ -228,10 +228,8 @@ class OutInAxisOperationClient extends OperationClient {
                         engine.receiveFault(response);
                         if (options.isExceptionToBeThrownOnSOAPFault()) {
                             // does the SOAPFault has a detail element for Excpetion
-
                             throw new AxisFault(soapFault.getCode(), soapFault.getReason(),
                                     soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
-
                         }
                     }
                 }
@@ -262,6 +260,8 @@ class OutInAxisOperationClient extends OperationClient {
 
         responseMessageContext.setServerSide(false);
         responseMessageContext.setMessageID(msgctx.getMessageID());
+        // FIXME Is the internal logic correct (thilina)
+        // Internally this registers the opContext not the msgContext
         addMessageContext(responseMessageContext);
         responseMessageContext.setServiceContext(msgctx.getServiceContext());
         responseMessageContext.setAxisMessage(
@@ -270,15 +270,16 @@ class OutInAxisOperationClient extends OperationClient {
         //sending the message
         engine.send(msgctx);
         responseMessageContext.setDoingREST(msgctx.isDoingREST());
-
         responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
                 .getProperty(MessageContext.TRANSPORT_IN));
         responseMessageContext.setTransportIn(msgctx.getTransportIn());
         responseMessageContext.setTransportOut(msgctx.getTransportOut());
+		responseMessageContext.setProperty(MessageContext.TRANSPORT_HEADERS,
+				msgctx.getProperty(MessageContext.TRANSPORT_HEADERS));
 
-        if (responseMessageContext.getEnvelope() == null) {
-            // If request is REST we assume the responseMessageContext is REST, so
-            // set the variable
+		if (responseMessageContext.getEnvelope() == null) {
+			// If request is REST we assume the responseMessageContext is REST,
+			// so set the variable
 
             SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(
                     responseMessageContext, msgctx.getEnvelope().getNamespace()

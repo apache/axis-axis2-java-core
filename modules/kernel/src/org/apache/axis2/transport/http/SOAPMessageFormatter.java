@@ -17,11 +17,9 @@
 package org.apache.axis2.transport.http;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.zip.GZIPOutputStream;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -29,36 +27,18 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.MIMEOutputUtils;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.commons.httpclient.methods.RequestEntity;
 
-public class SOAPMessageFormatter implements MessageFormatter {
-	private byte[] bytes;
+public class SOAPMessageFormatter implements MessageFormatter{
 
-	private OMElement element;
-
-	private MessageContext msgCtxt;
-
-	private String soapActionString;
-
-	private OMOutputFormat format;
-	
-	private URL targetURL;
-
-	public SOAPMessageFormatter(MessageContext msgCtxt, String soapActionString,
-			OMOutputFormat format, URL targetURL) {
-		this.msgCtxt = msgCtxt;
-		this.soapActionString = soapActionString;
-		this.format = format;
-		this.element = msgCtxt.getEnvelope();
-		this.targetURL = targetURL;
-	}
-
-	public void handleOMOutput(OutputStream out, boolean preserve)
-			throws AxisFault {
+	public void writeTo(MessageContext msgCtxt, OMOutputFormat format,
+			OutputStream out, boolean preserve) throws AxisFault {
+		OMElement element = msgCtxt.getEnvelope();
 		try {
 			if (!(format.isOptimized()) & format.isDoingSWA()) {
 				StringWriter bufferedSOAPBody = new StringWriter();
@@ -67,9 +47,7 @@ public class SOAPMessageFormatter implements MessageFormatter {
 				} else {
 					element.serializeAndConsume(bufferedSOAPBody, format);
 				}
-				MIMEOutputUtils.writeSOAPWithAttachmentsMessage(
-						bufferedSOAPBody, out, msgCtxt.getAttachmentMap(),
-						format);
+				writeSwAMessage(msgCtxt,bufferedSOAPBody,out,format);
 			} else {
 				if (preserve) {
 					element.serialize(out, format);
@@ -82,7 +60,9 @@ public class SOAPMessageFormatter implements MessageFormatter {
 		}
 	}
 
-	public byte[] getBytes() throws AxisFault {
+	public byte[] getBytes(MessageContext msgCtxt, OMOutputFormat format)
+			throws AxisFault {
+		OMElement element = msgCtxt.getEnvelope();
 		try {
 			ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
 			if (!format.isOptimized()) {
@@ -92,9 +72,7 @@ public class SOAPMessageFormatter implements MessageFormatter {
 				if (format.isDoingSWA()) {
 					StringWriter bufferedSOAPBody = new StringWriter();
 					element.serializeAndConsume(bufferedSOAPBody, format2);
-					MIMEOutputUtils.writeSOAPWithAttachmentsMessage(
-							bufferedSOAPBody, bytesOut, msgCtxt
-									.getAttachmentMap(), format2);
+					writeSwAMessage(msgCtxt,bufferedSOAPBody,bytesOut,format);
 				} else {
 					element.serializeAndConsume(bytesOut, format2);
 				}
@@ -110,26 +88,16 @@ public class SOAPMessageFormatter implements MessageFormatter {
 		}
 	}
 
-	public long getContentLength() {
-		try {
-			if (bytes == null) {
-				bytes = getBytes();
-			}
-			return bytes.length;
-
-		} catch (AxisFault e) {
-			return -1;
-		}
-	}
-
-	public String getContentType() {
+	public String getContentType(MessageContext msgCtxt, OMOutputFormat format,
+			String soapActionString) {
 		String encoding = format.getCharSetEncoding();
 		String contentType = format.getContentType();
 		if (encoding != null) {
 			contentType += "; charset=" + encoding;
 		}
 
-		// action header is not mandated in SOAP 1.2. So putting it, if available
+		// action header is not mandated in SOAP 1.2. So putting it, if
+		// available
 		if (!msgCtxt.isSOAP11() && (soapActionString != null)
 				&& !"".equals(soapActionString.trim())
 				&& !"\"\"".equals(soapActionString.trim())) {
@@ -138,24 +106,65 @@ public class SOAPMessageFormatter implements MessageFormatter {
 		return contentType;
 	}
 
-	public String getSOAPAction() {
-		//if SOAP 1.2 we attach the soap action to the content-type
-		//No need to set it as a header.
-        if (msgCtxt.isSOAP11()) {
-            if ("".equals(soapActionString)){
-             return  "\"\"";
-            }else{
-                if (soapActionString != null && !soapActionString.startsWith("\"")) {  // SOAPAction string must be a quoted string
-                    soapActionString = "\"" + soapActionString + "\"";
-                }
-                return soapActionString;
-            }
-        } 
-        return null;
+	public String formatSOAPAction(MessageContext msgCtxt, OMOutputFormat format,
+			String soapActionString) {
+		// if SOAP 1.2 we attach the soap action to the content-type
+		// No need to set it as a header.
+		if (msgCtxt.isSOAP11()) {
+			if ("".equals(soapActionString)) {
+				return "\"\"";
+			} else {
+				if (soapActionString != null
+						&& !soapActionString.startsWith("\"")) { 
+					// SOAPAction string must be a quoted string
+					soapActionString = "\"" + soapActionString + "\"";
+				}
+				return soapActionString;
+			}
+		}
+		return null;
 	}
 
-	public URL getTargetAddress() {
+	public URL getTargetAddress(MessageContext msgCtxt, OMOutputFormat format,
+			URL targetURL) {
 		// SOAP do not want to alter the target URL
 		return targetURL;
 	}
+	
+	private void writeSwAMessage(MessageContext msgCtxt,
+			StringWriter bufferedSOAPBody, OutputStream outputStream,
+			OMOutputFormat format) {
+		Object property = msgCtxt
+				.getProperty(Constants.Configuration.MM7_COMPATIBLE);
+		boolean MM7CompatMode = false;
+		if (property != null) {
+			MM7CompatMode = JavaUtils.isTrueExplicitly(property);
+		}
+		if (!MM7CompatMode) {
+			MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,
+					outputStream, msgCtxt.getAttachmentMap(), format);
+		} else {
+			String innerBoundary;
+			String partCID;
+			Object innerBoundaryProperty = msgCtxt
+					.getProperty(Constants.Configuration.MM7_INNER_BOUNDARY);
+			if (innerBoundaryProperty != null) {
+				innerBoundary = (String) innerBoundaryProperty;
+			} else {
+				innerBoundary = "innerBoundary"
+						+ UUIDGenerator.getUUID().replace(':', '_');
+			}
+			Object partCIDProperty = msgCtxt
+					.getProperty(Constants.Configuration.MM7_PART_CID);
+			if (partCIDProperty != null) {
+				partCID = (String) partCIDProperty;
+			} else {
+				partCID = "innerCID"
+						+ UUIDGenerator.getUUID().replace(':', '_');
+			}
+			MIMEOutputUtils.writeMM7Message(bufferedSOAPBody, outputStream,
+					msgCtxt.getAttachmentMap(), format, partCID, innerBoundary);
+		}
+	}
+	
 }

@@ -242,6 +242,9 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String FILE_SIZE_THRESHOLD = "sizeThreshold";
         public static final String ENABLE_SWA = "enableSwA";
         public static final String MIME_BOUNDARY = "mimeBoundary";
+        public static final String MM7_COMPATIBLE = "MM7Compatible";
+        public static final String MM7_INNER_BOUNDARY = "MM7InnerBoundary";
+        public static final String MM7_PART_CID = "MM7PartCID";
         
         
         public static final String HTTP_METHOD_GET = "GET";

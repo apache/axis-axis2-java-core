@@ -25,6 +25,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
@@ -47,6 +48,10 @@ public class AxisRequestEntity implements RequestEntity {
 	
 	private boolean isAllowedRetry;
 	
+	private OMOutputFormat format;
+	
+	private String soapAction;
+	
 	/**
 	 * Method calls to this request entity are delegated to the following Axis2
 	 * message formatter object.
@@ -54,16 +59,18 @@ public class AxisRequestEntity implements RequestEntity {
 	 * @param messageFormatter
 	 */
 	public AxisRequestEntity(MessageFormatter messageFormatter,
-			MessageContext msgContext, boolean chunked,boolean isAllowedRetry) {
+			MessageContext msgContext, OMOutputFormat format,String soapAction, boolean chunked,boolean isAllowedRetry) {
 		this.messageFormatter = messageFormatter;
 		this.messageContext = msgContext;
 		this.chunked = chunked;
         this.isAllowedRetry = isAllowedRetry;
+        this.format = format;
+        this.soapAction = soapAction;
 	}
 	
 	public boolean isRepeatable() {
 		// All Axis2 request entity implementations were returning this true
-		// So it is true here
+		// So we return true as defualt
 		return true;
 	}
 	
@@ -75,10 +82,10 @@ public class AxisRequestEntity implements RequestEntity {
 		}
 		try {
 			if (chunked) {
-				messageFormatter.handleOMOutput(outStream, isAllowedRetry);
+				messageFormatter.writeTo(messageContext,format,outStream, isAllowedRetry);
 			} else {
 				if (bytes == null) {
-					bytes = messageFormatter.getBytes();
+					bytes = messageFormatter.getBytes(messageContext,format);
 				}
 				outStream.write(bytes);
 			}
@@ -99,10 +106,17 @@ public class AxisRequestEntity implements RequestEntity {
 		{
 			return -1;
 		}
-		return messageFormatter.getContentLength();
+		if (bytes == null) {
+			try {
+				bytes = messageFormatter.getBytes(messageContext, format);
+			} catch (AxisFault e) {
+					return -1;
+			}
+		}
+		return bytes.length;
 	}
 	
 	public String getContentType() {
-		return messageFormatter.getContentType();
+		return messageFormatter.getContentType(messageContext,format,soapAction);
 	}
 }

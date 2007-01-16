@@ -57,17 +57,17 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         }
 
 		MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(
-				msgContext, soapActionString, format, url);
-		url = messageFormatter.getTargetAddress();
+				msgContext);
+		url = messageFormatter.getTargetAddress(msgContext,format,url);
 		postMethod.setPath(url.getPath());
 		postMethod.setRequestEntity(new AxisRequestEntity(messageFormatter,
-				msgContext, chunked, isAllowedRetry));
+				msgContext,format,soapActionString, chunked, isAllowedRetry));
 
 		if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
 			postMethod.setContentChunked(true);
 		}
 
-		String soapAction = messageFormatter.getSOAPAction();
+		String soapAction = messageFormatter.formatSOAPAction(msgContext,format,soapActionString);
 		if (soapAction!=null) {
                postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
         } 

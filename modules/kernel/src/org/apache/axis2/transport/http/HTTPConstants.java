@@ -458,7 +458,7 @@ public class HTTPConstants {
     public static final String COOKIE_STRING = "Cookie";
     public static final String HTTP_METHOD_GET = "GET";
     public static final String HTTP_METHOD_POST = "POST";
-    public static final String CONTENT_TYPE = "ContentType";
+    public static final String CONTENT_TYPE = "Content-Type";
 
     /**
      * Method getBytes.

@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.Map;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
@@ -45,6 +46,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.SOAPMessageFormatter;
+import org.apache.axis2.transport.http.TransportHeaders;
 import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Loader;
@@ -64,16 +66,20 @@ public class TransportUtils {
 			if (inStream == null) {
 				throw new AxisFault(Messages.getMessage("inputstreamNull"));
 			}
-			Object contentType;
+			Object contentTypeObject;
 			boolean isMIME = false;
+			
+			contentTypeObject = msgContext.getProperty(HTTPConstants.CONTENT_TYPE);
 
-			contentType = msgContext.getProperty(HTTPConstants.MTOM_RECEIVED_CONTENT_TYPE);
-			
-			//TODO: we can improve this logic
-			if (contentType!=null){
-				isMIME=true;
+			String contentType=null;
+			if(contentTypeObject!=null){
+				contentType =(String) contentTypeObject;
+				if (JavaUtils.indexOfIgnoreCase(contentType,
+						HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
+					isMIME = true;
+				}
 			}
-			
+
 			String charSetEnc = (String) msgContext
 					.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 			if (charSetEnc == null) {
@@ -94,6 +100,87 @@ public class TransportUtils {
 		} catch (FactoryConfigurationError e) {
 			throw new AxisFault(e);
 		}
+//    	boolean isMIME=false;
+//		try {
+//			InputStream inStream = (InputStream) msgContext
+//					.getProperty(MessageContext.TRANSPORT_IN);
+//
+//			msgContext.setProperty(MessageContext.TRANSPORT_IN, null);
+//
+//			// this inputstram is set by the TransportSender represents a two
+//			// way transport or by a Transport Recevier
+//			if (inStream == null) {
+//				throw new AxisFault(Messages.getMessage("inputstreamNull"));
+//			}
+//			
+//			Map transportHeaders = (Map)msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+//			
+//			// This causes the transport headers to be initialized. We've been
+//			// anyway iterating through the headers. So this is not bad
+//			// for the moment.But there is a possibility to improve.
+//			Object contentTypeObject = transportHeaders.get(HTTPConstants.CONTENT_TYPE);
+//			if (contentTypeObject==null)
+//			{
+//				contentTypeObject = transportHeaders.get(HTTPConstants.CONTENT_TYPE.toLowerCase());
+//			}
+//			String contentType;
+//			if(contentTypeObject!=null)
+//			  contentType =(String) contentTypeObject;
+//			else
+//				throw new AxisFault("Content Type Cannot be null");
+//			
+//			if (JavaUtils.indexOfIgnoreCase(contentType,
+//					HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
+//				// It is MIME (MTOM or SwA)
+//				isMIME = true;
+//			}
+//			
+//            // get the type of char encoding &  setting the value in msgCtx
+//            String charSetEnc = Builder.getCharSetEncoding(contentType);
+//            if(charSetEnc == null){
+//                charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+//            }
+//            msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+//            
+//            String soapNS = null;
+//            if (contentType != null) {
+//    			if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+//    				soapNS = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+//    			} else if (contentType
+//    					.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+//    				soapNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+//    			}
+////    			if (JavaUtils.indexOfIgnoreCase(contentType,
+////    					HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
+////    				// It is MIME (MTOM or SwA)
+////    				isMIME = true;
+////    			}
+////    			else if (soapVersion == VERSION_SOAP11) {
+////    				// Deployment configuration parameter
+////    				Parameter enableREST = msgContext
+////    						.getParameter(Constants.Configuration.ENABLE_REST);
+////    				if ((msgContext.getSoapAction() == null) && (enableREST != null)) {
+////    					if (Constants.VALUE_TRUE.equals(enableREST.getValue())) {
+////    						// If the content Type is text/xml (BTW which is the
+////    						// SOAP 1.1 Content type ) and the SOAP Action is
+////    						// absent it is rest !!
+////    						msgContext.setDoingREST(true);
+////    					}
+////    				}
+////    			}
+//    		}
+//
+//			return createSOAPMessage(msgContext, inStream, soapNS,
+//					isMIME, (String) contentType, charSetEnc);
+//		} catch (AxisFault e) {
+//			throw e;
+//		} catch (OMException e) {
+//			throw new AxisFault(e);
+//		} catch (XMLStreamException e) {
+//			throw new AxisFault(e);
+//		} catch (FactoryConfigurationError e) {
+//			throw new AxisFault(e);
+//		}
 	}
 
     /**
@@ -116,25 +203,26 @@ public class TransportUtils {
 			InputStream inStream, String soapNamespaceURI, boolean isMIME,
 			String contentType, String charSetEnc) throws AxisFault,
 			OMException, XMLStreamException, FactoryConfigurationError {
-    	OMBuilder builder;
+    	OMBuilder builder=null;
 		OMElement documentElement;
 		if (isMIME) {
-			msgContext.setDoingMTOM(true);
 			builder = Builder.getAttachmentsBuilder(
 					msgContext, inStream, (String) contentType, !(msgContext
 							.isDoingREST()));
 		} else if (msgContext.isDoingREST()) {
 			builder = Builder.getPOXBuilder(inStream,
 					charSetEnc, soapNamespaceURI);
-		} else if (soapNamespaceURI!=null){
-				builder = Builder.getBuilder(inStream, charSetEnc,soapNamespaceURI);
-		}else
+//		} else if (soapNamespaceURI!=null){
+//				builder = Builder.getBuilder(inStream, charSetEnc,soapNamespaceURI);
+		}else if (contentType!=null)
 		{
 			builder = Builder.getBuilderFromSelector(contentType, inStream, msgContext);
 		}
 		if (builder==null)
 		{
-			throw new AxisFault("Cannot find a matching builder for the message. Unsupported Content Type.");
+			//FIXME making soap defualt for the moment..might effect the performance
+			builder = Builder.getBuilder(inStream, charSetEnc,soapNamespaceURI);
+//			throw new AxisFault("Cannot find a matching builder for the message. Unsupported Content Type.");
 		}
 		
 		documentElement = builder.getDocumentElement();
@@ -212,68 +300,28 @@ public class TransportUtils {
     /**
      * Initial work for a builder selector which selects the builder for a given message format based on the the content type of the recieved message.
      * content-type to builder mapping can be specified through the Axis2.xml.
-     * @param contentType
      * @param msgContext
      * @return the builder registered against the given content-type
      * @throws AxisFault
      */
-    public static MessageFormatter getMessageFormatter(
-			MessageContext msgContext, String soapActionString,
-			OMOutputFormat format, URL targetURL) throws AxisFault {
+    public static MessageFormatter getMessageFormatter(MessageContext msgContext) 
+    				throws AxisFault {
 		MessageFormatter messageFormatter = null;
 		String messageFormatString = getMessageFormatterProperty(msgContext);
 		if (messageFormatString != null) {
-			String formatterClassName = msgContext.getConfigurationContext()
-					.getAxisConfiguration().getMessageFormatter(
-							messageFormatString);
-			if (formatterClassName != null) {
-				try {
-					Class formatterClass = Loader.loadClass(formatterClassName);
-					Constructor constructor = formatterClass
-							.getConstructor(new Class[] {MessageContext.class, String.class,
-									OMOutputFormat.class, URL.class});
-					messageFormatter = (MessageFormatter) constructor
-							.newInstance(new Object[] { msgContext,
-									soapActionString, format, targetURL });
-				} catch (ClassNotFoundException e) {
-					throw new AxisFault("Specified Builder class ("
-							+ formatterClassName + ") cannot be found.", e);
-				} catch (InstantiationException e) {
-					throw new AxisFault(
-							"Cannot instantiate the specified Builder Class  : "
-									+ formatterClassName + ".", e);
-				} catch (IllegalAccessException e) {
-					throw new AxisFault(
-							"Cannot instantiate the specified Builder Class : "
-									+ formatterClassName + ".", e);
-				} catch (SecurityException e) {
-					throw new AxisFault(
-							"Permission problem when instantiating the specified Builder Class : "
-									+ formatterClassName + ".", e);
-				} catch (NoSuchMethodException e) {
-					throw new AxisFault(
-							"Required constructor is not found in the specified Builder Class : "
-									+ formatterClassName + ".", e);
-				} catch (IllegalArgumentException e) {
-					throw new AxisFault(
-							"Required constructor is not found in the specified Builder Class : "
-									+ formatterClassName + ".", e);
-				} catch (InvocationTargetException e) {
-					throw new AxisFault(
-							"Required constructor is not found in the specified Builder Class : "
-									+ formatterClassName + ".", e);
-				}
+			messageFormatter = msgContext.getConfigurationContext()
+					.getAxisConfiguration().getMessageFormatter(messageFormatString);
+			
 			}
-		}
 		if (messageFormatter == null) {
 			// Lets default to SOAP formatter
-			messageFormatter = new SOAPMessageFormatter(msgContext,
-					soapActionString, format, targetURL);
+			//TODO need to improve this to use the stateless nature
+			messageFormatter = new SOAPMessageFormatter();
 		}
 		return messageFormatter;
 	}
     
-    public static String getMessageFormatterProperty(MessageContext msgContext) {
+    private static String getMessageFormatterProperty(MessageContext msgContext) {
 		String messageFormatterProperty = null;
 		Object property = msgContext
 				.getProperty(Constants.Configuration.MESSAGE_TYPE);

@@ -22,6 +22,7 @@ import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
+import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -160,7 +161,7 @@ public class AxisConfiguration extends AxisDescription {
 	 * @param messageBuilder
 	 */
 	public void addMessageBuilder(String contentType,
-			String messageBuilder) {
+			Class messageBuilder) {
 		messageBuilders.put(contentType, messageBuilder);
 	}
 	
@@ -173,7 +174,7 @@ public class AxisConfiguration extends AxisDescription {
 	 * @param messageFormatter
 	 */
 	public void addMessageFormatter(String contentType,
-			String messageFormatter) {
+			MessageFormatter messageFormatter) {
 		messageFormatters.put(contentType, messageFormatter);
 	}
 
@@ -585,8 +586,8 @@ public class AxisConfiguration extends AxisDescription {
 	 * @return the configured message builder implementation class name against
 	 *         the given content type.
 	 */
-    public String getMessageBuilder(String contentType) {
-        return (String) messageBuilders.get(contentType);
+    public Class getMessageBuilder(String contentType) {
+        return (Class) messageBuilders.get(contentType);
     }
     
     /**
@@ -594,8 +595,8 @@ public class AxisConfiguration extends AxisDescription {
 	 * @return the configured message formatter implementation class name
 	 *         against the given content type.
 	 */
-    public String getMessageFormatter(String contentType) {
-        return (String) messageFormatters.get(contentType);
+    public MessageFormatter getMessageFormatter(String contentType) {
+        return (MessageFormatter) messageFormatters.get(contentType);
     }
 
     /**

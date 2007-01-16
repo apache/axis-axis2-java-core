@@ -194,7 +194,7 @@ public class Builder {
 				//Creates the MTOM specific MTOMStAXSOAPModelBuilder
 				builder = new MTOMStAXSOAPModelBuilder(streamReader,
 						attachments, soapEnvelopeNamespaceURI);
-
+				msgContext.setDoingMTOM(true);
 			} else if (attachments.getAttachmentSpecType().equals(
 					MTOMConstants.SWA_TYPE)) {
 				builder = new StAXSOAPModelBuilder(streamReader,
@@ -314,38 +314,30 @@ public class Builder {
      */
     public static OMBuilder getBuilderFromSelector(String contentType,
 			InputStream inputStream, MessageContext msgContext) throws AxisFault {
-		String builderClassName = msgContext.getConfigurationContext()
+    	int index = contentType.indexOf(';');
+		if (index!= 0)
+    	{
+    		contentType = contentType.substring(0,index);
+    	}
+		Class builderClass = msgContext.getConfigurationContext()
 				.getAxisConfiguration().getMessageBuilder(contentType);
-
-		if (builderClassName != null) {
+		if (builderClass != null) {
 			try {
-				Class builderClass = Loader.loadClass(builderClassName);
-				Constructor constructor = builderClass
-						.getConstructor(new Class[] { InputStream.class });
-				OMBuilder builder = (OMBuilder) constructor
-						.newInstance(new Object[] { inputStream });
+				OMBuilder builder = (OMBuilder) builderClass.newInstance();
+				builder.init(inputStream);
+				
+				// Setting the message type to make sure that we respond using the same message format
+				String messageType = builder.getMessageType();
+				if (messageType != null) {
+					msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, messageType);
+				}
 				return builder;
-			} catch (ClassNotFoundException e) {
-				throw new AxisFault("Specified Builder class ("
-						+ builderClassName + ") cannot be found.", e);
 			} catch (InstantiationException e) {
 				throw new AxisFault("Cannot instantiate the specified Builder Class  : "
-								+ builderClassName + ".", e);
+								+ builderClass.getName() + ".", e);
 			} catch (IllegalAccessException e) {
 				throw new AxisFault("Cannot instantiate the specified Builder Class : "
-								+ builderClassName + ".", e);
-			} catch (SecurityException e) {
-				throw new AxisFault("Permission problem when instantiating the specified Builder Class : "
-								+ builderClassName + ".", e);
-			} catch (NoSuchMethodException e) {
-				throw new AxisFault("Required constructor is not found in the specified Builder Class : "
-								+ builderClassName + ".", e);
-			} catch (IllegalArgumentException e) {
-				throw new AxisFault("Required constructor is not found in the specified Builder Class : "
-								+ builderClassName + ".", e);
-			} catch (InvocationTargetException e) {
-				throw new AxisFault("Required constructor is not found in the specified Builder Class : "
-								+ builderClassName + ".", e);
+								+ builderClass.getName() + ".", e);
 			}
 		}
 		return null;

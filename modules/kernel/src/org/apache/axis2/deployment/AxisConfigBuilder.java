@@ -29,6 +29,7 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.Phase;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseException;
+import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.TargetResolver;
@@ -142,7 +143,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 Iterator keys = builderSelector.keySet().iterator();
                 while (keys.hasNext()) {
                     String key = (String) keys.next();
-                    axisConfig.addMessageBuilder(key, (String) builderSelector.get(key));
+                    axisConfig.addMessageBuilder(key, (Class) builderSelector.get(key));
                 }
             }
             
@@ -153,7 +154,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 Iterator keys = messageFormatters.keySet().iterator();
                 while (keys.hasNext()) {
                     String key = (String) keys.next();
-                    axisConfig.addMessageFormatter(key, (String) messageFormatters.get(key));
+                    axisConfig.addMessageFormatter(key, (MessageFormatter) messageFormatters.get(key));
                 }
             }
 

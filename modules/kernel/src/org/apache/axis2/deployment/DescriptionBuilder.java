@@ -50,6 +50,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.PolicyReference;
+import org.omg.CORBA.OBJ_ADAPTER;
 
 /**
  * This class does the common tasks for all *Builder class.
@@ -214,9 +215,9 @@ public class DescriptionBuilder implements DeploymentConstants {
 		while (msgBuilders.hasNext()) {
 			OMElement msgBuilderElement = (OMElement) msgBuilders.next();
 			final OMElement tempMsgBuilder = msgBuilderElement;
-			String builderClassName = null;
+			Class builderClass = null;
 			try {
-				builderClassName = findAndValidateSelectorClass(tempMsgBuilder,
+				builderClass = findAndValidateSelectorClass(tempMsgBuilder,
 						DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_BUILDER);
 			} catch (PrivilegedActionException e) {
 				throw (DeploymentException) e.getException();
@@ -224,7 +225,7 @@ public class DescriptionBuilder implements DeploymentConstants {
 			OMAttribute contentTypeAtt = msgBuilderElement
 					.getAttribute(new QName(TAG_CONTENT_TYPE));
 			builderSelector.put(contentTypeAtt.getAttributeValue(),
-					builderClassName);
+					builderClass);
 		}
 		return builderSelector;
 	}
@@ -242,41 +243,54 @@ public class DescriptionBuilder implements DeploymentConstants {
 		while (msgFormatters.hasNext()) {
 			OMElement msgFormatterElement = (OMElement) msgFormatters.next();
 			final OMElement tempMsgFormatter = msgFormatterElement;
-			String formatterClassName = null;
+			Object formatterObject;
+			Class formatterClass = null;
 			try {
-				formatterClassName = findAndValidateSelectorClass(tempMsgFormatter,DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_FORMATTER );
+				formatterClass = findAndValidateSelectorClass(tempMsgFormatter,DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_FORMATTER );
+				formatterObject = formatterClass.newInstance();
 			} catch (PrivilegedActionException e) {
 				throw (DeploymentException) e.getException();
+			} catch (InstantiationException e) {
+				throw new DeploymentException(
+						"Cannot instantiate the specified Builder Class  : "
+								+ formatterClass.getName() + ".", e);
+			} catch (IllegalAccessException e) {
+				throw new DeploymentException(
+						"Cannot instantiate the specified Builder Class : "
+								+ formatterClass.getName() + ".", e);
 			}
 			OMAttribute contentTypeAtt = msgFormatterElement
 					.getAttribute(new QName(TAG_CONTENT_TYPE));
 			messageFormatters.put(contentTypeAtt.getAttributeValue(),
-					formatterClassName);
+					formatterObject);
 		}
 		return messageFormatters;
 	}
 
-	protected String findAndValidateSelectorClass(final OMElement tempMsgBuilder, final String errorMsg)
+	protected Class findAndValidateSelectorClass(final OMElement tempMsgBuilder, final String errorMsg)
 			throws PrivilegedActionException {
-		return (String) org.apache.axis2.java.security.AccessController
+		return (Class) org.apache.axis2.java.security.AccessController
 				.doPrivileged(new PrivilegedExceptionAction() {
 					public Object run()
 							throws org.apache.axis2.deployment.DeploymentException {
 						OMAttribute builderName = tempMsgBuilder
 								.getAttribute(new QName(TAG_CLASS_NAME));
 						String className = builderName.getAttributeValue();
+						Class selectorClass;
 						try {
-							Class selectorClass;
 							if ((className != null) && !"".equals(className)) {
 								selectorClass = Loader.loadClass(Thread.currentThread()
 										.getContextClassLoader(), className);
+							}else
+							{
+								throw new DeploymentException(Messages.getMessage(errorMsg,
+										"Invalid Class Name",className));
 							}
 						} catch (ClassNotFoundException e) {
-							throw new DeploymentException(
-									Messages.getMessage(errorMsg,
+							throw new DeploymentException(Messages.getMessage(errorMsg,
 													"ClassNotFoundException",className), e);
 						}
-						return className;
+						return selectorClass;
 					}
 				});
 	}

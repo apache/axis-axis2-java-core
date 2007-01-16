@@ -42,9 +42,9 @@ public class BuilderSelectorDeploymentTest extends AbstractTestCase {
         File xml = new File(xmlFile);
         FileSystemConfigurator fsc = new FileSystemConfigurator(repo.getAbsolutePath(), xml.getAbsolutePath());
         AxisConfiguration axisConfig = fsc.getAxisConfiguration();
-        String className = axisConfig.getMessageBuilder("text/xml");
+        String className = axisConfig.getMessageBuilder("text/xml").getName();
         assertEquals(className,"org.apache.axiom.om.impl.builder.StAXOMBuilder");
-        className = axisConfig.getMessageBuilder("application/soap+xml");
+        className = axisConfig.getMessageBuilder("application/soap+xml").getName();
         assertEquals(className,"org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder");
     }
     
