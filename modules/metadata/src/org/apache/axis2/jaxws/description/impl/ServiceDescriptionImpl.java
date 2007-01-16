@@ -606,10 +606,10 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: cannot find SEI composite specified by the endpoint interface");
 					}
 					
-					//Verify that the only class annotations are WebService and HandlerChain
-					//(per JSR181 Sec. 3.1)
-					if ( composite.getBindingTypeAnnot()!= null 
-							|| composite.getSoapBindingAnnot() != null
+					// Verify that the only class annotations are WebService and HandlerChain
+					// (per JSR181 Sec. 3.1).  Note that this applies to JSR-181 annotations; the restriction
+                    // does not apply to JSR-224 annotations such as BindingType
+					if ( composite.getSoapBindingAnnot() != null
 							|| composite.getWebFaultAnnot() != null
 							|| composite.getWebServiceClientAnnot() != null
 							|| composite.getWebServiceContextAnnot()!= null
