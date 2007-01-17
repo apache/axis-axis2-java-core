@@ -315,7 +315,7 @@ public class Builder {
     public static OMBuilder getBuilderFromSelector(String contentType,
 			InputStream inputStream, MessageContext msgContext) throws AxisFault {
     	int index = contentType.indexOf(';');
-		if (index!= 0)
+		if (index>0)
     	{
     		contentType = contentType.substring(0,index);
     	}
