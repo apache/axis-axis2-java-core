@@ -272,6 +272,7 @@ public class ConfigurationContextFactory {
         AxisConfiguration axisConfig = new AxisConfiguration();
         AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig);
         builder.populateConfig();
+        axisConfig.validateSystemPredefinedPhases();
         return new ConfigurationContext(axisConfig);
     }
 }

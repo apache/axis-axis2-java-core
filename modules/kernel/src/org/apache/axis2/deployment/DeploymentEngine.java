@@ -27,7 +27,6 @@ import org.apache.axis2.deployment.repository.util.WSInfo;
 import org.apache.axis2.deployment.scheduler.DeploymentIterator;
 import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
-import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -109,7 +108,7 @@ public class DeploymentEngine implements DeploymentConstants {
             } catch (MalformedURLException e) {
                 log.info(e.getMessage());
             }
-            validateSystemPredefinedPhases();
+            axisConfig.validateSystemPredefinedPhases();
         } catch (AxisFault axisFault) {
             throw new DeploymentException(axisFault);
         }
@@ -120,7 +119,7 @@ public class DeploymentEngine implements DeploymentConstants {
         new RepositoryListener(this, true);
         org.apache.axis2.util.Utils.calculateDefaultModuleVersion(
                 axisConfig.getModules(), axisConfig);
-        validateSystemPredefinedPhases();
+        axisConfig.validateSystemPredefinedPhases();
         try {
             engageModules();
         } catch (AxisFault axisFault) {
@@ -189,7 +188,7 @@ public class DeploymentEngine implements DeploymentConstants {
             }
             org.apache.axis2.util.Utils.calculateDefaultModuleVersion(
                     axisConfig.getModules(), axisConfig);
-            validateSystemPredefinedPhases();
+            axisConfig.validateSystemPredefinedPhases();
         } catch (MalformedURLException e) {
             throw new DeploymentException(e);
         } catch (IOException e) {
@@ -734,20 +733,6 @@ public class DeploymentEngine implements DeploymentConstants {
             log.info(e);
         }
         wsToUnDeploy.clear();
-    }
-
-    /**
-     * Checks whether some one has changed the system pre-defined phases
-     * for all the flows. If they have been changed,throws a DeploymentException.
-     *
-     * @throws DeploymentException
-     */
-    private void validateSystemPredefinedPhases() throws DeploymentException {
-        PhasesInfo phasesInfo = axisConfig.getPhasesInfo();
-        axisConfig.setInPhasesUptoAndIncludingPostDispatch(phasesInfo.getGlobalInflow());
-        axisConfig.setInFaultPhases(phasesInfo.getGlobalInFaultPhases());
-        axisConfig.setGlobalOutPhase(phasesInfo.getGlobalOutPhaseList());
-        axisConfig.setOutFaultPhases(phasesInfo.getOUT_FaultPhases());
     }
 
     /**
