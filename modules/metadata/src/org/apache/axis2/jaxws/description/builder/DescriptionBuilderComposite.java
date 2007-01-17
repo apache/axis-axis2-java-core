@@ -431,6 +431,7 @@ public class DescriptionBuilderComposite {
 	 * Convenience method for unit testing. We will print all of the 
 	 * data members here.
 	 */
+	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		String newLine = "\n";
@@ -464,6 +465,12 @@ public class DescriptionBuilderComposite {
 			sb.append("\t ** @WebServiceProvider **");
 			sb.append(newLine);
 			sb.append("\t" + webServiceProviderAnnot.toString());
+		}
+		sb.append(newLine);
+		if(bindingTypeAnnot != null) {
+			sb.append("\t ** @BindingType **");
+			sb.append(newLine);
+			sb.append("\t" + bindingTypeAnnot.toString());
 		}
 		sb.append(newLine);
 		if(webServiceClientAnnot != null) {
@@ -523,4 +530,5 @@ public class DescriptionBuilderComposite {
 		sb.append("***** END DescriptionBuilderComposite *****");
 		return sb.toString();
 	}
+	
 }

@@ -24,12 +24,19 @@ import java.util.List;
 
 import javax.jws.WebService;
 import javax.wsdl.Definition;
+import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
+import org.apache.axis2.jaxws.description.builder.MDQConstants;
+import org.apache.axis2.jaxws.description.builder.WsdlComposite;
+import org.apache.axis2.jaxws.description.builder.WsdlGenerator;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
+
 
 /**
  * 
@@ -78,6 +85,7 @@ public class PartialWSDLTests extends TestCase {
         dbc.setClassName(AddNumbersImplPartial1.class.getName());
         dbc.setWsdlDefinition(wsdlDefn);
         dbc.setwsdlURL(wsdlURL);
+        dbc.setCustomWsdlGenerator(new WSDLGeneratorImpl(wsdlDefn));
         
         HashMap<String, DescriptionBuilderComposite> dbcMap = new HashMap<String, DescriptionBuilderComposite>();
         dbcMap.put(AddNumbersImplPartial1.class.getName(), dbc);
@@ -86,12 +94,20 @@ public class PartialWSDLTests extends TestCase {
         assertEquals(1, serviceDescList.size());
         ServiceDescription sd = serviceDescList.get(0);
         assertNotNull(sd);
+       
 
         EndpointDescription[] edArray = sd.getEndpointDescriptions();
         assertNotNull(edArray);
         assertEquals(1, edArray.length);
         EndpointDescription ed = edArray[0];
         assertNotNull(ed);
+        
+        // Test for presence of generated WSDL
+        AxisService as = ed.getAxisService();
+        assertNotNull(as);
+        Parameter compositeParam = as.getParameter(MDQConstants.WSDL_COMPOSITE);
+        assertNotNull(compositeParam);
+        assertNotNull(compositeParam.getValue());
         
         EndpointInterfaceDescription eid = ed.getEndpointInterfaceDescription();
         assertNotNull(eid);
@@ -143,6 +159,7 @@ public class PartialWSDLTests extends TestCase {
         dbc.setClassName(AddNumbersImplPartial1.class.getName());
         dbc.setWsdlDefinition(wsdlDefn);
         dbc.setwsdlURL(wsdlURL);
+        dbc.setCustomWsdlGenerator(new WSDLGeneratorImpl(wsdlDefn));
         
         HashMap<String, DescriptionBuilderComposite> dbcMap = new HashMap<String, DescriptionBuilderComposite>();
         dbcMap.put(AddNumbersImplPartial1.class.getName(), dbc);
@@ -157,6 +174,13 @@ public class PartialWSDLTests extends TestCase {
         assertEquals(1, edArray.length);
         EndpointDescription ed = edArray[0];
         assertNotNull(ed);
+        
+        // Test for presence of generated WSDL
+        AxisService as = ed.getAxisService();
+        assertNotNull(as);
+        Parameter compositeParam = as.getParameter(MDQConstants.WSDL_COMPOSITE);
+        assertNotNull(compositeParam);
+        assertNotNull(compositeParam.getValue());
         
         EndpointInterfaceDescription eid = ed.getEndpointInterfaceDescription();
         assertNotNull(eid);
@@ -175,3 +199,24 @@ class AddNumbersImplPartial1 {
         return number1 + number2;
     }
 }
+
+class WSDLGeneratorImpl implements WsdlGenerator {
+
+	private Definition def;
+	
+	public WSDLGeneratorImpl(Definition def) {
+		this.def = def;
+	}
+	
+	public WsdlComposite generateWsdl(String implClass, String bindingType) throws WebServiceException {
+		// Need WSDL generation code
+		WsdlComposite composite = new WsdlComposite();
+		composite.setWsdlFileName(implClass);
+		HashMap<String, Definition> testMap = new HashMap<String, Definition>();
+		testMap.put(composite.getWsdlFileName(), def);
+		composite.setWsdlDefinition(testMap);
+		return composite;
+	}
+
+}
+

@@ -164,17 +164,22 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
             
             //TODO: Verify that this classname is truly always the wrapper class
             mdc.setDeclaringClass(dbc.getClassName());
-            OperationDescription operation = new OperationDescriptionImpl(mdc, this);
-    
-            //TODO: Do we need to worry about a null AxisOperation at this level?
+            // Only add if it is a method that would be or is in the WSDL i.e. 
+            // don't create an OperationDescriptor for the MDC representing the
+            // constructor
+            if(DescriptionUtils.createOperationDescription(mdc.getMethodName())) {
+            	OperationDescription operation = new OperationDescriptionImpl(mdc, this);
+            	// TODO: Do we need to worry about a null AxisOperation at this level?
+                
+                //Add this AxisOperation to the AxisService
+                getEndpointDescription().getAxisService().addOperation(operation.getAxisOperation());
             
-            //Add this AxisOperation to the AxisService
-            getEndpointDescription().getAxisService().addOperation(operation.getAxisOperation());
-        
-            if (log.isDebugEnabled())
-                log.debug("EID: Just added operation= " +operation.getOperationName());
-            addOperation(operation);
-        
+                if (log.isDebugEnabled())
+                    log.debug("EID: Just added operation= " +operation.getOperationName());
+                addOperation(operation);
+            
+            }
+ 
         }
         
         if (log.isDebugEnabled())

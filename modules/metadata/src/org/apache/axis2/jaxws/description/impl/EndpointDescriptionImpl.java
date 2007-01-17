@@ -27,6 +27,7 @@ import javax.jws.WebService;
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
+import javax.wsdl.PortType;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPAddress;
@@ -316,11 +317,15 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
 					wsdl4jWrapper = new WSDL4JWrapper(composite.getWsdlURL(), composite.getWsdlDefinition());
 					getServiceDescriptionImpl().setWsdlWrapper(wsdl4jWrapper);
 				} 
+				else {
+					wsdlComposite = generateWSDL(composite);
+				}
 			} catch (WSDLException e) {
 				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
 			}
 			
 			//If this is not null, then we don't bother generating wsdl
+			
 			if (seic.getWsdlDefinition() == null)	
 				wsdlComposite = generateWSDL(composite);	
     	}
@@ -627,9 +632,11 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         isAxisServiceBuiltFromWSDL = false;
         if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
             isAxisServiceBuiltFromWSDL = buildAxisServiceFromWSDL();
+            
         }
         
         if (!isAxisServiceBuiltFromWSDL) {
+        	//generateWSDL(composite);
             buildAxisServiceFromAnnotations();
         }
         
@@ -704,10 +711,12 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     		axisService = serviceBuilder.populateService();
     		axisService.setName(createAxisServiceName());
             isBuiltFromWSDL = true;
+            
     	} catch (AxisFault e) {
     		// TODO We should not swallow a fault here.
     		log.warn(Messages.getMessage("warnAxisFault", e.toString()));
             isBuiltFromWSDL = false;
+            return isBuiltFromWSDL;
     	}
         return isBuiltFromWSDL;
     }
@@ -1427,14 +1436,19 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     	
     	WsdlComposite wsdlComposite = null;
      	Definition defn = dbc.getWsdlDefinition();
-    	
-    	if (defn == null ) {
+    	if (defn == null || !isAxisServiceBuiltFromWSDL) {
     		
         	//Invoke the callback for generating the wsdl
             if (dbc.getCustomWsdlGenerator() != null) {
-            	
+            	String implName = null;
+            	if(axisService == null) {
+            		implName = DescriptionUtils.javifyClassName(composite.getClassName());
+            	}
+            	else {
+            		implName = (String)axisService.getParameterValue(MDQConstants.SERVICE_CLASS);
+            	}
             	wsdlComposite = 
-            		dbc.getCustomWsdlGenerator().generateWsdl((String)axisService.getParameterValue(MDQConstants.SERVICE_CLASS), getBindingType());
+            		dbc.getCustomWsdlGenerator().generateWsdl(implName, getBindingType());
  
             	if (wsdlComposite != null) {
             		wsdlComposite.setWsdlFileName((this.getAnnoWebServiceServiceName() + ".wsdl").toLowerCase());
@@ -1458,6 +1472,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     	}
     	return wsdlComposite;
     } 
+   
 }
 
 

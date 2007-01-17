@@ -411,6 +411,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     		//  look in both places and find the correct one, if it exists. There is a patch 
     		//  in EndpointDescriptionImpl constructor which will reset the wsdlWrapper, if necessary. But
     		//  that functionality should be moved here at some point.
+
     		if (composite.getWsdlDefinition() != null) {
     			this.wsdlURL = composite.getWsdlURL();
                 
@@ -616,13 +617,15 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 							|| composite.getWebServiceContextAnnot()!= null
 							|| !composite.getAllWebServiceRefAnnots().isEmpty()
 					) {
-						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: invalid annotations specified when WebService annotation specifies an endpoint interface");
+						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: invalid annotations specified when WebService annotation specifies an endpoint interface: "
+								+ composite.getClassName());
 					}
 					
 					//Verify that WebService annotation does not contain a name attribute
 					//(per JSR181 Sec. 3.1)
 					if (composite.getWebServiceAnnot().name() != null) {
-						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: invalid annotations specified when WebService annotation specifies an endpoint interface");
+						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: invalid annotations specified when WebService annotation specifies an endpoint interface: "  + 
+						composite.getClassName());
 					}
 					
 					//Verify that that this implementation class implements all methods in the interface
@@ -663,7 +666,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 		 *	compiler will take care of everything else.
 		 */
 		
-        HashMap compositeHashMap = new HashMap();
+		HashMap compositeHashMap = new HashMap();
 		Iterator<MethodDescriptionComposite> compIterator = composite.getMethodDescriptionsList().iterator();
 		while (compIterator.hasNext()) {
 			MethodDescriptionComposite mdc = compIterator.next();
@@ -688,8 +691,9 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 			MethodDescriptionComposite mdc = verifySEIIterator.next();
 			// REVIEW:  Only the names are checked; this isn't checking signatures
 			if (compositeHashMap.get(mdc.getMethodName()) == null) {
-				throw ExceptionFactory.makeWebServiceException("ServiceDescription: subclass does not implement method on specified interface.  Method: " +  
-                        mdc.getMethodName() + ", Interface Class: " + seic.getClassName() + ", Implementation class: " + composite.getClassName());				
+				throw ExceptionFactory.makeWebServiceException("ServiceDescription: subclass does not implement method on specified interface: " + 
+						"method name: " + mdc.getMethodName() + " endpointInterface: " + seic.getClassName() + 
+						" implementation class: " + composite.getClassName());				
 			}
 		}
 		
@@ -938,4 +942,5 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         }
         return portsUsingAddress;
     }
+    
 }

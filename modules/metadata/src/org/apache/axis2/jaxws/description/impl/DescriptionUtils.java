@@ -27,6 +27,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.CONSTRUCTOR_METHOD;
 
 /**
  * Utilities used throughout the Description package.
@@ -248,5 +249,19 @@ class DescriptionUtils {
         // TODO J2W AccessController Needed
         // Don't make this public, its a security exposure
         return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+    }
+    
+    /**
+     * Determines whether a method should have an OperationDescription created for it
+     * based on the name. This is a convenience method to allow us to exlude methods
+     * such as constructors.
+     * @param methodName
+     * @return 
+     */
+    static boolean createOperationDescription(String methodName) {
+    	if(methodName.equals(CONSTRUCTOR_METHOD)) {
+    		return false;
+    	}
+    	return true;
     }
 }

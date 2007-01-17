@@ -36,6 +36,7 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.validator.ServiceDescriptionValidator;
+import org.apache.axis2.jaxws.description.validator.ValidationFailures;
 
 /**
  * Creates the JAX-WS metadata descritpion hierachy from some combinations of
@@ -81,9 +82,13 @@ public class DescriptionFactoryImpl {
                     serviceDescriptionList.add(serviceDescription);
                 }
                 else {
+                	
+                	String msg = "The ServiceDescription failed to validate due to the following errors: \n" +
+                	validator.toString();
+                	
                     // TODO: Validate all service descriptions before failing
                     // TODO: Get more detailed failure information from the Validator
-                    throw ExceptionFactory.makeWebServiceException("ServiceDescription did not validate correctly");
+                    throw ExceptionFactory.makeWebServiceException(msg);
                 }
             }
         }

@@ -37,4 +37,7 @@ public class MDQConstants {
     public static final String WSDL_FILE_NAME = "WSDL_FILE_NAME";
     public static final String SCHEMA_DOCS = "SCHEMA_DOCS";
     public static final String WSDL_COMPOSITE = "WSDL_COMPOSITE";
+    
+    // Java string that represents a class constructor
+    public static final String CONSTRUCTOR_METHOD = "<init>";
 }
