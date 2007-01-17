@@ -95,12 +95,12 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             processTransportReceivers(trs_Reivers);
 
-            // Process Observers
-            Iterator obs_ittr = config_element.getChildrenWithName(new QName(TAG_LISTENER));
-
             // Process TargetResolvers
             OMElement targetResolvers = config_element.getFirstChildWithName(new QName(TAG_TARGET_RESOLVERS));
             processTargetResolvers(axisConfig, targetResolvers);
+
+            // Process Observers
+            Iterator obs_ittr = config_element.getChildrenWithName(new QName(TAG_LISTENER));
 
             processObservers(obs_ittr);
 

@@ -68,6 +68,7 @@ public class MessageContextBuilder {
         newmsgCtx.setTransportIn(inMessageContext.getTransportIn());
         newmsgCtx.setTransportOut(inMessageContext.getTransportOut());
         newmsgCtx.setMessageID(UUIDGenerator.getUUID());
+        newmsgCtx.setServerSide(inMessageContext.isServerSide());
         newmsgCtx.addRelatesTo(new RelatesTo(inMessageContext.getOptions().getMessageId()));
         
         newmsgCtx.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
@@ -151,7 +152,6 @@ public class MessageContextBuilder {
         newmsgCtx.setAxisMessage(ao.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
 
         newmsgCtx.setDoingMTOM(inMessageContext.isDoingMTOM());
-        newmsgCtx.setServerSide(inMessageContext.isServerSide());
         newmsgCtx.setServiceGroupContextId(inMessageContext.getServiceGroupContextId());
 
         // Ensure transport settings match the scheme for the To EPR
@@ -181,7 +181,6 @@ public class MessageContextBuilder {
         }
 
         faultContext.setProcessingFault(true);
-        faultContext.setServerSide(true);
         
         // Not worth setting up the session information on a fault flow
         faultContext.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
