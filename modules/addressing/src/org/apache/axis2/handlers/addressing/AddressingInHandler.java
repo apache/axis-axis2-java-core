@@ -209,17 +209,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
                 soapHeaderBlock.getAttribute(
                         new QName(AddressingConstants.WSA_RELATES_TO_RELATIONSHIP_TYPE));
         
-        String relationshipTypeString = null;
-        
-        // If an attribute was found, use the value from it 
-        if(relationshipType!=null){
-            relationshipTypeString = relationshipType.getAttributeValue();
-        }else{ // Else use the appropriate default (depends on namespace in use)
-            relationshipTypeString =
-                Submission.WSA_NAMESPACE.equals(addressingNamespace)
-                        ? Submission.WSA_DEFAULT_RELATIONSHIP_TYPE
-                        : Final.WSA_DEFAULT_RELATIONSHIP_TYPE;
-        }
+        String relationshipTypeString = relationshipType == null ? null : relationshipType.getAttributeValue();
         
         if(log.isTraceEnabled()){
             log.trace("extractRelatesToInformation: Extracted Relationship. Value="+address+" RelationshipType="+relationshipTypeString);

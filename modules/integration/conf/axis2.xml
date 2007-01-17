@@ -183,9 +183,9 @@
     <module ref="addressing"/>
 
     <!--Configuring module , providing parameters for modules whether they refer or not-->
-    <!--<moduleConfig name="addressing">-->
-    <!--<parameter name="addressingPara" locked="false">N/A</parameter>-->
-    <!--</moduleConfig>-->
+    <moduleConfig name="addressing">
+        <parameter name="includeOptionalHeaders" locked="false">true</parameter>
+    </moduleConfig>
 
     <!-- ================================================= -->
     <!-- Phases  -->

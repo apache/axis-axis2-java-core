@@ -11,6 +11,11 @@
     <!-- Engage the security module -->
     <module ref="rampart"/>
 
+    <!--Configuring module , providing parameters for modules whether they refer or not-->
+    <moduleConfig name="addressing">
+        <parameter name="includeOptionalHeaders" locked="false">true</parameter>
+    </moduleConfig>
+
     <!-- ================================================= -->
     <!-- Transport Ins -->
     <!-- ================================================= -->

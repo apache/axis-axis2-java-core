@@ -29,6 +29,8 @@ import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.util.TestUtil;
 
@@ -66,6 +68,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
 
         MessageContext msgCtxt = new MessageContext();
+        msgCtxt.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
         msgCtxt.setProperty(WS_ADDRESSING_VERSION, Submission.WSA_NAMESPACE);
         msgCtxt.setTo(epr);
         msgCtxt.setReplyTo(replyTo);
@@ -94,6 +97,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
     public void testHeaderCreationFromMsgCtxtInformation() throws Exception {
         msgCtxt = new MessageContext();
+        msgCtxt.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
 
         EndpointReference epr = new EndpointReference("http://www.from.org/service/");
         epr.addReferenceParameter(new QName("Reference2"),
@@ -134,6 +138,7 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
     public void testMustUnderstandSupport() throws Exception {
         msgCtxt = new MessageContext();
+        msgCtxt.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
 
         msgCtxt.setProperty(AddressingConstants.ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS, Boolean.TRUE);
         
@@ -174,12 +179,13 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
                 .getDocumentElement()));
     }
 
-    public void testDuplicateHeaders() throws AxisFault {
+    public void testDuplicateHeaders() throws Exception {
 
         // this will check whether we can add to epr, if there is one already.
         EndpointReference eprOne = new EndpointReference("http://whatever.org");
         EndpointReference duplicateEpr = new EndpointReference("http://whatever.duplicate.org");
         msgCtxt = new MessageContext();
+        msgCtxt.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
         msgCtxt.setEnvelope(defaultEnvelope);
@@ -198,11 +204,12 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
     }
 
-    public void testDuplicateHeadersWithOverridingOn() throws AxisFault {
+    public void testDuplicateHeadersWithOverridingOn() throws Exception {
 
         // this will check whether we can add to epr, if there is one already.
         EndpointReference eprOne = new EndpointReference("http://whatever.org");
         msgCtxt = new MessageContext();
+        msgCtxt.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
         SOAPHeaderBlock soapHeaderBlock =
@@ -221,11 +228,12 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
     }
 
-    public void testDuplicateHeadersWithOverridingOff() throws AxisFault {
+    public void testDuplicateHeadersWithOverridingOff() throws Exception {
 
         // this will check whether we can add to epr, if there is one already.
         EndpointReference eprOne = new EndpointReference("http://whatever.org");
         msgCtxt = new MessageContext();
+        msgCtxt.setConfigurationContext(ConfigurationContextFactory.createDefaultConfigurationContext());
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
         SOAPHeaderBlock soapHeaderBlock =

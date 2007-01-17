@@ -118,10 +118,16 @@ public class MessageContextBuilder {
             targetResolver.resolveTarget(newmsgCtx);
         }
 
-        // Determine ReplyTo for respome message. Normally 'None URI' but has a value if SOAP Session support is in use
+        // Determine ReplyTo for respome message.
         AxisService axisService = inMessageContext.getAxisService();
         if (axisService != null && Constants.SCOPE_SOAP_SESSION.equals(axisService.getScope())) {
-            newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
+            //If the wsa 2004/08 (submission) spec is in effect use the wsa anonymous URI as the default replyTo value.
+            //This is necessary because the wsa none URI is not available in that spec.
+            if (AddressingConstants.Submission.WSA_NAMESPACE.equals(inMessageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION)))
+                newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Submission.WSA_ANONYMOUS_URL));
+            else
+                newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
+            
             // add the service group id as a reference parameter
             String serviceGroupContextId = inMessageContext.getServiceGroupContextId();
             if (serviceGroupContextId != null && !"".equals(serviceGroupContextId)) {
