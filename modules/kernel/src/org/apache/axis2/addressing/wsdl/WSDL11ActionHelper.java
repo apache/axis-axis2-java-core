@@ -93,7 +93,7 @@ public class WSDL11ActionHelper {
     	log.trace(result);
     	return result;
     }
-
+    
     private static String getWSAWActionExtensionAttribute(AttributeExtensible ae){
     	// Search first for a wsaw:Action using the submission namespace
     	Object attribute = ae.getExtensionAttribute(submissionWSAWNS);
@@ -136,4 +136,15 @@ public class WSDL11ActionHelper {
     		return null;
     	}
     }
+    
+    public static String getInputActionFromStringInformation(String messageExchangePattern, String targetNamespace, String portTypeName, String operationName, String inputName){
+        return WSDL11DefaultActionPatternHelper.getInputActionFromStringInformation(messageExchangePattern, targetNamespace, portTypeName, operationName, inputName);
+    }
+    public static String getOutputActionFromStringInformation(String messageExchangePattern, String targetNamespace, String portTypeName, String operationName, String outputName){
+        return WSDL11DefaultActionPatternHelper.getOutputActionFromStringInformation(messageExchangePattern, targetNamespace, portTypeName, operationName, outputName);
+    }
+    public static String getFaultActionFromStringInformation(String targetNamespace, String portTypeName, String operationName, String faultName){
+        return WSDL11DefaultActionPatternHelper.getFaultActionFromStringInformation(targetNamespace, portTypeName, operationName, faultName);
+    }
+                
 }
