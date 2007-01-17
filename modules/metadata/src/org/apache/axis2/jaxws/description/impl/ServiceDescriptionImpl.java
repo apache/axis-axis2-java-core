@@ -524,6 +524,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 			validateIntegrity();
 		}
 		catch (Exception ex) {
+            // TODO: This exception needs to be rethrown!
 			//com.ibm.ws.ffdc.FFDCFilter.processException(ex, "org.apache.axis2.jaxws.description.ServiceDescription", "329", this);				
 			//Tr.error(_tc, msg, inserts);
 		}
@@ -662,27 +663,57 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 		 *	compiler will take care of everything else.
 		 */
 		
-		HashMap compositeHashMap = new HashMap();
-		Iterator<MethodDescriptionComposite> compIterator = 
-					composite.getMethodDescriptionsList().iterator();
-
+        HashMap compositeHashMap = new HashMap();
+		Iterator<MethodDescriptionComposite> compIterator = composite.getMethodDescriptionsList().iterator();
 		while (compIterator.hasNext()) {
 			MethodDescriptionComposite mdc = compIterator.next();
 			compositeHashMap.put(mdc.getMethodName(),mdc);
 		}
+        // Add methods declared in the implementation's superclass
+        addSuperClassMethods(compositeHashMap, composite);
 		
-		Iterator<MethodDescriptionComposite> seiIterator = 
-					seic.getMethodDescriptionsList().iterator();
+        HashMap seiMethodHashMap = new HashMap();
+        Iterator<MethodDescriptionComposite> seiMethodIterator =  seic.getMethodDescriptionsList().iterator();
+        while (seiMethodIterator.hasNext()) {
+            MethodDescriptionComposite mdc = seiMethodIterator.next();
+            seiMethodHashMap.put(mdc.getMethodName(),mdc);
+        }
+        // Add any methods declared in superinterfaces of the SEI
+        addSuperClassMethods(seiMethodHashMap, seic);
 		
-		while (seiIterator.hasNext()) {
-			MethodDescriptionComposite mdc = seiIterator.next();
-
+        // Make sure all the methods in the SEI (including any inherited from superinterfaces) are
+        // implemented by the bean (including inherited methods on the bean).
+        Iterator<MethodDescriptionComposite> verifySEIIterator = seiMethodHashMap.values().iterator();
+		while (verifySEIIterator.hasNext()) {
+			MethodDescriptionComposite mdc = verifySEIIterator.next();
+			// REVIEW:  Only the names are checked; this isn't checking signatures
 			if (compositeHashMap.get(mdc.getMethodName()) == null) {
-				throw ExceptionFactory.makeWebServiceException("ServiceDescription: subclass does not implement method on specified interface");				
+				throw ExceptionFactory.makeWebServiceException("ServiceDescription: subclass does not implement method on specified interface.  Method: " +  
+                        mdc.getMethodName() + ", Interface Class: " + seic.getClassName() + ", Implementation class: " + composite.getClassName());				
 			}
 		}
 		
 	}
+    /**
+     * Adds any methods declared in superclasses to the HashMap.  The hierachy starting with the DBC will be walked
+     * up recursively, adding methods from each parent DBC encountered.  
+     * 
+     * Note that this can be used for either classes or interfaces.
+     * @param methodMap
+     * @param dbc
+     */
+    private void addSuperClassMethods(HashMap methodMap, DescriptionBuilderComposite dbc) {
+        DescriptionBuilderComposite superDBC = dbcMap.get(dbc.getSuperClassName());
+        if(superDBC != null) {
+            Iterator<MethodDescriptionComposite> mIter = superDBC.getMethodDescriptionsList().iterator();
+            while(mIter.hasNext()) {
+                MethodDescriptionComposite mdc = mIter.next();
+                methodMap.put(mdc.getMethodName(), mdc);
+            }
+            addSuperClassMethods(methodMap, superDBC);
+        }
+    }
+
 	
 	/*
 	 * This method verifies that, if there are any WebMethod with exclude == false, then
