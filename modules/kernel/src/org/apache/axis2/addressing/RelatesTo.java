@@ -17,15 +17,52 @@
 
 package org.apache.axis2.addressing;
 
-import java.io.Serializable;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.ArrayList;
+
+import org.apache.axis2.util.ObjectStateUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Class RelatesTo
  */
-public class RelatesTo implements Serializable {
+public class RelatesTo implements Externalizable {
 
-	private static final long serialVersionUID = 978799688901329012L;
+    /*
+     * setup for logging
+     */
+    private static final Log log = LogFactory.getLog(RelatesTo.class);
+
+    private static final String myClassName = "RelatesTo";
+
+    /**
+     * @serial The serialization version ID tracks the version of the class.
+     * If a class definition changes, then the serialization/externalization
+     * of the class is affected. If a change to the class is made which is
+     * not compatible with the serialization/externalization of the class,
+     * then the serialization version ID should be updated.
+     * Refer to the "serialVer" utility to compute a serialization
+     * version ID.
+     */
+	private static final long serialVersionUID = -1120384315333414960L;
+
+    /**
+     * @serial Tracks the revision level of a class to identify changes to the 
+     * class definition that are compatible to serialization/externalization.
+     * If a class definition changes, then the serialization/externalization
+     * of the class is affected. 
+     * Refer to the writeExternal() and readExternal() methods.
+     */
+    // supported revision levels, add a new level to manage compatible changes
+    private static final int REVISION_1 = 1;
+    // current revision level of this object
+    private static final int revisionID = REVISION_1;
+
+    
 
 	/**
      * Field relationshipType
@@ -39,6 +76,13 @@ public class RelatesTo implements Serializable {
 
     private ArrayList extensibilityAttributes = null;
     
+    /**
+     * Constructor RelatesTo
+     *
+     */
+    public RelatesTo() {
+    }
+
     /**
      * Constructor RelatesTo
      *
@@ -110,4 +154,122 @@ public class RelatesTo implements Serializable {
         return "Identifier: " + value
              + ", Relationship type: " + relationshipType;
     }
+
+
+    /* ===============================================================
+     * Externalizable support 
+     * ===============================================================
+     */
+    
+    /**
+     * Save the contents of this object.
+     * <p>
+     * NOTE: Transient fields and static fields are not saved.
+     *
+     * @param out    The stream to write the object contents to
+     * 
+     * @exception IOException
+     */
+    public void writeExternal(ObjectOutput out) throws IOException
+    {
+        // write out contents of this object
+
+        // NOTES: For each item, where appropriate,
+        //        write out the following information, IN ORDER:
+        //           the class name
+        //           the active or empty flag
+        //           the data length, if appropriate
+        //           the data   
+
+        //---------------------------------------------------------
+        // in order to handle future changes to the object 
+        // definition, be sure to maintain the 
+        // object level identifiers
+        //---------------------------------------------------------
+        // serialization version ID
+        out.writeLong(serialVersionUID);
+
+        // revision ID
+        out.writeInt(revisionID);
+
+        //---------------------------------------------------------
+        // various strings
+        //---------------------------------------------------------
+
+        // String relationshipType
+        ObjectStateUtils.writeString(out, relationshipType, "RelatesTo.relationshipType");
+
+        // String value
+        ObjectStateUtils.writeString(out, value, "RelatesTo.value");
+
+        //---------------------------------------------------------
+        // collections and lists
+        //---------------------------------------------------------
+
+        ObjectStateUtils.writeArrayList(out, extensibilityAttributes, "RelatesTo.extensibilityAttributes");
+
+    }
+
+
+    /**
+     * Restore the contents of the object that was 
+     * previously saved. 
+     * <p> 
+     * NOTE: The field data must read back in the same order and type
+     * as it was written.  Some data will need to be validated when 
+     * resurrected.
+     *
+     * @param in    The stream to read the object contents from 
+     * 
+     * @exception IOException
+     * @exception ClassNotFoundException
+     */
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+    {
+        // serialization version ID
+        long suid = in.readLong();
+
+        // revision ID
+        int  revID = in.readInt();
+
+        // make sure the object data is in a version we can handle
+        if (suid != serialVersionUID)
+        {
+            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_SUID);
+        }
+
+        // make sure the object data is in a revision level we can handle
+        if (revID != REVISION_1)
+        {
+            throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
+        }
+
+
+        //---------------------------------------------------------
+        // various strings
+        //---------------------------------------------------------
+
+        // String relationshipType
+        relationshipType = ObjectStateUtils.readString(in,"RelatesTo.relationshipType");
+
+        // String value
+        value = ObjectStateUtils.readString(in, "RelatesTo.value");
+
+        //---------------------------------------------------------
+        // collections and lists
+        //---------------------------------------------------------
+
+        // ArrayList extensibilityAttributes
+        ArrayList tmpAL2 = ObjectStateUtils.readArrayList(in, "RelatesTo.extensibilityAttributes");
+        if (tmpAL2 != null)
+        {
+            extensibilityAttributes = new ArrayList(tmpAL2);
+        }
+        else
+        {
+            extensibilityAttributes = null;
+        }
+
+    }
+
 }
