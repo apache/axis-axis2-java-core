@@ -715,7 +715,11 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                     String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
                     responseWrapperClassName = packageName + "." + className + "Response";
                 } else {
-                    responseWrapperClassName = methodComposite.getDeclaringClass() + "Response";
+                	//JAXWS Spec is not clear on what default should be added. We think its the endpoint impls package + OperationName + Response.
+                	//In situation where wsGen uses sei's package to store jaxb bean.
+                	String declaringClazz = methodComposite.getDeclaringClass();
+                	String packageName = declaringClazz.substring(0, declaringClazz.lastIndexOf("."));
+                    responseWrapperClassName = packageName + "." + DescriptionUtils.javaMethodtoClassName(methodComposite.getMethodName()) + "Response";
                 }
                 responseWrapperClassName = determineActualAritfactPackage(responseWrapperClassName);
             }
