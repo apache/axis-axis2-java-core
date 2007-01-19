@@ -34,6 +34,7 @@ import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.NotSerializableException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
@@ -42,6 +43,7 @@ import java.io.UTFDataFormatException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -83,6 +85,14 @@ public class ObjectStateUtils
 
     public static final String OBJ_SAVE_PROBLEM    = "The object could not be saved to the output stream.  The object may or may not be important for processing the message when it is restored. Look at how the object is to be used during message processing.";
     public static final String OBJ_RESTORE_PROBLEM = "The object could not be restored from the input stream.  The object may or may not be important for processing the message when it is restored. Look at how the object is to be used during message processing.";
+
+    // as a way to improve performance and reduce trace logging with
+    // extra exceptions, keep a table of classes that are not serializable
+    // and only log the first time it that the class is encountered in
+    // an NotSerializableException
+    // note that the Hashtable is synchronized by Java so we shouldn't need to 
+    // do extra control over access to the table
+    public static Hashtable NotSerializableList = new Hashtable();
 
     //--------------------------------------------------------------------
     // Save/Restore methods
@@ -179,13 +189,15 @@ public class ObjectStateUtils
 
             out.writeBoolean(EMPTY_OBJECT);
 
-            // trace point
-            if (log.isTraceEnabled())
-            {
-                log.trace("ObjectStateUtils:writeString(): EMPTY String    desc ["+desc+"]  ");
-            }
-            //System.out.println("ObjectStateUtils:writeString(): EMPTY String   desc ["+desc+"]  ");
+            // for now, don't trace the EMPTY lines
+            //  // trace point
+            //  if (log.isTraceEnabled())
+            //  {
+            //      log.trace("ObjectStateUtils:writeString(): EMPTY String    desc ["+desc+"]  ");
+            //  }
+            //  //System.out.println("ObjectStateUtils:writeString(): EMPTY String   desc ["+desc+"]  ");
         }
+
     }
 
 
@@ -328,7 +340,8 @@ public class ObjectStateUtils
      * <BOLD>Non-Null Object</BOLD>
      * <LI> UTF     - class name string 
      * <LI> boolean - active flag
-     * <LI> object  - object
+     * <LI> object  - object if no error 
+     * <LI> LAST_ENTRY marker 
      * <P>
      * <BOLD>Null Object</BOLD>
      * <LI> UTF     - description
@@ -343,6 +356,8 @@ public class ObjectStateUtils
      */
     public static void writeObject(ObjectOutput out, Object obj, String desc) throws IOException
     {
+        IOException returned_exception = null;
+
         if (obj != null)
         {
             String objClassName = obj.getClass().getName();
@@ -351,14 +366,88 @@ public class ObjectStateUtils
             out.writeUTF(fullDesc);
 
             out.writeBoolean(ACTIVE_OBJECT);
-            out.writeObject(obj);
 
-            // trace point
-            if (log.isTraceEnabled())
+            // put the object into a test output buffer to see if it can be saved
+            // this technique preserves the integrity of the real output stream in the
+            // event of a serialization error
+            ByteArrayOutputStream test_outBuffer = new ByteArrayOutputStream();
+            ObjectOutputStream test_objOut = new ObjectOutputStream(test_outBuffer);
+
+            boolean  canWrite = false;
+
+            try
             {
-                log.trace("ObjectStateUtils:writeObject(): Object ["+objClassName+"]  desc ["+desc+"]");
+                // write the object to the test buffer
+                test_objOut.writeObject(obj);
+                canWrite = true;
             }
-            //System.out.println("ObjectStateUtils:writeObject(): Object ["+objClassName+"]  desc ["+desc+"]");
+            catch (NotSerializableException nse2)
+            {
+                returned_exception = nse2;
+                // only trace the first time a particular class causes this exception
+                traceNotSerializable(obj, nse2, desc, "ObjectStateUtils.writeObject()", OBJ_SAVE_PROBLEM);
+            }
+            catch (IOException exc2)
+            {
+                // use this as a generic point for exceptions for the test output stream
+                returned_exception = exc2;
+
+                // trace point
+                if (log.isTraceEnabled())
+                {
+                    log.trace("ObjectStateUtils:writeObject(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc2.getClass().getName()+" : "+exc2.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc2);
+                    //System.out.println("ObjectStateUtils:writeObject(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
+                    //exc2.printStackTrace();
+                }
+            }
+
+            if (canWrite)
+            {
+                // write the object to the real output stream
+                try
+                {
+                    out.writeObject(obj);
+
+                    // trace point
+                    if (log.isTraceEnabled())
+                    {
+                        log.trace("ObjectStateUtils:writeObject(): Object ["+objClassName+"]  desc ["+desc+"]");
+                    }
+                    //System.out.println("ObjectStateUtils:writeObject(): Object ["+objClassName+"]  desc ["+desc+"]");
+                }
+                catch (NotSerializableException nse)
+                {
+                    returned_exception = nse;
+                    // only trace the first time a particular class causes this exception
+                    traceNotSerializable(obj, nse, desc, "ObjectStateUtils.writeObject()", OBJ_SAVE_PROBLEM);
+                }
+                catch (IOException exc)
+                {
+                    // use this as a generic point for exceptions for the test output stream
+                    returned_exception = exc;
+
+                    // trace point
+                    if (log.isTraceEnabled())
+                    {
+                        log.trace("ObjectStateUtils:writeObject(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
+                        //System.out.println("ObjectStateUtils:writeObject(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
+                        //exc.printStackTrace();
+                    }
+                }
+            }
+
+            // put the end-of-marker in the stream
+            out.writeObject(LAST_ENTRY);
+
+            test_outBuffer.close();
+            test_objOut.close();
+
+            if (returned_exception != null)
+            {
+                // let the caller know that there was a problem
+                // note the integrity of the real output stream has been preserved
+                throw returned_exception;
+            }
         }
         else
         {
@@ -367,12 +456,13 @@ public class ObjectStateUtils
 
             out.writeBoolean(EMPTY_OBJECT);
 
-            // trace point
-            if (log.isTraceEnabled())
-            {
-                log.trace("ObjectStateUtils:writeObject(): EMPTY Object ["+desc+"]  ");
-            }
-            //System.out.println("ObjectStateUtils:writeObject(): EMPTY Object ["+desc+"]  ");
+            // for now, don't trace the EMPTY lines
+            //  // trace point
+            //  if (log.isTraceEnabled())
+            //  {
+            //      log.trace("ObjectStateUtils:writeObject(): EMPTY Object ["+desc+"]  ");
+            //  }
+            //  //System.out.println("ObjectStateUtils:writeObject(): EMPTY Object ["+desc+"]  ");
         }
     }
 
@@ -385,7 +475,8 @@ public class ObjectStateUtils
      * <BOLD>Non-Null Object</BOLD>
      * <LI> UTF     - class name string 
      * <LI> boolean - active flag
-     * <LI> object  - object
+     * <LI> object  - object if no error 
+     * <LI> LAST_ENTRY marker 
      * <P>
      * <BOLD>Null Object</BOLD>
      * <LI> UTF     - description
@@ -410,7 +501,58 @@ public class ObjectStateUtils
 
         if (isActive == ACTIVE_OBJECT)
         {
+            boolean done = false;
+
             obj = in.readObject();
+
+            if (obj != null)
+            {
+                if (obj instanceof String)
+                {
+                    String tmp = (String) obj;
+                    if (tmp.equalsIgnoreCase(LAST_ENTRY))
+                    {
+                        // this is the last entry
+                        done = true;
+
+                        // reset the object to be returned
+                        obj = null;
+                    }
+                }
+            }
+
+            // if we haven't got the end marker, then pull it from the stream
+            if (done == false)
+            {
+                Object obj2 = in.readObject();
+                
+                // verify that this is the end marker
+                boolean isConsistent = false;
+
+                if (obj2 != null)
+                {
+                    if (obj2 instanceof String)
+                    {
+                        String tmp2 = (String) obj2;
+                        if (tmp2.equalsIgnoreCase(LAST_ENTRY))
+                        {
+                            // ok
+                            isConsistent = true;
+                        }
+                    }
+                }
+
+                if (isConsistent == false)
+                {
+                    // trace the inconsistency
+                    if (log.isTraceEnabled())
+                    {
+                        log.trace("ObjectStateUtils:readObject(): Inconsistent results reading the stream for ["+desc+"]  ");
+                    }
+                    //System.trace.println("ObjectStateUtils:readObject(): Inconsistent results reading the stream for ["+desc+"]  ");
+                }
+            }
+
         }
 
         String value = "null";
@@ -451,14 +593,6 @@ public class ObjectStateUtils
      */
     public static void writeArrayList(ObjectOutput out, ArrayList al, String desc) throws IOException
     {
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace("ObjectStateUtils:writeArrayList(): BEGIN    List ["+desc+"]  ");
-        }
-        //System.out.println("ObjectStateUtils:writeArrayList(): BEGIN    List ["+desc+"]  ");
-
-
         // The format of the data is
         //
         //  Non-null list:
@@ -484,12 +618,13 @@ public class ObjectStateUtils
 
             out.writeBoolean(EMPTY_OBJECT);
 
-            // trace point
-            if (log.isTraceEnabled())
-            {
-                log.trace("ObjectStateUtils:writeArrayList(): EMPTY List ["+desc+"]  ");
-            }
-            //System.out.println("ObjectStateUtils:writeArrayList(): EMPTY List ["+desc+"]  ");
+            // for now, don't trace the EMPTY lines
+            //  // trace point
+            //  if (log.isTraceEnabled())
+            //  {
+            //      log.trace("ObjectStateUtils:writeArrayList(): EMPTY List ["+desc+"]  ");
+            //  }
+            //  //System.out.println("ObjectStateUtils:writeArrayList(): EMPTY List ["+desc+"]  ");
         }
         else
         {
@@ -502,6 +637,12 @@ public class ObjectStateUtils
             // expected list size
             out.writeInt(listSize);
 
+            // put each list entry into a test output buffer to see if it can be saved
+            // this technique preserves the integrity of the real output stream in the
+            // event of a serialization error
+            ByteArrayOutputStream test_outBuffer = new ByteArrayOutputStream();
+            ObjectOutputStream test_objOut = new ObjectOutputStream(test_outBuffer);
+
             // setup an iterator for the list
             Iterator i = al.iterator();
 
@@ -510,34 +651,69 @@ public class ObjectStateUtils
                 Object obj = i.next();
                 String tmpClassName = obj.getClass().getName();
 
+                boolean  canWrite = false;
+
                 try
                 {
-                    out.writeObject(obj);
-                    savedListSize++;
-
-                    // trace point
-                    if (log.isTraceEnabled())
-                    {
-                        log.trace("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]");
-                    }
-                    //System.out.println("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]");
-
+                    // write the object to the test buffer
+                    test_objOut.writeObject(obj);
+                    canWrite = true;
                 }
-                catch (Exception ex)
+                catch (NotSerializableException nse2)
                 {
-                    // use this as a generic point for all exceptions
+                    // only trace the first time a particular class causes this exception
+                    traceNotSerializable(obj, nse2, desc, "ObjectStateUtils.writeArrayList()", OBJ_SAVE_PROBLEM);
+                }
+                catch (Exception exc)
+                {
+                    // use this as a generic point for exceptions
 
                     // trace point
-                    log.warn("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
-                    //System.out.println("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
-
                     if (log.isTraceEnabled())
                     {
-                        // informational
-                        log.trace("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]  "+OBJ_SAVE_PROBLEM,ex);
-                        //ex.printStackTrace();
+                        log.trace("ObjectStateUtils:writeArrayList(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
+                        //System.out.println("ObjectStateUtils:writeArrayList(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
+                        //exc.printStackTrace();
                     }
                 }
+
+                if (canWrite)
+                {
+                    // write the object to the real output stream
+                    try
+                    {
+                        out.writeObject(obj);
+                        savedListSize++;
+
+                        // trace point
+                        if (log.isTraceEnabled())
+                        {
+                            log.trace("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]");
+                        }
+                        //System.out.println("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]");
+
+                    }
+                    catch (NotSerializableException nse)
+                    {
+                        // only trace the first time a particular class causes this exception
+                        traceNotSerializable(obj, nse, desc, "ObjectStateUtils.writeArrayList()", OBJ_SAVE_PROBLEM);
+                    }
+                    catch (Exception ex)
+                    {
+                        // use this as a generic point for exceptions
+
+                        // trace point
+                        if (log.isTraceEnabled())
+                        {
+                            log.trace("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM, ex);
+                            //System.out.println("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
+                            //ex.printStackTrace();
+                        }
+                    }
+                }
+
+                // reset the temporary buffer for the next round
+                test_objOut.reset();
             }
 
             // put the end-of-marker in the stream
@@ -552,14 +728,10 @@ public class ObjectStateUtils
                 log.trace("ObjectStateUtils:writeArrayList(): List ["+desc+"]   members saved ["+savedListSize+"]");
             }
             //System.out.println("ObjectStateUtils:writeArrayList(): List ["+desc+"]   members saved ["+savedListSize+"]");
-        }
 
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace("ObjectStateUtils:writeArrayList(): END    List ["+desc+"]  ");
+            test_outBuffer.close();
+            test_objOut.close();
         }
-        //System.out.println("ObjectStateUtils:writeArrayList(): END    List ["+desc+"]  ");
 
     }
 
@@ -588,14 +760,6 @@ public class ObjectStateUtils
      */
     public static ArrayList readArrayList(ObjectInput in, String desc) throws IOException
     {
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace("ObjectStateUtils:readArrayList(): BEGIN    List  ["+desc+"]");
-        }
-        //System.out.println("ObjectStateUtils:readArrayList(): BEGIN    ["+desc+"]");
-
-
         // The format of the data is
         //
         //  Non-null list:
@@ -686,13 +850,10 @@ public class ObjectStateUtils
                     // use this as a generic point for all exceptions
 
                     // trace point
-                    log.warn("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM);
-                    //System.out.println("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
-
                     if (log.isTraceEnabled())
                     {
-                        // informational
-                        log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"]  "+OBJ_RESTORE_PROBLEM,ex);
+                        log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM, ex);
+                        //System.out.println("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM);
                         //ex.printStackTrace();
                     }
 
@@ -713,14 +874,13 @@ public class ObjectStateUtils
 
             if (list.isEmpty())
             {
-                // trace point
-                if (log.isTraceEnabled())
-                {
-                    log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]");
-                    log.trace("ObjectStateUtils:readArrayList(): END    List  ["+desc+"]");
-                }
-                //System.out.println("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]");
-                //System.out.println("ObjectStateUtils:readArrayList(): END    ["+desc+"]");
+                // for now, don't trace the EMPTY lines
+                //  // trace point
+                //  if (log.isTraceEnabled())
+                //  {
+                //      log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]");
+                //  }
+                //  //System.out.println("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]");
 
                 return null;
             }
@@ -730,10 +890,8 @@ public class ObjectStateUtils
                 if (log.isTraceEnabled())
                 {
                     log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [listsize="+list.size()+"]");
-                    log.trace("ObjectStateUtils:readArrayList(): END    List  ["+desc+"]");
                 }
                 //System.out.println("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [listsize="+list.size()+"]");
-                //System.out.println("ObjectStateUtils:readArrayList(): END    ["+desc+"]");
 
                 return list;
             }
@@ -744,10 +902,8 @@ public class ObjectStateUtils
             if (log.isTraceEnabled())
             {
                 log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]");
-                log.trace("ObjectStateUtils:readArrayList(): END    List  ["+desc+"]");
             }
             //System.out.println("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]");
-            //System.out.println("ObjectStateUtils:readArrayList(): END    ["+desc+"]");
 
             return null;
         }
@@ -774,14 +930,6 @@ public class ObjectStateUtils
      */
     public static void writeHashMap(ObjectOutput out, HashMap map, String desc) throws IOException
     {
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace("ObjectStateUtils:writeHashMap(): BEGIN    map ["+desc+"]  ");
-        }
-        //System.out.println("ObjectStateUtils:writeHashMap(): BEGIN    map ["+desc+"]  ");
-
-
         // The format of the data is
         //
         //  Non-null list:
@@ -807,12 +955,13 @@ public class ObjectStateUtils
 
             out.writeBoolean(EMPTY_OBJECT);
 
-            // trace point
-            if (log.isTraceEnabled())
-            {
-                log.trace("ObjectStateUtils:writeHashMap(): EMPTY map ["+desc+"]  ");
-            }
-            //System.out.println("ObjectStateUtils:writeHashMap(): EMPTY map ["+desc+"]  ");
+            // for now, don't trace the EMPTY lines
+            //  // trace point
+            //  if (log.isTraceEnabled())
+            //  {
+            //      log.trace("ObjectStateUtils:writeHashMap(): EMPTY map ["+desc+"]  ");
+            //  } 
+            //  //System.out.println("ObjectStateUtils:writeHashMap(): EMPTY map ["+desc+"]  ");
         }
         else
         {
@@ -860,34 +1009,38 @@ public class ObjectStateUtils
                         // ok, the pair can be saved so write them to our "real" buffer
                         canWritePair = true;
                     }
+                    catch (NotSerializableException nse)
+                    {
+                        // only trace the first time a particular class causes this exception
+                        traceNotSerializable(value, nse, desc, "ObjectStateUtils.writeHashMap() map value", OBJ_SAVE_PROBLEM);
+                    }
                     catch (Exception ex)
                     {
-                        // use this as a generic point for all exceptions
+                        // use this as a generic point for exceptions
 
                         // trace point
-                        log.warn("ObjectStateUtils:writeHashMap(): map value ["+value.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
-                        //System.out.println("ObjectStateUtils:writeHashMap(): map value ["+value.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
-
                         if (log.isTraceEnabled())
                         {
-                            // informational message
-                            log.trace("ObjectStateUtils:writeHashMap(): map value ["+value.getClass().getName()+"]  "+OBJ_SAVE_PROBLEM,ex);
+                            log.trace("ObjectStateUtils:writeHashMap(): map value ["+value.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM, ex);
+                            //System.out.println("ObjectStateUtils:writeHashMap(): map value ["+value.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
                             //ex.printStackTrace();
                         }
                     }
                 }
+                catch (NotSerializableException nse2)
+                {
+                    // only trace the first time a particular class causes this exception
+                    traceNotSerializable(key, nse2, desc, "ObjectStateUtils.writeHashMap() map key", OBJ_SAVE_PROBLEM);
+                }
                 catch (Exception exc)
                 {
-                    // use this as a generic point for all exceptions
+                    // use this as a generic point for exceptions
 
                     // trace point
-                    log.warn("ObjectStateUtils:writeHashMap(): map key ["+key.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
-                    //System.out.println("ObjectStateUtils:writeHashMap(): map key ["+key.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]");
-
                     if (log.isTraceEnabled())
                     {
-                        // informational
-                        log.trace("ObjectStateUtils:writeHashMap(): map key ["+key.getClass().getName()+"]  "+OBJ_SAVE_PROBLEM, exc);
+                        log.trace("ObjectStateUtils:writeHashMap(): map key ["+key.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
+                        //System.out.println("ObjectStateUtils:writeHashMap(): map key ["+key.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
                         //exc.printStackTrace();
                     }
                 }
@@ -911,16 +1064,18 @@ public class ObjectStateUtils
                                 out.writeObject(value);
                             }
                         }
+                        catch (NotSerializableException nse3)
+                        {
+                            // only trace the first time a particular class causes this exception
+                            traceNotSerializable(value, nse3, desc, "ObjectStateUtils.writeHashMap() map value output error", OBJ_SAVE_PROBLEM);
+                        }
                         catch (Exception excp)
                         {
                             // trace point
-                            log.warn("ObjectStateUtils:writeHashMap(): output error: map value ["+value.getClass().getName()+"]  ***Exception***  ["+excp.getClass().getName()+" : "+excp.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
-                            //System.out.println("ObjectStateUtils:writeHashMap(): output error: map value ["+value.getClass().getName()+"]  ***Exception***  ["+excp.getClass().getName()+" : "+excp.getMessage()+"]");
-
                             if (log.isTraceEnabled())
                             {
-                                // informational
-                                log.trace("ObjectStateUtils:writeHashMap(): output error: map value ["+value.getClass().getName()+"]  "+OBJ_SAVE_PROBLEM,excp);
+                                log.trace("ObjectStateUtils:writeHashMap(): output error: map value ["+value.getClass().getName()+"]  ***Exception***  ["+excp.getClass().getName()+" : "+excp.getMessage()+"]  "+OBJ_SAVE_PROBLEM, excp);
+                                //System.out.println("ObjectStateUtils:writeHashMap(): output error: map value ["+value.getClass().getName()+"]  ***Exception***  ["+excp.getClass().getName()+" : "+excp.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
                                 //excp.printStackTrace();
                             }
 
@@ -930,19 +1085,21 @@ public class ObjectStateUtils
 
                         savedListSize++;
                     }
+                    catch (NotSerializableException nse4)
+                    {
+                        // only trace the first time a particular class causes this exception
+                        traceNotSerializable(key, nse4, desc, "ObjectStateUtils.writeHashMap() map key output error", OBJ_SAVE_PROBLEM);
+                    }
                     catch (Exception ex)
                     {
                         // there was an error with the key to the real output stream
                         // so skip to the next pair
 
                         // trace point
-                        log.warn("ObjectStateUtils:writeHashMap(): output error: map key ["+key.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
-                        //System.out.println("ObjectStateUtils:writeHashMap(): output error: map key ["+key.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
-
                         if (log.isTraceEnabled())
                         {
-                            // informational
-                            log.trace("ObjectStateUtils:writeHashMap(): output error: map key ["+key.getClass().getName()+"]  "+OBJ_SAVE_PROBLEM,ex);
+                            log.trace("ObjectStateUtils:writeHashMap(): output error: map key ["+key.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM, ex);
+                            //System.out.println("ObjectStateUtils:writeHashMap(): output error: map key ["+key.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
                             //ex.printStackTrace();
                         }
                     }
@@ -969,15 +1126,7 @@ public class ObjectStateUtils
 
             pair_outBuffer.close();
             pair_objOut.close();
-
         }
-
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace("ObjectStateUtils:writeHashMap(): END      map ["+desc+"]  ");
-        }
-        //System.out.println("ObjectStateUtils:writeHashMap(): END      map ["+desc+"]  ");
     }
 
 
@@ -1005,14 +1154,6 @@ public class ObjectStateUtils
      */
     public static HashMap readHashMap(ObjectInput in, String desc) throws IOException
     {
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace("ObjectStateUtils:readHashMap(): BEGIN   ["+desc+"]  ");
-        }
-        //System.out.println("ObjectStateUtils:readHashMap(): BEGIN   ["+desc+"]  ");
-
-
         // The format of the data is
         //
         //  Non-null list:
@@ -1124,13 +1265,10 @@ public class ObjectStateUtils
                     // use this as a generic point for all exceptions
 
                     // trace point
-                    log.warn("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM);
-                    //System.out.println("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
-
                     if (log.isTraceEnabled())
                     {
-                        // informational
-                        log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"]  "+OBJ_RESTORE_PROBLEM, ex);
+                        log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM,ex);
+                        //System.out.println("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM);
                         //ex.printStackTrace();
                     }
                 }
@@ -1143,14 +1281,13 @@ public class ObjectStateUtils
 
             if (map.isEmpty())
             {
-                // trace point
-                if (log.isTraceEnabled())
-                {
-                    log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]");
-                    log.trace("ObjectStateUtils:readHashMap(): END     ["+desc+"]  ");
-                }
-                //System.out.println("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]");
-                //System.out.println("ObjectStateUtils:readHashMap(): END     ["+desc+"]  ");
+                // for now, don't trace the EMPTY lines
+                //  // trace point
+                //  if (log.isTraceEnabled())
+                //  {
+                //      log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]");
+                //  }
+                //  //System.out.println("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]");
 
                 return null;
             }
@@ -1160,10 +1297,8 @@ public class ObjectStateUtils
                 if (log.isTraceEnabled())
                 {
                     log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [mapsize="+map.size()+"]");
-                    log.trace("ObjectStateUtils:readHashMap(): END     ["+desc+"]  ");
                 }
                 //System.out.println("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [mapsize="+map.size()+"]");
-                //System.out.println("ObjectStateUtils:readHashMap(): END     ["+desc+"]  ");
 
                 return map;
             }
@@ -1175,10 +1310,8 @@ public class ObjectStateUtils
             if (log.isTraceEnabled())
             {
                 log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]");
-                log.trace("ObjectStateUtils:readHashMap(): END     ["+desc+"]  ");
             }
             //System.out.println("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]");
-            //System.out.println("ObjectStateUtils:readHashMap(): END     ["+desc+"]  ");
 
             return null;
         }
@@ -1205,14 +1338,6 @@ public class ObjectStateUtils
      */
     public static void writeLinkedList(ObjectOutput out, LinkedList objlist, String desc) throws IOException
     {
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace("ObjectStateUtils:writeLinkedList(): BEGIN    List ["+desc+"]  ");
-        }
-        //System.out.println("ObjectStateUtils:writeLinkedList(): BEGIN    List ["+desc+"]  ");
-
-
         // The format of the data is
         //
         //  Non-null list:
@@ -1238,12 +1363,13 @@ public class ObjectStateUtils
 
             out.writeBoolean(EMPTY_OBJECT);
 
-            // trace point
-            if (log.isTraceEnabled())
-            {
-                log.trace("ObjectStateUtils:writeLinkedList(): EMPTY List ["+desc+"]  ");
-            }
-            //System.out.println("ObjectStateUtils:writeLinkedList(): EMPTY List ["+desc+"]  ");
+            // for now, don't trace the EMPTY lines
+            //  // trace point
+            //  if (log.isTraceEnabled())
+            //  {
+            //      log.trace("ObjectStateUtils:writeLinkedList(): EMPTY List ["+desc+"]  ");
+            //  }
+            //  //System.out.println("ObjectStateUtils:writeLinkedList(): EMPTY List ["+desc+"]  ");
         }
         else
         {
@@ -1256,6 +1382,12 @@ public class ObjectStateUtils
             // expected list size
             out.writeInt(listSize);
 
+            // put each list entry into a test output buffer to see if it can be saved
+            // this technique preserves the integrity of the real output stream in the
+            // event of a serialization error
+            ByteArrayOutputStream test_outBuffer = new ByteArrayOutputStream();
+            ObjectOutputStream test_objOut = new ObjectOutputStream(test_outBuffer);
+
             // setup an iterator for the list
             Iterator i = objlist.iterator();
 
@@ -1264,34 +1396,69 @@ public class ObjectStateUtils
                 Object obj = i.next();
                 String tmpClassName = obj.getClass().getName();
 
+                boolean  canWrite = false;
+
                 try
                 {
-                    out.writeObject(obj);
-                    savedListSize++;
-
-                    // trace point
-                    if (log.isTraceEnabled())
-                    {
-                        log.trace("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]");
-                    }
-                    //System.out.println("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]");
-
+                    // write the object to the test buffer
+                    test_objOut.writeObject(obj);
+                    canWrite = true;
                 }
-                catch (Exception ex)
+                catch (NotSerializableException nse2)
                 {
-                    // use this as a generic point for all exceptions
+                    // only trace the first time a particular class causes this exception
+                    traceNotSerializable(obj, nse2, desc, "ObjectStateUtils.writeLinkedList()", OBJ_SAVE_PROBLEM);
+                }
+                catch (Exception exc)
+                {
+                    // use this as a generic point for exceptions
 
                     // trace point
-                    log.warn("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"] "+OBJ_SAVE_PROBLEM);
-                    //System.out.println("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
-
                     if (log.isTraceEnabled())
                     {
-                        // informational
-                        log.trace("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]  "+OBJ_SAVE_PROBLEM,ex);
-                        //ex.printStackTrace();
+                        log.trace("ObjectStateUtils:writeLinkedList(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
+                        //System.out.println("ObjectStateUtils:writeLinkedList(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
+                        //exc.printStackTrace();
                     }
                 }
+
+                if (canWrite)
+                {
+                    // write the object to the real output stream
+                    try
+                    {
+                        out.writeObject(obj);
+                        savedListSize++;
+
+                        // trace point
+                        if (log.isTraceEnabled())
+                        {
+                            log.trace("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]");
+                        }
+                        //System.out.println("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]");
+
+                    }
+                    catch (NotSerializableException nse)
+                    {
+                        // only trace the first time a particular class causes this exception
+                        traceNotSerializable(obj, nse, desc, "ObjectStateUtils.writeLinkedList()", OBJ_SAVE_PROBLEM);
+                    }
+                    catch (Exception ex)
+                    {
+                        // use this as a generic point for exceptions
+
+                        // trace point
+                        if (log.isTraceEnabled())
+                        {
+                            log.trace("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"] "+OBJ_SAVE_PROBLEM, ex);
+                            //System.out.println("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"] "+OBJ_SAVE_PROBLEM);
+                            //ex.printStackTrace();
+                        }
+                    }
+                }
+
+                // reset the temporary buffer for the next round
+                test_objOut.reset();
             }
 
             // put the end-of-marker in the stream
@@ -1306,14 +1473,10 @@ public class ObjectStateUtils
                 log.trace("ObjectStateUtils:writeLinkedList(): List ["+desc+"]   members saved ["+savedListSize+"]");
             }
             //System.out.println("ObjectStateUtils:writeLinkedList(): List ["+desc+"]   members saved ["+savedListSize+"]");
-        }
 
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace("ObjectStateUtils:writeLinkedList(): END    List ["+desc+"]  ");
+            test_outBuffer.close();
+            test_objOut.close();
         }
-        //System.out.println("ObjectStateUtils:writeLinkedList(): END    List ["+desc+"]  ");
 
     }
 
@@ -1342,14 +1505,6 @@ public class ObjectStateUtils
      */
     public static LinkedList readLinkedList(ObjectInput in, String desc) throws IOException
     {
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace("ObjectStateUtils:readLinkedList(): BEGIN    List  ["+desc+"]");
-        }
-        //System.out.println("ObjectStateUtils:readLinkedList(): BEGIN    ["+desc+"]");
-
-
         // The format of the data is
         //
         //  Non-null list:
@@ -1440,13 +1595,10 @@ public class ObjectStateUtils
                     // use this as a generic point for all exceptions
 
                     // trace point
-                    log.warn("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM);
-                    //System.out.println("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
-
                     if (log.isTraceEnabled())
                     {
-                        // informational
-                        log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"] "+OBJ_RESTORE_PROBLEM, ex);
+                        log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM,ex);
+                        //System.out.print("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM);
                         //ex.printStackTrace();
                     }
 
@@ -1467,14 +1619,13 @@ public class ObjectStateUtils
 
             if (list.isEmpty())
             {
-                // trace point
-                if (log.isTraceEnabled())
-                {
-                    log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]");
-                    log.trace("ObjectStateUtils:readLinkedList(): END    List  ["+desc+"]");
-                }
-                //System.out.println("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]");
-                //System.out.println("ObjectStateUtils:readLinkedList(): END    ["+desc+"]");
+                // for now, don't trace the EMPTY lines
+                //  // trace point
+                //  if (log.isTraceEnabled())
+                //  {
+                //      log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]");
+                //  }
+                //  //System.out.println("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]");
 
                 return null;
             }
@@ -1484,10 +1635,8 @@ public class ObjectStateUtils
                 if (log.isTraceEnabled())
                 {
                     log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [listsize="+list.size()+"]");
-                    log.trace("ObjectStateUtils:readLinkedList(): END    List  ["+desc+"]");
                 }
                 //System.out.println("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [listsize="+list.size()+"]");
-                //System.out.println("ObjectStateUtils:readLinkedList(): END    ["+desc+"]");
 
                 return list;
             }
@@ -1498,10 +1647,8 @@ public class ObjectStateUtils
             if (log.isTraceEnabled())
             {
                 log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]");
-                log.trace("ObjectStateUtils:readLinkedList(): END    List  ["+desc+"]");
             }
             //System.out.println("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]");
-            //System.out.println("ObjectStateUtils:readLinkedList(): END    ["+desc+"]");
 
             return null;
         }
@@ -2219,4 +2366,54 @@ public class ObjectStateUtils
             return false;
         }
     }
+
+
+    /**
+     * Trace the NotSerializable exception for the specified object
+     * if this is the first time that the specified
+     * object has caused the exception.
+     * 
+     * @param obj         The object being saved or restored
+     * @param nse         The exception object with the details of the error
+     * @param objDesc     The description of the object, eg, like the field name where it is being used
+     * @param methodName  The method name which encountered the exception
+     * @param desc        Text to be used for tracing
+     */
+    public static void traceNotSerializable(Object obj, NotSerializableException nse, String objDesc, String methodName, String desc)
+    {
+        if (log.isTraceEnabled() == false)
+        {
+            // if no tracing is being done, there's nothing to do
+            // exit quickly
+            return;
+        }
+
+        if (obj != null)
+        {
+            String objName = obj.getClass().getName();
+
+            if (NotSerializableList.get(objName) == null)
+            {
+                // set up some information about the exception
+                // for now, just use an initial counter, which we aren't doing much with
+                // but takes less space than the original object that caused the exception
+                // future: consider using a trace information object that would
+                //         contain a count of the times that a particular class
+                //         caused the exception, the class name of that class,
+                //         and the stack trace for the first time - this information
+                //         could then be accessed from a utility
+                Integer counter = new Integer(1);
+
+                // add to table
+                NotSerializableList.put(objName,counter);
+
+                // trace point
+                log.trace("ObjectStateUtils: ***NotSerializableException*** ["+nse.getMessage()+"] in method ["+methodName+"] for object ["+objName+"]  associated with ["+objDesc+"].  "+desc);
+                //System.out.println("ObjectStateUtils: ***NotSerializableException*** ["+nse.getMessage()+"] in method ["+methodName+"] for object ["+objName+"]  associated with ["+objDesc+"].  "+desc);
+            }
+
+        }
+        
+    }
+
 }
