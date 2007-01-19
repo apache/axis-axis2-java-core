@@ -120,6 +120,10 @@ public class MessageUtils {
             mhs.addHeader(mh.getName(), mh.getValue());
         }
         a.setMimeHeaders(mhs);
+        
+        // Make sure content id is preserved
+        String contentID = ap.getContentId();
+        a.setContentID(contentID);
         return a;
     }
     
@@ -139,6 +143,10 @@ public class MessageUtils {
             MimeHeader mh = (MimeHeader) it.next();
             ap.addMimeHeader(mh.getName(), mh.getValue());
         }
+        
+        // Preserve the original content id
+        String contentID = a.getContentID();
+        ap.setContentId(contentID);
         return ap;
     }
     

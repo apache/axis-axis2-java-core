@@ -310,6 +310,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             String content = (String) attachmentPart.getContent();
             assertTrue(content != null);
             assertTrue(SoapMessageProvider.TEXT_XML_ATTACHMENT.equals(content));
+            assert(attachmentPart.getContentId().equals(SoapMessageProvider.ID));
             
             // Print out the response
             System.out.println(">> Response [" + response.toString() + "]");

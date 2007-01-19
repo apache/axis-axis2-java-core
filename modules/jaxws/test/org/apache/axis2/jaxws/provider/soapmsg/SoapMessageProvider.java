@@ -262,6 +262,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         // Additional assertion checks
         assert(countAttachments(request) == 1);
         AttachmentPart requestAP = (AttachmentPart) request.getAttachments().next();
+        assert(requestAP.getContentId().equals(ID));
         String content = (String) requestAP.getContent();
         assert(SoapMessageProvider.TEXT_XML_ATTACHMENT.equals(content));
         
