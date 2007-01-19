@@ -95,8 +95,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 if (log.isDebugEnabled()) 
                     log.debug("Adding JAXBAttachmentUnmarshaller to Unmarshaller");
                 
-                XMLPart xp = getParent();
-                Message msg = xp.getParent();
+                Message msg = getParent();
                 
                 // TODO Pool ?
                 JAXBAttachmentUnmarshaller aum = new JAXBAttachmentUnmarshaller();
@@ -171,8 +170,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 if (log.isDebugEnabled())
                     log.debug("Adding JAXBAttachmentMarshaller to Marshaller");
                 
-                XMLPart xp = getParent();
-                Message msg = xp.getParent();
+                Message msg = getParent();
                 
                 // Pool
                 JAXBAttachmentMarshaller am = new JAXBAttachmentMarshaller();
@@ -215,14 +213,11 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 	}
     
     private boolean isMTOMEnabled() {
-        XMLPart xp = getParent();
-        if (xp != null) {
-            Message msg = xp.getParent();
-            if (msg != null && msg.isMTOMEnabled())
-                return true;
-        }
-        
-        return false;
+       Message msg = getParent();
+       if (msg != null && msg.isMTOMEnabled()) {
+          return true;
+       }
+       return false;
     }
     
     /**

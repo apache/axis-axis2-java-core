@@ -129,4 +129,15 @@ public interface Block extends OMDataSource {
 	 */
 	public BlockFactory getBlockFactory();
     
+    /**
+     * Get the Message associated with this block
+     * @return Message
+     */
+    public Message getParent();
+    
+    /** Set the Message associated with this block
+     * (This method is intended to be called by the Message Implementation only)
+     * @param parent
+     */
+    public void setParent(Message parent);
 }

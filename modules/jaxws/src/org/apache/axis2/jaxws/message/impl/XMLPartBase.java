@@ -257,6 +257,7 @@ public abstract class XMLPartBase implements XMLPart {
 		} else {
 			block = blockFactory.createFrom(getAsOMElement(), null, null);
 		}
+        block.setParent(getParent());
 		return block;
 	}
 
@@ -374,6 +375,14 @@ public abstract class XMLPartBase implements XMLPart {
             // build the fault from an OM or SOAPEnvelope.  
             XMLSpine spine = getContentAsXMLSpine();
             xmlFault = spine.getXMLFault();
+            
+            // For each block in the xmlfault, set the message
+            Block[] blocks = xmlFault.getDetailBlocks();
+            if (blocks != null) {
+                for (int i=0; i<blocks.length; i++) {
+                    blocks[i].setParent(getParent());
+                }
+            }
         } 
         return xmlFault;
 	}
@@ -382,7 +391,14 @@ public abstract class XMLPartBase implements XMLPart {
 	 * @see org.apache.axis2.jaxws.message.XMLPart#setXMLFault(org.apache.axis2.jaxws.message.XMLFault)
 	 */
 	public void setXMLFault(XMLFault xmlFault) throws MessageException {
-		// Since the XMLFault contains detail Blocks it makes sence to convert
+	    // For each block in the xmlfault, set the message
+        Block[] blocks = xmlFault.getDetailBlocks();
+        if (blocks != null) {
+            for (int i=0; i<blocks.length; i++) {
+                blocks[i].setParent(getParent());
+            }
+        }
+        // Since the XMLFault contains detail Blocks it makes sence to convert
         // to an XMLSpine first (since that is what we do in the other calls that set Blocks).
         // Of course if the XMLFault did not have detail Blocks we might be able to 
         // do this without a transformation of the data.  
@@ -455,14 +471,18 @@ public abstract class XMLPartBase implements XMLPart {
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getBodyBlock(int, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
 	 */
 	public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) throws MessageException {
-		return getContentAsXMLSpine().getBodyBlock(index, context, blockFactory);
-	}
+		Block block = getContentAsXMLSpine().getBodyBlock(index, context, blockFactory);
+		block.setParent(getParent());
+        return block;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getHeaderBlock(java.lang.String, java.lang.String, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
 	 */
 	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws MessageException {
-		return getContentAsXMLSpine().getHeaderBlock(namespace, localPart, context, blockFactory);
+		Block block = getContentAsXMLSpine().getHeaderBlock(namespace, localPart, context, blockFactory);
+        block.setParent(getParent());
+        return block;
 	}
 
 	/* (non-Javadoc)
@@ -497,14 +517,16 @@ public abstract class XMLPartBase implements XMLPart {
 	 * @see org.apache.axis2.jaxws.message.XMLPart#setBodyBlock(int, org.apache.axis2.jaxws.message.Block)
 	 */
 	public void setBodyBlock(int index, Block block) throws MessageException {
-		getContentAsXMLSpine().setBodyBlock(index, block);
+		block.setParent(getParent());
+        getContentAsXMLSpine().setBodyBlock(index, block);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#setHeaderBlock(java.lang.String, java.lang.String, org.apache.axis2.jaxws.message.Block)
 	 */
 	public void setHeaderBlock(String namespace, String localPart, Block block) throws MessageException {
-		getContentAsXMLSpine().setHeaderBlock(namespace, localPart, block);
+		block.setParent(getParent());
+        getContentAsXMLSpine().setHeaderBlock(namespace, localPart, block);
 	}
     
     /*

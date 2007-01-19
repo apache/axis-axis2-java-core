@@ -32,6 +32,7 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
+import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -69,7 +70,7 @@ public abstract class BlockImpl implements Block {
 	private QName qName;
 	private BlockFactory factory;
 	private boolean consumed = false;
-    private XMLPart parent;
+    private Message parent;
 	
 	/**
 	 * A Block has the following components
@@ -113,11 +114,11 @@ public abstract class BlockImpl implements Block {
 		return busContext;
 	}
     
-    public XMLPart getParent() {
+    public Message getParent() {
         return parent;
     }
     
-    public void setParent(XMLPart p) {
+    public void setParent(Message p) {
         parent = p;
     }
      
