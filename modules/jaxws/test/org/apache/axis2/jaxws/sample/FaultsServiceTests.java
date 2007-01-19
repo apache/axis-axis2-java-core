@@ -317,4 +317,31 @@ public class FaultsServiceTests extends TestCase {
         assertTrue(soapFault != null);
         assertTrue(soapFault.getFaultString().contains("NullPointerException"));
     }
+    
+    /**
+     * Tests that that SOAPFaultException (for WebServiceException) is thrown 
+     */
+    public void testFaultsService11(){
+        Exception exception = null;
+        try{
+            FaultsServicePortType proxy = getProxy();
+            
+            // the invoke will throw an exception, if the test is performed right
+            int total = proxy.throwFault(2, "WSE", 2);  // "WSE" will cause service to throw WebServiceException System Exception
+            
+        }catch(SOAPFaultException e){
+            // Okay...on the client a SOAPFaultException should be thrown
+            exception = e;
+        } catch (Exception e) {
+            fail("Did not get a SOAPFaultException");
+        }
+        
+        System.out.println("----------------------------------");
+        
+        assertNotNull(exception);
+        SOAPFaultException sfe = (SOAPFaultException) exception;
+        SOAPFault soapFault = sfe.getFault();
+        assertTrue(soapFault != null);
+        assertTrue(soapFault.getFaultString().equals("This is a WebServiceException"));
+    }
 }

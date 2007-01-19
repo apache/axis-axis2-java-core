@@ -20,6 +20,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.Holder;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
@@ -110,6 +111,9 @@ System.out.println("\nIn getQuote(): " + tickerSymbol + "\n");
             } catch (SOAPException se) {}
         } else if (b.equals("NPE")) {
             throw new NullPointerException();
+        } else if (b.equals("WSE")) {
+            WebServiceException wsf = new WebServiceException("This is a WebServiceException");
+            throw wsf;
         }
         return 0;
     }
