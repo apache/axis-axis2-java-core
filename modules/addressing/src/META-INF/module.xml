@@ -1,4 +1,4 @@
-<module name="addressing">
+<module name="addressing" class="org.apache.axis2.addressing.AddressingModule">
     <Description>This is WS-Addressing implementation on Axis2. Currently we have implemented Submission version (2004/08) and Proposed Recommendation. </Description>
     <InFlow>
         <handler name="AddressingFinalInHandler" class="org.apache.axis2.handlers.addressing.AddressingFinalInHandler">
