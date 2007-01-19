@@ -135,8 +135,7 @@ class XMLSpineImpl implements XMLSpine {
 		SOAPHeader header = root.getHeader();
 		if (header != null) {
             Iterator it = header.getChildren();
-            advanceIterator(it, headerBlocks, false); 
-            //advanceIterator(it, headerBlocks, true);            
+            advanceIterator(it, headerBlocks, true);             
         }
 
 		
@@ -162,6 +161,7 @@ class XMLSpineImpl implements XMLSpine {
                 }
                 bodyIterator = op.getChildren();
             }
+            // We only want to advance past the first block...we will lazily parse the other blocks
 			advanceIterator(bodyIterator, bodyBlocks, false);
 		} else {
 			// Process the Fault
@@ -170,7 +170,7 @@ class XMLSpineImpl implements XMLSpine {
 			SOAPFaultDetail detail = fault.getDetail();
 			if (detail != null) {
 			  detailIterator = detail.getChildren();
-			  advanceIterator(detailIterator, detailBlocks, false);
+			  advanceIterator(detailIterator, detailBlocks, true);  // Advance through all of the detail blocks
 			}
 		}
 		return;
@@ -188,25 +188,22 @@ class XMLSpineImpl implements XMLSpine {
 		// TODO This code must be reworked.  The OM Iterator causes the entire OMElement to be 
 		// parsed when it.next() is invoked.  I will need to fix this to gain performance.  (scheu)
 		
-		boolean found = false;
-		boolean first = true;
-		while (it.hasNext() && (!found && !toEnd)) {
-			// Remove the nodes as they are converted into blocks
-			if (!first) {
-				it.remove();
-			}
-			first = true;
-			
+        boolean found = false;
+		while (it.hasNext() && !found) {
 			OMNode node = (OMNode) it.next();
 			if (node instanceof OMElement) {
 				// Elements are converted into Blocks
 				Block block = null;
 				try { 
 					block = obf.createFrom((OMElement) node, null, null);
+                    it.remove();  // Remove the nodes as they are converted 
 				} catch (XMLStreamException xse) {
 					throw ExceptionFactory.makeMessageException(xse);
 				}
 				blocks.add(block);
+                if (!toEnd) {
+                    found = true;  // Found the one element, indicate that we can quit
+                }
 			} else {
                 // TODO LOGGING ?
 				// A Non-element is found, it is probably whitespace text, but since
@@ -379,7 +376,7 @@ class XMLSpineImpl implements XMLSpine {
 	            OMElement e = new OMSourcedElementImpl(b.getQName(),soapFactory, b);                  
 	            root.getBody().getFault().getDetail().addChild(e);                  
 	        }               
-	        bodyBlocks.clear();  
+	        detailBlocks.clear();  
 	    }
 	    return root;
 	}
@@ -432,8 +429,11 @@ class XMLSpineImpl implements XMLSpine {
 
 	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws MessageException {
 		int index = getHeaderBlockIndex(namespace, localPart);
+        if (index < 0) {
+            // REVIEW What should happen if header block not found
+            return null;  
+        }
 		try {
-			//Block oldBlock = bodyBlocks.get(index);
 			Block oldBlock = headerBlocks.get(index);
 			// Convert to new Block
 			Block newBlock = blockFactory.createFrom(oldBlock, context);
@@ -448,8 +448,11 @@ class XMLSpineImpl implements XMLSpine {
 
 	public void setHeaderBlock(String namespace, String localPart, Block block) throws MessageException {
 		int index = getHeaderBlockIndex(namespace, localPart);
-		headerBlocks.add(block);
-		//headerBlocks.set(index, block);
+        if (index >= 0) {
+            headerBlocks.set(index, block);
+        } else {
+            headerBlocks.add(block);
+        }
 	}
 
 	/**
@@ -472,7 +475,9 @@ class XMLSpineImpl implements XMLSpine {
 	}
 	public void removeHeaderBlock(String namespace, String localPart) throws MessageException {
 		int index = getHeaderBlockIndex(namespace, localPart);
-		headerBlocks.remove(index);
+        if (index >= 0) {
+            headerBlocks.remove(index);
+        }
 	}
 
 	public String traceString(String indent) {

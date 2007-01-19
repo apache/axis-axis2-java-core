@@ -30,6 +30,7 @@ import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFault;
 import javax.xml.stream.XMLStreamException;
@@ -56,6 +57,7 @@ import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.axis2.jaxws.util.ConvertUtils;
+import org.apache.axis2.jaxws.util.SAAJFactory;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -537,8 +539,19 @@ public class MethodMarshallerUtils  {
         XMLFault xmlfault = message.getXMLFault();
         Block[] detailBlocks = xmlfault.getDetailBlocks();
         
+        // Sometimes Axis2 will flow a single detail element with the name "Exception".  
+        // "Exception" contains stack information.  This is a violation of the WSI specification; however
+        // we still need to work around it.
+        boolean isStack = false;
+        QName elementName = null;
+        if (detailBlocks !=null && detailBlocks.length == 1) {
+            elementName = detailBlocks[0].getQName();
+            isStack = (elementName.getNamespaceURI().length() == 0 && elementName.getLocalPart().equals("Exception"));
+        }
+        
         
         if ((operationDesc.getFaultDescriptions().length == 0) || 
+                isStack ||
                 (detailBlocks == null) || 
                 (detailBlocks.length > 1))  {
             // This is a system exception if the method does not throw a checked exception or if 
@@ -553,9 +566,6 @@ public class MethodMarshallerUtils  {
                 // Since RPC is type based, JAXB needs the declared type
                 // to unmarshal the object.  But we don't know the declared
                 // type without knowing the name of the type (sigh)
-                
-                // First get the QName...this might cause a parse
-                QName elementName = detailBlocks[0].getQName();
                 
                 // Now search the FaultDescriptors to find the right 
                 // declared type
@@ -574,7 +584,7 @@ public class MethodMarshallerUtils  {
             
             // TODO This code assumes that the block can be demarshalled as a 
             // known JAXB object.  But what if a detail is flowed that we don't know how to handle.
-            // for example, what if the detail is a stack trace.  To be on the safe side, we should
+            // To be on the safe side, we should
             // probably make a copy of the OMBlock and then throw create a SystemException if
             // with the original detail if JAXB unmarshalling fails.
             // (I agree that this would not be performant, but we are on an exception path)
@@ -683,7 +693,7 @@ public class MethodMarshallerUtils  {
      */
     private static Exception createServiceException(String message, Class exceptionclass, Object bean, Class beanFormalType) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
         // All webservice exception classes are required to have a constructor that takes a (String, bean) argument
-        // TODO necessary to be more careful here with instantiating, cassting, etc?
+        // TODO necessary to be more careful here with instantiating, casting, etc?
         if (log.isDebugEnabled()) {
             log.debug("Constructing JAX-WS Exception:" + exceptionclass);
         }
@@ -703,16 +713,20 @@ public class MethodMarshallerUtils  {
         ProtocolException e = null;
         Protocol protocol = message.getProtocol();
         String text = xmlFault.getReason().getText();
+        
         if (protocol == Protocol.soap11 || protocol == Protocol.soap12) {
             // Throw a SOAPFaultException
             if (log.isDebugEnabled()) {
                 log.debug("Constructing SOAPFaultException for " + text);
             }
+            String protocolNS = (protocol == Protocol.soap11) ? 
+                    SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE : 
+                        SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE;
             try {
                 // The following set of instructions is used to avoid 
                 // some unimplemented methods in the Axis2 SAAJ implementation
-                SOAPEnvelope env = message.getAsSOAPEnvelope();
-                SOAPBody body = env.getBody();
+                javax.xml.soap.MessageFactory mf = SAAJFactory.createMessageFactory(protocolNS);
+                SOAPBody body = mf.createMessage().getSOAPBody();
                 SOAPFault soapFault = XMLFaultUtils.createSAAJFault(xmlFault, body);
                 e = new SOAPFaultException(soapFault);
             } catch (Exception ex) {
