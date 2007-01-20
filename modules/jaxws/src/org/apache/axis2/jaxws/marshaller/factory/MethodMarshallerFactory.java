@@ -19,9 +19,6 @@ package org.apache.axis2.jaxws.marshaller.factory;
 import javax.jws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
-import org.apache.axis2.jaxws.marshaller.impl.DocLitBareMethodMarshallerImpl;
-import org.apache.axis2.jaxws.marshaller.impl.DocLitWrappedMethodMarshallerImpl;
-import org.apache.axis2.jaxws.marshaller.impl.RPCLitMethodMarshallerImpl;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitBareMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitWrappedMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.RPCLitMethodMarshaller;
@@ -32,15 +29,7 @@ import org.apache.axis2.jaxws.description.OperationDescription;
  */
 public class MethodMarshallerFactory {
 
-    // The following flags are for testing only.
-    // The allow us to test the old implementation against the new implementation.
-    private static final boolean ALT_RPCLIT_CLIENT         = true;
-    private static final boolean ALT_DOCLIT_WRAPPED_CLIENT = true;
-    private static final boolean ALT_DOCLIT_BARE_CLIENT    = true;
     
-    private static final boolean ALT_RPCLIT_SERVER         = true;
-    private static final boolean ALT_DOCLIT_WRAPPED_SERVER = true;
-    private static final boolean ALT_DOCLIT_BARE_SERVER    = true;
     
 	/**
 	 * Intentionally private
@@ -61,23 +50,11 @@ public class MethodMarshallerFactory {
             SOAPBinding.ParameterStyle paramStyle,
             boolean isClient){  // This flag is for testing only !
 		if (style == SOAPBinding.Style.RPC) {
-            if (ALT_RPCLIT_CLIENT && isClient || ALT_RPCLIT_SERVER && !isClient ) {
-                return new RPCLitMethodMarshaller();  
-            } else {
-                return new RPCLitMethodMarshallerImpl();
-            }
+            return new RPCLitMethodMarshaller();  
         } else if (paramStyle == SOAPBinding.ParameterStyle.WRAPPED){
-            if (ALT_DOCLIT_WRAPPED_CLIENT && isClient || ALT_DOCLIT_WRAPPED_SERVER && !isClient) {
-                return new DocLitWrappedMethodMarshaller();
-            } else {
-                return new DocLitWrappedMethodMarshallerImpl();
-            }
+            return new DocLitWrappedMethodMarshaller();
 		} else if (paramStyle == SOAPBinding.ParameterStyle.BARE){
-            if (ALT_DOCLIT_BARE_CLIENT && isClient || ALT_DOCLIT_BARE_SERVER && !isClient) {
-                return new DocLitBareMethodMarshaller();
-            } else {
-                return new DocLitBareMethodMarshallerImpl();
-            }
+            return new DocLitBareMethodMarshaller();
 		}
 		return null;
 	}
