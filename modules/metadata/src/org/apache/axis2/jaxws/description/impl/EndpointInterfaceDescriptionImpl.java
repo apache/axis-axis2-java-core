@@ -164,20 +164,31 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
             
             //TODO: Verify that this classname is truly always the wrapper class
             mdc.setDeclaringClass(dbc.getClassName());
+            
             // Only add if it is a method that would be or is in the WSDL i.e. 
             // don't create an OperationDescriptor for the MDC representing the
             // constructor
             if(DescriptionUtils.createOperationDescription(mdc.getMethodName())) {
-            	OperationDescription operation = new OperationDescriptionImpl(mdc, this);
-            	// TODO: Do we need to worry about a null AxisOperation at this level?
-                
-                //Add this AxisOperation to the AxisService
-                getEndpointDescription().getAxisService().addOperation(operation.getAxisOperation());
-            
-                if (log.isDebugEnabled())
-                    log.debug("EID: Just added operation= " +operation.getOperationName());
-                addOperation(operation);
-            
+            	//First check if this operation already exists on the AxisService, if so
+            	//then use that in the description hierarchy
+            	
+            	AxisService axisService = getEndpointDescription().getAxisService();
+            	AxisOperation axisOperation = axisService.getOperation(OperationDescriptionImpl.determineOperationQName(mdc));
+            	
+           		OperationDescription operation = new OperationDescriptionImpl(mdc, this, axisOperation);
+           	
+            	if (axisOperation == null) {
+            		//This axisOperation does not already exist on the AxisService, so add it now
+            		
+                    // TODO: Do we need to worry about a null AxisOperation at this level?
+        
+            		axisService.addOperation(operation.getAxisOperation());
+            		
+            	}
+            	
+        		if (log.isDebugEnabled())
+        			log.debug("EID: Just added operation= " +operation.getOperationName());
+        		addOperation(operation);
             }
  
         }

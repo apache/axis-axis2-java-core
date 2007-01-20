@@ -159,81 +159,84 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         this.operationName = axisOperation.getName();
     }
 
-    OperationDescriptionImpl(MethodDescriptionComposite mdc, EndpointInterfaceDescription parent) {
+    OperationDescriptionImpl(	MethodDescriptionComposite mdc, 
+    							EndpointInterfaceDescription parent, 
+    							AxisOperation axisOperation) {
 
         parentEndpointInterfaceDescription = parent;
         methodComposite = mdc;
         this.operationName = new QName(getOperationName());
         webMethodAnnotation = methodComposite.getWebMethodAnnot();
-
-        AxisOperation axisOperation = null;
-        
-        try {
-            if (isOneWay()) {               
-                axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY);
-            } else {
-                axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT);
-            }
-            //TODO: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
-            //                                              ROBUST_IN_ONLY
-            //      Determine how these MEP's should be handled, if at all
-                    
-        } catch (Exception e) {
-            AxisFault ex = new AxisFault("OperationDescriptionImpl:cons - unable to build AxisOperation ");
-        }
-            
-        if (axisOperation != null){
-            
-            axisOperation.setName(determineOperationQName(this.methodComposite));
-            axisOperation.setSoapAction(this.getAction());
-
-        
-            //TODO: Determine other axisOperation values that may need to be set
-            //      Currently, the following values are being set on AxisOperation in 
-            //      ServiceBuilder.populateService which we are not setting:
-            //          AxisOperation.setPolicyInclude()
-            //          AxisOperation.setWsamappingList()
-            //          AxisOperation.setOutputAction()
-            //          AxisOperation.addFaultAction()
-            //          AxisOperation.setFaultMessages()
-            
-            // TODO: The WSMToAxisServiceBuilder sets the message receiver, not sure why this is done
-            //       since AxisService.addOperation does this as well by setting it to a default
-            //       MessageReceiver...it appears that this code is also setting it to a default
-            //       receiver..need to understand this
-
-            /*
-            String messageReceiverClass = "org.apache.axis2.rpc.receivers.RPCMessageReceiver";
-            if(wsmOperation.isOneWay()){
-                messageReceiverClass = "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver";
-            }
-            try{
-                MessageReceiver msgReceiver = (MessageReceiver)Class.forName(messageReceiverClass).newInstance();
-                axisOperation.setMessageReceiver(msgReceiver);
-
-            }catch(Exception e){
-            }
-            */
-
-            parameterDescriptions = createParameterDescriptions();
-            faultDescriptions = createFaultDescriptions();
-            
-            //TODO: Need to process the other annotations that can exist, on the server side
-            //      and at the method level.
-            //      They are, as follows:       
-            //          WebResultAnnot (181)
-            //          HandlerChain
-            //          SoapBinding (181)
-            //          WebServiceRefAnnot (List) (JAXWS)
-            //          WebServiceContextAnnot (JAXWS via injection)
-            //          RequestWrapper (JAXWS)
-            //          ResponseWrapper (JAXWS)
-            
-//System.out.println("OperationDescription: Finished setting operation");
-            
-        }
-        
         this.axisOperation = axisOperation;
+        
+        //If an AxisOperation was already created for us by populateService then just use that onw
+        //Otherwise, build it up here
+        if (this.axisOperation == null) {
+        	
+        	try {
+        		if (isOneWay()) {               
+        			axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY);
+        		} else {
+        			axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT);
+        		}
+        		//TODO: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
+        		//                                              ROBUST_IN_ONLY
+        		//      Determine how these MEP's should be handled, if at all
+        		
+        	} catch (Exception e) {
+        		AxisFault ex = new AxisFault("OperationDescriptionImpl:cons - unable to build AxisOperation ");
+        	}
+            
+        	if (axisOperation != null){
+        		
+        		axisOperation.setName(determineOperationQName(this.methodComposite));
+        		axisOperation.setSoapAction(this.getAction());
+        		
+        		
+        		//TODO: Determine other axisOperation values that may need to be set
+        		//      Currently, the following values are being set on AxisOperation in 
+        		//      ServiceBuilder.populateService which we are not setting:
+        		//          AxisOperation.setPolicyInclude()
+        		//          AxisOperation.setWsamappingList()
+        		//          AxisOperation.setOutputAction()
+        		//          AxisOperation.addFaultAction()
+        		//          AxisOperation.setFaultMessages()
+        		
+        		// TODO: The WSMToAxisServiceBuilder sets the message receiver, not sure why this is done
+        		//       since AxisService.addOperation does this as well by setting it to a default
+        		//       MessageReceiver...it appears that this code is also setting it to a default
+        		//       receiver..need to understand this
+        		
+        		/*
+        		 String messageReceiverClass = "org.apache.axis2.rpc.receivers.RPCMessageReceiver";
+        		 if(wsmOperation.isOneWay()){
+        		 messageReceiverClass = "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver";
+        		 }
+        		 try{
+        		 MessageReceiver msgReceiver = (MessageReceiver)Class.forName(messageReceiverClass).newInstance();
+        		 axisOperation.setMessageReceiver(msgReceiver);
+        		 
+        		 }catch(Exception e){
+        		 }
+        		 */
+        		
+        		//TODO: Need to process the other annotations that can exist, on the server side
+        		//      and at the method level.
+        		//      They are, as follows:       
+        		//          WebResultAnnot (181)
+        		//          HandlerChain
+        		//          SoapBinding (181)
+        		//          WebServiceRefAnnot (List) (JAXWS)
+        		//          WebServiceContextAnnot (JAXWS via injection)
+        		//          RequestWrapper (JAXWS)
+        		//          ResponseWrapper (JAXWS)	
+        	}
+        	
+        	this.axisOperation = axisOperation;
+        }
+        
+		parameterDescriptions = createParameterDescriptions();
+		faultDescriptions = createFaultDescriptions();
     }
     
     void setSEIMethod(Method method) {
@@ -425,7 +428,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     
     //TODO: For now, we are overriding the above method only because it is static, these should
     //be combined at some point
-    static QName determineOperationQName(MethodDescriptionComposite mdc) {
+    public static QName determineOperationQName(MethodDescriptionComposite mdc) {
         return new QName(determineOperationName(mdc));
     }
     
