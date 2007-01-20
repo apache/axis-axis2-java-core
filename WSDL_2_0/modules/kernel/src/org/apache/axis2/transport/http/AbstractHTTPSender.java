@@ -25,6 +25,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
@@ -33,15 +34,20 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.woden.wsdl20.extensions.http.HTTPLocation;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.zip.GZIPInputStream;
 
 public abstract class AbstractHTTPSender {
@@ -259,7 +265,7 @@ public abstract class AbstractHTTPSender {
         InputStream in = httpMethod.getResponseBodyAsStream();
 
         Header contentEncoding =
-                httpMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_ENCODING);
+                httpMethod.getResponseHeader(HTTPConstants.HEADER_TRANSFER_ENCODING);
         if (contentEncoding != null) {
             if (contentEncoding.getValue().
                     equalsIgnoreCase(HTTPConstants.COMPRESSION_GZIP)) {
@@ -526,8 +532,22 @@ public abstract class AbstractHTTPSender {
                                     HTTPConstants.COMPRESSION_GZIP);
         }
         if (Utils.isExplicitlyTrue(msgContext, HTTPConstants.MC_GZIP_REQUEST)) {
-            method.addRequestHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
-                                    HTTPConstants.COMPRESSION_GZIP);
+            Header header = null;
+            if ((header = method.getRequestHeader(HTTPConstants.HEADER_TRANSFER_ENCODING))  != null)
+
+            method.removeRequestHeader(header);
+//            method.addRequestHeader(HTTPConstants.HEADER_TRANSFER_ENCODING,
+//                                    HTTPConstants.COMPRESSION_GZIP + "," + HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED);
+
+
+            method.addRequestHeader(HTTPConstants.HEADER_TRANSFER_ENCODING,
+                                                HTTPConstants.COMPRESSION_GZIP);
+            method.addRequestHeader(HTTPConstants.HEADER_TRANSFER_ENCODING,
+                                                HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED);
+
+
+
+
         }
 
 
@@ -581,5 +601,84 @@ public abstract class AbstractHTTPSender {
         }
 
         return userAgentString;
+    }
+
+        protected String applyURITemplating(MessageContext messageContext, String query, boolean detach) {
+
+            OMElement firstElement;
+            if (detach) {
+                firstElement = messageContext.getEnvelope().getBody().getFirstElement();
+            }
+            else {
+                firstElement = messageContext.getEnvelope().getBody().getFirstElement().cloneOMElement();
+            }
+
+
+            HTTPLocation httpLocation = new HTTPLocation(query);
+
+            String [] localNames = httpLocation.getLocalNames();
+            String [] values = new String[localNames.length];
+            int i;
+            for (i = 0; i < localNames.length; i++) {
+                String localName = localNames[i];
+
+                try {
+                values[i] = URLEncoder.encode(getOMElementValue(localName,firstElement), "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    log.error("Unable to encode Query String");
+                }
+            }
+
+
+             httpLocation.substitute(values);
+
+
+//            // first process the situ where user had explicitly put some params to go in the URL
+//            ArrayList httpLocationParams = (ArrayList) messageContext.getProperty(
+//                    Constants.Configuration.URL_HTTP_LOCATION_PARAMS_LIST);
+//
+//           // now let's process URL templates.
+//            String patternString = "\\{[A-Z0-9a-z._%-]+\\}";
+//            Pattern pattern = Pattern.compile(patternString);
+//
+//            StringBuffer buffer = new StringBuffer(query);
+//
+//            Matcher matcher = pattern.matcher(buffer);
+//
+//            while (matcher.find()) {
+//                String match = matcher.group();
+//
+//                // Get indices of matching string
+//                int start = matcher.start();
+//                int end = matcher.end();
+//
+//                CharSequence charSequence = match.subSequence(1, match.length() - 1);
+//
+//                buffer.delete(start, end);
+//                try {
+//                    buffer.insert(start, URLEncoder.encode(getOMElementValue(charSequence.toString(), firstElement, detach),"UTF-8"));
+//                } catch (UnsupportedEncodingException e) {
+//                    log.error("Unable to encode Query String");
+//                }
+//                matcher.reset();
+//
+//            }
+//
+//            return buffer.toString();
+
+            return httpLocation.toString();
+    }
+
+     private String getOMElementValue(String elementName, OMElement parentElement) {
+        OMElement httpURLParam = parentElement.getFirstChildWithName(new QName(elementName));
+
+        if (httpURLParam != null) {
+            httpURLParam.detach();
+            if (parentElement.getFirstOMChild() == null) {
+                parentElement.detach();
+            }
+            }
+            return httpURLParam.getText();
+
     }
 }

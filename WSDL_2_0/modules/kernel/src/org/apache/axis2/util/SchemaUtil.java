@@ -22,6 +22,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.context.MessageContext;
@@ -34,17 +35,37 @@ import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaInclude;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.servlet.ServletRequestContext;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.FileItemFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpUtils;
 import javax.xml.namespace.QName;
+import javax.mail.internet.MimeMessage;
+import javax.mail.Session;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Enumeration;
+import java.util.List;
+import java.net.URLDecoder;
+import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 
 /**
  * 
  */
 public class SchemaUtil {
+    private static final Log log = LogFactory.getLog(SchemaUtil.class);
+
 
     public static XmlSchema[] getAllSchemas(XmlSchema schema) {
         HashMap map = new HashMap();
@@ -98,8 +119,12 @@ public class SchemaUtil {
 
         SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
         SOAPBody body = soapEnvelope.getBody();
-
-        Map requestParameterMap = request.getParameterMap();
+        String queryParameterSeparator = null;
+        AxisBindingOperation axisBindingOperation = (AxisBindingOperation)msgCtxt.getProperty(Constants.AXIS_BINDING_OPERATION);
+        if (axisBindingOperation != null) {
+            queryParameterSeparator = (String)axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
+        }
+        Map requestParameterMap = getParameterMap(request, queryParameterSeparator);
 
         if (xmlSchemaElement == null) {
             // if there is no schema its piece of cake !! add these to the soap body in any order you like.
@@ -112,9 +137,9 @@ public class SchemaUtil {
                 Iterator requestParamMapIter = requestParameterMap.keySet().iterator();
                 while (requestParamMapIter.hasNext()) {
                     String key = (String) requestParamMapIter.next();
-
                     String value = (String) ((Object[]) requestParameterMap.get(key))[0];
                     soapFactory.createOMElement(key, null, bodyFirstChild).setText(value);
+
                 }
             }
         } else {
@@ -149,31 +174,19 @@ public class SchemaUtil {
 
                         // now we need to know some information from the binding operation.
 
-                        // First retrieve the binding operations from message context
-                        AxisBindingOperation axisBindingOperation = (AxisBindingOperation) msgCtxt.getProperty(Constants.AXIS_BINDING_OPERATION);
-
                         // Now we are going to extrac information from the binding operation. WSDL 2.0
                         // http bindiing allows to define a query parameter separator. To capture it
                         // create a variable wit the default as "&"
-                        String queryParameterSeparator = "&";
 
                         MultipleEntryHashMap httpLocationParameterMap = new MultipleEntryHashMap();
                         if (axisBindingOperation != null) {
-
-                            // now check whether we have a query parameter separator defined in this
-                            // operation
-                            String queryParamSeparatorTemp = (String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
-                            if (queryParamSeparatorTemp != null && !"".equals(queryParamSeparatorTemp))
-                            {
-                                queryParameterSeparator = queryParamSeparatorTemp;
-                            }
 
                             // get the http location property
                             String httpLocation = (String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
 
                             // parameter names can be different from the element name in the schema, due
                             // to http location. Let's filter the parameter names from it.
-                            httpLocationParameterMap = createHttpLocationParameterMap(httpLocation, queryParameterSeparator, request);
+                            httpLocationParameterMap = createHttpLocationParameterMap(httpLocation, queryParameterSeparator, request, requestParameterMap);
 
                         }
 
@@ -184,20 +197,20 @@ public class SchemaUtil {
 
                             // check whether this has a mapping in httpLocationParameterMap.
                             String mappingParamName = (String) httpLocationParameterMap.get(name);
-                            if (mappingParamName != null) {
-                                name = mappingParamName;
+                            if (mappingParamName == null) {
+                                mappingParamName = name;
                             }
 
-                            String[] parameterValuesArray = (String[]) requestParameterMap.get(name);
+                            String[] parameterValuesArray = (String[]) requestParameterMap.get(mappingParamName);
                             String value = null;
                             if (parameterValuesArray != null &&
                                     !"".equals(parameterValuesArray[0]) && parameterValuesArray[0] != null)
                             {
                                 value = parameterValuesArray[0];
 
-                            } else if (httpLocationParameterMap.get(name) != null) {
+                            } else if (httpLocationParameterMap.get(mappingParamName) != null) {
 
-                                value = (String) httpLocationParameterMap.get(name);
+                                value = (String) httpLocationParameterMap.get(mappingParamName);
 
                             } else if (xmlSchemaElement.getMinOccurs() != 0) {
                                 throw new AxisFault("Required element " + qName +
@@ -234,7 +247,8 @@ public class SchemaUtil {
      */
     protected static MultipleEntryHashMap createHttpLocationParameterMap(String httpLocation,
                                                                          String queryParameterSeparator,
-                                                                         HttpServletRequest request) {
+                                                                         HttpServletRequest request,
+                                                                         Map parameterMap) {
 
         MultipleEntryHashMap httpLocationParameterMap = new MultipleEntryHashMap();
 
@@ -245,7 +259,7 @@ public class SchemaUtil {
         if (urlParts.length > 1) {
             String templatedQueryParams = urlParts[1];
             // first extract parameters from the query part
-            extractParametersFromQueryPart(templatedQueryParams, queryParameterSeparator, httpLocationParameterMap, request.getParameterMap());
+            extractParametersFromQueryPart(templatedQueryParams, queryParameterSeparator, httpLocationParameterMap, parameterMap);
         }
 
         // now let's do the difficult part, extract parameters from the path element.
@@ -265,7 +279,7 @@ public class SchemaUtil {
             if (buffer.indexOf("{") > 0 && buffer.indexOf("}") > 0) {
                 String parameterName = buffer.substring(0, buffer.indexOf("="));
                 String schemaElementName = buffer.substring(buffer.indexOf("=") + 2, buffer.length() - 1);
-                httpLocationParameterMap.put(schemaElementName, parameterMap.get(parameterName));
+                httpLocationParameterMap.put(schemaElementName, parameterName);
             }
 
         }
@@ -345,4 +359,71 @@ public class SchemaUtil {
 
         }
     }
+
+    private static Map getParameterMap(HttpServletRequest request, String queryParamSeparator) {
+
+        String encodedQueryString = request.getQueryString();
+        String queryString = null;
+        Map parameterMap = new HashMap();
+
+        if (encodedQueryString != null) {
+
+        try {
+            queryString = URLDecoder.decode(encodedQueryString, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            log.error("Could not decode the query String in the HttpServletRequest");
+        }
+//            queryString = encodedQueryString;
+
+        if (queryParamSeparator ==null || queryParamSeparator.equals("&")) {
+            parameterMap = HttpUtils.parseQueryString(queryString);
+        }
+        else {
+          String parts[] = queryString.split(queryParamSeparator);
+            for (int i=0; i < parts.length; i++) {
+                int separator = parts[i].indexOf("=");
+                String [] value = new String[1];
+                value[0] = parts[i].substring(separator);
+                parameterMap.put(parts[i].substring(0,separator), value);
+            }
+        }
+        }
+
+        if (request.getContentType().indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1) {
+            ServletRequestContext servletRequestContext = new ServletRequestContext(request);
+            try {
+                List items = parseRequest(servletRequestContext);
+                Iterator iter = items.iterator();
+                while(iter.hasNext()) {
+                    String [] value = new String[1];
+                    DiskFileItem diskFileItem = (DiskFileItem)iter.next();
+                    value[0] = diskFileItem.getString();
+                    parameterMap.put(diskFileItem.getFieldName(),value);
+                }
+            } catch (FileUploadException e) {
+                    log.error("Unable to extract data from Multipart request");
+            }
+        } else {
+
+        Enumeration enumeration = request.getParameterNames();
+        while(enumeration.hasMoreElements()) {
+            String paramName = (String)enumeration.nextElement();
+            if (parameterMap.get(paramName) == null) {
+                parameterMap.put(paramName, request.getParameterValues(paramName));
+            }
+        }
+        }
+
+        return parameterMap;
+    }
+
+    private static List parseRequest(ServletRequestContext requestContext) throws FileUploadException {
+        // Create a factory for disk-based file items
+        FileItemFactory factory = new DiskFileItemFactory();
+        // Create a new file upload handler
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        // Parse the request
+        return upload.parseRequest(requestContext);
+    }
+
 }

@@ -31,6 +31,7 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
+import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -101,7 +102,13 @@ public class TransportUtils {
             } else if (msgContext.isDoingREST()) {
                 XMLStreamReader xmlreader =
                         StAXUtils.createXMLStreamReader(inStream, charSetEnc);
-                SOAPFactory soapFactory = new SOAP11Factory();
+                SOAPFactory soapFactory;
+                if (SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespaceURI)) {
+                soapFactory = new SOAP11Factory();
+                }
+                else {
+                    soapFactory = new SOAP12Factory();
+                }
 
                 builder = new StAXOMBuilder(xmlreader);
                 builder.setOMBuilderFactory(soapFactory);

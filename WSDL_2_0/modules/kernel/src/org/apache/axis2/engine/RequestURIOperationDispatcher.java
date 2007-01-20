@@ -58,6 +58,10 @@ public class RequestURIOperationDispatcher extends AbstractDispatcher {
                 QName operationName = new QName(values[1]);
                 log.debug("Checking for Operation using QName(target endpoint URI fragment) : " + operationName);
                 AxisOperation axisOperation = service.getOperation(operationName);
+                if (axisOperation == null) {
+                    log.debug("Attempted to check for Operation using target endpoint URI, but the operation fragment does not match a operation name");
+                    return null;
+                }
                 AxisEndpoint axisEndpoint = service.getEndpoint((String) messageContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
                 AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisEndpoint.getBinding().getChild(axisOperation.getName());
                 messageContext.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);

@@ -3,6 +3,7 @@ package org.apache.axis2.description;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
@@ -12,6 +13,7 @@ import org.apache.woden.*;
 import org.apache.woden.internal.DOMWSDLFactory;
 import org.apache.woden.internal.wsdl20.extensions.soap.SOAPBindingExtensionsImpl;
 import org.apache.woden.internal.wsdl20.extensions.http.HTTPBindingExtensionsImpl;
+import org.apache.woden.internal.wsdl20.extensions.InterfaceOperationExtensionsImpl;
 import org.apache.woden.schema.Schema;
 import org.apache.woden.wsdl20.*;
 import org.apache.woden.wsdl20.enumeration.Direction;
@@ -512,7 +514,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             HTTPLocation httpLocation = soapBindingOperationExtensions.getHttpLocation();
             if (httpLocation != null) {
                 axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION,
-                        httpLocation.toString());
+                        httpLocation.getLocationTemplate());
             }
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
                     soapBindingOperationExtensions.getHttpTransferCodingDefault());
@@ -678,17 +680,35 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 throw new AxisFault("HTTP Binding Extention not found");
             }
 
-            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_FAULT_SERIALIZATION, httpBindingOperationExtensions.getHttpFaultSerialization());
-            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION, httpBindingOperationExtensions.getHttpInputSerialization());
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_FAULT_SERIALIZATION,
+                    httpBindingOperationExtensions.getHttpFaultSerialization());
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION,
+                    httpBindingOperationExtensions.getHttpInputSerialization());
             HTTPLocation httpLocation = httpBindingOperationExtensions.getHttpLocation();
 
+            // If httpLocation is not null we should extract a constant part from it and add its value and the
+            // corresponding AxisOperation to a map in order to dispatch rest messages. If httpLocation is null we add
+            // the operation name into this map.
             if (httpLocation != null) {
-                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocation.toString());
+                String httpLocationString = httpLocation.getLocationTemplate();
+                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocationString);
+                axisService.addHttpLocationDispatcherString(RESTUtil.getConstantFromHTTPLocation(httpLocationString),
+                        axisOperation);
+            } else {
+                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, "/" + axisOperation.getName().
+                        getLocalPart());
             }
-            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_METHOD, httpBindingOperationExtensions.getHttpMethod());
-            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_OUTPUT_SERIALIZATION, httpBindingOperationExtensions.getHttpOutputSerialization());
-            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR, httpBindingOperationExtensions.getHttpQueryParameterSeparator());
-            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING, httpBindingOperationExtensions.getHttpTransferCodingDefault());
+            
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED, httpBindingOperationExtensions.
+                    isHttpLocationIgnoreUncited());
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_METHOD, httpBindingOperationExtensions.
+                    getHttpMethod());
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_OUTPUT_SERIALIZATION,
+                    httpBindingOperationExtensions.getHttpOutputSerialization());
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
+                    httpBindingOperationExtensions.getHttpQueryParameterSeparator());
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
+                    httpBindingOperationExtensions.getHttpTransferCodingDefault());
 
             BindingMessageReference[] bindingMessageReferences =
                     bindingOperation.getBindingMessageReferences();
@@ -716,8 +736,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     throw new AxisFault("HTTP Binding Extention not found");
                 }
 
-                axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER, createHttpHeaders(httpBindingMessageReferenceExtensions.getHttpHeaders()));
-                axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING, httpBindingMessageReferenceExtensions.getHttpTransferCoding());
+                axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER,
+                        createHttpHeaders(httpBindingMessageReferenceExtensions.getHttpHeaders()));
+                axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
+                        httpBindingMessageReferenceExtensions.getHttpTransferCoding());
 
 //                    SOAPHeaderBlock[] soapHeaders = soapHeaderExt.getSoapHeaders();
 //
@@ -736,11 +758,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 axisBindingOperation.addChild(axisMessage.getDirection(),axisBindingMessage);
 
-
             }
 
             axisBinding.addChild(axisBindingOperation.getName(), axisBindingOperation);
-
 
         }
     }
@@ -782,16 +802,19 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         axisOperation.setMessageExchangePattern(operation.getMessageExchangePattern().toString());
         axisOperation.setStyle("document");
 
-        // The following can be used to capture the wsdlx:safe attribute
+//         The following can be used to capture the wsdlx:safe attribute
 
-//        InterfaceOperationExtensionsImpl interfaceOperationExtensions;
-//        try {
-//            interfaceOperationExtensions = (InterfaceOperationExtensionsImpl)operation.getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_EXTENSIONS));
-//        } catch (URISyntaxException e) {
-//            throw new AxisFault("WSDL2 extensions not defined for this operation");
-//        }
-//
-//        interfaceOperationExtensions.isSafety();
+        InterfaceOperationExtensionsImpl interfaceOperationExtensions;
+        try {
+            interfaceOperationExtensions = (InterfaceOperationExtensionsImpl)operation.getComponentExtensionsForNamespace(new URI(WSDL2Constants.URI_WSDL2_EXTENSIONS));
+        } catch (URISyntaxException e) {
+            throw new AxisFault("WSDL2 extensions not defined for this operation");
+        }
+
+        if (interfaceOperationExtensions != null) {
+            Parameter parameter = new Parameter(WSDL2Constants.ATTR_WSDLX_SAFE, new Boolean(interfaceOperationExtensions.isSafety()));
+            axisOperation.addParameter(parameter);
+        }
 
 
         InterfaceMessageReference[] interfaceMessageReferences = operation
@@ -1265,8 +1288,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             if (elementDeclaration != null) {
                 QName name = elementDeclaration.getName();
-                SOAPHeaderMessage soapHeaderMessage = new SOAPHeaderMessage(name);
+                SOAPHeaderMessage soapHeaderMessage = new SOAPHeaderMessage();
+                soapHeaderMessage.setElement(name);
                 soapHeaderMessage.setRequired(soapHeaderBlock.isRequired().booleanValue());
+                soapHeaderMessage.setMustUnderstand(soapHeaderBlock.mustUnderstand());
                 soapHeaderMessages.add(soapHeaderMessage);
             }
         }

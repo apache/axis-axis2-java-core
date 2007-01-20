@@ -19,6 +19,7 @@ package org.apache.axis2.description;
 */
 
 public interface WSDL2Constants {
+    
     String WSDL_NAMESPACE = "http://www.w3.org/2006/01/wsdl";
     String DEFAULT_WSDL_NAMESPACE_PREFIX = "wsdl2";
     String DESCRIPTION = "description";
@@ -49,7 +50,7 @@ public interface WSDL2Constants {
     String SOAP_BINDING_PREFIX = "SOAPBinding";
     String HTTP_PROTOCAL = "http://www.w3.org/2003/05/soap/bindings/HTTP";
     String SERVICE_LOCAL_NAME = "service";
-    
+
     String URI_HTTP_SOAP12 = "http://www.w3.org/2003/05/soap/bindings/HTTP";
     String URI_HTTP_SOAP11 = "http://www.w3.org/2006/01/soap11/bindings/HTTP";
     String URI_WSOAP_MEP = "http://www.w3.org/2003/05/soap/mep/soap-response/";
@@ -69,17 +70,17 @@ public interface WSDL2Constants {
     String ATTR_WHTTP_METHOD = "whttp:method";
     String ATTR_WHTTP_CODE = "whttp:code";
     String ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR = "whttp:queryParameterSeparator";
+    String ATTR_WHTTP_IGNORE_UNCITED = "whttp:ignoreUncited";
     String ATTR_WHTTP_INPUT_SERIALIZATION = "whttp:inputSerialization";
     String ATTR_WHTTP_OUTPUT_SERIALIZATION = "whttp:outputSerialization";
     String ATTR_WHTTP_FAULT_SERIALIZATION = "whttp:faultSerialization";
     String ATTR_WHTTP_AUTHENTICATION_TYPE = "whttp:authenticationType";
     String ATTR_WHTTP_AUTHENTICATION_REALM = "whttp:authenticationRealm";
 
-
+    String ATTR_WSDLX_SAFE = "wsdlx:safe";
 
     String SOAP_VERSION_1_1 = "1.1";
     String SOAP_VERSION_1_2 = "1.2";
-
 
     String MESSAGE_LABEL_IN = "In";
     String MESSAGE_LABEL_OUT = "Out";

@@ -30,8 +30,10 @@ public class HTTPConstants {
             "application/x-www-form-urlencoded";
     public static final String MEDIA_TYPE_TEXT_XML = "text/xml";
     public static final String MEDIA_TYPE_MULTIPART_RELATED = "multipart/related";
+    public static final String MEDIA_TYPE_MULTIPART_FORM_DATA = "multipart/form-data";
     public static final String MEDIA_TYPE_APPLICATION_XML = "application/xml";
     public static final String MEDIA_TYPE_APPLICATION_SOAP_XML = "application/soap+xml";
+    public static final String MEDIA_TYPE_APPLICATION_ECHO_XML = "application/echo+xml";
 
     /**
      * Field REQUEST_URI
@@ -446,6 +448,11 @@ public class HTTPConstants {
      * context property to true to have the request body gzip compressed.
      */
     public static final String MC_GZIP_REQUEST = "transport.http.gzipRequest";
+
+     /* by default the HTTP response body is not compressed. set this message
+     * context property to true to have the response body gzip compressed.
+     */
+    public static final String MC_GZIP_RESPONSE = "gzipResponse";
 
     /**
      * This will allow users to set any custom headers to the message context, which will be picked

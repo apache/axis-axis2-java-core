@@ -126,7 +126,6 @@ public class AxisEngine {
      * method is called twice, it implies that sending the error handling has failed, in which case
      * the method logs the error and exists.
      * @deprecated (post 1.1 branch)
-     * @see org.apache.axis2.util.MessageContextBuilder.createFaultMessageContext()
      */
     public MessageContext createFaultMessageContext(MessageContext processingContext, Throwable e)
             throws AxisFault {

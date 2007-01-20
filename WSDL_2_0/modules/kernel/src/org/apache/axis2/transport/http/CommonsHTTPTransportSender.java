@@ -43,8 +43,10 @@ import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.zip.GZIPOutputStream;
 
 public class CommonsHTTPTransportSender extends AbstractHandler implements TransportSender {
 
@@ -95,8 +97,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
 
                 if ((transferEncoding != null)
                         &&
-                        HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(
-                                transferEncoding.getValue())) {
+                        transferEncoding.toString().indexOf(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED) > -1) {
                     chunked = true;
                 }
             } else if (HTTPConstants.HEADER_PROTOCOL_10.equals(version.getValue())) {
@@ -195,7 +196,11 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
              * Figuringout the REST properties/parameters
              */
             if (msgContext.isDoingREST()) {
-                dataOut = msgContext.getEnvelope().getBody().getFirstElement();
+                if (msgContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) {
+                    dataOut = msgContext.getEnvelope().getBody().getFault().getDetail().getFirstElement();
+                } else {
+                    dataOut = msgContext.getEnvelope().getBody().getFirstElement();
+                }
             } else {
                 dataOut = msgContext.getEnvelope();
             }
@@ -246,7 +251,12 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
                 if (contentTypeObject != null) {
                     contentType = (String) contentTypeObject;
                 } else if (msgContext.isDoingREST() && !(format.isOptimized())) {
-                    contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
+                    String property = (String)msgContext.getProperty(Constants.Configuration.CONTENT_TYPE);
+                    if (property != null) {
+                        contentType = property;
+                    } else {
+                        contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
+                    }
                 } else {
                     contentType = format.getContentType();
                     format.setSOAP11(msgContext.isSOAP11());
@@ -272,7 +282,23 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,
                     out, msgContext.getAttachmentMap(), format);
         } else {
-            dataOut.serializeAndConsume(out, format);
+            Object gzip = msgContext.getOptions().getProperty(HTTPConstants.MC_GZIP_RESPONSE);
+            if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
+                GZIPOutputStream gzout = null;
+                ByteArrayOutputStream compressed = new ByteArrayOutputStream();
+                try {
+                    gzout = new GZIPOutputStream(compressed);
+                    dataOut.serializeAndConsume(gzout, format);
+                    gzout.flush();
+                    gzout.close();
+                    out.write(compressed.toByteArray());
+                } catch (IOException e) {
+                    throw new AxisFault("Could not compress response");
+                }
+            } else {
+                dataOut.serializeAndConsume(out, format);
+            }
+
         }
     }
 

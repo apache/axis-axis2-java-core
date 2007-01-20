@@ -22,10 +22,15 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.zip.GZIPOutputStream;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
@@ -53,7 +58,20 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         // execute the HtttpMethodBase - a connection manager can be given for
         // handle multiple
         HttpClient httpClient = getHttpClient(msgContext);
-        PostMethod postMethod = new PostMethod(url.toString());
+
+        // Check whther the url has httpLocation
+        String urlString = url.toString();
+        int separator = urlString.indexOf('{');
+        if (separator > 0) {
+            String path = urlString.substring(0, separator - 1);
+            String query = urlString.substring(separator - 1);
+            String replacedQuery ;
+                 replacedQuery = applyURITemplating(msgContext, query, false);
+            url = new URL(path + replacedQuery);
+        }
+        PostMethod postMethod = new PostMethod();
+        postMethod.setPath(url.getPath());
+        postMethod.setQueryString(url.getQuery());
         if (isAuthenticationEnabled(msgContext)) {
             postMethod.setDoAuthentication(true);
         }
@@ -65,7 +83,6 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
-        postMethod.setPath(url.getPath());
         postMethod.setRequestEntity(new AxisSOAPRequestEntity(dataout, chunked, msgContext,
                 charEncoding, soapActionString));
 

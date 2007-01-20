@@ -150,7 +150,7 @@ public abstract class Stub {
 
 
     protected String setAppendAddressToEPR(OperationClient _operationClient,
-                                         String addressFromBinding) {
+                                           String addressFromBinding) {
         EndpointReference toEPRFromServiceClient = _serviceClient.getOptions().getTo();
 
         String oldAddress = toEPRFromServiceClient.getAddress();
@@ -158,15 +158,10 @@ public abstract class Stub {
 
         // here we assume either addressFromBinding have a '?' infront or not
         if (addressFromBinding.charAt(0) != '?') {
-            addressFromBinding = "?" + addressFromBinding;
+            addressFromBinding = "/" + addressFromBinding;
         }
 
-        if (address.indexOf("?") != -1) {
-            address += addressFromBinding.replaceAll("\\?", "&");
-        } else {
-            address += addressFromBinding;
-        }
-
+        address += addressFromBinding;
         toEPRFromServiceClient.setAddress(address);
         _operationClient.getOptions().setTo(toEPRFromServiceClient);
         return oldAddress;

@@ -19,6 +19,7 @@ package org.apache.axis2.transport.http;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -29,6 +30,8 @@ import org.apache.axis2.deployment.WarBasedAxisConfigurator;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.AxisBindingOperation;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.ListenerManager;
@@ -40,6 +43,11 @@ import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.httpclient.Header;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -54,6 +62,8 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.Iterator;
 
 /**
  * Class AxisServlet
@@ -104,6 +114,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, req.getRequestURL().toString());
         msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE,resp);
 //        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT, servletConfig.getServletContext());
         return msgContext;
     }
@@ -229,11 +240,20 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 new RESTUtil(configContext).processPostRequest(msgContext,
                         req,
                         res);
+                Object contextWritten =
+                        msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
+                if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
+                    res.setStatus(HttpServletResponse.SC_ACCEPTED);
+                }
             } catch (Exception e) {
                 log.error(e);
                 if (msgContext != null) {
                     res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    handleFault(msgContext, out, new AxisFault(e));
+                    if (e instanceof AxisFault) {
+                        handleFault(msgContext, out, (AxisFault)e);
+                    } else {
+                        handleFault(msgContext, out, new AxisFault(e));
+                    }
                 } else {
                     throw new ServletException(e);
                 }
@@ -251,12 +271,31 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 Object contextWritten =
                         msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
 
+                MessageContext outMsgContext = msgContext.getOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                if (outMsgContext != null) {
+                    Object gzip = outMsgContext.getProperty(HTTPConstants.MC_GZIP_RESPONSE);
+                    if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
+                        res.addHeader(HTTPConstants.HEADER_TRANSFER_ENCODING,
+                                    HTTPConstants.COMPRESSION_GZIP);
+                    }
+                    List customHheaders = (List) outMsgContext.getProperty(HTTPConstants.HTTP_HEADERS);
+                    if (customHheaders != null) {
+                        Iterator iter = customHheaders.iterator();
+                        while (iter.hasNext()) {
+                            Header header = (Header) iter.next();
+                            if (header != null) {
+                                res.addHeader(header.getName(), header.getValue());
+                            }
+                        }
+                    }
+                }
                 res.setContentType("text/xml; charset="
                         + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
                 if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
                     res.setStatus(HttpServletResponse.SC_ACCEPTED);
                 }
+
             } catch (AxisFault e) {
                 log.debug(e);
                 if (msgContext != null) {
@@ -265,7 +304,16 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                         if (AddressingHelper.isFaultRedirected(msgContext)) {
                             res.setStatus(HttpServletResponse.SC_ACCEPTED);
                         } else {
+
                             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+                            AxisBindingOperation axisBindingOperation = (AxisBindingOperation) msgContext.getProperty(Constants.AXIS_BINDING_OPERATION);
+                            if (axisBindingOperation != null) {
+                                String code = (String) axisBindingOperation.getFault((String) msgContext.getProperty(Constants.FAULT_NAME)).getProperty(WSDL2Constants.ATTR_WHTTP_CODE);
+                                if (code != null) {
+                                    res.setStatus(Integer.parseInt(code));
+                                }
+                            }
                         }
                         handleFault(msgContext, out, e);
                     } catch (AxisFault e2) {
@@ -283,6 +331,14 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                             res.setStatus(HttpServletResponse.SC_ACCEPTED);
                         } else {
                             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+                            AxisBindingOperation axisBindingOperation = (AxisBindingOperation) msgContext.getProperty(Constants.AXIS_BINDING_OPERATION);
+                            if (axisBindingOperation != null) {
+                                String code = (String) axisBindingOperation.getFault((String) msgContext.getProperty(Constants.FAULT_NAME)).getProperty(WSDL2Constants.ATTR_WHTTP_CODE);
+                                if (code != null) {
+                                    res.setStatus(Integer.parseInt(code));
+                                }
+                            }
                         }
                         handleFault(msgContext, out, new AxisFault(t.toString(), t));
                     } catch (AxisFault e2) {
@@ -300,7 +356,28 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
         AxisEngine engine = new AxisEngine(configContext);
-        MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgContext, e);
+        MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+
+        // SOAP 1.2 specification mentions that we should send HTTP code 400 in a fault if the
+        // fault code Sender
+        HttpServletResponse response = (HttpServletResponse) msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE);
+         if (response != null) {
+            SOAPFaultCode code = faultContext.getEnvelope().getBody().getFault().getCode();
+            OMElement valueElement = null;
+            if (code != null) {
+                valueElement = code.getFirstChildWithName(new QName(
+                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                        SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME));
+            }
+
+            if (valueElement != null) {
+                if (valueElement.getText().trim().indexOf(SOAP12Constants.FAULT_CODE_SENDER) >
+                    -1) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                }
+            }
+        }
+
 
         engine.sendFault(faultContext);
     }
@@ -521,9 +598,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      */
     private boolean isRESTRequest(HttpServletRequest request) {
         String contentType = request.getContentType();
-        String soapActionHeader = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
 
-        return ((soapActionHeader == null) ||
-                (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1));
+        return ((contentType == null || contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
+        contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
+        contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1));
     }
 }

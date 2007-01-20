@@ -42,11 +42,13 @@ import org.apache.axis2.util.Utils;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Enumeration;
 import java.util.zip.GZIPInputStream;
 
 public class HTTPTransportUtils {
@@ -164,11 +166,15 @@ public class HTTPTransportUtils {
         try {
 
             Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+
             if (headers != null) {
-                if (HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING)) ||
-                    HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING.toLowerCase())))
+                String header = (String)headers.get(HTTPConstants.HEADER_TRANSFER_ENCODING);
+                if (header != null) {
+                if (((header.indexOf(HTTPConstants.COMPRESSION_GZIP)) > -1) ||
+                    ((header.toLowerCase().indexOf(HTTPConstants.COMPRESSION_GZIP)) > -1))
                 {
                     in = new GZIPInputStream(in);
+                }
                 }
             }
 

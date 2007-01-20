@@ -1870,7 +1870,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addSOAPAction(doc, methodElement, axisOperation.getName());
         addOutputAndFaultActions(doc, methodElement, axisOperation);
         addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
-        addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
+//        addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
 
         /*
          * Setting the policy of the operation
@@ -1902,12 +1902,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         if (WSDL2Constants.URI_WSOAP_MEP.equalsIgnoreCase(mep)) {
             methodElement.appendChild(generateOptionParamComponent(doc, "org.apache.axis2.Constants.Configuration.ENABLE_REST", "true"));
-            methodElement.appendChild(generateOptionParamComponent(doc," Constants.Configuration.HTTP_METHOD", "\"" + org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET + "\""));
-       }
+            methodElement.appendChild(generateOptionParamComponent(doc," org.apache.axis2.Constants.Configuration.HTTP_METHOD", "\"" + org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET + "\""));
+            methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.Constants.Configuration.CONTENT_TYPE", "\"" + "org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM" + "\""));
+      }
 
-        setTransferCoding(axisOperation, methodElement, doc);
-        
-        if (axisBinding.getType().equals(WSDL2Constants.URI_WSDL2_HTTP)) {
+
+        else if (axisBinding.getType().equals(WSDL2Constants.URI_WSDL2_HTTP)) {
 
             methodElement.appendChild(generateOptionParamComponent(doc, "org.apache.axis2.Constants.Configuration.ENABLE_REST", "true"));
             
@@ -1922,6 +1922,29 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             if (property != null) {
             methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_METHOD", "\"" + property + "\""));
             }
+
+            Boolean value = (Boolean) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED,
+                        axisOperation.getName());
+            if (value != null) {
+            methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED", "\"" + value.booleanValue() + "\""));
+            }
+            
+            // If there is no WHTTP_METHOD defined then we better compute the default value which is get if the operation
+            // is wsdlx:safe or post otherwise
+            else if (!WSDL2Constants.URI_WSOAP_MEP.equalsIgnoreCase(mep)) {
+                Parameter safe = axisOperation.getParameter(WSDL2Constants.ATTR_WSDLX_SAFE);
+                if (safe != null) {
+                    if (((Boolean)safe.getValue()).booleanValue()) {
+                        methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_METHOD", "\"" + org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET + "\""));
+                    }
+                    else {
+                        methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_METHOD", "\"" + org.apache.axis2.Constants.Configuration.HTTP_METHOD_POST + "\""));
+                    }
+                }
+            }
+
+
+            setTransferCoding(axisOperation, methodElement, doc);
 
             property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_CODE,
                         axisOperation.getName());
@@ -2159,7 +2182,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (headerparamList != null) {
             for (Iterator iterator = headerparamList.iterator(); iterator.hasNext();) {
                 SOAPHeaderMessage header = (SOAPHeaderMessage) iterator.next();
-                soapHeaderParameterQNameList.add(header.getElement());
+                soapHeaderParameterQNameList.add(header);
             }
         }
 
@@ -2641,7 +2664,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             for (int i = 0; i < count; i++) {
                 Element param = doc.createElement("param");
-                QName name = (QName) parameters.get(i);
+                SOAPHeaderMessage header = (SOAPHeaderMessage) parameters.get(i);
+                QName name = header.getElement();
 
                 addAttribute(doc, "name", this.mapper.getParameterName(name), param);
 
@@ -2652,6 +2676,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                 addAttribute(doc, "type", typeMappingStr, param);
                 addAttribute(doc, "location", location, param);
+                addAttribute(doc, "mustUnderstand", header.isMustUnderstand().toString(), param);
                 parameterElementList.add(param);
             }
         }

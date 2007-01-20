@@ -28,9 +28,14 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisEndpoint;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.RequestURIBasedDispatcher;
 import org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher;
+import org.apache.axis2.engine.RequestURIOperationDispatcher;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.SchemaUtil;
@@ -68,10 +73,12 @@ public class RESTUtil {
                 throw new AxisFault("ContentType should be given to proceed," +
                         " according to WSDL 2.0 HTTP binding rules");
             } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_TEXT_XML) > -1 ||
-                    contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED) > -1) {
+                    contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED) > -1  ||
+                    contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1) {
                 soapEnvelope = handleNonURLEncodedContentTypes(msgContext, request,
                         OMAbstractFactory.getSOAP11Factory());
-            } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1) {
+            } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
+                    contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1) {
                 // 2. Else, Dispatch and find out the operation and the service.
                 // Dispatching can only be done using the RequestURI, as others can not be run in the REST case
                 dispatchAndVerify(msgContext);
@@ -90,6 +97,7 @@ public class RESTUtil {
             } else {
                 throw new AxisFault("Content type should be one of /n " + HTTPConstants.MEDIA_TYPE_TEXT_XML +
                         "/n " + HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
+                        "/n " + HTTPConstants.MEDIA_TYPE_APPLICATION_XML +
                         "/n " + HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED);
             }
 
@@ -161,11 +169,28 @@ public class RESTUtil {
     private void dispatchAndVerify(MessageContext msgContext) throws AxisFault {
         RequestURIBasedDispatcher requestDispatcher = new RequestURIBasedDispatcher();
         requestDispatcher.invoke(msgContext);
+        dispatchOperation(msgContext);
 
         // check for the dispatching result
         if (msgContext.getAxisService() == null || msgContext.getAxisOperation() == null) {
             throw new AxisFault("I can not find a service for this request to be serviced." +
                     " Check the WSDL and the request URI");
+        }
+    }
+
+    private void dispatchOperation(MessageContext msgContext) {
+        AxisService axisService = msgContext.getAxisService();
+        if (axisService != null) {
+        HttpServletRequest httpServletRequest= (HttpServletRequest)msgContext.getProperty(Constants.HTTP_SERVLET_REQUEST);
+        String url = httpServletRequest.getPathInfo();
+        String pathString = parseRequestURL(httpServletRequest.getPathInfo() + "?" + httpServletRequest.getQueryString());
+        AxisOperation axisOperation = axisService.getOperationFromRequestURL(pathString);
+            if (axisOperation != null) {
+                AxisEndpoint axisEndpoint = axisService.getEndpoint((String) msgContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
+                AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisEndpoint.getBinding().getChild(axisOperation.getName());
+                msgContext.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
+                msgContext.setAxisOperation(axisOperation);
+            }
         }
     }
 
@@ -183,31 +208,31 @@ public class RESTUtil {
             // irrespective of the schema, if the media type is text/xml, all the information
             // should be in the body.
             // I'm assuming here that the user is sending this data according to the schema.
-            if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_TEXT_XML, contentType)) {
+            if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_TEXT_XML, contentType) ||
+                    checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_APPLICATION_XML, contentType)) {
+
+                // get the type of char encoding
+                String charSetEnc = TransportUtils.getCharSetEncoding(contentType);
 
                 // If charset is not specified
                 XMLStreamReader xmlreader;
-                if (TransportUtils.getCharSetEncoding(contentType) == null) {
-                    xmlreader = StAXUtils.createXMLStreamReader(inputStream, MessageContext.DEFAULT_CHAR_SET_ENCODING);
-
+                if (charSetEnc == null) {
                     // Set the encoding scheme in the message context
-                    msgCtxt.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                            MessageContext.DEFAULT_CHAR_SET_ENCODING);
-                } else {
-
-                    // get the type of char encoding
-                    String charSetEnc = TransportUtils.getCharSetEncoding(contentType);
-
-                    xmlreader = StAXUtils.createXMLStreamReader(inputStream,
-                            charSetEnc);
-
-                    // Setting the value in msgCtx
-                    msgCtxt.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+                    charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
                 }
 
+                // Setting the value in msgCtx
+                msgCtxt.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
+
+                // Create documentElement only if the content length is greator than 0
+                if (request.getContentLength() != 0) {
+                xmlreader = StAXUtils.createXMLStreamReader(inputStream,
+                            charSetEnc);
                 OMNodeEx documentElement = (OMNodeEx) new StAXOMBuilder(xmlreader).getDocumentElement();
                 documentElement.setParent(null);
                 body.addChild(documentElement);
+                }
+                
 
                 // if the media type is multipart/related, get help from Axis2 :)
             } else
@@ -233,4 +258,34 @@ public class RESTUtil {
         }
         return contentTypeStringFromRequest.indexOf(contentType) > -1;
     }
+
+    public static String getConstantFromHTTPLocation(String httpLocation) {
+        if (httpLocation.charAt(0) != '?') {
+                    httpLocation = "/" + httpLocation;
+        }
+        int index = httpLocation.indexOf("{");
+        if (index > -1) {
+            httpLocation =  httpLocation.substring(0,index -1);
+        }
+        return httpLocation;
+    }
+
+    private String parseRequestURL (String path) {
+
+        path = path.substring(1);
+        int index = path.indexOf("/");
+        String service = null;
+
+        if (-1 != index) {
+            service =  path.substring(index);
+        }
+         else {
+            int queryIndex = path.indexOf("?");
+            service = path.substring(queryIndex);
+        }
+         return service;
+    }
+
 }
+
+

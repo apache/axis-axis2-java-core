@@ -80,6 +80,9 @@ public class AxisService extends AxisDescription {
     private static final Log log = LogFactory.getLog(AxisService.class);
     private URL fileName;
 
+    // Maps httpLocations to corresponding operations. Used to dispatch rest messages.    
+    private HashMap httpLocationDispatcherMap = null;
+
     private HashMap operationsAliasesMap = null;
 //    private HashMap operations = new HashMap();
 
@@ -251,6 +254,7 @@ public class AxisService extends AxisDescription {
         moduleConfigmap = new HashMap();
         //by default service scope is for the request
         scope = Constants.SCOPE_REQUEST;
+        httpLocationDispatcherMap = new HashMap();
         messageReceivers = new HashMap();
         moduleRefs = new ArrayList();
         engagedModules = new ArrayList();
@@ -567,6 +571,17 @@ public class AxisService extends AxisDescription {
         operationsAliasesMap.put(action, axisOperation);
     }
 
+    /**
+     * Maps an constant string in the whttp:location to the given operation. This is used by
+     * RequestURIOperationDispatcher based dispatching to figure out which operation it is that a
+     * given message is for.
+     *
+     * @param string        the constant drawn from whttp:location
+     * @param axisOperation the operation to map to
+     */
+    public void addHttpLocationDispatcherString(String string, AxisOperation axisOperation) {
+        httpLocationDispatcherMap.put(string, axisOperation);
+    }
 
     public void printSchema(OutputStream out) throws AxisFault {
         for (int i = 0; i < schemaList.size(); i++) {
@@ -932,6 +947,27 @@ public class AxisService extends AxisDescription {
     public AxisOperation getOperationByAction(String action) {
         return (AxisOperation) operationsAliasesMap.get(action);
     }
+
+    /**
+     * Given the requestPath that the request came to his method returns the corresponding axisOperation
+     *
+     * @param requestPath - Part of the request url which is the part after the service name
+     * @return AxisOperation - The corresponding AxisOperation
+     */
+    public AxisOperation getOperationFromRequestURL(String requestPath) {
+
+        Collection httpLocations = httpLocationDispatcherMap.keySet();
+        Iterator iter = httpLocations.iterator();
+        while (iter.hasNext()) {
+            String location = (String) iter.next();
+            if (requestPath.indexOf(location) == 0) {
+                return (AxisOperation) httpLocationDispatcherMap.get(location);
+            }
+
+        }
+        return null;
+    }
+
 
     /**
      * Returns the operation given a SOAP Action. This

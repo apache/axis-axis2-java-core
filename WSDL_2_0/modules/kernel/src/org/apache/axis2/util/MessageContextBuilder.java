@@ -157,6 +157,11 @@ public class MessageContextBuilder {
         // Create a basic response MessageContext with basic fields copied
         MessageContext faultContext = createResponseMessageContext(processingContext);
 
+        String contentType = (String)processingContext.getProperty(Constants.Configuration.CONTENT_TYPE_OF_FAULT);
+        if (contentType != null) {
+            faultContext.setProperty(Constants.Configuration.CONTENT_TYPE,contentType);
+        }
+
         // Register the fault message context
         if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null)
         {

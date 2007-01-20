@@ -23,6 +23,8 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.transport.http.util.ComplexPart;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.httpclient.Header;
@@ -32,6 +34,9 @@ import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.multipart.StringPart;
+import org.apache.commons.httpclient.methods.multipart.Part;
+import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,15 +46,58 @@ import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.nio.charset.Charset;
 
 public class RESTSender extends AbstractHTTPSender {
     private static final Log log = LogFactory.getLog(RESTSender.class);
+
+    public Part [] createMultipatFormDataRequest(MessageContext msgContext, OMElement dataOut) {
+        ArrayList parts = new ArrayList();
+        String requestData = "";
+        if (dataOut != null) {
+            Iterator iter1 = dataOut.getChildElements();
+
+            while (iter1.hasNext()) {
+               OMElement ele = (OMElement) iter1.next();
+                // check whether the element is a complex type
+                if (ele.getFirstElement() != null) {
+                    requestData = "<" + ele.getQName().getLocalPart() + ">";
+                    requestData = requestData + processComplexType(ele.getChildElements());
+                    requestData = requestData + "</" + ele.getQName().getLocalPart() + ">";
+                    parts.add(new ComplexPart(ele.getQName().getLocalPart(),requestData));
+                } else {
+                    parts.add(new StringPart(ele.getQName().getLocalPart(),ele.getText()));
+                }
+            }
+        }
+        Part [] partsArray = new Part[parts.size()];
+        return (Part [])parts.toArray(partsArray);
+    }
+
+    private String processComplexType(Iterator iter) {
+        String data = "";
+        while (iter.hasNext()) {
+            OMElement ele = (OMElement) iter.next();
+            data = data + "<" + ele.getQName().getLocalPart() + ">\n";
+            if (ele.getFirstElement() != null) {
+                data = data + processComplexType(ele.getChildElements());
+            } else {
+                data = data + "<" + ele.getQName().getLocalPart() + ">";
+                data = data + ele.getText();
+                data = data + "</" + ele.getQName().getLocalPart() + ">\n";
+            }
+        }
+        return data;
+    }
 
     /*Obtain two strings;one to go in the url and rest to pass in the body
     **when doing POST in application/x-www-form-urlencoded form.
@@ -57,6 +105,7 @@ public class RESTSender extends AbstractHTTPSender {
     public RequestData createRequest(MessageContext msgContext, OMElement dataout) {
 
         RequestData data = new RequestData();
+        if (dataout != null) {
         Iterator iter1 = dataout.getChildElements();
         ArrayList paraList = new ArrayList();
         ArrayList urlList = new ArrayList();
@@ -115,6 +164,11 @@ public class RESTSender extends AbstractHTTPSender {
             data.bodyRequest = paraString;
         }
 
+        if (dataout.getFirstOMChild() == null) {
+            dataout.detach();
+        }
+        }
+
         return data;
     }
 
@@ -160,6 +214,7 @@ public class RESTSender extends AbstractHTTPSender {
      * @return - the URL after appending the properties
      */
     protected String appendParametersToURL(MessageContext messageContext, String urlString, String queryPart) {
+        StringBuffer buffer = null;
         try {
             OMElement firstElement = messageContext.getEnvelope().getBody().getFirstElement();
 
@@ -170,16 +225,16 @@ public class RESTSender extends AbstractHTTPSender {
             URL url = new URL(urlString);
             String path = url.getPath();
 
-            if (httpLocationParams != null) {
-                for (int i = 0; i < httpLocationParams.size(); i++) {
-                    String httpLocationParam = (String) httpLocationParams.get(i);
-                    OMElement httpURLParam = firstElement.getFirstChildWithName(new QName(httpLocationParam));
-                    if (httpURLParam != null) {
-                        path += "/" + httpURLParam.getText();
-                        httpURLParam.detach();
-                    }
-                }
-            }
+//            if (httpLocationParams != null) {
+//                for (int i = 0; i < httpLocationParams.size(); i++) {
+//                    String httpLocationParam = (String) httpLocationParams.get(i);
+//                    OMElement httpURLParam = firstElement.getFirstChildWithName(new QName(httpLocationParam));
+//                    if (httpURLParam != null) {
+//                        path += "/" + httpURLParam.getText();
+//                        httpURLParam.detach();
+//                    }
+//                }
+//            }
 
             if (queryPart != null && queryPart.length() > 0) {
                 if (queryPart.startsWith("?")) {
@@ -193,7 +248,7 @@ public class RESTSender extends AbstractHTTPSender {
             String patternString = "\\{[A-Z0-9a-z._%-]+\\}";
             Pattern pattern = Pattern.compile(patternString);
 
-            StringBuffer buffer = new StringBuffer(path);
+            buffer = new StringBuffer(path);
 
             Matcher matcher = pattern.matcher(buffer);
 
@@ -216,6 +271,10 @@ public class RESTSender extends AbstractHTTPSender {
 
         } catch (MalformedURLException e) {
             log.error("Error in processing POST request", e);
+        }
+        catch (StringIndexOutOfBoundsException e) {
+            log.error("Error in processing POST request", e);
+            return buffer.toString();
         }
 
         return null;
@@ -241,10 +300,21 @@ public class RESTSender extends AbstractHTTPSender {
             getMethod.setDoAuthentication(true);
         }
 
-        String urlString = url.getFile();
-        urlString = appendParametersToURL(msgContext, urlString, param);
+        String urlString = url.toString();
+        int separator = urlString.indexOf('{');
+        if (separator > 0) {
+            String path = urlString.substring(0, separator - 1);
+            String query = urlString.substring(separator - 1);
+            String replacedQuery ;
+                 replacedQuery = applyURITemplating(msgContext, query, false);
+            url = new URL(path + replacedQuery);
+        }
 
-        getMethod.setPath(urlString);
+//        String urlString = url.getFile();
+//        urlString = appendParametersToURL(msgContext, urlString, param);
+
+        getMethod.setPath(url.getPath());
+        getMethod.setQueryString(url.getQuery());
 
         // Serialization as "application/x-www-form-urlencoded"
         String charEncoding =
@@ -311,26 +381,45 @@ public class RESTSender extends AbstractHTTPSender {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
+        String urlString = url.toString();
+        int separator = urlString.indexOf('{');
+        if (separator > 0) {
+            String path = urlString.substring(0, separator - 1);
+            String query = urlString.substring(separator - 1);
+            String replacedQuery ;
+            if (httpContentType.equalsIgnoreCase(HTTPConstants.MEDIA_TYPE_X_WWW_FORM)) {
+            replacedQuery = applyURITemplating(msgContext, query, true);
+            }
+            else {
+                 replacedQuery = applyURITemplating(msgContext, query, false);
+            }
+            url = new URL(path + replacedQuery);
+        }
+
+        postMethod.setPath(url.getPath());
+        postMethod.setQueryString(url.getQuery());
+
         // if POST as application/x-www-form-urlencoded
         RequestData reqData;
 
         if (httpContentType.equalsIgnoreCase(HTTPConstants.MEDIA_TYPE_X_WWW_FORM)) {
             reqData = createRequest(msgContext, dataout);
-            String pathString = url.getPath();
-
-            String urlString = appendParametersToURL(msgContext, pathString, reqData.urlRequest);
-
-            postMethod.setPath(urlString);
-
             if (reqData.bodyRequest == null) {
                 reqData.bodyRequest = "0";
             }
             postMethod.setRequestEntity(new AxisRESTRequestEntity(reqData.bodyRequest, httpContentType));
 
+        } else if (httpContentType.equalsIgnoreCase(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA)) {
+//            String uuid = UUIDGenerator.getUUID();
+//            String uuid = "-------------------------"+System.currentTimeMillis();
+            Part[] parts = createMultipatFormDataRequest(msgContext, dataout);   
+//            postMethod.setRequestEntity(new AxisRESTRequestEntity(bodyData, httpContentType + "; boundry=" + uuid));
+
+//            Part[] parts = {new ComplexPart("param_name", "value"), new StringPart("second param", "second value")};
+            postMethod.setRequestEntity(new MultipartRequestEntity(parts, postMethod.getParams()));
         } else {
-            postMethod.setPath(url.getPath());
             postMethod.setRequestEntity(new AxisRequestEntity(dataout, chunked, msgContext,
-                    charEncoding, soapActionString));
+                    charEncoding, soapActionString, httpContentType));
         }
 
         if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
@@ -425,17 +514,20 @@ public class RESTSender extends AbstractHTTPSender {
         private OMElement element;
         private MessageContext msgCtxt;
         private String soapActionString;
+        private String contentType;
 
         public AxisRequestEntity(OMElement element, boolean chunked,
                                  MessageContext msgCtxt,
                                  String charSetEncoding,
-                                 String soapActionString) {
+                                 String soapActionString,
+                                 String contentType) {
             this.element = element;
             this.chunked = chunked;
             this.msgCtxt = msgCtxt;
             this.doingMTOM = msgCtxt.isDoingMTOM();
             this.charSetEnc = charSetEncoding;
             this.soapActionString = soapActionString;
+            this.contentType = contentType;
         }
 
         private void handleOMOutput(OutputStream out, boolean doingMTOM)
@@ -474,7 +566,7 @@ public class RESTSender extends AbstractHTTPSender {
                 {
                     if (chunked) {
                         this.handleOMOutput(out, doingMTOM);
-                    } else {
+                    } else if (element != null) {
                         if (bytes == null) {
                             bytes = writeBytes();
                         }
@@ -498,13 +590,15 @@ public class RESTSender extends AbstractHTTPSender {
                 {
                     if (chunked) {
                         return -1;
-                    } else {
+                    } else if (element != null) {
                         if (bytes == null) {
                             bytes = writeBytes();
                         }
 
                         return bytes.length;
                     }
+
+                    return 0;
                 }
             } catch (AxisFault e) {
                 return -1;
@@ -513,16 +607,13 @@ public class RESTSender extends AbstractHTTPSender {
 
         public String getContentType() {
             String encoding = format.getCharSetEncoding();
-            String contentType = format.getContentType();
-
             if (encoding != null) {
                 contentType += "; charset=" + encoding;
             }
 
             // action header is not mandated in SOAP 1.2. So putting it, if available
             if (!msgCtxt.isSOAP11() && (soapActionString != null)
-                    && !"".equals(soapActionString.trim()) && ! "\"\"".equals(soapActionString.trim()))
-            {
+                    && !"".equals(soapActionString.trim()) && !"\"\"".equals(soapActionString.trim())) {
                 contentType =
                         contentType + ";action=\"" + soapActionString + "\";";
             }
