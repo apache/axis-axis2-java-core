@@ -18,11 +18,11 @@ package org.apache.axis2.jaxws.message.impl;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.XMLPartFactory;
@@ -42,7 +42,7 @@ public class XMLPartFactoryImpl implements XMLPartFactory {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.factory.XMLPartFactory#createFrom(javax.xml.stream.XMLStreamReader)
 	 */
-	public XMLPart createFrom(XMLStreamReader reader) throws XMLStreamException, MessageException {
+	public XMLPart createFrom(XMLStreamReader reader) throws XMLStreamException, WebServiceException {
 		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, null);  // Pass null has the version to trigger autodetection
 		SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
 		return createFrom(omEnvelope);
@@ -51,21 +51,21 @@ public class XMLPartFactoryImpl implements XMLPartFactory {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.MessageFactory#createFrom(org.apache.axiom.om.OMElement)
 	 */
-	public XMLPart createFrom(OMElement omElement) throws XMLStreamException, MessageException {
+	public XMLPart createFrom(OMElement omElement) throws XMLStreamException, WebServiceException {
 		return new XMLPartImpl(omElement);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.MessageFactory#create(org.apache.axis2.jaxws.message.Protocol)
 	 */
-	public XMLPart create(Protocol protocol) throws XMLStreamException, MessageException {
+	public XMLPart create(Protocol protocol) throws XMLStreamException, WebServiceException {
 		return new XMLPartImpl(protocol);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.factory.XMLPartFactory#createFrom(javax.xml.soap.SOAPEnvelope)
 	 */
-	public XMLPart createFrom(javax.xml.soap.SOAPEnvelope soapEnvelope) throws XMLStreamException, MessageException {
+	public XMLPart createFrom(javax.xml.soap.SOAPEnvelope soapEnvelope) throws XMLStreamException, WebServiceException {
 		return new XMLPartImpl(soapEnvelope);
 	}
 

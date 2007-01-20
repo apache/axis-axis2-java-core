@@ -24,11 +24,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -69,7 +69,7 @@ public class CallbackFuture extends Callback {
         MessageContext response = null;
         try {
             response = AsyncUtils.createMessageContext(result);
-        } catch (MessageException e) {
+        } catch (WebServiceException e) {
             cft.setError(e);
             if (debug) {
                 log.debug("An error occured while processing the async response.  " + e.getMessage());

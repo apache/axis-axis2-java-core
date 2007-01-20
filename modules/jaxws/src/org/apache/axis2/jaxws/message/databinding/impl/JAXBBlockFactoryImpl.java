@@ -19,12 +19,12 @@ package org.apache.axis2.jaxws.message.databinding.impl;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
@@ -47,7 +47,7 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(org.apache.axiom.om.OMElement, java.lang.Object, javax.xml.namespace.QName)
 	 */
-	public Block createFrom(OMElement omElement, Object context, QName qName) throws XMLStreamException, MessageException {
+	public Block createFrom(OMElement omElement, Object context, QName qName) throws XMLStreamException, WebServiceException {
 		// The context for a JAXBFactory must be non-null and should be a JAXBBlockContext.
 		if (context == null) {
 		    // JAXWS spec 4.3.4 conformance requires a WebServiceException whose cause is JAXBException
@@ -64,7 +64,7 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(java.lang.Object, java.lang.Object, javax.xml.namespace.QName)
 	 */
-	public Block createFrom(Object businessObject, Object context, QName qName) throws MessageException {
+	public Block createFrom(Object businessObject, Object context, QName qName) throws WebServiceException {
 		
 		// The context must be non-null and should be a JAXBBlockContext.
 		// For legacy reasons, a JAXBContext is also supported (and wrapped into a JAXBBlockContext)
@@ -93,7 +93,7 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
 		try {
 			return new JAXBBlockImpl(businessObject, (JAXBBlockContext) context, qName, this);
 		} catch (JAXBException e) {
-			throw ExceptionFactory.makeMessageException(e);
+			throw ExceptionFactory.makeWebServiceException(e);
 		}
 	}
 

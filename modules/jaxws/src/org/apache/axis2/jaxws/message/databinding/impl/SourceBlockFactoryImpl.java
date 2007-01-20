@@ -19,10 +19,10 @@ package org.apache.axis2.jaxws.message.databinding.impl;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.Block;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
 
@@ -43,7 +43,7 @@ public class SourceBlockFactoryImpl extends BlockFactoryImpl implements SourceBl
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(java.lang.Object, java.lang.Object, javax.xml.namespace.QName)
 	 */
-	public Block createFrom(Object businessObject, Object context, QName qName) throws MessageException {
+	public Block createFrom(Object businessObject, Object context, QName qName) throws WebServiceException {
 		return new SourceBlockImpl((Source) businessObject, qName, this);
 	}
 

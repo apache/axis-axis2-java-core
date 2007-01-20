@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -43,7 +44,6 @@ import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultCode;
@@ -93,7 +93,7 @@ public class XMLFaultUtils {
 	 * @param detailBlocks
 	 * @return
 	 */
-	public static XMLFault createXMLFault(SOAPFault soapFault, Block[] detailBlocks) throws MessageException {
+	public static XMLFault createXMLFault(SOAPFault soapFault, Block[] detailBlocks) throws WebServiceException {
         
 	    // The SOAPFault structure is modeled after SOAP 1.2.  
         // Here is a sample comprehensive SOAP 1.2 fault which will help you understand the
@@ -192,9 +192,9 @@ public class XMLFaultUtils {
      * Create XMLFault
      * @param soapFault
      * @return xmlFault
-     * @throws MessageException
+     * @throws WebServiceException
      */
-    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault) throws MessageException {
+    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault) throws WebServiceException {
         Block[] detailBlocks = getDetailBlocks(soapFault);
         return createXMLFault(soapFault, detailBlocks);
     }
@@ -205,7 +205,7 @@ public class XMLFaultUtils {
      * @param detailBlocks
      * @return
      */
-    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault, Block[] detailBlocks) throws MessageException {
+    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault, Block[] detailBlocks) throws WebServiceException {
         
         // The SOAPFault structure is modeled after SOAP 1.2.  
         // Here is a sample comprehensive SOAP 1.2 fault which will help you understand the
@@ -306,7 +306,7 @@ public class XMLFaultUtils {
      * @return
      */
     /*
-    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault) throws MessageException {
+    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault) throws WebServiceException {
         
        // Convert the SOAPFault into an OM SOAPFault.  OMSOAP Fault already supports SOAP 1.2, so this makes the code easier to migrate
        
@@ -325,7 +325,7 @@ public class XMLFaultUtils {
     }
     */
     
-    private static Block[] getDetailBlocks(SOAPFault soapFault) throws MessageException {
+    private static Block[] getDetailBlocks(SOAPFault soapFault) throws WebServiceException {
         try {
             Block[] blocks = null;
             SOAPFaultDetail detail = soapFault.getDetail();
@@ -343,11 +343,11 @@ public class XMLFaultUtils {
             }
             return blocks;
         } catch (Exception e) {
-            throw ExceptionFactory.makeMessageException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
     }
     
-    private static Block[] getDetailBlocks(javax.xml.soap.SOAPFault soapFault) throws MessageException {
+    private static Block[] getDetailBlocks(javax.xml.soap.SOAPFault soapFault) throws WebServiceException {
         try {
             Block[] blocks = null;
             Detail detail = soapFault.getDetail();
@@ -365,7 +365,7 @@ public class XMLFaultUtils {
             }
             return blocks;
         } catch (Exception e) {
-            throw ExceptionFactory.makeMessageException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
     }
         
@@ -382,7 +382,7 @@ public class XMLFaultUtils {
      */
     public static SOAPFault createSOAPFault(XMLFault xmlFault, 
                 SOAPBody body, 
-                boolean ignoreDetailBlocks) throws MessageException {
+                boolean ignoreDetailBlocks) throws WebServiceException {
         
         // Get the factory and create the soapFault
         SOAPFactory factory = MessageUtils.getSOAPFactory(body);
@@ -494,7 +494,7 @@ public class XMLFaultUtils {
      * @return SOAPFault (which is attached to body)
      */
     public static javax.xml.soap.SOAPFault createSAAJFault(XMLFault xmlFault, 
-                javax.xml.soap.SOAPBody body) throws SOAPException, MessageException {
+                javax.xml.soap.SOAPBody body) throws SOAPException, WebServiceException {
         
         // Get the factory and create the soapFault
         String protocolNS = body.getNamespaceURI();

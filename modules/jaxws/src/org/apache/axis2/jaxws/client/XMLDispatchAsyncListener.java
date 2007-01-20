@@ -2,6 +2,7 @@ package org.apache.axis2.jaxws.client;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.om.OMElement;
@@ -9,7 +10,6 @@ import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
@@ -51,7 +51,7 @@ public class XMLDispatchAsyncListener extends AsyncResponse {
                 BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(blockFactoryType);
                 Block block = message.getBodyBlock(0, null, factory);
                 value = block.getBusinessObject(true);
-            } catch (MessageException e) {
+            } catch (WebServiceException e) {
                 e.printStackTrace();
             } catch (XMLStreamException e) {
                 e.printStackTrace();
@@ -76,7 +76,7 @@ public class XMLDispatchAsyncListener extends AsyncResponse {
 
                     value = block.getBusinessObject(true);
                 }
-            } catch (MessageException e) {
+            } catch (WebServiceException e) {
                 e.printStackTrace();
             } catch (XMLStreamException e) {
                 e.printStackTrace();

@@ -19,9 +19,9 @@ package org.apache.axis2.jaxws.message.factory;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLPart;
 
@@ -41,27 +41,27 @@ public interface XMLPartFactory {
 	 * @param reader XMLStreamReader
 	 * @throws MessageStreamException
 	 */
-	public XMLPart createFrom(XMLStreamReader reader) throws XMLStreamException, MessageException;
+	public XMLPart createFrom(XMLStreamReader reader) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * create XMLPart from OMElement
 	 * @param omElement OMElement
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	public XMLPart createFrom(OMElement omElement) throws XMLStreamException, MessageException;
+	public XMLPart createFrom(OMElement omElement) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * create XMLPart from SOAPEnvelope
 	 * @param soapEnvelope SOAPEnvelope
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	public XMLPart createFrom(SOAPEnvelope soapEnvelope) throws XMLStreamException, MessageException;
+	public XMLPart createFrom(SOAPEnvelope soapEnvelope) throws XMLStreamException, WebServiceException;
 
 	/**
 	 * create empty XMLPart of the specified protocol
 	 * @param protocol
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	public XMLPart create(Protocol protocol) throws XMLStreamException, MessageException;
+	public XMLPart create(Protocol protocol) throws XMLStreamException, WebServiceException;
 	
 }

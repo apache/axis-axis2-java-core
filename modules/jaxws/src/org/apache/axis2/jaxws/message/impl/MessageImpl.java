@@ -33,6 +33,7 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -41,7 +42,6 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLPart;
@@ -80,7 +80,7 @@ public class MessageImpl implements Message {
 	 * This constructor constructs an empty message with the specified protocol
 	 * @param protocol
 	 */
-	MessageImpl(Protocol protocol) throws MessageException, XMLStreamException {
+	MessageImpl(Protocol protocol) throws WebServiceException, XMLStreamException {
 		createXMLPart(protocol);
 	}
 	
@@ -89,7 +89,7 @@ public class MessageImpl implements Message {
 	 * This constructor creates a message from the specified root.
 	 * @param root
 	 */
-	MessageImpl(OMElement root) throws MessageException, XMLStreamException  {
+	MessageImpl(OMElement root) throws WebServiceException, XMLStreamException  {
 		createXMLPart(root);
 	}
 	
@@ -98,17 +98,17 @@ public class MessageImpl implements Message {
 	 * This constructor creates a message from the specified root.
 	 * @param root
 	 */
-	MessageImpl(SOAPEnvelope root) throws MessageException, XMLStreamException  {
+	MessageImpl(SOAPEnvelope root) throws WebServiceException, XMLStreamException  {
 	    createXMLPart(root);
 	}
     
     /**
      * Create a new XMLPart and Protocol from the root
      * @param root SOAPEnvelope
-     * @throws MessageException
+     * @throws WebServiceException
      * @throws XMLStreamException
      */
-    private void createXMLPart(SOAPEnvelope root) throws MessageException, XMLStreamException {
+    private void createXMLPart(SOAPEnvelope root) throws WebServiceException, XMLStreamException {
         XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
         xmlPart = factory.createFrom(root);
         protocol = xmlPart.getProtocol();
@@ -118,10 +118,10 @@ public class MessageImpl implements Message {
     /**
      * Create a new XMLPart and Protocol from the root
      * @param root OMElement
-     * @throws MessageException
+     * @throws WebServiceException
      * @throws XMLStreamException
      */
-    private void createXMLPart(OMElement root) throws MessageException, XMLStreamException {
+    private void createXMLPart(OMElement root) throws WebServiceException, XMLStreamException {
         XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
         xmlPart = factory.createFrom(root);
         protocol = xmlPart.getProtocol();
@@ -131,16 +131,16 @@ public class MessageImpl implements Message {
     /**
      * Create a new empty XMLPart from the Protocol
      * @param protocol
-     * @throws MessageException
+     * @throws WebServiceException
      * @throws XMLStreamException
      */
-    private void createXMLPart(Protocol protocol) throws MessageException, XMLStreamException {
+    private void createXMLPart(Protocol protocol) throws WebServiceException, XMLStreamException {
         this.protocol = protocol;
         if (protocol.equals(Protocol.unknown)) {
-            throw ExceptionFactory.makeMessageException(Messages.getMessage("ProtocolIsNotKnown"));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ProtocolIsNotKnown"));
         } else if (protocol.equals(Protocol.rest)) {
             // TODO Need REST support
-            throw ExceptionFactory.makeMessageException(Messages.getMessage("RESTIsNotSupported"));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"));
         }
         XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
         xmlPart = factory.create(protocol);
@@ -150,7 +150,7 @@ public class MessageImpl implements Message {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.Message#getAsSOAPMessage()
 	 */
-	public SOAPMessage getAsSOAPMessage() throws MessageException {
+	public SOAPMessage getAsSOAPMessage() throws WebServiceException {
 
 		// TODO: 
 		// This is a non performant way to create SOAPMessage. I will serialize
@@ -205,7 +205,7 @@ public class MessageImpl implements Message {
             
             return soapMessage;
 		} catch (Exception e) {
-			throw ExceptionFactory.makeMessageException(e);
+			throw ExceptionFactory.makeWebServiceException(e);
 		}
 
 	}
@@ -216,7 +216,7 @@ public class MessageImpl implements Message {
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getAsBlock(java.lang.Object,
 	 *      org.apache.axis2.jaxws.message.factory.BlockFactory)
 	 */
-	public Block getAsBlock(Object context, BlockFactory blockFactory) throws MessageException, XMLStreamException {
+	public Block getAsBlock(Object context, BlockFactory blockFactory) throws WebServiceException, XMLStreamException {
 		return xmlPart.getAsBlock(context, blockFactory);
 	}
 
@@ -271,31 +271,31 @@ public class MessageImpl implements Message {
 		return protocol;
 	}
 
-	public OMElement getAsOMElement() throws MessageException {
+	public OMElement getAsOMElement() throws WebServiceException {
 		return xmlPart.getAsOMElement();
 	}
 
-	public javax.xml.soap.SOAPEnvelope getAsSOAPEnvelope() throws MessageException {
+	public javax.xml.soap.SOAPEnvelope getAsSOAPEnvelope() throws WebServiceException {
 		return xmlPart.getAsSOAPEnvelope();
 	}
 
-	public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) throws MessageException {
+	public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) throws WebServiceException {
 		return xmlPart.getBodyBlock(index, context, blockFactory);
 	}
 
-	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws MessageException {
+	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws WebServiceException {
 		return xmlPart.getHeaderBlock(namespace, localPart, context, blockFactory);
 	}
 
-	public int getNumBodyBlocks() throws MessageException {
+	public int getNumBodyBlocks() throws WebServiceException {
 		return xmlPart.getNumBodyBlocks();
 	}
 
-	public int getNumHeaderBlocks() throws MessageException {
+	public int getNumHeaderBlocks() throws WebServiceException {
 		return xmlPart.getNumHeaderBlocks();
 	}
 
-	public XMLStreamReader getXMLStreamReader(boolean consume) throws MessageException {
+	public XMLStreamReader getXMLStreamReader(boolean consume) throws WebServiceException {
 		return xmlPart.getXMLStreamReader(consume);
 	}
 
@@ -303,23 +303,23 @@ public class MessageImpl implements Message {
 		return xmlPart.isConsumed();
 	}
 
-	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, MessageException {
+	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, WebServiceException {
 		xmlPart.outputTo(writer, consume);
 	}
 
-	public void removeBodyBlock(int index) throws MessageException {
+	public void removeBodyBlock(int index) throws WebServiceException {
 		xmlPart.removeBodyBlock(index);
 	}
 
-	public void removeHeaderBlock(String namespace, String localPart) throws MessageException {
+	public void removeHeaderBlock(String namespace, String localPart) throws WebServiceException {
 		xmlPart.removeHeaderBlock(namespace, localPart);
 	}
 
-	public void setBodyBlock(int index, Block block) throws MessageException {
+	public void setBodyBlock(int index, Block block) throws WebServiceException {
         xmlPart.setBodyBlock(index, block);
 	}
 
-	public void setHeaderBlock(String namespace, String localPart, Block block) throws MessageException {
+	public void setHeaderBlock(String namespace, String localPart, Block block) throws WebServiceException {
 		xmlPart.setHeaderBlock(namespace, localPart, block);
 	}
 
@@ -371,15 +371,15 @@ public class MessageImpl implements Message {
         mtomEnabled = b;
     }
 
-	public XMLFault getXMLFault() throws MessageException {
+	public XMLFault getXMLFault() throws WebServiceException {
 		return xmlPart.getXMLFault();
 	}
 
-	public void setXMLFault(XMLFault xmlFault) throws MessageException {
+	public void setXMLFault(XMLFault xmlFault) throws WebServiceException {
 		xmlPart.setXMLFault(xmlFault);
 	}
 
-	public boolean isFault() throws MessageException {
+	public boolean isFault() throws WebServiceException {
 		return xmlPart.isFault();
 	}
 
@@ -391,15 +391,15 @@ public class MessageImpl implements Message {
         return xmlPart.getStyle();
     }
 
-    public void setStyle(Style style) throws MessageException {
+    public void setStyle(Style style) throws WebServiceException {
         xmlPart.setStyle(style);
     }
 
-    public QName getOperationElement() throws MessageException {
+    public QName getOperationElement() throws WebServiceException {
         return xmlPart.getOperationElement();
     }
 
-    public void setOperationElement(QName operationQName) throws MessageException {
+    public void setOperationElement(QName operationQName) throws WebServiceException {
         xmlPart.setOperationElement(operationQName);
     }
 

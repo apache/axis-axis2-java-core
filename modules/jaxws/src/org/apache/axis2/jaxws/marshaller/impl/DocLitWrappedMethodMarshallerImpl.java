@@ -34,7 +34,6 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -260,16 +259,16 @@ public class DocLitWrappedMethodMarshallerImpl extends MethodMarshallerImpl {
      * @param jaxbElement object representing the element to marshal (JAXBElement or object has @XmlRootElement)
      * @return
      * @throws JAXBException
-     * @throws MessageException
+     * @throws WebServiceException
      * @throws XMLStreamException
      */
-    private Message createMessage(Object jaxbElement, OperationDescription operationDesc)throws JAXBException, MessageException, XMLStreamException{
+    private Message createMessage(Object jaxbElement, OperationDescription operationDesc)throws JAXBException, WebServiceException, XMLStreamException{
             Block bodyBlock = null;
             
             Protocol protocol = null;
             try {
                 protocol = Protocol.getProtocolForBinding(operationDesc.getEndpointInterfaceDescription().getEndpointDescription().getBindingType()); //soap11;
-            } catch (MessageException e) {
+            } catch (WebServiceException e) {
                 // TODO better handling than this?
                 e.printStackTrace();
             }

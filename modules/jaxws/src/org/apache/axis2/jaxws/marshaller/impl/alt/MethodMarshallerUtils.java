@@ -47,7 +47,6 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
@@ -146,7 +145,7 @@ public class MethodMarshallerUtils  {
             Message message, 
             Set<String> packages, 
             boolean isInput, 
-            boolean usePartName) throws MessageException, XMLStreamException {
+            boolean usePartName) throws XMLStreamException {
         
         List<PDElement> pvList = new ArrayList<PDElement>();
             
@@ -315,7 +314,7 @@ public class MethodMarshallerUtils  {
      * @param isRPC 
      * @throws MessageException
      */
-    static void toMessage(List<PDElement> pvList, Message message, Set<String> packages, boolean isRPC) throws MessageException {
+    static void toMessage(List<PDElement> pvList, Message message, Set<String> packages, boolean isRPC) throws WebServiceException {
         
         int index = message.getNumBodyBlocks();
         for (int i=0; i<pvList.size(); i++) {
@@ -368,7 +367,7 @@ public class MethodMarshallerUtils  {
             Set<String> packages, 
             Message message, 
             boolean isRPC) 
-            throws MessageException {
+            throws WebServiceException {
         
         // Create the JAXBBlockContext
         // RPC uses type marshalling, so recored the rpcType
@@ -396,11 +395,11 @@ public class MethodMarshallerUtils  {
      * @param message
      * @param rpcType RPC Declared Type class (only used for RPC processing
      * @return type enabled object
-     * @throws MessageException
+     * @throws WebService
      * @throws XMLStreamException
      */
     static Object getReturnValue(Set<String> packages, Message message, Class rpcType) 
-        throws MessageException, XMLStreamException {
+        throws WebServiceException, XMLStreamException {
         
         
         // The return object is the first block in the body
@@ -425,13 +424,13 @@ public class MethodMarshallerUtils  {
      * @param packages Packages needed to marshal the object
      * @param message Message
      * @param isRPC
-     * @throws MessageException
+     * @throws WebServiceException
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
     static void marshalFaultResponse(Throwable throwable, OperationDescription operationDesc,  Set<String> packages, Message message, boolean isRPC)
-     throws MessageException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+     throws WebServiceException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         
         // Get the root cause of the throwable object
         Throwable t = ClassUtils.getRootCause(throwable);
@@ -522,7 +521,7 @@ public class MethodMarshallerUtils  {
      * @param message
      * @param isRPC
      * @return Throwable
-     * @throws MessageException
+     * @throws WebServiceException
      * @throws ClassNotFoundException
      * @throws IllegalAccessException
      * @throws InstantiationException
@@ -531,7 +530,7 @@ public class MethodMarshallerUtils  {
      * @throws NoSuchMethodException
      */
     static Throwable demarshalFaultResponse(OperationDescription operationDesc, Set<String> packages,Message message, boolean isRPC) 
-        throws MessageException, ClassNotFoundException, IllegalAccessException,
+        throws WebServiceException, ClassNotFoundException, IllegalAccessException,
                InstantiationException, XMLStreamException, InvocationTargetException, NoSuchMethodException {
         
         Throwable exception = null;

@@ -26,12 +26,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.xml.ws.Response;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -167,13 +167,9 @@ public class AsyncResponse implements Response {
         if (log.isDebugEnabled()) {
             log.debug("Demarshalling response message as a String");
         }
-        try {
-            Message msg = mc.getMessage();
-            OMElement om = msg.getAsOMElement();
-            return om.toString();
-        } catch (MessageException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
+        Message msg = mc.getMessage();
+        OMElement om = msg.getAsOMElement();
+        return om.toString();
     }
 
 }

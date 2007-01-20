@@ -38,7 +38,6 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
@@ -265,7 +264,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         if (protocol == null) {
             try {
                 protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
-            } catch (MessageException e) {
+            } catch (WebServiceException e) {
                 // TODO better handling than this?
                 e.printStackTrace();
             }
@@ -370,7 +369,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         Protocol protocol = null;
         try {
             protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()); 
-        } catch (MessageException e) {
+        } catch (WebServiceException e) {
             // TODO better handling than this?
             e.printStackTrace();
         }
@@ -463,7 +462,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         if (protocol == null) {
             try {
                 protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
-            } catch (MessageException e) {
+            } catch (WebServiceException e) {
                 // TODO better handling than this?
                 e.printStackTrace();
             }

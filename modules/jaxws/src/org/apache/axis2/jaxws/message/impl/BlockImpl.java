@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
@@ -33,7 +34,6 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
@@ -125,9 +125,9 @@ public abstract class BlockImpl implements Block {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.Block#getBusinessObject(boolean)
 	 */
-	public Object getBusinessObject(boolean consume) throws XMLStreamException, MessageException {
+	public Object getBusinessObject(boolean consume) throws XMLStreamException, WebServiceException {
 		if (consumed) {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
 		}
 		if (busObject != null) {
 			busObject =  _getBOFromBO(busObject, busContext, consume);
@@ -153,7 +153,7 @@ public abstract class BlockImpl implements Block {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.Block#getQName()
 	 */
-	public QName getQName() throws MessageException {
+	public QName getQName() throws WebServiceException {
 		// If the QName is not known, find it
 		try {
 			if (qName == null) {
@@ -168,7 +168,7 @@ public abstract class BlockImpl implements Block {
 			return qName;
 		} catch (Exception xse) {
             setConsumed(true);
-			throw ExceptionFactory.makeMessageException(xse);
+			throw ExceptionFactory.makeWebServiceException(xse);
 		}
 	}
 	
@@ -183,10 +183,10 @@ public abstract class BlockImpl implements Block {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.Block#getXMLStreamReader(boolean)
 	 */
-	public XMLStreamReader getXMLStreamReader(boolean consume) throws XMLStreamException, MessageException {
+	public XMLStreamReader getXMLStreamReader(boolean consume) throws XMLStreamException, WebServiceException {
 		XMLStreamReader newReader = null;
 		if (consumed) {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
 		}
 		if (omElement != null) {
 			if (consume) {
@@ -212,11 +212,7 @@ public abstract class BlockImpl implements Block {
 	 * @see org.apache.axiom.om.OMDataSource#getReader()
 	 */
 	public XMLStreamReader getReader() throws XMLStreamException {
-		try {
-			return getXMLStreamReader(true);
-		} catch (MessageException e) {
-			throw ExceptionFactory.makeMessageInternalException(null, e);
-		}
+	    return getXMLStreamReader(true);
 	}
 
 	/* (non-Javadoc)
@@ -242,18 +238,14 @@ public abstract class BlockImpl implements Block {
 	 * @see org.apache.axiom.om.OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
 	 */
 	public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-		try {
-			outputTo(writer, true);
-		} catch (MessageException e) {
-			throw ExceptionFactory.makeMessageInternalException(null, e);
-		}
+		outputTo(writer, true);
 	}
 
-	public OMElement getOMElement() throws XMLStreamException, MessageException {
+	public OMElement getOMElement() throws XMLStreamException, WebServiceException {
 		OMElement newOMElement = null;
 		boolean consume =true;  // get the OM consumes the message
 		if (consumed) {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
 		}
 		if (omElement != null) {
 			newOMElement = omElement;
@@ -300,9 +292,9 @@ public abstract class BlockImpl implements Block {
 		return (qName != null);
 	}
 
-	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, MessageException {
+	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, WebServiceException {
 		if (consumed) {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
 		}
 		if (omElement != null) {
 			if (consume) {
@@ -352,7 +344,7 @@ public abstract class BlockImpl implements Block {
 	 * @param busContext
 	 * @return
 	 */
-	protected abstract Object _getBOFromReader(XMLStreamReader reader, Object busContext) throws XMLStreamException, MessageException;
+	protected abstract Object _getBOFromReader(XMLStreamReader reader, Object busContext) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * Get an XMLStreamReader for the BusinessObject
@@ -361,7 +353,7 @@ public abstract class BlockImpl implements Block {
 	 * @param busContext
 	 * @return
 	 */
-	protected abstract XMLStreamReader _getReaderFromBO(Object busObj, Object busContext) throws XMLStreamException, MessageException;
+	protected abstract XMLStreamReader _getReaderFromBO(Object busObj, Object busContext) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * Output Reader contents to a Writer.
@@ -382,8 +374,8 @@ public abstract class BlockImpl implements Block {
 	 * @param busContext
 	 * @param writer
 	 * @throws XMLStreamException
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	protected abstract void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer) throws XMLStreamException, MessageException;
+	protected abstract void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer) throws XMLStreamException, WebServiceException;
 	
 }

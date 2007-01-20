@@ -26,8 +26,6 @@ import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.message.MessageException;
-import org.apache.axis2.jaxws.message.MessageInternalException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -118,56 +116,6 @@ public class ExceptionFactory {
 	}
 	
 	/**
-	 * Create a MessageException using the information from a Throwable and message
-	 * @param message
-	 * @param throwable
-	 * @return MessageException
-	 */
-	public static MessageException makeMessageException(String message, Throwable throwable) {
-		try {
-			// See if there is already a MessgeException 
-			MessageException e = (MessageException) findException(throwable, MessageException.class);
-			if (e == null) {
-				e = createMessageException(message, throwable);
-			}
-			return e;
-		} catch (RuntimeException re) {
-			// TODO 
-			// This is not a good situation, an exception occurred while building the exception.
-			// This should never occur!  For now log the problem and rethrow...we may revisit this later
-			if (log.isDebugEnabled()) {
-				log.debug(Messages.getMessage("exceptionDuringExceptionFlow"), re);
-			}
-			throw re;
-		}
-	}
-	
-	/**
-	 * Create a MessageInternalException using the information from a Throwable and message
-	 * @param message
-	 * @param throwable
-	 * @return MessageInternalException
-	 */
-	public static MessageInternalException makeMessageInternalException(String message, Throwable throwable) {
-		try {
-			// See if there is already a HTTPException 
-			MessageInternalException e = (MessageInternalException) findException(throwable, MessageInternalException.class);
-			if (e == null) {
-				e = createMessageInternalException(message, throwable);
-			}
-			return e;
-		} catch (RuntimeException re) {
-			// TODO 
-			// This is not a good situation, an exception occurred while building the exception.
-			// This should never occur!  For now log the problem and rethrow...we may revisit this later
-			if (log.isDebugEnabled()) {
-				log.debug(Messages.getMessage("exceptionDuringExceptionFlow"), re);
-			}
-			throw re;
-		}
-	}
-	
-	/**
 	 * Make a WebServiceException with a given message
 	 * @param message
 	 * @return WebServiceException
@@ -184,24 +132,7 @@ public class ExceptionFactory {
 	public static WebServiceException makeWebServiceException(Throwable throwable){
 		return makeWebServiceException(null, throwable);
 	}
-	
-	/**
-	 * Create a MessageException using the information from a given Throwable instance
-	 * @param throwable
-	 * @return MessageException
-	 */
-	public static MessageException makeMessageException(Throwable throwable){
-		return makeMessageException(null, throwable);
-	}
-	
-	/**
-	 * Make a MessageException with a given message
-	 * @param message
-	 * @return MessageException
-	 */
-	public static MessageException makeMessageException(String message) {
-		return makeMessageException(message, null);  
-	}
+
 	
 	/**
 	 * Create a WebServiceException
@@ -211,8 +142,8 @@ public class ExceptionFactory {
 	 */
 	private static WebServiceException createWebServiceException(String message, Throwable t) {
         
-        // We might have an embedded MessageException that has a good message on it
-        MessageException me = (MessageException) findException(t, MessageException.class);
+        // We might have an embedded WebServiceException that has a good message on it
+        WebServiceException me = (WebServiceException) findException(t, WebServiceException.class);
         if (me != null) {
             String meMessage = me.getMessage();
             if (meMessage != null) {
@@ -278,57 +209,6 @@ public class ExceptionFactory {
 		return e;
 	}
 	
-	/**
-	 * Create a MessageException
-	 * @param message
-	 * @param t Throwable
-	 * @return MessageException
-	 */
-	private static MessageException createMessageException(String message, Throwable t) {
-		Throwable rootCause = null;
-		if (t != null) {
-			rootCause = getRootCause(t);
-		}
-		rootCause = rootCause==null ? t :rootCause;
-		
-		MessageException e = null;
-		if (message != null) {
-			e = new MessageException(message, rootCause);
-		} else {
-			e = new MessageException(rootCause);
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("create Exception:", e);
-		}
-		return e;
-	}
-	
-	/**
-	 * Create a MessageInternalException
-	 * @param message
-	 * @param t Throwable
-	 * @return MessageException
-	 */
-	private static MessageInternalException createMessageInternalException(String message, Throwable t) {
-        
-		Throwable rootCause = null;
-		if (t != null) {
-			rootCause = getRootCause(t);
-		}
-		rootCause = rootCause==null ? t :rootCause;
-		
-		MessageInternalException e = null;
-		if (message != null) {
-			e = new MessageInternalException(message, rootCause);
-		} else {
-			e = new MessageInternalException(rootCause);
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("create Exception:", e);
-		}
-		return e;
-	}
-	
     /**
      * Return the exception or nested cause that is assignable from the specified class
      * @param t Throwable
@@ -380,8 +260,6 @@ public class ExceptionFactory {
     	while (t != null) {
     		Throwable nextCause = null;
     		if (t instanceof InvocationTargetException ||
-    		    t instanceof MessageException ||
-    		    t instanceof MessageInternalException ||
     		    t instanceof AxisFault) {
     			// Skip over this cause
     			nextCause = getCause(t);

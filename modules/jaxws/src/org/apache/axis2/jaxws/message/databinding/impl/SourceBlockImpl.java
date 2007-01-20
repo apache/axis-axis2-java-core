@@ -36,12 +36,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.databinding.SourceBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
@@ -87,7 +87,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 	 * @param qName
 	 * @param factory
 	 */
-	SourceBlockImpl(Source busObject, QName qName, BlockFactory factory) throws MessageException {
+	SourceBlockImpl(Source busObject, QName qName, BlockFactory factory) throws WebServiceException {
 		super(busObject, null, qName, factory);
 
 		// Check validity of Source
@@ -98,7 +98,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 			busObject instanceof JAXBSource) {
 			// Okay, these are supported Source objects
 		} else {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("SourceNotSupported", busObject.getClass().getName()));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("SourceNotSupported", busObject.getClass().getName()));
 		}
 	}
 	
@@ -135,7 +135,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 	}
 
 	@Override
-	protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext) throws XMLStreamException, MessageException  {
+	protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext) throws XMLStreamException, WebServiceException  {
 	    try {
 	        // TODO not sure if this is always the most performant way to do this.
 	        if (busObj instanceof DOMSource) {
@@ -153,7 +153,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 	            // We had some problems with testers producing DOMSources w/o Namespaces.  
 	            // It's easy to catch this here.
 	            if (element.getLocalName() == null) {
-	                throw new XMLStreamException(ExceptionFactory.makeMessageException(Messages.getMessage("JAXBSourceNamespaceErr")));
+	                throw new XMLStreamException(ExceptionFactory.makeWebServiceException(Messages.getMessage("JAXBSourceNamespaceErr")));
 	            }
 	            
 	            return new DOMReader(element);
@@ -174,7 +174,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 	        return _slow_getReaderFromSource((Source)busObj);
 	    } catch (Exception e) {
             String className = (busObj == null) ? "none" : busObj.getClass().getName();
-	        throw ExceptionFactory.makeMessageException(Messages.getMessage("SourceReadErr", className), e);
+	        throw ExceptionFactory.makeWebServiceException(Messages.getMessage("SourceReadErr", className), e);
 	    }
 	}
 	
@@ -196,7 +196,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
    }
 
 	@Override
-	protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer) throws XMLStreamException, MessageException {
+	protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer) throws XMLStreamException, WebServiceException {
 		// There is no fast way to output the Source to a writer, so get the reader
 		// and pass use the default reader->writer.
 		XMLStreamReader reader = _getReaderFromBO(busObject, busContext);
@@ -210,7 +210,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 			return busObject;
 		} else {
 			// TODO Missing Impl
-			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("SourceMissingSupport", busObject.getClass().getName()), null);
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("SourceMissingSupport", busObject.getClass().getName()));
 		}
 	}
 	

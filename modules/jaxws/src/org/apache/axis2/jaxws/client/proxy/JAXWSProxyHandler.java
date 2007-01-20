@@ -128,7 +128,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 if (debug) {
 				    log.debug("An error occured while invoking the method: " + e.getMessage());
                 }
-                throw ExceptionFactory.makeMessageException(e);
+                throw ExceptionFactory.makeWebServiceException(e);
 			}			
 		}
 		else {

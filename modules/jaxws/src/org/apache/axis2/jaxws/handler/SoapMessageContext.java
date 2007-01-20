@@ -22,11 +22,11 @@ import java.util.Set;
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 
 /**
  * The SOAPMessageContext is the context handed to SOAP-based application
@@ -51,12 +51,8 @@ public class SoapMessageContext extends ProtectedMessageContext
     }
 
     public SOAPMessage getMessage(){
-    	try{
-    		Message msg = getMessageObject();
-    		return msg.getAsSOAPMessage();
-    	}catch(MessageException e){
-    		throw ExceptionFactory.makeWebServiceException(e);
-    	}
+        Message msg = getMessageObject();
+        return msg.getAsSOAPMessage();
     }
 
     public Set<URI> getRoles() {

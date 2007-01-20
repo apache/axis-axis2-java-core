@@ -19,11 +19,11 @@ package org.apache.axis2.jaxws.message.factory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 
 /**
@@ -43,14 +43,14 @@ public interface MessageFactory {
 	 * @param reader XMLStreamReader
 	 * @throws XMLStreamException
 	 */
-	public Message createFrom(XMLStreamReader reader) throws XMLStreamException, MessageException;
+	public Message createFrom(XMLStreamReader reader) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * create Message with the xml from the OMElement
 	 * @param omElement OMElement
 	 * @throws XMLStreamException
 	 */
-	public Message createFrom(OMElement omElement) throws XMLStreamException, MessageException;
+	public Message createFrom(OMElement omElement) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * create Message from a Block
@@ -58,15 +58,15 @@ public interface MessageFactory {
 	 * @param context Associated Context or null
 	 * @throws XMLStreamException
 	 */
-	public Message createFrom(Block other, Object context) throws XMLStreamException, MessageException;
+	public Message createFrom(Block other, Object context) throws XMLStreamException, WebServiceException;
 
 	/**
 	 * create Message from SOAPMessage
 	 * The xml and attachments from the SOAPMessage are used to populate the new Message
 	 * @param SOAPMessage
-	 * @throws XMLStreamException, MessageException
+	 * @throws XMLStreamException, WebServiceException
 	 */
-	public Message createFrom(SOAPMessage message) throws XMLStreamException, MessageException;
+	public Message createFrom(SOAPMessage message) throws XMLStreamException, WebServiceException;
 
 	
 	/**
@@ -74,5 +74,5 @@ public interface MessageFactory {
 	 * @param protocol
 	 * @throws XMLStreamException
 	 */
-	public Message create(Protocol protocol) throws XMLStreamException, MessageException;
+	public Message create(Protocol protocol) throws XMLStreamException, WebServiceException;
 }

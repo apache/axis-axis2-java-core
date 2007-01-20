@@ -22,10 +22,10 @@ import java.lang.reflect.Method;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.message.MessageException;
 
 /**
  * Provides convenience methods to construct a SOAP 1.1 or SOAP 1.2 SAAJ MessageFactory or SOAPFactory.
@@ -47,14 +47,14 @@ public class SAAJFactory {
      * @param namespace
      * @return
      */
-    public static SOAPFactory createSOAPFactory(String namespace) throws MessageException, SOAPException {
+    public static SOAPFactory createSOAPFactory(String namespace) throws WebServiceException, SOAPException {
         Method m = getSOAPFactoryNewInstanceProtocolMethod();
         SOAPFactory sf = null;
         if (m == null) {
             if (namespace.equals(SOAP11_ENV_NS)) {
                 sf = SOAPFactory.newInstance();
             } else {
-                throw ExceptionFactory.makeMessageException(Messages.getMessage("SOAP12WithSAAJ12Err"));
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("SOAP12WithSAAJ12Err"));
             }
         } else {
             String protocol = DYNAMIC_PROTOCOL;
@@ -66,7 +66,7 @@ public class SAAJFactory {
             try {
                 sf = (SOAPFactory) m.invoke(null, new Object[] {protocol});
             } catch (Exception e) {
-                throw ExceptionFactory.makeMessageException(e);
+                throw ExceptionFactory.makeWebServiceException(e);
             }
         }
         return sf;
@@ -77,14 +77,14 @@ public class SAAJFactory {
      * @param namespace
      * @return
      */
-    public static MessageFactory createMessageFactory(String namespace) throws MessageException, SOAPException {
+    public static MessageFactory createMessageFactory(String namespace) throws WebServiceException, SOAPException {
         Method m = getMessageFactoryNewInstanceProtocolMethod();
         MessageFactory mf = null;
         if (m == null) {
             if (namespace.equals(SOAP11_ENV_NS)) {
                 mf = MessageFactory.newInstance();
             } else {
-                throw ExceptionFactory.makeMessageException(Messages.getMessage("SOAP12WithSAAJ12Err"));
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("SOAP12WithSAAJ12Err"));
             }
         } else {
             String protocol = DYNAMIC_PROTOCOL;
@@ -96,7 +96,7 @@ public class SAAJFactory {
             try {
                 mf = (MessageFactory) m.invoke(null, new Object[] {protocol});
             } catch (Exception e) {
-                throw ExceptionFactory.makeMessageException(e);
+                throw ExceptionFactory.makeWebServiceException(e);
             }
         }
         return mf;

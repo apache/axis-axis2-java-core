@@ -29,6 +29,7 @@ import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -49,7 +50,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -156,7 +156,7 @@ public class MessageUtils {
      * @param msgContext
      * @return Message
      */
-    public static Message getMessageFromMessageContext(MessageContext msgContext) throws MessageException {
+    public static Message getMessageFromMessageContext(MessageContext msgContext) throws WebServiceException {
         if (log.isDebugEnabled()) {
             log.debug("Start getMessageFromMessageContext");
         }
@@ -259,7 +259,7 @@ public class MessageUtils {
      * @param message JAX-WS Message
      * @param msgContext Axis2MessageContext
      */
-    public static void putMessageOnMessageContext(Message message, MessageContext msgContext) throws AxisFault, MessageException {
+    public static void putMessageOnMessageContext(Message message, MessageContext msgContext) throws AxisFault, WebServiceException {
         // Put the XML message on the Axis 2 Message Context
         SOAPEnvelope envelope = (SOAPEnvelope) message.getAsOMElement();
         msgContext.setEnvelope(envelope);

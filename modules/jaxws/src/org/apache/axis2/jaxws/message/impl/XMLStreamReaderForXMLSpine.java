@@ -20,10 +20,10 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.Block;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.util.StackableReader;
 import org.apache.axis2.jaxws.message.util.XMLStreamReaderFilter;
@@ -158,7 +158,7 @@ public class XMLStreamReaderForXMLSpine extends XMLStreamReaderFilter {
 					sr.push(block.getXMLStreamReader(consume));
 				}
 			}
-		} catch (MessageException me) {
+		} catch (WebServiceException me) {
 			throw new XMLStreamException(me);
 		}
 	}

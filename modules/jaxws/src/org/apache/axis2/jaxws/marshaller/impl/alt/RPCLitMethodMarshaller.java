@@ -33,7 +33,6 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -55,7 +54,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         Protocol protocol = null;
         try {
             protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()); 
-        } catch (MessageException e) {
+        } catch (WebServiceException e) {
             // TODO better handling than this?
             e.printStackTrace();
         }
@@ -191,7 +190,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         if (protocol == null) {
             try {
                 protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
-            } catch (MessageException e) {
+            } catch (WebServiceException e) {
                 // TODO better handling than this?
                 e.printStackTrace();
             }
@@ -328,7 +327,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         if (protocol == null) {
             try {
                 protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
-            } catch (MessageException e) {
+            } catch (WebServiceException e) {
                 // TODO better handling than this?
                 e.printStackTrace();
             }

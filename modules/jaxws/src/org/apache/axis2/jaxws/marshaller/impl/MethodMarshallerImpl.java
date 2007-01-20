@@ -51,7 +51,6 @@ import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
@@ -609,7 +608,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return (objects!=null)? new ArrayList<T>(Arrays.asList(objects)):new ArrayList<T>();
 	}
 	
-	protected Block createJAXBBlock(Object jaxbObject, JAXBBlockContext context) throws MessageException{
+	protected Block createJAXBBlock(Object jaxbObject, JAXBBlockContext context) throws WebServiceException{
 		JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
 		return factory.createFrom(jaxbObject,context,null);
 		
@@ -618,7 +617,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	protected Block createJAXBBlock(String name, 
 			Object jaxbObject, 
 			JAXBBlockContext context, 
-			String targetNamespace) throws MessageException, JAXBException {
+			String targetNamespace) throws WebServiceException, JAXBException {
 		
 		JAXBIntrospector i  = JAXBUtils.getJAXBIntrospector(context.getJAXBContext());
 		boolean isElement = i.isElement(jaxbObject);
@@ -751,7 +750,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return null;
 	}
 	
-	protected Message createMessage(ArrayList<MethodParameter> mps, OperationDescription operationDesc) throws JAXBException, MessageException, XMLStreamException{
+	protected Message createMessage(ArrayList<MethodParameter> mps, OperationDescription operationDesc) throws JAXBException, WebServiceException, XMLStreamException{
 		Block block = null;
 		Object object = null;
 		String objectName = null;
@@ -762,7 +761,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
         Protocol protocol = null;
         try {
             protocol = Protocol.getProtocolForBinding(operationDesc.getEndpointInterfaceDescription().getEndpointDescription().getBindingType()); //soap11;
-        } catch (MessageException e) {
+        } catch (WebServiceException e) {
             // TODO better handling than this?
             e.printStackTrace();
         }
@@ -822,17 +821,17 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return m;
 	}
 	
-	protected Message createFaultMessage(OMElement element) throws XMLStreamException, MessageException {
+	protected Message createFaultMessage(OMElement element) throws XMLStreamException, WebServiceException {
 		MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
 		return mf.createFrom(element);
 	}
 	
-	protected Message createEmptyMessage(OperationDescription operationDesc) throws JAXBException, MessageException, XMLStreamException {
+	protected Message createEmptyMessage(OperationDescription operationDesc) throws JAXBException, WebServiceException, XMLStreamException {
         
         Protocol protocol = null;
         try {
             protocol = Protocol.getProtocolForBinding(operationDesc.getEndpointInterfaceDescription().getEndpointDescription().getBindingType());
-        } catch (MessageException e) {
+        } catch (WebServiceException e) {
             // TODO better handling than this?
             e.printStackTrace();
         }
@@ -842,7 +841,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 		return m;
 	}
 	
-	protected Object createBOFromHeaderBlock(Set<String> contextPackages, Message message, String targetNamespace, String localPart) throws JAXBException, MessageException, XMLStreamException{
+	protected Object createBOFromHeaderBlock(Set<String> contextPackages, Message message, String targetNamespace, String localPart) throws JAXBException, WebServiceException, XMLStreamException{
 		
 		JAXBBlockContext blockContext = createJAXBBlockContext(contextPackages);
 		
@@ -853,12 +852,12 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
         return block.getBusinessObject(true);
 	}
 	
-	protected Object createBOFromBodyBlock(Set<String> contextPackages, Message message) throws JAXBException, MessageException, XMLStreamException{
+	protected Object createBOFromBodyBlock(Set<String> contextPackages, Message message) throws JAXBException, WebServiceException, XMLStreamException{
 		return createBusinessObject(contextPackages, message);
 	}
 
 	
-	protected Object createBusinessObject(Set<String> contextPackages, Message message) throws JAXBException, MessageException, XMLStreamException{
+	protected Object createBusinessObject(Set<String> contextPackages, Message message) throws JAXBException, WebServiceException, XMLStreamException{
 		JAXBBlockContext blockContext = createJAXBBlockContext(contextPackages);
 		
 		// Get a JAXBBlockFactory instance.  We'll need this to get the JAXBBlock
@@ -869,7 +868,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
         return block.getBusinessObject(true);
 	}
 	
-	private JAXBBlockContext createJAXBBlockContext(Set<String> contextPackages) throws JAXBException, MessageException {
+	private JAXBBlockContext createJAXBBlockContext(Set<String> contextPackages) throws JAXBException, WebServiceException {
 		JAXBBlockContext blockContext = new JAXBBlockContext(contextPackages);
 		return blockContext;
 	}
@@ -879,11 +878,11 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	 * @param block
 	 * @return
 	 * @throws JAXBException
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 * @throws XMLStreamException
 	 */
 	protected Object createFaultBusinessObject(Block block, OperationDescription operationDesc)
-			throws JAXBException, MessageException, XMLStreamException {
+			throws JAXBException, WebServiceException, XMLStreamException {
 		JAXBBlockContext blockContext = new JAXBBlockContext(createContextPackageSet(operationDesc));		
 		// Get a JAXBBlockFactory instance. 
         JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
@@ -893,7 +892,7 @@ public abstract class MethodMarshallerImpl implements MethodMarshaller {
 	}
 	
     protected void assignHolderValues(ArrayList<MethodParameter> mps, ArrayList<Object> inputArgHolders, Message message, OperationDescription operationDesc)
-            throws JAXBException, MessageException, XMLStreamException{
+            throws JAXBException, WebServiceException, XMLStreamException{
 		Object bo = null;
 		int index = 0;
 		for(MethodParameter mp:mps){

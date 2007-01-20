@@ -32,7 +32,6 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodParameter;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -115,7 +114,7 @@ public class DocLitBareMethodMarshallerImpl extends MethodMarshallerImpl  {
 		}
         
     }
-	private ArrayList<MethodParameter> createParameterForSEIMethod(Message message, OperationDescription operationDesc)throws IllegalAccessException, InstantiationException, ClassNotFoundException, MessageException, XMLStreamException, JAXBException{
+	private ArrayList<MethodParameter> createParameterForSEIMethod(Message message, OperationDescription operationDesc)throws IllegalAccessException, InstantiationException, ClassNotFoundException, WebServiceException, XMLStreamException, JAXBException{
 	    ArrayList<MethodParameter> mps = new ArrayList<MethodParameter>();
 	    if(message == null){
 	        return null;

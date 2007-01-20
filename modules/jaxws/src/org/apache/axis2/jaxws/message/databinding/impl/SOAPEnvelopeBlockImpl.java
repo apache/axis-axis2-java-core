@@ -9,10 +9,10 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -58,7 +58,7 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
 	 */
 	@Override
 	protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
-			throws XMLStreamException, MessageException {
+			throws XMLStreamException, WebServiceException {
 		
 		// TODO Temporary solution.  The better way is to get an OM
 		// and convert with the SAAJConverter
@@ -74,7 +74,7 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
 	 */
 	@Override
 	protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
-			throws XMLStreamException, MessageException {
+			throws XMLStreamException, WebServiceException {
 		return new SOAPElementReader((SOAPElement)busObj);
 	}
 
@@ -83,7 +83,7 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
 	 */
 	@Override
 	protected void _outputFromBO(Object busObject, Object busContext,
-			XMLStreamWriter writer) throws XMLStreamException, MessageException {
+			XMLStreamWriter writer) throws XMLStreamException, WebServiceException {
 		XMLStreamReader reader = _getReaderFromBO(busObject, busContext);
 		_outputFromReader(reader, writer);	
 	}

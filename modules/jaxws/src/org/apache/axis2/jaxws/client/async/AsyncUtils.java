@@ -18,10 +18,11 @@
  */
 package org.apache.axis2.jaxws.client.async;
 
+import javax.xml.ws.WebServiceException;
+
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;
@@ -31,7 +32,7 @@ public class AsyncUtils {
 
     private static final Log log = LogFactory.getLog(AsyncUtils.class);
     
-    public static MessageContext createMessageContext(AsyncResult result) throws MessageException {
+    public static MessageContext createMessageContext(AsyncResult result) throws WebServiceException {
         boolean debug = log.isDebugEnabled();
         MessageContext response = null;
         

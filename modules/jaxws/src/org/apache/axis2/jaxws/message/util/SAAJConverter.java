@@ -21,9 +21,9 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.jaxws.message.MessageException;
 
 /**
  * SAAJConverter
@@ -35,28 +35,28 @@ public interface SAAJConverter {
 	 * Convert OM SOAPEnvleope to SAAJ SOAPEnvelope
 	 * @param omElement
 	 * @return SOAPEnvelope
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
 	public SOAPEnvelope toSAAJ(org.apache.axiom.soap.SOAPEnvelope omElement)
-		throws MessageException;
+		throws WebServiceException;
 
 	/**
 	 * Convert SAAJ SOAPEnvelope to OM SOAPEnvelope
 	 * @param saajEnvelope
 	 * @return OM Envelope
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
 	public org.apache.axiom.soap.SOAPEnvelope toOM(SOAPEnvelope saajEnvelope)
-		throws MessageException;
+		throws WebServiceException;
 	
 	/**
 	 * Convert SOAPElement into an OMElement
 	 * @param soapElement
 	 * @return OMElement
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
 	public OMElement toOM(SOAPElement soapElement) 
-		throws MessageException;
+		throws WebServiceException;
 	
 	/**
 	 * Convert omElement into a SOAPElement and add it to the parent SOAPElement.
@@ -66,11 +66,11 @@ public interface SAAJConverter {
 	 * @param omElement
 	 * @param parent SOAPElement
 	 * @return SOAPElement that was added to the parent.
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 * @see toSAAJ(OMElement, SOAPElement, SOAPFactory)
 	 */
 	public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent)
-		throws MessageException;
+		throws WebServiceException;
 	
 	/**
 	 * Convert omElement into a SOAPElement and add it to the parent SOAPElement.
@@ -78,19 +78,19 @@ public interface SAAJConverter {
 	 * @param parent SOAPElement
 	 * @param sf SOAPFactory that is used to create Name objects
 	 * @return SOAPElement that was added to the parent.
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 * * @see toSAAJ(OMElement, SOAPElement)
 	 */
 	public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent, SOAPFactory sf)
-		throws MessageException;
+		throws WebServiceException;
 	
 	/**
 	 * Creates a MessageFactory that can support the SOAP version identified
 	 * by the specified envelope namespace. 
 	 * @param namespace
 	 * @return
-	 * @throws MessageException if the namespace is SOAP 1.2 and the SAAJ does not support
+	 * @throws WebServiceException if the namespace is SOAP 1.2 and the SAAJ does not support
 	 * SOAP 1.2 or the namespace is unknown.
 	 */
-	public MessageFactory createMessageFactory(String namespace) throws SOAPException, MessageException;
+	public MessageFactory createMessageFactory(String namespace) throws SOAPException, WebServiceException;
 }

@@ -21,6 +21,7 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.om.OMElement;
@@ -29,7 +30,6 @@ import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -86,8 +86,6 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
     			blockFactoryType = getBlockFactory();
     			return createEmptyMessage(Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()));
     			
-    		}catch(MessageException e){
-    			throw ExceptionFactory.makeWebServiceException(e);
     		}catch(XMLStreamException e){
     			throw ExceptionFactory.makeWebServiceException(e);
     		}
@@ -252,7 +250,7 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         }
         return null;
     }
-    private Message createEmptyMessage(Protocol protocol)throws MessageException, XMLStreamException{
+    private Message createEmptyMessage(Protocol protocol)throws WebServiceException, XMLStreamException{
     	MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
     	Message m = mf.create(protocol);
     	return m;

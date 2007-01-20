@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.message;
 
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -47,7 +48,7 @@ public enum Protocol {
      * @param url
      * @return
      */
-    public static Protocol getProtocolForBinding(String url) throws MessageException {
+    public static Protocol getProtocolForBinding(String url) throws WebServiceException {
         boolean debug = log.isDebugEnabled();
         if (debug) {
             log.debug("Configuring message protocol for binding [" + url + "]");
@@ -70,7 +71,7 @@ public enum Protocol {
             return Protocol.soap12;
         }
         else {
-            throw ExceptionFactory.makeMessageException(Messages.getMessage("protoNotFound00", url));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("protoNotFound00", url));
         }
     }
     

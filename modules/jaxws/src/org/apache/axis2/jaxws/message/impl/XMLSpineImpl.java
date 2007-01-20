@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -44,7 +45,6 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -104,9 +104,9 @@ class XMLSpineImpl implements XMLSpine {
 	 * Create spine from an existing OM tree
 	 * @param envelope
      * @param style Style
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	public XMLSpineImpl(SOAPEnvelope envelope, Style style) throws MessageException {
+	public XMLSpineImpl(SOAPEnvelope envelope, Style style) throws WebServiceException {
 		super();
         this.style = style;
 		init(envelope);
@@ -116,11 +116,11 @@ class XMLSpineImpl implements XMLSpine {
 			protocol = Protocol.soap12;
 		} else {
 			// TODO Support for REST
-			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("RESTIsNotSupported"), null);
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"));
 		}
 	} 
 
-	private void init(SOAPEnvelope envelope) throws MessageException {
+	private void init(SOAPEnvelope envelope) throws WebServiceException {
 		root = envelope;
 		headerBlocks.clear();
 		bodyBlocks.clear();
@@ -181,9 +181,9 @@ class XMLSpineImpl implements XMLSpine {
 	 * @param it Iterator
 	 * @param blocks List<Block> to update
 	 * @param toEnd if true, iterator is advanced to the end, otherwise it is advanced one Element
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	private  void advanceIterator(Iterator it, List<Block> blocks, boolean toEnd) throws MessageException {
+	private  void advanceIterator(Iterator it, List<Block> blocks, boolean toEnd) throws WebServiceException {
 		
 		// TODO This code must be reworked.  The OM Iterator causes the entire OMElement to be 
 		// parsed when it.next() is invoked.  I will need to fix this to gain performance.  (scheu)
@@ -198,7 +198,7 @@ class XMLSpineImpl implements XMLSpine {
 					block = obf.createFrom((OMElement) node, null, null);
                     it.remove();  // Remove the nodes as they are converted 
 				} catch (XMLStreamException xse) {
-					throw ExceptionFactory.makeMessageException(xse);
+					throw ExceptionFactory.makeWebServiceException(xse);
 				}
 				blocks.add(block);
                 if (!toEnd) {
@@ -220,7 +220,7 @@ class XMLSpineImpl implements XMLSpine {
 			soapFactory = new SOAP12Factory();
 		} else {
 			// TODO REST Support is needed
-			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("RESTIsNotSupported"), null);
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"), null);
 		}
 		return soapFactory;
 	}
@@ -264,17 +264,17 @@ class XMLSpineImpl implements XMLSpine {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#outputTo(javax.xml.stream.XMLStreamWriter, boolean)
 	 */
-	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, MessageException {
+	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, WebServiceException {
 		Reader2Writer r2w = new Reader2Writer(getXMLStreamReader(consume));
 		r2w.outputTo(writer);
 	}
 
-	public XMLStreamReader getXMLStreamReader(boolean consume) throws MessageException {
+	public XMLStreamReader getXMLStreamReader(boolean consume) throws WebServiceException {
 		return new XMLStreamReaderForXMLSpine(root, protocol,
 					headerBlocks, bodyBlocks, detailBlocks, consume);
 	}
 
-	public XMLFault getXMLFault() throws MessageException {
+	public XMLFault getXMLFault() throws WebServiceException {
 		if (!isFault()) {
 		    return null;
         }
@@ -292,14 +292,14 @@ class XMLSpineImpl implements XMLSpine {
         return xmlFault;
 	}
     
-    private int getNumDetailBlocks() throws MessageException {
+    private int getNumDetailBlocks() throws WebServiceException {
         if (detailIterator != null) {
             advanceIterator(detailIterator, detailBlocks, true);
         }
         return detailBlocks.size();
     }
 	
-	public void setXMLFault(XMLFault xmlFault) throws MessageException {
+	public void setXMLFault(XMLFault xmlFault) throws WebServiceException {
         
         // Clear out the existing body and detail blocks
         SOAPBody body = root.getBody();
@@ -329,7 +329,7 @@ class XMLSpineImpl implements XMLSpine {
 		return consumed;
 	}
 
-	public OMElement getAsOMElement() throws MessageException {
+	public OMElement getAsOMElement() throws WebServiceException {
 	    if (headerBlocks != null) {        
 	        for (int i=0; i<headerBlocks.size(); i++) {                   
 	            Block b = (Block) headerBlocks.get(i);                   
@@ -384,14 +384,14 @@ class XMLSpineImpl implements XMLSpine {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getNumBodyBlocks()
 	 */
-	public int getNumBodyBlocks() throws MessageException {
+	public int getNumBodyBlocks() throws WebServiceException {
 		if (bodyIterator != null) {
 			advanceIterator(bodyIterator, bodyBlocks, true);
 		}
 		return bodyBlocks.size();
 	}
 
-	public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) throws MessageException {
+	public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) throws WebServiceException {
 		if (index >= bodyBlocks.size() && bodyIterator != null) {
 			advanceIterator(bodyIterator, bodyBlocks, true);
 		}
@@ -405,29 +405,29 @@ class XMLSpineImpl implements XMLSpine {
 			}
 			return newBlock;
 		} catch (XMLStreamException xse) {
-			throw ExceptionFactory.makeMessageException(xse);
+			throw ExceptionFactory.makeWebServiceException(xse);
 		}
 	}
 
-	public void setBodyBlock(int index, Block block) throws MessageException {
+	public void setBodyBlock(int index, Block block) throws WebServiceException {
 		if (index >= bodyBlocks.size() && bodyIterator != null) {
 			advanceIterator(bodyIterator, bodyBlocks, true);
 		}
 		bodyBlocks.add(index, block);
 	}
 
-	public void removeBodyBlock(int index) throws MessageException {
+	public void removeBodyBlock(int index) throws WebServiceException {
 		if (index >= bodyBlocks.size() && bodyIterator != null) {
 			advanceIterator(bodyIterator, bodyBlocks, true);
 		}
 		bodyBlocks.remove(index);
 	}
 
-	public int getNumHeaderBlocks() throws MessageException {
+	public int getNumHeaderBlocks() throws WebServiceException {
 		return headerBlocks.size();
 	}
 
-	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws MessageException {
+	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws WebServiceException {
 		int index = getHeaderBlockIndex(namespace, localPart);
         if (index < 0) {
             // REVIEW What should happen if header block not found
@@ -442,11 +442,11 @@ class XMLSpineImpl implements XMLSpine {
 			}
 			return newBlock;
 		} catch (XMLStreamException xse) {
-			throw ExceptionFactory.makeMessageException(xse);
+			throw ExceptionFactory.makeWebServiceException(xse);
 		}
 	}
 
-	public void setHeaderBlock(String namespace, String localPart, Block block) throws MessageException {
+	public void setHeaderBlock(String namespace, String localPart, Block block) throws WebServiceException {
 		int index = getHeaderBlockIndex(namespace, localPart);
         if (index >= 0) {
             headerBlocks.set(index, block);
@@ -460,9 +460,9 @@ class XMLSpineImpl implements XMLSpine {
 	 * @param namespace
 	 * @param localPart
 	 * @return index of header block or -1
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	private int getHeaderBlockIndex(String namespace, String localPart) throws MessageException {
+	private int getHeaderBlockIndex(String namespace, String localPart) throws WebServiceException {
 		for (int i=0; i<headerBlocks.size(); i++) {
 			Block block = headerBlocks.get(i);
 			QName qName = block.getQName();
@@ -473,7 +473,7 @@ class XMLSpineImpl implements XMLSpine {
 		}
 		return -1;
 	}
-	public void removeHeaderBlock(String namespace, String localPart) throws MessageException {
+	public void removeHeaderBlock(String namespace, String localPart) throws WebServiceException {
 		int index = getHeaderBlockIndex(namespace, localPart);
         if (index >= 0) {
             headerBlocks.remove(index);
@@ -489,7 +489,7 @@ class XMLSpineImpl implements XMLSpine {
         return "SPINE";
     }
 
-    public boolean isFault() throws MessageException {
+    public boolean isFault() throws WebServiceException {
 		return XMLFaultUtils.isFault(root);
 	}
 

@@ -51,7 +51,6 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -362,8 +361,8 @@ public class AxisInvocationController extends InvocationController {
             if (log.isDebugEnabled()) {
                 log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
             }
-        } catch (MessageException e) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("prepareRequestFail"), e);
+        } catch (WebServiceException e) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("prepareRequestFail"));
         } catch (AxisFault e) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("prepareRequestFail"), e);
         }
@@ -491,7 +490,7 @@ public class AxisInvocationController extends InvocationController {
             op.setMessageReceiver(new CallbackReceiver());
     }
     
-    private Message createMessageFromOM(OMElement om) throws MessageException {
+    private Message createMessageFromOM(OMElement om) throws WebServiceException {
         try {
             MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
             Message msg = mf.createFrom(om);

@@ -20,6 +20,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMElement;
@@ -53,9 +54,9 @@ public interface Block extends OMDataSource {
 	 * @param consume true if this is the last request on the block.
 	 * @return Object (JAXB, String etc.)
 	 * @throws XMLStreamException
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	public Object getBusinessObject(boolean consume) throws XMLStreamException, MessageException;
+	public Object getBusinessObject(boolean consume) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * GetBusinesContext
@@ -70,25 +71,25 @@ public interface Block extends OMDataSource {
 	 * @return XMLStreamReader
 	 * @throws XMLStreamException
 	 */
-	public XMLStreamReader getXMLStreamReader(boolean consume) throws XMLStreamException, MessageException;
+	public XMLStreamReader getXMLStreamReader(boolean consume) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * Get the OMElement represented by this Block.
 	 * This call always consumes the block because you are taking control of the underlying OM
 	 * @return
 	 * @throws XMLStreamException
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	public OMElement getOMElement() throws XMLStreamException, MessageException;
+	public OMElement getOMElement() throws XMLStreamException, WebServiceException;
 	
     /**
      * Write out the Block
      * @param writer XMLStreamWriter
      * @param consume true if this is the last request on the block.
      * @throws XMLStreamException
-     * @trhows MessageException
+     * @trhows WebServiceException
      */
-    public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, MessageException;	
+    public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, WebServiceException;	
         
     /**
      * isConsumed
@@ -119,9 +120,9 @@ public interface Block extends OMDataSource {
 	 * Asking for the QName can cause a performant hit.
 	 * @see isQNameAvailable
 	 * @return QName of the block
-	 * @throw MessageException
+	 * @throw WebServiceException
 	 */
-	public QName getQName() throws MessageException;
+	public QName getQName() throws WebServiceException;
     
 	/**
 	 * Get BlockFactory 
