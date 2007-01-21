@@ -25,12 +25,17 @@ import test.EchoStringResponse;
 
 public class JAXBCallbackHandler<T> implements AsyncHandler<T> {
 
+    T data = null;
     public void handleResponse(Response response) {
         try {
-            EchoStringResponse esr = (EchoStringResponse) response.get();
-            System.out.println(">> Async response received: " + esr.getEchoStringReturn());
+            data = (T) response.get();
+            System.out.println(">> Async response received: " + data);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public T getData() {
+        return data;
     }
 }

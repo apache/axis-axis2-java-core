@@ -51,18 +51,6 @@ public class JAXBDispatchAsyncListener extends AsyncResponse {
     }
     
     public Object getResponseValueObject(MessageContext mc) {
-        Object value = null;
-        
-        Message message = mc.getMessage();
-        try {
-            JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-            JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
-            Block block = message.getBodyBlock(0, context, factory);
-            value = block.getBusinessObject(true);
-        } catch (Exception e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
-        
-        return value;
+        return JAXBDispatch.getValue(mc.getMessage(), mode, jaxbContext);
     }
 }

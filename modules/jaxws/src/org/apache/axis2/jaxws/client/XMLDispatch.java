@@ -134,6 +134,15 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
     }
 
     public Object getValueFromMessage(Message message) {
+        return getValue(message, mode, blockFactoryType);
+    }
+    
+    /**
+     * Common code used by XMLDispatch and XMLDispatchAsyncListener
+     * @param message
+     * @return object
+     */
+    static Object getValue(Message message, Mode mode, Class blockFactoryType) {
         Object value = null;
         Block block = null;
         

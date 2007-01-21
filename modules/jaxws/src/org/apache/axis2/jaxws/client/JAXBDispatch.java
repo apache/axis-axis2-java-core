@@ -97,6 +97,17 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
     }
 
     public Object getValueFromMessage(Message message) {
+        return getValue(message, mode, jaxbContext);
+    }
+    
+    /**
+     * Common code to get the value for JAXBDispatch and JAXBDispatchAsyncListener
+     * @param message
+     * @param mode
+     * @param jaxbContext
+     * @return
+     */
+    static Object getValue(Message message, Mode mode, JAXBContext jaxbContext) {
         Object value = null;
         try {
             if (mode.equals(Mode.PAYLOAD)) {
@@ -118,7 +129,8 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
                 XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
                 Block stringBlock = stringFactory.createFrom(stringValue, null, soapEnvQname);   
                 BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-                Block block = factory.createFrom(stringBlock, null);
+                JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
+                Block block = factory.createFrom(stringBlock, context);
                 value = block.getBusinessObject(true);   
             }
         } catch (Exception e) {

@@ -21,8 +21,12 @@ package org.apache.axis2.jaxws.dispatch;
 import java.util.concurrent.Future;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+
+import org.xmlsoap.schemas.soap.envelope.Body;
+import org.xmlsoap.schemas.soap.envelope.Envelope;
 
 import junit.framework.TestCase;
 import test.EchoString;
@@ -31,7 +35,9 @@ import test.ObjectFactory;
 
 public class JAXBDispatch extends TestCase {
 
-    private Dispatch<Object> dispatch;
+    private Dispatch<Object> dispatchPayload;
+    private Dispatch<Object> dispatchMessage;
+    private JAXBContext jbc;
     
     public JAXBDispatch(String name) {
         super(name);
@@ -42,25 +48,28 @@ public class JAXBDispatch extends TestCase {
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);
         svc.addPort(DispatchTestConstants.QNAME_PORT, null, DispatchTestConstants.URL);
         
-        //Create the JAX-B Dispatch object
-        JAXBContext jbc = null;
-        jbc = JAXBContext.newInstance("test");
-        dispatch = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+        //Create the JAX-B Dispatch object to recognize the test and soap packages
+        jbc = JAXBContext.newInstance("test:org.xmlsoap.schemas.soap.envelope");
+        
+        // Create Payload and Message Dispatch
+        dispatchPayload = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
                 jbc, Service.Mode.PAYLOAD);
+        dispatchMessage = svc.createDispatch(DispatchTestConstants.QNAME_PORT, 
+                jbc, Service.Mode.MESSAGE);
     }
     
-    public void testSync() throws Exception {
+    public void testSyncPayload() throws Exception {
         System.out.println("---------------------------------------");
         System.out.println("test: " + getName());
 
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
         EchoString request = factory.createEchoString();         
-        request.setInput("SYNC JAXB TEST");
+        request.setInput("SYNC JAXB PAYLOAD TEST");
         
         // Invoke the Dispatch<Object>
         System.out.println(">> Invoking sync Dispatch with JAX-B Parameter");
-        EchoStringResponse response = (EchoStringResponse) dispatch.invoke(request);
+        EchoStringResponse response = (EchoStringResponse) dispatchPayload.invoke(request);
         
         assertNotNull(response);
         
@@ -71,39 +80,148 @@ public class JAXBDispatch extends TestCase {
         assertTrue("[ERROR] - Zero length content in response", response.getEchoStringReturn().length() > 0);
     }
     
-    public void testAysnc() throws Exception {
+    public void testAysncPayload() throws Exception {
         System.out.println("---------------------------------------");
         System.out.println("test: " + getName());
         
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
         EchoString request = factory.createEchoString();         
-        request.setInput("ASYNC(CALLBACK) JAXB TEST");
+        request.setInput("ASYNC(CALLBACK) JAXB PAYLOAD TEST");
         
         // Create the callback for async responses
         JAXBCallbackHandler<Object> callback = new JAXBCallbackHandler<Object>();
         
         // Invoke the Dispatch<Object> asynchronously
         System.out.println(">> Invoking async(callback) Dispatch with JAX-B Parameter");
-        Future<?> monitor = dispatch.invokeAsync(request, callback);
+        Future<?> monitor = dispatchPayload.invokeAsync(request, callback);
         
         while (!monitor.isDone()) {
              System.out.println(">> Async invocation still not complete");
              Thread.sleep(1000);
         }
+        
+        EchoStringResponse response = (EchoStringResponse) callback.getData();
+        assertNotNull(response);
+        
+        System.out.println(">> Response content: " + response.getEchoStringReturn());
+        
+        assertTrue("[ERROR] - Response object was null", response != null);
+        assertTrue("[ERROR] - No content in response object", response.getEchoStringReturn() != null);
+        assertTrue("[ERROR] - Zero length content in response", response.getEchoStringReturn().length() > 0);
+
     }
     
-    public void testOneWay() throws Exception {
+    public void testOneWayPayload() throws Exception {
         System.out.println("---------------------------------------");
         System.out.println("test: " + getName());
 
         // Create the input param
         ObjectFactory factory = new ObjectFactory();
         EchoString request = factory.createEchoString();         
-        request.setInput("ONE-WAY JAXB TEST");
+        request.setInput("ONE-WAY JAXB PAYLOAD TEST");
         
         // Invoke the Dispatch<Object> one-way
         System.out.println(">> Invoking one-way Dispatch with JAX-B Parameter");
-        dispatch.invokeOneWay(request);
+        dispatchPayload.invokeOneWay(request);
+    }
+    
+    public void testSyncMessage() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+
+        // Create the input param
+        ObjectFactory factory = new ObjectFactory();
+        EchoString echoString = factory.createEchoString();         
+        echoString.setInput("SYNC JAXB MESSAGETEST");
+        
+        JAXBElement<Envelope> request = createJAXBEnvelope();
+        request.getValue().getBody().getAny().add(echoString);
+        
+        jbc.createMarshaller().marshal(request,System.out);
+        
+        // Invoke the Dispatch<Object>
+        System.out.println(">> Invoking sync Dispatch with JAX-B Parameter");
+        JAXBElement<Envelope> jaxbResponse = (JAXBElement<Envelope>) dispatchMessage.invoke(request);
+        
+        assertNotNull(jaxbResponse);
+        Envelope response = jaxbResponse.getValue();
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        EchoStringResponse echoStringResponse = (EchoStringResponse) response.getBody().getAny().get(0);
+        
+        System.out.println(">> Response content: " + echoStringResponse.getEchoStringReturn());
+        assertTrue("[ERROR] - No content in response object", echoStringResponse.getEchoStringReturn() != null);
+        assertTrue("[ERROR] - Zero length content in response", echoStringResponse.getEchoStringReturn().length() > 0);
+    }
+    
+    public void testAysncMessage() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        // Create the input param
+        ObjectFactory factory = new ObjectFactory();
+        EchoString echoString = factory.createEchoString();         
+        echoString.setInput("ASYNC(CALLBACK) JAXB MESSAGE TEST");
+        
+        JAXBElement<Envelope> request = createJAXBEnvelope();
+        request.getValue().getBody().getAny().add(echoString);
+        
+        
+        // Create the callback for async responses
+        JAXBCallbackHandler<Object> callback = new JAXBCallbackHandler<Object>();
+        
+        // Invoke the Dispatch<Object> asynchronously
+        System.out.println(">> Invoking async(callback) Dispatch with JAX-B Parameter");
+        Future<?> monitor = dispatchMessage.invokeAsync(request, callback);
+        
+        while (!monitor.isDone()) {
+             System.out.println(">> Async invocation still not complete");
+             Thread.sleep(1000);
+        }
+        
+        JAXBElement<Envelope> jaxbResponse = (JAXBElement<Envelope>) callback.getData();
+        
+        assertNotNull(jaxbResponse);
+        Envelope response = jaxbResponse.getValue();
+        
+        assertNotNull(response);
+        assertNotNull(response.getBody());
+        EchoStringResponse echoStringResponse = (EchoStringResponse) response.getBody().getAny().get(0);
+        
+        System.out.println(">> Response content: " + echoStringResponse.getEchoStringReturn());
+        assertTrue("[ERROR] - No content in response object", echoStringResponse.getEchoStringReturn() != null);
+        assertTrue("[ERROR] - Zero length content in response", echoStringResponse.getEchoStringReturn().length() > 0);
+
+        
+    }
+    
+    public void testOneWayMessge() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+
+        // Create the input param
+        ObjectFactory factory = new ObjectFactory();
+        EchoString echoString = factory.createEchoString();         
+        echoString.setInput("ONE-WAY JAXB MESSAGE TEST");
+        
+        JAXBElement<Envelope> request = createJAXBEnvelope();
+        request.getValue().getBody().getAny().add(echoString);
+        
+        // Invoke the Dispatch<Object> one-way
+        System.out.println(">> Invoking one-way Dispatch with JAX-B Parameter");
+        dispatchMessage.invokeOneWay(request);
+    }
+    
+    private JAXBElement<Envelope> createJAXBEnvelope() {
+        org.xmlsoap.schemas.soap.envelope.ObjectFactory factory = 
+            new org.xmlsoap.schemas.soap.envelope.ObjectFactory();
+        Envelope env = new Envelope();
+        
+        Body body = new Body();
+        env.setBody(body);
+        
+        JAXBElement<Envelope> jaxbEnv = factory.createEnvelope(env);
+        return jaxbEnv;
     }
 }

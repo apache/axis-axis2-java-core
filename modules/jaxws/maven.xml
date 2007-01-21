@@ -38,6 +38,14 @@
     	<!-- Run JAXB schema compiler with designated schemas -->
         <ant:echo>Generating JAX-B classes from XSDs</ant:echo>    
         
+        <ant:echo>Generating java from soap 11</ant:echo>
+        <java classname="com.sun.tools.xjc.Driver" fork="true"> 
+        	<jvmarg line="${maven.junit.jvmargs2}"/>
+        	<classpath refid="maven.dependency.classpath"/>
+        	<classpath location="${compiled.classes.dir}"/>
+            <arg line="-d ${schema.generated.src.dir} -quiet  ${schema.source.dir}/soap11.xsd"/>
+        </java>
+        
     	<ant:echo>Generating java from echo.xsd</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
         	<jvmarg line="${maven.junit.jvmargs2}"/>
