@@ -31,9 +31,9 @@ import org.apache.commons.logging.LogFactory;
 public class AsyncUtils {
 
     private static final Log log = LogFactory.getLog(AsyncUtils.class);
+    private static final boolean debug = log.isDebugEnabled();
     
     public static MessageContext createMessageContext(AsyncResult result) throws WebServiceException {
-        boolean debug = log.isDebugEnabled();
         MessageContext response = null;
         
         if (debug) {
@@ -54,7 +54,7 @@ public class AsyncUtils {
                 log.debug("An error occurred in the ThreadContextMigratorUtil " + t);
                 log.debug("...caused by " + t.getCause());
             }
-            ExceptionFactory.makeWebServiceException(t);
+            throw ExceptionFactory.makeWebServiceException(t);
         }
         
         return response;

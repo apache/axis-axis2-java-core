@@ -43,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 public class CallbackFuture extends Callback {
     
     private static final Log log = LogFactory.getLog(CallbackFuture.class);
+    private static final boolean debug = log.isDebugEnabled();
     
     private CallbackFutureTask cft;
     private Executor executor;
@@ -61,9 +62,8 @@ public class CallbackFuture extends Callback {
     
     @Override
     public void onComplete(AsyncResult result) {
-        boolean debug = log.isDebugEnabled();
         if (debug) {
-            log.debug("JAX-WS async response listener received the response");
+            log.debug("JAX-WS received the async response");
         }
         
         MessageContext response = null;
@@ -108,6 +108,7 @@ public class CallbackFuture extends Callback {
 class CallbackFutureTask implements Callable {
     
     private static final Log log = LogFactory.getLog(CallbackFutureTask.class);
+    private static final boolean debug = log.isDebugEnabled();
     
     AsyncResponse response;
     MessageContext responseMsgCtx;
@@ -136,10 +137,20 @@ class CallbackFutureTask implements Callable {
             response.onError(error);
         }
         
-        if (log.isDebugEnabled()) {
-            log.debug("Calling JAX-WS AsyncHandler with the Response object");
+        try {
+            if (debug) {
+                log.debug("Calling JAX-WS AsyncHandler with the Response object");
+                log.debug("AyncHandler class: " + handler.getClass());
+            }
+            handler.handleResponse(response);    
         }
-        handler.handleResponse(response);        
+        catch (Throwable t) {
+            if (debug) {
+                log.debug("An error occured while invoking the callback object.");
+                log.debug("Error: " + t.getMessage());
+            }
+        }
+                
         return null;
     }
 }
