@@ -46,7 +46,7 @@ public abstract class AbstractSchemaCompilerTester extends TestCase {
         documentBuilderFactory.setNamespaceAware(true);
 
         DocumentBuilder builder =  documentBuilderFactory.newDocumentBuilder();
-        Document doc = builder.parse(new File(fileName));
+        Document doc = builder.parse(new File(System.getProperty("basedir")+"/"+fileName));
 
         //now read it to a schema
         XmlSchemaCollection schemaCol =  getSchemaReader();
