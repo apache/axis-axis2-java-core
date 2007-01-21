@@ -33,7 +33,7 @@
   <description>WS-Addressing implementation</description>
 
   <dependencies>
-  <dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>axis2-kernel</artifactId>
     </dependency>
@@ -73,14 +73,15 @@
   			<skip>false</skip>
   		</configuration>
   	  </plugin>
-  	  <plugin>
+	<plugin>
         <groupId>org.apache.axis2.maven2</groupId>
         <artifactId>axis2-mar-maven-plugin</artifactId>
+        <version>SNAPSHOT</version>
         <extensions>true</extensions>
         <configuration>
        	  <includeDependencies>false</includeDependencies>
         </configuration>
-      </plugin>
+      </plugin> 
     </plugins>
   </build>
 </project>
