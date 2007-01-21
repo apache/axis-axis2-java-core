@@ -171,8 +171,12 @@ public class AxisEngine {
               checkMustUnderstand(msgContext);
               
               MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
-              if (receiver!=null)
-            	  receiver.receive(msgContext);
+              if (receiver==null){
+                  throw new AxisFault(Messages.getMessage(
+                          "nomessagereciever",
+                          msgContext.getAxisOperation().getName().toString()));
+              }
+              receiver.receive(msgContext);
             }
             flowComplete(msgContext, true);
           }
@@ -339,6 +343,11 @@ public class AxisEngine {
             // invoke the Message Receivers
             checkMustUnderstand(msgContext);
             MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
+            if (receiver==null){
+                throw new AxisFault(Messages.getMessage(
+                        "nomessagereciever",
+                        msgContext.getAxisOperation().getName().toString()));
+            }
             receiver.receive(msgContext);
           }
           flowComplete(msgContext, true);
