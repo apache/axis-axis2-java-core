@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.description;
 import javax.jws.WebService;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
+import javax.xml.ws.WebFault;
 
 import junit.framework.TestCase;
 
@@ -39,7 +40,12 @@ public class WrapperPackageTests extends TestCase {
         assertEquals("org.apache.axis2.jaxws.description.Method1", requestWrapperClass);
         String responseWrapperClass = opDesc.getResponseWrapperClassName();
         assertEquals("org.apache.axis2.jaxws.description.Method1Response", responseWrapperClass);
-        
+        FaultDescription fDesc = opDesc.getFaultDescriptions()[0];
+        String faultExceptionClass = fDesc.getExceptionClassName();
+        assertEquals("org.apache.axis2.jaxws.description.Method1Exception", faultExceptionClass);
+        String faultBeanClass = fDesc.getFaultBean();
+        assertEquals("org.apache.axis2.jaxws.description.ExceptionBean", faultBeanClass);
+
     }
     
     public void testSEISubPackageWrapper() {
@@ -49,7 +55,12 @@ public class WrapperPackageTests extends TestCase {
         assertEquals("org.apache.axis2.jaxws.description.jaxws.SubPackageMethod1", requestWrapperClass);
         String responseWrapperClass = opDesc.getResponseWrapperClassName();
         assertEquals("org.apache.axis2.jaxws.description.jaxws.SubPackageMethod1Response", responseWrapperClass);
-        
+        FaultDescription fDesc = opDesc.getFaultDescriptions()[0];
+        String faultExceptionClass = fDesc.getExceptionClassName();
+        assertEquals("org.apache.axis2.jaxws.description.SubPackageException", faultExceptionClass);
+        String faultBeanClass = fDesc.getFaultBean();
+        assertEquals("org.apache.axis2.jaxws.description.jaxws.SubPackageExceptionBean", faultBeanClass);
+
     }
     
     /*
@@ -78,7 +89,7 @@ public class WrapperPackageTests extends TestCase {
 class SEIPackageWrapper {
     @RequestWrapper()
     @ResponseWrapper()
-    public String method1(String string) {
+    public String method1(String string) throws Method1Exception {
         return string;
     }
 }
@@ -91,11 +102,25 @@ class Method1Response {
     
 }
 
+@WebFault()
+class Method1Exception extends Exception {
+    public ExceptionBean getFaultInfo() { return null; }
+}
+
+class ExceptionBean {
+    
+}
+
+@WebFault
+class SubPackageException extends Exception {
+    // No getFaultInfo method
+}
+
 @WebService()
 class SEISubPackageWrapper {
     @RequestWrapper()
     @ResponseWrapper()
-    public String subPackageMethod1(String string) {
+    public String subPackageMethod1(String string) throws SubPackageException {
         return string;
     }
 }

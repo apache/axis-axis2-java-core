@@ -452,9 +452,12 @@ public class MethodMarshallerUtils  {
         // Get the FaultDescriptor matching this Exception.
         // If FaultDescriptor is found, this is a JAX-B Service Exception.
         // If not found, this is a System Exception
-        FaultDescription fd = operationDesc.resolveFaultByExceptionName(t.getClass().getName());
+        FaultDescription fd = operationDesc.resolveFaultByExceptionName(t.getClass().getCanonicalName());
 
         if (t instanceof SOAPFaultException) {
+            if (log.isErrorEnabled()) {
+                log.debug("Marshal SOAPFaultException");
+            }
             // Category C: SOAPFaultException 
             // Construct the xmlFault from the SOAPFaultException's Fault
             SOAPFaultException sfe = (SOAPFaultException) t;
@@ -468,13 +471,30 @@ public class MethodMarshallerUtils  {
             }
             
         } else if (fd != null) {
+            if (log.isErrorEnabled()) {
+                log.debug("Marshal as a Service Exception");
+            }
             // The exception is a Service Exception.  It may be (A) JAX-WS compliant exception or (B) JAX-WS legacy exception
             
-            // TODO Need to add detection and code to differentiate between (A) and (B)
+            // The faultBeanObject is a JAXB object that represents the data of the exception.  It is marshalled in the detail
+            // section of the soap fault.  The faultBeanObject is obtained direction from the exception (A) or via 
+            // the legacy exception rules (B).
+            Object faultBeanObject = null;
+       
+            if (LegacyExceptionUtil.isLegacyException(t.getClass())) {
+                // Legacy Exception case
+                faultBeanObject = LegacyExceptionUtil.createFaultBean(t, fd);
+            } else {
+                // Normal case
+                // Get the fault bean object.  
+                Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
+                faultBeanObject = getFaultInfo.invoke(t, null);
+            }
             
-            // Get the fault bean object.  Make sure it can be rendered as an element
-            Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
-            Object faultBeanObject = getFaultInfo.invoke(t, null);
+            if (log.isErrorEnabled()) {
+                log.debug("The faultBean type is" + faultBeanObject.getClass().getName());
+            }
+            // Make sure the faultBeanObject can be marshalled as an element
             if (!XMLRootElementUtil.isElementEnabled(faultBeanObject.getClass())) {
                 faultBeanObject = XMLRootElementUtil.getElementEnabledObject(fd.getTargetNamespace(), fd.getName(), 
                         faultBeanObject.getClass(), faultBeanObject);
@@ -492,9 +512,15 @@ public class MethodMarshallerUtils  {
             Block[] detailBlocks = new Block[1];
             detailBlocks[0] = factory.createFrom(faultBeanObject,context,null);
             
+            if (log.isErrorEnabled()) {
+                log.debug("Create the xmlFault for the Service Exception");
+            }
             // Now make a XMLFault containing the detailblock
             xmlfault = new XMLFault(null, new XMLFaultReason(t.getMessage()), detailBlocks);
         } else if (t instanceof WebServiceException) {
+            if (log.isErrorEnabled()) {
+                log.debug("Marshal as a WebServiceException");
+            }
             // Category D: WebServiceException
             // The reason is constructed with the getMessage of the exception.  
             // There is no detail
@@ -502,6 +528,9 @@ public class MethodMarshallerUtils  {
             xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
                     new XMLFaultReason(wse.getMessage()));  // Assumes text is the language supported by the current Locale
         } else {
+            if (log.isErrorEnabled()) {
+                log.debug("Marshal as a unchecked System Exception");
+            }
             // Category E: Other System Exception
             // The reason is constructed with the toString of the exception.  
             // This places the class name of the exception in the reason
@@ -556,7 +585,10 @@ public class MethodMarshallerUtils  {
             // This is a system exception if the method does not throw a checked exception or if 
             // the detail block is missing or contains multiple items.
             exception = createSystemException(xmlfault, message);
-        } else {            
+        } else {        
+            if (log.isErrorEnabled()) {
+                log.debug("Ready to demarshal service exception.  The detail entry name is " + elementName);
+            }
             // Get the JAXB object from the block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
             
@@ -602,23 +634,34 @@ public class MethodMarshallerUtils  {
                 faultBeanQName = XMLRootElementUtil.getXmlRootElementQName(faultBeanObject);
             }
             
+            if (log.isErrorEnabled()) {
+                log.debug("Searching for the matching FaultDescription");
+            }
             // Using the faultBeanQName, find the matching faultDescription 
             FaultDescription faultDesc = null;
             for(int i=0; i<operationDesc.getFaultDescriptions().length && faultDesc == null; i++) {
                 FaultDescription fd = operationDesc.getFaultDescriptions()[i];
                 QName tryQName = new QName(fd.getTargetNamespace(), fd.getName());
-                                
+                if (log.isErrorEnabled()) {
+                    log.debug("  FaultDescription qname is (" + tryQName + ") and demarshalled bean qname is (" + faultBeanQName + ")");
+                }
                 if (faultBeanQName == null || faultBeanQName.equals(tryQName)) {
                     faultDesc = fd;
                     
                 }
             }
             if (faultDesc == null) {
+                if (log.isErrorEnabled()) {
+                    log.debug("A FaultDescription was not found");
+                }
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("MethodMarshallerErr1", faultBeanObject.getClass().toString()));
             }
             
             // Construct the JAX-WS generated exception that holds the faultBeanObject
             Class exceptionClass = loadClass(faultDesc.getExceptionClassName());
+            if (log.isErrorEnabled()) {
+                log.debug("Found FaultDescription.  The exception name is " + exceptionClass.getName());
+            }
             Class faultBeanFormalClass = loadClass(faultDesc.getFaultBean());  // Note that faultBean may not be a bean, it could be a primitive     
             exception =createServiceException(xmlfault.getReason().getText(), exceptionClass, faultBeanObject, faultBeanFormalClass);
         }
@@ -691,15 +734,21 @@ public class MethodMarshallerUtils  {
      * @throws NoSuchMethodException
      */
     private static Exception createServiceException(String message, Class exceptionclass, Object bean, Class beanFormalType) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
-        // All webservice exception classes are required to have a constructor that takes a (String, bean) argument
-        // TODO necessary to be more careful here with instantiating, casting, etc?
+        
         if (log.isDebugEnabled()) {
             log.debug("Constructing JAX-WS Exception:" + exceptionclass);
         }
-        Constructor constructor = exceptionclass.getConstructor(new Class[] { String.class, beanFormalType });
-        Object exception = constructor.newInstance(new Object[] { message, bean });
+        Exception exception = null;
+        if (LegacyExceptionUtil.isLegacyException(exceptionclass)) {
+            // Legacy Exception
+            exception = LegacyExceptionUtil.createFaultException(exceptionclass, bean);
+        } else {
+            // Normal case, use the contstructor to create the exception
+            Constructor constructor = exceptionclass.getConstructor(new Class[] { String.class, beanFormalType });
+            exception = (Exception) constructor.newInstance(new Object[] { message, bean });
+        }
 
-        return (Exception) exception;
+        return exception;
 
     }
     

@@ -4,13 +4,16 @@ package org.apache.axis2.jaxws.sample.faultsservice;
 import javax.xml.ws.WebFault;
 
 /**
- * This is an example of a legacy exception (InvalidTickerFault) which may be the result of a JAX-RPC emission.
+ * This is an example of a legacy exception  which may be the result of a JAX-RPC emission.
  * The fault does not have the valid constructors and lacks a getFaultInfo method.
  * However (in this case) the fault has a @WebFault that identifies the faultbean
  */
 @WebFault(name = "InvalidTickerFault", 
         targetNamespace = "http://org/test/polymorphicfaults",
-        faultBean="org.test.polymorphicfaults.InvalidTickerFaultBean")
+        faultBean="org.test.polymorphicfaults.InvalidTickerFaultExceptionBean")
+        
+        // faultBean is intentionally not specified. It should default to 
+        // faultBean="org.test.polymorphicfaults.InvalidTickerFault_ExceptionBean"
 public class InvalidTickerFault_Exception
     extends Exception
 {

@@ -31,6 +31,7 @@ import javax.xml.bind.JAXBElement;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
+import org.apache.axis2.jaxws.wrapper.PropertyInfo;
 
 public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 
@@ -134,6 +135,9 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
         // It is possible the that the number of fields is greater than the number of child elements due
         // to customizations.
 		if(field.length < childNames.size()){
+            // TODO we may want to allow the case where the childNames contains the "message" and
+            // the jaxb object does not.  Scenaio: jaxbClass is a faultBean for an exception, but
+            // does not map "message" because "message" is passed in the faultstring.
 			throw new JAXBWrapperException(Messages.getMessage("JAXBWrapperErr4", jaxbClass.getName()));
 		}
         

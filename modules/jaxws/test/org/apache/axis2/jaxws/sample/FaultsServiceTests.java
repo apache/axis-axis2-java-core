@@ -171,7 +171,7 @@ public class FaultsServiceTests extends TestCase {
      * Test throwing legacy fault
      * Disabled while I fix this test
      */
-    public void _testFaultsService5(){
+    public void testFaultsService5(){
         Exception exception = null;
         try{
             FaultsServicePortType proxy = getProxy();
