@@ -21,26 +21,42 @@ import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.Utils;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class AddressingWSDLValidationHandler extends AbstractHandler implements AddressingConstants {
+public class AddressingValidationHandler extends AbstractHandler implements AddressingConstants {
 
-    private static final Log log = LogFactory.getLog(AddressingWSDLValidationHandler.class);
+    private static final Log log = LogFactory.getLog(AddressingValidationHandler.class);
     
     /* (non-Javadoc)
      * @see org.apache.axis2.engine.Handler#invoke(org.apache.axis2.context.MessageContext)
      */
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-    	// If no AxisOperation has been found at the end of the dispatch phase and addressing
-        // is in use we should throw an ActionNotSupported Fault
-        checkAction(msgContext);
-        // Check that if wsaddressing=required that addressing headers were found inbound
-        checkUsingAddressing(msgContext);
-        // Check that if anonymous flag is in effect that the replyto and faultto are valid
-        //checkAnonymous(msgContext);
+        Object flag = msgContext.getProperty(IS_ADDR_INFO_ALREADY_PROCESSED);
+        if (log.isTraceEnabled()){
+            log.trace("invoke: IS_ADDR_INFO_ALREADY_PROCESSED=" + flag);
+        }
+        
+        if (JavaUtils.isTrueExplicitly(flag)) {
+            // If no AxisOperation has been found at the end of the dispatch phase and addressing
+            // is in use we should throw an ActionNotSupported Fault
+            checkAction(msgContext);
+            // Check if the wsa:MessageID is required or not.
+            checkMessageIDHeader(msgContext);
+            // Check that if anonymous flag is in effect that the replyto and faultto are valid
+            //checkAnonymous(msgContext);
+        }
+        
+        if (JavaUtils.isFalseExplicitly(flag)) {
+            // Check that if wsaddressing=required that addressing headers were found inbound
+            checkUsingAddressing(msgContext);            
+        }
+        
         return InvocationResponse.CONTINUE;        
     }
     
@@ -62,13 +78,7 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
             log.trace("checkUsingAddressing: WSAddressingFlag=" + addressingFlag);
         }
         if (AddressingConstants.ADDRESSING_REQUIRED.equals(addressingFlag)) {
-            Object flag = msgContext.getProperty(AddressingConstants.IS_ADDR_INFO_ALREADY_PROCESSED);
-            if (log.isTraceEnabled()){
-                log.trace("checkUsingAddressing: IS_ADDR_INFO_ALREADY_PROCESSED=" + flag);
-            }
-            if (JavaUtils.isFalseExplicitly(flag)) {
-                AddressingFaultsHelper.triggerMessageAddressingRequiredFault(msgContext,AddressingConstants.WSA_ACTION);
-            }
+            AddressingFaultsHelper.triggerMessageAddressingRequiredFault(msgContext,AddressingConstants.WSA_ACTION);
         }
     }
     
@@ -110,13 +120,37 @@ public class AddressingWSDLValidationHandler extends AbstractHandler implements 
      * is moved into the addressing module
      */
     private void checkAction(MessageContext msgContext) throws AxisFault{
-        Object flag = msgContext.getProperty(AddressingConstants.IS_ADDR_INFO_ALREADY_PROCESSED);
-        if (log.isTraceEnabled()){
-            log.trace("checkAction: IS_ADDR_INFO_ALREADY_PROCESSED=" + flag);
+        if((msgContext.getAxisService() == null) || (msgContext.getAxisOperation() == null)){
+            AddressingFaultsHelper.triggerActionNotSupportedFault(msgContext, msgContext.getWSAAction());
         }
-        if(JavaUtils.isTrueExplicitly(flag)){
-            if((msgContext.getAxisService() == null) || (msgContext.getAxisOperation() == null)){
-                AddressingFaultsHelper.triggerActionNotSupportedFault(msgContext, msgContext.getWSAAction());
+    }
+    
+    /**
+     * Validate that a message id is present when required. The check applied here
+     * only applies to WS-Addressing headers that comply with the 2005/08 (final)
+     * spec. 
+     * 
+     * @param msgContext
+     * @throws AxisFault
+     * @see AddressingSubmissionInHandler#checkForMandatoryHeaders
+     */
+    private void checkMessageIDHeader(MessageContext msgContext) throws AxisFault {
+        String namespace = (String) msgContext.getProperty(WS_ADDRESSING_VERSION);
+        if (!Final.WSA_NAMESPACE.equals(namespace)) {
+            return;
+        }
+
+        AxisOperation axisOperation = msgContext.getAxisOperation();
+        String mep = axisOperation.getMessageExchangePattern();
+        int mepConstant = Utils.getAxisSpecifMEPConstant(mep);
+        
+        if (mepConstant == WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_OUT ||
+            mepConstant == WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_OPTIONAL_OUT ||
+            mepConstant == WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY)
+        {
+            String messageId = msgContext.getOptions().getMessageId();
+            if (messageId == null || "".equals(messageId)) {
+                AddressingFaultsHelper.triggerMessageAddressingRequiredFault(msgContext, WSA_MESSAGE_ID);
             }
         }
     }

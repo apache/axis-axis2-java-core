@@ -60,6 +60,8 @@ public class AddressingFinalInHandler extends AddressingInHandler {
     }
 
     protected void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
+        //Validation of the wsa:MessageID is performed in the AddressingValidationHandler.
+        
         if (!alreadyFoundAddrHeader.contains(WSA_ACTION)) {
             AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_ACTION);
         } 
