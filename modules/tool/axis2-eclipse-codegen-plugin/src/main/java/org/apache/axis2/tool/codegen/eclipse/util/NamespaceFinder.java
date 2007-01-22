@@ -49,9 +49,11 @@ public class NamespaceFinder {
 	public static String getDefaultNamespacePrefix(){
 		return NS_DEFAULT_PREFIX;
 	}
+	
 	public static String getServiceNameText(String fullyQualifiedClassName){
 		//tokenize the className
 		String[] classNameParts = fullyQualifiedClassName.split("\\.");
 		return classNameParts[classNameParts.length-1];
 	}
+	
 }

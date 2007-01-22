@@ -94,6 +94,8 @@
                     new org.apache.axis2.jibx.JiBXDataSource(marshallable, bindingFactory);
                 org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace(bindingFactory.getElementNamespaces()[index], null);
                 return factory.createOMElement(source, bindingFactory.getElementNames()[index], namespace);
+            } else if (param == null) {
+                throw new RuntimeException("Cannot bind null value of type <xsl:value-of select="@type"/>");
             } else {
                 throw new RuntimeException("No JiBX &lt;mapping> defined for class <xsl:value-of select="@type"/>");
             }
@@ -134,8 +136,19 @@
     
       <!-- returning an array of values -->
       <xsl:when test="out-wrapper/@empty='false' and out-wrapper/return-element/@array='true'">
+        <xsl:variable name="wrapper-uri" select="out-wrapper/@ns"/>
+        <xsl:variable name="wrapper-prefix" select="out-wrapper/@prefix"/>
               envelope = factory.getDefaultEnvelope();
-              org.apache.axiom.om.OMElement wrapper = factory.createOMElement("<xsl:value-of select='out-wrapper/@name'/>", "<xsl:value-of select='out-wrapper/@ns'/>", "");
+              org.apache.axiom.om.OMElement wrapper = factory.createOMElement("<xsl:value-of select='out-wrapper/@name'/>", "<xsl:value-of select='$wrapper-uri'/>", "<xsl:value-of select='$wrapper-prefix'/>");
+        <xsl:if test="string-length(normalize-space($wrapper-prefix)) = 0">
+            wrapper.declareDefaultNamespace("<xsl:value-of select='$wrapper-uri'/>");
+        </xsl:if>
+        <xsl:if test="out-wrapper/@need-namespaces='true'">
+              addMappingNamespaces(factory, wrapper, "<xsl:value-of select='$wrapper-uri'/>", "<xsl:value-of select='$wrapper-prefix'/>");
+        </xsl:if>
+        <xsl:if test="count(out-wrapper/extra-namespace) &gt; 0">
+              wrapper.declareNamespace(factory.createOMNamespace("<xsl:value-of select='out-wrapper/extra-namespace/@ns'/>", "<xsl:value-of select='out-wrapper/extra-namespace/@prefix'/>"));
+        </xsl:if>
               envelope.getBody().addChild(wrapper);
               <xsl:value-of select="out-wrapper/return-element/@java-type"/>[] results = skel.<xsl:call-template name="call-arg-list"/>;
               if (results == null || results.length == 0) {
@@ -146,8 +159,6 @@
           </xsl:otherwise>
         </xsl:choose>
               } else {
-                  org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='out-wrapper/return-element/@ns'/>", "app");
-                  wrapper.declareNamespace(appns);
         <xsl:choose>
           <xsl:when test="out-wrapper/return-element/@form='complex'">
                   for (int i = 0; i &lt; results.length; i++) {
@@ -155,7 +166,7 @@
                       if (result == null) {
             <xsl:choose>
               <xsl:when test="out-wrapper/return-element/@nillable='true'">
-                          org.apache.axiom.om.OMElement child = factory.createOMElement("<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
+                          org.apache.axiom.om.OMElement child = factory.createOMElement("<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>");
                           org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
                           child.declareNamespace(xsins);
                           child.addAttribute("nil", "true", xsins);
@@ -166,7 +177,11 @@
               </xsl:otherwise>
             </xsl:choose>
                       } else {
-                          org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", bindingFactory);
+                          if (bindingFactory == null) {
+                              throw new RuntimeException(bindingErrorMessage);
+                          }
+                          org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
+                          org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='out-wrapper/return-element/@ns'/>", "");
                           org.apache.axiom.om.OMElement child = factory.createOMElement(src, "<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
                           wrapper.addChild(child);
                       }
@@ -175,7 +190,7 @@
           <xsl:otherwise>
                   for (int i = 0; i &lt; results.length; i++) {
                       <xsl:value-of select="out-wrapper/return-element/@java-type"/> result = results[i];
-                      org.apache.axiom.om.OMElement child = factory.createOMElement("<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
+                      org.apache.axiom.om.OMElement child = factory.createOMElement("<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>");
             <xsl:choose>
               <xsl:when test="out-wrapper/return-element/@serializer=''">
                       child.setText(result.toString());
@@ -193,19 +208,28 @@
     
       <!-- returning a single value -->
       <xsl:when test="out-wrapper/@empty='false'">
+        <xsl:variable name="wrapper-uri" select="out-wrapper/@ns"/>
+        <xsl:variable name="wrapper-prefix" select="out-wrapper/@prefix"/>
               envelope = factory.getDefaultEnvelope();
-              org.apache.axiom.om.OMElement wrapper = factory.createOMElement("<xsl:value-of select='out-wrapper/@name'/>", "<xsl:value-of select='out-wrapper/@ns'/>", "");
+              org.apache.axiom.om.OMElement wrapper = factory.createOMElement("<xsl:value-of select='out-wrapper/@name'/>", "<xsl:value-of select='$wrapper-uri'/>", "<xsl:value-of select='$wrapper-prefix'/>");
+        <xsl:if test="string-length(normalize-space($wrapper-prefix)) = 0">
+            wrapper.declareDefaultNamespace("<xsl:value-of select='$wrapper-uri'/>");
+        </xsl:if>
+        <xsl:if test="out-wrapper/@need-namespaces='true'">
+              addMappingNamespaces(factory, wrapper, "<xsl:value-of select='$wrapper-uri'/>", "<xsl:value-of select='$wrapper-prefix'/>");
+        </xsl:if>
+        <xsl:if test="count(out-wrapper/extra-namespace) &gt; 0">
+              wrapper.declareNamespace(factory.createOMNamespace("<xsl:value-of select='out-wrapper/extra-namespace/@ns'/>", "<xsl:value-of select='out-wrapper/extra-namespace/@prefix'/>"));
+        </xsl:if>
               envelope.getBody().addChild(wrapper);
               <xsl:value-of select="out-wrapper/return-element/@java-type"/> result = skel.<xsl:call-template name="call-arg-list"/>;
-              org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='out-wrapper/return-element/@ns'/>", "app");
-              wrapper.declareNamespace(appns);
         <xsl:choose>
           <xsl:when test="out-wrapper/return-element/@form='complex'">
               if (result == null) {
             <xsl:choose>
               <xsl:when test="out-wrapper/return-element/@optional='true'"/>
               <xsl:when test="out-wrapper/return-element/@nillable='true'">
-                  org.apache.axiom.om.OMElement child = factory.createOMElement("<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
+                  org.apache.axiom.om.OMElement child = factory.createOMElement("<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>");
                   org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
                   child.declareNamespace(xsins);
                   child.addAttribute("nil", "true", xsins);
@@ -216,13 +240,17 @@
               </xsl:otherwise>
             </xsl:choose>
               } else {
-                  org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", bindingFactory);
+                  if (bindingFactory == null) {
+                      throw new RuntimeException(bindingErrorMessage);
+                  }
+                  org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(result, _type_index<xsl:value-of select="out-wrapper/return-element/@type-index"/>, "<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
+                  org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='out-wrapper/return-element/@ns'/>", "");
                   org.apache.axiom.om.OMElement child = factory.createOMElement(src, "<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
                   wrapper.addChild(child);
               }
           </xsl:when>
           <xsl:otherwise>
-              org.apache.axiom.om.OMElement child = factory.createOMElement("<xsl:value-of select='out-wrapper/return-element/@name'/>", appns);
+              org.apache.axiom.om.OMElement child = factory.createOMElement("<xsl:value-of select='out-wrapper/return-element/@name'/>",  "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>");
             <xsl:choose>
               <xsl:when test="out-wrapper/return-element/@object='true'">
               if (result == null) {
@@ -354,7 +382,16 @@
                 // create SOAP envelope with the payload
                 org.apache.axiom.soap.SOAPEnvelope env = createEnvelope(_operationClient.getOptions());
                 org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
-                org.apache.axiom.om.OMElement wrapper = factory.createOMElement("<xsl:value-of select='in-wrapper/@name'/>", "<xsl:value-of select='in-wrapper/@ns'/>", "");
+                org.apache.axiom.om.OMElement wrapper = factory.createOMElement("<xsl:value-of select='in-wrapper/@name'/>", "<xsl:value-of select='in-wrapper/@ns'/>", "<xsl:value-of select='in-wrapper/@prefix'/>");
+    <xsl:if test="string-length(normalize-space(in-wrapper/@prefix)) = 0">
+                wrapper.declareDefaultNamespace("<xsl:value-of select='in-wrapper/@ns'/>");
+    </xsl:if>
+    <xsl:if test="in-wrapper/@need-namespaces='true'">
+                addMappingNamespaces(factory, wrapper, "<xsl:value-of select='in-wrapper/@ns'/>", "<xsl:value-of select='in-wrapper/@prefix'/>");
+    </xsl:if>
+    <xsl:if test="count(in-wrapper/extra-namespace) &gt; 0">
+                wrapper.declareNamespace(factory.createOMNamespace("<xsl:value-of select='in-wrapper/extra-namespace/@ns'/>", "<xsl:value-of select='in-wrapper/extra-namespace/@prefix'/>"));
+    </xsl:if>
                 env.getBody().addChild(wrapper);
                 org.apache.axiom.om.OMElement child;
     <xsl:apply-templates select="in-wrapper/parameter-element" mode="interface-implementation"/>
@@ -468,7 +505,7 @@
     <xsl:choose>
       <xsl:when test="@optional='true'"></xsl:when>
       <xsl:when test="@nillable='true'">
-        child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
+        child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>");
         org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         child.declareNamespace(xsins);
         child.addAttribute("nil", "true", xsins);
@@ -484,7 +521,7 @@
     <xsl:choose>
       <xsl:when test="@object='true' and @nillable='true'">
             if (_item == null) {
-                child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
+                child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>");
                 org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
                 child.declareNamespace(xsins);
                 child.addAttribute("nil", "true", xsins);
@@ -513,7 +550,7 @@
     <xsl:choose>
       <xsl:when test="@object='true' and @nillable='true'">
         if (<xsl:value-of select="@java-name"/> == null) {
-            child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
+            child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>");
             org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
             child.declareNamespace(xsins);
             child.addAttribute("nil", "true", xsins);
@@ -538,20 +575,23 @@
   <!-- Convert the current value to an element. -->
   <xsl:template name="serialize-value-to-child">
     <xsl:choose>
-      <xsl:when test="@java-type='String' and @serializer=''">
-        child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
+      <xsl:when test="@java-type='java.lang.String' and @serializer=''">
+        child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>");
         child.setText(<xsl:call-template name="parameter-or-array-item"/>);
       </xsl:when>
       <xsl:when test="@form='simple' and @serializer=''">
-        child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
+        child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>");
         child.setText(<xsl:call-template name="parameter-or-array-item"/>.toString());
       </xsl:when>
       <xsl:when test="@form='simple'">
-        child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "");
+        child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>");
         child.setText(<xsl:value-of select="@serializer"/>(<xsl:call-template name="parameter-or-array-item"/>));
       </xsl:when>
       <xsl:when test="@form='complex'">
-        org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(<xsl:call-template name="parameter-or-array-item"/>, _type_index<xsl:value-of select="@type-index"/>, "<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", bindingFactory);
+        if (bindingFactory == null) {
+            throw new RuntimeException(bindingErrorMessage);
+        }
+        org.apache.axiom.om.OMDataSource src = new org.apache.axis2.jibx.JiBXDataSource(<xsl:call-template name="parameter-or-array-item"/>, _type_index<xsl:value-of select="@type-index"/>, "<xsl:value-of select='@name'/>", "<xsl:value-of select='@prefix'/>", bindingNamespaceIndexes, bindingNamespacePrefixes, bindingFactory);
         org.apache.axiom.om.OMNamespace appns = factory.createOMNamespace("<xsl:value-of select='@ns'/>", "");
         child = factory.createOMElement(src, "<xsl:value-of select='@name'/>", appns);
       </xsl:when>
@@ -653,8 +693,11 @@
   
   <!-- Called by main template to handle static binding data and methods. -->
   <xsl:template match="initialize-binding">
+    <xsl:variable name="nscount" select="count(binding-namespace)"/>
       private static final org.jibx.runtime.IBindingFactory bindingFactory;
       private static final String bindingErrorMessage;
+      private static final int[] bindingNamespaceIndexes;
+      private static final String[] bindingNamespacePrefixes;
     <xsl:apply-templates mode="generate-index-fields" select="abstract-type"/>
         static {
             org.jibx.runtime.IBindingFactory factory = null;
@@ -673,6 +716,60 @@
             bindingFactory = factory;
             bindingErrorMessage = message;
     <xsl:apply-templates mode="set-index-fields" select="abstract-type"/>
+            int[] indexes = null;
+            String[] prefixes = null;
+            if (factory != null) {
+                
+                // check for xsi namespace included
+                String[] nsuris = factory.getNamespaces();
+                int xsiindex = nsuris.length;
+                while (--xsiindex >= 0 &amp;&amp;
+                    !"http://www.w3.org/2001/XMLSchema-instance".equals(nsuris[xsiindex]));
+                
+                // get actual size of index and prefix arrays to be allocated
+                int nscount = <xsl:value-of select="$nscount"/>;
+                int usecount = nscount;
+                if (xsiindex >= 0) {
+                    usecount++;
+                }
+                
+                // allocate and initialize the arrays
+                indexes = new int[usecount];
+                prefixes = new String[usecount];
+      <xsl:for-each select="binding-namespace">
+        <xsl:variable name="nsindex" select="count(preceding-sibling::binding-namespace)"/>
+                indexes[<xsl:value-of select="$nsindex"/>] = nsIndex("<xsl:value-of select='@ns'/>", nsuris);
+                prefixes[<xsl:value-of select="$nsindex"/>] = "<xsl:value-of select='@prefix'/>";
+      </xsl:for-each>
+                if (xsiindex >= 0) {
+                    indexes[nscount] = xsiindex;
+                    prefixes[nscount] = "xsi";
+                }
+                
+            }
+            bindingNamespaceIndexes = indexes;
+            bindingNamespacePrefixes = prefixes;
+        }
+        
+        private static int nsIndex(String uri, String[] uris) {
+            for (int i = 0; i &lt; uris.length; i++) {
+                if (uri.equals(uris[i])) {
+                    return i;
+                }
+            }
+            throw new IllegalArgumentException("Namespace " + uri + " not found in binding directory information");
+        }
+        
+        private static void addMappingNamespaces(org.apache.axiom.soap.SOAPFactory factory, org.apache.axiom.om.OMElement wrapper, String nsuri, String nspref) {
+            String[] nss = bindingFactory.getNamespaces();
+            for (int i = 0; i &lt; bindingNamespaceIndexes.length; i++) {
+                int index = bindingNamespaceIndexes[i];
+                String uri = nss[index];
+                String prefix = bindingNamespacePrefixes[i];
+                if (!nsuri.equals(uri) || !nspref.equals(prefix)) {
+                    wrapper.declareNamespace(factory.createOMNamespace(uri, prefix));
+                }
+            }
         }
         
         private static org.jibx.runtime.impl.UnmarshallingContext getNewUnmarshalContext(org.apache.axiom.om.OMElement param)
@@ -688,7 +785,7 @@
             return ctx;
         }
         
-    <!-- shouldn't be needed when no actual binding, but called by fault conversion code so must be left in for now -->
+        <!-- shouldn't be needed when no actual binding, but called by fault conversion code so must be left in for now -->
         private static Object fromOM(org.apache.axiom.om.OMElement param, Class type,
             java.util.Map extraNamespaces) {
             try {
@@ -776,7 +873,7 @@
   <!-- Convert the current element into a value. -->
   <xsl:template name="deserialize-element-value">
     <xsl:choose>
-      <xsl:when test="@java-type='String' and @deserializer=''">
+      <xsl:when test="@java-type='java.lang.String' and @deserializer=''">
         uctx.parseElementText("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>")
       </xsl:when>
       <xsl:when test="@form='simple' and @deserializer=''">

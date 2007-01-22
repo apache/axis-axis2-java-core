@@ -205,7 +205,7 @@ public class HTTPTransportUtils {
             Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
             if (headers != null) {
                 if (HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING)) ||
-                    HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING.toLowerCase())))
+                    HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING_LOWERCASE)))
                 {
                     in = new GZIPInputStream(in);
                 }

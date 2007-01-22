@@ -43,15 +43,15 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
     protected String addressingNamespace = Final.WSA_NAMESPACE;  // defaulting to final version
     protected String addressingVersion = null;
     private static final Log log = LogFactory.getLog(AddressingInHandler.class);
+    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // if another handler has already processed the addressing headers, do not do anything here.
         if (JavaUtils.isTrueExplicitly(msgContext.getProperty(IS_ADDR_INFO_ALREADY_PROCESSED))) {
-            if(log.isDebugEnabled()) {
-                log.debug("Another handler has processed the addressing headers. Nothing to do here.");
+            if(isDebugEnabled) {
+                 log.debug("Another handler has processed the addressing headers. Nothing to do here.");
             }
-
             return InvocationResponse.CONTINUE;
         }
         
@@ -61,9 +61,10 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             namespace = addressingNamespace;
         }
         else if (!namespace.equals(addressingNamespace)) {
-            if(log.isDebugEnabled()) {
-                log.debug("This addressing handler does not match the specified namespace, " + namespace);
-            }
+            if(isDebugEnabled) {
+                             log.debug("This addressing handler does not match the specified namespace, " + namespace);
+                         }
+
 
             return InvocationResponse.CONTINUE;
         }
@@ -79,9 +80,10 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             return InvocationResponse.CONTINUE;
         }
 
-		if(log.isDebugEnabled()) {
-			log.debug("Starting " + addressingVersion + " IN handler ...");
-		}
+        if(isDebugEnabled) {
+                     log.debug("Starting " + addressingVersion + " IN handler ...");
+                 }
+
 
         ArrayList addressingHeaders;
         addressingHeaders = header.getHeaderBlocksWithNSURI(namespace);
@@ -89,16 +91,18 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             msgContext.setProperty(WS_ADDRESSING_VERSION, namespace);
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
 
-			if(log.isDebugEnabled()) {
-				log.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
-			}
+            if(isDebugEnabled) {
+                             log.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
+                         }
+
             extractAddressingInformation(header, msgContext, addressingHeaders, namespace);
             msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
         } else {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
-			if(log.isDebugEnabled()) {
-				log.debug("No Headers present corresponding to " + addressingVersion);
-			}
+            if(isDebugEnabled) {
+                             log.debug("No Headers present corresponding to " + addressingVersion);
+                         }
+			
         }
         
         return InvocationResponse.CONTINUE;

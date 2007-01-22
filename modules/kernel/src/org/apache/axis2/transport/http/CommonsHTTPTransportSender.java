@@ -339,7 +339,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 								.length() == 0))) {
 					// last option is to get it from the axis operation
 					soapActionString = messageContext.getAxisOperation()
-							.getSoapAction();
+							.getInputAction();
 				}
 			}
 		}

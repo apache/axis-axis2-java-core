@@ -480,8 +480,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         }
                         axisOperation.setSoapAction(unknownElement
                                 .getAttributeValue("soapAction"));
-                        if(axisOperation.getSoapAction() != null){
-                            axisService.mapActionToOperation(axisOperation.getSoapAction(), axisOperation);
+                        if(axisOperation.getInputAction() != null){
+                            axisService.mapActionToOperation(axisOperation.getInputAction(), axisOperation);
                         }
                     }
                 } else if (WSDLConstants.WSDL11Constants.SOAP_12_HEADER.equals(unknown

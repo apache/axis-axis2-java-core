@@ -552,8 +552,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         {
         	return false;
         }else {
-        	return ((soapActionHeader == null) ||
-                (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1));
+            if (contentType != null && contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1)
+                   {
+                   	return false;
+                   }else {
+                    	return ((soapActionHeader == null) ||
+                             (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1));
+                    }
         }
     }
     

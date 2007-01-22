@@ -216,24 +216,8 @@ class OutInAxisOperationClient extends OperationClient {
         } else {
             if (block) {
                 // Send the SOAP Message and receive a response
-                MessageContext response = send(mc);
-                // check for a fault and return the result
-                if (response != null) {
-                    SOAPEnvelope resEnvelope = response.getEnvelope();
-                    if (resEnvelope.getBody().hasFault()) {
-                        SOAPFault soapFault = resEnvelope.getBody().getFault();
-
-                        //we need to call engine.receiveFault
-                        AxisEngine engine = new AxisEngine(mc.getConfigurationContext());
-                        engine.receiveFault(response);
-                        if (options.isExceptionToBeThrownOnSOAPFault()) {
-                            // does the SOAPFault has a detail element for Excpetion
-                            throw new AxisFault(soapFault.getCode(), soapFault.getReason(),
-                                    soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
-                        }
-                    }
-                }
-                completed = true;
+              send(mc);
+              completed = true;
             } else {
                 sc.getConfigurationContext().getThreadPool().execute(
                         new NonBlockingInvocationWorker(callback, mc));
@@ -249,7 +233,7 @@ class OutInAxisOperationClient extends OperationClient {
      */
     protected MessageContext send(MessageContext msgctx) throws AxisFault {
 
-        AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
+       AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
 
         // create the responseMessageContext
         MessageContext responseMessageContext = new MessageContext();
@@ -260,8 +244,6 @@ class OutInAxisOperationClient extends OperationClient {
 
         responseMessageContext.setServerSide(false);
         responseMessageContext.setMessageID(msgctx.getMessageID());
-        // FIXME Is the internal logic correct (thilina)
-        // Internally this registers the opContext not the msgContext
         addMessageContext(responseMessageContext);
         responseMessageContext.setServiceContext(msgctx.getServiceContext());
         responseMessageContext.setAxisMessage(
@@ -270,30 +252,47 @@ class OutInAxisOperationClient extends OperationClient {
         //sending the message
         engine.send(msgctx);
         responseMessageContext.setDoingREST(msgctx.isDoingREST());
+
         responseMessageContext.setProperty(MessageContext.TRANSPORT_IN, msgctx
                 .getProperty(MessageContext.TRANSPORT_IN));
         responseMessageContext.setTransportIn(msgctx.getTransportIn());
         responseMessageContext.setTransportOut(msgctx.getTransportOut());
-		responseMessageContext.setProperty(MessageContext.TRANSPORT_HEADERS,
-				msgctx.getProperty(MessageContext.TRANSPORT_HEADERS));
 
-		if (responseMessageContext.getEnvelope() == null) {
-			// If request is REST we assume the responseMessageContext is REST,
-			// so set the variable
+        // Options object reused above so soapAction needs to be removed so
+        // that soapAction+wsa:Action on response don't conflict
+        responseMessageContext.setSoapAction("");
 
+        if (responseMessageContext.getEnvelope() == null) {
+            // If request is REST we assume the responseMessageContext is REST, so
+            // set the variable
             SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(
                     responseMessageContext, msgctx.getEnvelope().getNamespace()
                     .getNamespaceURI());
-            if (resenvelope != null) {
+             if (resenvelope != null) {
                 responseMessageContext.setEnvelope(resenvelope);
+            } else {
+                throw new AxisFault(Messages
+                        .getMessage("blockingInvocationExpectsResponse"));
+            }
+        }
+        SOAPEnvelope resenvelope = responseMessageContext.getEnvelope();
+        if (resenvelope != null) {
+            if (resenvelope.getBody().hasFault()) {
+                SOAPFault soapFault = resenvelope.getBody().getFault();
+                //we need to call engine.receiveFault
+                engine = new AxisEngine(msgctx.getConfigurationContext());
+                engine.receiveFault(responseMessageContext);
+                if (options.isExceptionToBeThrownOnSOAPFault()) {
+                    // does the SOAPFault has a detail element for Excpetion
+                    throw new AxisFault(soapFault.getCode(), soapFault.getReason(),
+                            soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
+                }
+            } else {
                 engine = new AxisEngine(msgctx.getConfigurationContext());
                 engine.receive(responseMessageContext);
                 if (responseMessageContext.getReplyTo() != null) {
                     sc.setTargetEPR(responseMessageContext.getReplyTo());
                 }
-            } else {
-                throw new AxisFault(Messages
-                        .getMessage("blockingInvocationExpectsResponse"));
             }
         }
         return responseMessageContext;

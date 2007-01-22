@@ -48,8 +48,14 @@ public class JiBXDataSource implements OMDataSource
     /** Element name (only used with {@link #marshallerIndex}). */
     private final String elementName;
     
-    /** Element namespace URI (only used with {@link #marshallerIndex}). */
-    private final String elementNamespaceUri;
+    /** Element namespace prefix (only used with {@link #marshallerIndex}). */
+    private final String elementNamespacePrefix;
+    
+    /** Indexes of namespaces to be opened (only used with {@link #marshallerIndex}). */
+    private final int[] openNamespaceIndexes;
+    
+    /** Prefixes of namespaces to be opened (only used with {@link #marshallerIndex}). */
+    private final String[] openNamespacePrefixes;
     
     /** Data object for output. */
     private final Object dataObject;
@@ -67,7 +73,9 @@ public class JiBXDataSource implements OMDataSource
         marshallerIndex = -1;
         dataObject = obj;
         bindingFactory = factory;
-        elementName = elementNamespaceUri = null;
+        elementName = elementNamespacePrefix = null;
+        openNamespaceIndexes = null;
+        openNamespacePrefixes = null;
     }
     
     /**
@@ -76,18 +84,22 @@ public class JiBXDataSource implements OMDataSource
      * @param obj
      * @param index
      * @param name
-     * @param uri
+     * @param prefix
+     * @param nsindexes
+     * @param nsprefixes
      * @param factory
      */
-    public JiBXDataSource(Object obj, int index, String name, String uri,
-        IBindingFactory factory) {
+    public JiBXDataSource(Object obj, int index, String name, String prefix,
+        int[] nsindexes, String[] nsprefixes, IBindingFactory factory) {
         if (index < 0) {
             throw new
                 IllegalArgumentException("index value must be non-negative");
         }
         marshallerIndex = index;
         elementName = name;
-        elementNamespaceUri = uri;
+        elementNamespacePrefix = prefix;
+        openNamespaceIndexes = nsindexes;
+        openNamespacePrefixes = nsprefixes;
         dataObject = obj;
         bindingFactory = factory;
     }
@@ -102,39 +114,25 @@ public class JiBXDataSource implements OMDataSource
         if (marshallerIndex < 0) {
             ((IMarshallable)dataObject).marshal(ctx);
         } else {
-            IXMLWriter wrtr = ctx.getXmlWriter();
-            int nsidx = 0;
-            boolean nsfound = true;
-            if (!"".equals(elementNamespaceUri)) {
-                nsfound = false;
-                for (nsidx = wrtr.getNamespaceCount()-1; nsidx > 1; nsidx--) {
-                    if (elementNamespaceUri.equals(wrtr.getNamespaceUri(nsidx))) {
-                        nsfound = true;
-                        break;
-                    }
-                }
-            }
             try {
-                if (nsfound) {
-                    wrtr.startTagOpen(nsidx, elementName);
-                } else {
-                    nsidx = wrtr.getNamespaceCount();
-                    String[] uris = new String[] { elementNamespaceUri };
-                    int[] indexes = new int[] { nsidx };
-                    String[] prefixes = new String[] { "" };
-                    wrtr.pushExtensionNamespaces(uris);
-                    wrtr.startTagNamespaces(nsidx, elementName, indexes, prefixes);
+                
+                // open namespaces from wrapper element
+                IXMLWriter wrtr = ctx.getXmlWriter();
+                wrtr.openNamespaces(openNamespaceIndexes, openNamespacePrefixes);
+                String name = elementName;
+                if (!"".equals(elementNamespacePrefix)) {
+                    name = elementNamespacePrefix + ':' + name;
                 }
+                wrtr.startTagOpen(0, name);
+                
+                // marshal object representation (may include attributes) into element
                 IMarshaller mrsh = ctx.getMarshaller(marshallerIndex,
                     bindingFactory.getMappedClasses()[marshallerIndex]);
                 mrsh.marshal(dataObject, ctx);
-                wrtr.endTag(nsidx, elementName);
-                if (!nsfound) {
-                    wrtr.popExtensionNamespaces();
-                }
+                wrtr.endTag(0, name);
+                
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new JiBXException("Error marshalling XML representation", e);
             }
         }
     }

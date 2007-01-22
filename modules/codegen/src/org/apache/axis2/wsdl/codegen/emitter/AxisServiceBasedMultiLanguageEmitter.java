@@ -128,8 +128,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         mepToSuffixMap = new HashMap();
         mepToSuffixMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
-        mepToSuffixMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
-        mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "InOnly");
+        mepToSuffixMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "RobustInOnly");
+        mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY, MESSAGE_RECEIVER_SUFFIX + "RobustInOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT, MESSAGE_RECEIVER_SUFFIX + "InOut");
         //register the other types as necessary

@@ -142,7 +142,7 @@
                </xsl:when>
                 <xsl:otherwise>
                    <xsl:choose>
-                      <xsl:when test="(@restricted) and (@occuranceChanged) and (not(@typeChanged))">
+                       <xsl:when test="(@restricted) and (@occuranceChanged) and (not(@typeChanged)) and (not(@rewrite))">
                             <xsl:variable name="basePropertyType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
 
 
@@ -152,12 +152,12 @@
                          * Overridden from <xsl:value-of select="$restriction"/>
                          */
                          protected void validate<xsl:value-of select="$javaName"/>(<xsl:value-of select="$propertyType"/> param){
-                         <xsl:if test="not(@unbound)">
+                           <xsl:if test="not(@unbound) and @array">
                               if ((param != null) &amp;&amp; (param.length &gt; <xsl:value-of select="@maxOccurs"/>)){
                                 throw new java.lang.RuntimeException();
                               }
                          </xsl:if>
-                         <xsl:if test="$min!=0">
+                           <xsl:if test="$min!=0 and @array">
                               if ((param != null) &amp;&amp; (param.length &lt; <xsl:value-of select="$min"/>)){
                                 throw new java.lang.RuntimeException();
                               }
