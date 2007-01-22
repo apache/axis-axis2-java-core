@@ -51,7 +51,7 @@ public class AddressingFinalInHandler extends AddressingInHandler {
                 log.trace("extractToEprReferenceParameters: Checking header: "+headerElement.getQName());
             }
             if (isRefParamAttr != null && "true".equals(isRefParamAttr.getAttributeValue())) {
-                toEPR.addReferenceParameter(headerElement.getQName(), headerElement.getText());
+                toEPR.addReferenceParameter(headerElement);
                 if (log.isTraceEnabled()){
                     log.trace("extractToEprReferenceParameters: Header: "+headerElement.getQName()+" has IsReferenceParameter attribute. Adding to toEPR.");
                 }
