@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.client.async;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -89,23 +90,24 @@ public class AsyncResponse implements Response {
     //-------------------------------------
     
     public boolean cancel(boolean mayInterruptIfRunning) {
-        // If the task has been cancelled or has completed, then we must
-        // return false because the call failed.
-        // If the task has NOT been cancelled or completed, then we must
-        // set the appropriate flags and not allow the task to continue.
-
-        // TODO: Do we actually need to do some level of interrupt on the
-        // processing in the get() call?  If so, how?  
-        if (!cancelled || !(latch.getCount() == 0)) {
+        // The task cannot be cancelled if it has already been cancelled
+        // before or if it has already completed.
+        if (cancelled || latch.getCount() == 0) {
+            if (debug) {
+                log.debug("Cancellation attempt failed.");
+            }
             return false;
         }
-        else {
-            //TODO: Implement the actual cancellation.
-            return false;
-        }
+        
+        cancelled = true;
+        return cancelled;
     }
 
     public Object get() throws InterruptedException, ExecutionException {
+        if (cancelled) {
+            throw new CancellationException("The task was cancelled.");
+        }
+        
         // Wait for the response to come back
         if (debug) {
             log.debug("Waiting for async response delivery.");
@@ -117,8 +119,23 @@ public class AsyncResponse implements Response {
     }
 
     public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        if (cancelled) {
+            throw new CancellationException("The task was cancelled.");
+        }
+        
         // Wait for the response to come back
+        if (debug) {
+            log.debug("Waiting for async response delivery with time out.");
+            log.debug("timeout = " + timeout);
+            log.debug("units   = " + unit);
+        }
         latch.await(timeout, unit);
+        
+        // If the response still hasn't been returned, then we've timed out
+        // and must throw a TimeoutException
+        if (latch.getCount() > 0) {
+            throw new TimeoutException("The client timed out while waiting for an asynchronous response");
+        }
         
         Object obj = processAsyncResponse(response);
         return obj;
@@ -133,9 +150,6 @@ public class AsyncResponse implements Response {
     }
 
     public Map getContext() {
-        if (responseContext == null) {
-            responseContext = new HashMap<String, Object>();
-        }
         return responseContext;
     }
     
@@ -144,6 +158,10 @@ public class AsyncResponse implements Response {
             return true;
         else
             return false;
+    }
+    
+    private void initResponseContext() {
+        responseContext = new HashMap<String, Object>();
     }
     
     private Object processAsyncResponse(MessageContext ctx) throws ExecutionException {
@@ -173,7 +191,9 @@ public class AsyncResponse implements Response {
         if (debug && obj != null) {
             log.debug("Unmarshalled response object of type: " + obj.getClass());
         }
-
+        
+        initResponseContext();
+        
         return obj;
     }
     
