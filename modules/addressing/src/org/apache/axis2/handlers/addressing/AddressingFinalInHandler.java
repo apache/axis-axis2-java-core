@@ -59,8 +59,12 @@ public class AddressingFinalInHandler extends AddressingInHandler {
         }
     }
 
+    /**
+     * @see AddressingValidationHandler#checkMessageIDHeader
+     */
     protected void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
-        //Validation of the wsa:MessageID is performed in the AddressingValidationHandler.
+        //Unable to validate the wsa:MessageID header here as we do not yet know which MEP
+        //is in effect.
         
         if (!alreadyFoundAddrHeader.contains(WSA_ACTION)) {
             AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_ACTION);
