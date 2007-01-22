@@ -41,6 +41,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.message.factory.ClassFinderFactory;
 import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -454,8 +455,12 @@ public class JAXBUtils {
         	 e.printStackTrace();            
         }
         try {
-            //This will load classes from jar file.
-            classes.addAll(getClassesFromJarFile(pkg, cl));
+           //If Calsses not found in directory then look for jar that has these classes
+        	if(classes.size() <=0){
+        		//This will load classes from jar file.
+	        	ClassFinder cf = ClassFinderFactory.getClassFinder();
+	            classes.addAll(cf.getClassesFromJarFile(pkg, cl));
+        	}
         } catch (ClassNotFoundException e) {
         	 if(log.isDebugEnabled()){
                  log.debug("getClassesFromJarFile failed to get Classes");
@@ -545,68 +550,6 @@ public class JAXBUtils {
         return classes;
     }
     
-    private static ArrayList<Class> getClassesFromJarFile(String pkg, ClassLoader cl)throws ClassNotFoundException{
-        try {
-    	ArrayList<Class> classes = new ArrayList<Class>();
-    	URLClassLoader ucl = (URLClassLoader)cl;
-        URL[] srcURL = ucl.getURLs();
-        String path = pkg.replace('.', '/');
-        //Read resources as URL from class loader.
-        for(URL url:srcURL){
-        	if("file".equals(url.getProtocol())){
-        		File f = new File(url.getPath());
-        		//If file is not of type directory then its a jar file
-        		if(f.exists() && !f.isDirectory()){
-        			try{
-	        			JarFile jf = new JarFile(f);
-	        			Enumeration<JarEntry> entries = jf.entries();
-	        			//read all entries in jar file
-	        			while(entries.hasMoreElements()){
-	        				JarEntry je = entries.nextElement();
-	        				String clazzName = je.getName();
-	        				if(clazzName!=null && clazzName.endsWith(".class")){
-		        				//Add to class list here.
-		        				clazzName = clazzName.substring (0, clazzName.length() - 6);
-		        	            clazzName = clazzName.replace ('/', '.').replace ('\\', '.').replace (':', '.');
-		        	            //We are only going to add the class that belong to the provided package.
-		        				if(clazzName.startsWith(pkg)){
-	        						 try {
-	        	                            Class clazz = Class.forName(clazzName, 
-	        	                                    false, 
-	        	                                    Thread.currentThread().getContextClassLoader());
-	        	                            // Don't add any interfaces or JAXWS specific classes.  
-	        	                            // Only classes that represent data and can be marshalled 
-	        	                            // by JAXB should be added.
-	        	                            if(!clazz.isInterface()
-	        	                                    && ClassUtils.getDefaultPublicConstructor(clazz) != null
-	        	                                    && !ClassUtils.isJAXWSClass(clazz)){
-	        	                                if (log.isDebugEnabled()) {
-	        	                                    log.debug("Adding class: " + clazzName);
-	        	                                }
-	        	                                classes.add(clazz);
-	        	                                
-	        	                            }
-	        	                        } catch (Exception e) {
-	        	                            if (log.isDebugEnabled()) {
-	        	                                log.debug("Tried to load class " + clazzName + " while constructing a JAXBContext.  This class will be skipped.  Processing Continues." );
-	        	                                log.debug("  The reason that class could not be loaded:" + e.toString());
-	        	                            }
-	        	                            e.printStackTrace();
-	        	                        }
-	        					}
-	        				}
-	        			}
-        			}catch(IOException e){
-        				throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr4"));
-        			}
-        		}
-        	}
-        }
-    	return classes;
-        } catch (Exception e) {
-            throw new ClassNotFoundException(e.getMessage());
-        }
-    }
     private static  String[] commonArrayClasses = new String[] { 
         // primitives
         "boolean[]",
