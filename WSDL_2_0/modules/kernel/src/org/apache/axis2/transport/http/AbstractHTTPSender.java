@@ -26,6 +26,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.WSDL20DefaultValueHolder;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
@@ -632,43 +633,39 @@ public abstract class AbstractHTTPSender {
 
              httpLocation.substitute(values);
 
-
-//            // first process the situ where user had explicitly put some params to go in the URL
-//            ArrayList httpLocationParams = (ArrayList) messageContext.getProperty(
-//                    Constants.Configuration.URL_HTTP_LOCATION_PARAMS_LIST);
-//
-//           // now let's process URL templates.
-//            String patternString = "\\{[A-Z0-9a-z._%-]+\\}";
-//            Pattern pattern = Pattern.compile(patternString);
-//
-//            StringBuffer buffer = new StringBuffer(query);
-//
-//            Matcher matcher = pattern.matcher(buffer);
-//
-//            while (matcher.find()) {
-//                String match = matcher.group();
-//
-//                // Get indices of matching string
-//                int start = matcher.start();
-//                int end = matcher.end();
-//
-//                CharSequence charSequence = match.subSequence(1, match.length() - 1);
-//
-//                buffer.delete(start, end);
-//                try {
-//                    buffer.insert(start, URLEncoder.encode(getOMElementValue(charSequence.toString(), firstElement, detach),"UTF-8"));
-//                } catch (UnsupportedEncodingException e) {
-//                    log.error("Unable to encode Query String");
-//                }
-//                matcher.reset();
-//
-//            }
-//
-//            return buffer.toString();
-
             return httpLocation.toString();
     }
 
+    protected String appendQueryParameters(MessageContext messageContext, String query) {
+
+
+        OMElement firstElement;
+        String queryParameterSeparator = (String) messageContext.getProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
+        // In case queryParameterSeparator is null we better use the default value 
+        if (queryParameterSeparator == null) {
+            queryParameterSeparator = WSDL20DefaultValueHolder.getDefaultValue(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
+        }
+        firstElement = messageContext.getEnvelope().getBody().getFirstElement();
+        ArrayList values = new ArrayList();
+        if (firstElement != null) {
+            Iterator iter = firstElement.getChildElements();
+            while(iter.hasNext()) {
+                OMElement element = (OMElement)iter.next();
+                values.add(element.getLocalName() + "=" + element.getText());
+           }
+        }
+        if (values.size() > 0) {
+            if (query == null) {
+
+            query = (String)values.get(0);
+            }
+
+            for (int i=1;i<values.size();i++) {
+                query = queryParameterSeparator + values.get(i);
+            }
+        }
+        return query;
+    }
      private String getOMElementValue(String elementName, OMElement parentElement) {
         OMElement httpURLParam = parentElement.getFirstChildWithName(new QName(elementName));
 

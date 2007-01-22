@@ -24,6 +24,7 @@ public class WSDL20DefaultValueHolder {
 
     public static final String WHTTP_METHOD_WSDLX_SAFE = "whttp:methodWSDLsafe";
     public static final String WHTTP_METHOD_WSDLX_NOTSAFE = "whttp:methodWSDLNotsafe";
+    public static final String ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR_DEFAULT = "&";
 
 
     static {
@@ -31,7 +32,7 @@ public class WSDL20DefaultValueHolder {
         defaultValuesMap.put(WSDL2Constants.ATTR_WSOAP_ACTION, "\\\"\\\"");
         defaultValuesMap.put(WHTTP_METHOD_WSDLX_SAFE, org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET);
         defaultValuesMap.put(WHTTP_METHOD_WSDLX_SAFE, org.apache.axis2.Constants.Configuration.HTTP_METHOD_POST);
-        defaultValuesMap.put(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR, "&");
+        defaultValuesMap.put(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR, ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR_DEFAULT);
     }
 
     public static String getDefaultValue(String name) {

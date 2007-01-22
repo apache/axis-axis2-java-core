@@ -1898,12 +1898,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         methodElement.appendChild(getFaultElement(doc,
                 axisOperation));
 
+        setTransferCoding(axisOperation, methodElement, doc);
+
         String mep = (String)getBindingPropertyFromOperation(WSDL2Constants.ATTR_WSOAP_MEP, axisOperation.getName());
 
         if (WSDL2Constants.URI_WSOAP_MEP.equalsIgnoreCase(mep)) {
             methodElement.appendChild(generateOptionParamComponent(doc, "org.apache.axis2.Constants.Configuration.ENABLE_REST", "true"));
             methodElement.appendChild(generateOptionParamComponent(doc," org.apache.axis2.Constants.Configuration.HTTP_METHOD", "\"" + org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET + "\""));
             methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.Constants.Configuration.CONTENT_TYPE", "\"" + "org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM" + "\""));
+            methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR", "\"" + WSDL20DefaultValueHolder.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR_DEFAULT + "\""));
       }
 
 
@@ -1943,8 +1946,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 }
             }
 
-
-            setTransferCoding(axisOperation, methodElement, doc);
 
             property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_CODE,
                         axisOperation.getName());

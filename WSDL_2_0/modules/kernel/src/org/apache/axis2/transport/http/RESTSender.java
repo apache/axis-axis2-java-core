@@ -23,8 +23,10 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.transport.http.util.ComplexPart;
 import org.apache.axis2.util.UUIDGenerator;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.httpclient.Header;
@@ -201,84 +203,84 @@ public class RESTSender extends AbstractHTTPSender {
         }
     }
 
-    /**
-     * This will be used to support http location. User will create an OMElement to be plugged in to
-     * SOAP body. Then he has to name the parameters that should go in the url. This method will extract
-     * those parameters from the body first child and append to the url.
-     * <p/>
-     * In addition to that, user can set a URL template, like ?firstName={FirstName}. In this case,
-     * first name must be taken from the body and will replace the url.
-     *
-     * @param messageContext
-     * @param urlString
-     * @return - the URL after appending the properties
-     */
-    protected String appendParametersToURL(MessageContext messageContext, String urlString, String queryPart) {
-        StringBuffer buffer = null;
-        try {
-            OMElement firstElement = messageContext.getEnvelope().getBody().getFirstElement();
-
-            // first process the situ where user had explicitly put some params to go in the URL
-            ArrayList httpLocationParams = (ArrayList) messageContext.getProperty(
-                    Constants.Configuration.URL_HTTP_LOCATION_PARAMS_LIST);
-
-            URL url = new URL(urlString);
-            String path = url.getPath();
-
-//            if (httpLocationParams != null) {
-//                for (int i = 0; i < httpLocationParams.size(); i++) {
-//                    String httpLocationParam = (String) httpLocationParams.get(i);
-//                    OMElement httpURLParam = firstElement.getFirstChildWithName(new QName(httpLocationParam));
-//                    if (httpURLParam != null) {
-//                        path += "/" + httpURLParam.getText();
-//                        httpURLParam.detach();
-//                    }
+//    /**
+//     * This will be used to support http location. User will create an OMElement to be plugged in to
+//     * SOAP body. Then he has to name the parameters that should go in the url. This method will extract
+//     * those parameters from the body first child and append to the url.
+//     * <p/>
+//     * In addition to that, user can set a URL template, like ?firstName={FirstName}. In this case,
+//     * first name must be taken from the body and will replace the url.
+//     *
+//     * @param messageContext
+//     * @param urlString
+//     * @return - the URL after appending the properties
+//     */
+//    protected String appendParametersToURL(MessageContext messageContext, String urlString, String queryPart) {
+//        StringBuffer buffer = null;
+//        try {
+//            OMElement firstElement = messageContext.getEnvelope().getBody().getFirstElement();
+//
+//            // first process the situ where user had explicitly put some params to go in the URL
+//            ArrayList httpLocationParams = (ArrayList) messageContext.getProperty(
+//                    Constants.Configuration.URL_HTTP_LOCATION_PARAMS_LIST);
+//
+//            URL url = new URL(urlString);
+//            String path = url.getPath();
+//
+////            if (httpLocationParams != null) {
+////                for (int i = 0; i < httpLocationParams.size(); i++) {
+////                    String httpLocationParam = (String) httpLocationParams.get(i);
+////                    OMElement httpURLParam = firstElement.getFirstChildWithName(new QName(httpLocationParam));
+////                    if (httpURLParam != null) {
+////                        path += "/" + httpURLParam.getText();
+////                        httpURLParam.detach();
+////                    }
+////                }
+////            }
+//
+//            if (queryPart != null && queryPart.length() > 0) {
+//                if (queryPart.startsWith("?")) {
+//                    path = urlString + queryPart;
+//                } else {
+//                    path = urlString + "?" + queryPart;
 //                }
 //            }
-
-            if (queryPart != null && queryPart.length() > 0) {
-                if (queryPart.startsWith("?")) {
-                    path = urlString + queryPart;
-                } else {
-                    path = urlString + "?" + queryPart;
-                }
-            }
-
-            // now let's process URL templates.
-            String patternString = "\\{[A-Z0-9a-z._%-]+\\}";
-            Pattern pattern = Pattern.compile(patternString);
-
-            buffer = new StringBuffer(path);
-
-            Matcher matcher = pattern.matcher(buffer);
-
-            while (matcher.find()) {
-                String match = matcher.group();
-
-                // Get indices of matching string
-                int start = matcher.start();
-                int end = matcher.end();
-
-                CharSequence charSequence = match.subSequence(1, match.length() - 1);
-
-                buffer.delete(start, end);
-                buffer.insert(start, getOMElementValue(charSequence.toString(), firstElement));
-
-            }
-
-            return buffer.toString();
-
-
-        } catch (MalformedURLException e) {
-            log.error("Error in processing POST request", e);
-        }
-        catch (StringIndexOutOfBoundsException e) {
-            log.error("Error in processing POST request", e);
-            return buffer.toString();
-        }
-
-        return null;
-    }
+//
+//            // now let's process URL templates.
+//            String patternString = "\\{[A-Z0-9a-z._%-]+\\}";
+//            Pattern pattern = Pattern.compile(patternString);
+//
+//            buffer = new StringBuffer(path);
+//
+//            Matcher matcher = pattern.matcher(buffer);
+//
+//            while (matcher.find()) {
+//                String match = matcher.group();
+//
+//                // Get indices of matching string
+//                int start = matcher.start();
+//                int end = matcher.end();
+//
+//                CharSequence charSequence = match.subSequence(1, match.length() - 1);
+//
+//                buffer.delete(start, end);
+//                buffer.insert(start, getOMElementValue(charSequence.toString(), firstElement));
+//
+//            }
+//
+//            return buffer.toString();
+//
+//
+//        } catch (MalformedURLException e) {
+//            log.error("Error in processing POST request", e);
+//        }
+//        catch (StringIndexOutOfBoundsException e) {
+//            log.error("Error in processing POST request", e);
+//            return buffer.toString();
+//        }
+//
+//        return null;
+//    }
 
     private String getOMElementValue(String elementName, OMElement parentElement) {
         OMElement httpURLParam = parentElement.getFirstChildWithName(new QName(elementName));
@@ -293,7 +295,7 @@ public class RESTSender extends AbstractHTTPSender {
     }
 
     private void sendViaGet(MessageContext msgContext, URL url)
-            throws MalformedURLException, AxisFault, IOException {
+            throws AxisFault, IOException {
         String param = getQueryParameters(msgContext);
         GetMethod getMethod = new GetMethod();
         if (isAuthenticationEnabled(msgContext)) {
@@ -310,12 +312,16 @@ public class RESTSender extends AbstractHTTPSender {
             url = new URL(path + replacedQuery);
         }
 
-//        String urlString = url.getFile();
-//        urlString = appendParametersToURL(msgContext, urlString, param);
-
         getMethod.setPath(url.getPath());
-        getMethod.setQueryString(url.getQuery());
-
+        String query = url.getQuery();
+        String ignoreUncited = (String) msgContext.getProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED);
+        // If ignoreUncited property is true we can ignore the uncited parameters in the url, If it is not specified it
+        // defaults to false hence we append the additional query parameters.
+        if (ignoreUncited != null && JavaUtils.isTrueExplicitly(ignoreUncited)) {
+            getMethod.setQueryString(query);
+        } else {
+            getMethod.setQueryString(appendQueryParameters(msgContext, url.getQuery()));
+        }
         // Serialization as "application/x-www-form-urlencoded"
         String charEncoding =
                 (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);

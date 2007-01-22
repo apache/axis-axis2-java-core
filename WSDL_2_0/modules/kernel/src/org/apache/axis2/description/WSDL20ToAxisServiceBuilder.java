@@ -512,9 +512,17 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         soapMep.toString());
             }
             HTTPLocation httpLocation = soapBindingOperationExtensions.getHttpLocation();
+            // If httpLocation is not null we should extract a constant part from it and add its value and the
+            // corresponding AxisOperation to a map in order to dispatch rest messages. If httpLocation is null we add
+            // the operation name into this map.
             if (httpLocation != null) {
-                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION,
-                        httpLocation.getLocationTemplate());
+                String httpLocationString = httpLocation.getLocationTemplate();
+                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocationString);
+                axisService.addHttpLocationDispatcherString(RESTUtil.getConstantFromHTTPLocation(httpLocationString),
+                        axisOperation);
+            } else {
+                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, "/" + axisOperation.getName().
+                        getLocalPart());
             }
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
                     soapBindingOperationExtensions.getHttpTransferCodingDefault());
