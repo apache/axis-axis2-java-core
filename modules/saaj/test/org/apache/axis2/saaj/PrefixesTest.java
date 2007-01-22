@@ -15,7 +15,9 @@
  */
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -27,9 +29,8 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
+
+import junit.framework.TestCase;
 
 public class PrefixesTest extends TestCase {
 

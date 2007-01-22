@@ -350,8 +350,40 @@ public class SOAPMessageImpl extends SOAPMessage {
         return props.get(property);
     }
 
+    /**
+     * Returns an AttachmentPart object that is associated with an attachment that is referenced by
+     * this SOAPElement or null if no such attachment exists. References can be made via an href
+     * attribute as described in SOAP Messages with Attachments
+     * (http://www.w3.org/TR/SOAPattachments#SOAPReferenceToAttachements) , or via a single Text 
+     * child node containing a URI as described in the WS-I Attachments Profile 1.0 for elements of 
+     * schema type ref:swaRef(ref:swaRef 
+     * (http://www.wsi.org/Profiles/AttachmentsProfile-1.0-2004-08-24.html") ). These two 
+     * mechanisms must be supported. The support for references via href attribute also implies 
+     * that this method should also be supported on an element that is an xop:Include element (XOP
+     * (http://www.w3.org/2000/xp/Group/3/06/Attachments/XOP.html) ). other reference mechanisms 
+     * may be supported by individual implementations of this standard. Contact your vendor for 
+     * details.
+     * 
+     * @param element - The SOAPElement containing the reference to an Attachment
+     * @return the referenced AttachmentPart or null if no such AttachmentPart exists or no
+     * reference can be found in this SOAPElement.
+     * @throws SOAPException - if there is an error in the attempt to access the attachment
+     * 
+     */
     public AttachmentPart getAttachment(SOAPElement soapelement) throws SOAPException {
-        return null;  //TODO - Not yet implemented
+
+        Collection matchingAttachmentParts = new ArrayList();
+        Iterator iterator = getAttachments();
+        {
+            AttachmentPartImpl part;
+            while (iterator.hasNext()) {
+                part = (AttachmentPartImpl) iterator.next();
+                if (part.matches(null)) {
+                    matchingAttachmentParts.add(part);
+                }
+            }
+        }
+        return null;  //TODO - Not yet implemented        
     }
 
     public void removeAttachments(MimeHeaders mimeheaders) {

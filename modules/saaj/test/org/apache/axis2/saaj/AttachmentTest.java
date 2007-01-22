@@ -1,6 +1,12 @@
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -9,13 +15,8 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+
+import junit.framework.TestCase;
 
 public class AttachmentTest extends TestCase {
 

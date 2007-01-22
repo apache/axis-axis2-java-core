@@ -116,7 +116,9 @@ public class PrefixedQName implements Name {
         if (!qName.equals(((PrefixedQName) obj).qName)) {
             return false;
         }
-        return prefix.equals(((PrefixedQName) obj).prefix);
+        return true;
+        //Is this correct?
+        //return prefix.equals(((PrefixedQName) obj).prefix);
     }
 
     public int hashCode() {

@@ -99,8 +99,17 @@ public class DetailImpl extends SOAPFaultElementImpl implements Detail {
         return details.iterator();
     }
 
+    /**
+     * Creates a new DetailEntry object with the given name and adds it to this Detail object.
+     * @param name - a Name object identifying the new DetailEntry object
+     * @throws SOAPException - thrown when there is a problem in adding a DetailEntry object to this
+     * Detail object.
+     */
     public DetailEntry addDetailEntry(QName qname) throws SOAPException {
-        return null;  //TODO: Fixme.
+        SOAPElementImpl childElement = (SOAPElementImpl) addChildElement(qname);
+        DetailEntryImpl detailEntry = new DetailEntryImpl(childElement.element);
+        childElement.element.setUserData(SAAJ_NODE, detailEntry, null);
+        return detailEntry;
     }
 
     public SOAPElement addAttribute(QName qname, String value) throws SOAPException {

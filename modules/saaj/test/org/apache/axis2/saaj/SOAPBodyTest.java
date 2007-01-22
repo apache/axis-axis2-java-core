@@ -208,8 +208,6 @@ public class SOAPBodyTest extends TestCase {
         }
     }
 
-    //TODO : check with azeez
-    //sumedha
     /*
      * For SOAP 1.1 message 
      */

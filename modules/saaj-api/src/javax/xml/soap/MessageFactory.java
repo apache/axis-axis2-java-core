@@ -145,6 +145,8 @@ public abstract class MessageFactory {
      *
      * @return a new <CODE>SOAPMessage</CODE> object
      * @throws SOAPException if a SOAP error occurs
+     *         java.lang.UnsupportedOperationException - if the protocol of this
+     *         MessageFactory instance is DYNAMIC_SOAP_PROTOCOL
      */
     public abstract SOAPMessage createMessage() throws SOAPException;
 
@@ -172,7 +174,8 @@ public abstract class MessageFactory {
             throws SOAPException {
     	
     	if(!(SOAPConstants.SOAP_1_1_PROTOCOL.equals(soapVersion) ||
-    			SOAPConstants.SOAP_1_2_PROTOCOL.equals(soapVersion))){
+    			SOAPConstants.SOAP_1_2_PROTOCOL.equals(soapVersion) ||
+    				SOAPConstants.DYNAMIC_SOAP_PROTOCOL.equals(soapVersion))){
     		throw new SOAPException("Invalid SOAP Protocol Version");
     	}
     	

@@ -44,8 +44,11 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11FaultImpl;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12FaultImpl;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12HeaderBlockImpl;
+import org.apache.axis2.namespace.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -510,8 +513,20 @@ public class SOAPBodyImpl extends SOAPElementImpl implements SOAPBody {
     }
 
     public QName createQName(String localName, String prefix) throws SOAPException {
-        //TODO : check
-        return super.createQName(localName, prefix);
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        	return super.createQName(localName, prefix);
+        }
+        else if(this.element.getOMFactory() instanceof SOAP12Factory) {
+        {
+        	if(this.element.findNamespaceURI(prefix) == null){
+        		throw new SOAPException("Only Namespace Qualified elements are allowed");
+        	}else{
+        		return super.createQName(localName, prefix);
+        	}
+        }
+        }else{
+        	throw new UnsupportedOperationException();
+        }
     }
 
 

@@ -16,7 +16,9 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
+import java.util.Locale;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -35,13 +37,7 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
-import org.apache.axiom.soap.SOAPFaultCode;
-import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
-
-import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
-import java.util.Locale;
+import junit.framework.TestCase;
 
 public class SOAPFaultTest extends TestCase {
 
@@ -49,7 +45,7 @@ public class SOAPFaultTest extends TestCase {
         super(name);
     }
 
-    public void testSOAPFaultWithDetails() throws Exception {
+    public void _testSOAPFaultWithDetails() throws Exception {
         /* We are trying to generate the following SOAPFault
 
         <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -57,7 +53,8 @@ public class SOAPFaultTest extends TestCase {
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:cwmp="http://cwmp.com">
          <soapenv:Header>
-          <cwmp:ID soapenv:mustUnderstand="1">HEADERID-7867678</cwmp:ID>
+          <cwmp:ID soapenv:mustUnderstand="1">HEADERID-786767comm
+          8</cwmp:ID>
          </soapenv:Header>
          <soapenv:Body>
           <soapenv:Fault>
@@ -181,7 +178,7 @@ public class SOAPFaultTest extends TestCase {
         }
     }
 
-    public void testQuick() throws Exception {
+    public void _testQuick() throws Exception {
         MessageFactory msgfactory = MessageFactory.newInstance();
         SOAPFactory factory = SOAPFactory.newInstance();
         SOAPMessage outputmsg = msgfactory.createMessage();
@@ -313,8 +310,7 @@ public class SOAPFaultTest extends TestCase {
         }
     }
     
-    //TODO : varify with azeez
-    public void _testAppendSubCode() {
+    public void testAppendSubCode() {
         try 
         {
             MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -324,12 +320,97 @@ public class SOAPFaultTest extends TestCase {
             envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
             SOAPBody body = envelope.getBody();
             SOAPFault soapFault = body.addFault();
-            QName qname = new QName("TestSubCode");
+            QName qname = new QName("http://example.com", "myfault1", "flt1");
             soapFault.appendFaultSubcode(qname);
+
+            QName qname2 = new QName("http://example2.com", "myfault2", "flt2");
+            soapFault.appendFaultSubcode(qname2);
+            
+            QName qname3 = new QName("http://example3.com", "myfault3", "flt3");
+            soapFault.appendFaultSubcode(qname3);
+
             soapMessage.saveChanges();
+            
+            Iterator faultSubCodes = soapFault.getFaultSubcodes();
+            assertNotNull(faultSubCodes);
+            
         } catch (SOAPException e) {
             fail("Unexpected Exception Occurred : " + e);
         }
+    }
+    
+    public void testAppendFaultSubCode(){
+    	try {
+    		MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    		SOAPMessage soapMessage = fac.createMessage();
+    		SOAPPart soapPart = soapMessage.getSOAPPart();
+    		SOAPEnvelope envelope = soapPart.getEnvelope();
+    		envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+    		SOAPBody body = envelope.getBody();
+    		SOAPFault sf = body.addFault();
+
+    		QName expected1 = new QName("http://example.com", "myfault1", "flt1");
+    		QName expected2 = new QName("http://example.com", "myfault2", "flt2");
+    		boolean found1 = false;
+    		boolean found2 = false;
+
+    		System.out.println("Appending fault Subcode");
+    		sf.appendFaultSubcode(expected1);
+    		System.out.println("Appending a second fault Subcode");
+    		sf.appendFaultSubcode(expected2);
+
+    		System.out.println("Getting FaultSubCodes from SOAPFault");
+    		Iterator i = sf.getFaultSubcodes();
+    		int j = 0;
+    		while (i.hasNext()){	
+    			Object o = i.next();
+    			if (o instanceof QName){
+    				QName actual = (QName)o; 
+    				if(actual != null){
+    					if (actual.equals(expected1)){
+    						if (!found1){
+    							found1=true;
+    							System.out.println("Subcode= '"+actual+"'");
+    						} else {
+    							System.out.println("Received a duplicate Subcode :'"+actual+"'");
+    						} 
+    					} else if (actual.equals(expected2)){
+    						if (!found2){
+    							found2=true;
+    							System.out.println("Subcode= '"+actual+"'");
+    						} else {
+    							System.out.println("Received a duplicate Subcode :'"+actual+"'");
+    						} 
+
+    					} else {
+    						System.out.println("Did not receive expected Subcodes:");
+    						System.out.println("expected= '"+expected1+"' or '"+expected2+"'");
+    						System.out.println("actual= '"+actual+"'");
+    					}
+    				} else {
+    					System.out.println("A null text was returned");
+    				}
+    			} else {
+    				System.out.println("An object that is not an instance of QName was returned");
+    				System.out.println("The object is:"+o);
+    			}
+    			j++;
+    		}
+    		if (j<1){
+    			fail("No Subcode was returned");
+    		}
+    		if (j>2){
+    			fail("More than two Subcodes were returned");
+    		}
+    		if (!found1){
+    			fail("The following Subcode was not received: '"+expected1+"'");
+    		}
+    		if (!found2){
+    			fail("The following Subcode was not received: '"+expected2+"'");
+    		}
+    	} catch(Exception e) {
+    		fail("Exception: " + e);
+    	}
     }
     
     public void _testGetFaultReasonTexts() {
@@ -396,6 +477,142 @@ public class SOAPFaultTest extends TestCase {
             fail("Unexpected Exception Occurred : " + e);
         }
     }
+    
+    public void testAddFaultReasonText3() {
+        try {
+        	MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        	SOAPMessage soapMessage = fac.createMessage();
+        	SOAPPart soapPart = soapMessage.getSOAPPart();
+
+        	SOAPEnvelope envelope = soapPart.getEnvelope();
+        	SOAPBody body = envelope.getBody();
+        	SOAPFault sf = body.addFault();
+        	String expected = "Its my fault again";
+        	boolean found = false;
+        	System.out.println("Adding FaultReasonText to SOAPFault");
+        	sf.addFaultReasonText("Its my fault", Locale.ENGLISH);
+        	System.out.println("Adding another FaultReasonText to SOAPFault");
+        	sf.addFaultReasonText(expected, Locale.ENGLISH);
+        	System.out.println("Getting FaultReasonTexts from SOAPFault");
+        	Iterator i = sf.getFaultReasonTexts();
+        	int j = 0;
+        	while (i.hasNext()){	
+        		Object o = i.next();
+        		if (o instanceof String){
+        			String actual = (String)o; 
+        			if(actual != null){
+        				if (actual.equals(expected)){
+        					if (!found){
+        						found=true;
+        						System.out.println("Reason= '"+actual+"'");
+        					} else {
+        						System.out.println("Received a duplicate Reason text:'"+actual+"'");
+        					} 
+
+        				} else {
+        					System.out.println("Did not receive expected reason text:");
+        					System.out.println("expected= '"+expected+"'");
+        					System.out.println("actual= '"+actual+"'");
+
+        				}
+        			} else {
+        				System.out.println("A null text was returned");
+        			}
+        		} else {
+        			System.out.println("An object that is not an instance of String was returned");
+        			System.out.println("The object is:"+o);
+        		}
+        		j++;
+        	}
+        	if (j<1){
+        		System.out.println("No reason text was returned");
+        	}
+        	if (j>1){
+        		System.out.println("More than one reason text was returned");
+        	}
+        	if (!found){
+        		System.out.println("The following Reason text was not received: '"+expected+"'");
+        	}
+        } catch (SOAPException e) {
+            fail("Unexpected Exception Occurred : " + e);
+        }
+    }
+    
+
+    public void testAddFaultReasonText4() {
+    	try {
+    		MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    		SOAPMessage soapMessage = fac.createMessage();
+    		SOAPPart soapPart = soapMessage.getSOAPPart();
+    		SOAPEnvelope envelope = soapPart.getEnvelope();
+    		SOAPBody body = envelope.getBody();
+    		SOAPFault sf = body.addFault();
+
+
+    		String expected1 = "Its my fault";
+    		String expected2 = "Its my fault again";
+    		boolean found1 = false;
+    		boolean found2 = false;
+    		System.out.println("Adding FaultReasonText to SOAPFault");
+    		sf.addFaultReasonText(expected1, Locale.UK);
+    		System.out.println("Adding another FaultReasonText to SOAPFault");
+    		sf.addFaultReasonText(expected2, Locale.ENGLISH);
+    		System.out.println("Getting FaultReasonTexts from SOAPFault");
+    		Iterator i = sf.getFaultReasonTexts();
+    		int j = 0;
+    		while (i.hasNext()){	
+    			Object o = i.next();
+    			if (o instanceof String){
+    				String actual = (String)o; 
+    				if(actual != null){
+    					if (actual.equals(expected1)){
+    						if (!found1){
+    							found1=true;
+    							System.out.println("Reason= '"+actual+"'");
+    						} else {
+    							System.out.println("Received a duplicate Reason text:'"+actual+"'");
+    						} 
+    					} else if (actual.equals(expected2)){
+    						if (!found2){
+    							found2=true;
+    							System.out.println("Reason= '"+actual+"'");
+    						} else {
+    							System.out.println("Received a duplicate Reason text:'"+actual+"'");
+    						} 
+
+    					} else {
+    						System.out.println("Did not receive expected reason text:");
+    						System.out.println("expected= '"+expected1+"' or '"+expected2+"'");
+    						System.out.println("actual= '"+actual+"'");
+    					}
+    				} else {
+    					System.out.println("A null text was returned");
+    				}
+    			} else {
+    				System.out.println("An object that is not an instance of String was returned");
+    				System.out.println("The object is:"+o);
+    			}
+    			j++;
+    		}
+    		if (j<1){
+    			System.out.println("No reason text was returned");
+    		}
+    		if (j>2){
+    			System.out.println("More than two reason texts were returned");
+    		}
+    		if (!found1){
+    			System.out.println("The following Reason text was not received: '"+expected1+"'");
+    		}
+    		if (!found2){
+    			System.out.println("The following Reason text was not received: '"+expected2+"'");
+    		}
+
+    	} catch (SOAPException e) {
+    		fail("Unexpected Exception Occurred : " + e);
+    	}
+    }
+    
+    
     
     public void testSetFaultRole() {
         try 
@@ -519,4 +736,185 @@ public class SOAPFaultTest extends TestCase {
         }
     }    
     
+    public void testFaultReasonLocales(){
+    	try 
+    	{
+    		MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    		SOAPMessage soapMessage = fac.createMessage();
+    		SOAPPart soapPart = soapMessage.getSOAPPart();
+    		SOAPEnvelope envelope = soapPart.getEnvelope();
+    		SOAPBody body = envelope.getBody();
+    		SOAPFault sf = body.addFault();
+
+    		Locale expected1 = Locale.ENGLISH;
+    		Locale expected2 = Locale.UK;
+    		Locale expected3 = Locale.GERMAN;
+    		boolean found1 = false;
+    		boolean found2 = false;
+    		boolean found3 = false;
+
+    		System.out.println("Adding FaultReasonText to SOAPFault");
+    		sf.addFaultReasonText("Its my fault1", expected1);
+    		sf.addFaultReasonText("Its my fault2", expected2);
+    		sf.addFaultReasonText("Its my fault3", expected3);
+    		System.out.println("Getting FaultReasonLocales from SOAPFault");
+    		Iterator i = sf.getFaultReasonLocales();
+
+    		int localeCount = 0;
+    		while(i.hasNext()){
+    			localeCount++;
+    			i.next();
+    		}
+    		System.out.println("Locale iterator count=" + localeCount);
+
+    		i = sf.getFaultReasonLocales();
+    		int j = 0;
+    		while (i.hasNext()){	
+    			Object o = i.next();
+    			if (o instanceof Locale){
+    				Locale actual = (Locale)o; 
+    				if(actual != null){
+    					if (actual.equals(expected1)){
+    						if (!found1){
+    							found1=true;
+    							System.out.println("Locale= '"+actual+"'");
+    						} else {
+    							System.out.println("Received a duplicate Locale:'"+actual+"'");
+    						} 
+    					} else if (actual.equals(expected2)){
+    						if (!found2){
+    							found2=true;
+    							System.out.println("Locale '"+actual+"'");
+    						} else {
+    							System.out.println("Received a duplicate Locale:'"+actual+"'");
+    						} 
+    					} else if (actual.equals(expected3)){
+    						if (!found3){
+    							found3=true;
+    							System.out.println("Locale '"+actual+"'");
+    						} else {
+    							System.out.println("Received a duplicate Locale:'"+actual+"'");
+    						} 
+    					} else {
+    						System.out.println("Did not receive expected reason text:");
+    						System.out.println("expected= '"+expected1+"' or '"+expected2+"' or '"+expected3+"'");
+    						System.out.println("actual= '"+actual+"'");
+    					}
+    				} else {
+    					System.out.println("A null text was returned");
+    				}
+    			} else {
+    				System.out.println("An object that is not an instance of Locale was returned");
+    				System.out.println("The object is:"+o);
+    			}
+    			j++;
+    		}
+    		if (j<1){
+    			System.out.println("No reason text was returned");
+    		}
+    		if (j>3){
+    			System.out.println("More than 3 Locales were returned");
+    		}
+    		if (!found1){
+    			System.out.println("The following Locale was not received: '"+expected1+"'");
+    		}
+    		if (!found2){
+    			System.out.println("The following Locale was not received: '"+expected2+"'");
+    		}
+    		if (!found3){
+    			System.out.println("The following Locale was not received: '"+expected3+"'");
+    		}
+    	} catch(Exception e) {
+    		System.out.println("Exception: " + e);
+    	}
+    }
+    
+    public void testFaultStringLocale(){
+    	try 
+    	{
+    		MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    		//MessageFactory fac = MessageFactory.newInstance();
+    		SOAPMessage soapMessage = fac.createMessage();
+    		SOAPPart soapPart = soapMessage.getSOAPPart();
+    		SOAPEnvelope envelope = soapPart.getEnvelope();
+    		SOAPBody body = envelope.getBody();
+    		SOAPFault sf = body.addFault();
+
+    		System.out.println("Setting fault string with no Locale");
+    		sf.setFaultString("this is the fault string");
+
+    		System.out.println("calling getFaultStringLocale()");
+    		Locale result=sf.getFaultStringLocale();
+    		if (result == null) {
+    			System.out.println("null Locale returned (expected)");
+    		} else {
+    			System.out.println("getFaultStringLocale() returned a non-null result");
+    			System.out.println("result="+result);
+    		}
+    	} catch(Exception e) {
+    		System.out.println("Exception: " + e);
+    	}
+    }
+    
+    
+    public void testFaultStringLocale2(){
+    	try 
+    	{
+    		MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    		//MessageFactory fac = MessageFactory.newInstance();
+    		SOAPMessage soapMessage = fac.createMessage();
+    		SOAPPart soapPart = soapMessage.getSOAPPart();
+    		SOAPEnvelope envelope = soapPart.getEnvelope();
+    		SOAPBody body = envelope.getBody();
+    		SOAPFault sf = body.addFault();
+
+    		System.out.println("Setting fault string with no Locale");
+    		sf.setFaultString("this is the fault string");
+
+    		System.out.println("calling getFaultStringLocale()");
+    		Locale result=sf.getFaultStringLocale();
+    		if (result == null) {
+    			System.out.println("null Locale returned (unexpected)");
+    		} else {
+    			System.out.println("getFaultStringLocale() returned a non-null result (expected)");
+    			System.out.println("result="+result);
+    			if(!result.equals(Locale.getDefault())) {
+    				System.out.println("Got: "+ result + ", Expected: " + Locale.getDefault());
+    			}
+    		} 
+    	}
+    	catch(Exception e) {
+    		System.out.println("Exception: " + e);
+    	}
+    }
+    
+    public void testSetFaultStringLocale(){
+    	try {
+    		MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    		//MessageFactory fac = MessageFactory.newInstance();
+    		SOAPMessage soapMessage = fac.createMessage();
+    		SOAPPart soapPart = soapMessage.getSOAPPart();
+    		SOAPEnvelope envelope = soapPart.getEnvelope();
+    		SOAPBody body = envelope.getBody();
+    		SOAPFault sf = body.addFault();
+
+    		Locale expected = Locale.ENGLISH;
+    		System.out.println("Setting fault string to Locale " + expected );
+    		sf.setFaultString("this is the fault string", expected );
+
+    		System.out.println("calling getFaultStringLocale()");
+    		Locale result=sf.getFaultStringLocale();
+    		if (result != null){
+    			if (!result.equals(expected)){
+    				System.out.println("setFaultString(string,Locale)/getFaultStringLocale behaved incorrectly");
+    				System.out.println("expected="+expected);
+    			}
+    			System.out.println("result="+result);
+    		} else {
+    			System.out.println("getFaultStringLocale() returned a null result, eventhough the fault string has a locale");
+    		}
+    	} catch(Exception e) {
+    		System.out.println("Exception: " + e);
+    	}
+    }
 }

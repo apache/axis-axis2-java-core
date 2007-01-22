@@ -32,6 +32,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.Iterator;
 
 /**
@@ -160,8 +161,12 @@ public class AttachmentPartImpl extends AttachmentPart {
         }
         try {
             String contentType = dataHandler.getContentType();
-            if (contentType.equals("text/plain") ||
-                    contentType.equals("text/xml") ||
+            //TODO change to text/xml
+            if(contentType.equals("text/xml")){
+            	StringReader stringReader = new StringReader((String)dataHandler.getContent());
+            	StreamSource streamSource = new StreamSource(stringReader);
+            	return streamSource;
+            }else if (contentType.equals("text/plain") ||
                     contentType.equals("text/html")) {
 
                 //For these content types underlying DataContentHandler surely does
@@ -408,7 +413,7 @@ public class AttachmentPartImpl extends AttachmentPart {
     public InputStream getBase64Content() throws SOAPException {
         try {
             if (dataHandler == null) {
-                return null;
+                throw new SOAPException();
             }
             return dataHandler.getInputStream();
         } catch (IOException e) {

@@ -16,11 +16,11 @@
 
 package org.apache.axis2.saaj;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPMessage;
 
 import junit.framework.TestCase;
 
