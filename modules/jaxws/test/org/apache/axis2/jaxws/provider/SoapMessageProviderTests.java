@@ -27,6 +27,7 @@ import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Binding;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
@@ -201,9 +202,10 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             AttachmentPart attachmentPart = (AttachmentPart) response.getAttachments().next();
             
             // Check the attachment
-            String content = (String) attachmentPart.getContent();
+            StreamSource contentSS = (StreamSource) attachmentPart.getContent();
+            String content = SoapMessageProvider.getAsString(contentSS);
             assertTrue(content != null);
-            assertTrue(SoapMessageProvider.TEXT_XML_ATTACHMENT.equals(content));
+            assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
             
             // Print out the response
             System.out.println(">> Response [" + response.toString() + "]");
@@ -257,9 +259,10 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             AttachmentPart attachmentPart = (AttachmentPart) response.getAttachments().next();
             
             // Check the attachment
-            String content = (String) attachmentPart.getContent();
+            StreamSource contentSS = (StreamSource) attachmentPart.getContent();
+            String content = SoapMessageProvider.getAsString(contentSS);
             assertTrue(content != null);
-            assertTrue(SoapMessageProvider.TEXT_XML_ATTACHMENT.equals(content));
+            assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
             
             // Print out the response
             System.out.println(">> Response [" + response.toString() + "]");
@@ -307,9 +310,10 @@ public class SoapMessageProviderTests extends ProviderTestCase {
             AttachmentPart attachmentPart = (AttachmentPart) response.getAttachments().next();
             
             // Check the attachment
-            String content = (String) attachmentPart.getContent();
+            StreamSource contentSS = (StreamSource) attachmentPart.getContent();
+            String content = SoapMessageProvider.getAsString(contentSS);
             assertTrue(content != null);
-            assertTrue(SoapMessageProvider.TEXT_XML_ATTACHMENT.equals(content));
+            assertTrue(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
             assert(attachmentPart.getContentId().equals(SoapMessageProvider.ID));
             
             // Print out the response

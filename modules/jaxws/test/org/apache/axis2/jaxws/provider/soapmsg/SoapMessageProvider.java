@@ -17,6 +17,8 @@
 package org.apache.axis2.jaxws.provider.soapmsg;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.Iterator;
 
 import javax.xml.soap.AttachmentPart;
@@ -29,6 +31,12 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
@@ -202,8 +210,9 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         // Additional assertion checks
         assert(countAttachments(request) == 1);
         AttachmentPart requestAP = (AttachmentPart) request.getAttachments().next();
-        String content = (String) requestAP.getContent();
-        assert(SoapMessageProvider.TEXT_XML_ATTACHMENT.equals(content));
+        StreamSource contentSS = (StreamSource) requestAP.getContent();
+        String content = getAsString(contentSS);
+        assert(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
         
         // Build the Response
         MessageFactory factory = MessageFactory.newInstance();
@@ -231,8 +240,9 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         // Additional assertion checks
         assert(countAttachments(request) == 1);
         AttachmentPart requestAP = (AttachmentPart) request.getAttachments().next();
-        String content = (String) requestAP.getContent();
-        assert(SoapMessageProvider.TEXT_XML_ATTACHMENT.equals(content));
+        StreamSource contentSS = (StreamSource) requestAP.getContent();
+        String content = getAsString(contentSS);
+        assert(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
         
         System.out.println("The MTOM Request Message appears correct.");
         
@@ -263,8 +273,9 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         assert(countAttachments(request) == 1);
         AttachmentPart requestAP = (AttachmentPart) request.getAttachments().next();
         assert(requestAP.getContentId().equals(ID));
-        String content = (String) requestAP.getContent();
-        assert(SoapMessageProvider.TEXT_XML_ATTACHMENT.equals(content));
+        StreamSource contentSS = (StreamSource) requestAP.getContent();
+        String content = getAsString(contentSS);
+        assert(content.contains(SoapMessageProvider.TEXT_XML_ATTACHMENT));
         
         // Build the Response
         MessageFactory factory = MessageFactory.newInstance();
@@ -315,5 +326,15 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
             count++;
         }
         return count;
+    }
+    
+    public static String getAsString(StreamSource ss) throws Exception {
+        
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Result result = new StreamResult(out);
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.transform(ss, result); 
+        String text = new String(out.toByteArray());
+        return text;
     }
 }
