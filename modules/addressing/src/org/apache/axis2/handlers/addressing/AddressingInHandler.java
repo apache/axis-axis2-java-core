@@ -50,7 +50,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         // if another handler has already processed the addressing headers, do not do anything here.
         if (JavaUtils.isTrueExplicitly(msgContext.getProperty(IS_ADDR_INFO_ALREADY_PROCESSED))) {
             if(isDebugEnabled) {
-                 log.debug("Another handler has processed the addressing headers. Nothing to do here.");
+                log.debug("Another handler has processed the addressing headers. Nothing to do here.");
             }
             return InvocationResponse.CONTINUE;
         }
@@ -62,9 +62,8 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         }
         else if (!namespace.equals(addressingNamespace)) {
             if(isDebugEnabled) {
-                             log.debug("This addressing handler does not match the specified namespace, " + namespace);
-                         }
-
+                log.debug("This addressing handler does not match the specified namespace, " + namespace);
+            }
 
             return InvocationResponse.CONTINUE;
         }
@@ -81,8 +80,8 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         }
 
         if(isDebugEnabled) {
-                     log.debug("Starting " + addressingVersion + " IN handler ...");
-                 }
+            log.debug("Starting " + addressingVersion + " IN handler ...");
+        }
 
 
         ArrayList addressingHeaders;
@@ -92,17 +91,16 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
 
             if(isDebugEnabled) {
-                             log.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
-                         }
+                log.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
+            }
 
             extractAddressingInformation(header, msgContext, addressingHeaders, namespace);
             msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
         } else {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
             if(isDebugEnabled) {
-                             log.debug("No Headers present corresponding to " + addressingVersion);
-                         }
-			
+                log.debug("No Headers present corresponding to " + addressingVersion);
+            }
         }
         
         return InvocationResponse.CONTINUE;
@@ -125,18 +123,18 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         while (addressingHeadersIt.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt.next();
             if (!SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole())){
-                if (WSA_TO.equals(soapHeaderBlock.getLocalName())) {
+                if (WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
+                    ignoreAction = checkDuplicateHeaders(WSA_ACTION, checkedHeaderNames, duplicateHeaderNames);
+                } else if (WSA_TO.equals(soapHeaderBlock.getLocalName())) {
                     ignoreTo = checkDuplicateHeaders(WSA_TO, checkedHeaderNames, duplicateHeaderNames);
-                } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
-                    ignoreFrom = checkDuplicateHeaders(WSA_FROM, checkedHeaderNames, duplicateHeaderNames);
+                } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
+                    ignoreMessageID = checkDuplicateHeaders(WSA_MESSAGE_ID, checkedHeaderNames, duplicateHeaderNames);
                 } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName())) {
                     ignoreReplyTo = checkDuplicateHeaders(WSA_REPLY_TO, checkedHeaderNames, duplicateHeaderNames);
                 } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName())) {
                     ignoreFaultTo = checkDuplicateHeaders(WSA_FAULT_TO, checkedHeaderNames, duplicateHeaderNames);
-                } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
-                    ignoreMessageID = checkDuplicateHeaders(WSA_MESSAGE_ID, checkedHeaderNames, duplicateHeaderNames);
-                } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
-                    ignoreAction = checkDuplicateHeaders(WSA_ACTION, checkedHeaderNames, duplicateHeaderNames);
+                } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
+                    ignoreFrom = checkDuplicateHeaders(WSA_FROM, checkedHeaderNames, duplicateHeaderNames);
                 }
             }
         }
@@ -146,20 +144,20 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         while (addressingHeadersIt2.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt2.next();
             if (!SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole())){
-                if (WSA_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreTo) {
+                if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
+                    extractActionInformation(soapHeaderBlock, namespace, messageContext);
+                } else if (WSA_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreTo) {
                     extractToEPRInformation(soapHeaderBlock, messageContextOptions, header, namespace);
-                } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName()) && !ignoreFrom) {
-                    extractFromEPRInformation(soapHeaderBlock, namespace, messageContext);
+                } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName()) && !ignoreMessageID) {
+                    extractMessageIDInformation(soapHeaderBlock, namespace, messageContext);
                 } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreReplyTo) {
                     extractReplyToEPRInformation(soapHeaderBlock, namespace, messageContext);
                 } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreFaultTo) {
                     extractFaultToEPRInformation(soapHeaderBlock, namespace, messageContext);
-                } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName()) && !ignoreMessageID) {
-                    extractMessageIDInformation(soapHeaderBlock, addressingNamespace, messageContext);
-                } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
-                    extractActionInformation(soapHeaderBlock, namespace, messageContext);
                 } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
                     extractRelatesToInformation(soapHeaderBlock, namespace, messageContextOptions);
+                } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName()) && !ignoreFrom) {
+                    extractFromEPRInformation(soapHeaderBlock, namespace, messageContext);
                 }
             }
         }
