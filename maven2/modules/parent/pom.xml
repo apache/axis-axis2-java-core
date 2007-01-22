@@ -438,9 +438,9 @@
         <version>2.2</version>
       </dependency>
       <dependency>
-        <groupId>incubator-woden</groupId>
+        <groupId>org.apache.woden</groupId>
         <artifactId>woden</artifactId>
-        <version>SNAPSHOT</version>
+        <version>1.0-incubating-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>xmlunit</groupId>

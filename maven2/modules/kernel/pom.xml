@@ -77,7 +77,7 @@
       <artifactId>neethi</artifactId>
     </dependency>
     <dependency>
-      <groupId>incubator-woden</groupId>
+      <groupId>org.apache.woden</groupId>
       <artifactId>woden</artifactId>
     </dependency>
     <dependency>
