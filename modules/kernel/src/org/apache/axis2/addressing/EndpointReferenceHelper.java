@@ -290,7 +290,6 @@ public class EndpointReferenceHelper {
                 while (allAddrAttributes.hasNext()) {
                     OMAttribute attribute = (OMAttribute) allAddrAttributes.next();
                     addressAttributes.add(attribute);
-                    System.out.println("fromOM attr: "+attribute);
                 }
                 epr.setAddressAttributes(addressAttributes);
             }
