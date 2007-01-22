@@ -79,6 +79,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             return InvocationResponse.CONTINUE;
         }
 
+        // Determine the addressin namespace in effect.
         Object addressingVersionFromCurrentMsgCtxt = msgContext.getProperty(WS_ADDRESSING_VERSION);
         boolean isFinalAddressingNamespace = true;
         String namespace = Final.WSA_NAMESPACE;
@@ -88,6 +89,24 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             namespace = Submission.WSA_NAMESPACE;
         }
         
+        // Determine whether to include optional addressing headers in the output.
+        boolean includeOptionalHeaders = this.includeOptionalHeaders;
+        Object includeHeadersPropery = msgContext.getProperty(INCLUDE_OPTIONAL_HEADERS);
+        if (includeHeadersPropery != null) {
+            includeOptionalHeaders = JavaUtils.isTrueExplicitly(includeHeadersPropery);
+        }
+        
+        // Determine if a MustUnderstand attribute will be added to all headers in the
+        // addressing namespace.
+        Object mustUnderstandProperty = msgContext.getProperty(AddressingConstants.ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS);
+        boolean addMustUnderstandAttribute = JavaUtils.isTrueExplicitly(mustUnderstandProperty);
+
+        // what if there are addressing headers already in the message. Do you replace that or not?
+        // Lets have a parameter to control that. The default behavior is you won't replace addressing
+        // headers if there are any (this was the case so far).
+        Object replaceHeadersProperty = msgContext.getProperty(REPLACE_ADDRESSING_HEADERS);
+        boolean replaceHeaders = JavaUtils.isTrueExplicitly(replaceHeadersProperty);
+
         SOAPFactory factory = (SOAPFactory) msgContext.getEnvelope().getOMFactory();
         OMNamespace addressingNamespaceObject = factory.createOMNamespace(namespace, WSA_DEFAULT_PREFIX);
 
@@ -107,23 +126,17 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         // define that in the Header itself.
         envelope.declareNamespace(addressingNamespaceObject);
 
-        // what if there are addressing headers already in the message. Do you replace that or not?
-        // Lets have a parameter to control that. The default behavior is you won't replace addressing
-        // headers if there are any (this was the case so far).
-        Object replaceHeadersParam = msgContext.getProperty(REPLACE_ADDRESSING_HEADERS);
-        boolean replaceHeaders = JavaUtils.isTrueExplicitly(replaceHeadersParam);
-
         // processing WSA To
-        processToEPR(messageContextOptions, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
+        processToEPR(messageContextOptions, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace, includeOptionalHeaders);
 
         // processing WSA replyTo
-        processReplyTo(envelope, messageContextOptions, msgContext, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
+        processReplyTo(envelope, messageContextOptions, msgContext, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace, includeOptionalHeaders);
         
         // processing WSA From
-        processFromEPR(messageContextOptions, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
+        processFromEPR(messageContextOptions, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace, includeOptionalHeaders);
 
         // processing WSA FaultTo
-        processFaultToEPR(messageContextOptions, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
+        processFaultToEPR(messageContextOptions, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace, includeOptionalHeaders);
 
         // processing WSA MessageID
         processMessageID(messageContextOptions, envelope, msgContext, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
@@ -132,13 +145,13 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         processWSAAction(messageContextOptions, envelope, msgContext, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
 
         // processing WSA RelatesTo
-        processRelatesTo(envelope, messageContextOptions, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
+        processRelatesTo(envelope, messageContextOptions, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace, includeOptionalHeaders);
 
         // process fault headers, if present
         processFaultsInfoIfPresent(envelope, msgContext, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
         
         // process mustUnderstand attribute, if required.
-        processMustUnderstandProperty(envelope, msgContext, addressingNamespaceObject);
+        processMustUnderstandProperty(envelope, msgContext, addressingNamespaceObject, addMustUnderstandAttribute);
         
         return InvocationResponse.CONTINUE;
     }
@@ -237,7 +250,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         }
     }
 
-    private void processRelatesTo(SOAPEnvelope envelope, Options messageContextOptions, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace) {
+    private void processRelatesTo(SOAPEnvelope envelope, Options messageContextOptions, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace, boolean includeOptionalHeaders) {
         if (!isAddressingHeaderAlreadyAvailable(WSA_RELATES_TO, envelope, addressingNamespaceObject, replaceHeaders, true))
         {
             RelatesTo[] relatesTo = messageContextOptions.getRelationships();
@@ -278,38 +291,38 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         }
     }
 
-    private void processFaultToEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace) throws AxisFault {
+    private void processFaultToEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace, boolean includeOptionalHeaders) throws AxisFault {
         EndpointReference epr = messageContextOptions.getFaultTo();
         String headerName = AddressingConstants.WSA_FAULT_TO;
         
         //Omit the header if the epr is null.
         if (epr != null && !isAddressingHeaderAlreadyAvailable(headerName, envelope, addressingNamespaceObject, replaceHeaders, false)) {
-            addToSOAPHeader(epr, headerName, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
+            addToSOAPHeader(epr, headerName, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace, includeOptionalHeaders);
         }
     }
 
-    private void processFromEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace) throws AxisFault {
+    private void processFromEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace, boolean includeOptionalHeaders) throws AxisFault {
         EndpointReference epr = messageContextOptions.getFrom();
         String headerName = AddressingConstants.WSA_FROM;
         
         //Omit the header if the epr is null.
         if (epr != null && !isAddressingHeaderAlreadyAvailable(headerName, envelope, addressingNamespaceObject, replaceHeaders, false)) {
-            addToSOAPHeader(epr, headerName, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);
+            addToSOAPHeader(epr, headerName, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace, includeOptionalHeaders);
         }
     }
 
-    private void processReplyTo(SOAPEnvelope envelope, Options messageContextOptions, MessageContext msgContext, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace) throws AxisFault {
+    private void processReplyTo(SOAPEnvelope envelope, Options messageContextOptions, MessageContext msgContext, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace, boolean includeOptionalHeaders) throws AxisFault {
         EndpointReference epr = messageContextOptions.getReplyTo();
         String headerName = AddressingConstants.WSA_REPLY_TO;
         
         //Don't check epr for null here as addToSOAPHeader() will provide an appropriate default.
         //This default is especially useful for client side outbound processing.
         if (!isAddressingHeaderAlreadyAvailable(headerName, envelope, addressingNamespaceObject, replaceHeaders, false)) {
-            addToSOAPHeader(epr, headerName, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace);            
+            addToSOAPHeader(epr, headerName, envelope, addressingNamespaceObject, replaceHeaders, isFinalAddressingNamespace, includeOptionalHeaders);            
         }
     }
 
-    private void processToEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace) {
+    private void processToEPR(Options messageContextOptions, SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace, boolean includeOptionalHeaders) {
         EndpointReference epr = messageContextOptions.getTo();
         if (epr != null && !isAddressingHeaderAlreadyAvailable(WSA_TO, envelope, addressingNamespaceObject, replaceHeaders, false))
         {
@@ -353,7 +366,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
     private void addToSOAPHeader(EndpointReference epr,
                                  String headerName,
-                                 SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace) throws AxisFault {
+                                 SOAPEnvelope envelope, OMNamespace addressingNamespaceObject, boolean replaceHeaders, boolean isFinalAddressingNamespace, boolean includeOptionalHeaders) throws AxisFault {
         String namespace = addressingNamespaceObject.getNamespaceURI();
         String prefix = addressingNamespaceObject.getPrefix();
         String anonymous = isFinalAddressingNamespace ?
@@ -451,16 +464,15 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
     }
     
     /**
-     * Sets a mustUnderstand="1" attribute on all headers that are found with the appropriate
+     * Sets a mustUnderstand attribute on all headers that are found with the appropriate
      * addressing namespace.
      * 
      * @param envelope
      * @param msgContext
      * @param addressingNamespaceObject
      */
-    private void processMustUnderstandProperty(SOAPEnvelope envelope, MessageContext msgContext, OMNamespace addressingNamespaceObject) {
-        Object flag = msgContext.getProperty(AddressingConstants.ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS);
-        if (JavaUtils.isTrueExplicitly(flag)) {
+    private void processMustUnderstandProperty(SOAPEnvelope envelope, MessageContext msgContext, OMNamespace addressingNamespaceObject, boolean addMustUnderstandAttribute) {
+        if (addMustUnderstandAttribute) {
             List headers = envelope.getHeader().getHeaderBlocksWithNSURI(addressingNamespaceObject.getNamespaceURI());
 
             for (int i = 0, size = headers.size(); i < size; i++) {
