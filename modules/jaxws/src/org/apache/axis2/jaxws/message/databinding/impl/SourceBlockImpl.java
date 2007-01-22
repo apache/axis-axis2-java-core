@@ -138,6 +138,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 	protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext) throws XMLStreamException, WebServiceException  {
 	    try {
 	        // TODO not sure if this is always the most performant way to do this.
+            /* The following code failed in some (CTS) environments. 
 	        if (busObj instanceof DOMSource) {
 	            // Let's use our own DOMReader for now...
 	            Element element = null;
@@ -158,6 +159,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 	            
 	            return new DOMReader(element);
 	        } 
+            */
 	        
 	        if(busObj instanceof StreamSource){
 	            XMLInputFactory f = StAXUtils.getXMLInputFactory();
