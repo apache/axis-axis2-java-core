@@ -177,9 +177,11 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         // Use the correct fault action for the selected namespace
         if (Final.WSA_FAULT_ACTION.equals(action) || Submission.WSA_FAULT_ACTION.equals(action)) {
             action = isFinalAddressingNamespace ? Final.WSA_FAULT_ACTION : Submission.WSA_FAULT_ACTION;
+            messageContextOptions.setAction(action);
         }
         else if (!isFinalAddressingNamespace && Final.WSA_SOAP_FAULT_ACTION.equals(action)) {
             action = Submission.WSA_FAULT_ACTION;
+            messageContextOptions.setAction(action);
         }
 
         // If we need to add a wsa:Action header
@@ -260,6 +262,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                             if (includeOptionalHeaders) {
                                 relationshipType = isFinalAddressingNamespace ?
                                         Final.WSA_DEFAULT_RELATIONSHIP_TYPE : Submission.WSA_DEFAULT_RELATIONSHIP_TYPE;
+                                relatesTo[i].setRelationshipType(relationshipType);
                             }
                             else {
                                 continue; //Omit the relationship type
