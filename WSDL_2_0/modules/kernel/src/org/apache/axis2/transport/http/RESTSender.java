@@ -308,7 +308,7 @@ public class RESTSender extends AbstractHTTPSender {
             String path = urlString.substring(0, separator - 1);
             String query = urlString.substring(separator - 1);
             String replacedQuery ;
-                 replacedQuery = applyURITemplating(msgContext, query, false);
+                 replacedQuery = applyURITemplating(msgContext, query, true);
             url = new URL(path + replacedQuery);
         }
 
@@ -326,16 +326,24 @@ public class RESTSender extends AbstractHTTPSender {
         String charEncoding =
                 (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
+        String contentType = null;
+
         // Default encoding scheme
         if (charEncoding == null) {
-            getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                    HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
-                            + MessageContext.DEFAULT_CHAR_SET_ENCODING);
+            contentType = HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
+                            + MessageContext.DEFAULT_CHAR_SET_ENCODING;
         } else {
-            getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
-                    HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
-                            + charEncoding);
+            contentType = HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
+                            + charEncoding;
         }
+
+        String action = msgContext.getOptions().getAction();
+
+        if (action != null) {
+            contentType = contentType + ";" + "action=" + action; 
+        }
+
+        getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,contentType);
 
         HttpClient httpClient = getHttpClient(msgContext);
         executeMethod(httpClient, msgContext, url, getMethod);

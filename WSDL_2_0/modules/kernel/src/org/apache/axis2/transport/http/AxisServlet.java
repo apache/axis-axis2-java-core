@@ -27,11 +27,7 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.deployment.WarBasedAxisConfigurator;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.description.AxisBindingOperation;
-import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.ListenerManager;
@@ -237,6 +233,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (!disableREST && enableRESTInAxis2MainServlet && isRESTRequest(req)) {
             msgContext = createMessageContext(req, res);
             try {
+              String soapActionHeader = req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
+
+            if ((soapActionHeader != null) && soapActionHeader.startsWith("\"")
+                && soapActionHeader.endsWith("\"")) {
+                soapActionHeader = soapActionHeader.substring(1, soapActionHeader.length() - 1);
+            }
+                msgContext.setSoapAction(soapActionHeader);
                 new RESTUtil(configContext).processPostRequest(msgContext,
                         req,
                         res);
@@ -309,9 +312,12 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
                             AxisBindingOperation axisBindingOperation = (AxisBindingOperation) msgContext.getProperty(Constants.AXIS_BINDING_OPERATION);
                             if (axisBindingOperation != null) {
-                                String code = (String) axisBindingOperation.getFault((String) msgContext.getProperty(Constants.FAULT_NAME)).getProperty(WSDL2Constants.ATTR_WHTTP_CODE);
+                                AxisBindingMessage fault = axisBindingOperation.getFault((String) msgContext.getProperty(Constants.FAULT_NAME));
+                                if (fault != null) {
+                                String code = (String) fault.getProperty(WSDL2Constants.ATTR_WHTTP_CODE);
                                 if (code != null) {
                                     res.setStatus(Integer.parseInt(code));
+                                }
                                 }
                             }
                         }

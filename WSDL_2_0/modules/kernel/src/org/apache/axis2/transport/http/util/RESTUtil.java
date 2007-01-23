@@ -32,13 +32,11 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.description.AxisBindingOperation;
-import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.engine.RequestURIBasedDispatcher;
-import org.apache.axis2.engine.SOAPMessageBodyBasedDispatcher;
-import org.apache.axis2.engine.RequestURIOperationDispatcher;
+import org.apache.axis2.engine.*;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.SchemaUtil;
+import org.apache.axis2.util.Utils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 
@@ -171,6 +169,11 @@ public class RESTUtil {
         requestDispatcher.invoke(msgContext);
         dispatchOperation(msgContext);
 
+        if (msgContext.getAxisOperation() == null) {
+            SOAPActionBasedDispatcher soapActionBasedDispatcher = new SOAPActionBasedDispatcher();
+            soapActionBasedDispatcher.invoke(msgContext);
+        }
+
         // check for the dispatching result
         if (msgContext.getAxisService() == null || msgContext.getAxisOperation() == null) {
             throw new AxisFault("I can not find a service for this request to be serviced." +
@@ -182,8 +185,7 @@ public class RESTUtil {
         AxisService axisService = msgContext.getAxisService();
         if (axisService != null) {
         HttpServletRequest httpServletRequest= (HttpServletRequest)msgContext.getProperty(Constants.HTTP_SERVLET_REQUEST);
-        String url = httpServletRequest.getPathInfo();
-        String pathString = parseRequestURL(httpServletRequest.getPathInfo() + "?" + httpServletRequest.getQueryString());
+        String pathString = Utils.parseRequestURL(httpServletRequest.getPathInfo() + "?" + httpServletRequest.getQueryString());
         AxisOperation axisOperation = axisService.getOperationFromRequestURL(pathString);
             if (axisOperation != null) {
                 AxisEndpoint axisEndpoint = axisService.getEndpoint((String) msgContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
@@ -270,22 +272,6 @@ public class RESTUtil {
         return httpLocation;
     }
 
-    private String parseRequestURL (String path) {
-
-        path = path.substring(1);
-        int index = path.indexOf("/");
-        String service = null;
-
-        if (-1 != index) {
-            service =  path.substring(index);
-        }
-         else {
-            int queryIndex = path.indexOf("?");
-            service = path.substring(queryIndex);
-        }
-         return service;
     }
-
-}
 
 

@@ -347,4 +347,20 @@ public class Utils {
         return mepConstant;
     }
 
+    public static String parseRequestURL (String path) {
+
+        path = path.substring(1);
+        int index = path.indexOf("/");
+        String service = null;
+
+        if (-1 != index) {
+            service =  path.substring(index);
+        }
+         else {
+            int queryIndex = path.indexOf("?");
+            service = path.substring(queryIndex);
+        }
+         return service;
+    }
+
 }

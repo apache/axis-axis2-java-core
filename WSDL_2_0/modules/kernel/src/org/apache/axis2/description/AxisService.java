@@ -424,14 +424,6 @@ public class AxisService extends AxisDescription {
 
         Iterator axisMessageIter = axisOperation.getChildren();
 
-        while (axisMessageIter.hasNext()) {
-            AxisMessage axisMessage = (AxisMessage) axisMessageIter.next();
-            String messageName = axisMessage.getName();
-            if (messageName != null && !messageName.equals(operationName)) {
-                mapActionToOperation(messageName, axisOperation);
-            }
-        }
-
         mapActionToOperation(operationName, axisOperation);
 
         String action = axisOperation.getSoapAction();

@@ -18,14 +18,7 @@
 package org.apache.axis2;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPConstants;
-import org.apache.axiom.soap.SOAPFaultCode;
-import org.apache.axiom.soap.SOAPFaultDetail;
-import org.apache.axiom.soap.SOAPFaultNode;
-import org.apache.axiom.soap.SOAPFaultReason;
-import org.apache.axiom.soap.SOAPFaultRole;
-import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.*;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
@@ -242,7 +235,7 @@ public class AxisFault extends RemoteException {
      *
      * @param header to add.
      */
-    public void addHeader(SOAPHeader header) {
+    public void addHeader(SOAPHeaderBlock header) {
         headers.add(header);
     }
 

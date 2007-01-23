@@ -438,6 +438,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 soapBindingExtensions.getHttpTransferCodingDefault());
         axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_MODULE,
                 createSoapModules(soapBindingExtensions.getSoapModules()));
+        axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
+                soapBindingExtensions.getHttpQueryParameterSeparatorDefault());
 
         // Capture all the fault specific properties
 
@@ -526,6 +528,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
                     soapBindingOperationExtensions.getHttpTransferCodingDefault());
+            axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
+                    soapBindingOperationExtensions.getHttpQueryParameterSeparator());
 
 
             BindingMessageReference[] bindingMessageReferences =

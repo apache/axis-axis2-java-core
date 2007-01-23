@@ -193,35 +193,34 @@ public class SchemaUtil {
                         while (iterator.hasNext()) {
                             XmlSchemaElement innerElement = (XmlSchemaElement) iterator.next();
                             QName qName = innerElement.getQName();
-                            String name = qName != null ? qName.getLocalPart() : innerElement.getName();
+                            long minOccurs = innerElement.getMinOccurs();
+                            while (minOccurs != 0) {
+                                String name = qName != null ? qName.getLocalPart() : innerElement.getName();
 
-                            // check whether this has a mapping in httpLocationParameterMap.
-                            String mappingParamName = (String) httpLocationParameterMap.get(name);
-                            if (mappingParamName == null) {
-                                mappingParamName = name;
+                                // check whether this has a mapping in httpLocationParameterMap.
+                                String value = (String) httpLocationParameterMap.get(name);
+                                if (value == null) {
+                                    String[] parameterValuesArray = (String[]) requestParameterMap.get(name);
+                                    if (parameterValuesArray != null &&
+                                            !"".equals(parameterValuesArray[0]) && parameterValuesArray[0] != null) {
+                                        value = parameterValuesArray[0];
+
+                                    }
+                                }
+
+                                if (value == null) {
+                                    throw new AxisFault("Required element " + qName +
+                                            " defined in the schema can not be found in the request");
+                                }
+
+                                OMNamespace ns = (qName == null || qName.getNamespaceURI() == null || qName.getNamespaceURI().length() == 0) ?
+                                        null :
+                                        soapFactory.createOMNamespace(qName.getNamespaceURI(), null);
+                                soapFactory.createOMElement(name, ns,
+                                        bodyFirstChild).setText(value);
+
+                                minOccurs--;
                             }
-
-                            String[] parameterValuesArray = (String[]) requestParameterMap.get(mappingParamName);
-                            String value = null;
-                            if (parameterValuesArray != null &&
-                                    !"".equals(parameterValuesArray[0]) && parameterValuesArray[0] != null)
-                            {
-                                value = parameterValuesArray[0];
-
-                            } else if (httpLocationParameterMap.get(mappingParamName) != null) {
-
-                                value = (String) httpLocationParameterMap.get(mappingParamName);
-
-                            } else if (xmlSchemaElement.getMinOccurs() != 0) {
-                                throw new AxisFault("Required element " + qName +
-                                        " defined in the schema can not be found in the request");
-                            }
-
-                            OMNamespace ns = (qName == null || qName.getNamespaceURI() == null || qName.getNamespaceURI().length() == 0) ?
-                                    null :
-                                    soapFactory.createOMNamespace(qName.getNamespaceURI(), null);
-                            soapFactory.createOMElement(name, ns,
-                                    bodyFirstChild).setText(value);
                         }
                     }
                 }
@@ -263,7 +262,7 @@ public class SchemaUtil {
         }
 
         // now let's do the difficult part, extract parameters from the path element.
-        extractParametersFromPath(templatedPath, httpLocationParameterMap, request.getRequestURL());
+        extractParametersFromPath(templatedPath, httpLocationParameterMap, request.getRequestURI());
 
         return httpLocationParameterMap;
     }
@@ -279,7 +278,10 @@ public class SchemaUtil {
             if (buffer.indexOf("{") > 0 && buffer.indexOf("}") > 0) {
                 String parameterName = buffer.substring(0, buffer.indexOf("="));
                 String schemaElementName = buffer.substring(buffer.indexOf("=") + 2, buffer.length() - 1);
-                httpLocationParameterMap.put(schemaElementName, parameterName);
+                String[] parameterValuesArray = (String[]) parameterMap.get(parameterName);
+                if (parameterValuesArray != null) {
+                    httpLocationParameterMap.put(schemaElementName, parameterValuesArray[0]);
+                }
             }
 
         }
@@ -306,7 +308,7 @@ public class SchemaUtil {
      * @param templatedPath
      * @param httpLocationParameterMap
      */
-    protected static void extractParametersFromPath(String templatedPath, MultipleEntryHashMap httpLocationParameterMap, StringBuffer requestURIBuffer) {
+    protected static void extractParametersFromPath(String templatedPath, MultipleEntryHashMap httpLocationParameterMap, String requestURL) {
 
 
         if (templatedPath != null && !"".equals(templatedPath) && templatedPath.indexOf("{") > -1) {
@@ -317,6 +319,13 @@ public class SchemaUtil {
             int templateStartIndex = 0;
             int templateEndIndex = 0;
             int indexOfNextConstant = 0;
+
+            StringBuffer requestURIBuffer = null;
+            try {
+                requestURIBuffer = new StringBuffer(URLDecoder.decode(requestURL, "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                log.error("Could not decode the query String in the HttpServletRequest");
+            }
 
             while (startIndex < requestURIBuffer.length()) {
                 // this will always hold the starting index of a template parameter
@@ -373,7 +382,6 @@ public class SchemaUtil {
         } catch (UnsupportedEncodingException e) {
             log.error("Could not decode the query String in the HttpServletRequest");
         }
-//            queryString = encodedQueryString;
 
         if (queryParamSeparator ==null || queryParamSeparator.equals("&")) {
             parameterMap = HttpUtils.parseQueryString(queryString);
@@ -383,7 +391,7 @@ public class SchemaUtil {
             for (int i=0; i < parts.length; i++) {
                 int separator = parts[i].indexOf("=");
                 String [] value = new String[1];
-                value[0] = parts[i].substring(separator);
+                value[0] = parts[i].substring(separator+1);
                 parameterMap.put(parts[i].substring(0,separator), value);
             }
         }
@@ -403,7 +411,7 @@ public class SchemaUtil {
             } catch (FileUploadException e) {
                     log.error("Unable to extract data from Multipart request");
             }
-        } else {
+        } else {                  
 
         Enumeration enumeration = request.getParameterNames();
         while(enumeration.hasMoreElements()) {

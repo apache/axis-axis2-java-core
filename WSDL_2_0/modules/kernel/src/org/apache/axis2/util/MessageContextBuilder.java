@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.List;
+import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
@@ -310,6 +311,14 @@ public class MessageContextBuilder {
                 axisFault = (AxisFault) e.getCause();
             }
         }
+
+        if (axisFault != null) {
+            Iterator iter = axisFault.headerIterator();
+            while (iter.hasNext()) {
+                SOAPHeaderBlock header = (SOAPHeaderBlock)iter.next();
+                envelope.getHeader().addChild(header);
+            }
+        }                                                         
 
         if (e instanceof SOAPProcessingException) {
             soapException = (SOAPProcessingException) e;

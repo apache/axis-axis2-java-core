@@ -661,7 +661,7 @@ public abstract class AbstractHTTPSender {
             }
 
             for (int i=1;i<values.size();i++) {
-                query = queryParameterSeparator + values.get(i);
+                query = query + queryParameterSeparator + values.get(i);
             }
         }
         return query;

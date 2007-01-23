@@ -32,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Dispatches the operation based on the information from the target endpoint URL.
@@ -60,7 +61,12 @@ public class RequestURIOperationDispatcher extends AbstractDispatcher {
                 AxisOperation axisOperation = service.getOperation(operationName);
                 if (axisOperation == null) {
                     log.debug("Attempted to check for Operation using target endpoint URI, but the operation fragment does not match a operation name");
-                    return null;
+                    HttpServletRequest httpServletRequest= (HttpServletRequest)messageContext.getProperty(Constants.HTTP_SERVLET_REQUEST);
+                    String pathString = Utils.parseRequestURL(httpServletRequest.getPathInfo() + "?" + httpServletRequest.getQueryString());
+                    axisOperation = service.getOperationFromRequestURL(pathString);
+                    if (axisOperation == null) {
+                        return null;
+                    }
                 }
                 AxisEndpoint axisEndpoint = service.getEndpoint((String) messageContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
                 AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisEndpoint.getBinding().getChild(axisOperation.getName());
