@@ -20,46 +20,66 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <groupId>org.apache.axis2.maven2</groupId>
-    <artifactId>axis2-maven-tools</artifactId>
-    <version>SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
+    <groupId>org.apache</groupId>
+    <artifactId>apache</artifactId>
+    <version>3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>axis2-mar-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Axis 2 Mar Maven Plugin</name>
-
+  <groupId>org.apache.axis2.maven2</groupId>
+  <version>SNAPSHOT</version>
+  
   <description>
     A Maven 2 plugin for creating Axis 2 module archives (mar files)
   </description>
 
+  <scm>
+    <connection>http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/tool/axis2-mar-maven-plugin</connection>
+    <developerConnection>https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/tool/axis2-mar-maven-plugin</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/tool/axis2-mar-maven-plugin</url>
+  </scm>
+
   <dependencies>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-archiver</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-plugin-testing-harness</artifactId>
-    </dependency>
-  </dependencies>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>2.0.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-project</artifactId>
+        <version>2.0.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-artifact</artifactId>
+        <version>2.0.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-archiver</artifactId>
+        <version>2.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>1.1</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>3.8.2</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.shared</groupId>
+        <artifactId>maven-plugin-testing-harness</artifactId>
+        <version>1.0-beta-1</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
 
   <developers>
     <developer>
