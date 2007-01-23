@@ -11,7 +11,9 @@
         * by the Apache Axis2 version: #axisVersion# #today#
         */
 
-        package <xsl:value-of select="@package"/>;
+        <xsl:if test="string-length(normalize-space(@package)) > 0">
+            package <xsl:value-of select="@package"/>;
+        </xsl:if>
 
         /**
         *  <xsl:value-of select="$name"/> wrapped bean classes
