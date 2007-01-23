@@ -17,13 +17,10 @@
 
 package org.apache.axis2.context;
 
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.ListenerManager;
@@ -33,7 +30,6 @@ import org.apache.axis2.modules.Module;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.SessionUtils;
-import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
 import org.apache.commons.logging.Log;
@@ -126,11 +122,9 @@ public class ConfigurationContext extends AbstractContext {
                 String serviceGroupName = ((AxisServiceGroup) axisService.getParent()).getServiceGroupName();
                 serviceGroupContext = null;
 
-                synchronized (applicationSessionServiceGroupContextTable) {
-                    if (applicationSessionServiceGroupContextTable != null) {
-                        serviceGroupContext = (ServiceGroupContext) applicationSessionServiceGroupContextTable.get(
-                                serviceGroupName);
-                    }
+                if (applicationSessionServiceGroupContextTable != null) {
+                    serviceGroupContext = (ServiceGroupContext) applicationSessionServiceGroupContextTable.get(
+                            serviceGroupName);
                 }
 
                 if (serviceGroupContext == null) {
@@ -139,14 +133,12 @@ public class ConfigurationContext extends AbstractContext {
                         axisServiceGroup = (AxisServiceGroup) axisService.getParent();
                     }
                     serviceGroupContext = new ServiceGroupContext(messageContext.getConfigurationContext(),
-                                                                  axisServiceGroup);
+                            axisServiceGroup);
 
-                    synchronized (applicationSessionServiceGroupContextTable) {
-                        if (applicationSessionServiceGroupContextTable == null) {
-                            applicationSessionServiceGroupContextTable = new Hashtable();
-                        }
-                        applicationSessionServiceGroupContextTable.put(serviceGroupName, serviceGroupContext);
+                    if (applicationSessionServiceGroupContextTable == null) {
+                        applicationSessionServiceGroupContextTable = new Hashtable();
                     }
+                    applicationSessionServiceGroupContextTable.put(serviceGroupName, serviceGroupContext);
 
                 }
                 serviceContext = serviceGroupContext.getServiceContext(axisService);
@@ -233,31 +225,25 @@ public class ConfigurationContext extends AbstractContext {
     public void registerServiceGroupContext(ServiceGroupContext serviceGroupContext) {
         String id = serviceGroupContext.getId();
 
-        synchronized (serviceGroupContextMap) {
-            if (serviceGroupContextMap == null) {
-                serviceGroupContextMap = new Hashtable();
-            }
-
-            if ((serviceGroupContextMap.isEmpty()) || (serviceGroupContextMap.get(id) == null)) {
-                serviceGroupContextMap.put(id, serviceGroupContext);
-                serviceGroupContext.touch();
-                serviceGroupContext.setParent(this);
-            }
+        if (serviceGroupContextMap == null) {
+            serviceGroupContextMap = new Hashtable();
         }
 
+        if ((serviceGroupContextMap.isEmpty()) || (serviceGroupContextMap.get(id) == null)) {
+            serviceGroupContextMap.put(id, serviceGroupContext);
+            serviceGroupContext.touch();
+            serviceGroupContext.setParent(this);
+        }
         // this is the best time to clean up the SGCtxts since are not being used anymore
         cleanupServiceGroupContexts();
     }
 
-    public void addServiceGroupContextintoApplicatoionScopeTable(ServiceGroupContext serviceGroupContext) { 
-
-        synchronized (applicationSessionServiceGroupContextTable) {
-            if (applicationSessionServiceGroupContextTable == null) {
-                applicationSessionServiceGroupContextTable = new Hashtable();
-            }
-            applicationSessionServiceGroupContextTable.put(
-                    serviceGroupContext.getDescription().getServiceGroupName(), serviceGroupContext);
+    public void addServiceGroupContextintoApplicatoionScopeTable(ServiceGroupContext serviceGroupContext) {
+        if (applicationSessionServiceGroupContextTable == null) {
+            applicationSessionServiceGroupContextTable = new Hashtable();
         }
+        applicationSessionServiceGroupContextTable.put(
+                serviceGroupContext.getDescription().getServiceGroupName(), serviceGroupContext);
     }
 
     public AxisConfiguration getAxisConfiguration() {
@@ -270,13 +256,12 @@ public class ConfigurationContext extends AbstractContext {
      * @return Returns OperationContext <code>OperationContext<code>
      */
     public OperationContext getOperationContext(String id) {
-        OperationContext opCtx = null;
-        
+        OperationContext opCtx;
         synchronized (operationContextMap) {
             if (operationContextMap == null) {
                 return null;
             }
-            opCtx = (OperationContext) this.operationContextMap.get(id); 
+            opCtx = (OperationContext) this.operationContextMap.get(id);
         }
 
         return opCtx;
@@ -286,54 +271,44 @@ public class ConfigurationContext extends AbstractContext {
         return this.operationContextMap;
     }
 
-    public OperationContext findOperationContext(String operationName, String serviceName, String serviceGroupName)
-    {
-        if (operationName == null)
-        {
+    public OperationContext findOperationContext(String operationName, String serviceName, String serviceGroupName) {
+        if (operationName == null) {
             return null;
         }
-        
-        if (serviceName == null)
-        {
+
+        if (serviceName == null) {
             return null;
         }
 
         // group name is not necessarily a prereq
         // but if the group name is non-null, then it has to match
 
-        synchronized (operationContextMap)
-        {
+        synchronized (operationContextMap) {
             Iterator it = operationContextMap.keySet().iterator();
 
-            while (it.hasNext())
-            {
+            while (it.hasNext()) {
                 Object key = it.next();
                 OperationContext value = (OperationContext) operationContextMap.get(key);
 
-                String valueOperationName = null;
-                String valueServiceName = null;
-                String valueServiceGroupName = null;
+                String valueOperationName;
+                String valueServiceName;
+                String valueServiceGroupName;
 
-                if (value != null)
-                {
+                if (value != null) {
                     valueOperationName = value.getOperationName();
                     valueServiceName = value.getServiceName();
                     valueServiceGroupName = value.getServiceGroupName();
 
-                    if ((valueOperationName != null) && (valueOperationName.equals(operationName)))
-                    {
-                        if ((valueServiceName != null) && (valueServiceName.equals(serviceName)))
-                        {
+                    if ((valueOperationName != null) && (valueOperationName.equals(operationName))) {
+                        if ((valueServiceName != null) && (valueServiceName.equals(serviceName))) {
                             if ((valueServiceGroupName != null) && (serviceGroupName != null)
-                                && (valueServiceGroupName.equals(serviceGroupName)))
-                            {
+                                    && (valueServiceGroupName.equals(serviceGroupName))) {
                                 // match
                                 return value;
                             }
 
                             // or, both need to be null
-                            if ((valueServiceGroupName == null) && (serviceGroupName == null))
-                            {
+                            if ((valueServiceGroupName == null) && (serviceGroupName == null)) {
                                 // match
                                 return value;
                             }
@@ -366,20 +341,18 @@ public class ConfigurationContext extends AbstractContext {
                                                       MessageContext msgContext) {
 
         ServiceGroupContext serviceGroupContext = null;
-        
-        synchronized (serviceGroupContextMap) {
-            if (serviceGroupContextMap != null) {
-                serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
 
-                if (serviceGroupContext != null) {
-                    serviceGroupContext.touch();
-                }
+        if (serviceGroupContextMap != null) {
+            serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
+
+            if (serviceGroupContext != null) {
+                serviceGroupContext.touch();
             }
         }
 
         if (serviceGroupContext == null
-            && msgContext != null
-            && msgContext.getSessionContext() != null) {
+                && msgContext != null
+                && msgContext.getSessionContext() != null) {
             serviceGroupContext = msgContext.getSessionContext().getServiceGroupContext(
                     serviceGroupContextId);
         }
@@ -390,11 +363,9 @@ public class ConfigurationContext extends AbstractContext {
                 AxisServiceGroup asg = (AxisServiceGroup) axisService.getParent();
                 if (asg != null) {
 
-                    synchronized (applicationSessionServiceGroupContextTable) {
-                        if (applicationSessionServiceGroupContextTable != null) {
-                            serviceGroupContext = (ServiceGroupContext)
-                                    applicationSessionServiceGroupContextTable.get(asg.getServiceGroupName());
-                        }
+                    if (applicationSessionServiceGroupContextTable != null) {
+                        serviceGroupContext = (ServiceGroupContext)
+                                applicationSessionServiceGroupContextTable.get(asg.getServiceGroupName());
                     }
                 }
             }
@@ -406,28 +377,24 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Returns a ServiceGroupContext object associated
-     * with the specified ID from the internal table. 
-     * 
-     * @param Id     The ID string associated with the ServiceGroupContext object
+     * with the specified ID from the internal table.
+     *
+     * @param Id The ID string associated with the ServiceGroupContext object
      * @return The ServiceGroupContext object, or null if not found
      */
     public ServiceGroupContext getServiceGroupContext(String Id) {
 
-        if (Id == null)
-        {
+        if (Id == null) {
             // Hashtables require non-null key-value pairs
             return null;
         }
 
         ServiceGroupContext serviceGroupContext = null;
 
-        synchronized (serviceGroupContextMap)
-        {
-            if (serviceGroupContextMap != null) {
-                serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(Id);
-                if (serviceGroupContext != null) {
-                    serviceGroupContext.touch();
-                }
+        if (serviceGroupContextMap != null) {
+            serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(Id);
+            if (serviceGroupContext != null) {
+                serviceGroupContext.touch();
             }
         }
 
@@ -481,21 +448,19 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     private void cleanupServiceGroupContexts() {
-        synchronized (serviceGroupContextMap) {
-            if (serviceGroupContextMap == null) {
-                return;
-            }
-            long currentTime = new Date().getTime();
-            Iterator sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
-            while (sgCtxtMapKeyIter.hasNext()) {
-                String sgCtxtId = (String) sgCtxtMapKeyIter.next();
-                ServiceGroupContext serviceGroupContext =
-                        (ServiceGroupContext) serviceGroupContextMap.get(sgCtxtId);
-                if ((currentTime - serviceGroupContext.getLastTouchedTime()) >
-                        getServiceGroupContextTimoutInterval()) {
-                    sgCtxtMapKeyIter.remove();
-                    cleanupServiceContexts(serviceGroupContext);
-                }
+        if (serviceGroupContextMap == null) {
+            return;
+        }
+        long currentTime = new Date().getTime();
+        Iterator sgCtxtMapKeyIter = serviceGroupContextMap.keySet().iterator();
+        while (sgCtxtMapKeyIter.hasNext()) {
+            String sgCtxtId = (String) sgCtxtMapKeyIter.next();
+            ServiceGroupContext serviceGroupContext =
+                    (ServiceGroupContext) serviceGroupContextMap.get(sgCtxtId);
+            if ((currentTime - serviceGroupContext.getLastTouchedTime()) >
+                    getServiceGroupContextTimoutInterval()) {
+                sgCtxtMapKeyIter.remove();
+                cleanupServiceContexts(serviceGroupContext);
             }
         }
     }
@@ -526,9 +491,9 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-    private void cleanupContexts() {
+    public void cleanupContexts() {
         if ((applicationSessionServiceGroupContextTable != null) &&
-            (applicationSessionServiceGroupContextTable.size() > 0)) {
+                (applicationSessionServiceGroupContextTable.size() > 0)) {
             Iterator applicationScopeSgs = applicationSessionServiceGroupContextTable.values().iterator();
             while (applicationScopeSgs.hasNext()) {
                 ServiceGroupContext serviceGroupContext =
@@ -546,66 +511,62 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     public void terminate()
-      throws AxisFault
-    {
-      Runtime.getRuntime().removeShutdownHook(cleanupThread);
-      performCleanup();
+            throws AxisFault {
+        Runtime.getRuntime().removeShutdownHook(cleanupThread);
+        performCleanup();
     }
-        
-    private void performCleanup()
-      throws AxisFault
-    {
-      if (listenerManager != null)
-      {
-        listenerManager.stop();
-      }
-      
-      /*Stop the transport senders*/
-      HashMap transportOut = getAxisConfiguration().getTransportsOut();
-      if (transportOut.size() > 0) {
-          Iterator trsItr = transportOut.values().iterator();
-          while (trsItr.hasNext()) {
-              TransportOutDescription outDescription = (TransportOutDescription) trsItr.next();
-              TransportSender trsSededer = outDescription.getSender();
-              if (trsSededer != null) {
-                  trsSededer.stop();
-              }
-          }
-      }
 
-      /*Shut down the modules*/
-      HashMap modules = getAxisConfiguration().getModules();
-      if (modules != null) {
-          Iterator moduleitr = modules.values().iterator();
-          while (moduleitr.hasNext()) {
-              AxisModule axisModule = (AxisModule) moduleitr.next();
-              Module module = axisModule.getModule();
-              if (module != null) {
-                  module.shutdown(this);
-              }
-          }
-      }
-
-      cleanupContexts();
-      
-      /*Shut down the services*/
-      Iterator services = getAxisConfiguration().getServices().values().iterator();
-      while (services.hasNext()) {
-        AxisService axisService = (AxisService) services.next();
-        ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
-        if (serviceLifeCycle != null) {
-          serviceLifeCycle.shutDown(this, axisService);
+    private void performCleanup()  throws AxisFault {
+        if (listenerManager != null) {
+            listenerManager.stop();
         }
-      }
+
+        /*Stop the transport senders*/
+        HashMap transportOut = getAxisConfiguration().getTransportsOut();
+        if (transportOut.size() > 0) {
+            Iterator trsItr = transportOut.values().iterator();
+            while (trsItr.hasNext()) {
+                TransportOutDescription outDescription = (TransportOutDescription) trsItr.next();
+                TransportSender trsSededer = outDescription.getSender();
+                if (trsSededer != null) {
+                    trsSededer.stop();
+                }
+            }
+        }
+
+        /*Shut down the modules*/
+        HashMap modules = getAxisConfiguration().getModules();
+        if (modules != null) {
+            Iterator moduleitr = modules.values().iterator();
+            while (moduleitr.hasNext()) {
+                AxisModule axisModule = (AxisModule) moduleitr.next();
+                Module module = axisModule.getModule();
+                if (module != null) {
+                    module.shutdown(this);
+                }
+            }
+        }
+
+        cleanupContexts();
+
+        /*Shut down the services*/
+        Iterator services = getAxisConfiguration().getServices().values().iterator();
+        while (services.hasNext()) {
+            AxisService axisService = (AxisService) services.next();
+            ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
+            if (serviceLifeCycle != null) {
+                serviceLifeCycle.shutDown(this, axisService);
+            }
+        }
     }
-    
+
     public String getServiceContextPath() {
-        if(cachedServicePath == null){
+        if (cachedServicePath == null) {
             cachedServicePath = internalGetServiceContextPath();
         }
         return cachedServicePath;
     }
-    
+
     private String internalGetServiceContextPath() {
         String ctxRoot = getContextRoot().trim();
         String path = "/";
@@ -678,26 +639,21 @@ public class ConfigurationContext extends AbstractContext {
         }
         return serviceGroupContextTimoutInterval;
     }
-    
-    class CleanupThread extends Thread
-    {
-      ConfigurationContext configContext;
-      
-      public CleanupThread(ConfigurationContext configContext)
-      {
-        this.configContext = configContext;
-      }
-      
-      public void run()
-      {
-        try
-        {
-          configContext.performCleanup();
+
+    class CleanupThread extends Thread {
+        ConfigurationContext configContext;
+
+        public CleanupThread(ConfigurationContext configContext) {
+            this.configContext = configContext;
         }
-        catch (AxisFault e)
-        {
-          e.printStackTrace();
+
+        public void run() {
+            try {
+                configContext.performCleanup();
+            }
+            catch (AxisFault e) {
+                e.printStackTrace();
+            }
         }
-      }
     }
 }
