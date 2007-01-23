@@ -80,7 +80,10 @@ public class ClassFinderImpl implements ClassFinder {
 		        	                             classes.add(clazz);
 		        	                             
 		        	                         }
-		        	                       }catch (Exception e) {
+		        	             	        //catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+		        	             	        //does not extend Exception, so lets catch everything that extends Throwable
+		        	                        //rather than just Exception.
+		        	                       }catch (Throwable e) {
 		        	                         if (log.isDebugEnabled()) {
 		        	                             log.debug("Tried to load class " + clazzName + " while constructing a JAXBContext.  This class will be skipped.  Processing Continues." );
 		        	                             log.debug("  The reason that class could not be loaded:" + e.toString());

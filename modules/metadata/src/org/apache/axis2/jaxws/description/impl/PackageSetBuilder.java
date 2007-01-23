@@ -368,8 +368,10 @@ public class PackageSetBuilder {
             // TODO J2W AccessController Needed
             // Don't make this public, its a security exposure
             return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
-            
-        } catch (ClassNotFoundException e) {
+	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+	        //does not extend Exception, so lets catch everything that extends Throwable
+            //rather than just Exception.
+        } catch (Throwable e) {
             // TODO Should the exception be swallowed ?
             if (log.isDebugEnabled()) {
                 log.debug("PackageSetBuilder cannot load the following class:" + className);

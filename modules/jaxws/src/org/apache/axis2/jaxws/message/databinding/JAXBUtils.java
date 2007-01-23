@@ -81,7 +81,12 @@ public class JAXBUtils {
 	 */
 	public static JAXBContext getJAXBContext(Set<String> contextPackages) throws JAXBException {
 		// JAXBContexts for the same class can be reused and are supposed to be thread-safe
-        
+        if(log.isDebugEnabled()){
+        	log.debug("Following packages are in this batch of getJAXBContext() :");
+        	for(String pkg:contextPackages){
+        		log.debug(pkg);
+        	}
+        }
 	    // The JAXBContexts are keyed by ClassLoader and the set of Strings
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         
@@ -125,7 +130,12 @@ public class JAXBUtils {
     private static JAXBContext createJAXBContext(Set<String> contextPackages, ClassLoader cl) throws JAXBException {
 
        JAXBContext context = null;
-       
+       if(log.isDebugEnabled()){
+       	log.debug("Following packages are in this batch of getJAXBContext() :");
+       	for(String pkg:contextPackages){
+       		log.debug(pkg);
+       	}
+       }
         // The contextPackages is a set of package names that are constructed using PackageSetBuilder.
         // PackageSetBuilder gets the packages names from the following sources.
         //   a) It walks the various annotations on the WebService collecting package names.
@@ -368,14 +378,20 @@ public class JAXBUtils {
 	private static boolean checkPackage(String p, ClassLoader cl) {
 	    
 	    // Each package must have an ObjectFactory
-	    
+		if(log.isDebugEnabled()){
+        	log.debug("checking package :" + p);
+        	
+        }
 	    try {
 	        Class cls = Class.forName(p + ".ObjectFactory",false, cl);
 	        if (cls != null) {
 	            return true;
 	        }
-	    } catch (Exception e) {
-	        // Exception is thrown if class does not exist.  
+	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+	        //does not extend Exception. So we will absorb any Throwable exception here.
+	    } catch (Throwable e) {
+	        // Exception is thrown if class does not exist.
+	    	e.printStackTrace();
 	    }
 	    
         try {
@@ -383,8 +399,11 @@ public class JAXBUtils {
             if (cls != null) {
                 return true;
             }
-        } catch (Exception e) {
-            // Exception is thrown if class does not exist.  
+            //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+	        //does not extend Exception. So we will absorb any Throwable exception here.
+        } catch (Throwable e) {
+            // Exception is thrown if class does not exist.
+        	e.printStackTrace();
         }
 
 	    return false;
@@ -451,8 +470,7 @@ public class JAXBUtils {
         } catch (ClassNotFoundException e) {
         	 if(log.isDebugEnabled()){
                  log.debug("getClassesFromDirectory failed to get Classes");
-        	 }
-        	 e.printStackTrace();            
+        	 }          
         }
         try {
            //If Calsses not found in directory then look for jar that has these classes
@@ -465,7 +483,6 @@ public class JAXBUtils {
         	 if(log.isDebugEnabled()){
                  log.debug("getClassesFromJarFile failed to get Classes");
         	 }
-        	 e.printStackTrace();
         }
         
         return classes;
@@ -535,7 +552,9 @@ public class JAXBUtils {
                                 
                                 //Class aClazz = Class.forName(loadableName, false, Thread.currentThread().getContextClassLoader());
                             }
-                        } catch (Exception e) {
+                	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+                	        //does not extend Exception
+                        } catch (Throwable e) {
                             if (log.isDebugEnabled()) {
                                 log.debug("Tried to load class " + className + " while constructing a JAXBContext.  This class will be skipped.  Processing Continues." );
                                 log.debug("  The reason that class could not be loaded:" + e.toString());
@@ -580,7 +599,9 @@ public class JAXBUtils {
                 // Load and add the class
                 Class cls = Class.forName(ClassUtils.getLoadableClassName(className), false, cl);
                 list.add(cls);
-            } catch (Exception e) {
+    	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+    	        //does not extend Exception
+            } catch (Throwable e) {
                 if (log.isDebugEnabled()) {
                     log.debug("Tried to load class " + className + " while constructing a JAXBContext.  This class will be skipped.  Processing Continues." );
                     log.debug("  The reason that class could not be loaded:" + e.toString());

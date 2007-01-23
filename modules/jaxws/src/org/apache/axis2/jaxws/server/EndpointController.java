@@ -109,7 +109,10 @@ public class EndpointController {
 		    //TODO: What should be done if the supplied ClassLoader is null?
             Class _class = Class.forName(className, true, cl);
             return _class;
-		} catch(ClassNotFoundException cnf ){
+	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+	        //does not extend Exception, so lets catch everything that extends Throwable
+            //rather than just Exception.
+		} catch(Throwable cnf ){
 			throw ExceptionFactory.makeWebServiceException(Messages.getMessage(
                     "EndpointControllerErr4", className));
 		}

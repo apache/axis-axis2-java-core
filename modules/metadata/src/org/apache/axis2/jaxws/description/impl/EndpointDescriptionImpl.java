@@ -470,7 +470,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     				try {
     					// TODO: Using Class.forName() is probably not the best long-term way to get the SEI class from the annotation
     					seiClass = Class.forName(seiClassName, false, Thread.currentThread().getContextClassLoader());
-    				} catch (ClassNotFoundException e) {
+    			        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+    			        //does not extend Exception, so lets catch everything that extends Throwable
+                        //rather than just Exception.
+    				} catch (Throwable e) {
     					// TODO: Throwing wrong exception
     					e.printStackTrace();
     					throw new UnsupportedOperationException("Can't create SEI class: " + e);
