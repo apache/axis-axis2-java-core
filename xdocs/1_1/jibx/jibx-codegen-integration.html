@@ -20,6 +20,11 @@ downside, JiBX requires more setup than the other data binding techniques - in
 particular, you need to come up with a set of data classes and a binding
 definition in order to work with JiBX in Axis2.</p>
 
+<p>JiBX support for Axis2 and Web services in general is continuing to evolve.
+This page covers the basics of using JiBX with Axis2 as of the current release.
+Check the <a href="http://www.sosnoski.com/jibx-wiki/space/axis2-jibx">JiBX
+Axis2 Wiki page</a> for updated information about using JiBX with Axis2.</p>
+
 <h2>Content</h2>
 <ul>
   <li><a href="#intro">Introduction</a></li>
@@ -160,7 +165,7 @@ more details.</p>
 <p>To run the WSDL2Java tool for JiBX data binding you need:</p>
 <ol>
   <li>To specify <i>-d jibx</i> to select JiBX binding.</li>
-  <li>You also need an additional parameter, <i>-Ebindingfile {file}</i>
+  <li>You also generally need an additional parameter, <i>-Ebindingfile {file}</i>
     (where <i>{file}</i> is the file path to your JiBX binding definition).</li>
   <li>Finally, you need to have the <i>axis2-jibx-XXXX.jar</i>, the
     <i>jibx-bind-XXXX.jar</i>, and the <i>jibx-run-XXXX.jar</i> files
@@ -174,11 +179,14 @@ method parameters, and each abstract mapping must specify a <i>type-name</i>
 attribute that matches the schema <i>complexType</i> used in the WSDL. You can
 also use formats in the binding definition to define the handling of schema
 <i>simpleType</i>s. Schema types corresponding to Java primitives and simple
-objects with build-in JiBX conversions are handled automatically.</p>
+objects with built-in JiBX conversions are handled automatically, and if all the
+parameter and return values in your wrapped WSDL are of these types you don't
+even need a JiBX binding definition. This is the one case where the
+<i>-Ebindingfile {file}</i> parameter is not needed.</p>
 
-<p>If you're not unwrapping the interface, your JiBX binding definition must
-include a concrete mapping for each element used as input or output by any
-operation.</p>
+<p>If you're not unwrapping the interface, you must use a JiBX binding
+definition and it must include a concrete mapping for each element used as input
+or output by any operation.</p>
 
 <a name="coming"></a>
 <h2>Coming Attractions</h2>
@@ -187,8 +195,9 @@ operation.</p>
 corresponding JiBX binding definitions from an input schema, and also for
 generating binding+schema generation from existing code. These features will be
 integrated into the Axis2 JiBX support when they are available. Check the <a
-href="http://www.jibx.org">JiBX project site</a> for updates on both JiBX
-and the Axis2 JiBX support.</p>
+href="http://www.jibx.org">JiBX project site</a> for updates on JiBX, and the
+<a href="http://www.sosnoski.com/jibx-wiki/space/axis2-jibx">JiBX
+Axis2 Wiki page</a> for updated information about using JiBX with Axis2.</p>
 
 <h2>References</h2>
 
