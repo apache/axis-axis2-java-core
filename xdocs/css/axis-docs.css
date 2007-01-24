@@ -58,17 +58,17 @@ p {
 
 a, a:link {
     color: #039;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 a:hover {
     color: #03c;
-    font-size: 12px;
+    font-size: 11px;
     text-decoration: none;
 }
 
 a:visited {
-    font-size: 12px; /* color: #969; */
+    font-size: 11px; /* color: #969; */
 /* No need to discolour visited links as this is a system */
 }
 
