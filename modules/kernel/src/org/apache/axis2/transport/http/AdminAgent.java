@@ -125,7 +125,8 @@ public class AdminAgent extends AbstractAgent {
     			: "disabled");
     	req.setAttribute("hotUpdate", (hasHotUpdate.equals("true")) ? "enabled" : "disabled");
     	boolean isMultipart = FileUpload.isMultipartContent(req);
-    	if (isMultipart) {
+        
+        if (isMultipart) {
 
     		try {
     			// Create a new file upload handler
@@ -147,7 +148,7 @@ public class AdminAgent extends AbstractAgent {
     						req.setAttribute("cause", "Unsupported file type " + fileExtesion);
     					} else {
 
-    						String fileNameOnly = "";
+    						String fileNameOnly ;
     						if (fileName.indexOf("\\") < 0) {
     							fileNameOnly =
     								fileName.substring(fileName.lastIndexOf("/") + 1, fileName
@@ -247,15 +248,6 @@ public class AdminAgent extends AbstractAgent {
     	}
     	renderView(SERVICE_PARA_EDIT_JSP_NAME, req, res);
     }
-
-    private String getBasicHTML(String s) {
-        return "<html>\n" +
-                "<body>\n" +
-                s +
-                "</body>\n" +
-                "</html>";
-    }
-
 
     protected void processEngagingGlobally(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         HashMap modules = configContext.getAxisConfiguration().getModules();

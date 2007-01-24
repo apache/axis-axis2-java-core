@@ -736,11 +736,11 @@ public class AxisConfiguration extends AxisDescription {
         return this.systemClassLoader;
     }
 
-    public TransportInDescription getTransportIn(QName name) throws AxisFault {
+    public TransportInDescription getTransportIn(QName name) {
         return (TransportInDescription) transportsIn.get(name);
     }
 
-    public TransportOutDescription getTransportOut(QName name) throws AxisFault {
+    public TransportOutDescription getTransportOut(QName name) {
         return (TransportOutDescription) transportsOut.get(name);
     }
 
