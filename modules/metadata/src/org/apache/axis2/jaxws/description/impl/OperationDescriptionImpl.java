@@ -143,6 +143,8 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     // Default value per JSR-181 MR sec 4.5, pg 24
     public static final Boolean WebResult_Header_DEFAULT = new Boolean(false);
     private Boolean             webResultHeader;
+    private Method serviceImplMethod;
+    private boolean serviceImplMethodFound = false;
 
     OperationDescriptionImpl(Method method, EndpointInterfaceDescription parent) {
         // TODO: Look for WebMethod anno; get name and action off of it
@@ -167,6 +169,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         methodComposite = mdc;
         this.operationName = new QName(getOperationName());
         webMethodAnnotation = methodComposite.getWebMethodAnnot();
+
         this.axisOperation = axisOperation;
         
         //If an AxisOperation was already created for us by populateService then just use that onw
@@ -1224,7 +1227,6 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
 
     public Method getMethodFromServiceImpl(Class serviceImpl) {
-        Method serviceImplMethod = null;
         
         // TODO: This doesn't support overloaded methods in the service impl  This is
         //       DIFFERENT than overloaded WSDL operations (which aren't supported).  We
@@ -1241,29 +1243,69 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         //  There will be two OpDescs, Foo1 and Foo2; the incoming wsdl operation will correctly identify
         //  which OpDesc.  However, to return the correct service impl method, we need to compare the
         //  signatures, not just the method names.
-        
-        Method[] methods = serviceImpl.getMethods();
-        String opDescMethodName = getJavaMethodName();
-        ParameterDescription[] paramDesc = getParameterDescriptions();
-        // TODO: As noted above, a full signature is necessary, not just number of params
-        int numberOfParams = 0;
-        if (paramDesc != null) {
-            numberOfParams = paramDesc.length;
-        }
-        
-        // Loop through all the methods on the service impl and find the method that maps
-        // to this OperationDescripton
-        for (Method checkMethod : methods) {
-            if (checkMethod.getName().equals(opDescMethodName)) {
-                Class[] methodParams = checkMethod.getParameterTypes();
-                // TODO: As noted above, a full signature is necessary, not just number of params
-                if (methodParams.length == numberOfParams) {
-                    serviceImplMethod = checkMethod;
-                    break;
+        if(!serviceImplMethodFound) {
+        	Method[] methods = serviceImpl.getMethods();
+            String opDescMethodName = getJavaMethodName();
+            ParameterDescription[] paramDesc = getParameterDescriptions();
+            // TODO: As noted above, a full signature is necessary, not just number of params
+            int numberOfParams = 0;
+            if (paramDesc != null) {
+                numberOfParams = paramDesc.length;
+            }
+            
+            // Loop through all the methods on the service impl and find the method that maps
+            // to this OperationDescripton
+            for (Method checkMethod : methods) {
+                if (checkMethod.getName().equals(opDescMethodName)) {
+                    Class[] methodParams = checkMethod.getParameterTypes();
+                    // TODO: As noted above, a full signature is necessary, not just number of params
+                    if (methodParams.length == numberOfParams) {
+                       if (paramTypesMatch(paramDesc, methodParams)) {
+                        	serviceImplMethod = checkMethod;
+                        	break;
+                       }
+                    }
                 }
             }
+            serviceImplMethodFound = true;
         }
-        
         return serviceImplMethod;
     } 
+    
+    /**
+     * This method will compare the types of the parameters in a 
+     * <code>ParameterDescription</code> vs. the type of the arguments in 
+     * the parameters of a <code>Method</code>.
+     * @param paramDescs - <code>ParameterDescription</code>[]
+     * @param methodParams - <code>Class</code>[]
+     * @return - <code>boolean</code>
+     */
+    private boolean paramTypesMatch(ParameterDescription[] paramDescs, Class[] 
+        methodParams) {
+    	for(int i=0; i < paramDescs.length; i++) {
+    		String mParamType = methodParams[i].getName();
+    		String pdType = getPDType(paramDescs[i]);
+    		if(mParamType == null || !mParamType.equals(pdType)) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
+    /**
+     * This will get a <code>String</code> representing the parameter class of a 
+     * <code>ParameterDescription</code>.
+     * @param pd - <code>ParameterDescrition</code>
+     * @return - <code>String</code>
+     */
+    private String getPDType(ParameterDescription pd) {
+    	String type = null;
+    	if(pd.getParameterType() != null) {
+    		type = pd.getParameterType().getName();
+    	}
+    	else if(pd.getParameterActualType() != null) {
+    		type = pd.getParameterActualType().getName();
+    	}
+    	return type;
+    }
 }
