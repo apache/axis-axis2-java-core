@@ -15,18 +15,6 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axis2.transport.http.HTTPConstants;
-
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.MimeHeaders;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,6 +23,19 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+
+import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axis2.transport.http.HTTPConstants;
 
 public class SOAPMessageImpl extends SOAPMessage {
 
@@ -386,8 +387,36 @@ public class SOAPMessageImpl extends SOAPMessage {
         return null;  //TODO - Not yet implemented        
     }
 
-    public void removeAttachments(MimeHeaders mimeheaders) {
-        //TODO - Not yet implemented
+    /**
+     * Removes all the AttachmentPart objects that have header entries that match the specified
+     * headers. Note that the removed attachment could have headers in addition to those 
+     * specified.
+     * @param headers - a MimeHeaders object containing the MIME headers for which to search
+     * @since SAAJ 1.3
+     */
+    public void removeAttachments(MimeHeaders headers) {
+        //TODO - check
+    	
+    	Collection newAttachmentParts = new ArrayList();
+    	Iterator attachmentPartsItr = attachmentParts.iterator();
+    	for (Iterator iter = attachmentPartsItr; iter.hasNext();) {
+			AttachmentPart attachmentPart = (AttachmentPart) iter.next();
+			
+			//Get all the headers
+			Iterator allMIMEHeaders = headers.getAllHeaders();
+			for (Iterator iterator = allMIMEHeaders; iterator.hasNext();) {
+				MimeHeader mimeHeader = (MimeHeader) iterator.next();
+				String[] headerValues = attachmentPart.getMimeHeader(mimeHeader.getName());
+				//if values for this header name, do not remove it
+				if(headerValues.length != 0){
+					if(!(headerValues[0].equals(mimeHeader.getValue()))){
+						newAttachmentParts.add(attachmentPart);
+					}
+				}
+			}
+		}
+    	attachmentParts.clear();
+    	this.attachmentParts = newAttachmentParts;
     }
 
     /**

@@ -232,8 +232,8 @@ public class SOAPFactoryTest extends TestCase {
     public void testCreateFault1(){
     	try 
     	{
-    		SOAPFactory factory = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-    		//SOAPFactory factory = SOAPFactory.newInstance();
+    		//SOAPFactory factory = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    		SOAPFactory factory = SOAPFactory.newInstance();
 
     		if(factory == null) {
     			System.out.println(

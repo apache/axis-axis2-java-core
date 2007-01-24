@@ -15,6 +15,9 @@
  */
 package org.apache.axis2.saaj;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Iterator;
 
@@ -205,8 +208,12 @@ public class SOAPMessageTest extends TestCase {
     
     
     //TODO : sumedha complete
-    public void testRemoveAttachement(){
+    public void testRemoveAttachements(){
     	Iterator iterator = null;
+        AttachmentPart ap1 = null;
+        AttachmentPart ap2 = null;
+        AttachmentPart ap3 = null;
+    	
     	try 
     	{
     		MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
@@ -217,6 +224,20 @@ public class SOAPMessageTest extends TestCase {
     		SOAPBody body = envelope.getBody();
     		SOAPFault sf = body.addFault();
 
+    		
+    		InputStream in1 = new FileInputStream(new File("test-resources" + File.separator + "attach.xml"));
+    		ap1 = msg.createAttachmentPart(in1, "text/xml");
+            msg.addAttachmentPart(ap1);
+
+    		InputStream in2 = new FileInputStream(new File("test-resources" + File.separator + "axis2.xml"));
+    		ap2 = msg.createAttachmentPart(in2, "text/xml");
+            msg.addAttachmentPart(ap2);
+
+    		InputStream in3 = new FileInputStream(new File("test-resources" + File.separator + "axis2.xml"));
+    		ap3 = msg.createAttachmentPart(in3, "text/plain");
+            msg.addAttachmentPart(ap3);
+    		
+    		
     		System.out.println("get all attachments");
     		iterator = msg.getAttachments();
 
@@ -254,6 +275,7 @@ public class SOAPMessageTest extends TestCase {
     		if (cnt > 1) {
     			System.out.println("the 2 text/xml attachments were not removed (unexpected)");
     		} else if(cnt == 1) {
+    			iterator = msg.getAttachments();
     			AttachmentPart ap = (AttachmentPart) iterator.next();
     			String ctype = ap.getContentType();
     			System.out.println("Content-Type of remaining attachment is: "+ctype);

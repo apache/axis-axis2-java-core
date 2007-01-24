@@ -176,7 +176,7 @@ public class SOAPBodyTest extends TestCase {
     }
 
     //TODO : fix
-    public void _testExtractContentAsDocument(){
+    public void testExtractContentAsDocument(){
     	try
     	{
     		MessageFactory fact = MessageFactory.newInstance();

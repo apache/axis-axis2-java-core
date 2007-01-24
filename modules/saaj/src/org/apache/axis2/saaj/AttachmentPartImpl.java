@@ -15,12 +15,12 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
-import org.apache.axiom.om.impl.dom.DocumentImpl;
-import org.apache.axiom.om.impl.dom.TextImpl;
-import org.apache.axis2.saaj.util.SAAJDataSource;
-import org.apache.axis2.transport.http.HTTPConstants;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.util.Iterator;
 
 import javax.activation.DataHandler;
 import javax.activation.UnsupportedDataTypeException;
@@ -29,11 +29,13 @@ import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.util.Iterator;
+
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axiom.om.impl.dom.DocumentImpl;
+import org.apache.axiom.om.impl.dom.TextImpl;
+import org.apache.axis2.saaj.util.SAAJDataSource;
+import org.apache.axis2.transport.http.HTTPConstants;
 
 /**
  * 
@@ -225,8 +227,9 @@ public class AttachmentPartImpl extends AttachmentPart {
             }
         } else if (object instanceof java.io.InputStream) {
             try {
-                source = new SAAJDataSource((java.io.InputStream) object,
-                        SAAJDataSource.MAX_MEMORY_DISK_CACHED,
+            	
+            	source = new SAAJDataSource((java.io.InputStream) object,
+                        SAAJDataSource.MIN_MEMORY_DISK_CACHED,
                         contentType, true);
                 extractFilename(source);
                 dataHandler = new DataHandler(source);
@@ -245,7 +248,24 @@ public class AttachmentPartImpl extends AttachmentPart {
             } catch (java.io.IOException io) {
                 throw new java.lang.IllegalArgumentException("Illegal Argument");
             }
-        } else {
+        }else if (object instanceof BufferedImage) {
+            try {
+                dataHandler = new DataHandler(object,contentType);
+                contentObject = null; // the stream has been consumed
+            } catch (Exception e) {
+            	throw new java.lang.IllegalArgumentException(e);
+            }
+        }
+        /*
+        else if (object instanceof byte[]) {
+            try {
+                dataHandler = new DataHandler();
+                contentObject = null; // the stream has been consumed
+            } catch (Exception e) {
+            	throw new java.lang.IllegalArgumentException(e);
+            }
+        }*/
+        else {
             throw new java.lang.IllegalArgumentException("Illegal Argument");
         }
     }
@@ -421,10 +441,25 @@ public class AttachmentPartImpl extends AttachmentPart {
         }
     }
 
+    
+    /**
+     * Gets the content of this AttachmentPart object as an InputStream as if a call had been made 
+     * to getContent and no DataContentHandler had been registered for the content-type of this 
+     * AttachmentPart.Note that reading from the returned InputStream would result in consuming 
+     * the data in the stream. It is the responsibility of the caller to reset the InputStream 
+     * appropriately before calling a Subsequent API. If a copy of the raw attachment content is 
+     * required then the getRawContentBytes() API should be used instead.
+     *
+     * @return an InputStream from which the raw data contained by the AttachmentPart can be 
+     * accessed.
+     * @throws SOAPException - if there is no content set into this AttachmentPart object or if 
+     * there was a data transformation error.
+     * @since SAAJ 1.3 
+     */
     public InputStream getRawContent() throws SOAPException {
         try {
             if (dataHandler == null) {
-                return null;
+                throw new SOAPException("No content set");
             }
             return dataHandler.getInputStream();
         } catch (IOException e) {
@@ -432,9 +467,19 @@ public class AttachmentPartImpl extends AttachmentPart {
         }
     }
 
+    /**
+     * Gets the content of this AttachmentPart object as a byte[] array as if a call had been made 
+     * to getContent and no DataContentHandler had been registered for the content-type of this 
+     * AttachmentPart.
+     * 
+     * @return a byte[] array containing the raw data of the AttachmentPart.
+     * @throws SOAPException - if there is no content set into this AttachmentPart object or if 
+     *         there was a data transformation error.
+     * @since SAAJ 1.3
+     */
     public byte[] getRawContentBytes() throws SOAPException {
         if (dataHandler == null) {
-            return null;
+        	throw new SOAPException("Content is null");
         }
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         try {
@@ -445,16 +490,92 @@ public class AttachmentPartImpl extends AttachmentPart {
         return bout.toByteArray();
     }
 
-    public void setBase64Content(InputStream inputstream, String s) throws SOAPException {
-        //TODO - Not yet implemented
+    
+    /**
+     * Sets the content of this attachment part from the Base64 source InputStream and sets the 
+     * value of the Content-Type header to the value contained in contentType, This method would 
+     * first decode the base64 input and write the resulting raw bytes to the attachment.
+     * A subsequent call to getSize() may not be an exact measure of the content size.
+     * 
+     * @param content - the base64 encoded data to add to the attachment part
+     *        contentType - the value to set into the Content-Type header
+     * @throws SOAPException - if there is an error in setting the content
+     *         java.lang.NullPointerException - if content is null
+     */
+    public void setBase64Content(InputStream content, String contentType) throws SOAPException {
+    	if(content == null){
+    		throw new SOAPException("Content is null");
+    	}
+    	try {
+    		if(isValidBase64Encoding(content)){
+    			setContent(content, contentType);		
+    		}else{
+    			throw new SOAPException("Not a valid Base64 encoding");
+    		}
+    	} catch (Exception ex) {
+    		throw new SOAPException(ex);
+    	}
     }
 
-    public void setRawContent(InputStream inputstream, String s) throws SOAPException {
-        //TODO - Not yet implemented
+    /*
+     * check if the given InputStream contains valid Base64 Encoding
+     */
+    private boolean isValidBase64Encoding (InputStream content) {
+    	//TODO need to add more checks
+    	int size;
+		try {
+			size = content.available();
+	    	if (size%4 != 0){
+	    		//Length of Base64 encoded input string is not a multiple of 4
+	    		return false;
+	    	}else{
+	    		return true;
+	    	}
+		} catch (IOException e) {
+			return false;
+		}
     }
+    
+    /**
+     * Sets the content of this attachment part to that contained by the InputStream content and 
+     * sets the value of the Content-Type header to the value contained in contentType.A subsequent
+     * call to getSize() may not be an exact measure of the content size.
+     * 
+     * @param content - the raw data to add to the attachment part
+     *        contentType - the value to set into the Content-Type header
+     * @throws SOAPException - if there is an error in setting the content
+     *         java.lang.NullPointerException - if content is null
+     *         
+     */
+    public void setRawContent(InputStream content, String contentType) throws SOAPException {
+    	//TODO check
+    	if(content == null){
+    		//throw new NullPointerException("content is null"); 
+    		throw new SOAPException("content is null");
+    	}
+    	setContent(content, contentType);
+    }
+    
+    
+    /**
+     * Sets the content of this attachment part to that contained by the byte[] array content and 
+     * sets the value of the Content-Type header to the value contained in contentType.
+     * 
+     * @param content - the raw data to add to the attachment part
+     *        contentType - the value to set into the Content-Type header
+     *        offset - the offset in the byte array of the content
+     *        len - the number of bytes that form the content
+     * @throws SOAPException - if an there is an error in setting the content or content is null
+     * @since SAAJ 1.3
+     * 
+     */
 
-    public void setRawContentBytes(byte[] abyte0, int i, int j, String s) throws SOAPException {
-        //TODO - Not yet implemented
+    public void setRawContentBytes(byte[] content, int offset, int len, String contentType) throws SOAPException {
+        //TODO - complete
+    	if(content == null){
+    		throw new SOAPException("Content is null");
+    	}
+    	
     }
 
     /**

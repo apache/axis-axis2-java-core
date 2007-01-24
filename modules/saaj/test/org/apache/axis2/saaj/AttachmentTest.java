@@ -1,22 +1,29 @@
 package org.apache.axis2.saaj;
 
+import java.awt.Image;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.util.Iterator;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeader;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.TestCase;
+
+import com.sun.mail.util.BASE64EncoderStream;
 
 public class AttachmentTest extends TestCase {
 
@@ -141,4 +148,185 @@ public class AttachmentTest extends TestCase {
             throw new UnsupportedOperationException("I don't give output streams");
         }
     }
+    
+    public void testClearContent() throws Exception {
+    	try {
+    		InputStream in1 = new FileInputStream(new File("test-resources" + File.separator + "attach.xml"));
+
+        	MessageFactory factory = MessageFactory.newInstance();
+        	SOAPMessage message = factory.createMessage();
+            AttachmentPart ap = message.createAttachmentPart();
+            MimeHeader mh = null;
+    		
+    		System.out.println("Setting Mime Header ");
+    		ap.setMimeHeader("Content-Description","some text");
+
+    		System.out.println("Setting Content Id Header ");
+    		ap.setContentId("id@abc.com");
+
+    		System.out.println("Setting Content ");
+    		ap.setContent( new StreamSource(in1),"text/xml");
+
+    		System.out.println("Clearing Content ");
+    		ap.clearContent();
+
+    		try {
+
+    			System.out.println("Getting Content ");
+    			InputStream is = (InputStream)ap.getContent();
+
+    			System.out.println("Error: SOAPException should have been thrown");
+    		} catch(SOAPException e) {
+    			System.out.println("Error thrown.(expected)");
+    		}
+
+    		Iterator iterator = ap.getAllMimeHeaders();
+    		int cnt=0;
+    		boolean foundHeader1=false;
+    		boolean foundHeader2=false;
+    		boolean foundDefaultHeader=false;
+    		while (iterator.hasNext()) {
+    			cnt++;
+    			mh = (MimeHeader)iterator.next();
+    			String name=mh.getName();
+    			String value=mh.getValue();
+    			if (name.equals("Content-Description") && value.equals("some text")){
+    				if (!foundHeader1){
+    					foundHeader1=true;
+    					System.out.println("MimeHeaders do match for header1");
+    					System.out.println("receive: name="+name+", value="+value);
+    				}
+    				else {
+    					System.out.println("Error: Received the same header1 header twice");
+    					System.out.println("received: name="+name+", value="+value);
+    				}
+    			} else if (name.equals("Content-Id") && value.equals("id@abc.com")){
+    				//TODO Content-Id or Content-ID??
+    				if (!foundHeader2){
+    					foundHeader2=true;
+    					System.out.println("MimeHeaders do match for header2");
+    					System.out.println("receive: name="+name+", value="+value);
+    				}
+    				else {
+    					System.out.println("Error: Received the same header2 header twice");
+    					System.out.println("received: name="+name+", value="+value);
+    				}
+    			} else if (name.equals("Content-Type") && value.equals("text/xml")){
+    				if (!foundDefaultHeader){
+    					foundDefaultHeader=true;
+    					System.out.println("MimeHeaders do match for default header");
+    					System.out.println("receive: name="+name+", value="+value);
+    				}
+    				else {
+    					System.out.println("Error: Received the same default header header twice");
+    					System.out.println("received: name="+name+", value="+value);
+    				}
+    			} else {
+    				System.out.println("Error: Received an invalid header");
+    				System.out.println("received: name="+name+", value="+value);
+    			}
+    		}
+
+    		if (!(foundHeader1 && foundHeader2)){
+    			System.out.println("Error: did not receive both headers");
+    		}
+
+    	} catch(Exception e) {
+    		System.out.println("Exception: " + e);
+    	}
+
+    }
+    
+
+    
+    public void testGetContent() throws Exception 
+    {
+    	try 
+    	{
+    		MessageFactory factory = MessageFactory.newInstance();
+    		SOAPMessage msg = factory.createMessage();
+    		AttachmentPart ap = msg.createAttachmentPart();
+    		Image image = javax.imageio.ImageIO.read(new File("test-resources" + File.separator + "attach.gif"));
+    		ap = msg.createAttachmentPart(image, "image/gif");
+
+    		System.out.println("Getting Content should return an Image object");
+    		Object o = ap.getContent();
+    		System.out.println("object returned="+o);
+    		if(o != null) {
+    			if(o instanceof Image)
+    				System.out.println("Image object was returned (ok)");
+    			else {
+    				System.out.println("Unexpected object was returned (not ok)");
+    				System.out.println("Unexpected object="+o);
+    			}
+    		} else {
+    			System.out.println("null was returned");
+    		}
+    	} catch(Exception e) {
+    		System.out.println("Exception: " + e);
+    	}
+    }
+    
+    public void testGetRawContents(){
+    	try 
+    	{
+    		MessageFactory factory = MessageFactory.newInstance();
+    		SOAPMessage msg = factory.createMessage();
+    		AttachmentPart ap = msg.createAttachmentPart();
+    		ap = msg.createAttachmentPart();
+    		byte data1[] = null;
+    		data1 = ap.getRawContentBytes();
+
+    	} catch(SOAPException e) {
+    		System.out.println("Caught expected SOAPException");
+    	} catch(NullPointerException e) {
+    		System.out.println("Caught expected NullPointerException");
+    	} catch(Exception e) {
+    		fail();
+    	}
+    }
+    
+    public void testSetBase64Content(){
+    	try 
+    	{
+    		MessageFactory factory = MessageFactory.newInstance();
+    		SOAPMessage msg = factory.createMessage();
+    		AttachmentPart ap = msg.createAttachmentPart();
+
+    		URL url = new URL("http://ws.apache.org/images/project-logo.jpg");
+    		DataHandler dh = new DataHandler(url);
+    		System.out.println("Create InputStream from DataHandler's InputStream");
+    		InputStream is = dh.getInputStream();
+
+    		System.out.println("Setting Content via InputStream for image/jpeg mime type");
+    		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    		OutputStream ret = new BASE64EncoderStream(bos);
+    		int count;
+    		byte buf[] = new byte[8192];
+    		while ((count = is.read(buf, 0, 8192)) != -1) {
+    			ret.write(buf, 0, count);
+    		}
+    		ret.flush();
+    		buf = bos.toByteArray();
+    		InputStream stream = new ByteArrayInputStream(buf);
+    		ap.setBase64Content(stream,"image/jpeg");
+
+    		System.out.println("Getting Content should return InputStream object");
+    		InputStream r = ap.getBase64Content();
+    		System.out.println("object returned="+r);
+    		if(r != null) {
+    			if(r instanceof InputStream)
+    				System.out.println("InputStream object was returned (ok)");
+    			else {
+    				System.out.println("Unexpected object was returned (not ok)");
+    				System.out.println("Unexpected object="+r);
+    			}
+    		} else {
+    			System.out.println("null was returned");
+    		}
+    	} catch(Exception e) {
+    		System.out.println("Exception: " + e);
+    	}
+    }
+    
 }

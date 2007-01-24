@@ -351,6 +351,49 @@ public class SOAPElementTest extends TestCase {
         }
     }
     
+    public void testRemoveAttribute2() {
+    	boolean pass = true;
+    	try 
+    	{
+    		SOAPMessage msg = MessageFactory.newInstance().createMessage();
+    		SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
+    		SOAPBody body = envelope.getBody();
+
+    		QName name = new QName("MyAttr1");
+    		String value = "MyValue1";
+    		System.out.println("Add attribute qname = " + name.getLocalPart() + 
+    				", value = " + value);
+    		body.addAttribute(name, value);
+    		System.out.println("Remove attribute qname = " + name.getLocalPart() + 
+    				", value = " + value);
+    		boolean b = body.removeAttribute(name);
+    		if(!b) {
+    			System.out.println("removeAttribute() did not return true");
+    			System.out.println("removeAttributeTest() test FAILED");
+    			pass = false;
+    		} 
+    		if(pass) {
+    			b = body.removeAttribute(name);
+    			if(b) {
+    				System.out.println("removeAttribute() did not return false");
+    				System.out.println("removeAttributeTest() test FAILED");
+    				pass = false;
+    			}
+    		}
+    		if(pass) {
+    			if(body.getAttributeValue(name) == null) {
+    				System.out.println("removeAttributeTest() test PASSED");
+    			} else {
+    				System.out.println("removeAttributeTest() test FAILED");
+    				pass = false;
+    			}
+    		}
+    	} catch(Exception e) {
+    		System.out.println("Exception: " + e);
+    		pass = false;
+    	}
+    }    
+    
     /*
      * name
      */
