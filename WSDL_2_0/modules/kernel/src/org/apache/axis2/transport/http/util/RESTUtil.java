@@ -22,6 +22,7 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -121,6 +122,35 @@ public class RESTUtil {
                                      HttpServletResponse response) throws AxisFault {
         // here, only the parameters in the URI are supported. Others will be discarded.
         try {
+
+            // when using the wsdl2 soap response MEP it can contain soap action. We better look for it here,
+            // if its there put it into msgContext so that we can use it later for dispatching purposes.
+
+            String contentType = request.getContentType();
+
+            if (contentType != null) {
+
+                //Check for action header and set it in as soapAction in MessageContext
+                int index = contentType.indexOf("action");
+                if (index > -1) {
+                    String transientString = contentType.substring(index, contentType.length());
+                    int equal = transientString.indexOf("=");
+                    int firstSemiColon = transientString.indexOf(";");
+                    String soapAction; // This will contain "" in the string
+                    if (firstSemiColon > -1) {
+                        soapAction = transientString.substring(equal + 1, firstSemiColon);
+                    } else {
+                        soapAction = transientString.substring(equal + 1, transientString.length());
+                    }
+                    if ((soapAction != null) && soapAction.startsWith("\"")
+                            && soapAction.endsWith("\"")) {
+                        soapAction = soapAction
+                                .substring(1, soapAction.length() - 1);
+                    }
+                    msgContext.setSoapAction(soapAction);
+
+                }
+            }
 
             // set the required properties so that even if there is an error during the dispatch
             // phase the response message will be passed to the client well. 

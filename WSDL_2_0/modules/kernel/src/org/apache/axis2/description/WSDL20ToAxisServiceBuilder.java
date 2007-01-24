@@ -91,11 +91,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     public WSDL20ToAxisServiceBuilder(String wsdlUri,
                                       String name, String interfaceName) throws Exception {
         WSDLReader wsdlReader = WSDLFactory.newInstance().newWSDLReader();
-        DescriptionElement descriptionElement = wsdlReader.readWSDL(wsdlUri);
+        Description description = wsdlReader.readWSDL(wsdlUri);
+        DescriptionElement descriptionElement = description.toElement();
         savedTargetNamespace = descriptionElement.getTargetNamespace()
                 .toString();
         namespacemap = descriptionElement.getNamespaces();
-        this.description = descriptionElement.toComponent();
+        this.description = description;
         this.serviceName = null;
         if (name != null) {
             serviceName = new QName(descriptionElement.getTargetNamespace().toString(), name);
@@ -314,9 +315,10 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         try {
             if (description == null) {
 
+                Description description = null;
                 DescriptionElement descriptionElement = null;
                 if (wsdlURI != null && !"".equals(wsdlURI)) {
-                    descriptionElement = readInTheWSDLFile(wsdlURI);
+                    description = readInTheWSDLFile(wsdlURI);
                 } else if (in != null) {
 
                     DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
@@ -329,14 +331,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     WSDLSource wsdlSource = reader.createWSDLSource();
                     wsdlSource.setSource(document.getDocumentElement());
                     wsdlSource.setBaseURI(new URI(getBaseUri()));
-                    descriptionElement = reader.readWSDL(wsdlSource);
+                    description = reader.readWSDL(wsdlSource);
+                    descriptionElement = description.toElement();
                 } else {
                     throw new AxisFault("No resources found to read the wsdl");
                 }
 
                 savedTargetNamespace = descriptionElement.getTargetNamespace().toString();
                 namespacemap = descriptionElement.getNamespaces();
-                this.description = descriptionElement.toComponent();
+                this.description = description;
 
             }
             // Create the namespacemap
@@ -1271,7 +1274,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         return false;
     }
 
-    private DescriptionElement readInTheWSDLFile(String wsdlURI)
+    private Description readInTheWSDLFile(String wsdlURI)
             throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();

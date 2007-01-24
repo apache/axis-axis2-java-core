@@ -233,13 +233,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (!disableREST && enableRESTInAxis2MainServlet && isRESTRequest(req)) {
             msgContext = createMessageContext(req, res);
             try {
-              String soapActionHeader = req.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
 
-            if ((soapActionHeader != null) && soapActionHeader.startsWith("\"")
-                && soapActionHeader.endsWith("\"")) {
-                soapActionHeader = soapActionHeader.substring(1, soapActionHeader.length() - 1);
-            }
-                msgContext.setSoapAction(soapActionHeader);
                 new RESTUtil(configContext).processPostRequest(msgContext,
                         req,
                         res);
