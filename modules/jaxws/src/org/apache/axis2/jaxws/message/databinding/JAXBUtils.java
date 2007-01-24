@@ -42,6 +42,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.factory.ClassFinderFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -476,7 +477,8 @@ public class JAXBUtils {
            //If Calsses not found in directory then look for jar that has these classes
         	if(classes.size() <=0){
         		//This will load classes from jar file.
-	        	ClassFinder cf = ClassFinderFactory.getClassFinder();
+        		ClassFinderFactory cff = (ClassFinderFactory)FactoryRegistry.getFactory(ClassFinderFactory.class);
+	        	ClassFinder cf = cff.getClassFinder();
 	            classes.addAll(cf.getClassesFromJarFile(pkg, cl));
         	}
         } catch (ClassNotFoundException e) {

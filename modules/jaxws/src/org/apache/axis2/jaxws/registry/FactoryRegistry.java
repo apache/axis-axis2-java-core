@@ -25,6 +25,7 @@ import org.apache.axis2.jaxws.message.databinding.impl.OMBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.SOAPEnvelopeBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.SourceBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.XMLStringBlockFactoryImpl;
+import org.apache.axis2.jaxws.message.factory.ClassFinderFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
@@ -56,6 +57,7 @@ public class FactoryRegistry {
 		table.put(XMLPartFactory.class, new XMLPartFactoryImpl());
 		table.put(SAAJConverterFactory.class, new SAAJConverterFactoryImpl());
 	    table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactory());
+	    table.put(ClassFinderFactory.class, new ClassFinderFactory());
 	}
 	/**
 	 * FactoryRegistry is currently a static singleton
@@ -70,5 +72,14 @@ public class FactoryRegistry {
 	 */
 	public static Object getFactory(Class intface) {
 		return table.get(intface);
+	}
+	
+	/**
+	 * setFactory
+	 * @param intface
+	 * @param factoryObject
+	 */
+	public static void setFactory(Class intface, Object factoryObject){
+		table.put(intface, factoryObject);
 	}
 }

@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class ClassFinderFactory {
 	private static final Log log = LogFactory.getLog(ClassFinderFactory.class);
-	public static ClassFinder getClassFinder(){
+	public ClassFinder getClassFinder(){
 		return new ClassFinderImpl();
 	}
 }
