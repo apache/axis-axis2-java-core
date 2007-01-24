@@ -44,7 +44,7 @@ public class AddressingHelper {
         EndpointReference replyTo = messageContext.getReplyTo();
         if (replyTo == null) {
             if (isDebugEnabled) {
-                log.debug("isReplyRedirected: ReplyTo is null. Returning false");
+                log.debug(messageContext.getLogIDString()+" isReplyRedirected: ReplyTo is null. Returning false");
             }
             return false;
         } else {
@@ -64,7 +64,7 @@ public class AddressingHelper {
         EndpointReference faultTo = messageContext.getFaultTo();
         if (faultTo == null) {
             if (isDebugEnabled) {
-                log.debug("isReplyRedirected: FaultTo is null. Returning isReplyRedirected");
+                log.debug(messageContext.getLogIDString()+" isReplyRedirected: FaultTo is null. Returning isReplyRedirected");
             }
             return isReplyRedirected(messageContext);
         } else {

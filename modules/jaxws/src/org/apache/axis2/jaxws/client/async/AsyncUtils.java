@@ -51,7 +51,7 @@ public class AsyncUtils {
         }
         catch (Throwable t) {
             if (debug) {
-                log.debug("An error occurred in the ThreadContextMigratorUtil " + t);
+                log.debug(axisResponse.getLogIDString()+" An error occurred in the ThreadContextMigratorUtil " + t);
                 log.debug("...caused by " + t.getCause());
             }
             throw ExceptionFactory.makeWebServiceException(t);

@@ -89,6 +89,19 @@ public class MessageContext extends AbstractContext implements Externalizable {
      */
     private static final Log log = LogFactory.getLog(MessageContext.class);
 
+    /**
+     * @serial An ID which can be used to correlate operations on a single
+     * message in the log files, irrespective of thread switches, persistence,
+     * etc. 
+     */
+    private String logCorrelationID = UUIDGenerator.getUUID();
+    
+    /**
+     * This string will be used to hold a form of the logCorrelationID that
+     * is more suitable for output than its generic form.
+     */
+    private transient String logCorrelationIDString = "[MessageContext: logID="+logCorrelationID+"]";
+    
     private static final String myClassName = "MessageContext";
 
     /**
@@ -515,6 +528,37 @@ public class MessageContext extends AbstractContext implements Externalizable {
     public MessageContext() {
         super(null);
         options = new Options();
+    }
+
+    public String toString()
+    {
+      return logCorrelationIDString;
+    }
+    
+    /**
+     * Get a "raw" version of the logCorrelationID.  The logCorrelationID
+     * is guaranteed to be unique and may be persisted along with the rest
+     * of the message context.
+     * 
+     * @return A string that can be output to a log file as an identifier
+     * for this MessageContext.  It is suitable for matching related log
+     * entries. 
+     */
+    public String getLogCorrelationID()
+    {
+      return logCorrelationID;
+    }
+    
+    /**
+     * Get a formatted version of the logCorrelationID.
+     * 
+     * @return A string that can be output to a log file as an identifier
+     * for this MessageContext.  It is suitable for matching related log
+     * entries. 
+     */
+    public String getLogIDString()
+    {
+      return logCorrelationIDString;
     }
 
     /**
@@ -2223,6 +2267,8 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         out.writeLong(getLastTouchedTime());
 
+        ObjectStateUtils.writeString(out, logCorrelationID, "logCorrelationID");
+
         boolean persistWithOptimizedMTOM = (getProperty(MTOMConstants.ATTACHMENTS) != null);
         out.writeBoolean(persistWithOptimizedMTOM);
         
@@ -3176,6 +3222,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
         long time = in.readLong();
         setLastTouchedTime(time);
 
+        logCorrelationID = ObjectStateUtils.readString(in, "logCorrelationID");
+        logCorrelationIDString = "[MessageContext: logID="+logCorrelationID+"]";
+        
         boolean persistedWithOptimizedMTOM = in.readBoolean();
         
         String contentType = null;
@@ -4954,4 +5003,5 @@ public class MessageContext extends AbstractContext implements Externalizable {
     {
         this.options = op;
     }
+    
 }

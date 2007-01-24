@@ -58,7 +58,7 @@ public abstract class AbstractOperationDispatcher extends AbstractHandler {
 
             if (axisOperation != null) {
                 if (isDebugEnabled) {
-                    log.debug(Messages.getMessage("operationfound",
+                    log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("operationfound",
                             axisOperation.getName().getLocalPart()));
                 }
 

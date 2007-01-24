@@ -75,7 +75,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         // it should be able to disable addressing by some one.
         Object property = msgContext.getProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES);
         if (JavaUtils.isTrueExplicitly(property)) {
-            log.debug("Addressing is disabled .....");
+            log.debug(msgContext.getLogIDString()+" Addressing is disabled .....");
             return InvocationResponse.CONTINUE;
         }
 
@@ -176,13 +176,13 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         String action = messageContextOptions.getAction();
         
         if(log.isTraceEnabled()){
-            log.trace("processWSAAction: action from messageContext: "+action);
+            log.trace(msgCtxt.getLogIDString()+" processWSAAction: action from messageContext: "+action);
         }
         if(action == null || "".equals(action)){
             if(msgCtxt.getAxisOperation()!=null){
                 action = msgCtxt.getAxisOperation().getOutputAction();
                 if(log.isTraceEnabled()){
-                    log.trace("processWSAAction: action from AxisOperation: "+action);
+                    log.trace(msgCtxt.getLogIDString()+" processWSAAction: action from AxisOperation: "+action);
                 }
             }
         }
@@ -201,12 +201,12 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         if(!isAddressingHeaderAlreadyAvailable(WSA_ACTION, envelope,
                 addressingNamespaceObject, replaceHeaders, false)){
             if(log.isTraceEnabled()){
-                log.trace("processWSAAction: No existing wsa:Action header found");
+                log.trace(msgCtxt.getLogIDString()+" processWSAAction: No existing wsa:Action header found");
             }
             // If we don't have an action to add,
             if(action == null || "".equals(action)){
                 if(log.isTraceEnabled()){
-                    log.trace("processWSAAction: No action to add to header");
+                    log.trace(msgCtxt.getLogIDString()+" processWSAAction: No action to add to header");
                 }
                 // Fault unless validation has been explictily turned off
                 if(!Utils.isExplicitlyTrue(msgCtxt, AddressingConstants.DISABLE_OUTBOUND_ADDRESSING_VALIDATION)){
@@ -214,7 +214,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 }
             }else{
                 if(log.isTraceEnabled()){
-                    log.trace("processWSAAction: Adding action to header: "+action);
+                    log.trace(msgCtxt.getLogIDString()+" processWSAAction: Adding action to header: "+action);
                 }
                 // Otherwise just add the header
                 OMElement oe = processStringInfo(action, WSA_ACTION, envelope, addressingNamespaceObject);

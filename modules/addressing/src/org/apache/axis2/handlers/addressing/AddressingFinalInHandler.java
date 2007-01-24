@@ -86,7 +86,7 @@ public class AddressingFinalInHandler extends AddressingInHandler {
             }
             
             if (log.isTraceEnabled()){
-                log.trace("setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
+                log.trace(messageContext.getLogIDString()+" setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
             }
             
             epr.setAddress(Final.WSA_ANONYMOUS_URL);

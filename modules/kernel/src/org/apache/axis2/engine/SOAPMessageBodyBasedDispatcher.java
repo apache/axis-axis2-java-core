@@ -54,8 +54,8 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
             return null;
         } else {
             if(isDebugEnabled){
-            log.debug(
-                    "Checking for Operation using SOAP message body's first child's local name : "
+            log.debug(messageContext.getLogIDString()+
+                    " Checking for Operation using SOAP message body's first child's local name : "
                             + bodyFirstChild.getLocalName());
             }
             operationName = new QName(bodyFirstChild.getLocalName());
@@ -85,8 +85,8 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
                 String filePart = ns.getNamespaceURI();
 
                 if(isDebugEnabled){
-                log.debug(
-                        "Checking for Service using SOAP message body's first child's namespace : "
+                log.debug(messageContext.getLogIDString()+
+                        " Checking for Service using SOAP message body's first child's namespace : "
                                 + filePart);
                 }
                 ConfigurationContext configurationContext = messageContext.getConfigurationContext();

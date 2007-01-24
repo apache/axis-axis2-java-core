@@ -121,7 +121,7 @@ public class AxisInvocationController extends InvocationController {
             // there would be no message on the MessageContext
             faultexception = af;
             if (log.isDebugEnabled()) {
-                log.debug("AxisFault received from client: " + af.getMessage());
+                log.debug(axisRequestMsgCtx.getLogIDString()+" AxisFault received from client: " + af.getMessage());
             }
         }
         
@@ -192,7 +192,7 @@ public class AxisInvocationController extends InvocationController {
             // Whatever exception we get here will not be from the server since a one-way
             // invocation has no response.  This will always be a SENDER fault
             if (log.isDebugEnabled()) {
-                log.debug("AxisFault received from client: " + af.getMessage());
+                log.debug(axisRequestMsgCtx.getLogIDString()+" AxisFault received from client: " + af.getMessage());
             }
         	throw ExceptionFactory.makeWebServiceException(ClassUtils.getRootCause(af));
         }

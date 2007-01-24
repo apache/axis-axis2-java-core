@@ -324,7 +324,7 @@ public abstract class AxisOperation extends AxisDescription
                     configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
             if (null == operationContext && log.isDebugEnabled()) {
-                log.debug("Cannot correlate inbound message RelatesTo value [" + msgContext.getRelatesTo() + "] to in-progree MEP");
+                log.debug(msgContext.getLogIDString()+" Cannot correlate inbound message RelatesTo value [" + msgContext.getRelatesTo() + "] to in-progree MEP");
             }
         }
 

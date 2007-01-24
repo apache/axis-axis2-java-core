@@ -56,7 +56,7 @@ public abstract class AbstractServiceDispatcher extends AbstractHandler {
 
             if (axisService != null) {
                 if (isDebugEnabled) {
-                    log.debug(Messages.getMessage("servicefound",
+                    log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("servicefound",
                             axisService.getName()));
                 }
                 msgctx.setAxisService(axisService);

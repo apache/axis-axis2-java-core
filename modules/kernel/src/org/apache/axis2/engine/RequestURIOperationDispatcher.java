@@ -52,14 +52,14 @@ public class RequestURIOperationDispatcher extends AbstractDispatcher {
 
             if ((values.length >= 2) && (values[1] != null)) {
                 QName operationName = new QName(values[1]);
-                log.debug("Checking for Operation using QName(target endpoint URI fragment) : " + operationName);
+                log.debug(messageContext.getLogIDString()+" Checking for Operation using QName(target endpoint URI fragment) : " + operationName);
                 return service.getOperation(operationName);
             } else {
-                log.debug("Attempted to check for Operation using target endpoint URI, but the operation fragment was missing");
+                log.debug(messageContext.getLogIDString()+" Attempted to check for Operation using target endpoint URI, but the operation fragment was missing");
                 return null;
             }
         } else {
-            log.debug("Attempted to check for Operation using null target endpoint URI");
+            log.debug(messageContext.getLogIDString()+" Attempted to check for Operation using null target endpoint URI");
             return null;
         }
     }
