@@ -20,17 +20,13 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.*;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.*;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
-import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.CallbackReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import javax.wsdl.Definition;
@@ -396,65 +392,11 @@ public class ServiceClient {
      * @see #createClient(QName)
      */
     public void sendRobust(QName operation, OMElement elem) throws AxisFault {
-        if (options.isUseSeparateListener()) {
-
-            // This mean doing a Fault may come through a different channel .
-            // If the
-            // transport is two way transport (e.g. http) Only one channel is
-            // used (e.g. in http cases
-            // 202 OK is sent to say no response available). Axis2 get blocked
-            // return when the response is available.
-            SyncCallBack callback = new SyncCallBack();
-
-            // this method call two channel non blocking method to do the work
-            // and wait on the callback
-            sendReceiveNonBlocking(operation, elem, callback);
-
-            long timeout = options.getTimeOutInMilliSeconds();
-            long waitTime = timeout;
-            long startTime = System.currentTimeMillis();
-
-            synchronized (callback) {
-                while (! callback.isComplete() && waitTime >= 0) {
-                    try {
-                        callback.wait(timeout);
-                    } catch (InterruptedException e) {
-                        // We were interrupted for some reason, keep waiting
-                        // or throw new AxisFault( "Callback was interrupted by someone?" );
-                    }
-                    // The wait finished, compute remaining time
-                    // - wait can end prematurely, see Object.wait( int timeout )
-                    waitTime = timeout - (System.currentTimeMillis() - startTime);
-                }
-
-            }
-            SOAPEnvelope envelope = callback.envelope;
-            // process the result of the invocation
-            if (envelope != null) {
-                // building soap envelope
-                envelope.build();
-                // closing transport
-                if (envelope.getBody().hasFault()) {
-                    SOAPFault soapFault = envelope.getBody().getFault();
-                    throw new AxisFault(soapFault.getCode(), soapFault.getReason(),
-                            soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
-                }
-            } else {
-                if (callback.error instanceof AxisFault) {
-                    throw (AxisFault) callback.error;
-                } else if (callback.error != null) {
-                    throw new AxisFault(callback.error);
-                } else if (! callback.isComplete()) {
-                    //no exception has occurred
-                }
-            }
-        } else {
-            MessageContext mc = new MessageContext();
-            fillSOAPEnvelope(mc, elem);
-            OperationClient mepClient = createClient(operation);
-            mepClient.addMessageContext(mc);
-            mepClient.execute(true);
-        }
+        MessageContext mc = new MessageContext();
+        fillSOAPEnvelope(mc, elem);
+        OperationClient mepClient = createClient(operation);
+        mepClient.addMessageContext(mc);
+        mepClient.execute(true);
     }
 
     /**
@@ -524,76 +466,14 @@ public class ServiceClient {
      */
     public OMElement sendReceive(QName operationQName, OMElement xmlPayload)
             throws AxisFault {
-        /**
-         * If a module has set the USE_ASYNC_OPERATIONS option then we override the behaviour
-         * for sync calls. However we leave real async calls alone.
-         */
-        boolean useAsync = false;
-        if (!options.isUseSeparateListener()) {
-            Boolean useAsyncOption = (Boolean) configContext.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
-            if (useAsyncOption != null) useAsync = useAsyncOption.booleanValue();
-        }
-
-        if (useAsync || options.isUseSeparateListener()) {
-
-            // Here we are trying to do a request-response invocation using two different channels for the request
-            // and the response.
-            // For example, if the IN and OUT transports are HTTP, then two different HTTP channels will be used. The first
-            // channel will be used to send the request, which the server respond sending HTTP 200, if accepted and uses
-            // a completely different channel to send the response. This flag, informs the Axis2 client engine to
-            // keep listeners ready to receive the response.
-
-            // even if the client is blocking we use a Callback, internally, to relate the response back to the client.
-            SyncCallBack callback = new SyncCallBack();
-
-            // this method call two channel non blocking method to do the work
-            // and wait on the callback
-            sendReceiveNonBlocking(operationQName, xmlPayload, callback);
-
-            long timeout = options.getTimeOutInMilliSeconds();
-            long waitTime = timeout;
-            long startTime = System.currentTimeMillis();
-
-            synchronized (callback) {
-                while (! callback.isComplete() && waitTime >= 0) {
-                    try {
-                        callback.wait(timeout);
-                    } catch (InterruptedException e) {
-                        // We were interrupted for some reason, keep waiting
-                        // or throw new AxisFault( "Callback was interrupted by someone?" );
-                    }
-                    // The wait finished, compute remaining time
-                    // - wait can end prematurely, see Object.wait( int timeout )
-                    waitTime = timeout - (System.currentTimeMillis() - startTime);
-                }
-
-            }
-            // process the result of the invocation
-            if (callback.envelope != null) {
-                // transport was already returned by the call back receiver
-                //Building of the Envelope should happen at the setComplete()
-                // or onComplete() methods of the Callback class
-                return callback.envelope.getBody().getFirstElement();
-            } else {
-                if (callback.error instanceof AxisFault) {
-                    throw (AxisFault) callback.error;
-                } else if (callback.error != null) {
-                    throw new AxisFault(callback.error);
-                } else if (! callback.isComplete()) {
-                    throw new AxisFault(Messages.getMessage("responseTimeOut"));
-                } else
-                    throw new AxisFault(Messages.getMessage("callBackCompletedWithError"));
-            }
-        } else {
-            MessageContext messageContext = new MessageContext();
-            fillSOAPEnvelope(messageContext, xmlPayload);
-            OperationClient operationClient = createClient(operationQName);
-            operationClient.addMessageContext(messageContext);
-            operationClient.execute(true);
-            MessageContext response = operationClient
-                    .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            return response.getEnvelope().getBody().getFirstElement();
-        }
+        MessageContext messageContext = new MessageContext();
+        fillSOAPEnvelope(messageContext, xmlPayload);
+        OperationClient operationClient = createClient(operationQName);
+        operationClient.addMessageContext(messageContext);
+        operationClient.execute(true);
+        MessageContext response = operationClient
+                .getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        return response.getEnvelope().getBody().getFirstElement();
     }
 
     /**
@@ -635,24 +515,6 @@ public class ServiceClient {
         // progamming model is non blocking
         mepClient.setCallback(callback);
         mepClient.addMessageContext(mc);
-
-        /**
-         * If a module has set the USE_ASYNC_OPERATIONS option then we override the behaviour
-         * for sync calls. However we leave real async calls alone.
-         */
-        boolean useAsync = false;
-        if (!options.isUseSeparateListener()) {
-            Boolean useAsyncOption = (Boolean) configContext.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
-            if (useAsyncOption != null) useAsync = useAsyncOption.booleanValue();
-        }
-
-        if (useAsync || options.isUseSeparateListener()) {
-            MessageReceiver messageReceiver = axisService.getOperation(operation).getMessageReceiver();
-            if (messageReceiver == null || !(messageReceiver instanceof CallbackReceiver)) {
-                CallbackReceiver callbackReceiver = new CallbackReceiver();
-                axisService.getOperation(operation).setMessageReceiver(callbackReceiver);
-            }
-        }
         mepClient.execute(false);
     }
 
@@ -785,42 +647,6 @@ public class ServiceClient {
         serviceContext.setCachingOperationContext(cachingOpContext);
     }
 
-
-    /**
-     * This class acts as a callback that allows users to wait on the result.
-     */
-    private class SyncCallBack extends Callback {
-        private SOAPEnvelope envelope;
-
-        private MessageContext msgctx;
-
-        private Exception error;
-
-        public void onComplete(AsyncResult result) {
-            this.envelope = result.getResponseEnvelope();
-            // Transport input stream gets closed after calling setComplete
-            // method. Have to build the whole envelope including the
-            // attachments at this stage. Data might get lost if the input
-            // stream gets closed before building the whole envelope.
-            this.envelope.buildWithAttachments();
-            this.msgctx = result.getResponseMessageContext();
-        }
-
-        public void setComplete(boolean complete) {
-            super.setComplete(complete);
-            synchronized (this) {
-                notify();
-            }
-        }
-
-        public void onError(Exception e) {
-            error = e;
-        }
-
-        public MessageContext getMsgctx() {
-            return msgctx;
-        }
-    }
 
     /**
      * Get the service context.
