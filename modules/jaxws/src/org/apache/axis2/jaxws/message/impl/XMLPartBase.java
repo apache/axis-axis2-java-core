@@ -223,6 +223,7 @@ public abstract class XMLPartBase implements XMLPart {
 		default:
 			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("XMLPartImplErr2"));
 		}
+        spine.setParent(getParent());
         setContent(spine, SPINE);
 		return spine;
 	}
@@ -472,7 +473,9 @@ public abstract class XMLPartBase implements XMLPart {
 	 */
 	public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) throws WebServiceException {
 		Block block = getContentAsXMLSpine().getBodyBlock(index, context, blockFactory);
-		block.setParent(getParent());
+		if (block != null) {
+		    block.setParent(getParent());
+        }
         return block;
     }
 

@@ -25,6 +25,7 @@ import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.Block;
+import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -214,5 +215,11 @@ interface XMLSpine {
      * @return String containing trace information
      */
     public String traceString(String indent);
+    
+    /**
+     * Used to identify the Message parent of the XMLSpine
+     * @param msg
+     */
+    public void setParent(Message msg);
     
 }

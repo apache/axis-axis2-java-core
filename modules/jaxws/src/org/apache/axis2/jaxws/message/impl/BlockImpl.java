@@ -134,11 +134,11 @@ public abstract class BlockImpl implements Block {
 		} else {
 			// Transform reader into business object
 			XMLStreamReader reader;
-			if (consume) {
-				reader = omElement.getXMLStreamReaderWithoutCaching();
-			} else {
-				reader = omElement.getXMLStreamReader();
-			}
+            if (omElement.getBuilder() != null && !omElement.getBuilder().isCompleted()) {
+                reader = omElement.getXMLStreamReaderWithoutCaching();
+            } else {
+                reader = omElement.getXMLStreamReader();
+            }
 			busObject = _getBOFromReader(reader, busContext);
 			omElement = null;
 		}

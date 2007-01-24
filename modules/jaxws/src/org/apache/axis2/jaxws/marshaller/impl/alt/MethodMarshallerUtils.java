@@ -321,7 +321,7 @@ public class MethodMarshallerUtils  {
             PDElement pv = pvList.get(i);
             
             // Create the JAXBBlockContext
-            // RPC uses type marshalling, so recored the rpcType
+            // RPC uses type marshalling, so use the rpcType
             JAXBBlockContext context = new JAXBBlockContext(packages);
             if (isRPC) {
                 context.setRPCType(pv.getParam().getParameterActualType());

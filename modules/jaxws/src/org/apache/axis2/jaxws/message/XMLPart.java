@@ -191,7 +191,7 @@ public interface XMLPart {
 	 * @param index
 	 * @param context
 	 * @param blockFactory
-	 * @return Block
+	 * @return Block or null
 	 * @throws WebServiceException
 	 */
 	public Block getBodyBlock(int index, Object context, BlockFactory blockFactory)  

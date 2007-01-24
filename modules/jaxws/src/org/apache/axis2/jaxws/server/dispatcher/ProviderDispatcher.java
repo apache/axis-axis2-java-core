@@ -143,10 +143,10 @@ public class ProviderDispatcher extends JavaDispatcher{
             }
             else {
                 // If it is not MESSAGE, then it is PAYLOAD (which is the default); only work with the body 
-            	if(message.getNumBodyBlocks()!=0){
-            		Block block = message.getBodyBlock(0, null, factory);
+                Block block = message.getBodyBlock(0, null, factory);
+                if(block != null){
             		requestParamValue = block.getBusinessObject(true);
-            	}else{
+            	} else {
             		if(log.isDebugEnabled()){
             			log.debug("No body blocks in SOAPMessage, Calling provider method with null input parameters");
             		}
