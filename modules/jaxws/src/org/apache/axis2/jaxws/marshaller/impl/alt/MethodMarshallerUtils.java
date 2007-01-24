@@ -525,8 +525,14 @@ public class MethodMarshallerUtils  {
             // The reason is constructed with the getMessage of the exception.  
             // There is no detail
             WebServiceException wse = (WebServiceException) t;
+            
+            // Get the fault text using algorithm defined in JAX-WS 10.2.2.3
+            String text = wse.getMessage();
+            if (text == null || text.length() == 0) {
+                text = wse.toString();
+            }
             xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
-                    new XMLFaultReason(wse.getMessage()));  // Assumes text is the language supported by the current Locale
+                    new XMLFaultReason(text));  // Assumes text is the language supported by the current Locale
         } else {
             if (log.isErrorEnabled()) {
                 log.debug("Marshal as a unchecked System Exception");
@@ -535,8 +541,13 @@ public class MethodMarshallerUtils  {
             // The reason is constructed with the toString of the exception.  
             // This places the class name of the exception in the reason
             // There is no detail.
+            // Get the fault text using algorithm defined in JAX-WS 10.2.2.3
+            String text = t.getMessage();
+            if (text == null || text.length() == 0) {
+                text = t.toString();
+            }
             xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
-                    new XMLFaultReason(t.toString()));  // Assumes text is the language supported by the current Locale
+                    new XMLFaultReason(text));  // Assumes text is the language supported by the current Locale
         }
         // Add the fault to the message
         message.setXMLFault(xmlfault);
