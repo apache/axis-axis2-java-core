@@ -186,7 +186,8 @@ public class ConfigurationContext extends AbstractContext {
                     registerServiceGroupContext(serviceGroupContext);
                 } else if (Constants.SCOPE_TRANSPORT_SESSION.equals(maxScope)) {
                     if (sessionContext != null) {
-                        sessionContext.addServiceGroupContext(serviceGroupContext, serviceGroupContextId);
+                        String serviceGroupName = serviceGroupContext.getDescription().getServiceGroupName();
+                        sessionContext.addServiceGroupContext(serviceGroupContext, serviceGroupName);
                         sessionContext.addServiceContext(serviceContext);
                     }
                 }
@@ -353,8 +354,9 @@ public class ConfigurationContext extends AbstractContext {
         if (serviceGroupContext == null
                 && msgContext != null
                 && msgContext.getSessionContext() != null) {
+            String serviceGroupName = msgContext.getAxisServiceGroup().getServiceGroupName();
             serviceGroupContext = msgContext.getSessionContext().getServiceGroupContext(
-                    serviceGroupContextId);
+                    serviceGroupName);
         }
 
         if (serviceGroupContext == null && msgContext != null) {

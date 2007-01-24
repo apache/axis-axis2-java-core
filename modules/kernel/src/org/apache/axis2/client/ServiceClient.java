@@ -292,12 +292,14 @@ public class ServiceClient {
      * @throws AxisFault if something goes wrong
      */
     public void engageModule(QName moduleName) throws AxisFault {
-        AxisModule module = axisConfig.getModule(moduleName);
-        if (module != null) {
-            axisService.engageModule(module, axisConfig);
-        } else {
-            throw new AxisFault("Unable to engage module : " +
-                    moduleName.getLocalPart());
+        synchronized (this) {
+            AxisModule module = axisConfig.getModule(moduleName);
+            if (module != null) {
+                axisService.engageModule(module, axisConfig);
+            } else {
+                throw new AxisFault("Unable to engage module : " +
+                        moduleName.getLocalPart());
+            }
         }
     }
 
@@ -527,9 +529,9 @@ public class ServiceClient {
          * for sync calls. However we leave real async calls alone.
          */
         boolean useAsync = false;
-        if(!options.isUseSeparateListener()) {
-        	Boolean useAsyncOption = (Boolean) configContext.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
-        	if(useAsyncOption != null) useAsync = useAsyncOption.booleanValue();
+        if (!options.isUseSeparateListener()) {
+            Boolean useAsyncOption = (Boolean) configContext.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
+            if (useAsyncOption != null) useAsync = useAsyncOption.booleanValue();
         }
 
         if (useAsync || options.isUseSeparateListener()) {
@@ -639,9 +641,9 @@ public class ServiceClient {
          * for sync calls. However we leave real async calls alone.
          */
         boolean useAsync = false;
-        if(!options.isUseSeparateListener()) {
-        	Boolean useAsyncOption = (Boolean) configContext.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
-        	if(useAsyncOption != null) useAsync = useAsyncOption.booleanValue();
+        if (!options.isUseSeparateListener()) {
+            Boolean useAsyncOption = (Boolean) configContext.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
+            if (useAsyncOption != null) useAsync = useAsyncOption.booleanValue();
         }
 
         if (useAsync || options.isUseSeparateListener()) {
