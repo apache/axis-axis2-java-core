@@ -23,6 +23,8 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -35,6 +37,7 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.commons.httpclient.Header;
 
@@ -222,6 +225,13 @@ public abstract class Stub {
                                                 String propertyKey,
                                                 int value){
        addPropertyToOperationClient(operationClient,propertyKey,new Integer(value));
+    }
+
+    protected void setMustUnderstand(OMElement headerElement){
+        OMFactory omFactory = OMAbstractFactory.getOMFactory();
+        OMAttribute mustUnderstandAttribute =
+                omFactory.createOMAttribute("mustUnderstand",headerElement.getDefaultNamespace(),"true");
+        headerElement.addAttribute(mustUnderstandAttribute);
     }
 
 }

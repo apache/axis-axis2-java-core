@@ -53,7 +53,7 @@ public class RestSenderTest extends TestCase {
 
     public void testAppendParametersToURL() {
         RESTSender restSender = new RESTSender();
-        String modifiedURL = restSender.appendParametersToURL(messageContext, testURL, queryPart);
+        String modifiedURL = restSender.appendParameters(messageContext, testURL, queryPart);
 
         System.out.println("original = " + testURL + queryPart);
         System.out.println("modifiedURL = " + modifiedURL);

@@ -347,7 +347,16 @@
                                     <xsl:for-each select="input/param[@location='soap_header']">
                                         // add the children only if the parameter is not null
                                         if (<xsl:value-of select="@name"/>!=null){
-                                            env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                            <xsl:choose>
+                                                <xsl:when test="@mustUnderstand = 'true'">
+                                                    org.apache.axiom.om.OMElement omElement = toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")))
+                                                    setMustUnderstand(omElement);
+                                                    env.getHeader().addChild(omElement);
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                         }
                                     </xsl:for-each>
 
@@ -595,7 +604,16 @@
                                     <xsl:for-each select="input/param[@location='soap_header']">
                                          // add the soap_headers only if they are not null
                                         if (<xsl:value-of select="@name"/>!=null){
-                                           env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                           <xsl:choose>
+                                                <xsl:when test="@mustUnderstand = 'true'">
+                                                    org.apache.axiom.om.OMElement omElement = toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")))
+                                                    setMustUnderstand(omElement);
+                                                    env.getHeader().addChild(omElement);
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                                </xsl:otherwise>
+                                            </xsl:choose>
                                         }
                                     </xsl:for-each>
                                      <xsl:for-each select="input/param[@location='http_header']">
@@ -790,7 +808,16 @@
                                                     <xsl:for-each select="input/param[@location='soap_header']">
                                                         // add the children only if the parameter is not null
                                                         if (<xsl:value-of select="@name"/>!=null){
-                                                        env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                                            <xsl:choose>
+                                                                <xsl:when test="@mustUnderstand = 'true'">
+                                                                    org.apache.axiom.om.OMElement omElement = toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")))
+                                                                    setMustUnderstand(omElement);
+                                                                    env.getHeader().addChild(omElement);
+                                                                </xsl:when>
+                                                                <xsl:otherwise>
+                                                                    env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                                                </xsl:otherwise>
+                                                            </xsl:choose>
                                                         }
                                                     </xsl:for-each>
                                                      <xsl:for-each select="input/param[@location='http_header']">
