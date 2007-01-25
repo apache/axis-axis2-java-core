@@ -302,30 +302,8 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
 			DescriptionBuilderComposite seic = 
 					getServiceDescriptionImpl().getDBCMap().get(composite.getWebServiceAnnot().endpointInterface());
 	
-			//TODO: This functionality is intended to fix the bug that potentially places the 
-			// wsdlDefinition on the wrong composite. This code should be moved to 
-			// ServiceDescriptionImpl.setupWsdlDefinition() eventually
-			try { 
-				WSDL4JWrapper wsdl4jWrapper = null;
-
-				if (seic.getWsdlDefinition() != null) {
-					//set the sdimpl from the SEI composite
-					wsdl4jWrapper = new WSDL4JWrapper(seic.getWsdlURL(), seic.getWsdlDefinition());
-					getServiceDescriptionImpl().setWsdlWrapper(wsdl4jWrapper);
-				} else if (composite.getWsdlDefinition() != null) {
-					//set the sdimpl from the impl. class composite
-					wsdl4jWrapper = new WSDL4JWrapper(composite.getWsdlURL(), composite.getWsdlDefinition());
-					getServiceDescriptionImpl().setWsdlWrapper(wsdl4jWrapper);
-				} 
-				else {
-					wsdlComposite = generateWSDL(composite);
-				}
-			} catch (WSDLException e) {
-				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
-			}
 			
-			//If this is not null, then we don't bother generating wsdl
-			
+			//Only generate WSDL if a definition doesn't already exist
 			if (seic.getWsdlDefinition() == null)	
 				wsdlComposite = generateWSDL(composite);	
     	}

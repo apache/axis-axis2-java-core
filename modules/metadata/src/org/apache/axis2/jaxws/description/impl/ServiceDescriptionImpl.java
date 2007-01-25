@@ -407,24 +407,51 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     	
     	if (isDBCMap()) {
 
-    		//TODO: Currently, there is a bug which allows the wsdlDefinition to be placed
+    		//  Currently, there is a bug which allows the wsdlDefinition to be placed
     		//  on either the impl class composite or the sei composite, or both. We need to 
-    		//  look in both places and find the correct one, if it exists. There is a patch 
-    		//  in EndpointDescriptionImpl constructor which will reset the wsdlWrapper, if necessary. But
-    		//  that functionality should be moved here at some point.
+    		//  look in both places and find the correct one, if it exists.
 
-    		if (composite.getWsdlDefinition() != null) {
-    			this.wsdlURL = composite.getWsdlURL();
-                
-    			try {
-                    this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL, 
-                    				composite.getWsdlDefinition());
-
-                }
-    			catch (WSDLException e) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
-                }
-    		}
+    	    if (((composite.getWebServiceAnnot() != null) && 
+    	          DescriptionUtils.isEmpty(composite.getWebServiceAnnot().endpointInterface()))  	                    
+    	               || 
+    	          (!(composite.getWebServiceProviderAnnot() == null))) {
+    	        //This is either an implicit SEI, or a WebService Provider
+    	        if (composite.getWsdlDefinition() != null) {
+    	            this.wsdlURL = composite.getWsdlURL();
+    	            
+    	            try {
+    	                this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL, 
+    	                        composite.getWsdlDefinition());
+    	            } catch (WSDLException e) {
+    	                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
+    	            }
+    	        }
+    	        
+    	    } else if (composite.getWebServiceAnnot() != null) {
+    	        //This impl class specifies an SEI...this is a special case. There is a bug
+    	        //in the tooling that allows for the wsdllocation to be specifed on either the
+    	        //impl. class, or the SEI, or both. So, we need to look for the wsdl as follows:
+    	        //          1. If the Wsdl exists on the SEI, then check for it on the impl.
+    	        //          2. If it is not found in either location, in that order, then generate
+    	        
+    	        DescriptionBuilderComposite seic = 
+    	            getDBCMap().get(composite.getWebServiceAnnot().endpointInterface());
+    	        
+    	        try { 
+    	            if (seic.getWsdlDefinition() != null) {
+    	                //set the sdimpl from the SEI composite
+    	                this.wsdlURL = seic.getWsdlURL();
+    	                this.wsdlWrapper = new WSDL4JWrapper(seic.getWsdlURL(), seic.getWsdlDefinition());
+    	            } else if (composite.getWsdlDefinition() != null) {
+    	                //set the sdimpl from the impl. class composite
+    	                this.wsdlURL = composite.getWsdlURL();
+    	                this.wsdlWrapper = new WSDL4JWrapper(composite.getWsdlURL(), composite.getWsdlDefinition());
+    	            } 
+    	        } catch (WSDLException e) {
+    	            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
+    	        }
+    	    }           
+    	    
         //Deprecate this code block when MDQ is fully integrated
     	} else if (wsdlURL != null) {
             try {
