@@ -21,10 +21,7 @@ import java.util.ArrayList;
 
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -227,10 +224,10 @@ public abstract class Stub {
        addPropertyToOperationClient(operationClient,propertyKey,new Integer(value));
     }
 
-    protected void setMustUnderstand(OMElement headerElement){
+    protected void setMustUnderstand(OMElement headerElement, OMNamespace omNamespace){
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMAttribute mustUnderstandAttribute =
-                omFactory.createOMAttribute("mustUnderstand",headerElement.getDefaultNamespace(),"true");
+                omFactory.createOMAttribute(SOAP12Constants.ATTR_MUSTUNDERSTAND,omNamespace, "true");
         headerElement.addAttribute(mustUnderstandAttribute);
     }
 

@@ -36,6 +36,7 @@ import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
@@ -190,14 +191,17 @@ public class RESTSender extends AbstractHTTPSender {
             String httpMethod =
                     (String) msgContext.getProperty(Constants.Configuration.HTTP_METHOD);
 
-            if ((httpMethod != null)
-                    && Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
-                this.sendViaGet(msgContext, url);
-
-                return;
+            if (httpMethod != null) {
+                if (Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
+                    this.sendViaGet(msgContext, url);
+                    return;
+                } else if (Constants.Configuration.HTTP_METHOD_DELETE.equalsIgnoreCase(httpMethod)) {
+                    this.sendViaDelete(msgContext, url);
+                    return;
+                }
+            } else {
+                this.sendViaPost(msgContext, dataout, url, soapActionString);
             }
-
-            this.sendViaPost(msgContext, dataout, url, soapActionString);
         } catch (Exception e) {
             log.error("Error in extracting transport properties from message context", e);
         }
@@ -292,6 +296,80 @@ public class RESTSender extends AbstractHTTPSender {
 
         return null;
 
+    }
+
+    private void sendViaDelete(MessageContext msgContext, URL url)
+            throws AxisFault, IOException {
+
+        DeleteMethod deleteMethod = new DeleteMethod();
+        if (isAuthenticationEnabled(msgContext)) {
+            deleteMethod.setDoAuthentication(true);
+        }
+        String urlString = url.toString();
+        int separator = urlString.indexOf('{');
+        if (separator > 0) {
+            String path = urlString.substring(0, separator - 1);
+            String query = urlString.substring(separator - 1);
+            String replacedQuery ;
+                 replacedQuery = applyURITemplating(msgContext, query, true);
+            url = new URL(path + replacedQuery);
+        }
+
+        deleteMethod.setPath(url.getPath());
+        String query = url.getQuery();
+        String ignoreUncited = (String) msgContext.getProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED);
+        // If ignoreUncited property is true we can ignore the uncited parameters in the url, If it is not specified it
+        // defaults to false hence we append the additional query parameters.
+        if (ignoreUncited != null && JavaUtils.isTrueExplicitly(ignoreUncited)) {
+            deleteMethod.setQueryString(query);
+        } else {
+            deleteMethod.setQueryString(appendQueryParameters(msgContext, url.getQuery()));
+        }
+        // Serialization as "application/x-www-form-urlencoded"
+        String charEncoding =
+                (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+
+        String contentType = null;
+
+        // Default encoding scheme
+        if (charEncoding == null) {
+            contentType = HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
+                            + MessageContext.DEFAULT_CHAR_SET_ENCODING;
+        } else {
+            contentType = HTTPConstants.MEDIA_TYPE_X_WWW_FORM + "; charset="
+                            + charEncoding;
+        }
+
+        String action = msgContext.getOptions().getAction();
+
+        if (action != null) {
+            contentType = contentType + ";" + "action=" + action;
+        }
+
+        deleteMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,contentType);
+
+        HttpClient httpClient = getHttpClient(msgContext);
+        executeMethod(httpClient, msgContext, url, deleteMethod);
+
+        if (deleteMethod.getStatusCode() == HttpStatus.SC_OK) {
+            processResponse(deleteMethod, msgContext);
+        } else if (deleteMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
+        } else if (deleteMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+            Header contenttypeHheader =
+                    deleteMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+            String value = contenttypeHheader.getValue();
+
+            if (value != null) {
+                if ((value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0)
+                        || (value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0)) {
+                    processResponse(deleteMethod, msgContext);
+                }
+            }
+        } else {
+            throw new AxisFault(Messages.getMessage("transportError",
+                    String.valueOf(deleteMethod.getStatusCode()),
+                    deleteMethod.getResponseBodyAsString()));
+        }
     }
 
     private void sendViaGet(MessageContext msgContext, URL url)

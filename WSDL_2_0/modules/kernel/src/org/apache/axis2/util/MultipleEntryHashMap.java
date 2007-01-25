@@ -41,6 +41,9 @@ public class MultipleEntryHashMap {
         if (list != null) {
             Object o = list.get(0);
             list.remove(0);
+            if (list.size() == 0) {
+                table.remove(key);
+            }
             return o;
         }
 

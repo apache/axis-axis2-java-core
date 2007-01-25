@@ -75,7 +75,7 @@ public class RESTUtil {
                     contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED) > -1  ||
                     contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1) {
                 soapEnvelope = handleNonURLEncodedContentTypes(msgContext, request,
-                        OMAbstractFactory.getSOAP11Factory());
+                        OMAbstractFactory.getSOAP12Factory());
             } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
                     contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1) {
                 // 2. Else, Dispatch and find out the operation and the service.
@@ -92,7 +92,7 @@ public class RESTUtil {
                 soapEnvelope = SchemaUtil.handleMediaTypeURLEncoded(msgContext,
                         request,
                         xmlSchemaElement,
-                        OMAbstractFactory.getSOAP11Factory());
+                        OMAbstractFactory.getSOAP12Factory());
             } else {
                 throw new AxisFault("Content type should be one of /n " + HTTPConstants.MEDIA_TYPE_TEXT_XML +
                         "/n " + HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
@@ -154,7 +154,6 @@ public class RESTUtil {
 
             // set the required properties so that even if there is an error during the dispatch
             // phase the response message will be passed to the client well. 
-            msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD, org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_GET);
             msgContext.setDoingREST(true);
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream());
 
@@ -174,7 +173,7 @@ public class RESTUtil {
             SOAPEnvelope soapEnvelope = SchemaUtil.handleMediaTypeURLEncoded(msgContext,
                     request,
                     xmlSchemaElement,
-                    OMAbstractFactory.getSOAP11Factory());
+                    OMAbstractFactory.getSOAP12Factory());
             msgContext.setEnvelope(soapEnvelope);
 
             invokeAxisEngine(msgContext);

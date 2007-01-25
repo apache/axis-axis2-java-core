@@ -17,6 +17,7 @@ package org.apache.axis2.util;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -158,10 +159,10 @@ public class SchemaUtil {
 
             // we handle only GET and POST methods. Do a sanity check here, first.
 
-            String httpMethod = request.getMethod();
-            if (org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_POST.equals(httpMethod)
-                    || (org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_GET.equals(httpMethod)))
-            {
+//            String httpMethod = request.getMethod();
+//            if (org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_POST.equals(httpMethod)
+//                    || (org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_GET.equals(httpMethod)))
+//            {
                 // Schema should adhere to the IRI style in this. So assume IRI style and dive in to
                 // schema
                 XmlSchemaType schemaType = xmlSchemaElement.getSchemaType();
@@ -194,6 +195,7 @@ public class SchemaUtil {
                             XmlSchemaElement innerElement = (XmlSchemaElement) iterator.next();
                             QName qName = innerElement.getQName();
                             long minOccurs = innerElement.getMinOccurs();
+                            boolean nillable = innerElement.isNillable();
                             while (minOccurs != 0) {
                                 String name = qName != null ? qName.getLocalPart() : innerElement.getName();
 
@@ -209,24 +211,38 @@ public class SchemaUtil {
                                 }
 
                                 if (value == null) {
+
+                                    if (nillable) {
+
+                                        OMNamespace xsi = soapFactory.createOMNamespace(Constants.URI_DEFAULT_SCHEMA_XSI,Constants.NS_PREFIX_SCHEMA_XSI);
+                                        OMAttribute omAttribute = soapFactory.createOMAttribute("nil",xsi,"true");
+                                        OMNamespace ns = (qName == null || qName.getNamespaceURI() == null || qName.getNamespaceURI().length() == 0) ?
+                                        null :
+                                        soapFactory.createOMNamespace(qName.getNamespaceURI(), null);
+                                        soapFactory.createOMElement(name, ns,
+                                        bodyFirstChild).addAttribute(omAttribute);           
+
+                                    } else {
                                     throw new AxisFault("Required element " + qName +
                                             " defined in the schema can not be found in the request");
-                                }
+                                    }
+                                } else {
 
                                 OMNamespace ns = (qName == null || qName.getNamespaceURI() == null || qName.getNamespaceURI().length() == 0) ?
                                         null :
                                         soapFactory.createOMNamespace(qName.getNamespaceURI(), null);
                                 soapFactory.createOMElement(name, ns,
                                         bodyFirstChild).setText(value);
+                                }
 
                                 minOccurs--;
                             }
                         }
                     }
                 }
-            } else {
-                throw new AxisFault("According to WSDL 2.0 rules, we support complex types only");
-            }
+//            } else {
+//                throw new AxisFault("According to WSDL 2.0 rules, we support complex types only");
+//            }
 
         }
         return soapEnvelope;

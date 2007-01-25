@@ -1910,7 +1910,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         if (WSDL2Constants.URI_WSOAP_MEP.equalsIgnoreCase(mep)) {
             methodElement.appendChild(generateOptionParamComponent(doc, "org.apache.axis2.Constants.Configuration.ENABLE_REST", "true"));
-            methodElement.appendChild(generateOptionParamComponent(doc," org.apache.axis2.Constants.Configuration.HTTP_METHOD", "\"" + org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET + "\""));
+            methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.Constants.Configuration.HTTP_METHOD", "\"" + org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET + "\""));
             methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.Constants.Configuration.CONTENT_TYPE", "\"" + "org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM" + "\""));
       }
 
@@ -1922,29 +1922,28 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_METHOD,
                         axisOperation.getName());
             if (property != null) {
-            methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_METHOD", "\"" + property + "\""));
+            methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.Constants.Configuration.HTTP_METHOD", "\"" + property + "\""));
             }
 
-            Boolean value = (Boolean) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED,
-                        axisOperation.getName());
-            if (value != null) {
-            methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED", "\"" + value.booleanValue() + "\""));
-            }
-            
             // If there is no WHTTP_METHOD defined then we better compute the default value which is get if the operation
             // is wsdlx:safe or post otherwise
             else if (!WSDL2Constants.URI_WSOAP_MEP.equalsIgnoreCase(mep)) {
                 Parameter safe = axisOperation.getParameter(WSDL2Constants.ATTR_WSDLX_SAFE);
                 if (safe != null) {
                     if (((Boolean)safe.getValue()).booleanValue()) {
-                        methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_METHOD", "\"" + org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET + "\""));
+                        methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.Constants.Configuration.HTTP_METHOD", "\"" + org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET + "\""));
                     }
                     else {
-                        methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_METHOD", "\"" + org.apache.axis2.Constants.Configuration.HTTP_METHOD_POST + "\""));
+                        methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.Constants.Configuration.HTTP_METHOD", "\"" + org.apache.axis2.Constants.Configuration.HTTP_METHOD_POST + "\""));
                     }
                 }
             }
 
+            Boolean value = (Boolean) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED,
+                                    axisOperation.getName());
+                        if (value != null) {
+                        methodElement.appendChild(generateOptionParamComponent(doc,"org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED", "\"" + value.booleanValue() + "\""));
+            }
 
             property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_CODE,
                         axisOperation.getName());

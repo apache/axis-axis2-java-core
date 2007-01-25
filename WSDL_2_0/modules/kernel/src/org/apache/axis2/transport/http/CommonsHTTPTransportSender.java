@@ -35,11 +35,13 @@ import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -47,6 +49,8 @@ import java.io.ByteArrayOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.zip.GZIPOutputStream;
+import java.util.List;
+import java.util.Iterator;
 
 public class CommonsHTTPTransportSender extends AbstractHandler implements TransportSender {
 
@@ -282,8 +286,21 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements Trans
             MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,
                     out, msgContext.getAttachmentMap(), format);
         } else {
+            ServletBasedOutTransportInfo transportInfo = (ServletBasedOutTransportInfo) msgContext.getProperty(Constants.OUT_TRANSPORT_INFO);
+            List customHheaders = (List) msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
+            if (customHheaders != null) {
+                Iterator iter = customHheaders.iterator();
+                while (iter.hasNext()) {
+                    Header header = (Header) iter.next();
+                    if (header != null) {
+                        transportInfo.addHeader(header.getName(), header.getValue());
+                    }
+                }
+            }
             Object gzip = msgContext.getOptions().getProperty(HTTPConstants.MC_GZIP_RESPONSE);
             if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
+                transportInfo.addHeader(HTTPConstants.HEADER_TRANSFER_ENCODING,
+                        HTTPConstants.COMPRESSION_GZIP);
                 GZIPOutputStream gzout = null;
                 ByteArrayOutputStream compressed = new ByteArrayOutputStream();
                 try {

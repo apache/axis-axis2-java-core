@@ -233,6 +233,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String ATTACHMENT_TEMP_DIR = "attachmentDIR";
         public static final String FILE_SIZE_THRESHOLD = "sizeThreshold";
         public static final String HTTP_METHOD_GET = "GET";
+        public static final String HTTP_METHOD_DELETE = "DELETE";
+        public static final String HTTP_METHOD_PUT = "PUT";
         public static final String HTTP_METHOD = "HTTP_METHOD";
         public static final String HTTP_METHOD_POST = "POST";
 

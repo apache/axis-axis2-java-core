@@ -194,9 +194,15 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             MessageContext messageContext = null;
             try {
                 messageContext = createMessageContext(req, resp);
+                messageContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD, Constants.Configuration.HTTP_METHOD_GET);
                 new RESTUtil(configContext).processGetRequest(messageContext,
                         req,
                         resp);
+                Object contextWritten =
+                        messageContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
+                if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
+                    resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                }
             } catch (Exception e) {
                 log.error(e);
                 if (messageContext != null) {
@@ -268,24 +274,24 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 Object contextWritten =
                         msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
 
-                MessageContext outMsgContext = msgContext.getOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-                if (outMsgContext != null) {
-                    Object gzip = outMsgContext.getProperty(HTTPConstants.MC_GZIP_RESPONSE);
-                    if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
-                        res.addHeader(HTTPConstants.HEADER_TRANSFER_ENCODING,
-                                    HTTPConstants.COMPRESSION_GZIP);
-                    }
-                    List customHheaders = (List) outMsgContext.getProperty(HTTPConstants.HTTP_HEADERS);
-                    if (customHheaders != null) {
-                        Iterator iter = customHheaders.iterator();
-                        while (iter.hasNext()) {
-                            Header header = (Header) iter.next();
-                            if (header != null) {
-                                res.addHeader(header.getName(), header.getValue());
-                            }
-                        }
-                    }
-                }
+//                MessageContext outMsgContext = msgContext.getOperationContext().getMessageContext(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+//                if (outMsgContext != null) {
+//                    Object gzip = outMsgContext.getProperty(HTTPConstants.MC_GZIP_RESPONSE);
+//                    if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
+//                        res.addHeader(HTTPConstants.HEADER_TRANSFER_ENCODING,
+//                                    HTTPConstants.COMPRESSION_GZIP);
+//                    }
+//                    List customHheaders = (List) outMsgContext.getProperty(HTTPConstants.HTTP_HEADERS);
+//                    if (customHheaders != null) {
+//                        Iterator iter = customHheaders.iterator();
+//                        while (iter.hasNext()) {
+//                            Header header = (Header) iter.next();
+//                            if (header != null) {
+//                                res.addHeader(header.getName(), header.getValue());
+//                            }
+//                        }
+//                    }
+//                }
                 res.setContentType("text/xml; charset="
                         + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
@@ -348,6 +354,47 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                     throw new ServletException(t);
                 }
             }
+        }
+    }
+
+        protected void doDelete(HttpServletRequest req,
+                         HttpServletResponse resp) throws ServletException, IOException {
+
+        initContextRoot(req);
+
+        // this method is also used to serve for the listServices request.
+
+        String requestURI = req.getRequestURI();
+        String query = req.getQueryString();
+
+            
+        if (!disableREST && enableRESTInAxis2MainServlet) { // if the main servlet should handle REST also
+            MessageContext messageContext = null;
+            try {
+                messageContext = createMessageContext(req, resp);
+                messageContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD, Constants.Configuration.HTTP_METHOD_DELETE);
+                new RESTUtil(configContext).processGetRequest(messageContext,
+                        req,
+                        resp);
+                Object contextWritten =
+                        messageContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
+                if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
+                    resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+                }
+            } catch (Exception e) {
+                log.error(e);
+                if (messageContext != null) {
+                    resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    handleFault(messageContext, resp.getOutputStream(), new AxisFault(e));
+                } else {
+                    throw new ServletException(e);
+                }
+            }
+        } else {
+            PrintWriter writer = new PrintWriter(resp.getOutputStream());
+            writer.println("<html><body><h2>Please enable REST support in WEB-INF/conf/axis2.xml and WEB-INF/web.xml</h2></body></html>");
+            writer.flush();
+            resp.setStatus(HttpServletResponse.SC_ACCEPTED);
         }
     }
 
