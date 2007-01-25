@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.net.URI;
 
 import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
 import org.apache.axis2.AxisFault;
@@ -117,7 +118,7 @@ public class HTTPWorker implements Worker {
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 final AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {
-                    final String ip = HttpUtils.getIpAddress();
+                    final String ip = getHostAddress(request);
                     EntityTemplate entity = new EntityTemplate(new ContentProducer() {
 
                         public void writeTo(final OutputStream outstream) throws IOException {
@@ -136,7 +137,7 @@ public class HTTPWorker implements Worker {
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
                 final AxisService service = (AxisService) services.get(serviceName);
                 if (service != null) {
-                    final String ip = HttpUtils.getIpAddress();
+                    final String ip = getHostAddress(request);
                     EntityTemplate entity = new EntityTemplate(new ContentProducer() {
 
                         public void writeTo(final OutputStream outstream) throws IOException {
@@ -290,6 +291,19 @@ public class HTTPWorker implements Worker {
             response.setStatusLine(new StatusLine(ver, 202, "OK"));
         }
     }
+	
+    public String getHostAddress(HttpRequest request) throws java.net.SocketException{
+        try {
+            Header hostHeader = request.getFirstHeader("host");
+            if (hostHeader!=null){
+                String host = hostHeader.getValue();
+                return new URI("http://"+host).getHost();
+            }
+        } catch (Exception e){
+            
+        }
+        return HttpUtils.getIpAddress();
+    }	
 
     class SimpleHTTPRequestResponseTransport implements RequestResponseTransport
     {
