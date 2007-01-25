@@ -23,6 +23,8 @@ import javax.xml.namespace.QName;
 
 public interface WSDLConstants {
 
+    String WSDL_1_1_STYLE = "style";
+    
     String STYLE_RPC = "rpc";
     String STYLE_DOC = "document";
     String STYLE_MSG = "msg";
@@ -159,6 +161,25 @@ public interface WSDLConstants {
         // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#out-opt-in
         String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/2006/01/wsdl/out-opt-in";
         String DEFAULT_NAMESPACE_URI = "http://www.w3.org/2006/01/wsdl";
+
+        String NMTOKEN_ANY = "#any";
+        String NMTOKEN_NONE = "#none";
+        String NMTOKEN_OTHER = "#other";
+        String NMTOKEN_ELEMENT = "#element";
+
+    }
+    
+    public static interface WSDL20_2004_Constants {
+
+        String MEP_URI_IN_ONLY = "http://www.w3.org/2004/08/wsdl/in-only";
+        String MEP_URI_ROBUST_IN_ONLY = "http://www.w3.org/2004/08/wsdl/robust-in-only";
+        String MEP_URI_IN_OUT = "http://www.w3.org/2004/08/wsdl/in-out";
+        String MEP_URI_IN_OPTIONAL_OUT = "http://www.w3.org/2004/08/wsdl/in-opt-out";
+        String MEP_URI_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/out-only";
+        String MEP_URI_ROBUST_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/robust-out-only";
+        String MEP_URI_OUT_IN = "http://www.w3.org/2004/08/wsdl/out-in";
+        String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/2004/08/wsdl/out-opt-in";
+        String DEFAULT_NAMESPACE_URI = "http://www.w3.org/2004/08/wsdl";
 
         String NMTOKEN_ANY = "#any";
         String NMTOKEN_NONE = "#none";
