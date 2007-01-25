@@ -37,6 +37,8 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.validator.ServiceDescriptionValidator;
 import org.apache.axis2.jaxws.description.validator.ValidationFailures;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Creates the JAX-WS metadata descritpion hierachy from some combinations of
@@ -44,6 +46,8 @@ import org.apache.axis2.jaxws.description.validator.ValidationFailures;
  * descriptors.
  */
 public class DescriptionFactoryImpl {
+    private static final Log log = LogFactory.getLog(DescriptionFactoryImpl.class);
+
     /**
      * A DescrptionFactory can not be instantiated; all methods are static.
      */
@@ -85,6 +89,12 @@ public class DescriptionFactoryImpl {
                 	
                 	String msg = "The ServiceDescription failed to validate due to the following errors: \n" +
                 	validator.toString();
+                    
+                    if (log.isDebugEnabled()) {
+                        log.debug("Validation Phase 2 failure: " + msg);
+                        log.debug("Failing composite: " + serviceImplComposite.toString());
+
+                    }
                 	
                     // TODO: Validate all service descriptions before failing
                     // TODO: Get more detailed failure information from the Validator

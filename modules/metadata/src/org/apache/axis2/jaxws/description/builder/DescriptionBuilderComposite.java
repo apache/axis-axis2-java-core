@@ -185,35 +185,44 @@ public class DescriptionBuilderComposite {
 	public URL getWsdlURL() {
 		return this.wsdlURL;
 	}
-	
-	/**
-	 * Returns the nth occurence of this MethodComposite. Since
-	 * method names are not unique, we have to account for multiple occurrences
-	 *
-	 * @return Returns the methodDescriptionComposite.
-	 */
-	public MethodDescriptionComposite getMethodDescriptionComposite(
-						String 	methodName,
-						int		occurence) {
+    /** Returns a collection of all MethodDescriptionComposites that match the 
+     * specified name 
+     */
+    public List<MethodDescriptionComposite> getMethodDescriptionComposite(String methodName) {
+        ArrayList<MethodDescriptionComposite> matchingMethods = new ArrayList<MethodDescriptionComposite>();
+        Iterator<MethodDescriptionComposite> iter = methodDescriptions.iterator();
+        while(iter.hasNext()) {
+            MethodDescriptionComposite composite = iter.next();
+            
+            if (composite.getMethodName() != null) {
+                if (composite.getMethodName().equals(methodName)){
+                    matchingMethods.add(composite);
+                }
+            }
+        }
+        
+        return matchingMethods;
+    }
 
-		MethodDescriptionComposite composite = null;
-		Iterator<MethodDescriptionComposite> iter = 
-							methodDescriptions.iterator();
-		int hits = 0;
-		while(iter.hasNext()) {
-			composite = iter.next();
-			
-			if (composite.getMethodName() != null) {
-				if (composite.getMethodName().equals(methodName)){
-					hits++;
-					if (hits == occurence)
-						return composite;
-				}
-			}
-		}
-		
-		return composite;
-	}
+    /**
+     * Returns the nth occurence of this MethodComposite. Since
+     * method names are not unique, we have to account for multiple occurrences
+     *
+     * @param methodName
+     * @param occurence The nth occurance to return; not this is NOT 0 based
+     * @return Returns the methodDescriptionComposite
+     */
+    public MethodDescriptionComposite getMethodDescriptionComposite(
+                        String  methodName,
+                        int     occurence) {
+        MethodDescriptionComposite returnMDC = null;
+        List<MethodDescriptionComposite> matchingMethods = getMethodDescriptionComposite(methodName);
+        if (matchingMethods != null && !matchingMethods.isEmpty() && 
+            occurence > 0 && occurence <= matchingMethods.size() ) {
+            returnMDC = matchingMethods.get(--occurence);
+        }
+        return returnMDC;
+    }
 	
 	public List<MethodDescriptionComposite> getMethodDescriptionsList() {
 		return methodDescriptions;

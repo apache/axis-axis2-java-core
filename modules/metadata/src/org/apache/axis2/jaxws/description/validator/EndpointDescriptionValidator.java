@@ -20,6 +20,8 @@ package org.apache.axis2.jaxws.description.validator;
 
 import javax.wsdl.Port;
 import javax.wsdl.Service;
+import javax.xml.ws.http.HTTPBinding;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
@@ -63,14 +65,60 @@ public class EndpointDescriptionValidator extends Validator {
     private boolean validateWSDLBindingType() {
         // TODO: The getWSDLBindingType is not getting the correct value; it needs to return the
         //       <soap:binding transport> value
-        if (true) return VALID;
+        boolean isBindingValid = false;
         String bindingType = endpointDesc.getBindingType();
         String wsdlBindingType = endpointDescWSDL.getWSDLBindingType();
-        if (wsdlBindingType != null && !wsdlBindingType.equals(bindingType)) {
-            addValidationFailure(this, "Binding type is invald");
-            return INVALID;
+        if (bindingType == null) {
+            // I don't think this can happen; the Description layer should provide a default
+            addValidationFailure(this, "Annotation binding type is null and did not have a default");
+            isBindingValid = false;
         }
-        return VALID;
+        // Validate that the annotation value specified is valid.
+        else if (!SOAPBinding.SOAP11HTTP_BINDING.equals(bindingType) &&
+                 !SOAPBinding.SOAP11HTTP_MTOM_BINDING.equals(bindingType) &&
+                 !SOAPBinding.SOAP12HTTP_BINDING.equals(bindingType) &&
+                 !SOAPBinding.SOAP12HTTP_MTOM_BINDING.equals(bindingType) &&
+                 !HTTPBinding.HTTP_BINDING.equals(bindingType)) {
+            addValidationFailure(this, "Invalid annotation binding value specified: " + bindingType);
+            isBindingValid = false;
+        }
+        // If there's no WSDL, then there will be no WSDL Binding Type to validate against
+        else if (wsdlBindingType == null) {
+            isBindingValid = true;
+        }
+        // Validate that the WSDL value is valid
+        else if (!EndpointDescriptionWSDL.SOAP11_WSDL_BINDING.equals(wsdlBindingType) &&
+                 !EndpointDescriptionWSDL.SOAP12_WSDL_BINDING.equals(wsdlBindingType) &&
+                 !EndpointDescriptionWSDL.HTTP_WSDL_BINDING.equals(wsdlBindingType)) {
+            addValidationFailure(this, "Invalid wsdl binding value specified: " + wsdlBindingType);
+            isBindingValid = false;
+        }
+        // Validate that the WSDL and annotations values indicate the same type of binding
+        else if (wsdlBindingType.equals(EndpointDescriptionWSDL.SOAP11_WSDL_BINDING)
+                 && (bindingType.equals(SOAPBinding.SOAP11HTTP_BINDING) || 
+                     bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING))) {
+            isBindingValid = true;
+        }
+        else if (wsdlBindingType.equals(EndpointDescriptionWSDL.SOAP12_WSDL_BINDING)
+                 && (bindingType.equals(SOAPBinding.SOAP12HTTP_BINDING) ||
+                     bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))) {
+            isBindingValid = true;
+        }
+        else if (wsdlBindingType.equals(EndpointDescriptionWSDL.HTTP_WSDL_BINDING) &&
+                 bindingType.equals(HTTPBinding.HTTP_BINDING)) {
+            isBindingValid = true;
+        }
+        // The HTTP binding is not valid on a Java Bean SEI-based endpoint; only on a Provider based one.
+        else if (wsdlBindingType.equals(EndpointDescriptionWSDL.HTTP_WSDL_BINDING) &&
+                 endpointDesc.isEndpointBased()) {
+            addValidationFailure(this, "The HTTPBinding can not be specified for SEI-based endpoints");
+            isBindingValid = false;
+        }
+        else {
+            addValidationFailure(this, "Invalid binding; wsdl = " + wsdlBindingType + ", annotation = " + bindingType);
+            isBindingValid = false;
+        }
+        return isBindingValid;
     }
 
     private boolean validateWSDLPort() {
@@ -81,7 +129,8 @@ public class EndpointDescriptionValidator extends Validator {
         if (wsdlService != null) {
             Port wsdlPort = endpointDescWSDL.getWSDLPort();
             if (wsdlPort == null) {
-                addValidationFailure(this, "Serivce exists in WSDL, but Port does not.  Not a valid Partial WSDL");
+                addValidationFailure(this, "Serivce exists in WSDL, but Port does not.  Not a valid Partial WSDL.  Service: " 
+                        + endpointDesc.getServiceQName() + "; Port: " + endpointDesc.getPortQName());
                 return INVALID;
             }
         }

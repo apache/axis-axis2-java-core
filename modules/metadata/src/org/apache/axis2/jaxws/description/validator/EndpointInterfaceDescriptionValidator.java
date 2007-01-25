@@ -81,8 +81,8 @@ public class EndpointInterfaceDescriptionValidator extends Validator {
             	addValidationFailure(this, "The operation names in the WSDL portType " +
             			"do not match the method names in the SEI or Web service i" +
             			"mplementation class.");
+                return INVALID;
             }
-            
         }
         return VALID;
     }
