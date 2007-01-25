@@ -112,7 +112,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     }
 
     public void destroy() {
-        super.destroy();
         //stoping listner manager
         try {
             if (configContext != null) {
@@ -121,7 +120,10 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         } catch (AxisFault axisFault) {
             log.info(axisFault.getMessage());
         }
-
+        try {
+            super.destroy();
+        } catch (Exception e){
+        }
     }
 
     /**
