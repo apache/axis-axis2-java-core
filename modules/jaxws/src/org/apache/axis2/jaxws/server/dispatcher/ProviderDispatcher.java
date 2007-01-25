@@ -37,6 +37,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -49,6 +50,7 @@ import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -177,9 +179,13 @@ public class ProviderDispatcher extends JavaDispatcher{
             	}
             });
         } catch (Exception e) {
-            e.printStackTrace();
-            //throw ExceptionFactory.makeWebServiceException(e);
-            responseParamValue = new XMLFault(XMLFaultCode.RECEIVER, new XMLFaultReason(e.toString()));
+            Throwable t = ClassUtils.getRootCause(e);
+            if (log.isDebugEnabled()) {
+                log.debug("Marshal Throwable =" + e.getClass().getName());
+                log.debug("  rootCause =" + t.getClass().getName());
+                log.debug("  exception=" + t.toString());
+            }
+            responseParamValue =MethodMarshallerUtils.createXMLFaultFromSystemException(t);
         }
 
         // If we have a one-way operation, then we cannot create a MessageContext 

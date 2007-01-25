@@ -41,6 +41,7 @@ import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.ServiceMode;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
@@ -62,6 +63,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
     
     public static String XML_REQUEST              = "xml request";
     public static String XML_RESPONSE             = "xml response";
+    public static String XML_EMPTYBODY_REQUEST    = "xml empty body request";
     public static String XML_ATTACHMENT_REQUEST   = "xml and attachment request";
     public static String XML_ATTACHMENT_RESPONSE  = "xml and attachment response";
     public static String XML_MTOM_REQUEST         = "xml and mtom request";
@@ -69,6 +71,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
     public static String XML_SWAREF_REQUEST       = "xml and swaref request";
     public static String XML_SWAREF_RESPONSE      = "xml and swaref response";
     public static String XML_FAULT_REQUEST        = "xml fault";
+    public static String XML_WSE_REQUEST        = "xml wse fault";
     
     private String XML_RETURN = "<ns2:ReturnType xmlns:ns2=\"http://test\"><return_str>" + 
         SoapMessageProvider.XML_RESPONSE +
@@ -118,6 +121,8 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
             String text = discElement.getValue();
             if (XML_REQUEST.equals(text)) {
                 response = getXMLResponse(soapMessage, discElement);
+            } else if (XML_EMPTYBODY_REQUEST.equals(text)) {
+                response = getXMLEmptyBodyResponse(soapMessage, discElement);
             } else if (XML_ATTACHMENT_REQUEST.equals(text)) {
                 response = getXMLAttachmentResponse(soapMessage, discElement);
             } else if (XML_MTOM_REQUEST.equals(text)) {
@@ -126,6 +131,8 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
                 response = getXMLSWARefResponse(soapMessage, discElement);
             } else if (XML_FAULT_REQUEST.equals(text)) {
                 throwSOAPFaultException();
+            } else if (XML_WSE_REQUEST.equals(text)) {
+                throwWebServiceException();
             } else {
                 // We should not get here
                 System.out.println("Unknown Type of Message");
@@ -137,8 +144,8 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
             //response.writeTo(System.out);
             //System.out.println("\n");
             return response;
-    	} catch (SOAPFaultException sfe) {
-    	    throw sfe;
+    	} catch (WebServiceException wse) {
+    	    throw wse;
         } catch(Exception e){
             System.out.println("***ERROR: In SoapMessageProvider.invoke: Caught exception " + e);
     		e.printStackTrace();
@@ -195,6 +202,26 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         
         // Set a content description
         response.setContentDescription(SoapMessageProvider.XML_RESPONSE);
+        return response;
+    }
+    
+    /**
+     * Get the response for an XML only request
+     * @param request
+     * @param dataElement
+     * @return SOAPMessage
+     */
+    private SOAPMessage getXMLEmptyBodyResponse(SOAPMessage request, SOAPElement dataElement) throws Exception {
+        SOAPMessage response;
+       
+
+        // Additional assertion checks
+        assert(countAttachments(request) == 0);
+        
+        // Build the Response
+        MessageFactory factory = MessageFactory.newInstance();
+        response = factory.createMessage();
+     
         return response;
     }
     
@@ -303,6 +330,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
             Name deName = sf.createName("detailEntry");
             SOAPElement detailEntry = detail.addDetailEntry(deName);
             detailEntry.addTextNode("sample detail");
+            fault.setFaultActor("sample actor");
             
             SOAPFaultException sfe = new SOAPFaultException(fault);
             throw sfe;
@@ -311,6 +339,10 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    private void throwWebServiceException() throws WebServiceException {
+        throw new WebServiceException("A WSE was thrown");
     }
     /**
      * Count Attachments

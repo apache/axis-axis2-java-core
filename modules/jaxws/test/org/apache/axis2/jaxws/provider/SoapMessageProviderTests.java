@@ -22,16 +22,19 @@ import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.DetailEntry;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Binding;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axis2.jaxws.provider.soapmsg.SoapMessageProvider;
 
@@ -54,6 +57,9 @@ public class SoapMessageProviderTests extends ProviderTestCase {
     private String XML_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
         SoapMessageProvider.XML_REQUEST +
         "</invoke_str></ns2:invoke>";
+    private String EMPTYBODY_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
+        SoapMessageProvider.XML_EMPTYBODY_REQUEST +
+        "</invoke_str></ns2:invoke>";
     private String ATTACHMENT_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
         SoapMessageProvider.XML_ATTACHMENT_REQUEST +
         "</invoke_str></ns2:invoke>";
@@ -69,6 +75,9 @@ public class SoapMessageProviderTests extends ProviderTestCase {
         "</ns2:invoke>";   
     private String XML_FAULT_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
     SoapMessageProvider.XML_FAULT_REQUEST +
+    "</invoke_str></ns2:invoke>";
+    private String XML_WSE_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
+    SoapMessageProvider.XML_WSE_REQUEST +
     "</invoke_str></ns2:invoke>";
                 
     
@@ -127,11 +136,51 @@ public class SoapMessageProviderTests extends ProviderTestCase {
     }
     
     /**
+     * Sends an SOAPMessage containing only xml data to the web service.  
+     * Receives a response containing an empty body
+     */
+    public void testProviderSourceXMLEmptyBody(){
+        try{       
+            // Create the dispatch
+            Dispatch<SOAPMessage> dispatch = createDispatch();
+            
+            // Create the SOAPMessage
+            String msg = reqMsgStart + EMPTYBODY_INVOKE + reqMsgEnd;
+            MessageFactory factory = MessageFactory.newInstance();
+            SOAPMessage request = factory.createMessage(null, 
+                    new ByteArrayInputStream(msg.getBytes()));
+            
+            // Test the transport headers by sending a content description
+            request.setContentDescription(SoapMessageProvider.XML_EMPTYBODY_REQUEST);
+            
+            // Dispatch
+            System.out.println(">> Invoking SourceMessageProviderDispatch");
+            SOAPMessage response = dispatch.invoke(request);
+            
+            // Check assertions
+            assertTrue(response !=null);
+            assertTrue(response.getSOAPBody() != null);
+            assertTrue(response.getSOAPBody().getFirstChild() == null);  // There should be nothing in the body
+            
+            assertTrue(countAttachments(response) == 0);
+            
+            // Print out the response
+            System.out.println(">> Response [" + response.toString() + "]");
+            response.writeTo(System.out);
+            
+        }catch(Exception e){
+            e.printStackTrace();
+            fail("Caught exception " + e);
+        }
+        
+    }
+    
+    /**
      * Sends an SOAPMessage containing only xml data 
      * Provider will throw a Fault
      */
-    public void testProviderSOAPFault(){
-        try{       
+    public void testProviderSOAPFault() throws Exception {
+             
             // Create the dispatch
             Dispatch<SOAPMessage> dispatch = createDispatch();
             
@@ -149,17 +198,49 @@ public class SoapMessageProviderTests extends ProviderTestCase {
                 System.out.println(">> Invoking SourceMessageProviderDispatch");
                 SOAPMessage response = dispatch.invoke(request);
                 assertTrue("Expected failure", false);
-            } catch (Exception e) {
-                
-            }
-
-           
+            } catch (SOAPFaultException e) {
+                // Okay
+                SOAPFault fault = e.getFault();
+                assertTrue(fault != null);
+                assertTrue(fault.getFaultString().equals("sample fault"));
+                assertTrue(fault.getDetail() != null);
+                DetailEntry de = (DetailEntry) fault.getDetail().getDetailEntries().next();
+                assertTrue(de != null);
+                assertTrue(de.getLocalName().equals("detailEntry"));
+                assertTrue(de.getValue().equals("sample detail"));
+                assertTrue(fault.getFaultActor().equals("sample actor"));
+            }    
+    }
+    
+    /**
+     * Sends an SOAPMessage containing only xml data 
+     * Provider will throw a generic WebServicesException
+     */
+    public void testProviderWebServiceException() throws Exception {
+             
+            // Create the dispatch
+            Dispatch<SOAPMessage> dispatch = createDispatch();
             
-        }catch(Exception e){
-            e.printStackTrace();
-            fail("Caught exception " + e);
-        }
-        
+            // Create the SOAPMessage
+            String msg = reqMsgStart + XML_WSE_INVOKE + reqMsgEnd;
+            MessageFactory factory = MessageFactory.newInstance();
+            SOAPMessage request = factory.createMessage(null, 
+                    new ByteArrayInputStream(msg.getBytes()));
+            
+            // Test the transport headers by sending a content description
+            request.setContentDescription(SoapMessageProvider.XML_WSE_REQUEST);
+            
+            try {
+                // Dispatch
+                System.out.println(">> Invoking SourceMessageProviderDispatch");
+                SOAPMessage response = dispatch.invoke(request);
+                assertTrue("Expected failure", false);
+            } catch (SOAPFaultException e) {
+                // Okay...SOAPFaultException should be thrown
+                SOAPFault fault = e.getFault();
+                assertTrue(fault != null);
+                assertTrue(fault.getFaultString().equals("A WSE was thrown"));
+            }    
     }
     
     /**
