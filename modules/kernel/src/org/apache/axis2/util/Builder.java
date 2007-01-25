@@ -199,7 +199,12 @@ public class Builder {
 					MTOMConstants.SWA_TYPE)) {
 				builder = new StAXSOAPModelBuilder(streamReader,
 						soapEnvelopeNamespaceURI);
-			}
+			} else if (attachments.getAttachmentSpecType().equals(
+                    MTOMConstants.SWA_TYPE_12) ) {
+                builder = new StAXSOAPModelBuilder(streamReader,
+                        soapEnvelopeNamespaceURI);
+            }
+
 		}
 		// To handle REST XOP case
 		else {
@@ -212,7 +217,10 @@ public class Builder {
 			} else if (attachments.getAttachmentSpecType().equals(
 					MTOMConstants.SWA_TYPE)) {
 				builder = new StAXOMBuilder(streamReader);
-			}
+			} else if (attachments.getAttachmentSpecType().equals(
+                    MTOMConstants.SWA_TYPE_12) ) {
+                builder = new StAXOMBuilder(streamReader);
+            }
 		}
 
 		return builder;
