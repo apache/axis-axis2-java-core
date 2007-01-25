@@ -155,7 +155,16 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
 				BlockFactory factory = (BlockFactory) FactoryRegistry
 						.getFactory(blockFactoryType);
 				block = message.getBodyBlock(0, null, factory);
-				value = block.getBusinessObject(true);
+                if (block != null) {
+                    value = block.getBusinessObject(true);
+                } else {
+                    // REVIEW This seems like the correct behavior.  If the body is empty, return a null
+                    // Any changes here should also be made to XMLDispatch.getValue
+                    if (log.isDebugEnabled()) {
+                        log.debug("There are no elements in the body to unmarshal.  XMLDispatch returns a null value");
+                    }
+                    value = null;
+                }
 				
 			} else if (mode.equals(Mode.MESSAGE)) {
 			   if (blockFactoryType.equals(SOAPEnvelopeBlockFactory.class)) {
