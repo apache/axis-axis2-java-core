@@ -690,7 +690,7 @@
 
 
                                        // write the nil attribute
-                                      writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                      writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                       xmlWriter.writeEndElement();
                                     }else{
                                      <xsl:value-of select="$varName"/>.getOMDataSource(
@@ -739,7 +739,7 @@
                                                     }
 
                                                    // write the nil attribute
-                                                   writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                                   writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                    xmlWriter.writeEndElement();
                                             </xsl:when>
                                             <xsl:when test="$min=0">
@@ -776,7 +776,7 @@
                                         }
 
                                        // write the nil attribute
-                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                        xmlWriter.writeEndElement();
                                 </xsl:when>
                                 <xsl:otherwise>
@@ -836,7 +836,7 @@
                                             }
 
                                            // write the nil attribute
-                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                            xmlWriter.writeEndElement();
                                         </xsl:when>
                                         <xsl:when test="$min=0">
@@ -872,7 +872,7 @@
                                         }
 
                                        // write the nil attribute
-                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                        xmlWriter.writeEndElement();
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -931,7 +931,7 @@
                                             }
 
                                            // write the nil attribute
-                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                            xmlWriter.writeEndElement();
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -1018,7 +1018,7 @@
                                                         } else {
                                                             xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
                                                         }
-                                                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                         xmlWriter.writeEndElement();
                                                    </xsl:when>
                                                    <xsl:when test="$min=0">
@@ -1057,7 +1057,7 @@
                                             }
 
                                            // write the nil attribute
-                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                            xmlWriter.writeEndElement();
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -1141,7 +1141,7 @@
                                               // write the nil attribute
                                               <xsl:choose>
                                                   <xsl:when test="@nillable">
-                                                     writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                                     writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                   </xsl:when>
                                                   <xsl:otherwise>
                                                      throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
@@ -1229,7 +1229,7 @@
                                         }
 
                                         // write the nil attribute
-                                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                         xmlWriter.writeEndElement();
                                        }else{
                                          <xsl:value-of select="$varName"/>.getOMDataSource(
@@ -1279,7 +1279,7 @@
                                             <xsl:choose>
                                                 <xsl:when test="$nillable">
                                                      // write the nil attribute
-                                                     writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                                     writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                 </xsl:when>
                                                 <xsl:otherwise>
                                                      throw new RuntimeException("testValue cannot be null !!");
@@ -1683,13 +1683,15 @@
             <xsl:if test="not(property/enumFacet)"><xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();</xsl:if>
             <xsl:if test="property/enumFacet"><xsl:value-of select="$name"/> object = null;</xsl:if>
             int event;
+            String nillableValue = null;
             try {
                 <!-- Advance to our start element, or if we are a complex type, to our first property start element or the outer end element if no properties -->
                 while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
                     reader.next();
 
                 <xsl:if test="@nillable">
-                   if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                   nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                   if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                          // Skip the element and report the null value.  It cannot have subelements.
                          while (!reader.isEndElement())
                              reader.next();
@@ -1862,7 +1864,8 @@
                                     <xsl:choose>
                                         <xsl:when test="@ours">
                                              <xsl:if test="@nillable">
-                                              if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                              nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                              if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                   <xsl:value-of select="$listName"/>.add(null);
                                                   reader.next();
                                               } else {
@@ -1886,7 +1889,8 @@
                                                 } else {
                                                     if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
                                                         <xsl:if test="@nillable">
-                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                          nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                          if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                               <xsl:value-of select="$listName"/>.add(null);
                                                               reader.next();
                                                           } else {
@@ -1970,7 +1974,8 @@
 
                                                       <!-- if-block that handles nillable -->
                                                       <xsl:if test="@nillable">
-                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                          nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                          if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                               <xsl:value-of select="$listName"/>.add(null);
                                                               reader.next();
                                                           }else{
@@ -2013,7 +2018,8 @@
                                         <!-- handling binary case -->
                                         <xsl:when test="@binary">
                                                <xsl:if test="@nillable">
-                                                  if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                  nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                  if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                       <xsl:value-of select="$listName"/>.add(null);
                                                       reader.next();
                                                   } else {
@@ -2067,7 +2073,8 @@
                                                     } else {
                                                         if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
                                                              <xsl:if test="@nillable">
-                                                              if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                              nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                              if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                                   <xsl:value-of select="$listName"/>.add(null);
                                                                   reader.next();
                                                               } else {
@@ -2133,7 +2140,8 @@
 
                                                       <!-- if-block that handles nillable -->
                                                       <xsl:if test="@nillable">
-                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                          nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                          if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                               <xsl:value-of select="$listName"/>.add(null);
                                                           }else{
                                                       </xsl:if>
@@ -2175,7 +2183,8 @@
                                         <!-- End of Array handling of default class - that is the OMElement -->
                                         <xsl:otherwise>
                                              <xsl:if test="@nillable">
-                                              if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                              nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                              if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                   <xsl:value-of select="$listName"/>.add(null);
                                                   reader.next();
                                               } else {
@@ -2200,7 +2209,8 @@
                                                 } else {
                                                     if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
                                                          <xsl:if test="@nillable">
-                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                          nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                          if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                               <xsl:value-of select="$listName"/>.add(null);
                                                               reader.next();
                                                           } else {
@@ -2231,7 +2241,8 @@
                                 </xsl:when>
                                 <xsl:when test="@ours">
                                     <xsl:if test="@nillable">
-                                      if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                      nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                      if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                           object.set<xsl:value-of select="$javaName"/>(null);
                                           reader.next();
                                           <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
@@ -2328,7 +2339,8 @@
                                 <!-- start of the simple types handling -->
                                 <xsl:otherwise>
                                     <xsl:if test="@nillable">
-                                       if (!"true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                       nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                       if (!"true".equals(nillableValue) &amp;&amp; !"1".equals(nillableValue)){
                                     </xsl:if>
                                     java.lang.String content = reader.getElementText();
                                     <xsl:if test="not(enumFacet)">
@@ -3110,7 +3122,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
 
                                        // write the nil attribute
-                                      writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                      writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                       xmlWriter.writeEndElement();
                                     }else{
                                      <xsl:value-of select="@type"/>Helper.getOMDataSource(<xsl:value-of select="$varName"/>,
@@ -3159,7 +3171,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                     }
 
                                                    // write the nil attribute
-                                                   writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                                   writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                    xmlWriter.writeEndElement();
                                             </xsl:when>
                                             <xsl:when test="$min=0">
@@ -3196,7 +3208,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         }
 
                                        // write the nil attribute
-                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                        xmlWriter.writeEndElement();
                                 </xsl:when>
                                 <xsl:otherwise>
@@ -3256,7 +3268,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                             }
 
                                            // write the nil attribute
-                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                            xmlWriter.writeEndElement();
                                         </xsl:when>
                                         <xsl:when test="$min=0">
@@ -3292,7 +3304,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         }
 
                                        // write the nil attribute
-                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                        xmlWriter.writeEndElement();
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -3351,7 +3363,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                             }
 
                                            // write the nil attribute
-                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                            xmlWriter.writeEndElement();
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -3438,7 +3450,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                         } else {
                                                             xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
                                                         }
-                                                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                         xmlWriter.writeEndElement();
                                                    </xsl:when>
                                                    <xsl:when test="$min=0">
@@ -3477,7 +3489,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                             }
 
                                            // write the nil attribute
-                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                           writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                            xmlWriter.writeEndElement();
                                     </xsl:when>
                                     <xsl:otherwise>
@@ -3561,7 +3573,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                               // write the nil attribute
                                               <xsl:choose>
                                                   <xsl:when test="@nillable">
-                                                     writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                                     writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                   </xsl:when>
                                                   <xsl:otherwise>
                                                      throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
@@ -3649,7 +3661,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         }
 
                                         // write the nil attribute
-                                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                         xmlWriter.writeEndElement();
                                        }else{
                                          <xsl:value-of select="@type"/>Helper.getOMDataSource(<xsl:value-of select="$varName"/>,
@@ -3699,7 +3711,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                             <xsl:choose>
                                                 <xsl:when test="$nillable">
                                                      // write the nil attribute
-                                                     writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","true",xmlWriter);
+                                                     writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                 </xsl:when>
                                                 <xsl:otherwise>
                                                      throw new RuntimeException("Value cannot be null !!");
@@ -3818,13 +3830,15 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
             <xsl:if test="not(property/enumFacet)"><xsl:value-of select="$fullyQualifiedName"/> object = new <xsl:value-of select="$fullyQualifiedName"/>();</xsl:if>
             <xsl:if test="property/enumFacet"><xsl:value-of select="$name"/> object = null;</xsl:if>
             int event;
+            String nillableValue = null;
             try {
                 <!-- Advance to our start element, or if we are a complex type, to our first property start element or the outer end element if no properties -->
                 while (!reader.isStartElement() &amp;&amp; !reader.isEndElement())
                     reader.next();
 
                 <xsl:if test="@nillable">
-                   if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                   nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                   if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                          // Skip the element and report the null value.  It cannot have subelements.
                          while (!reader.isEndElement())
                              reader.next();
@@ -3997,7 +4011,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                     <xsl:choose>
                                         <xsl:when test="@ours">
                                              <xsl:if test="@nillable">
-                                              if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                              nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                              if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                   <xsl:value-of select="$listName"/>.add(null);
                                                   reader.next();
                                               } else {
@@ -4021,7 +4036,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                 } else {
                                                     if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
                                                         <xsl:if test="@nillable">
-                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                          nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                          if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                               <xsl:value-of select="$listName"/>.add(null);
                                                               reader.next();
                                                           } else {
@@ -4105,7 +4121,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
                                                       <!-- if-block that handles nillable -->
                                                       <xsl:if test="@nillable">
-                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                          nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                          if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                               <xsl:value-of select="$listName"/>.add(null);
                                                               reader.next();
                                                           }else{
@@ -4148,7 +4165,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         <!-- handling binary case -->
                                         <xsl:when test="@binary">
                                                <xsl:if test="@nillable">
-                                                  if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                  nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                  if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                       <xsl:value-of select="$listName"/>.add(null);
                                                       reader.next();
                                                   } else {
@@ -4202,7 +4220,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                     } else {
                                                         if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
                                                              <xsl:if test="@nillable">
-                                                              if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                              nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                              if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                                   <xsl:value-of select="$listName"/>.add(null);
                                                                   reader.next();
                                                               } else {
@@ -4268,7 +4287,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
 
                                                       <!-- if-block that handles nillable -->
                                                       <xsl:if test="@nillable">
-                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                          nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                          if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                               <xsl:value-of select="$listName"/>.add(null);
                                                           }else{
                                                       </xsl:if>
@@ -4310,7 +4330,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         <!-- End of Array handling of default class - that is the OMElement -->
                                         <xsl:otherwise>
                                              <xsl:if test="@nillable">
-                                              if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                              nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                              if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                   <xsl:value-of select="$listName"/>.add(null);
                                                   reader.next();
                                               } else {
@@ -4335,7 +4356,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                                 } else {
                                                     if (<xsl:value-of select="$propQName"/>.equals(reader.getName())){
                                                          <xsl:if test="@nillable">
-                                                          if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                                          nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                                          if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                               <xsl:value-of select="$listName"/>.add(null);
                                                               reader.next();
                                                           } else {
@@ -4366,7 +4388,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 </xsl:when>
                                 <xsl:when test="@ours">
                                     <xsl:if test="@nillable">
-                                      if ("true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                      nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                      if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                           object.set<xsl:value-of select="$javaName"/>(null);
                                           reader.next();
                                           <xsl:if test="$isType or $anon">  <!-- This is a subelement property to be consumed -->
@@ -4463,7 +4486,8 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                 <!-- start of the simple types handling -->
                                 <xsl:otherwise>
                                     <xsl:if test="@nillable">
-                                       if (!"true".equals(reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil"))){
+                                       nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
+                                       if (!"true".equals(nillableValue) &amp;&amp; !"1".equals(nillableValue)){
                                     </xsl:if>
                                     java.lang.String content = reader.getElementText();
                                     <xsl:if test="not(enumFacet)">
