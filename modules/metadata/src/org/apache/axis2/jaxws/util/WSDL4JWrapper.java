@@ -17,6 +17,7 @@
 
 package org.apache.axis2.jaxws.util;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
@@ -42,7 +43,7 @@ public class WSDL4JWrapper implements WSDLWrapper {
 	private Definition wsdlDefinition = null;
 	private URL wsdlURL;
 	
-    public WSDL4JWrapper(URL wsdlURL)throws WSDLException{
+    public WSDL4JWrapper(URL wsdlURL)throws FileNotFoundException, WSDLException{
 		super();
 		this.wsdlURL = wsdlURL;
 		WSDLFactory factory = WSDLFactory.newInstance();
@@ -57,7 +58,11 @@ public class WSDL4JWrapper implements WSDLWrapper {
 			
 			wsdlDefinition = reader.readWSDL(explicitWsdl);
 			
-		} catch (Exception ex) {
+		}
+		catch(FileNotFoundException ex) {
+			throw ex;
+		}
+		catch (Exception ex) {
             throw new WSDLException("WSDL4JWrapper : ", ex.getMessage());
 		}
 	}

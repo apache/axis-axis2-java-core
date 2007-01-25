@@ -1,6 +1,7 @@
 package org.apache.axis2.jaxws.polymorphic.shape.tests;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
@@ -80,6 +81,9 @@ public class PolymorphicTests extends TestCase {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			fail();
+		}catch(FileNotFoundException e) {
+			e.printStackTrace();
+			fail();
 		}catch(WSDLException e){
 			e.printStackTrace();
 			fail();
@@ -114,6 +118,9 @@ public class PolymorphicTests extends TestCase {
 			}
 			System.out.println("------------------------------");
 		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			fail();
+		}catch(FileNotFoundException e) {
 			e.printStackTrace();
 			fail();
 		}catch(WSDLException e){

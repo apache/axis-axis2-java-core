@@ -16,6 +16,7 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -419,7 +420,8 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
                     this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL, 
                     				composite.getWsdlDefinition());
 
-                } catch (WSDLException e) {
+                }
+    			catch (WSDLException e) {
                     throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
                 }
     		}
@@ -427,7 +429,11 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     	} else if (wsdlURL != null) {
             try {
                 this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL);
-            } catch (WSDLException e) {
+            }
+            catch(FileNotFoundException e) {
+            	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlNotFoundErr", e.getMessage()), e);
+            }
+            catch (WSDLException e) {
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
             }
         }
