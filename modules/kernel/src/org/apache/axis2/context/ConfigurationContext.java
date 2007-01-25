@@ -628,6 +628,7 @@ public class ConfigurationContext extends AbstractContext {
 
     public void setContextRoot(String contextRoot) {
         this.contextRoot = contextRoot;
+        cachedServicePath = internalGetServiceContextPath();
     }
 
     /**
