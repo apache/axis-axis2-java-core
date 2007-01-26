@@ -33,6 +33,7 @@ public class MDQConstants {
     public static final String PROVIDER_SOURCE = "javax.xml.ws.Provider<javax.xml.transform.Source>";
     public static final String PROVIDER_SOAP = "javax.xml.ws.Provider<javax.xml.soap.SOAPMessage>";
     public static final String PROVIDER_DATASOURCE = "javax.xml.ws.Provider<javax.activation.DataSource>";
+    public static final String PROVIDER_STRING = "javax.xml.ws.Provider<java.lang.String>";
 
     public static final String WSDL_FILE_NAME = "WSDL_FILE_NAME";
     public static final String SCHEMA_DOCS = "SCHEMA_DOCS";
