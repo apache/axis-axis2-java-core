@@ -3665,7 +3665,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                         writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                         xmlWriter.writeEndElement();
                                        }else{
-                                         <xsl:value-of select="@type"/>Helper.getOMDataSource(<xsl:value-of select="$varName"/>,
+                                         <xsl:value-of select="property/@type"/>Helper.getOMDataSource(<xsl:value-of select="$varName"/>,
                                          <xsl:value-of select="$fullyQualifiedName"/>.MY_QNAME,
                                          factory).serialize(xmlWriter);
                                        }
