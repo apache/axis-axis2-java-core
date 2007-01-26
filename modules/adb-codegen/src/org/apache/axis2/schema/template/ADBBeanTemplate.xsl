@@ -4885,7 +4885,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                            return  <xsl:value-of select="@classname"/>Helper.parse(reader);
                        </xsl:when>
                         <xsl:otherwise>
-                            return  <xsl:value-of select="@classname"/>Helper.parse(reader);
+                            return  <xsl:value-of select="@classname"/>.Factory.parse(reader);
                         </xsl:otherwise>
                    </xsl:choose>
 
