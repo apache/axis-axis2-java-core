@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
@@ -48,6 +49,8 @@ public class EnginePausingTest extends TestCase {
         executedHandlers = new ArrayList();
         AxisConfiguration engineRegistry = new AxisConfiguration();
         configConetxt = new ConfigurationContext(engineRegistry);
+        configConetxt.setServicePath(Constants.DEFAULT_SERVICES_PATH);
+        configConetxt.setContextRoot("axis2");
         transportOut = new TransportOutDescription(new QName("null"));
         transportOut.setSender(new CommonsHTTPTransportSender());
         transportIn = new TransportInDescription(new QName("null"));
@@ -196,10 +199,10 @@ public class EnginePausingTest extends TestCase {
             if (pause) {
                 msgContext.pause();
                 pause = false;
-                return InvocationResponse.SUSPEND;        
+                return InvocationResponse.SUSPEND;
             } else {
                 executedHandlers.add(index);
-                return InvocationResponse.CONTINUE;        
+                return InvocationResponse.CONTINUE;
             }
         }
 

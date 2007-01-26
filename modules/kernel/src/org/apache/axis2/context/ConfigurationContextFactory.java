@@ -34,14 +34,11 @@ import org.apache.axis2.util.SessionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 public class ConfigurationContextFactory {
 
@@ -90,7 +87,7 @@ public class ConfigurationContextFactory {
         }
     }
 
-    public static void addModuleService(ConfigurationContext configCtx) throws AxisFault {
+    private static void addModuleService(ConfigurationContext configCtx) throws AxisFault {
         AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
         HashMap modules = axisConfig.getModules();
         if (modules != null && modules.size() > 0) {
@@ -113,19 +110,14 @@ public class ConfigurationContextFactory {
     private static void setContextPaths(AxisConfiguration axisConfig,
                                         ConfigurationContext configContext) {
         // Checking for context path
-        Parameter contextPath = axisConfig.getParameter(Constants.PARAM_CONTEXT_ROOT);
-        if (contextPath != null) {
-            String cpath = ((String) contextPath.getValue()).trim();
-            if (cpath.length() > 0) {
-                configContext.setContextRoot(cpath);
-            }
-        }
         Parameter servicePath = axisConfig.getParameter(Constants.PARAM_SERVICE_PATH);
         if (servicePath != null) {
             String spath = ((String) servicePath.getValue()).trim();
             if (spath.length() > 0) {
                 configContext.setServicePath(spath);
             }
+        } else {
+            configContext.setServicePath(Constants.DEFAULT_SERVICES_PATH);
         }
 
         Parameter restPathParam = axisConfig.getParameter(Constants.PARAM_REST_PATH);
@@ -134,6 +126,17 @@ public class ConfigurationContextFactory {
             if (restPath.length() > 0) {
                 configContext.setRESTPath(restPath);
             }
+        } else {
+            configContext.setRESTPath(Constants.DEFAULT_REST_PATH);
+        }
+        Parameter contextPath = axisConfig.getParameter(Constants.PARAM_CONTEXT_ROOT);
+        if (contextPath != null) {
+            String cpath = ((String) contextPath.getValue()).trim();
+            if (cpath.length() > 0) {
+                configContext.setContextRoot(cpath);
+            }
+        } else {
+            configContext.setContextRoot("axis2");
         }
     }
 
@@ -190,13 +193,9 @@ public class ConfigurationContextFactory {
      * Initializes modules and creates Transports.
      */
 
-    private static void init(ConfigurationContext configContext) throws AxisFault {
-        try {
-            initModules(configContext);
-            initTransportSenders(configContext);
-        } catch (DeploymentException e) {
-            throw new AxisFault(e);
-        }
+    private static void init(ConfigurationContext configContext) {
+        initModules(configContext);
+        initTransportSenders(configContext);
     }
 
     /**
@@ -204,9 +203,8 @@ public class ConfigurationContextFactory {
      * it can do so in init and this is different from module.engage().
      *
      * @param context
-     * @throws DeploymentException
      */
-    private static void initModules(ConfigurationContext context) throws DeploymentException {
+    private static void initModules(ConfigurationContext context) {
         try {
             HashMap modules = context.getAxisConfiguration().getModules();
             Collection col = modules.values();
@@ -229,7 +227,7 @@ public class ConfigurationContextFactory {
      *
      * @param configContext
      */
-    public static void initTransportSenders(ConfigurationContext configContext) {
+    private static void initTransportSenders(ConfigurationContext configContext) {
         AxisConfiguration axisConf = configContext.getAxisConfiguration();
 
         // Initialize Transport Outs
@@ -257,7 +255,10 @@ public class ConfigurationContextFactory {
      * @return Returns ConfigurationContext.
      */
     public static ConfigurationContext createEmptyConfigurationContext() {
-        return new ConfigurationContext(new AxisConfiguration());
+        AxisConfiguration axisConfiguration = new AxisConfiguration();
+        ConfigurationContext configContext = new ConfigurationContext(axisConfiguration);
+        setContextPaths(axisConfiguration, configContext);
+        return configContext;
     }
 
     /**
@@ -273,6 +274,8 @@ public class ConfigurationContextFactory {
         AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig);
         builder.populateConfig();
         axisConfig.validateSystemPredefinedPhases();
-        return new ConfigurationContext(axisConfig);
+        ConfigurationContext configContext = new ConfigurationContext(axisConfig);
+        setContextPaths(axisConfig, configContext);
+        return configContext;
     }
 }

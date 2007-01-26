@@ -17,6 +17,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 
@@ -28,10 +29,11 @@ public class RequestURIBasedServiceDispatcherTest extends TestCase {
         MessageContext messageContext = new MessageContext();
         AxisService as1 = new AxisService("Service1");
         AxisService as2 = new AxisService("Service2");
-        AxisConfiguration ac = new AxisConfiguration();
+
+        ConfigurationContext cc = ConfigurationContextFactory.createEmptyConfigurationContext();
+        AxisConfiguration ac = cc.getAxisConfiguration();
         ac.addService(as1);
         ac.addService(as2);
-        ConfigurationContext cc = new ConfigurationContext(ac);
         messageContext.setConfigurationContext(cc);
         
         messageContext.setTo(new EndpointReference("http://127.0.0.1:8080/axis2/services/Service2"));

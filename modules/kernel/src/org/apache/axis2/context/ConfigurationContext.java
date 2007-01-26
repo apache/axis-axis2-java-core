@@ -61,9 +61,9 @@ public class ConfigurationContext extends AbstractContext {
     private long serviceGroupContextTimoutInterval = 30 * 1000;
 
     //To specify url mapping for services
-    private String contextRoot = "axis2";
-    private String servicePath = "services";
-    private String restPath = Constants.DEFAULT_REST_PATH;
+    private String contextRoot;
+    private String servicePath;
+    private String restPath;
 
     private String cachedServicePath = null;
 
@@ -518,7 +518,7 @@ public class ConfigurationContext extends AbstractContext {
         performCleanup();
     }
 
-    private void performCleanup()  throws AxisFault {
+    private void performCleanup() throws AxisFault {
         if (listenerManager != null) {
             listenerManager.stop();
         }
@@ -615,7 +615,7 @@ public class ConfigurationContext extends AbstractContext {
         if (contextRoot == null || contextRoot.trim().length() == 0) {
             throw new IllegalArgumentException("context root cannot be null or empty");
         }
-        return this.contextRoot.trim();
+        return contextRoot.trim();
     }
 
     public void setServicePath(String servicePath) {

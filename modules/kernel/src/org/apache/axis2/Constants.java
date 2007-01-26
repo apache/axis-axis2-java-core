@@ -224,7 +224,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String ADDRESSING_ACTION = "WS-Addressing:Action";
     public static final String HTTP_FRONTEND_HOST_URL = "httpFrontendHostUrl";
     public static final String DEFAULT_REST_PATH = "rest";
-    
+    public static final String DEFAULT_SERVICES_PATH = "services";
+
     /**
      * Field Builder Selector
      */
