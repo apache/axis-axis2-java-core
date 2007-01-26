@@ -30,8 +30,16 @@
   <artifactId>axis2-java2wsdl</artifactId>
   <name>Apache Axis 2.0 - Java2WSDL</name>
   <description>To generate WSDL file for a given Java class</description>
-
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/java2wsdl</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/java2wsdl</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/java2wsdl</url>
+  </scm>
   <dependencies>
+  <dependency>
+      <groupId>org.apache.ws.commons.axiom</groupId>
+      <artifactId>axiom-api</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.ws.commons.axiom</groupId>
       <artifactId>axiom-impl</artifactId>
@@ -68,27 +76,32 @@
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
     </dependency>
-
-    <!--for java2wsdl generation we use JAM , so there should be a dependency on the annogen jar or-->
-    <!--XML Beans-->
     <dependency>
       <groupId>annogen</groupId>
       <artifactId>annogen</artifactId>
     </dependency>
-    <!-- Added this to support WS Policy in Axis2 -->
   </dependencies>
-
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
+      </snapshots>
+      <id>apache-snapshots</id>
+      <name>Apache Maven2 SNAPSHOTS</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
+      <layout>default</layout>
+    </repository>
+  </repositories>
   <build>
     <sourceDirectory>src</sourceDirectory>
-    <testSourceDirectory>test</testSourceDirectory>
     <resources>
-      <resource>
-        <directory>conf</directory>
-        <excludes>
-          <exclude>**/*.properties</exclude>
-        </excludes>
-        <filtering>false</filtering>
-      </resource>
       <resource>
         <directory>src</directory>
         <excludes>

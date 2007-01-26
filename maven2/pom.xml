@@ -32,12 +32,19 @@
   <name>Apache Axis 2.0</name>
   <modules>
     <module>modules/parent</module>
+    <module>modules/addressing</module>
     <module>modules/java2wsdl</module>
     <module>modules/kernel</module>
     <module>modules/tool</module>
     <module>modules/adb</module>
     <module>modules/codegen</module>
     <module>modules/adb-codegen</module>
+    <module>modules/jibx</module>
+    <module>modules/jaxbri</module>
+    <module>modules/xmlbeans</module>
+    <module>modules/json</module>
+    <module>modules/mtompolicy</module>
+    <module>modules/spring</module>
   </modules>
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/</connection>

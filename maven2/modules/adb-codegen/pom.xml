@@ -30,7 +30,11 @@
   <artifactId>axis2-adb-codegen</artifactId>
   <name>Apache Axis 2.0 - ADB Codegen</name>
   <description>ADB code generation support for Axis2</description>
-
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/adb-codegen</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/adb-codegen</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/adb-codegen</url>
+  </scm>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -51,14 +55,10 @@
     <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
-      <version>1.0</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

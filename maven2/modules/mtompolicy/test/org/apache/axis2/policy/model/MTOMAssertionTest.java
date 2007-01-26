@@ -32,7 +32,7 @@ public class MTOMAssertionTest extends TestCase {
     
     public void testSymmBinding() {
         try {
-            Policy p = this.getPolicy("test-resources/policy-mtom-security.xml");
+            Policy p = this.getPolicy(System.getProperty("basedir")+"/test-resources/policy-mtom-security.xml");
             List assertions = (List)p.getAlternatives().next();
             
             boolean isMTOMAssertionFound = false;

@@ -26,29 +26,24 @@
 		<relativePath>../parent/pom.xml</relativePath>
 	</parent>
 
-	<artifactId>axis2-jaxbri</artifactId>
-	<name>Apache Axis 2.0 - JAXB-RI Data Binding</name>
-	<description>JAXB-RI data binding support for Axis 2.0</description>
+	<artifactId>axis2-jaxws-api</artifactId>
+	<name>Apache Axis 2.0 - JAXWS API</name>
+	<description>Axis2 JAXWS API</description>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/jaxbri</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/jaxbri</developerConnection>
-    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/jaxbri</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/jaxws-api</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/jaxws-api</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/jaxws-api</url>
   </scm>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>axis2-codegen</artifactId>
+			<artifactId>axis2-kernel</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>2.0.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-xjc</artifactId>
-			<version>2.0.2</version>
-		</dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-saaj-api</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
@@ -56,7 +51,17 @@
 		</dependency>
 	</dependencies>
 
-	<build>
-		<sourceDirectory>src</sourceDirectory>
-	</build>
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <plugins>
+	      <plugin>
+	        <artifactId>maven-compiler-plugin</artifactId>
+	        <inherited>true</inherited>
+	        <configuration>
+	          <source>1.5</source>
+	          <target>1.5</target>
+	        </configuration>
+	      </plugin>
+        </plugins>
+    </build>
 </project>
