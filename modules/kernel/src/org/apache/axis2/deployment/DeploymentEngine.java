@@ -51,21 +51,21 @@ import java.util.zip.ZipInputStream;
 public class DeploymentEngine implements DeploymentConstants {
 
     private static final Log log = LogFactory.getLog(DeploymentEngine.class);
-    private boolean hotUpdate = true;    // to do hot update or not
-    private boolean hotDeployment = true;    // to do hot deployment or not
-    private boolean antiJARLocking = false;    // to do hot deployment or not
+    protected boolean hotUpdate = true;    // to do hot update or not
+    protected boolean hotDeployment = true;    // to do hot deployment or not
+    protected boolean antiJARLocking = false;    // to do hot deployment or not
     /**
      * Stores all the web Services to deploy.
      */
-    private List wsToDeploy = new ArrayList();
+    protected List wsToDeploy = new ArrayList();
 
     /**
      * Stores all the web Services to undeploy.
      */
-    private List wsToUnDeploy = new ArrayList();
+    protected List wsToUnDeploy = new ArrayList();
 
     //to keep the web resource location if any
-    private String webLocationString = null;
+    protected String webLocationString = null;
 
     /**
      * to keep a ref to engine register
@@ -76,12 +76,12 @@ public class DeploymentEngine implements DeploymentConstants {
 
     protected ConfigurationContext configContext;
 
-    private RepositoryListener repoListener;
+    protected RepositoryListener repoListener;
 
-    private String servicesPath = null;
-    private File servicesDir = null;
-    private String modulesPath = null;
-    private File modulesDir = null;
+    protected String servicesPath = null;
+    protected File servicesDir = null;
+    protected String modulesPath = null;
+    protected File modulesDir = null;
 
     public void loadServices() {
         repoListener.checkServices();
@@ -215,7 +215,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
-    private ArrayList populateService(AxisServiceGroup serviceGroup,
+    protected ArrayList populateService(AxisServiceGroup serviceGroup,
                                       URL servicesURL,
                                       String serviceName) throws DeploymentException {
         try {
@@ -316,7 +316,7 @@ public class DeploymentEngine implements DeploymentConstants {
         return axisConfig.getMessageReceiver(mepURL);
     }
 
-    private void addNewModule(AxisModule modulemetadata) throws AxisFault {
+    protected void addNewModule(AxisModule modulemetadata) throws AxisFault {
 
         Flow inflow = modulemetadata.getInFlow();
         ClassLoader moduleClassLoader = modulemetadata.getModuleClassLoader();
@@ -347,7 +347,7 @@ public class DeploymentEngine implements DeploymentConstants {
         log.debug(Messages.getMessage(DeploymentErrorMsgs.ADDING_NEW_MODULE));
     }
 
-    private void addServiceGroup(AxisServiceGroup serviceGroup,
+    protected void addServiceGroup(AxisServiceGroup serviceGroup,
                                  ArrayList serviceList,
                                  URL serviceLocation,
                                  ArchiveFileData currentArchiveFile)
@@ -360,7 +360,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
-    private static void fillServiceGroup(AxisServiceGroup serviceGroup,
+    protected static void fillServiceGroup(AxisServiceGroup serviceGroup,
                                          ArrayList serviceList,
                                          URL serviceLocation,
                                          AxisConfiguration axisConfig) throws AxisFault {
@@ -436,7 +436,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
-    private void addAsWebResources(File in, String serviceFileName, AxisServiceGroup serviceGroup) {
+    protected void addAsWebResources(File in, String serviceFileName, AxisServiceGroup serviceGroup) {
         try {
             if (webLocationString == null) {
                 return;
@@ -700,7 +700,7 @@ public class DeploymentEngine implements DeploymentConstants {
     /**
      * Starts the Deployment engine to perform Hot deployment and so on.
      */
-    private void startSearch(RepositoryListener listener) {
+    protected void startSearch(RepositoryListener listener) {
         Scheduler scheduler = new Scheduler();
 
         scheduler.schedule(new SchedulerTask(listener), new DeploymentIterator());
@@ -751,7 +751,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @param fileName
      * @return Returns String.
      */
-    private String getAxisServiceName(String fileName) {
+    protected String getAxisServiceName(String fileName) {
         char seperator = '.';
         String value;
         int index = fileName.indexOf(seperator);
@@ -797,7 +797,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @param axis2repoURI : The repository folder of Axis2
      * @throws DeploymentException
      */
-    private void setClassLoaders(String axis2repoURI) throws DeploymentException {
+    protected void setClassLoaders(String axis2repoURI) throws DeploymentException {
         ClassLoader sysClassLoader =
                 Utils.getClassLoader(Thread.currentThread().getContextClassLoader(), axis2repoURI);
 
@@ -820,7 +820,7 @@ public class DeploymentEngine implements DeploymentConstants {
     /**
      * Sets hotDeployment and hot update.
      */
-    private void setDeploymentFeatures() {
+    protected void setDeploymentFeatures() {
         String value;
         Parameter parahotdeployment = axisConfig.getParameter(TAG_HOT_DEPLOYMENT);
         Parameter parahotupdate = axisConfig.getParameter(TAG_HOT_UPDATE);
@@ -868,7 +868,7 @@ public class DeploymentEngine implements DeploymentConstants {
      * @param repositoryName
      */
 
-    private void prepareRepository(String repositoryName) {
+    protected void prepareRepository(String repositoryName) {
         File repository = new File(repositoryName);
         if (servicesPath != null) {
             servicesDir = new File(servicesPath);
@@ -894,7 +894,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
-    private String getRepositoryPath(File repository) {
+    protected String getRepositoryPath(File repository) {
         try {
             return repository.getCanonicalPath();
         } catch (IOException e) {
@@ -902,7 +902,7 @@ public class DeploymentEngine implements DeploymentConstants {
         }
     }
 
-    private ArrayList getFileList(URL fileListUrl) {
+    protected ArrayList getFileList(URL fileListUrl) {
         ArrayList fileList = new ArrayList();
         InputStream in;
         try {

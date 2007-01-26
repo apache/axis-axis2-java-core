@@ -27,7 +27,7 @@ import java.net.URLClassLoader;
 import java.net.URLDecoder;
 
 public class RepositoryListener implements DeploymentConstants {
-    private DeploymentEngine deploymentEngine;
+    protected DeploymentEngine deploymentEngine;
 
     /**
      * The parent directory of the modules and services directories
@@ -36,7 +36,7 @@ public class RepositoryListener implements DeploymentConstants {
     /**
      * Reference to a WSInfoList
      */
-    private WSInfoList wsInfoList;
+    protected WSInfoList wsInfoList;
 
     /**
      * This constructor takes two arguments, a folder name and a reference to Deployment Engine
@@ -83,7 +83,7 @@ public class RepositoryListener implements DeploymentConstants {
     }
 
 
-    private boolean isSourceControlDir(File file) {
+    protected boolean isSourceControlDir(File file) {
         if (file.isDirectory()) {
             String name = file.getName();
             if (name.equalsIgnoreCase("CVS") || name.equalsIgnoreCase(".svn")) {
@@ -93,7 +93,7 @@ public class RepositoryListener implements DeploymentConstants {
         return false;
     }
 
-    private void loadClassPathModules() {
+    protected void loadClassPathModules() {
         String classPath = getLocation();
         int lstindex = classPath.lastIndexOf(File.separatorChar);
         if (lstindex > 0) {
@@ -145,7 +145,7 @@ public class RepositoryListener implements DeploymentConstants {
      *
      * @return String (location of the axis2 jar)
      */
-    private String getLocation() {
+    protected String getLocation() {
         try {
             Class clazz = Loader.loadClass("org.apache.axis2.engine.AxisEngine");
             java.net.URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
@@ -188,7 +188,7 @@ public class RepositoryListener implements DeploymentConstants {
      * Searches a given folder for jar files and adds them to a list in the
      * WSInfolist class.
      */
-    private void findServicesInDirectory() {
+    protected void findServicesInDirectory() {
         File root = deploymentEngine.getServicesDir();
         File[] files = root.listFiles();
 
