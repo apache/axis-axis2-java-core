@@ -83,12 +83,9 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
 			OMElement payload = createEnvelope();
 			Options options = new Options();
 			options.setTo(targetEPR);
-	
-			options.setProperty(Constants.Configuration.MESSAGE_TYPE,
-					"application/json");
+			setMessageType(options);
 			options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-	//		options.setTimeOutInMilliSeconds(1000);
-			
+	
 			ServiceClient sender = new ServiceClient(configurationContext, null);
 			options.setAction(null);
 			sender.setOptions(options);
@@ -96,6 +93,11 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
 			OMElement result = sender.sendReceive(payload);
 			OMElement ele = (OMElement) result.getFirstOMChild();
 			compareWithCreatedOMText(ele.getText());
+	}
+	
+	protected void setMessageType(Options options) {
+		options.setProperty(Constants.Configuration.MESSAGE_TYPE,
+		"application/json");
 	}
 	
 	protected void compareWithCreatedOMText(String response) {

@@ -46,8 +46,12 @@ public class JSONOMBuilder implements OMBuilder {
         if (localName == null) {
             localName = getLocalName();
         }
-        JSONDataSource jsonDataSource = new JSONDataSource(this.jsonInputStream, localName);
+        JSONDataSource jsonDataSource = getDataSource();
         return new OMSourcedElementImpl(localName.substring(1, localName.length() - 1), ns, factory, jsonDataSource);
+    }
+
+    protected JSONDataSource getDataSource(){
+        return new JSONDataSource(this.jsonInputStream, localName);
     }
 
     private String getLocalName() {

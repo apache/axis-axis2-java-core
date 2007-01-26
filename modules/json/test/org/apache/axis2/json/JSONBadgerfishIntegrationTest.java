@@ -1,4 +1,3 @@
-package org.apache.axis2;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -15,15 +14,16 @@ package org.apache.axis2;
  * limitations under the License.
  */
 
-public class JScriptConstants {
-	public static final String MEDIA_TYPE_APPLICATION_JSON = "application/json";
+package org.apache.axis2.json;
 
-    public static final String MEDIA_TYPE_APPLICATION_JSON_BADGERFISH = "application/json/badgerfish";
+import org.apache.axis2.client.Options;
+import org.apache.axis2.Constants;
 
-//    public static final String JSON_CONVENTION = "convention";
-//
-//    public static final String BADGERFISH = "badgerfish";
-//
-//    public static final String MAPPED = "mapped";
-    
+public class JSONBadgerfishIntegrationTest extends JSONIntegrationTest {
+
+    protected void setMessageType(Options options) {
+        options.setProperty(Constants.Configuration.MESSAGE_TYPE,
+                "application/json/badgerfish");
+    }
+
 }
