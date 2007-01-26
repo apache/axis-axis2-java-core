@@ -96,8 +96,7 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                 newmsgContext.setEnvelope(envelope);
 
             } else {
-                throw new AxisFault(Messages.getMessage("methodDoesNotExistInOut",
-                        opDesc.getName().toString()));
+                throw new AxisFault(Messages.getMessage("methodDoesNotExistInOut"));
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
