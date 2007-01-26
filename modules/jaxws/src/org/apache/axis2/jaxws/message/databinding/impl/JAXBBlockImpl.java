@@ -42,6 +42,7 @@ import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.databinding.XSDListUtils;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
+import org.apache.axis2.jaxws.util.JavaUtils;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,6 +55,7 @@ import org.apache.commons.logging.LogFactory;
 public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
     private static final Log log = LogFactory.getLog(JAXBBlockImpl.class);
+    private static final String XMLNS = "xmlns=\"\" xmlns:xmlns=\"http://www.w3.org/2000/xmlns/\"";
     
 	/**
 	 * Called by JAXBBlockFactory
@@ -148,6 +150,21 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 		writer.flush();
 		sw.flush();
 		String str = sw.toString();
+		
+		// REVIEW ALERT
+		// Sometimes JAXB emits xmlns="" xmlns:xmlns..., which is invalid.
+		// The following lines of code removes this attribute.
+		// This seems to be related to MTOM..it has never failed in 
+		// other cases
+		if (isMTOMEnabled()) {
+			if (log.isDebugEnabled()) {
+				log.debug("JAXB marshalled the xml as: " + str);
+			}
+			str = JavaUtils.replace(str, XMLNS, "");
+			if (log.isDebugEnabled()) {
+				log.debug("XML text after inspection: " + str);
+			}
+		}
         writer.close();
 		
 		// Return a reader backed by the string
