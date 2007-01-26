@@ -69,26 +69,6 @@ public class HTTPWorker implements Worker {
         String method = request.getRequestLine().getMethod();
         String soapAction = HttpUtils.getSoapAction(request);
 
-        // Adjust version and content chunking based on the config
-        boolean chunked = false;
-        TransportOutDescription transportOut = msgContext.getTransportOut();
-        if (transportOut != null) {
-            Parameter p = transportOut.getParameter(HTTPConstants.PROTOCOL_VERSION);
-            if (p != null) {
-                if (HTTPConstants.HEADER_PROTOCOL_10.equals(p.getValue())) {
-                    ver = HttpVersion.HTTP_1_0;
-                }
-            }
-            if (ver.greaterEquals(HttpVersion.HTTP_1_1)) {
-                p = transportOut.getParameter(HTTPConstants.HEADER_TRANSFER_ENCODING);
-                if (p != null) {
-                    if (HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED.equals(p.getValue())) {
-                        chunked = true;
-                    }
-                }
-            }
-        }
-
         if (method.equals(HTTPConstants.HEADER_GET)) {
             if (uri.equals("/favicon.ico")) {
                 response.setStatusLine(new StatusLine(ver, 301, "Redirect"));
@@ -107,7 +87,6 @@ public class HTTPWorker implements Worker {
                         String res = HTTPTransportReceiver.printServiceHTML(serviceName, configurationContext);
                         StringEntity entity = new StringEntity(res);
                         entity.setContentType("text/html");
-                        entity.setChunked(chunked);
                         response.setEntity(entity);
                         return;
                     }
@@ -127,7 +106,6 @@ public class HTTPWorker implements Worker {
 
                     });
                     entity.setContentType("text/xml");
-                    entity.setChunked(chunked);
                     response.setEntity(entity);
                     return;
                 }
@@ -146,7 +124,6 @@ public class HTTPWorker implements Worker {
 
                     });
                     entity.setContentType("text/xml");
-                    entity.setChunked(chunked);
                     response.setEntity(entity);
                     return;
                 }
@@ -164,7 +141,6 @@ public class HTTPWorker implements Worker {
 
                     });
                     entity.setContentType("text/xml");
-                    entity.setChunked(chunked);
                     response.setEntity(entity);
                     return;
                 }
@@ -192,7 +168,6 @@ public class HTTPWorker implements Worker {
 
                         });
                         entity.setContentType("text/xml");
-                        entity.setChunked(chunked);
                         response.setEntity(entity);
                         return;
                     } else {
@@ -217,14 +192,12 @@ public class HTTPWorker implements Worker {
                     HTTPTransportReceiver.getGetRequestParameters(uri));
 
             if (processed) {
-                outbuffer.setChunked(chunked);
                 response.setEntity(outbuffer);
             } else {
                 response.setStatusLine(new StatusLine(ver, 200, "OK"));
                 String s = HTTPTransportReceiver.getServicesHTML(configurationContext);
                 StringEntity entity = new StringEntity(s);
                 entity.setContentType("text/html");
-                entity.setChunked(chunked);
                 response.setEntity(entity);
             }
 
@@ -264,7 +237,6 @@ public class HTTPWorker implements Worker {
               }
             }
             
-            outbuffer.setChunked(chunked);
             response.setEntity(outbuffer);
 
         } else {
