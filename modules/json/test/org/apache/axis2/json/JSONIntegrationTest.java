@@ -48,24 +48,24 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
 
 	protected void setUp() throws Exception {
 
-//		File configFile = new File("test-resources/axis2.xml");
-//		configurationContext = ConfigurationContextFactory
-//				.createConfigurationContextFromFileSystem(null, configFile
-//						.getAbsolutePath());
-//		server = new SimpleHTTPServer(configurationContext, TESTING_PORT);
-//		try {
-//			server.start();
-//		} finally {
-//
-//		}
-//		service = Utils.createSimpleService(serviceName, org.apache.axis2.json.Echo.class.getName(),
-//				operationName);
-//		server.getConfigurationContext().getAxisConfiguration().addService(
-//				service);
+		File configFile = new File("test-resources/axis2.xml");
+		configurationContext = ConfigurationContextFactory
+				.createConfigurationContextFromFileSystem(null, configFile
+						.getAbsolutePath());
+		server = new SimpleHTTPServer(configurationContext, TESTING_PORT);
+		try {
+			server.start();
+		} finally {
+
+		}
+		service = Utils.createSimpleService(serviceName, org.apache.axis2.json.Echo.class.getName(),
+				operationName);
+		server.getConfigurationContext().getAxisConfiguration().addService(
+				service);
 	}
 
 	protected void tearDown() throws Exception {
-//		server.stop();
+		server.stop();
 	}
 
 	protected OMElement createEnvelope() throws Exception {
@@ -80,24 +80,24 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
 	}
 
 	public void testEchoOMWithJSON() throws Exception {
-//		OMElement payload = createEnvelope();
-//		Options options = new Options();
-//		options.setTo(targetEPR);
-//
-//		options.setProperty(Constants.Configuration.MESSAGE_TYPE,
-//				"application/json");
-//		options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-////		options.setTimeOutInMilliSeconds(1000);
-//		
-//		ServiceClient sender = new ServiceClient(configurationContext, null);
-//		options.setAction(null);
-//		sender.setOptions(options);
-//		options.setTo(targetEPR);
-//		OMElement result = sender.sendReceive(payload);
-//		OMElement ele = (OMElement) result.getFirstOMChild();
-//		compareWithCreatedOMText(ele.getText());
+			OMElement payload = createEnvelope();
+			Options options = new Options();
+			options.setTo(targetEPR);
+	
+			options.setProperty(Constants.Configuration.MESSAGE_TYPE,
+					"application/json");
+			options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+	//		options.setTimeOutInMilliSeconds(1000);
+			
+			ServiceClient sender = new ServiceClient(configurationContext, null);
+			options.setAction(null);
+			sender.setOptions(options);
+			options.setTo(targetEPR);
+			OMElement result = sender.sendReceive(payload);
+			OMElement ele = (OMElement) result.getFirstOMChild();
+			compareWithCreatedOMText(ele.getText());
 	}
-
+	
 	protected void compareWithCreatedOMText(String response) {
 		TestCase.assertEquals(response, expectedString);
 	}
