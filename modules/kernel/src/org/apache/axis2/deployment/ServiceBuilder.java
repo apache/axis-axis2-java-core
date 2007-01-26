@@ -66,8 +66,8 @@ public class ServiceBuilder extends DescriptionBuilder {
         try {
             // Processing service level parameters
             Iterator itr = service_element.getChildrenWithName(new QName(TAG_PARAMETER));
-            processParameters(itr, service, service.getParent());            
-            
+            processParameters(itr, service, service.getParent());
+
             // process service description
             OMElement descriptionElement =
                     service_element.getFirstChildWithName(new QName(TAG_DESCRIPTION));
@@ -92,7 +92,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
             }
             OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTRIBUTE_NAME));
-            
+
             // If the service name is explicitly specified in the services.xml
             // then use that as the service name
             if (serviceNameatt != null) {
@@ -104,11 +104,11 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                 }
             }
-            
-            if (service.getParameter("ServiceClass") == null){
+
+            if (service.getParameter("ServiceClass") == null) {
                 log.info("The Service " + service.getName() + " does not specify a Service Class");
             }
-            
+
             // Process WS-Addressing flag attribute
             OMAttribute addressingRequiredatt = service_element.getAttribute(new QName(ATTRIBUTE_WSADDRESSING));
             if (addressingRequiredatt != null) {
@@ -259,7 +259,12 @@ public class ServiceBuilder extends DescriptionBuilder {
                 ArrayList trs = new ArrayList();
                 while (transport_itr.hasNext()) {
                     OMElement trsEle = (OMElement) transport_itr.next();
-                    trs.add(trsEle.getText());
+                    String tarnsportName = trsEle.getText().trim();
+                    trs.add(tarnsportName);
+                    if (axisConfig.getTransportIn(new QName(tarnsportName)) == null) {
+                        throw new AxisFault("Service is trying to expose in a tarnsport : "
+                                + transports + " and which is not available in Axis2");
+                    }
                 }
                 service.setExposedTransports(trs);
             }
