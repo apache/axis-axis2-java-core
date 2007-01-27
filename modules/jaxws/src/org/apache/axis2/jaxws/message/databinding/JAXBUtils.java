@@ -391,8 +391,7 @@ public class JAXBUtils {
 	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
 	        //does not extend Exception. So we will absorb any Throwable exception here.
 	    } catch (Throwable e) {
-	        // Exception is thrown if class does not exist.
-	    	e.printStackTrace();
+	       log.info("ObjectFactory Class Not Found");
 	    }
 	    
         try {
@@ -403,8 +402,7 @@ public class JAXBUtils {
             //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
 	        //does not extend Exception. So we will absorb any Throwable exception here.
         } catch (Throwable e) {
-            // Exception is thrown if class does not exist.
-        	e.printStackTrace();
+            log.info("package-info Class Not Found");
         }
 
 	    return false;
