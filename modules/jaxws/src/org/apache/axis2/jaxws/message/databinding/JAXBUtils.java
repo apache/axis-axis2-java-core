@@ -44,6 +44,7 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.factory.ClassFinderFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.ClassUtils;
+import org.apache.axis2.jaxws.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -72,6 +73,14 @@ public class JAXBUtils {
     private static Map<JAXBContext,JAXBIntrospector> imap = 
         Collections.synchronizedMap(new WeakHashMap<JAXBContext, JAXBIntrospector>());
 	
+    // From Lizet:
+    //"If you really care about the performance, 
+    // and/or your application is going to read a lot of small documents, 
+    // then creating Unmarshaller could be relatively an expensive operation. 
+    // In that case, consider pooling Unmarshaller objects.
+    // Different threads may reuse one Unmarshaller instance, 
+    // as long as you don't use one instance from two threads at the same time. 
+
     private static boolean ENABLE_ADV_POOLING = false;
 	
 	/**
@@ -392,6 +401,10 @@ public class JAXBUtils {
 	        //does not extend Exception. So we will absorb any Throwable exception here.
 	    } catch (Throwable e) {
 	       log.info("ObjectFactory Class Not Found");
+           if (log.isDebugEnabled()) {
+               log.debug("ObjectFactory Class Not Found " + e);
+               log.debug("...caused by " + e.getCause() + " "+ JavaUtils.stackToString(e));
+           }
 	    }
 	    
         try {
@@ -403,6 +416,10 @@ public class JAXBUtils {
 	        //does not extend Exception. So we will absorb any Throwable exception here.
         } catch (Throwable e) {
             log.info("package-info Class Not Found");
+            if (log.isDebugEnabled()) {
+                log.debug("package-info Class Not Found " + e);
+                log.debug("...caused by " + e.getCause() + " "+ JavaUtils.stackToString(e));
+            }
         }
 
 	    return false;
@@ -558,6 +575,7 @@ public class JAXBUtils {
                             if (log.isDebugEnabled()) {
                                 log.debug("Tried to load class " + className + " while constructing a JAXBContext.  This class will be skipped.  Processing Continues." );
                                 log.debug("  The reason that class could not be loaded:" + e.toString());
+                                log.debug(JavaUtils.stackToString(e));
                             }
                             e.printStackTrace();
                         }

@@ -30,6 +30,7 @@ import java.util.jar.JarFile;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.databinding.ClassFinder;
 import org.apache.axis2.jaxws.util.ClassUtils;
+import org.apache.axis2.jaxws.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -87,6 +88,7 @@ public class ClassFinderImpl implements ClassFinder {
 		        	                         if (log.isDebugEnabled()) {
 		        	                             log.debug("Tried to load class " + clazzName + " while constructing a JAXBContext.  This class will be skipped.  Processing Continues." );
 		        	                             log.debug("  The reason that class could not be loaded:" + e.toString());
+                                                 log.debug(JavaUtils.stackToString(e));
 		        	                         }
 		        	                         e.printStackTrace();
 		        	                       }

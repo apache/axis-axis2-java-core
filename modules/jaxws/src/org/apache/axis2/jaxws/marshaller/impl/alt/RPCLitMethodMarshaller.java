@@ -244,7 +244,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                         operationDesc.getResultPartName(), 
                         packages, 
                         m,
-                        true); // forceXSI since this is rpc/lit
+                        true, // forceXSI since this is rpc/lit
+                        operationDesc.isResultHeader()); 
             }
             
             // Convert the holder objects into a list of JAXB objects for marshalling
@@ -302,7 +303,13 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             Class returnType = operationDesc.getResultActualType();
             Object returnValue = null;
             if (returnType != void.class) {
-                returnValue = MethodMarshallerUtils.getReturnValue(packages, message, returnType);
+                // If the webresult is in the header, we need the name of the header so that we can find it.
+                if (operationDesc.isResultHeader()) {
+                    returnValue = MethodMarshallerUtils.getReturnValue(packages, message, returnType, true,
+                            operationDesc.getResultTargetNamespace(), operationDesc.getResultPartName());
+                } else {
+                    returnValue = MethodMarshallerUtils.getReturnValue(packages, message, returnType, false, null, null);
+                }
             }
             
             // Unmarshall the ParamValues from the Message

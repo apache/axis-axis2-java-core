@@ -74,7 +74,13 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             Class returnType = operationDesc.getResultActualType();
             Object returnValue = null;
             if (returnType != void.class) {
-                returnValue = MethodMarshallerUtils.getReturnValue(packages, message, null);
+                // If the webresult is in the header, we need the name of the header so that we can find it.
+                if (operationDesc.isResultHeader()) {
+                    returnValue = MethodMarshallerUtils.getReturnValue(packages, message, null, true,
+                            operationDesc.getResultTargetNamespace(), operationDesc.getResultName());
+                } else {
+                    returnValue = MethodMarshallerUtils.getReturnValue(packages, message, null, false, null, null);
+                }
             }
             
             // Unmarshall the ParamValues from the Message
@@ -136,12 +142,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
-            try {
-                protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
-            } catch (WebServiceException e) {
-                // TODO better handling than this?
-                e.printStackTrace();
-            }
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
         }
         
         // Note all exceptions are caught and rethrown with a WebServiceException
@@ -176,7 +177,8 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                 MethodMarshallerUtils.toMessage(returnObject, returnType,
                         operationDesc.getResultTargetNamespace(),
                         operationDesc.getResultName(), packages, m, 
-                        false); // don't force xsi:type for doc/lit
+                        false, // don't force xsi:type for doc/lit
+                        operationDesc.isResultHeader()); 
             }
             
             // Convert the holder objects into a list of JAXB objects for marshalling
@@ -199,13 +201,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
-        Protocol protocol = null;
-        try {
-            protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());
-        } catch (WebServiceException e) {
-            // TODO better handling than this?
-            e.printStackTrace();
-        }
+        Protocol protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());
         
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
@@ -256,12 +252,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
-            try {
-                protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
-            } catch (WebServiceException e) {
-                // TODO better handling than this?
-                e.printStackTrace();
-            }
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
         }
         
         // Note all exceptions are caught and rethrown with a WebServiceException

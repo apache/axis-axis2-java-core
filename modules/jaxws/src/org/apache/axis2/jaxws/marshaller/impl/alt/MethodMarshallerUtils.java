@@ -358,6 +358,7 @@ public class MethodMarshallerUtils  {
      * @param packages
      * @param message
      * @param isRPC
+     * @param isHeader
      * @throws MessageException
      */
     static void toMessage(Object returnValue, 
@@ -366,7 +367,8 @@ public class MethodMarshallerUtils  {
             String returnLocalPart, 
             Set<String> packages, 
             Message message, 
-            boolean isRPC) 
+            boolean isRPC,
+            boolean isHeader)
             throws WebServiceException {
         
         // Create the JAXBBlockContext
@@ -386,19 +388,32 @@ public class MethodMarshallerUtils  {
         Block block = factory.createFrom(returnValue, 
                 context, 
                 null);  // The factory will get the qname from the value
-        message.setBodyBlock(0, block);
+        
+        if (isHeader) {
+            message.setHeaderBlock(returnNS, returnLocalPart, block);
+        } else {
+            message.setBodyBlock(0, block);
+        }
     }
     
     /**
      * Unmarshal the return object from the message
      * @param packages
      * @param message
-     * @param rpcType RPC Declared Type class (only used for RPC processing
+     * @param rpcType RPC Declared Type class (only used for RPC processing)
+     * @param isHeader
+     * @param headerNS (only needed if isHeader)
+     * @param headerLocalPart (only needed if isHeader)
      * @return type enabled object
      * @throws WebService
      * @throws XMLStreamException
      */
-    static Object getReturnValue(Set<String> packages, Message message, Class rpcType) 
+    static Object getReturnValue(Set<String> packages, 
+            Message message, 
+            Class rpcType,
+            boolean isHeader,
+            String headerNS, 
+            String headerLocalPart)
         throws WebServiceException, XMLStreamException {
         
         
@@ -407,7 +422,12 @@ public class MethodMarshallerUtils  {
         if (rpcType != null) {
             context.setRPCType(rpcType);  // RPC is type-based, so the unmarshalled type must be provided
         }
-        Block block = message.getBodyBlock(0, context, factory);
+        Block block = null;
+        if (isHeader) {
+            block = message.getHeaderBlock(headerNS, headerLocalPart, context, factory);
+        } else {
+            block = message.getBodyBlock(0, context, factory);
+        }
         
         // Get the business object.  We want to return the object that represents the type.
         Object returnValue = block.getBusinessObject(true);

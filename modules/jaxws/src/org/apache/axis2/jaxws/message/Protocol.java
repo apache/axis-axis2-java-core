@@ -46,9 +46,9 @@ public enum Protocol {
      * URL that was passed in.
      * 
      * @param url
-     * @return
+     * @return Protocol or null
      */
-    public static Protocol getProtocolForBinding(String url) throws WebServiceException {
+    public static Protocol getProtocolForBinding(String url) {
         boolean debug = log.isDebugEnabled();
         if (debug) {
             log.debug("Configuring message protocol for binding [" + url + "]");
@@ -71,7 +71,10 @@ public enum Protocol {
             return Protocol.soap12;
         }
         else {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("protoNotFound00", url));
+            if (debug) {
+                log.debug("Protocol was not found for:" + url);
+            }
+            return null;
         }
     }
     

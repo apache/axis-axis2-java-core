@@ -31,7 +31,6 @@ public interface JAXBWrapperTool {
      * unwrap
      * Returns the list of child objects of the jaxb object
      * @param jaxbObject that is the wrapper element (JAXBElement or object with @XMLRootElement)
-     * @param jaxbContext JAXBContext
      * @param childNames list of xml child names as String
      * @return list of Objects in the same order as the element names.  
      */
@@ -45,8 +44,8 @@ public interface JAXBWrapperTool {
      * Note that the jaxbClass must be the class the represents the complexType. (It should never be JAXBElement)
      * 
      * @param jaxbClass 
-     * @param childObjects, component type objects
      * @param childNames list of xml child names as String
+     * @param childObjects, component type objects
      */ 
     public Object wrap(Class jaxbClass, List<String> childNames, Map<String, Object> childObjects) throws JAXBWrapperException;
     

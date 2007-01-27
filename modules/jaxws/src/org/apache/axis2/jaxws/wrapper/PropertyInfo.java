@@ -218,4 +218,12 @@ public class PropertyInfo {
 
         }
     }
+    
+    public String toString() {
+        String value = "PropertyInfo[";
+        value += " name="+ this.getPropertyName();
+        value += " type=" + this.getPropertyType().getName();
+        value += " propertyDecriptor=" + this.descriptor;
+        return value +"]";
+    }
 }

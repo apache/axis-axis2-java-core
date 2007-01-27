@@ -71,12 +71,13 @@ import org.apache.axis2.jaxws.sample.ParallelAsyncTests;
 import org.apache.axis2.jaxws.sample.WSGenTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
+import org.apache.log4j.BasicConfigurator;
 
 public class JAXWSTest extends TestCase {
     
     static {
-        // Uncomment the followign line to enable debug
-//        BasicConfigurator.configure();
+        // Uncomment the following line to enable debug
+        // BasicConfigurator.configure();
     }
     
     /**

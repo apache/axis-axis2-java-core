@@ -12,6 +12,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncPort;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncService;
+import org.apache.log4j.BasicConfigurator;
 import org.test.parallelasync.CustomAsyncResponse;
 import org.test.parallelasync.SleepResponse;
 
@@ -25,6 +26,7 @@ public class ParallelAsyncTests extends TestCase {
 
     private static final String DOCLITWR_ASYNC_ENDPOINT =
         "http://localhost:8080/axis2/services/AsyncService";
+
 
     public ParallelAsyncTests(String str) {
         super(str);
@@ -47,7 +49,7 @@ public class ParallelAsyncTests extends TestCase {
      * @wsdl async.wsdl + async.xml
      * @target AsyncPortImpl
      */
-    public void _testService_isAlive() throws Exception {
+    public void testService_isAlive() throws Exception {
         final String MESSAGE = "testServiceAlive";
 
         AsyncPort port = getPort(null);
@@ -56,6 +58,7 @@ public class ParallelAsyncTests extends TestCase {
         String req2 = "remappedAsync";
 
         for (int i = 0; i < 10; i++) {
+            
             Response<SleepResponse> resp1 = port.sleepAsync(req1);
             Response<CustomAsyncResponse> resp2 = port.remappedAsync(req2);
 
@@ -64,16 +67,28 @@ public class ParallelAsyncTests extends TestCase {
 
             waitBlocking(resp1);
         
+            String req1_result = null;
+            String req2_result = null;
             try {
-                String req1_result = resp1.get().getMessage();
-                String req2_result = resp2.get().getResponse();
+                req1_result = resp1.get().getMessage();
+                req2_result = resp2.get().getResponse();
             } catch (Exception e) {
                 e.printStackTrace();
                 fail(e.toString());
             }
 
-            assertEquals("sleepAsync did not return expected response ", req1, resp1.get().getMessage());
-            assertEquals("remappedAsync did not return expected response", req2, resp2.get().getResponse());
+            assertEquals("sleepAsync did not return expected response ", req1, req1_result);
+            assertEquals("remappedAsync did not return expected response", req2, req2_result);
+            
+            // TODO The following two asserts fail because calling get() a second time causes the an attempt to consume a message a second time.
+            // Since the message has already been read, this fails.
+            // Shouldn't the AsyncResponse cache the object until the messageContext changes
+            //assertEquals("sleepAsync did not return expected response ", req1, resp1.get().getMessage());
+            //assertEquals("remappedAsync did not return expected response", req2, resp2.get().getResponse());
+            
+            // Change the request for the next time through the loop
+            req1 = req1+"!";
+            req2 = req2+"!";
         }
         
     }
