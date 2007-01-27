@@ -373,11 +373,15 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             Class[] webFaultClasses = seiMethod.getExceptionTypes();
 
             for(Class wfClass:webFaultClasses) {
+                // according to JAXWS 3.7, the @WebFault annotation is only used for customizations,
+                // so we'll add all declared exceptions
+                WebFault wfanno = null;
                 for (Annotation anno:wfClass.getAnnotations()) {
                     if (anno.annotationType() == WebFault.class) {
-                        buildFaultList.add(new FaultDescriptionImpl(wfClass, (WebFault)anno, this));
+                        wfanno = (WebFault)anno;
                     }
                 }
+                buildFaultList.add(new FaultDescriptionImpl(wfClass, wfanno, this));
             }
         } else {
             // TODO do I care about methodComposite like the paramDescription does?
@@ -386,9 +390,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         	// 1. If this is a generic exception, ignore it
         	// 2. If this is not a generic exception, then find it in the DBC Map
         	//       If not found in map, then throw not found exception
-        	//       Else it was found, Verify that it has a WebFault Annotation, if not
-        	//        then throw exception
-        	//3. Pass the validated WebFault dbc and possibly the classImpl dbc to FaultDescription
+         	//3. Pass the validated WebFault dbc and possibly the classImpl dbc to FaultDescription
         	//4. Possibly set AxisOperation.setFaultMessages array...or something like that
         	
         	String[] webFaultClassNames = methodComposite.getExceptions();
@@ -404,13 +406,11 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
 					DescriptionBuilderComposite faultDBC = dbcMap.get(wfClassName);
 					
 					if (faultDBC != null){
-						if (faultDBC.getWebFaultAnnot() == null) {
-							throw ExceptionFactory.makeWebServiceException("OperationDescription: custom exception does not contain WebFault annotation");
-						} else {
-							//We found a valid exception composite thats annotated
-							buildFaultList.add(new FaultDescriptionImpl(faultDBC, this));
-						}
-					}
+                        // JAXWS 3.7 does not require @WebFault annotation
+                        // We found a valid exception composite thats annotated
+                        buildFaultList.add(new FaultDescriptionImpl(faultDBC, this));
+     			    }
+                                       
 				}
 			}
         }
@@ -757,17 +757,21 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public FaultDescription resolveFaultByFaultBeanName(String faultBeanName) {
-        for(FaultDescription fd: faultDescriptions) {
-            if (faultBeanName.equals(fd.getFaultBean()))
-                return fd;
+        if (faultDescriptions != null) {
+            for(FaultDescription fd: faultDescriptions) {
+                if (faultBeanName.equals(fd.getFaultBean()))
+                    return fd;
+            }
         }
         return null;
     }
     
     public FaultDescription resolveFaultByExceptionName(String exceptionClassName) {
-        for(FaultDescription fd: faultDescriptions) {
-            if (exceptionClassName.equals(fd.getExceptionClassName()))
-                return fd;
+        if (faultDescriptions != null) {
+            for(FaultDescription fd: faultDescriptions) {
+                if (exceptionClassName.equals(fd.getExceptionClassName()))
+                    return fd;
+            }
         }
         return null;
     }

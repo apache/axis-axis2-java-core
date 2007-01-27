@@ -11,7 +11,8 @@ import org.test.faults.FaultyWebServiceFault;
  * Generated source version: 2.0
  * 
  */
-@WebFault(faultBean="org.test.faults.FaultyWebServiceFault", name = "FaultyWebServiceFault", targetNamespace = "http://org/test/faults")
+// annotation is commented as part of the test to make sure defaults are used
+//@WebFault(faultBean="org.test.faults.FaultyWebServiceFault", name = "FaultyWebServiceFault", targetNamespace = "http://org/test/faults")
 public class FaultyWebServiceFault_Exception
     extends Exception
 {

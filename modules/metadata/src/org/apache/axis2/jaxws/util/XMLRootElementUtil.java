@@ -166,7 +166,7 @@ public class XMLRootElementUtil {
             return ((JAXBElement) obj).getName();
         }
         
-        Class clazz = obj.getClass();
+        Class clazz = (obj instanceof java.lang.Class) ? (Class) obj : obj.getClass();
         
         // If the clazz is a primitive, then it does not have a corresponding root element.
         if (clazz.isPrimitive() ||

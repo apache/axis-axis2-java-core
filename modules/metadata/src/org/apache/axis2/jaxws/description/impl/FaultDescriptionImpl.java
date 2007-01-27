@@ -31,6 +31,7 @@ import org.apache.axis2.jaxws.description.FaultDescriptionWSDL;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
+import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 
 /**
  * @see ../FaultDescription
@@ -178,8 +179,7 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
                 // is what is flowed over the wire.
                 try {
                     Class clazz = DescriptionUtils.loadClass(getFaultBean());
-                    XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
-                    targetNamespace = root.namespace();
+                    targetNamespace = XMLRootElementUtil.getXmlRootElementQName(clazz).getNamespaceURI();
                 } catch (Exception e) {
                     // All else fails use the faultBean to calculate a namespace
                     targetNamespace = makeNamespace(getFaultBean());
