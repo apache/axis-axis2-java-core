@@ -80,11 +80,9 @@ public class ParallelAsyncTests extends TestCase {
             assertEquals("sleepAsync did not return expected response ", req1, req1_result);
             assertEquals("remappedAsync did not return expected response", req2, req2_result);
             
-            // TODO The following two asserts fail because calling get() a second time causes the an attempt to consume a message a second time.
-            // Since the message has already been read, this fails.
-            // Shouldn't the AsyncResponse cache the object until the messageContext changes
-            //assertEquals("sleepAsync did not return expected response ", req1, resp1.get().getMessage());
-            //assertEquals("remappedAsync did not return expected response", req2, resp2.get().getResponse());
+            // Calling get() again should return the same object as the first call to get()
+            assertEquals("sleepAsync did not return expected response ", req1, resp1.get().getMessage());
+            assertEquals("remappedAsync did not return expected response", req2, resp2.get().getResponse());
             
             // Change the request for the next time through the loop
             req1 = req1+"!";

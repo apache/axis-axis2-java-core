@@ -53,6 +53,8 @@ public class AsyncResponse implements Response {
     private Map<String, Object> responseContext;
     private Throwable fault;
     private CountDownLatch latch;
+    private boolean cacheValid = false;
+    private Object cachedObject = null;
     
     protected AsyncResponse() {
         latch = new CountDownLatch(1);
@@ -67,6 +69,10 @@ public class AsyncResponse implements Response {
         fault = t;
         latch.countDown();
         
+        // Probably a good idea to invalidate the cache
+        cacheValid = false;
+        cachedObject = null;
+        
         if (debug) {
             log.debug("New latch count = [" + latch.getCount() + "]");
         }
@@ -75,6 +81,13 @@ public class AsyncResponse implements Response {
     protected void onComplete(MessageContext mc) {
         if (debug) {
             log.debug("AsyncResponse received a MessageContext. Counting down latch.");
+        }
+        
+        // A new message context invalidates the cached object retrieved
+        // during the last get()
+        if (response != mc) {
+            cachedObject = null;
+            cacheValid = false;
         }
         
         response = mc;
@@ -171,6 +184,15 @@ public class AsyncResponse implements Response {
         if (ctx == null) {
             throw new ExecutionException(ExceptionFactory.makeWebServiceException("null response"));
         }
+        
+        // Avoid a reparse of the message. If we already retrived the object, return
+        // it now.
+        if (cacheValid) {
+            if (log.isDebugEnabled()) {
+                log.debug("Return object cached from last get()");
+            }
+            return cachedObject;
+        }
 
         // TODO: Check the type of the object to make sure it corresponds with
         // the parameterized generic type.
@@ -180,6 +202,9 @@ public class AsyncResponse implements Response {
                 log.debug("Unmarshalling the async response message.");
              }
              obj = getResponseValueObject(ctx);
+             // Cache the object in case it is required again
+             cacheValid = true;
+             cachedObject = obj;      
         }
         catch (Throwable t) {
             if (debug) {
