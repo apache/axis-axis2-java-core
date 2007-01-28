@@ -108,7 +108,10 @@ public class ContextUitls {
 		soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, null);
 		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, Scope.APPLICATION);
 		   
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS, null);
-		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS, Scope.APPLICATION);
+		soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_INBOUND, null);
+		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_INBOUND, Scope.APPLICATION);
+
+        soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_OUTBOUND, null);
+        soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_OUTBOUND, Scope.APPLICATION);
 	}
 }
