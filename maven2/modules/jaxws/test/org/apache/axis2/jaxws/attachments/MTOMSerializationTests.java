@@ -40,7 +40,7 @@ public class MTOMSerializationTests extends TestCase {
     private DataSource imageDS;
     
     public void setUp() throws Exception {
-        String imageResourceDir = "test-resources"+File.separator+"image";
+        String imageResourceDir = System.getProperty("basedir")+"/"+"test-resources"+File.separator+"image";
         
         //Create a DataSource from an image 
         File file = new File(imageResourceDir+File.separator+"test.jpg");

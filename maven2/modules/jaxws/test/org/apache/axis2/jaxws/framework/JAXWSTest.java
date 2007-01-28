@@ -121,7 +121,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(ProxyTests.class);
         suite.addTestSuite(ProxyNonWrappedTests.class);
         suite.addTestSuite(RPCProxyTests.class);
-        suite.addTestSuite(GorillaDLWProxyTests.class);
+//        suite.addTestSuite(GorillaDLWProxyTests.class);
         suite.addTestSuite(SOAP12ProxyTests.class);
         suite.addTestSuite(ExceptionFactoryTests.class);
         suite.addTestSuite(BasicAuthSecurityTests.class);
@@ -141,7 +141,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(EndpointLifecycleTests.class);
         suite.addTestSuite(ResourceInjectionTests.class);
         suite.addTestSuite(AnyTypeTests.class);
-        suite.addTestSuite(PolymorphicTests.class);
+//        suite.addTestSuite(PolymorphicTests.class);
         suite.addTestSuite(NS2PkgTest.class);
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {

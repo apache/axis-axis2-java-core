@@ -46,7 +46,7 @@ public class RPCProxyTests extends TestCase {
     private String axisEndpoint = "http://localhost:8080/axis2/services/RPCLitService";
     private QName portName = new QName("http://org.apache.axis2.jaxws.proxy.rpclit",
             "RPCLit");
-    private String wsdlLocation = "test/org/apache/axis2/jaxws/proxy/rpclit/META-INF/RPCLit.wsdl";
+    private String wsdlLocation = System.getProperty("basedir")+"/"+"test/org/apache/axis2/jaxws/proxy/rpclit/META-INF/RPCLit.wsdl";
     
     /**
      * Utility method to get the proxy

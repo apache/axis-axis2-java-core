@@ -44,7 +44,7 @@ public abstract class ProviderTestCase extends TestCase {
     public ProviderTestCase(String name) {
         super(name);
         if(basedir == null){
-            basedir = new File(".").getAbsolutePath();
+            basedir = new File(System.getProperty("basedir")).getAbsolutePath();
         }
         providerResourceDir = new File(basedir, providerResourceDir).getAbsolutePath();
         imageResourceDir = new File(basedir, imageResourceDir).getAbsolutePath();

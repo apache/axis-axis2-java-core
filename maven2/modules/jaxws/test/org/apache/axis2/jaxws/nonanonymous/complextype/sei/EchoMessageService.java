@@ -28,7 +28,7 @@ public class EchoMessageService
         URL url = null;
         try {
         	try{
-	        	String baseDir = new File(".").getCanonicalPath();
+	        	String baseDir = new File(System.getProperty("basedir")).getCanonicalPath();
 	        	wsdlLocation = new File(baseDir + wsdlLocation).getAbsolutePath();
         	}catch(Exception e){
         		e.printStackTrace();

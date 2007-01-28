@@ -1,5 +1,7 @@
 package org.apache.axis2.jaxws.client;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
@@ -17,7 +19,21 @@ public class ClientConfigTests extends TestCase {
     }
     
     public void testBadWsdlUrl() throws Exception {
-        URL url = new URL("file:./test-resources/wsdl/BadEndpointAddress.wsdl");
+        
+        URL url = null;
+        String wsdlLocation = null;
+        try {
+            try{
+                String baseDir = new File(System.getProperty("basedir")).getCanonicalPath();
+                wsdlLocation = new File(baseDir + "/test-resources/wsdl/BadEndpointAddress.wsdl").getAbsolutePath();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            File file = new File(wsdlLocation);
+            url = file.toURL();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
         
         Service svc = Service.create(url, new QName("http://jaxws.axis2.apache.org", "EchoService"));
         Dispatch dispatch = svc.createDispatch(new QName("http://jaxws.axis2.apache.org", "EchoPort"), 
