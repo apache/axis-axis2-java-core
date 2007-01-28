@@ -202,10 +202,16 @@ public class PackageSetBuilder {
        
        // Also consider the request and response wrappers
        String pkg = getPackageFromClassName(opDesc.getRequestWrapperClassName());
+       if(log.isDebugEnabled()){
+    	   log.debug("Package from Request Wrapper annotation = "+ pkg);
+       }
        if (pkg != null) {
            set.add(pkg);
        }
        pkg = getPackageFromClassName(opDesc.getResponseWrapperClassName());
+       if(log.isDebugEnabled()){
+    	   log.debug("Package from Response Wrapper annotation = "+ pkg);
+       }
        if (pkg != null) {
            set.add(pkg);
        }
@@ -214,6 +220,9 @@ public class PackageSetBuilder {
        Class cls = opDesc.getResultActualType();
        if (cls != null && cls != void.class && cls != Void.class) {
            Package returnTypePkg = cls.getPackage();
+           if(log.isDebugEnabled()){
+        	   log.debug("Package from Return Type = "+ pkg);
+           }
            if (returnTypePkg != null) {
            	   pkg = returnTypePkg.getName();
                set.add(pkg);

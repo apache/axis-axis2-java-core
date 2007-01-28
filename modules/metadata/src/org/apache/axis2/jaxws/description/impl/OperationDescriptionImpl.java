@@ -613,7 +613,10 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                 // says the entire annotation "...MAY be omitted if all its properties would have default vaules."
                 // implying there IS some sort of default.  We'll try this for now:
                 if (isDBC()) {
-                    requestWrapperClassName = this.methodComposite.getDeclaringClass(); 
+                	String declaringClazz = this.methodComposite.getDeclaringClass();
+                	String packageName = declaringClazz.substring(0, declaringClazz.lastIndexOf("."));
+                    requestWrapperClassName = packageName + "." + DescriptionUtils.javaMethodtoClassName(methodComposite.getMethodName());
+                
                 } else {
                     Class clazz = seiMethod.getDeclaringClass();
                     String packageName = clazz.getPackage().getName();

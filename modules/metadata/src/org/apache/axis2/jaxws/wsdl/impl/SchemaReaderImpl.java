@@ -51,7 +51,13 @@ public class SchemaReaderImpl implements SchemaReader {
 		
 		//Read Schema Definition in wsdl;
 		Types types = wsdlDefinition.getTypes();
-		
+		if(types == null){
+			if(log.isDebugEnabled()){
+				log.debug("WARNING: Could not find any Scheam/Types from WSDL");
+				log.debug("no packages will derived from WSDL schema");
+			}
+			return set;
+		}
 		List extensibilityElements = types.getExtensibilityElements();
 		
 		//Read the schema defined in the wsdl

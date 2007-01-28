@@ -90,7 +90,6 @@ public class ClassFinderImpl implements ClassFinder {
 		        	                             log.debug("  The reason that class could not be loaded:" + e.toString());
                                                  log.debug(JavaUtils.stackToString(e));
 		        	                         }
-		        	                         e.printStackTrace();
 		        	                       }
 		        					}
 		        				}
