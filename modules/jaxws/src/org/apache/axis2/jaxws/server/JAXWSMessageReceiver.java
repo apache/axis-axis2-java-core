@@ -55,6 +55,8 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
      */
     public void receive(org.apache.axis2.context.MessageContext axisRequestMsgCtx) 
         throws AxisFault {
+        AxisFault faultToReturn = null;
+      
     	if (log.isDebugEnabled()) {
             log.debug("new request received");
         }
@@ -110,14 +112,24 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
                 
                 OperationContext opCtx = axisResponseMsgCtx.getOperationContext();
                 opCtx.addMessageContext(axisResponseMsgCtx);
+                
+                // If this is a fault message, we want to throw it as an
+                // exception so that the transport can do the appropriate things
+                if (responseMsgCtx.getMessage().isFault())
+                {
+                  faultToReturn =  new AxisFault("An error was detected during JAXWS processing", axisResponseMsgCtx); 
+                }
+                else
+                {
                   //This assumes that we are on the ultimate execution thread
                   ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
                 
                   //Create the AxisEngine for the reponse and send it.
                   AxisEngine engine = new AxisEngine(axisResponseMsgCtx.getConfigurationContext());
                   engine.send(axisResponseMsgCtx);
-                //This assumes that we are on the ultimate execution thread
-                ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
+                  //This assumes that we are on the ultimate execution thread
+                  ThreadContextMigratorUtil.performContextCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponseMsgCtx);
+                }
             }
 
         } catch (Exception e) {
@@ -133,6 +145,11 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
 
         //This assumes that we are on the ultimate execution thread
         ThreadContextMigratorUtil.performThreadCleanup(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisRequestMsgCtx);
+        
+        if (faultToReturn != null)
+        {
+          throw faultToReturn;
+        }
     }
     
     private boolean isMepInOnly(String mep){

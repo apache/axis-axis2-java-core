@@ -172,6 +172,29 @@ public class MessageContextBuilder {
             throw new AxisFault(Messages.getMessage("errorwhileProcessingFault"));
         }
 
+        // See if the throwable is an AxisFault and if it already contains the
+        // fault MessageContext
+        if (e instanceof AxisFault)
+        {
+          MessageContext faultMessageContext = ((AxisFault)e).getFaultMessageContext();
+          if (faultMessageContext != null)
+          {
+            // These may not have been set correctly when the original context
+            // was created -- an example of this is with the SimpleHTTPServer.
+            // I'm not sure if this is the correct thing to do, or if the
+            // code that created this context in the first place should
+            // expect that the transport out info was set correctly, as
+            // it may need to use that info at some point before we get to
+            // this code.
+            faultMessageContext.setProperty(MessageContext.TRANSPORT_OUT,
+                                  processingContext.getProperty(MessageContext.TRANSPORT_OUT));
+            faultMessageContext.setProperty(Constants.OUT_TRANSPORT_INFO,
+                                  processingContext.getProperty(Constants.OUT_TRANSPORT_INFO));
+            faultMessageContext.setProcessingFault(true);            
+            return faultMessageContext;
+          }
+        }
+        
         // Create a basic response MessageContext with basic fields copied
         MessageContext faultContext = createResponseMessageContext(processingContext);
         
