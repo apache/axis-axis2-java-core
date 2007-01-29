@@ -599,15 +599,8 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
                 providerInterfaceValid = true;
                 //This is a provider based endpoint, make sure the annotation exists
                 if (composite.getWebServiceProviderAnnot() == null) {
-                    // TODO: (VALIDATION) Don't throw this yet because a LOT of provider tests fail validation with it! 
-                    if (true) {
-                        log.error("FIXME: Validation error that is currently allowed: This is a Provider based endpoint that does not contain a WebServiceProvider annotation.  Provider class: " + composite.getClassName());
-                        log.debug("Failing composite: " + composite.toString());
-                    }
-                    else {
-                        // TODO: RAS/NLS
-                        throw ExceptionFactory.makeWebServiceException("Validation error: This is a Provider based endpoint that does not contain a WebServiceProvider annotation.  Provider class: " + composite.getClassName());
-                    }
+                    // TODO: RAS/NLS
+                    throw ExceptionFactory.makeWebServiceException("Validation error: This is a Provider based endpoint that does not contain a WebServiceProvider annotation.  Provider class: " + composite.getClassName());
                 }
             }
         }
@@ -687,17 +680,9 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 					//Verify that WebService annotation does not contain a name attribute
 					//(per JSR181 Sec. 3.1)
 					if (composite.getWebServiceAnnot().name() != null) {
-                        // TODO: (VALIDATION) Don't throw this yet because a LOT of provider tests fail validation with it! 
-                        if (true) {
-                            log.error("FIXME: Validation error currently allowed: WebService.name must not be specified when the bean specifies an endpoint interface.  Implentation class: "  
-                                    + composite.getClassName() + "; WebService.name: " + composite.getWebServiceAnnot().name());
-                            log.debug("Failing composite: " + composite.toString());
-                        }
-                        else {
-                            // TODO: RAS/NLS
-                            throw ExceptionFactory.makeWebServiceException("Validation error: WebService.name must not be specified when the bean specifies an endpoint interface.  Implentation class: "  
-                                    + composite.getClassName() + "; WebService.name: " + composite.getWebServiceAnnot().name());
-                        }
+                        // TODO: RAS/NLS
+                        throw ExceptionFactory.makeWebServiceException("Validation error: WebService.name must not be specified when the bean specifies an endpoint interface.  Implentation class: "  
+                                + composite.getClassName() + "; WebService.name: " + composite.getWebServiceAnnot().name());
 					}
 					
                     validateSEI(seic);
