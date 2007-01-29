@@ -16,22 +16,10 @@
 
 package org.apache.axis2.json;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.OMNamespaceImpl;
-import org.apache.axiom.om.impl.builder.OMBuilder;
-import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
-import org.apache.axiom.om.impl.llom.factory.OMLinkedListImplFactory;
-import org.apache.axis2.JScriptConstants;
 
 public class JSONBadgerfishOMBuilder extends JSONOMBuilder{
 
     protected JSONDataSource getDataSource(){
         return new JSONBadgerfishDataSource(this.jsonInputStream, localName);
     }
-
-
 }

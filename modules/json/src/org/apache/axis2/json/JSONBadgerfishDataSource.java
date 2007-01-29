@@ -35,13 +35,10 @@ public class JSONBadgerfishDataSource extends JSONDataSource{
         super(jsonInputStream, localName);
     }
 
-
     public javax.xml.stream.XMLStreamReader getReader() throws javax.xml.stream.XMLStreamException {
 
         BadgerFishXMLInputFactory inputFactory = new BadgerFishXMLInputFactory();
         return inputFactory.createXMLStreamReader(new JSONTokener("{" + localName + ":" + this.getJSONString()));
 
     }
-
-
 }

@@ -21,9 +21,8 @@ import org.apache.axis2.Constants;
 
 public class JSONBadgerfishIntegrationTest extends JSONIntegrationTest {
 
-    protected void setMessageType(Options options) {
-        options.setProperty(Constants.Configuration.MESSAGE_TYPE,
-                "application/json/badgerfish");
+    protected String getMessageType() {
+        return "application/json/badgerfish";
     }
 
 }

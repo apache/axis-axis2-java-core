@@ -115,7 +115,7 @@
         <messageFormatter contentType="application/json"
                          class="org.apache.axis2.json.JSONMessageFormatter"/>
         <messageFormatter contentType="application/json/badgerfish"
-                         class="org.apache.axis2.json.JSONMessageFormatter"/>
+                         class="org.apache.axis2.json.JSONBadgerfishMessageFormatter"/>
         <messageFormatter contentType="text/javascript"
                          class="org.apache.axis2.json.JSONMessageFormatter"/>
     </messageFormatters>

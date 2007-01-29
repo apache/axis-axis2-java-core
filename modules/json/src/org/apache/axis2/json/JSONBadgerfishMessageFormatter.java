@@ -1,6 +1,5 @@
-package org.apache.axis2;
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
+ * Copyright 2001-2004 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +14,18 @@ package org.apache.axis2;
  * limitations under the License.
  */
 
-public class JScriptConstants {
-	public static final String MEDIA_TYPE_APPLICATION_JSON = "application/json";
+package org.apache.axis2.json;
 
-    public static final String MEDIA_TYPE_APPLICATION_JSON_BADGERFISH = "application/json/badgerfish";
+import org.codehaus.jettison.badgerfish.BadgerFishXMLStreamWriter;
 
-//    public static final String JSON_CONVENTION = "convention";
-//
-//    public static final String BADGERFISH = "badgerfish";
-//
-//    public static final String MAPPED = "mapped";
-    
+import javax.xml.stream.XMLStreamWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+
+public class JSONBadgerfishMessageFormatter extends JSONMessageFormatter{
+
+    protected XMLStreamWriter getJSONWriter(OutputStream outStream){
+        return new BadgerFishXMLStreamWriter(new OutputStreamWriter(outStream));
+    }
+
 }

@@ -29,13 +29,10 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.JScriptConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.codehaus.jettison.badgerfish.BadgerFishXMLStreamWriter;
-import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 import org.codehaus.jettison.mapped.MappedNamespaceConvention;
+import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 
 
 public class JSONMessageFormatter implements MessageFormatter {
@@ -46,11 +43,7 @@ public class JSONMessageFormatter implements MessageFormatter {
         if (msgCtxt.getProperty(Constants.Configuration.CONTENT_TYPE) != null) {
             contentType = (String) msgCtxt.getProperty(Constants.Configuration.CONTENT_TYPE);
         } else {
-            if (msgCtxt.getProperty(Constants.Configuration.MESSAGE_TYPE).equals(JScriptConstants.MEDIA_TYPE_APPLICATION_JSON_BADGERFISH)) {
-                contentType = JScriptConstants.MEDIA_TYPE_APPLICATION_JSON_BADGERFISH;
-            } else {
-                contentType = JScriptConstants.MEDIA_TYPE_APPLICATION_JSON;
-            }
+            contentType = (String) msgCtxt.getProperty(Constants.Configuration.MESSAGE_TYPE);
 
         }
 
@@ -64,16 +57,7 @@ public class JSONMessageFormatter implements MessageFormatter {
         OMElement element = msgCtxt.getEnvelope().getBody().getFirstElement();
         try {
             ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-            XMLStreamWriter jsonWriter;
-
-//            if (msgCtxt.getProperty(JScriptConstants.JSON_CONVENTION) != null && msgCtxt.getProperty(JScriptConstants.JSON_CONVENTION).equals(JScriptConstants.BADGERFISH)) {
-            if (msgCtxt.getProperty(Constants.Configuration.MESSAGE_TYPE).equals(JScriptConstants.MEDIA_TYPE_APPLICATION_JSON_BADGERFISH)) {
-                jsonWriter = new BadgerFishXMLStreamWriter(new OutputStreamWriter(bytesOut));
-            } else {
-                MappedNamespaceConvention mnc = new MappedNamespaceConvention();
-                jsonWriter = new MappedXMLStreamWriter(mnc, new OutputStreamWriter(bytesOut));
-            }
-
+            XMLStreamWriter jsonWriter = getJSONWriter(bytesOut);
             element.serializeAndConsume(jsonWriter);
             jsonWriter.writeEndDocument();
 
@@ -90,26 +74,19 @@ public class JSONMessageFormatter implements MessageFormatter {
         return null;
     }
 
+    protected XMLStreamWriter getJSONWriter(OutputStream outStream) {
+        MappedNamespaceConvention mnc = new MappedNamespaceConvention();
+        return new MappedXMLStreamWriter(mnc, new OutputStreamWriter(outStream));
+    }
+
     public void writeTo(MessageContext msgCtxt, OMOutputFormat format,
                         OutputStream out, boolean preserve) throws AxisFault {
         OMElement element = msgCtxt.getEnvelope().getBody().getFirstElement();
-
-        XMLStreamWriter jsonWriter;
-
-//        if (msgCtxt.getProperty(JScriptConstants.JSON_CONVENTION) != null && msgCtxt.getProperty(JScriptConstants.JSON_CONVENTION).equals(JScriptConstants.BADGERFISH)) {
-        if (msgCtxt.getProperty(Constants.Configuration.MESSAGE_TYPE).equals(JScriptConstants.MEDIA_TYPE_APPLICATION_JSON_BADGERFISH)) {
-            jsonWriter = new BadgerFishXMLStreamWriter(new OutputStreamWriter(out));
-        } else {
-            MappedNamespaceConvention mnc = new MappedNamespaceConvention();
-            jsonWriter = new MappedXMLStreamWriter(mnc, new OutputStreamWriter(out));
-        }
+        XMLStreamWriter jsonWriter = getJSONWriter(out);
 
         try {
             element.serializeAndConsume(jsonWriter);
             jsonWriter.writeEndDocument();
-
-//            jsonWriter.close();
-
         } catch (XMLStreamException e) {
             throw new AxisFault(e);
         }
