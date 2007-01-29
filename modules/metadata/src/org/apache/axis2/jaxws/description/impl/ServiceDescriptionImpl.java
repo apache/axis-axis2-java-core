@@ -17,7 +17,9 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import java.io.FileNotFoundException;
+import java.net.ConnectException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -460,6 +462,12 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             }
             catch(FileNotFoundException e) {
             	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlNotFoundErr", e.getMessage()), e);
+            }
+            catch(UnknownHostException e) {
+            	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("unknownHost", e.getMessage()), e);
+            }
+            catch(ConnectException e) {
+            	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("connectionRefused", e.getMessage()), e);
             }
             catch (WSDLException e) {
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
