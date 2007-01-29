@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.wsdl.Definition;
 
-public class DescriptionBuilderComposite {
+public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAnnotationComposite {
 	/*
 	 * This structure contains the full reflected class, as well as, the
 	 * possible annotations found for this class...the class description 
@@ -356,6 +356,10 @@ public class DescriptionBuilderComposite {
 	public void addWebServiceRefAnnot(
 			WebServiceRefAnnot webServiceRefAnnot) {
 		webServiceRefAnnotList.add(webServiceRefAnnot);
+	}
+	
+	public void setWebServiceRefAnnot(WebServiceRefAnnot webServiceRefAnnot) {
+		addWebServiceRefAnnot(webServiceRefAnnot);
 	}
 
 	/**

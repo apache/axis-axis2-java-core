@@ -4,7 +4,7 @@
 package org.apache.axis2.jaxws.description.builder;
 
 
-public class FieldDescriptionComposite {
+public class FieldDescriptionComposite implements TMFAnnotationComposite {
 	
 	//Method reflective information
 	private String 	fieldName;		//field name

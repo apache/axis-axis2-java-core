@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class MethodDescriptionComposite {
+public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnnotationComposite {
 	
 	//Method reflective information
 	private String 		methodName;	//a public method name in this class
