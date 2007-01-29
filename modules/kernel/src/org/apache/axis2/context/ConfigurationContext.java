@@ -25,14 +25,10 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.modules.Module;
-import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.SessionUtils;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -43,7 +39,6 @@ import java.util.*;
  */
 public class ConfigurationContext extends AbstractContext {
 
-    private static final Log log = LogFactory.getLog(ConfigurationContext.class);
     /**
      * Map containing <code>MessageID</code> to
      * <code>OperationContext</code> mapping.
@@ -66,14 +61,10 @@ public class ConfigurationContext extends AbstractContext {
 
     private String cachedServicePath = null;
 
-    private Thread cleanupThread;
-
     public ConfigurationContext(AxisConfiguration axisConfiguration) {
         super(null);
         this.axisConfiguration = axisConfiguration;
         initConfigContextTimeout(axisConfiguration);
-        cleanupThread = new CleanupThread(this);
-        Runtime.getRuntime().addShutdownHook(cleanupThread);
     }
 
     private void initConfigContextTimeout(AxisConfiguration axisConfiguration) {
@@ -484,11 +475,7 @@ public class ConfigurationContext extends AbstractContext {
         }
         while (serviceContecxtes.hasNext()) {
             ServiceContext serviceContext = (ServiceContext) serviceContecxtes.next();
-            try {
-                DependencyManager.destroyServiceObject(serviceContext);
-            } catch (AxisFault axisFault) {
-                log.info(axisFault.getMessage());
-            }
+            DependencyManager.destroyServiceObject(serviceContext);
         }
     }
 
@@ -501,6 +488,7 @@ public class ConfigurationContext extends AbstractContext {
                         (ServiceGroupContext) applicationScopeSgs.next();
                 cleanupServiceContexts(serviceGroupContext);
             }
+            applicationSessionServiceGroupContextTable.clear();
         }
         if ((serviceGroupContextMap != null) && (serviceGroupContextMap.size() > 0)) {
             Iterator sopaSessionSgs = serviceGroupContextMap.values().iterator();
@@ -508,46 +496,17 @@ public class ConfigurationContext extends AbstractContext {
                 ServiceGroupContext serviceGroupContext = (ServiceGroupContext) sopaSessionSgs.next();
                 cleanupServiceContexts(serviceGroupContext);
             }
+            serviceGroupContextMap.clear();
         }
     }
 
     public void terminate()
             throws AxisFault {
-        Runtime.getRuntime().removeShutdownHook(cleanupThread);
         if (listenerManager != null) {
             listenerManager.stop();
         }
     }
 
-    private void performCleanup() throws AxisFault {
-        /*Stop the transport senders*/
-        HashMap transportOut = getAxisConfiguration().getTransportsOut();
-        if (transportOut.size() > 0) {
-            Iterator trsItr = transportOut.values().iterator();
-            while (trsItr.hasNext()) {
-                TransportOutDescription outDescription = (TransportOutDescription) trsItr.next();
-                TransportSender trsSededer = outDescription.getSender();
-                if (trsSededer != null) {
-                    trsSededer.stop();
-                }
-            }
-        }
-
-        /*Shut down the modules*/
-        HashMap modules = getAxisConfiguration().getModules();
-        if (modules != null) {
-            Iterator moduleitr = modules.values().iterator();
-            while (moduleitr.hasNext()) {
-                AxisModule axisModule = (AxisModule) moduleitr.next();
-                Module module = axisModule.getModule();
-                if (module != null) {
-                    module.shutdown(this);
-                }
-            }
-        }
-
-        cleanupContexts();
-    }
 
     public String getServiceContextPath() {
         if (cachedServicePath == null) {
@@ -628,22 +587,5 @@ public class ConfigurationContext extends AbstractContext {
             serviceGroupContextTimoutInterval = serviceGroupContextTimoutIntervalParam.intValue();
         }
         return serviceGroupContextTimoutInterval;
-    }
-
-    class CleanupThread extends Thread {
-        ConfigurationContext configContext;
-
-        public CleanupThread(ConfigurationContext configContext) {
-            this.configContext = configContext;
-        }
-
-        public void run() {
-            try {
-                configContext.performCleanup();
-            }
-            catch (AxisFault e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
