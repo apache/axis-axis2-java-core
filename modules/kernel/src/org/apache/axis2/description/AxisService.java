@@ -543,6 +543,11 @@ public class AxisService extends AxisDescription {
      * @param axisOperation the operation to map to
      */
     public void mapActionToOperation(String action, AxisOperation axisOperation) {
+        if(action == null || "".equals(action)){
+            if(log.isDebugEnabled()){
+                log.debug("mapActionToOperation: A null or empty action cannot be used to map to an operation.");
+            }
+        }
         operationsAliasesMap.put(action, axisOperation);
     }
 

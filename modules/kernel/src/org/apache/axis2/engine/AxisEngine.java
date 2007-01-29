@@ -612,7 +612,11 @@ public class AxisEngine {
         if (pi.equals(InvocationResponse.CONTINUE))
         {
           // Actually send the SOAP Fault
-          TransportSender sender = msgContext.getTransportOut().getSender();
+          TransportOutDescription transportOut = msgContext.getTransportOut();
+          if(transportOut == null) {
+              throw new AxisFault("Transport out has not been set");
+          }
+          TransportSender sender = transportOut.getSender();
 
           sender.invoke(msgContext);
           flowComplete(msgContext, false);
