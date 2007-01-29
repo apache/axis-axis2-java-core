@@ -2,14 +2,14 @@
 <head>
   <meta http-equiv="content-type" content="">
   <title>Developing Apache Axis2</title>
-  <link href="css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
+  <link href="css/axis-docs.css" rel="stylesheet" type="text/css" media="all">
 </head>
 
 <body lang="en">
 <h1>Developing Apache Axis2</h1>
 
-<p>This document will give you information on how to use SVN in order to get
-an SVN checkout/update and making commits to repository etc in the process of
+<p>This document provides information on how to use SVN to get an SVN
+checkout/update, make commits to the repository, etc., in the process of
 contributing to Apache projects (specifically Axis2). Instructions on
 configuring IDEs for development and using Maven to build the project is also
 included here.</p>
@@ -27,45 +27,45 @@ included here.</p>
 
 <p>The Axis2 development team uses Subversion (SVN) for source control.
 Subversion is a compelling replacement for CVS, developed under the auspices
-of the Tigris community and is licensed under an Apache compatible license.
-To learn more about Subversion or to download the latest distribution, visit
-the <a href="http:///subversion.tigris.org" target="_blank">Subversion
-project site</a>.  If you are looking for guidance on setting up and
-installing Subversion, please read the ASF <a
+of the Tigris community and licensed under an Apache compatible license. To
+learn more about Subversion or to download the latest distribution, visit the
+<a href="http:///subversion.tigris.org" target="_blank">Subversion project
+site</a>.  If you are looking for guidance on setting up and installing
+Subversion, please read the ASF <a
 href="http://www.apache.org/dev/version-control.html" target="_blank">Source
 Code Repositories page</a>.</p>
 <a name="checkout"></a>
 
-<h2>Checkout Axis2 From Subversion</h2>
+<h2>Checkout Axis2 from Subversion</h2>
 
-<p>When checking out the latest version of Axis2 from the Foundation's
-Subversion repository you must use one of the following URLs depending on
-your level of access to the Axis2 source code:</p>
+<p>To check out the latest version of Axis2 from the Foundation's Subversion
+repository, you must use one of the following URLs depending on your level of
+access to the Axis2 source code:</p>
 <ul>
-  <li><b>If you are not a committer:</b> Use <a
+  <li><b>If you are not a committer:</b> <a
     href="http://svn.apache.org/repos/asf/webservices/axis2/trunk/java"
     target="_blank">http://svn.apache.org/repos/asf/webservices/axis2/trunk/java</a></li>
-  <li><b>If you are a committer:</b> Use <a
+  <li><b>If you are a committer:</b> <a
     href="https://svn.apache.org/repos/asf/webservices/axis2/trunk/java"
     target="_blank">https://svn.apache.org/repos/asf/webservices/axis2/trunk/java</a></li>
 </ul>
-If you are a committer, make sure that you have selected an svnpasswd.  To do
-this you must log into svn.apache.org.  For more information, please read the
+If you are a committer, make sure that you have selected an svnpasswd. To do
+this, you must log into svn.apache.org. For more information, please read the
 ASF <a href="http://www.apache.org/dev/version-control.html"
 target="_blank">Source Code Repositories page</a>.
 
 <p>Once you have successfully installed Subversion, you can check out Axis2
 trunk by following these steps:</p>
 <ol type="1">
-  <li>Run <strong>svn co &lt;repository URL&gt; axis2</strong> where
+  <li>Run <strong>svn co &lt;repository URL&gt; axis2</strong> where the
     repository URL is one of the URLs from the previous list.</li>
   <li>This step will check out the latest version of the Axis2 Java codebase
-    to a directory named "axis2".  The second parameter to the svn co selects
-    a directory to create on your local machine.  If you want to checkout
-    Axis2 to a different directory, feel free to change axis2 to any other
-    directory name.</li>
-  <li>To update your working copy to the latest version from the repository.
-    Execute the <strong>svn update</strong> command.</li>
+    to a directory named "axis2".  The second parameter to the <strong>svn
+    co</strong> selects a directory to create on your local machine.  If you
+    want to checkout Axis2 to a different directory, feel free to change
+    axis2 to any other directory name.</li>
+  <li>To update your working copy to the latest version from the repository,
+    execute the <strong>svn update</strong> command.</li>
   <li>If you would like to submit a patch, you can execute <strong>svn
     diff</strong> to create a unified diff for submission to the Axis2 JIRA
     issue tracker.</li>
@@ -81,9 +81,8 @@ the <a href="http://maven.apache.org" target="_blank">Maven project page</a>.
 To use Maven to build the Axis2 project, follow these simple steps:</p>
 <ol type="1">
   <li>Install <a href="http://maven.apache.org/maven-1.x/"
-    target="_blank">Maven1</a>. See <a
-    href="http://maven.apache.org/maven-1.x/start/install.html"
-    target="_blank">here</a> for instructions.
+    target="_blank">Maven1</a>. Refer to the <a
+    href="http://maven.apache.org/maven-1.x/start/install.html">instructions</a>.
     <ul>
       <li>Create a MAVEN_HOME environment variable.</li>
       <li>Add MAVEN_HOME/bin to your PATH</li>
@@ -104,14 +103,14 @@ endorsement of a specific set of tools, it is simply meant as a pointer to
 ease the process of getting started with Axis2 development.</p>
 <ul>
   <li><strong>Intellij IDEA-</strong> type <strong>maven
-    idea:multiproject</strong>. This will generate the necessary IDEA .ipr,
-    .iml and .iws project files</li>
-  <li><strong>eclipse</strong>- type 
-  <strong>maven multiproject:goal -Dgoal=eclipse</strong>
-  Then in Eclipse, setup a Classpath Variable for MAVEN_REPO, and select 
-  File > Import > Existing Projects into Workspace > Select root directory. 
-  Selecting the root of the Axis source discovers all of the modules and allows 
-  all to be imported as individual projects at once.</li>
+    idea:multiproject</strong>. Generates the necessary IDEA .ipr, .iml and
+    .iws project files</li>
+  <li><strong>eclipse</strong>- type <strong>maven multiproject:goal
+    -Dgoal=eclipse</strong> Then in Eclipse, setup a Classpath Variable for
+    MAVEN_REPO, and select File &gt; Import &gt; Existing Projects into
+    Workspace &gt; Select root directory. Selecting the root of the Axis
+    source discovers all the modules and allows them to be imported as
+    individual projects at once.</li>
 </ul>
 </body>
 </html>
