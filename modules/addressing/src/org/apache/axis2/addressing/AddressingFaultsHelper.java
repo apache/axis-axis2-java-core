@@ -40,6 +40,83 @@ import org.apache.commons.logging.LogFactory;
 public class AddressingFaultsHelper{
     
     private static final Log log = LogFactory.getLog(AddressingFaultsHelper.class);
+
+    /**
+     * Build an understanndable fault string for the given faultCode and wsa:FaultDetail info.
+     * Should really use a message bundle.
+     * @param faultCodeLocalName
+     * @param faultDetail
+     * @return
+     */
+    public  static String getMessageForAxisFault(String faultCodeLocalName, String faultDetail){
+        String result = null;
+        
+        if(Submission.FAULT_INVALID_HEADER.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = "The server failed to process the WS-Addressing header: "+faultDetail+" [Reason]: A header representing a Message Addressing Property is not valid and the message cannot be processed";
+            }else{
+                result = "The server failed to process one of the WS-Addressing headers. [Reason]: A header representing a Message Addressing Property is not valid and the message cannot be processed";
+            }
+        }else if(Final.FAULT_INVALID_HEADER.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = "The server failed to process the WS-Addressing header: "+faultDetail+" [Reason]: A header representing a Message Addressing Property is not valid and the message cannot be processed";
+            }else{
+                result = "The server failed to process one of the WS-Addressing headers. [Reason]: A header representing a Message Addressing Property is not valid and the message cannot be processed";
+            }
+        }else if("InvalidCardinality".equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = "The server received more than one "+faultDetail+" WS-Addressing header";
+            }else{
+                result = "The server received more copies of a WS-Addressing header than expected";
+            }
+        }else if("MissingAddressInEPR".equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = "The server received more than one "+faultDetail+" WS-Addressing header";
+            }else{
+                result = "The server received more copies of a WS-Addressing header than expected";
+            }
+        }else if("DuplicateMessageID".equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = "A "+faultDetail+" header was expected to be an EPR but did not contain an [address].";
+            }else{
+                result = "A WS-Addressing header was expected to be an EPR but did not contain an [address].";
+            }
+        }else if("ActionMismatch".equals(faultCodeLocalName)){
+            result = "WS-Addressing Fault: The SOAPAction and wsa:Action received by the server did not match.";
+        }else if(Final.FAULT_ONLY_ANONYMOUS_ADDRESS_SUPPORTED.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = "The "+faultDetail+" header contained a non-anonymous [address] which is not supported by the server.";
+            }else{
+                result = "A WS-Addressing header contained a non-anonymous [address] which is not supported by the server.";
+            }
+        }else if(Final.FAULT_ONLY_NON_ANONYMOUS_ADDRESS_SUPPORTED.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = "The "+faultDetail+" header contained an anonymous [address] which is not supported by the server.";
+            }else{
+                result = "A WS-Addressing header contained an anonymous [address] which is not supported by the server.";
+            }
+        }else if(Submission.FAULT_ADDRESSING_HEADER_REQUIRED.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = "The "+faultDetail+" header is required when WS-Addressing is in use but was not sent.";
+            }else{
+                result = "A WS-Addressing header which is required when WS-Addressing is in use was not sent.";
+            }
+        }else if(Final.FAULT_ADDRESSING_HEADER_REQUIRED.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = "The "+faultDetail+" header is required when WS-Addressing is in use but was not sent.";
+            }else{
+                result = "A WS-Addressing header which is required when WS-Addressing is in use was not sent.";
+            }
+        }else if(AddressingConstants.FAULT_ACTION_NOT_SUPPORTED.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = "The server did not recognise the action which it received: "+faultDetail;
+            }else{
+                result = "The server did not recognise the action which it received.";
+            }
+        }
+        
+        return result;
+    }
     
     //    wsa:InvalidAddressingHeader [Reason] the string: "A header representing a Message Addressing Property is not valid and the message cannot be processed"
     //      wsa:InvalidAddress
