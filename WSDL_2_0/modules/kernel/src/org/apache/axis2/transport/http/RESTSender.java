@@ -33,10 +33,7 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.*;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
 import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
@@ -195,8 +192,15 @@ public class RESTSender extends AbstractHTTPSender {
                 if (Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
                     this.sendViaGet(msgContext, url);
                     return;
+                } else if (Constants.Configuration.HTTP_METHOD_POST.equalsIgnoreCase(httpMethod)) {
+                    this.sendViaPost(msgContext, dataout, url, soapActionString);
+                    return;
                 } else if (Constants.Configuration.HTTP_METHOD_DELETE.equalsIgnoreCase(httpMethod)) {
                     this.sendViaDelete(msgContext, url);
+                    return;
+                }
+                else if (Constants.Configuration.HTTP_METHOD_PUT.equalsIgnoreCase(httpMethod)) {
+                    this.sendViaPut(msgContext, dataout, url, soapActionString);
                     return;
                 }
             } else {
@@ -566,6 +570,131 @@ public class RESTSender extends AbstractHTTPSender {
             throw new AxisFault(Messages.getMessage("transportError",
                     String.valueOf(postMethod.getStatusCode()),
                     postMethod.getResponseBodyAsString()));
+        } catch (Exception e) {
+            log.error("Error in processing POST request", e);
+        }
+    }
+
+
+    private void sendViaPut(MessageContext msgContext, OMElement dataout, URL url,
+                             String soapActionString) throws MalformedURLException {
+
+        // execute the HtttpMethodBase - a connection manager can be given for
+        // handle multiple
+        HttpClient httpClient = getHttpClient(msgContext);
+
+        PutMethod putMethod = new PutMethod(url.toString());
+        if (isAuthenticationEnabled(msgContext)) {
+            putMethod.setDoAuthentication(true);
+        }
+        String httpContentType;
+
+        if (msgContext.getProperty(Constants.Configuration.CONTENT_TYPE) != null) {
+            httpContentType = (String) msgContext.getProperty(Constants.Configuration.CONTENT_TYPE);
+        } else {
+            httpContentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
+        }
+
+        String charEncoding =
+                (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+
+        if (charEncoding == null) {
+            charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+        }
+
+        String urlString = url.toString();
+        int separator = urlString.indexOf('{');
+        if (separator > 0) {
+            String path = urlString.substring(0, separator - 1);
+            String query = urlString.substring(separator - 1);
+            String replacedQuery ;
+            if (httpContentType.equalsIgnoreCase(HTTPConstants.MEDIA_TYPE_X_WWW_FORM)) {
+            replacedQuery = applyURITemplating(msgContext, query, true);
+            }
+            else {
+                 replacedQuery = applyURITemplating(msgContext, query, false);
+            }
+            url = new URL(path + replacedQuery);
+        }
+
+        putMethod.setPath(url.getPath());
+        putMethod.setQueryString(url.getQuery());
+
+        // if POST as application/x-www-form-urlencoded
+        RequestData reqData;
+
+        if (httpContentType.equalsIgnoreCase(HTTPConstants.MEDIA_TYPE_X_WWW_FORM)) {
+            reqData = createRequest(msgContext, dataout);
+            if (reqData.bodyRequest == null) {
+                reqData.bodyRequest = "0";
+            }
+            putMethod.setRequestEntity(new AxisRESTRequestEntity(reqData.bodyRequest, httpContentType));
+
+        } else if (httpContentType.equalsIgnoreCase(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA)) {
+//            String uuid = UUIDGenerator.getUUID();
+//            String uuid = "-------------------------"+System.currentTimeMillis();
+            Part[] parts = createMultipatFormDataRequest(msgContext, dataout);
+//            postMethod.setRequestEntity(new AxisRESTRequestEntity(bodyData, httpContentType + "; boundry=" + uuid));
+
+//            Part[] parts = {new ComplexPart("param_name", "value"), new StringPart("second param", "second value")};
+            putMethod.setRequestEntity(new MultipartRequestEntity(parts, putMethod.getParams()));
+        } else {
+            putMethod.setRequestEntity(new AxisRequestEntity(dataout, chunked, msgContext,
+                    charEncoding, soapActionString, httpContentType));
+        }
+
+        if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
+            putMethod.setContentChunked(true);
+        }
+
+        putMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
+
+        if (httpVersion != null) {
+            if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
+                httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
+                putMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
+                        HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+            } else {
+
+                // allowing keep-alive for 1.1
+                putMethod.setRequestHeader(HTTPConstants.HEADER_CONNECTION,
+                        HTTPConstants.HEADER_CONNECTION_KEEPALIVE);
+                putMethod.setRequestHeader(HTTPConstants.HEADER_EXPECT,
+                        HTTPConstants.HEADER_EXPECT_100_Continue);
+            }
+        }
+
+        /**
+         * main excecution takes place..
+         */
+        try {
+            executeMethod(httpClient, msgContext, url, putMethod);
+
+            if (putMethod.getStatusCode() == HttpStatus.SC_OK) {
+                processResponse(putMethod, msgContext);
+
+                return;
+            } else if (putMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
+                return;
+            } else if (putMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+                Header contenttypeHheader =
+                        putMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+
+                if (contenttypeHheader != null) {
+                    String value = contenttypeHheader.getValue();
+
+                    if ((value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0)
+                            || (value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0)) {
+                        processResponse(putMethod, msgContext);
+
+                        return;
+                    }
+                }
+            }
+
+            throw new AxisFault(Messages.getMessage("transportError",
+                    String.valueOf(putMethod.getStatusCode()),
+                    putMethod.getResponseBodyAsString()));
         } catch (Exception e) {
             log.error("Error in processing POST request", e);
         }

@@ -59,18 +59,11 @@ public class RequestURIOperationDispatcher extends AbstractDispatcher {
                 QName operationName = new QName(values[1]);
                 log.debug("Checking for Operation using QName(target endpoint URI fragment) : " + operationName);
                 AxisOperation axisOperation = service.getOperation(operationName);
-                if (axisOperation == null) {
-                    log.debug("Attempted to check for Operation using target endpoint URI, but the operation fragment does not match a operation name");
-                    HttpServletRequest httpServletRequest= (HttpServletRequest)messageContext.getProperty(Constants.HTTP_SERVLET_REQUEST);
-                    String pathString = Utils.parseRequestURL(httpServletRequest.getPathInfo() + "?" + httpServletRequest.getQueryString());
-                    axisOperation = service.getOperationFromRequestURL(pathString);
-                    if (axisOperation == null) {
-                        return null;
-                    }
+                if (axisOperation != null) {
+                    AxisEndpoint axisEndpoint = service.getEndpoint((String) messageContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
+                    AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisEndpoint.getBinding().getChild(axisOperation.getName());
+                    messageContext.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
                 }
-                AxisEndpoint axisEndpoint = service.getEndpoint((String) messageContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
-                AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisEndpoint.getBinding().getChild(axisOperation.getName());
-                messageContext.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
                 return axisOperation;
             } else {
                 log.debug("Attempted to check for Operation using target endpoint URI, but the operation fragment was missing");

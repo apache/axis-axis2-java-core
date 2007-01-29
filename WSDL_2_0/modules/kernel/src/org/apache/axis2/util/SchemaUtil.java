@@ -267,19 +267,21 @@ public class SchemaUtil {
 
         MultipleEntryHashMap httpLocationParameterMap = new MultipleEntryHashMap();
 
-        // let's handle query parameters and the path separately
-        String[] urlParts = httpLocation.split("\\?");
-        String templatedPath = urlParts[0];
+        if (httpLocation != null) {
 
-        if (urlParts.length > 1) {
-            String templatedQueryParams = urlParts[1];
-            // first extract parameters from the query part
-            extractParametersFromQueryPart(templatedQueryParams, queryParameterSeparator, httpLocationParameterMap, parameterMap);
+            // let's handle query parameters and the path separately
+            String[] urlParts = httpLocation.split("\\?");
+            String templatedPath = urlParts[0];
+
+            if (urlParts.length > 1) {
+                String templatedQueryParams = urlParts[1];
+                // first extract parameters from the query part
+                extractParametersFromQueryPart(templatedQueryParams, queryParameterSeparator, httpLocationParameterMap, parameterMap);
+            }
+
+            // now let's do the difficult part, extract parameters from the path element.
+            extractParametersFromPath(templatedPath, httpLocationParameterMap, request.getRequestURI());
         }
-
-        // now let's do the difficult part, extract parameters from the path element.
-        extractParametersFromPath(templatedPath, httpLocationParameterMap, request.getRequestURI());
-
         return httpLocationParameterMap;
     }
 

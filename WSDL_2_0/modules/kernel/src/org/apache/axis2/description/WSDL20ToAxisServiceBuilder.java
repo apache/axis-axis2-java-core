@@ -402,6 +402,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         // Capture all the binding specific properties
 
+        Map httpLocationTable = new TreeMap();
+
         SOAPBindingExtensionsImpl soapBindingExtensions = null;
         try {
             soapBindingExtensions = (SOAPBindingExtensionsImpl) binding
@@ -520,15 +522,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // If httpLocation is not null we should extract a constant part from it and add its value and the
             // corresponding AxisOperation to a map in order to dispatch rest messages. If httpLocation is null we add
             // the operation name into this map.
+            String httpLocationString = "";
             if (httpLocation != null) {
-                String httpLocationString = httpLocation.getLocationTemplate();
-                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocationString);
-                axisService.addHttpLocationDispatcherString(RESTUtil.getConstantFromHTTPLocation(httpLocationString),
-                        axisOperation);
-            } else {
-                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, "/" + axisOperation.getName().
-                        getLocalPart());
+                String httpLocationTemplete = httpLocation.getLocationTemplate();
+                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocationTemplete);
+                httpLocationString = RESTUtil.getConstantFromHTTPLocation(httpLocationTemplete);
+
             }
+
+            httpLocationTable.put(httpLocationString, axisOperation);
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
                     soapBindingOperationExtensions.getHttpTransferCodingDefault());
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
@@ -617,7 +619,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingOperation.addFault(axisBindingMessageFault);
 
             }
-
+            axisBinding.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE,httpLocationTable);
             axisBinding.addChild(axisBindingOperation.getName(), axisBindingOperation);
 
 
@@ -627,6 +629,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private void processHTTPBindingExtention(Binding binding, AxisBinding axisBinding)
             throws AxisFault {
 
+
+        Map httpLocationTable = new TreeMap();
         // Capture all the binding specific properties
 
         HTTPBindingExtensionsImpl httpBindingExtensions = null;
@@ -662,7 +666,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_CODE,
-                    httpBindingFaultExtensions.getHttpErrorStatusCode());
+                    httpBindingFaultExtensions.getHttpErrorStatusCode().getCode());
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER,
                     createHttpHeaders(httpBindingFaultExtensions.getHttpHeaders()));
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
@@ -704,15 +708,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // If httpLocation is not null we should extract a constant part from it and add its value and the
             // corresponding AxisOperation to a map in order to dispatch rest messages. If httpLocation is null we add
             // the operation name into this map.
+            String httpLocationString = "";
             if (httpLocation != null) {
-                String httpLocationString = httpLocation.getLocationTemplate();
-                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocationString);
-                axisService.addHttpLocationDispatcherString(RESTUtil.getConstantFromHTTPLocation(httpLocationString),
-                        axisOperation);
-            } else {
-                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, "/" + axisOperation.getName().
-                        getLocalPart());
+                String httpLocationTemplete = httpLocation.getLocationTemplate();
+                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocationTemplete);
+                httpLocationString = RESTUtil.getConstantFromHTTPLocation(httpLocationTemplete);
+
             }
+
+            httpLocationTable.put(httpLocationString, axisOperation);
             
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED, httpBindingOperationExtensions.
                     isHttpLocationIgnoreUncited());
@@ -773,8 +777,19 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 axisBindingOperation.addChild(axisMessage.getDirection(),axisBindingMessage);
 
+            }         BindingFaultReference [] bindingFaultReferences =
+                    bindingOperation.getBindingFaultReferences();
+            for (int j = 0; j < bindingFaultReferences.length; j++) {
+                BindingFaultReference bindingFaultReference = bindingFaultReferences[j];
+
+                AxisBindingMessage axisBindingMessageFault = axisBinding.getFault(bindingFaultReference.getInterfaceFaultReference()
+                        .getInterfaceFault().getName().getLocalPart());
+
+                axisBindingOperation.addFault(axisBindingMessageFault);
+
             }
 
+            axisBinding.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE,httpLocationTable);
             axisBinding.addChild(axisBindingOperation.getName(), axisBindingOperation);
 
         }

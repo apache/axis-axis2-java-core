@@ -196,32 +196,36 @@ public class RESTUtil {
     private void dispatchAndVerify(MessageContext msgContext) throws AxisFault {
         RequestURIBasedDispatcher requestDispatcher = new RequestURIBasedDispatcher();
         requestDispatcher.invoke(msgContext);
-        dispatchOperation(msgContext);
-
-        if (msgContext.getAxisOperation() == null) {
-            SOAPActionBasedDispatcher soapActionBasedDispatcher = new SOAPActionBasedDispatcher();
-            soapActionBasedDispatcher.invoke(msgContext);
-        }
-
-        // check for the dispatching result
-        if (msgContext.getAxisService() == null || msgContext.getAxisOperation() == null) {
-            throw new AxisFault("I can not find a service for this request to be serviced." +
-                    " Check the WSDL and the request URI");
-        }
-    }
-
-    private void dispatchOperation(MessageContext msgContext) {
         AxisService axisService = msgContext.getAxisService();
         if (axisService != null) {
-        HttpServletRequest httpServletRequest= (HttpServletRequest)msgContext.getProperty(Constants.HTTP_SERVLET_REQUEST);
-        String pathString = Utils.parseRequestURL(httpServletRequest.getPathInfo() + "?" + httpServletRequest.getQueryString());
-        AxisOperation axisOperation = axisService.getOperationFromRequestURL(pathString);
-            if (axisOperation != null) {
+            RequestURIOperationDispatcher requestURIOperationDispatcher = new RequestURIOperationDispatcher();
+            requestURIOperationDispatcher.invoke(msgContext);
+
+            if (msgContext.getAxisOperation() == null) {
+                HTTPLocationBasedDispatcher httpLocationBasedDispatcher = new HTTPLocationBasedDispatcher();
+                httpLocationBasedDispatcher.invoke(msgContext);
+            }
+
+            if (msgContext.getAxisOperation() == null) {
+                SOAPActionBasedDispatcher soapActionBasedDispatcher = new SOAPActionBasedDispatcher();
+                soapActionBasedDispatcher.invoke(msgContext);
+            }
+            AxisOperation axisOperation;
+            if ((axisOperation = msgContext.getAxisOperation()) != null) {
                 AxisEndpoint axisEndpoint = axisService.getEndpoint((String) msgContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
                 AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisEndpoint.getBinding().getChild(axisOperation.getName());
                 msgContext.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
                 msgContext.setAxisOperation(axisOperation);
             }
+
+            // check for the dispatching result
+            if (msgContext.getAxisOperation() == null) {
+                throw new AxisFault("I can not find a service for this request to be serviced." +
+                        " Check the WSDL and the request URI");
+            }
+        } else {
+            throw new AxisFault("I can not find a service for this request to be serviced." +
+                    " Check the WSDL and the request URI");
         }
     }
 
@@ -296,7 +300,7 @@ public class RESTUtil {
         }
         int index = httpLocation.indexOf("{");
         if (index > -1) {
-            httpLocation =  httpLocation.substring(0,index -1);
+            httpLocation =  httpLocation.substring(0,index);
         }
         return httpLocation;
     }

@@ -941,27 +941,6 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * Given the requestPath that the request came to his method returns the corresponding axisOperation
-     *
-     * @param requestPath - Part of the request url which is the part after the service name
-     * @return AxisOperation - The corresponding AxisOperation
-     */
-    public AxisOperation getOperationFromRequestURL(String requestPath) {
-
-        Collection httpLocations = httpLocationDispatcherMap.keySet();
-        Iterator iter = httpLocations.iterator();
-        while (iter.hasNext()) {
-            String location = (String) iter.next();
-            if (requestPath.indexOf(location) == 0) {
-                return (AxisOperation) httpLocationDispatcherMap.get(location);
-            }
-
-        }
-        return null;
-    }
-
-
-    /**
      * Returns the operation given a SOAP Action. This
      * method should be called if only one Endpoint is defined for
      * this Service. If more than one Endpoint exists, one of them will be

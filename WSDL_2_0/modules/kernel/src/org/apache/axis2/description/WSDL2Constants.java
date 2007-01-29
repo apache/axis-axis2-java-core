@@ -84,4 +84,6 @@ public interface WSDL2Constants {
 
     String MESSAGE_LABEL_IN = "In";
     String MESSAGE_LABEL_OUT = "Out";
+
+    String HTTP_LOCATION_TABLE = "HTTPLocationTable";
 }
