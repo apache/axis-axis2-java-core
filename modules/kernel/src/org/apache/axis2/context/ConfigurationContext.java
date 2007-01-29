@@ -24,7 +24,6 @@ import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.ListenerManager;
-import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.transport.TransportSender;
@@ -515,14 +514,12 @@ public class ConfigurationContext extends AbstractContext {
     public void terminate()
             throws AxisFault {
         Runtime.getRuntime().removeShutdownHook(cleanupThread);
-        performCleanup();
-    }
-
-    private void performCleanup() throws AxisFault {
         if (listenerManager != null) {
             listenerManager.stop();
         }
+    }
 
+    private void performCleanup() throws AxisFault {
         /*Stop the transport senders*/
         HashMap transportOut = getAxisConfiguration().getTransportsOut();
         if (transportOut.size() > 0) {
@@ -550,16 +547,6 @@ public class ConfigurationContext extends AbstractContext {
         }
 
         cleanupContexts();
-
-        /*Shut down the services*/
-        Iterator services = getAxisConfiguration().getServices().values().iterator();
-        while (services.hasNext()) {
-            AxisService axisService = (AxisService) services.next();
-            ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
-            if (serviceLifeCycle != null) {
-                serviceLifeCycle.shutDown(this, axisService);
-            }
-        }
     }
 
     public String getServiceContextPath() {
