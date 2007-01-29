@@ -33,6 +33,7 @@ import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.CallbackReceiver;
+import org.apache.axis2.util.Utils;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
@@ -340,8 +341,8 @@ class OutInAxisOperationClient extends OperationClient {
                 engine.receiveFault(responseMessageContext);
                 if (options.isExceptionToBeThrownOnSOAPFault()) {
                     // does the SOAPFault has a detail element for Excpetion
-                    throw new AxisFault(soapFault.getCode(), soapFault.getReason(),
-                            soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
+                    AxisFault af = Utils.getInboundFaultFromMessageContext(responseMessageContext);
+                    throw af;
                 }
             } else {
                 engine = new AxisEngine(msgctx.getConfigurationContext());

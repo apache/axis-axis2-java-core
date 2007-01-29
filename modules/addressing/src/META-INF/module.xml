@@ -32,6 +32,9 @@
         <handler name="AddressingSubmissionInHandler" class="org.apache.axis2.handlers.addressing.AddressingSubmissionInHandler">
             <order phase="PreDispatch"/>
         </handler>
+        <handler name="AddressingInFaultHandler" class="org.apache.axis2.handlers.addressing.AddressingInFaultHandler">
+            <order phase="Dispatch"/>
+        </handler>
         <!-- AddressingValidationHandler not present on the INfaultflow so that we don't get faults bouncing around forever -->
     </InFaultFlow>
 </module>

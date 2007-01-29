@@ -231,7 +231,13 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      */
     public static final String BUILDER_SELECTOR = "builderselector";
 
-
+    /**
+     * Property name for inbound fault processor to set a fault on the message
+     * context to be thrown by the client code in favour of a simple translation
+     * from SOAPFault to AxisFault 
+     */
+    public static final String INBOUND_FAULT_OVERRIDE = "inboundFaultOverride";
+    
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_REST_THROUGH_GET = "restThroughGet";
