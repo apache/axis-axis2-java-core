@@ -62,7 +62,7 @@ public class DependencyManager {
         } catch (InvocationTargetException e) {
             log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
         } catch (NoSuchMethodException e) {
-            log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
+            log.debug("Exception trying to call " + SERVICE_INIT_METHOD, e);
         }
     }
 

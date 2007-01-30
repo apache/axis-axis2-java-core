@@ -49,14 +49,25 @@ public interface MessageFormatter {
 
 	/**
 	 * To support deffered writing transports as in http chunking.. Axis2 was
-	 * doing this for some time.. TODO: Clarify the real usage of it
+	 * doing this for some time..
+	 * 
+	 * Preserve flag can be used to preserve the envelope for later use. This is
+	 * usefull when implementing authentication machnisms like NTLM.
 	 * 
 	 * @param out
-	 * @param preserve :  do not consume the OM when this is set..
+	 * @param preserve :
+	 *            do not consume the OM when this is set..
 	 */
 	public void writeTo(MessageContext messageContext, OMOutputFormat format,
 			OutputStream outputStream, boolean preserve) throws AxisFault;
 
+	/**
+	 * Different message formats can set their own content types
+	 * Eg: JSONFormatter can set the content type as application/json
+	 * @param messageContext
+	 * @param format
+	 * @param soapAction
+	 */
 	public String getContentType(MessageContext messageContext, OMOutputFormat format,
 			String soapAction);
 

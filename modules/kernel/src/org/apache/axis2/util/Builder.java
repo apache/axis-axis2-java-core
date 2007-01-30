@@ -333,12 +333,10 @@ public class Builder {
 			try {
 				OMBuilder builder = (OMBuilder) builderClass.newInstance();
 				builder.init(inputStream);
-				
-				// Setting the message type to make sure that we respond using the same message format
-				String messageType = builder.getMessageType();
-				if (messageType != null) {
-					msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, messageType);
-				}
+				// Setting the received content-type as the messageType to make
+				// sure that we respond using the received message serialisation
+				// format.
+				msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, contentType);
 				return builder;
 			} catch (InstantiationException e) {
 				throw new AxisFault("Cannot instantiate the specified Builder Class  : "
