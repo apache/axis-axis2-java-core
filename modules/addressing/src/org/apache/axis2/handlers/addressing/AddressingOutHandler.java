@@ -32,11 +32,13 @@ import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.addressing.i18n.AddressingMessages;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
@@ -210,7 +212,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 }
                 // Fault unless validation has been explictily turned off
                 if(!Utils.isExplicitlyTrue(msgCtxt, AddressingConstants.DISABLE_OUTBOUND_ADDRESSING_VALIDATION)){
-                    throw new AxisFault("Unable to determine wsa:Action for outbound message");
+                    throw new AxisFault(AddressingMessages.getMessage("outboundNoAction"));
                 }
             }else{
                 if(log.isTraceEnabled()){
