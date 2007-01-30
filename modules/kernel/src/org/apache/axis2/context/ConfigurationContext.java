@@ -201,15 +201,32 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * Registers a OperationContext with a given message ID.
+     * If the given message id already has a registered operation context,
+     * no change is made and the methid resturns false.
      *
      * @param messageID
      * @param mepContext
      */
-    public void registerOperationContext(String messageID,
+    public boolean registerOperationContext(String messageID,
                                          OperationContext mepContext) {
+        boolean alreadyInMap = false;
         mepContext.setKey(messageID);
         synchronized (operationContextMap) {
-            this.operationContextMap.put(messageID, mepContext);
+            alreadyInMap = operationContextMap.containsKey(messageID);
+            if(!alreadyInMap){
+                this.operationContextMap.put(messageID, mepContext);
+            }
+        }
+        return (!alreadyInMap);
+    }
+    
+    /**
+     * Unregisters the operation context associated with the given messageID
+     * @param key
+     */
+    public void unregisterOperationContext(String key) {
+        synchronized (operationContextMap) {
+            operationContextMap.remove(key);
         }
     }
 
@@ -256,10 +273,6 @@ public class ConfigurationContext extends AbstractContext {
         }
 
         return opCtx;
-    }
-
-    public Map getOperationContextMap() {
-        return this.operationContextMap;
     }
 
     public OperationContext findOperationContext(String operationName, String serviceName, String serviceGroupName) {

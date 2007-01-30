@@ -60,8 +60,8 @@ public class RelatesToBasedServiceDispatcherTest extends TestCase {
         OperationContext oc2 = new OperationContext(operation2);
         oc2.setParent(sc2);
         
-        cc.getOperationContextMap().put("urn:org.apache.axis2.dispatchers.messageid:123", oc1);
-        cc.getOperationContextMap().put("urn:org.apache.axis2.dispatchers.messageid:456", oc2);
+        cc.registerOperationContext("urn:org.apache.axis2.dispatchers.messageid:123", oc1);
+        cc.registerOperationContext("urn:org.apache.axis2.dispatchers.messageid:456", oc2);
         
         messageContext.setConfigurationContext(cc);
         messageContext.addRelatesTo(new RelatesTo("urn:org.apache.axis2.dispatchers.messageid:456"));
