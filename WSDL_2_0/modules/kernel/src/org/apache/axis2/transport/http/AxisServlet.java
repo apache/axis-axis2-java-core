@@ -88,7 +88,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected MessageContext
     createAndSetInitialParamsToMsgCtxt(HttpServletResponse resp,
                                        HttpServletRequest req) throws AxisFault {
-        
         MessageContext msgContext = new MessageContext();
         if (axisConfiguration.isManageTransportSession()) {
             // We need to create this only if transport session is enabled.
