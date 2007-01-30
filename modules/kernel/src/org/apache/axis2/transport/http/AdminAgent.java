@@ -40,9 +40,10 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.commons.fileupload.DiskFileUpload;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUpload;
+import org.apache.commons.fileupload.*;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.servlet.ServletRequestContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -124,16 +125,17 @@ public class AdminAgent extends AbstractAgent {
     	req.setAttribute("hotDeployment", (hasHotDeployment.equals("true")) ? "enabled"
     			: "disabled");
     	req.setAttribute("hotUpdate", (hasHotUpdate.equals("true")) ? "enabled" : "disabled");
-    	boolean isMultipart = FileUpload.isMultipartContent(req);
-        
+        RequestContext reqContext = new ServletRequestContext(req);
+
+    	boolean isMultipart = ServletFileUpload.isMultipartContent(reqContext);
         if (isMultipart) {
 
     		try {
-    			// Create a new file upload handler
-    			DiskFileUpload upload = new DiskFileUpload();
-
+    			//Create a factory for disk-based file items
+ 		     	FileItemFactory factory = new DiskFileItemFactory();
+    			//Create a new file upload handler
+    			ServletFileUpload upload = new ServletFileUpload(factory);
     			List items = upload.parseRequest(req);
-
     			// Process the uploaded items
     			Iterator iter = items.iterator();
     			while (iter.hasNext()) {
