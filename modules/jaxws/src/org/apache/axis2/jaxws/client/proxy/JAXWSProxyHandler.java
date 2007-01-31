@@ -23,10 +23,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.Future;
 
-import javax.jws.soap.SOAPBinding;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Binding;
 import javax.xml.ws.Response;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -159,8 +159,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
         // Enable MTOM on the Message if the property was set on the SOAPBinding.
         Binding bnd = getBinding();
         if (bnd != null && bnd instanceof SOAPBinding) {
-            javax.xml.ws.soap.SOAPBinding soapBnd = (javax.xml.ws.soap.SOAPBinding) bnd;
-            if (soapBnd.isMTOMEnabled()) {
+            if (((SOAPBinding)bnd).isMTOMEnabled()) {
                 Message requestMsg = request.getMessage();
                 requestMsg.setMTOMEnabled(true);
             }
