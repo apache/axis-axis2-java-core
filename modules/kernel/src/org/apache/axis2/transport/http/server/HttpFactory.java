@@ -45,11 +45,20 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.http.HTTPWorkerFactory;
-import org.apache.http.HttpServerConnection;
+import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.HttpResponseFactory;
+import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpParams;
+import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.BasicHttpProcessor;
+import org.apache.http.protocol.HttpProcessor;
+import org.apache.http.protocol.ResponseConnControl;
+import org.apache.http.protocol.ResponseContent;
+import org.apache.http.protocol.ResponseDate;
+import org.apache.http.protocol.ResponseServer;
 
 /**
  * Factory used to configure and create the various instances required in http transports.
@@ -245,13 +254,23 @@ public class HttpFactory {
             return new HTTPWorkerFactory();
     }
 
-    /** Create a request service processor to populate the response */
-    public HttpServiceProcessor newRequestServiceProcessor(
-            final HttpServerConnection connection, 
-            final SessionManager sessionManager, 
-            final Worker worker, 
-            final IOProcessorCallback callback) {
-        return new DefaultHttpServiceProcessor(connection, configurationContext, sessionManager, worker, callback);
+    public HttpProcessor newHttpProcessor() {
+        BasicHttpProcessor httpProcessor = new BasicHttpProcessor();
+        httpProcessor.addInterceptor(new RequestSessionCookie());
+        httpProcessor.addInterceptor(new ResponseDate());
+        httpProcessor.addInterceptor(new ResponseServer());
+        httpProcessor.addInterceptor(new ResponseContent());
+        httpProcessor.addInterceptor(new ResponseConnControl());
+        httpProcessor.addInterceptor(new ResponseSessionCookie());
+        return new LoggingProcessorDecorator(httpProcessor);
+    }
+
+    public ConnectionReuseStrategy newConnStrategy() {
+        return new DefaultConnectionReuseStrategy();
+    }
+    
+    public HttpResponseFactory newResponseFactory() {
+        return new DefaultHttpResponseFactory();
     }
     
     // *****

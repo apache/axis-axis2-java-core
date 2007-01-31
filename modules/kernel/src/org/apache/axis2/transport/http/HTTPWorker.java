@@ -48,6 +48,8 @@ import org.apache.http.StatusLine;
 import org.apache.http.entity.ContentProducer;
 import org.apache.http.entity.EntityTemplate;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicStatusLine;
 import org.apache.ws.commons.schema.XmlSchema;
 
 public class HTTPWorker implements Worker {
@@ -71,13 +73,13 @@ public class HTTPWorker implements Worker {
 
         if (method.equals(HTTPConstants.HEADER_GET)) {
             if (uri.equals("/favicon.ico")) {
-                response.setStatusLine(new StatusLine(ver, 301, "Redirect"));
-                response.addHeader(new Header("Location", "http://ws.apache.org/favicon.ico"));
+                response.setStatusLine(new BasicStatusLine(ver, 301, "Redirect"));
+                response.addHeader(new BasicHeader("Location", "http://ws.apache.org/favicon.ico"));
                 return;
             }
             if (!uri.startsWith(contextPath)) {
-                response.setStatusLine(new StatusLine(ver, 301, "Redirect"));
-                response.addHeader(new Header("Location", contextPath));
+                response.setStatusLine(new BasicStatusLine(ver, 301, "Redirect"));
+                response.addHeader(new BasicHeader("Location", contextPath));
                 return;
             }
             if (uri.indexOf("?") < 0) {
@@ -172,7 +174,7 @@ public class HTTPWorker implements Worker {
                         return;
                     } else {
                         // no schema available by that name  - send 404
-                        response.setStatusLine(new StatusLine(ver, 404, "Schema Not Found!"));
+                        response.setStatusLine(new BasicStatusLine(ver, 404, "Schema Not Found!"));
                         return;
                     }
                 }
@@ -194,7 +196,7 @@ public class HTTPWorker implements Worker {
             if (processed) {
                 response.setEntity(outbuffer);
             } else {
-                response.setStatusLine(new StatusLine(ver, 200, "OK"));
+                response.setStatusLine(new BasicStatusLine(ver, 200, "OK"));
                 String s = HTTPTransportReceiver.getServicesHTML(configurationContext);
                 StringEntity entity = new StringEntity(s);
                 entity.setContentType("text/html");
@@ -255,12 +257,12 @@ public class HTTPWorker implements Worker {
 
         if ((contextWritten != null) && Constants.VALUE_TRUE.equals(contextWritten)) {
             if ((isTwoChannel != null) && Constants.VALUE_TRUE.equals(isTwoChannel)) {
-                response.setStatusLine(new StatusLine(ver, 202, "OK"));
+                response.setStatusLine(new BasicStatusLine(ver, 202, "OK"));
                 return;
             }
-            response.setStatusLine(new StatusLine(ver, 200, "OK"));
+            response.setStatusLine(new BasicStatusLine(ver, 200, "OK"));
         } else {
-            response.setStatusLine(new StatusLine(ver, 202, "OK"));
+            response.setStatusLine(new BasicStatusLine(ver, 202, "OK"));
         }
     }
 	

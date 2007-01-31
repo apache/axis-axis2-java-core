@@ -34,12 +34,12 @@ import java.io.IOException;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.http.Header;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.io.CharArrayBuffer;
+import org.apache.http.message.BufferedHeader;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.CharArrayBuffer;
 
 public class ResponseSessionCookie implements HttpResponseInterceptor {
 
@@ -61,20 +61,31 @@ public class ResponseSessionCookie implements HttpResponseInterceptor {
           sessionCookie = (String) context.getAttribute(HTTPConstants.COOKIE_STRING);
         }
         if (sessionCookie != null) {
-            CharArrayBuffer buffer = new CharArrayBuffer(sessionCookie.length() + 40);
-            buffer.append(Constants.SESSION_COOKIE);
-            buffer.append("=");
-            buffer.append(sessionCookie);
-            response.addHeader(new Header(HTTPConstants.HEADER_SET_COOKIE, buffer.toString()));
-            buffer.append("; ");
+            // Generate Netscape style cookie header
+            CharArrayBuffer buffer1 = new CharArrayBuffer(sessionCookie.length() + 40);
+            buffer1.append(HTTPConstants.HEADER_SET_COOKIE);
+            buffer1.append(": ");
+            buffer1.append(Constants.SESSION_COOKIE);
+            buffer1.append("=");
+            buffer1.append(sessionCookie);
+            response.addHeader(new BufferedHeader(buffer1));
+            
+            // Generate RFC2965 cookie2 header
+            CharArrayBuffer buffer2 = new CharArrayBuffer(sessionCookie.length() + 50);
+            buffer2.append(HTTPConstants.HEADER_SET_COOKIE2);
+            buffer2.append(": ");
+            buffer2.append(Constants.SESSION_COOKIE);
+            buffer2.append("=");
+            buffer2.append(sessionCookie);
+            buffer2.append("; ");
             int port = response.getParams().getIntParameter(AxisParams.LISTENER_PORT, 0);
             if (port > 0) {
-                buffer.append("Port=\"");
-                buffer.append(Integer.toString(port));
-                buffer.append("\"; ");
+                buffer2.append("Port=\"");
+                buffer2.append(Integer.toString(port));
+                buffer2.append("\"; ");
             }
-            buffer.append("Version=1");
-            response.addHeader(new Header(HTTPConstants.HEADER_SET_COOKIE2, buffer.toString()));
+            buffer2.append("Version=1");
+            response.addHeader(new BufferedHeader(buffer2));
         }
     }
     
