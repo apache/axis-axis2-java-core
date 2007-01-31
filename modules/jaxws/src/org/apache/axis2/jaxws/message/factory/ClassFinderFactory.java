@@ -21,10 +21,21 @@ import org.apache.axis2.jaxws.message.databinding.impl.ClassFinderImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 public class ClassFinderFactory {
 	private static final Log log = LogFactory.getLog(ClassFinderFactory.class);
-	public ClassFinder getClassFinder(){
+
+	private ClassFinder finder = null;
+
+	public ClassFinder getClassFinder() {
+		if (finder != null) {
+			return finder;
+		}
 		return new ClassFinderImpl();
+	}
+
+	public void setClassFinder(ClassFinder finder) {
+		if(this.finder == null) {
+			this.finder = finder;
+		}
 	}
 }
