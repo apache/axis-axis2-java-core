@@ -209,7 +209,7 @@ public interface SOAPFault extends SOAPBodyElement {
      */
     public abstract Locale getFaultStringLocale();
 
-    public abstract void addFaultReasonText(java.lang.String s,
+    public abstract void addFaultReasonText(java.lang.String reasonText,
                         java.util.Locale locale)
                         throws SOAPException;
 

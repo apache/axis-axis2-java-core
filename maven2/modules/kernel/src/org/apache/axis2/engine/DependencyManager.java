@@ -43,7 +43,7 @@ public class DependencyManager {
     public final static String SERVICE_DESTROY_METHOD = "destroy";
 
     public static void initServiceClass(Object obj,
-                                        ServiceContext serviceContext) throws AxisFault {
+                                        ServiceContext serviceContext) {
         try {
             Class classToLoad = obj.getClass();
             // We can not call classToLoad.getDeclaredMethed() , since there
@@ -55,17 +55,14 @@ public class DependencyManager {
             }
         } catch (SecurityException e) {
             log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
-            throw new AxisFault(e);
         } catch (IllegalArgumentException e) {
             log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
-            throw new AxisFault(e);
         } catch (IllegalAccessException e) {
             log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
-            throw new AxisFault(e);
         } catch (InvocationTargetException e) {
             log.info("Exception trying to call " + SERVICE_INIT_METHOD, e);
-            throw new AxisFault(e);
         } catch (NoSuchMethodException e) {
+            log.debug("Exception trying to call " + SERVICE_INIT_METHOD, e);
         }
     }
 
@@ -104,7 +101,7 @@ public class DependencyManager {
      */
 
 
-    public static void destroyServiceObject(ServiceContext serviceContext) throws AxisFault {
+    public static void destroyServiceObject(ServiceContext serviceContext) {
         try {
             Object obj = serviceContext.getProperty(ServiceContext.SERVICE_OBJECT);
             if (obj != null) {
@@ -126,18 +123,12 @@ public class DependencyManager {
             }
         } catch (SecurityException e) {
             log.info("Exception trying to call " + SERVICE_DESTROY_METHOD, e);
-            throw new AxisFault(e);
         } catch (IllegalArgumentException e) {
             log.info("Exception trying to call " + SERVICE_DESTROY_METHOD, e);
-            throw new AxisFault(e);
         } catch (IllegalAccessException e) {
             log.info("Exception trying to call " + SERVICE_DESTROY_METHOD, e);
-            throw new AxisFault(e);
         } catch (InvocationTargetException e) {
             log.info("Exception trying to call " + SERVICE_DESTROY_METHOD, e);
-            throw new AxisFault(e);
         }
     }
-
-
 }

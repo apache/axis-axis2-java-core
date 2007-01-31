@@ -729,10 +729,6 @@ public class Options implements Externalizable {
      * <p>The value should always be an instance of:</p>
      * <pre>org.apache.axis2.transport.http.HttpTransportProperties.ProxyProperties</pre>
      * </li>
-     * <p><a name="BASIC_AUTHENTICATION"></a></p>
-     * <li><b>org.apache.axis2.transport.http.HTTPConstants.BASIC_AUTHENTICATION</b>
-     * <p>This enables the user to pass in basic authentication information, such as host, port, realm, username, password to be used with HTTP transport sender. </p>
-     * <p/>
      * <p>The value should always be an instance of: </p>
      * <pre>org.apache.axis2.transport.http.HttpTransportProperties.BasicAuthentication</pre>
      * </li>

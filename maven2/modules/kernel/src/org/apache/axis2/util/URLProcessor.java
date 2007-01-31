@@ -43,6 +43,11 @@ public class URLProcessor {
             if (namespace.indexOf(":") > -1) {
                 hostname = namespace.substring(namespace.indexOf(":") + 1);
 
+                // remove the leading /
+                while (hostname.startsWith("/")){
+                    hostname = hostname.substring(1);
+                }
+
                 if (hostname.indexOf("/") > -1) {
                     hostname = hostname.substring(0, hostname.indexOf("/"));
                 }

@@ -31,13 +31,17 @@ import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axiom.om.impl.OMNamespaceImpl;
 import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
 import org.apache.axiom.om.impl.dom.TextImpl;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12HeaderBlockImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -398,8 +402,24 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         return addChildElement(qname.getLocalPart(), "".equals(prefix) ? null : prefix  , qname.getNamespaceURI());
     }
 
+    /**
+     * Creates a QName whose namespace URI is the one associated with the parameter, prefix, 
+     * in the context of this SOAPElement. The remaining elements of the new QName are taken 
+     * directly from the parameters, localName and prefix.
+     * 
+     * @param localName - a String containing the local part of the name.
+     *        prefix - a String containing the prefix for the name.
+     * @return a QName with the specified localName and prefix, and with a namespace that is
+     *         associated with the prefix in the context of this SOAPElement. This namespace will 
+     *         be the same as the one that would be returned by getNamespaceURI(String) if it 
+     *         were given prefix as its parameter.
+     * @throws SOAPException - if the QName cannot be created.
+     * @since SAAJ 1.3
+     */
     public QName createQName(String localName, String prefix) throws SOAPException {
-    	//TODO - check
+    	if(this.element.getNamespaceURI(prefix) == null){
+    		throw new SOAPException("Invalid prefix");
+    	}
     	QName qname = null;
     	if(SOAPConstants.SOAP_1_1_PROTOCOL.equals(getSOAPVersion(this.element))){
     		qname = new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,localName,prefix);   		
@@ -461,6 +481,14 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 
     public SOAPElement setElementQName(QName newName) throws SOAPException {
         //TODO - check
+    	String localName = this.element.getLocalName();
+    	if(org.apache.axiom.soap.SOAPConstants.BODY_LOCAL_NAME.equals(localName)
+    			|| org.apache.axiom.soap.SOAPConstants.HEADER_LOCAL_NAME.equals(localName)
+    			|| org.apache.axiom.soap.SOAPConstants.SOAPENVELOPE_LOCAL_NAME .equals(localName)){
+    		throw new SOAPException("changing this element name is not allowed");
+    	}
+    	OMNamespace omNamespace = new OMNamespaceImpl(newName.getNamespaceURI(),newName.getPrefix());
+    	this.element.setNamespace(omNamespace);
         this.element.setLocalName(newName.getLocalPart());
         return this;
     }
@@ -484,14 +512,13 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       */
     public void removeContents() {
         //We will get all the children and iteratively call the detach() on all of 'em.
-        Iterator childIter = element.getChildren();
-
-        while (childIter.hasNext()) {
-            Object o = childIter.next();
-            if (o instanceof org.apache.axiom.om.OMNode) {
-                ((org.apache.axiom.om.OMNode) o).detach();
-            }
-        }
+    	Iterator childIter = element.getChildElements();
+    	while (childIter.hasNext()) {
+          Object o = childIter.next();
+          if (o instanceof org.apache.axiom.om.OMNode) {
+              ((org.apache.axiom.om.OMNode) o).detach();
+          }
+    	}
     }
 
     /* (non-Javadoc)
@@ -507,9 +534,10 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     
     //TODO : jira issue
     public void setEncodingStyle(String encodingStyle) throws SOAPException {
-        if (!encodingStyle.equals(SOAPConstants.URI_NS_SOAP_ENCODING)) {
-            throw new IllegalArgumentException("Invalid Encoding style : " + encodingStyle);
-        }
+    	//TODO : is this check correct?
+    	//if (!encodingStyle.equals(SOAPConstants.URI_NS_SOAP_ENCODING)) {
+        //	throw new IllegalArgumentException("Invalid Encoding style : " + encodingStyle);
+        //}
         ((DocumentImpl) getOwnerDocument()).setCharsetEncoding(encodingStyle);
     }
 

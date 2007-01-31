@@ -42,7 +42,7 @@ public class SOAPMessageBodyBasedServiceDispatcher extends AbstractServiceDispat
                 String filePart = ns.getNamespaceURI();
 
                 if(isDebugEnabled){
-                log.debug(
+                log.debug(messageContext.getLogIDString()+
                         "Checking for Service using SOAP message body's first child's namespace : "
                                 + filePart);
                 }

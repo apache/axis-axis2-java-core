@@ -267,7 +267,43 @@ public class TransportUtils {
 		return envelope;
 	}
 
+ /**
+     * Extracts and returns the character set encoding from the
+     * Content-type header
+     * Example:
+     * Content-Type: text/xml; charset=utf-8
+     *
+     * @param contentType
+     */
+    public static String getCharSetEncoding(String contentType) {
+        int index = contentType.indexOf(HTTPConstants.CHAR_SET_ENCODING);
 
+        if (index == -1) {    // Charset encoding not found in the content-type header
+            // Using the default UTF-8
+            return MessageContext.DEFAULT_CHAR_SET_ENCODING;
+        }
+
+        // If there are spaces around the '=' sign
+        int indexOfEq = contentType.indexOf("=", index);
+
+        // There can be situations where "charset" is not the last parameter of the Content-Type header
+        int indexOfSemiColon = contentType.indexOf(";", indexOfEq);
+        String value;
+
+        if (indexOfSemiColon > 0) {
+            value = (contentType.substring(indexOfEq + 1, indexOfSemiColon));
+        } else {
+            value = (contentType.substring(indexOfEq + 1, contentType.length())).trim();
+        }
+
+        // There might be "" around the value - if so remove them
+        if(value.indexOf('\"')!=-1){
+            value = value.replaceAll("\"", "");
+        }
+
+        return value.trim();
+    }
+    
     public static void writeMessage(MessageContext msgContext, OutputStream out) throws AxisFault {
         SOAPEnvelope envelope = msgContext.getEnvelope();
         OMElement outputMessage = envelope;

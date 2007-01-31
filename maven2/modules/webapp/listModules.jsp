@@ -34,19 +34,24 @@
          request.getSession().setAttribute(Constants.MODULE_MAP,null);
          Hashtable errornesModules =(Hashtable)request.getSession().getAttribute(Constants.ERROR_MODULE_MAP);
          if (moduleMap!=null && !moduleMap.isEmpty()){
-             String modulename = "";
+             String modulename ;
+             String moduleDescription ;
              Collection moduleNames = moduleMap.values();
              for (Iterator iterator = moduleNames.iterator(); iterator.hasNext();) {
                  foundModules = true;
                  AxisModule  moduleQName = (AxisModule) iterator.next();
                  modulename = moduleQName.getName().getLocalPart();
-		if (!wroteUL){
+                 moduleDescription = moduleQName.getModuleDescription();
+                 if(moduleDescription==null){
+                     moduleDescription = "[ --  No module description found  --]";
+                 }
+        if (!wroteUL){
 			wroteUL = true;
 %>
 	<ul>
 <%
 		}
-     %><li><%=modulename%></li>
+     %><li><b><%=modulename%></b> : <%=moduleDescription%></li>
       <%
              }
 		if (wroteUL){

@@ -28,6 +28,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -36,7 +37,6 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLPart;
@@ -112,15 +112,15 @@ public abstract class XMLPartBase implements XMLPart {
 	 * XMLPart should be constructed via the XMLPartFactory.
 	 * This constructor constructs an empty XMLPart with the specified protocol
 	 * @param protocol
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	XMLPartBase(Protocol protocol) throws MessageException {
+	XMLPartBase(Protocol protocol) throws WebServiceException {
 		super();
 		this.protocol = protocol;
 		if (protocol.equals(Protocol.unknown)) {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("ProtocolIsNotKnown"));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ProtocolIsNotKnown"));
 		} else if (protocol.equals(Protocol.rest)) {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("RESTIsNotSupported"));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"));
 		}
 		content = _createSpine(protocol);
 		contentType = SPINE;
@@ -130,9 +130,9 @@ public abstract class XMLPartBase implements XMLPart {
 	 * XMLPart should be constructed via the XMLPartFactory.
 	 * This constructor creates an XMLPart from the specified root.
 	 * @param root
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	XMLPartBase(OMElement root) throws MessageException {
+	XMLPartBase(OMElement root) throws WebServiceException {
 		content = root;
 		contentType = OM;
 		QName qName = root.getQName();
@@ -141,7 +141,7 @@ public abstract class XMLPartBase implements XMLPart {
 		} else if (qName.getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
 			protocol = Protocol.soap12;
 		} else {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("RESTIsNotSupported"));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"));
 		}
 	}
 	
@@ -149,9 +149,9 @@ public abstract class XMLPartBase implements XMLPart {
 	 * XMLPart should be constructed via the XMLPartFactory.
 	 * This constructor creates an XMLPart from the specified root.
 	 * @param root
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	XMLPartBase(SOAPEnvelope root) throws MessageException {
+	XMLPartBase(SOAPEnvelope root) throws WebServiceException {
 		content = root;
 		contentType = SOAPENVELOPE;
 		String ns = root.getNamespaceURI();
@@ -160,7 +160,7 @@ public abstract class XMLPartBase implements XMLPart {
 		} else if (ns.equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
 			protocol = Protocol.soap12;
 		} else {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("RESTIsNotSupported"));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"));
 		}
 	}
 	
@@ -169,7 +169,7 @@ public abstract class XMLPartBase implements XMLPart {
 		this.contentType = contentType;
 	}
 	
-	private OMElement getContentAsOMElement() throws MessageException {
+	private OMElement getContentAsOMElement() throws WebServiceException {
 		
 		OMElement om = null;
 		switch (contentType) {
@@ -183,13 +183,13 @@ public abstract class XMLPartBase implements XMLPart {
 			om = _convertSE2OM((SOAPEnvelope) content);
 			break;
 		default:
-			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("XMLPartImplErr2"), null);
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("XMLPartImplErr2"));
 		}
 		setContent(om, OM);
 		return om;
 	}
 		
-	private SOAPEnvelope getContentAsSOAPEnvelope() throws MessageException {
+	private SOAPEnvelope getContentAsSOAPEnvelope() throws WebServiceException {
 		SOAPEnvelope se = null;
 		switch (contentType) {
 		case (SOAPENVELOPE):
@@ -202,13 +202,13 @@ public abstract class XMLPartBase implements XMLPart {
 			se = _convertOM2SE((OMElement) content);
 			break;
 		default:
-			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("XMLPartImplErr2"), null);
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("XMLPartImplErr2"));
 		}
 		setContent(se, SOAPENVELOPE);
 		return se;
 	}
 	
-	private XMLSpine getContentAsXMLSpine() throws MessageException {
+	private XMLSpine getContentAsXMLSpine() throws WebServiceException {
 		XMLSpine spine = null;
 		switch (contentType) {
 		case (SPINE):
@@ -221,8 +221,9 @@ public abstract class XMLPartBase implements XMLPart {
 			spine = _convertOM2Spine((OMElement) content);
 			break;
 		default:
-			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("XMLPartImplErr2"), null);
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("XMLPartImplErr2"));
 		}
+        spine.setParent(getParent());
         setContent(spine, SPINE);
 		return spine;
 	}
@@ -230,21 +231,21 @@ public abstract class XMLPartBase implements XMLPart {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getAsOMElement()
 	 */
-	public OMElement getAsOMElement() throws MessageException {
+	public OMElement getAsOMElement() throws WebServiceException {
 		return getContentAsOMElement();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getAsSOAPEnvelope()
 	 */
-	public SOAPEnvelope getAsSOAPEnvelope() throws MessageException {
+	public SOAPEnvelope getAsSOAPEnvelope() throws WebServiceException {
 		return getContentAsSOAPEnvelope();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getAsBlock(java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
 	 */
-	public Block getAsBlock(Object context, BlockFactory blockFactory) throws MessageException, XMLStreamException {
+	public Block getAsBlock(Object context, BlockFactory blockFactory) throws WebServiceException, XMLStreamException {
 		
 		// Get the content as the specfied block.  There is some optimization here to prevent unnecessary copies.
 		// More optimization may be added later.
@@ -257,6 +258,7 @@ public abstract class XMLPartBase implements XMLPart {
 		} else {
 			block = blockFactory.createFrom(getAsOMElement(), null, null);
 		}
+        block.setParent(getParent());
 		return block;
 	}
 
@@ -277,7 +279,7 @@ public abstract class XMLPartBase implements XMLPart {
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.message.XMLPart#setStyle(javax.jws.soap.SOAPBinding.Style)
      */
-    public void setStyle(Style style) throws MessageException {
+    public void setStyle(Style style) throws WebServiceException {
         if (this.style != style) {
             if (contentType == SPINE) {
                 // Must switch to something other than XMLSpine
@@ -287,7 +289,7 @@ public abstract class XMLPartBase implements XMLPart {
         this.style = style;
     }
 
-    public QName getOperationElement() throws MessageException {
+    public QName getOperationElement() throws WebServiceException {
         try {
             if (style != Style.RPC) {
                 return null;
@@ -310,11 +312,11 @@ public abstract class XMLPartBase implements XMLPart {
             }
             return null;
         } catch (SOAPException se) {
-            throw ExceptionFactory.makeMessageException(se);
+            throw ExceptionFactory.makeWebServiceException(se);
         }
     }
 
-    public void setOperationElement(QName operationQName) throws MessageException {
+    public void setOperationElement(QName operationQName) throws WebServiceException {
         if (this.style == Style.RPC) {
             this.getContentAsXMLSpine().setOperationElement(operationQName);
         }
@@ -339,9 +341,9 @@ public abstract class XMLPartBase implements XMLPart {
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.message.XMLPart#getXMLStreamReader(boolean)
      */
-    public XMLStreamReader getXMLStreamReader(boolean consume) throws MessageException {
+    public XMLStreamReader getXMLStreamReader(boolean consume) throws WebServiceException {
 		if (consumed) {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("XMLPartImplErr1"));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("XMLPartImplErr1"));
 		}
 		XMLStreamReader reader = null;
 		if (contentType == SPINE) {
@@ -361,7 +363,7 @@ public abstract class XMLPartBase implements XMLPart {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getXMLFault()
 	 */
-	public XMLFault getXMLFault() throws MessageException {
+	public XMLFault getXMLFault() throws WebServiceException {
         
         XMLFault xmlFault = null;
         
@@ -374,6 +376,14 @@ public abstract class XMLPartBase implements XMLPart {
             // build the fault from an OM or SOAPEnvelope.  
             XMLSpine spine = getContentAsXMLSpine();
             xmlFault = spine.getXMLFault();
+            
+            // For each block in the xmlfault, set the message
+            Block[] blocks = xmlFault.getDetailBlocks();
+            if (blocks != null) {
+                for (int i=0; i<blocks.length; i++) {
+                    blocks[i].setParent(getParent());
+                }
+            }
         } 
         return xmlFault;
 	}
@@ -381,8 +391,15 @@ public abstract class XMLPartBase implements XMLPart {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#setXMLFault(org.apache.axis2.jaxws.message.XMLFault)
 	 */
-	public void setXMLFault(XMLFault xmlFault) throws MessageException {
-		// Since the XMLFault contains detail Blocks it makes sence to convert
+	public void setXMLFault(XMLFault xmlFault) throws WebServiceException {
+	    // For each block in the xmlfault, set the message
+        Block[] blocks = xmlFault.getDetailBlocks();
+        if (blocks != null) {
+            for (int i=0; i<blocks.length; i++) {
+                blocks[i].setParent(getParent());
+            }
+        }
+        // Since the XMLFault contains detail Blocks it makes sence to convert
         // to an XMLSpine first (since that is what we do in the other calls that set Blocks).
         // Of course if the XMLFault did not have detail Blocks we might be able to 
         // do this without a transformation of the data.  
@@ -393,9 +410,9 @@ public abstract class XMLPartBase implements XMLPart {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#isFault()
 	 */
-	public boolean isFault() throws MessageException {
+	public boolean isFault() throws WebServiceException {
         if (consumed) {
-            throw ExceptionFactory.makeMessageException(Messages.getMessage("XMLPartImplErr1"));
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("XMLPartImplErr1"));
         }
 
         try {
@@ -409,7 +426,7 @@ public abstract class XMLPartBase implements XMLPart {
                 return getContentAsXMLSpine().isFault();
             }
         } catch (SOAPException se) {
-            throw ExceptionFactory.makeMessageException(se);
+            throw ExceptionFactory.makeWebServiceException(se);
         }
         return false;
 	}
@@ -424,9 +441,9 @@ public abstract class XMLPartBase implements XMLPart {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#outputTo(javax.xml.stream.XMLStreamWriter, boolean)
 	 */
-	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, MessageException {
+	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, WebServiceException {
 		if (consumed) {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("XMLPartImplErr1"));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("XMLPartImplErr1"));
 		}
 		if (contentType == SPINE) {
 			getContentAsXMLSpine().outputTo(writer, consume);
@@ -454,57 +471,65 @@ public abstract class XMLPartBase implements XMLPart {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getBodyBlock(int, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
 	 */
-	public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) throws MessageException {
-		return getContentAsXMLSpine().getBodyBlock(index, context, blockFactory);
-	}
+	public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) throws WebServiceException {
+		Block block = getContentAsXMLSpine().getBodyBlock(index, context, blockFactory);
+		if (block != null) {
+		    block.setParent(getParent());
+        }
+        return block;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getHeaderBlock(java.lang.String, java.lang.String, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
 	 */
-	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws MessageException {
-		return getContentAsXMLSpine().getHeaderBlock(namespace, localPart, context, blockFactory);
+	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws WebServiceException {
+		Block block = getContentAsXMLSpine().getHeaderBlock(namespace, localPart, context, blockFactory);
+        block.setParent(getParent());
+        return block;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getNumBodyBlocks()
 	 */
-	public int getNumBodyBlocks() throws MessageException {
+	public int getNumBodyBlocks() throws WebServiceException {
 		return getContentAsXMLSpine().getNumBodyBlocks();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getNumHeaderBlocks()
 	 */
-	public int getNumHeaderBlocks() throws MessageException {
+	public int getNumHeaderBlocks() throws WebServiceException {
 		return getContentAsXMLSpine().getNumHeaderBlocks();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#removeBodyBlock(int)
 	 */
-	public void removeBodyBlock(int index) throws MessageException {
+	public void removeBodyBlock(int index) throws WebServiceException {
 		getContentAsXMLSpine().removeBodyBlock(index);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#removeHeaderBlock(java.lang.String, java.lang.String)
 	 */
-	public void removeHeaderBlock(String namespace, String localPart) throws MessageException {
+	public void removeHeaderBlock(String namespace, String localPart) throws WebServiceException {
 		getContentAsXMLSpine().removeHeaderBlock(namespace, localPart);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#setBodyBlock(int, org.apache.axis2.jaxws.message.Block)
 	 */
-	public void setBodyBlock(int index, Block block) throws MessageException {
-		getContentAsXMLSpine().setBodyBlock(index, block);
+	public void setBodyBlock(int index, Block block) throws WebServiceException {
+		block.setParent(getParent());
+        getContentAsXMLSpine().setBodyBlock(index, block);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#setHeaderBlock(java.lang.String, java.lang.String, org.apache.axis2.jaxws.message.Block)
 	 */
-	public void setHeaderBlock(String namespace, String localPart, Block block) throws MessageException {
-		getContentAsXMLSpine().setHeaderBlock(namespace, localPart, block);
+	public void setHeaderBlock(String namespace, String localPart, Block block) throws WebServiceException {
+		block.setParent(getParent());
+        getContentAsXMLSpine().setHeaderBlock(namespace, localPart, block);
 	}
     
     /*
@@ -526,57 +551,57 @@ public abstract class XMLPartBase implements XMLPart {
 	 * Convert SOAPEnvelope into an OM tree
 	 * @param se SOAPEnvelope
 	 * @return OM
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	protected abstract OMElement _convertSE2OM(SOAPEnvelope se) throws MessageException;
+	protected abstract OMElement _convertSE2OM(SOAPEnvelope se) throws WebServiceException;
 	
 	/**
 	 * Convert XMLSpine into an OM tree
 	 * @param spine XMLSpine
 	 * @return OM
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	protected abstract OMElement _convertSpine2OM(XMLSpine spine) throws MessageException;
+	protected abstract OMElement _convertSpine2OM(XMLSpine spine) throws WebServiceException;
 	
 	/**
 	 * Convert OM tree into a SOAPEnvelope
 	 * @param om
 	 * @return SOAPEnvelope
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	protected abstract SOAPEnvelope _convertOM2SE(OMElement om) throws MessageException;
+	protected abstract SOAPEnvelope _convertOM2SE(OMElement om) throws WebServiceException;
 	
 	/**
 	 * Convert XMLSpine into a SOAPEnvelope
 	 * @param spine
 	 * @return SOAPEnvelope
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	protected abstract SOAPEnvelope _convertSpine2SE(XMLSpine spine) throws MessageException;
+	protected abstract SOAPEnvelope _convertSpine2SE(XMLSpine spine) throws WebServiceException;
 	
 	/**
 	 * Convert OM into XMLSpine
 	 * @param om
 	 * @return
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	protected abstract XMLSpine _convertOM2Spine(OMElement om) throws MessageException;
+	protected abstract XMLSpine _convertOM2Spine(OMElement om) throws WebServiceException;
 	
 	/**
 	 * Convert SOAPEnvelope into XMLSPine
 	 * @param SOAPEnvelope
 	 * @return XMLSpine
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	protected abstract XMLSpine _convertSE2Spine(SOAPEnvelope se) throws MessageException;
+	protected abstract XMLSpine _convertSE2Spine(SOAPEnvelope se) throws WebServiceException;
 	
 	/**
 	 * Create an empty, default spine for the specificed protocol
 	 * @param protocol
 	 * @return 
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	protected XMLSpine _createSpine(Protocol protocol) throws MessageException {
+	protected XMLSpine _createSpine(Protocol protocol) throws WebServiceException {
 		// Default implementation is to simply construct the spine. 
 		// Derived classes may wish to construct a different kind of XMLSpine
 		return new XMLSpineImpl(protocol, getStyle());

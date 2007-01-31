@@ -23,8 +23,11 @@ import java.util.Locale;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
+import javax.xml.soap.DetailEntry;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -43,7 +46,6 @@ import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Block;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultCode;
@@ -93,7 +95,7 @@ public class XMLFaultUtils {
 	 * @param detailBlocks
 	 * @return
 	 */
-	public static XMLFault createXMLFault(SOAPFault soapFault, Block[] detailBlocks) throws MessageException {
+	public static XMLFault createXMLFault(SOAPFault soapFault, Block[] detailBlocks) throws WebServiceException {
         
 	    // The SOAPFault structure is modeled after SOAP 1.2.  
         // Here is a sample comprehensive SOAP 1.2 fault which will help you understand the
@@ -192,9 +194,9 @@ public class XMLFaultUtils {
      * Create XMLFault
      * @param soapFault
      * @return xmlFault
-     * @throws MessageException
+     * @throws WebServiceException
      */
-    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault) throws MessageException {
+    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault) throws WebServiceException {
         Block[] detailBlocks = getDetailBlocks(soapFault);
         return createXMLFault(soapFault, detailBlocks);
     }
@@ -205,7 +207,7 @@ public class XMLFaultUtils {
      * @param detailBlocks
      * @return
      */
-    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault, Block[] detailBlocks) throws MessageException {
+    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault, Block[] detailBlocks) throws WebServiceException {
         
         // The SOAPFault structure is modeled after SOAP 1.2.  
         // Here is a sample comprehensive SOAP 1.2 fault which will help you understand the
@@ -235,8 +237,7 @@ public class XMLFaultUtils {
         // </env:Envelope>
         
         
-        // Get the code
-        // TODO what if this fails ?  Log a message and treat like a RECEIVER fault ?
+        // Get the code or default code
         QName codeQName = soapFault.getFaultCodeAsQName();
         XMLFaultCode code = XMLFaultCode.fromQName(codeQName);
         
@@ -251,81 +252,70 @@ public class XMLFaultUtils {
         XMLFault xmlFault = new XMLFault(code, reason, detailBlocks);
         
         
+        boolean isSOAP12 = soapFault.getNamespaceURI().equals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE);
         
         // Add the secondary fault information
  
         // Get the SubCodes
-        /* REVIEW The following needs to be added
-         
-        SOAPFaultSubCode soapSubCode = soapCode.getSubCode();
-        if (soapSubCode != null) {
+        if (isSOAP12) {
+            Iterator it = soapFault.getFaultSubcodes();
             List<QName> list = new ArrayList<QName>();
-            
-            // Walk the nested sub codes and collect the qnames
-            while (soapSubCode != null) {
-                SOAPFaultValue soapSubCodeValue = soapSubCode.getValue();
-                QName qName = soapSubCodeValue.getTextAsQName();
-                list.add(qName);
-                soapSubCode = soapSubCode.getSubCode();
+            while (it.hasNext()) {
+                QName qName = (QName) it.next();
             }
-            
-            // Put the collected sub code qnames onto the xmlFault
-            QName[] qNames = new QName[list.size()];
-            xmlFault.setSubCodes(list.toArray(qNames));
+            if (list.size() > 0) {
+                QName[] subCodes = new QName[list.size()];
+                subCodes = list.toArray(subCodes);
+                xmlFault.setSubCodes(subCodes);
+            }
         }
         
+        
         // Get the secondary Reasons...the first reason was already saved as the primary reason
-        if (soapTexts.size() > 1) {
-            XMLFaultReason[] secondaryReasons = new XMLFaultReason[soapTexts.size() - 1];
-            for (int i= 1; i<soapTexts.size(); i++) {
-                SOAPFaultText soapReasonText = (SOAPFaultText) soapTexts.get(i);
-                secondaryReasons[i-1] = new XMLFaultReason(soapReasonText.getText(), 
-                                                           soapReasonText.getLang());
+        if (isSOAP12) {
+            try {
+                Iterator it = soapFault.getFaultReasonLocales();
+                boolean first = true;
+                List<XMLFaultReason> list = new ArrayList<XMLFaultReason>();
+                while (it.hasNext()) {
+                    locale = (Locale) it.next();
+                    if (first) {
+                        first = false;
+                    } else {
+                        text = soapFault.getFaultReasonText(locale);
+                        lang = locale.getLanguage();
+                        list.add(new XMLFaultReason(text, lang));
+                    }
+                }
+                if (list.size() > 0) {
+                    XMLFaultReason[] secondaryReasons = new XMLFaultReason[list.size()];
+                    secondaryReasons = list.toArray(secondaryReasons);
+                    xmlFault.setSecondaryReasons(secondaryReasons);
+                }
+            } catch (SOAPException se) {
+                throw ExceptionFactory.makeWebServiceException(se);
             }
-            xmlFault.setSecondaryReasons(secondaryReasons);
         }
         
         // Get the Node
-        SOAPFaultNode soapNode = soapFault.getNode();
-        if (soapNode != null) {
-            xmlFault.setNode(soapNode.getText());
+        if (isSOAP12) {
+            String soapNode = soapFault.getFaultNode();
+            if (soapNode != null) {
+                xmlFault.setNode(soapNode);
+            }
         }
         
         // Get the Role
-        SOAPFaultRole soapRole = soapFault.getRole();
+        String soapRole = soapFault.getFaultActor();  // getFaultActor works for both SOAP 1.1 and SOAP 1.2 per spec
         if (soapRole != null) {
-            xmlFault.setRole(soapRole.getText());
+            xmlFault.setRole(soapRole);
         }
-        */
+        
         return xmlFault;         
     }
-    /**
-     * Create an XMLFault object from a SOAPFault and detail Blocks
-     * @param soapFault
-     * @param detailBlocks
-     * @return
-     */
-    /*
-    public static XMLFault createXMLFault(javax.xml.soap.SOAPFault soapFault) throws MessageException {
-        
-       // Convert the SOAPFault into an OM SOAPFault.  OMSOAP Fault already supports SOAP 1.2, so this makes the code easier to migrate
-       
-       SAAJConverterFactory converterFactory = 
-           (SAAJConverterFactory) FactoryRegistry.getFactory(SAAJConverterFactory.class);
-       SAAJConverter converter = converterFactory.getSAAJConverter();
-       
-       javax.xml.soap.SOAPBody body = (javax.xml.soap.SOAPBody) soapFault.getParentElement();
-       javax.xml.soap.SOAPEnvelope env = (javax.xml.soap.SOAPEnvelope) body.getParentElement();
-       SOAPEnvelope omSOAPEnv = converter.toOM(env);
-       SOAPFault omSOAPFault = omSOAPEnv.getBody().getFault();
-       Block[] detailBlocks = getDetailBlocks(omSOAPFault);
-       XMLFault xmlFault = createXMLFault(omSOAPFault, detailBlocks);
-      
-       return xmlFault;
-    }
-    */
     
-    private static Block[] getDetailBlocks(SOAPFault soapFault) throws MessageException {
+    
+    private static Block[] getDetailBlocks(SOAPFault soapFault) throws WebServiceException {
         try {
             Block[] blocks = null;
             SOAPFaultDetail detail = soapFault.getDetail();
@@ -339,33 +329,40 @@ public class XMLFaultUtils {
                     Block b = bf.createFrom(om, null,om.getQName()); 
                     list.add(b);
                 }
+                blocks = new Block[list.size()];
                 blocks = list.toArray(blocks);
             }
             return blocks;
         } catch (Exception e) {
-            throw ExceptionFactory.makeMessageException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
     }
     
-    private static Block[] getDetailBlocks(javax.xml.soap.SOAPFault soapFault) throws MessageException {
+    private static Block[] getDetailBlocks(javax.xml.soap.SOAPFault soapFault) throws WebServiceException {
         try {
             Block[] blocks = null;
             Detail detail = soapFault.getDetail();
             if (detail != null) {
+                // Get a SAAJ->OM converter
+                SAAJConverterFactory converterFactory = (SAAJConverterFactory) FactoryRegistry.getFactory(SAAJConverterFactory.class);
+                SAAJConverter converter = converterFactory.getSAAJConverter();
+                
                 // Create a block for each element
                 OMBlockFactory bf = (OMBlockFactory) FactoryRegistry.getFactory(OMBlockFactory.class);
                 ArrayList<Block> list = new ArrayList<Block>();
                 Iterator it = detail.getChildElements();
                 while (it.hasNext()) {
-                    OMElement om = (OMElement) it.next();
+                    DetailEntry de = (DetailEntry) it.next();
+                    OMElement om = converter.toOM(de);
                     Block b = bf.createFrom(om, null,om.getQName()); 
                     list.add(b);
                 }
+                blocks = new Block[list.size()];
                 blocks = list.toArray(blocks);
             }
             return blocks;
         } catch (Exception e) {
-            throw ExceptionFactory.makeMessageException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
     }
         
@@ -382,7 +379,7 @@ public class XMLFaultUtils {
      */
     public static SOAPFault createSOAPFault(XMLFault xmlFault, 
                 SOAPBody body, 
-                boolean ignoreDetailBlocks) throws MessageException {
+                boolean ignoreDetailBlocks) throws WebServiceException {
         
         // Get the factory and create the soapFault
         SOAPFactory factory = MessageUtils.getSOAPFactory(body);
@@ -473,12 +470,14 @@ public class XMLFaultUtils {
         if (xmlFault.getRole() != null) {
             SOAPFaultRole soapRole = factory.createSOAPFaultRole();
             soapRole.setText(xmlFault.getRole());
+            soapFault.setRole(soapRole);
         }
         
         // Set the Node
         if (xmlFault.getNode() != null) {
             SOAPFaultNode soapNode = factory.createSOAPFaultNode();
             soapNode.setText(xmlFault.getNode());
+            soapFault.setNode(soapNode);
         }
            
         return soapFault;
@@ -494,7 +493,7 @@ public class XMLFaultUtils {
      * @return SOAPFault (which is attached to body)
      */
     public static javax.xml.soap.SOAPFault createSAAJFault(XMLFault xmlFault, 
-                javax.xml.soap.SOAPBody body) throws SOAPException, MessageException {
+                javax.xml.soap.SOAPBody body) throws SOAPException, WebServiceException {
         
         // Get the factory and create the soapFault
         String protocolNS = body.getNamespaceURI();
@@ -540,60 +539,57 @@ public class XMLFaultUtils {
                     Locale.getDefault();
         soapFault.setFaultString(reasonText, locale);
         
-        /*
+        
         // Set the Detail and contents of Detail
         Block[] blocks = xmlFault.getDetailBlocks();
         if (blocks != null && blocks.length > 0) {
-            SOAPFaultDetail detail = factory.createSOAPFaultDetail(soapFault);
-            if (!ignoreDetailBlocks) {
-                for (int i=0; i<blocks.length; i++) {
-                    // A Block implements OMDataSource.  So create OMSourcedElements
-                    // for each of the Blocks.
-                    OMSourcedElementImpl element = 
-                        new OMSourcedElementImpl(blocks[i].getQName(), factory, blocks[i]);
-                    detail.addChild(element);
+            Detail detail = soapFault.addDetail();
+            // Get a OM->SAAJ converter
+            SAAJConverterFactory converterFactory = (SAAJConverterFactory) FactoryRegistry.getFactory(SAAJConverterFactory.class);
+            SAAJConverter converter = converterFactory.getSAAJConverter();
+            for (int i=0; i<blocks.length; i++) {
+                try {
+                    converter.toSAAJ(blocks[i].getOMElement(), detail);
+                } catch (XMLStreamException xse) {
+                    ExceptionFactory.makeWebServiceException(xse);
                 }
             }
+            
         }
+        
         
         // Now set all of the secondary fault information
         // Set the SubCodes
         QName[] subCodes = xmlFault.getSubCodes();
-        if (subCodes != null && subCodes.length > 0) {
-           OMElement curr = soapCode;
-           for (int i=0; i<subCodes.length; i++) {
-               SOAPFaultSubCode subCode = (i==0) ?
-                       factory.createSOAPFaultSubCode((SOAPFaultCode)    curr) :
-                       factory.createSOAPFaultSubCode((SOAPFaultSubCode) curr);
-               SOAPFaultValue soapSubCodeValue = factory.createSOAPFaultValue(subCode);
-               soapSubCodeValue.setText(subCodes[i]);
-               curr = subCode;
+        if (subCodes != null && subCodes.length > 0 && protocolNS.equals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE)) {
+            for (int i=0; i<subCodes.length; i++) {
+               soapFault.appendFaultSubcode(subCodes[i]);
            }
         }
         
         // Set the secondary reasons and languages
         XMLFaultReason reasons[] = xmlFault.getSecondaryReasons();
-        if (reasons != null && reasons.length > 0) {
+        if (reasons != null && reasons.length > 0 && protocolNS.equals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE)) {
             for (int i=0; i<reasons.length; i++) {
-                SOAPFaultText soapReasonText = factory.createSOAPFaultText(soapReason);
-                soapReasonText.setText(reasons[i].getText());
-                soapReasonText.setLang(reasons[i].getLang());
+                if (reasons[i].getLang() == null || reasons[i].getLang().length() == 0) {
+                    locale = Locale.getDefault();
+                } else {
+                    locale = new Locale(reasons[i].getLang());
+                }
+                soapFault.addFaultReasonText(reasons[i].getText(), locale);
             }
         }
         
         // Set the Role
         if (xmlFault.getRole() != null) {
-            SOAPFaultRole soapRole = factory.createSOAPFaultRole();
-            soapRole.setText(xmlFault.getRole());
+            soapFault.setFaultActor(xmlFault.getRole());  // Use Fault actor because it is applicable for SOAP 1.1 and SOAP 1.2
         }
         
-        // Set the Node
-        if (xmlFault.getNode() != null) {
-            SOAPFaultNode soapNode = factory.createSOAPFaultNode();
-            soapNode.setText(xmlFault.getNode());
+        // Set the Node...only applicable for SOAP 1.2
+        if (xmlFault.getNode() != null && protocolNS.equals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE)) {
+            soapFault.setFaultRole(xmlFault.getNode());
         }
            
-           */
         return soapFault;
             
     }

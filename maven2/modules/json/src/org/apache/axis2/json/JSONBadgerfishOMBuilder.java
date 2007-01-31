@@ -1,4 +1,3 @@
-package org.apache.axis2;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -15,6 +14,12 @@ package org.apache.axis2;
  * limitations under the License.
  */
 
-public class JScriptConstants {
-	public static final String MEDIA_TYPE_APPLICATION_JSON = "application/json";
+package org.apache.axis2.json;
+
+
+public class JSONBadgerfishOMBuilder extends JSONOMBuilder{
+
+    protected JSONDataSource getDataSource(){
+        return new JSONBadgerfishDataSource(this.jsonInputStream, localName);
+    }
 }

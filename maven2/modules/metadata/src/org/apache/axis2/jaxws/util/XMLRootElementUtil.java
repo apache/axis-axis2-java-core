@@ -20,6 +20,8 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -28,6 +30,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This utility contains code to determine if an Object is 
@@ -73,6 +77,8 @@ import javax.xml.namespace.QName;
  * 
  */
 public class XMLRootElementUtil {
+    
+    private static final Log log = LogFactory.getLog(XMLRootElementUtil.class);
 
     /**
      * Constructor is intentionally private.  This class only provides static utility methods
@@ -160,7 +166,7 @@ public class XMLRootElementUtil {
             return ((JAXBElement) obj).getName();
         }
         
-        Class clazz = obj.getClass();
+        Class clazz = (obj instanceof java.lang.Class) ? (Class) obj : obj.getClass();
         
         // If the clazz is a primitive, then it does not have a corresponding root element.
         if (clazz.isPrimitive() ||
@@ -200,16 +206,41 @@ public class XMLRootElementUtil {
      */
     public static Map<String, PropertyDescriptor> createPropertyDescriptorMap(Class jaxbClass) throws NoSuchFieldException, IntrospectionException {
         
-        // TODO This is a very performance intensive search we should cache the calculated map keyed by the jaxbClass
+        if (log.isDebugEnabled()) {
+            log.debug("Get the PropertyDescriptor[] for " + jaxbClass);
+        }
         
+        // TODO This is a very performance intensive search we should cache the calculated map keyed by the jaxbClass
         PropertyDescriptor[] pds = Introspector.getBeanInfo(jaxbClass).getPropertyDescriptors();
-        // Make this a weak map in case we want to cache the resolts
+        // Make this a weak map in case we want to cache the results
         Map<String, PropertyDescriptor> map = new WeakHashMap<String, PropertyDescriptor>();
         
         // Unfortunately the element names are stored on the fields.
-        // Therefore we need to to match up the field and property descriptor
-        Field[] fields = jaxbClass.getDeclaredFields();
+        // Get all of the fields in the class and super classes
+        List<Field> fields = new ArrayList<Field>();
+        Class cls = jaxbClass;
+        while(cls != null) {
+            Field[] fieldArray = cls.getDeclaredFields();
+            for (Field field:fieldArray) {
+                fields.add(field);
+            }
+            cls = cls.getSuperclass();
+        }
+        
+        // Now match up the fields with the property descriptors...Sigh why didn't JAXB put the @XMLElement annotations on the 
+        // property methods!
         for(PropertyDescriptor pd:pds){
+            
+            // Skip over the class property..it is never represented as an xml element
+            if (pd.getName().equals("class")) {
+                continue;
+            }
+            
+            // For the current property, find a matching field...so that we can get the xml name
+            boolean found = false;
+            if (log.isDebugEnabled()) {
+                log.debug("  Start: Find xmlname for property:" + pd.getName());
+            }
             for(Field field:fields){
                 String fieldName = field.getName();
                 
@@ -217,7 +248,16 @@ public class XMLRootElementUtil {
                 if (fieldName.equalsIgnoreCase(pd.getDisplayName()) ||
                     fieldName.equalsIgnoreCase(pd.getName())   ) {
                     // Get the xmlElement name for this field
-                    String xmlName =getXmlElementName(jaxbClass, field);
+                    String xmlName =getXmlElementName(field.getDeclaringClass(), field);
+                    found = true;
+                    if (log.isDebugEnabled()) {
+                        log.debug("    Found field " + field.getName() + " which has xmlname=" + xmlName);
+                    }
+                    if (map.get(xmlName) != null) {
+                        if (log.isDebugEnabled()) {
+                            log.debug("    ALERT: property " + map.get(xmlName).getName() + " already has this same xmlName..this may cause problems.");
+                        }
+                    }
                     map.put(xmlName, pd);
                     break;
                 }
@@ -228,11 +268,37 @@ public class XMLRootElementUtil {
                     if (fieldName.equalsIgnoreCase(pd.getDisplayName()) ||
                             fieldName.equalsIgnoreCase(pd.getName())) {
                         // Get the xmlElement name for this field
-                        String xmlName =getXmlElementName(jaxbClass, field);
+                        String xmlName =getXmlElementName(field.getDeclaringClass(), field);
+                        found = true;
+                        if (log.isDebugEnabled()) {
+                            log.debug("    Found field " + field.getName() + " which has xmlname=" + xmlName);
+                        }
+                        if (map.get(xmlName) != null) {
+                            if (log.isDebugEnabled()) {
+                                log.debug("    ALERT: property " + map.get(xmlName).getName() + " already has this same xmlName..this may cause problems.");
+                            }
+                        }
                         map.put(xmlName, pd);
                         break;
                     }
                 }
+            }
+            
+            // We didn't find a field.  Default the xmlname to the property name
+            if (!found) {
+                String xmlName = pd.getName();
+                if (log.isDebugEnabled()) {
+                    log.debug("    A matching field was not found.  Defaulting xmlname to " + xmlName);
+                }
+                if (map.get(xmlName) != null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("    ALERT: property " + map.get(xmlName).getName() + " already has this same xmlName..this may cause problems.");
+                    }
+                }
+                map.put(xmlName, pd);
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("  End: Find xmlname for property:" + pd.getName());
             }
         }
         return map;

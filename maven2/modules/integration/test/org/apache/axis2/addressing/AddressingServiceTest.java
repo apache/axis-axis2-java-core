@@ -221,7 +221,7 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
                 fail("Should have received a specific fault");
             } catch (AxisFault af) {
                 af.printStackTrace();
-                assertEquals(Final.FAULT_ADDRESSING_HEADER_REQUIRED_REASON, af.getMessage());
+                assertEquals("The wsa:Action header is required when WS-Addressing is in use but was not sent.", af.getMessage());
             }
         } finally {
             if (sender != null)

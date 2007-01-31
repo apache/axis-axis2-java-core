@@ -16,19 +16,19 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.llom.OMElementImpl;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -44,7 +44,6 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
@@ -59,13 +58,8 @@ import org.apache.commons.logging.LogFactory;
 /**
  * XMLSpineImpl
  * 
- * An XMLSpine consists of an OM SOAPEnvelope which defines the "spine" of the message
- * (i.e. the SOAPEnvelope element, the SOAPHeader element, the SOAPBody element and
- * perhaps the SOAPFault element).  The real payload portions of the message are 
- * contained in Block object (headerBlocks, bodyBlocks, detailBlocks).
- * 
- * This "shortened" OM tree allows the JAX-WS implementation to process the message
- * without creating fully populated OM trees.
+ * An XMLSpine consists is an OMEnvelope (either a default one or one create from an incoming message).
+ * As Blocks are added or requested, they are placed in the tree as OMSourcedElements.
  *
  */
 class XMLSpineImpl implements XMLSpine {
@@ -77,12 +71,8 @@ class XMLSpineImpl implements XMLSpine {
     private Style style = Style.DOCUMENT;
 	private SOAPEnvelope root = null;
 	private SOAPFactory soapFactory = null;
-	private List<Block> headerBlocks = new ArrayList<Block>();
-	private List<Block> bodyBlocks   = new ArrayList<Block>();
-	private List<Block> detailBlocks = new ArrayList<Block>();
+	
 	private boolean consumed = false;
-	private Iterator bodyIterator = null;
-	private Iterator detailIterator = null;
     private Message parent = null;
     
 	/**
@@ -96,17 +86,17 @@ class XMLSpineImpl implements XMLSpine {
 		super();
 		this.protocol = protocol;
         this.style = style;
-		soapFactory = getFactory(protocol);
-		root = createEmptyEnvelope(protocol, style, soapFactory);
+		soapFactory = _getFactory(protocol);
+		root = _createEmptyEnvelope(protocol, style, soapFactory);
 	}
 	
 	/**
 	 * Create spine from an existing OM tree
 	 * @param envelope
      * @param style Style
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	public XMLSpineImpl(SOAPEnvelope envelope, Style style) throws MessageException {
+	public XMLSpineImpl(SOAPEnvelope envelope, Style style) throws WebServiceException {
 		super();
         this.style = style;
 		init(envelope);
@@ -116,132 +106,34 @@ class XMLSpineImpl implements XMLSpine {
 			protocol = Protocol.soap12;
 		} else {
 			// TODO Support for REST
-			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("RESTIsNotSupported"), null);
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"));
 		}
 	} 
 
-	private void init(SOAPEnvelope envelope) throws MessageException {
+	/**
+	 * @param envelope
+	 * @throws WebServiceException
+	 */
+	private void init(SOAPEnvelope envelope) throws WebServiceException {
 		root = envelope;
-		headerBlocks.clear();
-		bodyBlocks.clear();
-		detailBlocks.clear();
-		bodyIterator = null;
-		detailIterator = null;
         soapFactory = MessageUtils.getSOAPFactory(root);
 		
-		
-		// If a header block exists, create an OMBlock for each element
-		// This advances the StAX parser past the header end tag
+        // Advance past the header
 		SOAPHeader header = root.getHeader();
-		if (header != null) {
-            Iterator it = header.getChildren();
-            advanceIterator(it, headerBlocks, false); 
-            //advanceIterator(it, headerBlocks, true);            
+		if (header == null) {
+            header = soapFactory.createSOAPHeader(root);
         }
 
-		
+		// Now advance the parser to the body element
 		SOAPBody body = root.getBody();
         if (body == null) {
             // Create the body if one does not exist
             body = soapFactory.createSOAPBody(root);
         }
-        
-		if (!body.hasFault()) {
-			// Normal processing
-			// Only create the first body block, this ensures that the StAX 
-			// cursor is not advanced beyond the tag of the first element
-            if (style == Style.DOCUMENT) {
-                bodyIterator = body.getChildren();
-            } else {
-                // For RPC the blocks are within the operation element
-                OMElement op = body.getFirstElement();
-                if (op == null) {
-                    // Create one
-                    OMNamespace ns = soapFactory.createOMNamespace("", "");
-                    op = soapFactory.createOMElement("PLACEHOLDER_OPERATION", ns, body);
-                }
-                bodyIterator = op.getChildren();
-            }
-			advanceIterator(bodyIterator, bodyBlocks, false);
-		} else {
-			// Process the Fault
-
-			SOAPFault fault = body.getFault();
-			SOAPFaultDetail detail = fault.getDetail();
-			if (detail != null) {
-			  detailIterator = detail.getChildren();
-			  advanceIterator(detailIterator, detailBlocks, false);
-			}
-		}
-		return;
 	}
 	
-	/**
-	 * Utility method to advance the iterator and populate the blocks
-	 * @param it Iterator
-	 * @param blocks List<Block> to update
-	 * @param toEnd if true, iterator is advanced to the end, otherwise it is advanced one Element
-	 * @throws MessageException
-	 */
-	private  void advanceIterator(Iterator it, List<Block> blocks, boolean toEnd) throws MessageException {
-		
-		// TODO This code must be reworked.  The OM Iterator causes the entire OMElement to be 
-		// parsed when it.next() is invoked.  I will need to fix this to gain performance.  (scheu)
-		
-		boolean found = false;
-		boolean first = true;
-		while (it.hasNext() && (!found && !toEnd)) {
-			// Remove the nodes as they are converted into blocks
-			if (!first) {
-				it.remove();
-			}
-			first = true;
-			
-			OMNode node = (OMNode) it.next();
-			if (node instanceof OMElement) {
-				// Elements are converted into Blocks
-				Block block = null;
-				try { 
-					block = obf.createFrom((OMElement) node, null, null);
-				} catch (XMLStreamException xse) {
-					throw ExceptionFactory.makeMessageException(xse);
-				}
-				blocks.add(block);
-			} else {
-                // TODO LOGGING ?
-				// A Non-element is found, it is probably whitespace text, but since
-                // there is no way to represent this as a block, it is ignored.
-			}
-		}
-	}
-	
-	private static SOAPFactory getFactory(Protocol protocol) {
-		SOAPFactory soapFactory;
-		if (protocol == Protocol.soap11) {
-			soapFactory = new SOAP11Factory();
-		} else if (protocol == Protocol.soap12) {
-			soapFactory = new SOAP12Factory();
-		} else {
-			// TODO REST Support is needed
-			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("RESTIsNotSupported"), null);
-		}
-		return soapFactory;
-	}
-	private static SOAPEnvelope createEmptyEnvelope(Protocol protocol, Style style, SOAPFactory factory) {
-		SOAPEnvelope env = factory.createSOAPEnvelope();
-		// Add an empty body and header
-		factory.createSOAPBody(env);
-		factory.createSOAPHeader(env);
-        
-        // Create a dummy operation element if this is an rpc message
-        if (style == Style.RPC) {
-            OMNamespace ns = factory.createOMNamespace("", "");
-            factory.createOMElement("PLACEHOLDER_OPERATION", ns, env.getBody());
-        }
-
-		return env;
-	}
-
+    
+    
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getProtocol()
 	 */
@@ -267,17 +159,27 @@ class XMLSpineImpl implements XMLSpine {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#outputTo(javax.xml.stream.XMLStreamWriter, boolean)
 	 */
-	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, MessageException {
+	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, WebServiceException {
 		Reader2Writer r2w = new Reader2Writer(getXMLStreamReader(consume));
 		r2w.outputTo(writer);
 	}
 
-	public XMLStreamReader getXMLStreamReader(boolean consume) throws MessageException {
-		return new XMLStreamReaderForXMLSpine(root, protocol,
-					headerBlocks, bodyBlocks, detailBlocks, consume);
+	public XMLStreamReader getXMLStreamReader(boolean consume) throws WebServiceException {
+		if (consume) {
+            if (root.getBuilder() != null && !root.getBuilder().isCompleted()) {
+                return root.getXMLStreamReaderWithoutCaching();
+            } else {
+               return root.getXMLStreamReader();
+            }
+        } else {
+            return root.getXMLStreamReader();
+        }
 	}
 
-	public XMLFault getXMLFault() throws MessageException {
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.impl.XMLSpine#getXMLFault()
+	 */
+	public XMLFault getXMLFault() throws WebServiceException {
 		if (!isFault()) {
 		    return null;
         }
@@ -288,191 +190,141 @@ class XMLSpineImpl implements XMLSpine {
         Block[] blocks = null;
         if (numDetailBlocks > 0) {
             blocks = new Block[numDetailBlocks];
-            blocks = detailBlocks.toArray(blocks);
+            SOAPFaultDetail detail = root.getBody().getFault().getDetail();
+            for (int i=0; i<numDetailBlocks; i++) {
+                OMElement om = this._getChildOMElement(detail, i);
+                blocks[i] = this._getBlockFromOMElement(om, null, obf);
+                
+            }
         }
         
         XMLFault xmlFault = XMLFaultUtils.createXMLFault(root.getBody().getFault(), blocks);
         return xmlFault;
 	}
     
-    private int getNumDetailBlocks() throws MessageException {
-        if (detailIterator != null) {
-            advanceIterator(detailIterator, detailBlocks, true);
-        }
-        return detailBlocks.size();
+    private int getNumDetailBlocks() throws WebServiceException {
+        if (isFault()) {
+            SOAPFault fault = root.getBody().getFault();
+            return _getNumChildElements(fault.getDetail());
+        } 
+        return 0;
     }
 	
-	public void setXMLFault(XMLFault xmlFault) throws MessageException {
+	public void setXMLFault(XMLFault xmlFault) throws WebServiceException {
         
         // Clear out the existing body and detail blocks
         SOAPBody body = root.getBody();
         getNumDetailBlocks(); // Forces parse of existing detail blocks
         getNumBodyBlocks();  // Forces parse over body
-        bodyBlocks.clear();
-        detailBlocks.clear();
         OMNode child = body.getFirstOMChild();
         while (child != null) {
             child.detach();
             child = body.getFirstOMChild();
         }
         
-	    // Add a SOAPFault to the body.  Don't add the detail blocks to the SOAPFault
-        SOAPFault soapFault =XMLFaultUtils.createSOAPFault(xmlFault, body, true);
-        
-        // The spine now owns the Detail Blocks from the XMLFault
-        Block[] blocks = xmlFault.getDetailBlocks();
-        if (blocks != null) {
-            for(int i=0; i<blocks.length; i++) {
-                detailBlocks.add(blocks[i]);
-            }
-        }
+	    // Add a SOAPFault to the body.
+        SOAPFault soapFault =XMLFaultUtils.createSOAPFault(xmlFault, body, false);
 	}
 
 	public boolean isConsumed() {
 		return consumed;
 	}
 
-	public OMElement getAsOMElement() throws MessageException {
-	    if (headerBlocks != null) {        
-	        for (int i=0; i<headerBlocks.size(); i++) {                   
-	            Block b = (Block) headerBlocks.get(i);                   
-	            OMElement e = new OMSourcedElementImpl(b.getQName(),soapFactory, b);                  
-	            root.getHeader().addChild(e);                   
-	        }               
-	        headerBlocks.clear();               
-	    }            
-	    if (bodyBlocks != null) {
-	        for (int i=0; i<bodyBlocks.size(); i++) {                   
-	            Block b = (Block) bodyBlocks.get(i);       
-                
-                // In Dispatch<String> Provider<String> and some source modes, the block is built from text data.
-                // The assumption is that the text data represents one or more elements, but this may not be the
-                // case.  It could represent whitespace.  In such cases querying the qname will cause a parse of the
-                // code and the parse will fail.  We will interpret a failure as an indication that the block does not represent
-                // an element
-                
-                QName blockQName = null;
-                try {
-                    blockQName = b.getQName();
-                } catch (Exception e) {
-                    log.debug("The block does not represent an element");
-                }
-                
-                // Only create an OMElement if the block represents an element
-                if (blockQName != null) {
-                    OMElement e = new OMSourcedElementImpl(b.getQName(),soapFactory, b);
-                
-                    // The blocks are directly under the body if DOCUMENT.
-                    // The blocks are under the operation element if RPC
-                    if (style == Style.DOCUMENT) {
-                        root.getBody().addChild(e);    
-                    } else {
-                        root.getBody().getFirstElement().addChild(e);   
-                    }
-                }             
-	        }               
-	        bodyBlocks.clear();               
-	    }
-	    if (detailBlocks != null) {
-	        for (int i=0; i<detailBlocks.size(); i++) {                   
-	            Block b = (Block) detailBlocks.get(i);                  
-	            OMElement e = new OMSourcedElementImpl(b.getQName(),soapFactory, b);                  
-	            root.getBody().getFault().getDetail().addChild(e);                  
-	        }               
-	        bodyBlocks.clear();  
-	    }
-	    return root;
-	}
+	public OMElement getAsOMElement() throws WebServiceException {
+        return root;
+    }
+	 
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getNumBodyBlocks()
 	 */
-	public int getNumBodyBlocks() throws MessageException {
-		if (bodyIterator != null) {
-			advanceIterator(bodyIterator, bodyBlocks, true);
-		}
-		return bodyBlocks.size();
+	public int getNumBodyBlocks() throws WebServiceException {
+        return _getNumChildElements(_getBodyBlockParent());
 	}
-
-	public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) throws MessageException {
-		if (index >= bodyBlocks.size() && bodyIterator != null) {
-			advanceIterator(bodyIterator, bodyBlocks, true);
-		}
-		try {
-			Block oldBlock = bodyBlocks.get(index);
-		
-			// Convert to new Block
-			Block newBlock = blockFactory.createFrom(oldBlock, context);
-			if (newBlock != oldBlock) {
-				bodyBlocks.set(index, newBlock);
-			}
-			return newBlock;
-		} catch (XMLStreamException xse) {
-			throw ExceptionFactory.makeMessageException(xse);
-		}
-	}
-
-	public void setBodyBlock(int index, Block block) throws MessageException {
-		if (index >= bodyBlocks.size() && bodyIterator != null) {
-			advanceIterator(bodyIterator, bodyBlocks, true);
-		}
-		bodyBlocks.add(index, block);
-	}
-
-	public void removeBodyBlock(int index) throws MessageException {
-		if (index >= bodyBlocks.size() && bodyIterator != null) {
-			advanceIterator(bodyIterator, bodyBlocks, true);
-		}
-		bodyBlocks.remove(index);
-	}
-
-	public int getNumHeaderBlocks() throws MessageException {
-		return headerBlocks.size();
-	}
-
-	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws MessageException {
-		int index = getHeaderBlockIndex(namespace, localPart);
-		try {
-			//Block oldBlock = bodyBlocks.get(index);
-			Block oldBlock = headerBlocks.get(index);
-			// Convert to new Block
-			Block newBlock = blockFactory.createFrom(oldBlock, context);
-			if (newBlock != oldBlock) {
-				headerBlocks.set(index, newBlock);
-			}
-			return newBlock;
-		} catch (XMLStreamException xse) {
-			throw ExceptionFactory.makeMessageException(xse);
-		}
-	}
-
-	public void setHeaderBlock(String namespace, String localPart, Block block) throws MessageException {
-		int index = getHeaderBlockIndex(namespace, localPart);
-		headerBlocks.add(block);
-		//headerBlocks.set(index, block);
-	}
-
-	/**
-	 * Utility method to locate header block
-	 * @param namespace
-	 * @param localPart
-	 * @return index of header block or -1
-	 * @throws MessageException
+    
+    
+    
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.message.impl.XMLSpine#getBodyBlock(int, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
 	 */
-	private int getHeaderBlockIndex(String namespace, String localPart) throws MessageException {
-		for (int i=0; i<headerBlocks.size(); i++) {
-			Block block = headerBlocks.get(i);
-			QName qName = block.getQName();
-			if (qName.getNamespaceURI().equals(namespace) &&
-				qName.getLocalPart().equals(localPart)) {
-				return i;
-			}
-		}
-		return -1;
+    public Block getBodyBlock(int index, Object context, BlockFactory blockFactory) throws WebServiceException {
+        
+        if (log.isDebugEnabled()) {
+            log.debug("getBodyBlock: Get the " + index + "block using the block factory, " + blockFactory);
+        }
+        OMElement omElement = _getChildOMElement(_getBodyBlockParent(), index);
+        if (omElement == null) {
+            // Null indicates that no block is available
+            if (log.isDebugEnabled()) {
+                log.debug("getBodyBlock: The block was not found " );
+            }
+            return null;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("getBodyBlock: Found omElement " + omElement.getQName() );
+        }
+        return this._getBlockFromOMElement(omElement, context, blockFactory);
+    }
+
+	public void setBodyBlock(int index, Block block) throws WebServiceException {
+        
+        block.setParent(getParent());
+        OMElement bElement = _getBodyBlockParent();
+        OMElement om = this._getChildOMElement(bElement, index);
+        
+        // The block is supposed to represent a single element.  
+        // But if it does not represent an element , the following will fail.
+        QName qName = block.getQName();
+        
+        OMElement newOM = _createOMElementFromBlock(qName, block, soapFactory);
+        if (om == null) {
+           bElement.addChild(newOM);
+        } else {
+            om.insertSiblingBefore(newOM);
+            om.detach();
+        }
 	}
-	public void removeHeaderBlock(String namespace, String localPart) throws MessageException {
-		int index = getHeaderBlockIndex(namespace, localPart);
-		headerBlocks.remove(index);
+
+	public void removeBodyBlock(int index) throws WebServiceException {
+        OMElement om = this._getChildOMElement(_getBodyBlockParent(), index);
+        if (om != null) {
+            om.detach();
+        }
+	}
+
+	public int getNumHeaderBlocks() throws WebServiceException {
+		return _getNumChildElements(root.getHeader());
+	}
+
+	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws WebServiceException {
+		OMElement om = _getChildOMElement(root.getHeader(), namespace, localPart);
+        if (om == null) {
+            return null;
+        }
+        return this._getBlockFromOMElement(om, context, blockFactory);
+	}
+
+	public void setHeaderBlock(String namespace, String localPart, Block block) throws WebServiceException {
+        block.setParent(getParent());
+        OMElement newOM = _createOMElementFromBlock(new QName(namespace, localPart), block, soapFactory);
+        OMElement om = this._getChildOMElement(root.getHeader(), namespace, localPart);
+        if (om == null) {
+           if (root.getHeader() == null) {
+               soapFactory.createSOAPHeader(root);
+           }
+           root.getHeader().addChild(newOM);
+        } else {
+            om.insertSiblingBefore(newOM);
+            om.detach();
+        }
+	}
+
+	
+	public void removeHeaderBlock(String namespace, String localPart) throws WebServiceException {
+        OMElement om = this._getChildOMElement(root.getHeader(), namespace, localPart);
+        if (om != null) {
+            om.detach();
+        }
 	}
 
 	public String traceString(String indent) {
@@ -484,7 +336,7 @@ class XMLSpineImpl implements XMLSpine {
         return "SPINE";
     }
 
-    public boolean isFault() throws MessageException {
+    public boolean isFault() throws WebServiceException {
 		return XMLFaultUtils.isFault(root);
 	}
 
@@ -493,23 +345,179 @@ class XMLSpineImpl implements XMLSpine {
     }
 
     public QName getOperationElement() {
-        if (style == style.DOCUMENT) {
+        OMElement omElement = this._getBodyBlockParent();
+        if (omElement instanceof SOAPBody) {
             return null;
         } else {
-            return root.getBody().getFirstElement().getQName();
+            return omElement.getQName();
         }
     }
 
     public void setOperationElement(QName operationQName) {
-        if (style == style.RPC) {
-            if (soapFactory == null) {
-                soapFactory = MessageUtils.getSOAPFactory(root);
-            }
+        OMElement opElement = this._getBodyBlockParent();
+        if (!(opElement instanceof SOAPBody)) {
             OMNamespace ns = soapFactory.createOMNamespace(operationQName.getNamespaceURI(), operationQName.getPrefix());
-            OMElement opElement = root.getBody().getFirstElement();
             opElement.setLocalName(operationQName.getLocalPart());
             opElement.setNamespace(ns);
         }
     }
     
+    private Block _getBlockFromOMElement(OMElement om, Object context, BlockFactory blockFactory) throws WebServiceException {
+        try {
+            QName qName = om.getQName();
+            /* TODO We could gain performance if OMSourcedElement exposed a getDataSource method 
+             if (om instanceof OMSourcedElementImpl &&
+             ((OMSourcedElementImpl) om).getDataSource() instanceof Block) {
+             Block oldBlock = (Block) ((OMSourcedElementImpl) om).getDataSource();
+             Block newBlock = blockFactory.createFrom(oldBlock, context);
+             newBlock.setParent(getParent());
+             if (newBlock != oldBlock) {
+             // Replace the OMElement with the OMSourcedElement that delegates to the block
+              OMSourcedElementImpl newOM = new OMSourcedElementImpl(qName, soapFactory, newBlock);
+              om.insertSiblingBefore(newOM);
+              om.detach();
+              }
+              return newBlock;
+              } 
+              */
+            
+            
+            // Create the block
+            Block block = blockFactory.createFrom(om, context, qName);
+            block.setParent(getParent());
+            
+            // Get the business object to force a parse
+            block.getBusinessObject(false);
+            
+            // Replace the OMElement with the OMSourcedElement that delegates to the block
+            OMElement newOM = _createOMElementFromBlock(qName, block, soapFactory);
+            om.insertSiblingBefore(newOM);
+            ((OMElementImpl)om).setComplete(true);
+            om.detach();
+            return block;
+        } catch (XMLStreamException xse) {
+            throw ExceptionFactory.makeWebServiceException(xse);
+        }
+    }
+    
+    private static OMElement _createOMElementFromBlock(QName qName, Block b, SOAPFactory soapFactory) {
+        return new OMSourcedElementImpl(qName, soapFactory, b);
+    }
+    
+    /**
+     * Gets the OMElement that is the parent of where the the body blocks are located
+     * @return
+     */
+    private OMElement _getBodyBlockParent() {
+        SOAPBody body = root.getBody();
+        if (!body.hasFault() && style == Style.RPC) {
+            //  For RPC the blocks are within the operation element
+            OMElement op = body.getFirstElement();
+            if (op == null) {
+                // Create one
+                OMNamespace ns = soapFactory.createOMNamespace("", "");
+                op = soapFactory.createOMElement("PLACEHOLDER_OPERATION", ns, body);
+            }   
+            return op;
+        }
+        return body;
+    }
+
+    /**
+     * Create a factory for the specified protocol
+     * @param protocol
+     * @return
+     */
+    private static SOAPFactory _getFactory(Protocol protocol) {
+        SOAPFactory soapFactory;
+        if (protocol == Protocol.soap11) {
+            soapFactory = new SOAP11Factory();
+        } else if (protocol == Protocol.soap12) {
+            soapFactory = new SOAP12Factory();
+        } else {
+            // TODO REST Support is needed
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"), null);
+        }
+        return soapFactory;
+    }
+    
+    /**
+     * Create an emtpy envelope
+     * @param protocol
+     * @param style
+     * @param factory
+     * @return
+     */
+    private static SOAPEnvelope _createEmptyEnvelope(Protocol protocol, Style style, SOAPFactory factory) {
+        SOAPEnvelope env = factory.createSOAPEnvelope();
+        // Add an empty body and header
+        factory.createSOAPBody(env);
+        factory.createSOAPHeader(env);
+        
+        // Create a dummy operation element if this is an rpc message
+        if (style == Style.RPC) {
+            OMNamespace ns = factory.createOMNamespace("", "");
+            factory.createOMElement("PLACEHOLDER_OPERATION", ns, env.getBody());
+        }
+
+        return env;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.XMLPart#getNumBodyBlocks()
+     */
+    private static int _getNumChildElements(OMElement om) throws WebServiceException {
+        // Avoid calling this method.  It advances the parser.
+        if (om == null) {
+            return 0;
+        }
+        int num = 0;
+        Iterator iterator = om.getChildElements();
+        while (iterator.hasNext()) {
+            num++;
+            iterator.next();
+        }
+        return num;
+    }
+    
+    /** Get the child om at the indicated index
+     * @param om
+     * @param index
+     * @return child om or null
+     */
+    private static OMElement _getChildOMElement(OMElement om, int index) {
+        if (om == null) {
+            return null;
+        }
+        int i=0;
+        for (OMNode child = om.getFirstOMChild();
+            child != null;
+            child = child.getNextOMSibling()) {
+            if (child instanceof OMElement) {
+                if (i == index) {
+                    return (OMElement) child;
+                }
+                i++;
+            }
+        } 
+        return null;
+    }
+    
+    /** Get the child om at the indicated index
+     * @param om
+     * @param index
+     * @return child om or null
+     */
+    private static OMElement _getChildOMElement(OMElement om, String namespace, String localPart) {
+        if (om == null) {
+            return null;
+        }
+        QName qName = new QName(namespace, localPart);
+        Iterator it = om.getChildrenWithName(qName);
+        if (it != null && it.hasNext()) {
+            return (OMElement) it.next();
+        }
+        return null;
+    }
+
 }

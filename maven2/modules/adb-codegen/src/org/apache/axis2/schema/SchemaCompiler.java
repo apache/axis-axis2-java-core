@@ -6,6 +6,7 @@ import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
+import org.apache.axis2.schema.typemap.JavaTypeMap;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.commons.logging.Log;
@@ -631,12 +632,12 @@ public class SchemaCompiler {
             //Also we are sure that it should have a type reference
             QName referenceEltQName = referencedElement.getQName();
             if (referencedElement.getSchemaTypeName()!=null){
-                String className = findClassName(referencedElement.getSchemaTypeName(), isArray(xsElt));
+                // we have to only find the class name without arrary part
+                String javaClassName = findClassName(referencedElement.getSchemaTypeName(), false);
                 //if this element is referenced, there's no QName for this element
-                this.processedElementRefMap.put(referenceEltQName, className);
-
+                this.processedElementRefMap.put(referenceEltQName, javaClassName);
                 referencedElement.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
-                        className);
+                        javaClassName);
             }else{
                 //this referenced element has an anon type and that anon type has been already
                 //processed. But in this case we need it to be a seperate class since this
@@ -645,11 +646,16 @@ public class SchemaCompiler {
                 QName generatedTypeName = generateTypeQName(referenceEltQName, parentSchema);
                 XmlSchemaType referenceSchemaType = referencedElement.getSchemaType();
 
+
                 if (referenceSchemaType instanceof XmlSchemaComplexType){
+                    if (referencedElement.getSchemaTypeName() == null){
+                         referencedElement.setSchemaTypeName(generatedTypeName);
+                    }
+
                     //set a name
                     referenceSchemaType.setName(generatedTypeName.getLocalPart());
 
-                    writeComplexType((XmlSchemaComplexType)referenceSchemaType,
+                     String javaclassName =   writeComplexType((XmlSchemaComplexType)referenceSchemaType,
                             (BeanWriterMetaInfoHolder)processedAnonymousComplexTypesMap.get(referencedElement)
                     );
                     //remove the reference from the anon list since we named the type
@@ -658,10 +664,9 @@ public class SchemaCompiler {
 
                     //processedAnonymousComplexTypesMap.remove(referencedElement);
 
-                    //add this to the processed ref type map
-                    String fullyQualifiedClassName = writer.makeFullyQualifiedClassName(generatedTypeName);
-                    processedTypemap.put(generatedTypeName, fullyQualifiedClassName);
-                    this.processedElementRefMap.put(referenceEltQName, fullyQualifiedClassName);
+                    processedTypemap.put(generatedTypeName, javaclassName);
+                    this.processedElementRefMap.put(referenceEltQName, javaclassName);
+
                 }
             }
             // schema type name is present but not the schema type object
@@ -784,13 +789,13 @@ public class SchemaCompiler {
         if (processedElementRefMap.get(name)!=null){
             className =(String)processedElementRefMap.get(name);
 
-            //if (isArray) {
+            if (isArray) {
                 //append the square braces that say this is an array
                 //hope this works for all cases!!!!!!!
                 //todo this however is a thing that needs to be
                 //todo fixed to get complete language support
-            //    className = className + "[]";
-            //}
+                className = className + "[]";
+            }
         }
         return className;
 
@@ -921,10 +926,11 @@ public class SchemaCompiler {
      * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
      * @throws SchemaCompilationException
      */
-    private void writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder)
+    private String writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder)
             throws SchemaCompilationException {
-        writer.write(complexType, processedTypemap, metaInfHolder);
+       String javaClassName =  writer.write(complexType, processedTypemap, metaInfHolder);
         processedTypeMetaInfoMap.put(complexType.getQName(),metaInfHolder);
+        return javaClassName;
     }
 
     /**
@@ -1033,7 +1039,28 @@ public class SchemaCompiler {
 
 
             //process the particle of this node
-            processParticle(extension.getParticle(),metaInfHolder,parentSchema);
+            if (extension.getParticle() != null){
+                processParticle(extension.getParticle(),metaInfHolder,parentSchema);
+            }
+
+            // process attributes
+            //process attributes - first look for the explicit attributes
+            XmlSchemaObjectCollection attribs = extension.getAttributes();
+            Iterator attribIterator = attribs.getIterator();
+            while (attribIterator.hasNext()) {
+                Object o = attribIterator.next();
+                if (o instanceof XmlSchemaAttribute) {
+                    processAttribute((XmlSchemaAttribute) o, metaInfHolder,parentSchema);
+
+                }
+            }
+
+            //process any attribute
+            //somehow the xml schema parser does not seem to pickup the any attribute!!
+            XmlSchemaAnyAttribute anyAtt = extension.getAnyAttribute();
+            if (anyAtt != null) {
+                processAnyAttribute(metaInfHolder,anyAtt);
+            }
             String className = findClassName(extension.getBaseTypeName(), false);
 
             if (!writer.getDefaultClassName().equals(className)) {
@@ -1070,6 +1097,24 @@ public class SchemaCompiler {
 
             //process the particle of this node
             processParticle(restriction.getParticle(),metaInfHolder,parentSchema);
+
+             //process attributes - first look for the explicit attributes
+            XmlSchemaObjectCollection attribs = restriction.getAttributes();
+            Iterator attribIterator = attribs.getIterator();
+            while (attribIterator.hasNext()) {
+                Object o = attribIterator.next();
+                if (o instanceof XmlSchemaAttribute) {
+                    processAttribute((XmlSchemaAttribute) o, metaInfHolder,parentSchema);
+
+                }
+            }
+
+            //process any attribute
+            //somehow the xml schema parser does not seem to pickup the any attribute!!
+            XmlSchemaAnyAttribute anyAtt = restriction.getAnyAttribute();
+            if (anyAtt != null) {
+                processAnyAttribute(metaInfHolder,anyAtt);
+            }
             String className = findClassName(restriction.getBaseTypeName(), false);
 
             if (!writer.getDefaultClassName().equals(className)) {
@@ -1091,7 +1136,12 @@ public class SchemaCompiler {
                                        XmlSchema parentSchema)
             throws SchemaCompilationException {
 
-        XmlSchemaType type = parentSchema.getTypeByName(baseTypeName);
+        XmlSchemaType type;
+               type = parentSchema.getTypeByName(baseTypeName);
+               if (type == null){
+                   type = getType(parentSchema,baseTypeName);
+               }
+
 
         BeanWriterMetaInfoHolder baseMetaInfoHolder = (BeanWriterMetaInfoHolder)
                 processedTypeMetaInfoMap.get(baseTypeName);
@@ -1138,10 +1188,9 @@ public class SchemaCompiler {
                                 SchemaCompilerMessages.getMessage("schema.unknowncontenterror"));
                     }
                 }
-
-                //Do the actual parent setting
-                metaInfHolder.setAsParent(baseMetaInfoHolder);
             }
+            //Do the actual parent setting
+            metaInfHolder.setAsParent(baseMetaInfoHolder);
         }
     }
 
@@ -1178,7 +1227,7 @@ public class SchemaCompiler {
         	}
         	
         	//process extension base type
-        	processSimpleExtensionBaseType(extension.getBaseTypeName(),metaInfHolder);
+        	processSimpleExtensionBaseType(extension.getBaseTypeName(),metaInfHolder,parentSchema);
         	
         	//process attributes 
             XmlSchemaObjectCollection attribs = extension.getAttributes();
@@ -1229,21 +1278,37 @@ public class SchemaCompiler {
     * @param extBaseType
     * @param metaInfHolder
     */
-    public void processSimpleExtensionBaseType(QName extBaseType,BeanWriterMetaInfoHolder metaInfHolder) throws SchemaCompilationException {
+    public void processSimpleExtensionBaseType(QName extBaseType,
+                                               BeanWriterMetaInfoHolder metaInfHolder,
+                                               XmlSchema parentSchema) throws SchemaCompilationException {
     	
         //find the class name
         String className = findClassName(extBaseType, false);
 
-        //this means the schema type actually returns a different QName
-        if (changedTypeMap.containsKey(extBaseType)) {
-        	metaInfHolder.registerMapping(extBaseType,
-                    (QName) changedTypeMap.get(extBaseType),
-                    className,SchemaConstants.ELEMENT_TYPE);
-        } else {
-        	metaInfHolder.registerMapping(extBaseType,
-        			extBaseType,
-                    className,SchemaConstants.ELEMENT_TYPE);
+        // if the base type is an primitive then we do not have to extend them
+        // and it is considered as a property
+        // on the otherhand if the base type is an generated class then we have to
+        // extend from it
+
+        if (baseSchemaTypeMap.containsKey(extBaseType)){
+            //this means the schema type actually returns a different QName
+            if (changedTypeMap.containsKey(extBaseType)) {
+                metaInfHolder.registerMapping(extBaseType,
+                        (QName) changedTypeMap.get(extBaseType),
+                        className,SchemaConstants.ELEMENT_TYPE);
+            } else {
+                metaInfHolder.registerMapping(extBaseType,
+                        extBaseType,
+                        className,SchemaConstants.ELEMENT_TYPE);
+            }
+        } else if (processedTypemap.containsKey(extBaseType)) {
+            //set the extension base class name
+            metaInfHolder.setExtension(true);
+            metaInfHolder.setExtensionClassName(className);
+
+            copyMetaInfoHierarchy(metaInfHolder,extBaseType,parentSchema);
         }
+
 
         //get the binary state and add that to the status map
         if (isBinary(extBaseType)){
@@ -1280,12 +1345,14 @@ public class SchemaCompiler {
     /**
      * Process Facets.
      *
-     * @param facets
      * @param metaInfHolder
      */
-    private void processFacets(XmlSchemaObjectCollection facets,BeanWriterMetaInfoHolder metaInfHolder) {
-    	
-    	Iterator facetIterator = facets.getIterator();
+   private void processFacets(XmlSchemaSimpleTypeRestriction restriction,
+                               BeanWriterMetaInfoHolder metaInfHolder,
+                               XmlSchema parentSchema) {
+
+        XmlSchemaObjectCollection facets =  restriction.getFacets();
+        Iterator facetIterator = facets.getIterator();
 		
 		while (facetIterator.hasNext()) {
             Object obj = facetIterator.next();
@@ -1296,8 +1363,21 @@ public class SchemaCompiler {
 			}
             
 			else if ( obj instanceof XmlSchemaEnumerationFacet ) {
-				XmlSchemaEnumerationFacet enumeration = (XmlSchemaEnumerationFacet) obj;
-				metaInfHolder.addEnumFacet(enumeration.getValue().toString());
+                XmlSchemaEnumerationFacet enumeration = (XmlSchemaEnumerationFacet) obj;
+                if (restriction.getBaseTypeName().equals(SchemaConstants.XSD_QNAME)){
+                    // we have to process the qname here and shoud find the local part and namespace uri
+                    String value = enumeration.getValue().toString();
+                    String prefix = value.substring(0,value.indexOf(":"));
+                    String localPart = value.substring(value.indexOf(":") + 1);
+
+                    String namespaceUri = parentSchema.getNamespaceContext().getNamespaceURI(prefix);
+                    // set the string to suite for the convertQname method
+                    String qNameString = value + "\", \"" + namespaceUri;
+                    metaInfHolder.addEnumFacet(qNameString);
+                } else {
+				    metaInfHolder.addEnumFacet(enumeration.getValue().toString());
+                }
+
 			}
 			
 			else if ( obj instanceof XmlSchemaLengthFacet ) {
@@ -1348,7 +1428,7 @@ public class SchemaCompiler {
         QName qName = new QName(EXTRA_ATTRIBUTE_FIELD_NAME);
         metainf.registerMapping(qName,
                 null,
-                writer.getDefaultAttribClassName(),//always generate an array of
+                writer.getDefaultAttribArrayClassName(),//always generate an array of
                 //OMAttributes
                 SchemaConstants.ANY_TYPE);
         metainf.addtStatus(qName, SchemaConstants.ATTRIBUTE_TYPE);
@@ -1720,22 +1800,32 @@ public class SchemaCompiler {
                                          XmlSchemaElement xsElt,
                                          XmlSchema parentSchema) throws SchemaCompilationException{
 
-        if (processedTypemap.containsKey(simpleType.getQName())
-                || baseSchemaTypeMap.containsKey(simpleType.getQName())) {
-            return;
-        }
-
         String fullyQualifiedClassName = null;
         if(simpleType.getQName() != null) {
+            if (processedTypemap.containsKey(simpleType.getQName())
+             || baseSchemaTypeMap.containsKey(simpleType.getQName())) {
+                 return;
+          }
+
             // Must do this up front to support recursive types
             fullyQualifiedClassName = writer.makeFullyQualifiedClassName(simpleType.getQName());
             // we put the qname to processed type map it is only named type
             // otherwise we have to any way process that element.
             processedTypemap.put(simpleType.getQName(), fullyQualifiedClassName);
         } else {
-            fullyQualifiedClassName = writer.makeFullyQualifiedClassName(xsElt.getQName());
+            QName fakeQname = new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart());
+          if (processedTypemap.containsKey(fakeQname)
+              || baseSchemaTypeMap.containsKey(fakeQname)) {
+              return;
+            }
+            fullyQualifiedClassName = writer.makeFullyQualifiedClassName(fakeQname);
             simpleType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME,
-                    new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart()));
+                    fakeQname);
+// we have to set this otherwise the ours attribute would not set properly if refered to this simple
+                       // type from any other element
+                        xsElt.setSchemaTypeName(fakeQname);
+                        // should put this to the processedTypemap to generate the code correctly
+                        processedTypemap.put(fakeQname, fullyQualifiedClassName);
         }
         
         processedTypemap.put(simpleType.getQName(), fullyQualifiedClassName);
@@ -1782,7 +1872,7 @@ public class SchemaCompiler {
         	
                     //process facets
                     XmlSchemaObjectCollection facets = restriction.getFacets();
-                    processFacets(facets,metaInfHolder);
+                    processFacets(restriction,metaInfHolder,parentSchema);
                 } else {
                     //recurse
                     if (restriction.getBaseType() != null) {

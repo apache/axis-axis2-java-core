@@ -22,8 +22,8 @@ import java.util.Set;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
+import javax.xml.ws.WebServiceException;
 
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.util.SAAJFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,10 +68,10 @@ public class SOAPBinding extends BindingImpl
                 bindingNamespace = SOAP11_ENV_NS;
             }
             return SAAJFactory.createMessageFactory(bindingNamespace);
-        } catch (MessageException e) {
+        } catch (WebServiceException e) {
             // TODO log it and then what?
             if(log.isDebugEnabled()){
-                log.debug("MessageException calling SAAJFactory.createMessageFactory(\""+bindingNamespace+"\")");
+                log.debug("WebServiceException calling SAAJFactory.createMessageFactory(\""+bindingNamespace+"\")");
             }
         } catch (SOAPException e) {
             // TODO log it and then what?
@@ -114,10 +114,10 @@ public class SOAPBinding extends BindingImpl
                 bindingNamespace = SOAP11_ENV_NS;
             }
             return SAAJFactory.createSOAPFactory(bindingNamespace);
-        } catch (MessageException e) {
+        } catch (WebServiceException e) {
             // TODO log it and then what?
             if(log.isDebugEnabled()){
-                log.debug("MessageException calling SAAJFactory.createSOAPFactory(\""+bindingNamespace+"\")");
+                log.debug("WebServiceException calling SAAJFactory.createSOAPFactory(\""+bindingNamespace+"\")");
             }
         } catch (SOAPException e) {
             // TODO log it and then what?

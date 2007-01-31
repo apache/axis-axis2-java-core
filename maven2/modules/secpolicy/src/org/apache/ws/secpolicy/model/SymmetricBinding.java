@@ -32,11 +32,11 @@ import org.apache.ws.secpolicy.Constants;
 public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
 
     private EncryptionToken encryptionToken;
-    
+
     private SignatureToken signatureToken;
-    
+
     private ProtectionToken protectionToken;
-    
+
     /**
      * @return Returns the encryptionToken.
      */
@@ -91,7 +91,7 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
         }
         this.signatureToken = signatureToken;
     }
-    
+
     public QName getName() {
         return Constants.SYMMETRIC_BINDING;
     }
@@ -100,28 +100,28 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
         if (isNormalized()) {
             return this;
         }
-        
+
         AlgorithmSuite algorithmSuite = getAlgorithmSuite();
         List configurations = algorithmSuite.getConfigurations();
-        
+
         if (configurations == null && configurations.size() == 1) {
             setNormalized(true);
             return this;
         }
-        
+
         Policy policy = new Policy();
         ExactlyOne exactlyOne = new ExactlyOne();
-        
+
         All wrapper;
         SymmetricBinding symmetricBinding;
-        
+
         for (Iterator iterator = configurations.iterator(); iterator.hasNext();) {
             wrapper = new All();
             symmetricBinding = new SymmetricBinding();
-            
+
             algorithmSuite = (AlgorithmSuite) iterator.next();
             symmetricBinding.setAlgorithmSuite(algorithmSuite);
-            
+
             symmetricBinding.setEncryptionToken(getEncryptionToken());
             symmetricBinding.setEntireHeadersAndBodySignatures(isEntireHeadersAndBodySignatures());
             symmetricBinding.setIncludeTimestamp(isIncludeTimestamp());
@@ -133,24 +133,24 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
             symmetricBinding.setSignedEndorsingSupportingTokens(getSignedEndorsingSupportingTokens());
             symmetricBinding.setSignedSupportingToken(getSignedSupportingToken());
             symmetricBinding.setTokenProtection(isTokenProtection());
-            
+
             symmetricBinding.setNormalized(true);
             wrapper.addPolicyComponent(symmetricBinding);
             exactlyOne.addPolicyComponent(wrapper);
         }
-        
+
         policy.addPolicyComponent(exactlyOne);
         return policy;
     }
 
     public void serialize(XMLStreamWriter writer) throws XMLStreamException {
-        
+
         String localname = Constants.SYMMETRIC_BINDING.getLocalPart();
         String namespaceURI = Constants.SYMMETRIC_BINDING.getNamespaceURI();
-        
+
         String prefix;
         String writerPrefix = writer.getPrefix(namespaceURI);
-        
+
         if (writerPrefix == null) {
             prefix = Constants.SYMMETRIC_BINDING.getPrefix();
             writer.setPrefix(prefix, namespaceURI);
@@ -160,80 +160,88 @@ public class SymmetricBinding extends SymmetricAsymmetricBindingBase {
 
         // <sp:SymmetricBinding>
         writer.writeStartElement(prefix, localname, namespaceURI);
-        
+
         if (writerPrefix == null) {
             // xmlns:sp=".."
             writer.writeNamespace(prefix, namespaceURI);
         }
-        
-        
+
+
         String policyLocalName = Constants.POLICY.getLocalPart();
         String policyNamespaceURI = Constants.POLICY.getNamespaceURI();
-        
+
         String wspPrefix;
-        
+
         String wspWriterPrefix = writer.getPrefix(policyNamespaceURI);
         if (wspWriterPrefix == null) {
             wspPrefix = Constants.POLICY.getPrefix();
             writer.setPrefix(wspPrefix, policyNamespaceURI);
-            
+
         } else {
            wspPrefix = wspWriterPrefix;
         }
         // <wsp:Policy>
         writer.writeStartElement(wspPrefix, policyLocalName, policyNamespaceURI);
-        
-        if (encryptionToken != null) {
-            encryptionToken.serialize(writer);
-            
-        } else if ( protectionToken != null) {
+
+        if ( protectionToken != null) {
             protectionToken.serialize(writer);
-            
+
+        } else if (encryptionToken != null &&  signatureToken != null) {
+            encryptionToken.serialize(writer);
+            signatureToken.serialize(writer);
+
         } else {
-            throw new RuntimeException("Either EncryptionToken or ProtectionToken must be set");
+            throw new RuntimeException("Either (EncryptionToken and SignatureToken) or ProtectionToken must be set");
         }
-        
+
         AlgorithmSuite algorithmSuite = getAlgorithmSuite();
-        
+
         if (algorithmSuite == null) {
             throw new RuntimeException("AlgorithmSuite must be set");
         }
         // <sp:AlgorithmSuite />
         algorithmSuite.serialize(writer);
-        
+
         Layout layout = getLayout();
         if (layout != null) {
             // <sp:Layout />
             layout.serialize(writer);
         }
-        
+
         if (isIncludeTimestamp()) {
             // <sp:IncludeTimestamp />
             writer.writeStartElement(prefix, Constants.INCLUDE_TIMESTAMP.getLocalPart(), namespaceURI);
             writer.writeEndElement();
         }
-        
-        if (Constants.ENCRYPT_BEFORE_SIGNING.equals(protectionToken)) {
+
+        if (Constants.ENCRYPT_BEFORE_SIGNING.equals(getProtectionOrder())) {
             // <sp:EncryptBeforeSigning />
             writer.writeStartElement(prefix, Constants.ENCRYPT_BEFORE_SIGNING, namespaceURI);
             writer.writeEndElement();
+
+        } else if (Constants.SIGN_BEFORE_ENCRYPTING.equals(getProtectionOrder())) {
+            // <sp:SignBeforeEncrypt />
+            writer.writeStartElement(prefix, Constants.SIGN_BEFORE_ENCRYPTING, namespaceURI);
+            writer.writeEndElement();
         }
-        
+
         if (isSignatureProtection()) {
             // <sp:EncryptSignature />
             writer.writeStartElement(prefix, Constants.ENCRYPT_SIGNATURE.getLocalPart(), namespaceURI);
             writer.writeEndElement();
         }
-        
-        if (protectionToken != null) {
-            protectionToken.serialize(writer);
+
+        if (isEntireHeadersAndBodySignatures()) {
+            // <sp:OnlySignEntireHeadersAndBody />
+            writer.writeStartElement(prefix, Constants.ONLY_SIGN_ENTIRE_HEADERS_AND_BODY, namespaceURI);
+            writer.writeEndElement();
         }
         
         // </wsp:Policy>
         writer.writeEndElement();
-        
+
         // </sp:SymmetricBinding>
         writer.writeEndElement();
-        
+
     }
 }

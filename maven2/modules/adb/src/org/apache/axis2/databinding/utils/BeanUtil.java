@@ -117,34 +117,37 @@ public class BeanUtil {
                     if (SimpleTypeMapper.isSimpleType(ptype.getComponentType())) {
                         Object value = propDesc.getReadMethod().invoke(beanObject,
                                 null);
-                        int i1 = Array.getLength(value);
-                        for (int j = 0; j < i1; j++) {
-                            Object o = Array.get(value, j);
-                            if (elemntNameSpace != null) {
-                                object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                                        propDesc.getName(), elemntNameSpace.getPrefix()));
-                            } else {
-                                object.add(new QName(beanName.getNamespaceURI(),
-                                        propDesc.getName(), beanName.getPrefix()));
+                        if (value != null) {
+                            int i1 = Array.getLength(value);
+                            for (int j = 0; j < i1; j++) {
+                                Object o = Array.get(value, j);
+                                if (elemntNameSpace != null) {
+                                    object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                                            propDesc.getName(), elemntNameSpace.getPrefix()));
+                                } else {
+                                    object.add(new QName(beanName.getNamespaceURI(),
+                                            propDesc.getName(), beanName.getPrefix()));
+                                }
+                                object.add(o == null ? null : SimpleTypeMapper.getStringValue(o));
                             }
-                            object.add(o == null ? null : SimpleTypeMapper.getStringValue(o));
                         }
                     } else {
                         Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject,
                                 null);
-                        for (int j = 0; j < value.length; j++) {
-                            Object o = value[j];
-                            if (elemntNameSpace != null) {
-                                object.add(new QName(elemntNameSpace.getNamespaceURI(),
-                                        propDesc.getName(), elemntNameSpace.getPrefix()));
-                            } else {
-                                object.add(new QName(beanName.getNamespaceURI(),
-                                        propDesc.getName(), beanName.getPrefix()));
+                        if (value != null) {
+                            for (int j = 0; j < value.length; j++) {
+                                Object o = value[j];
+                                if (elemntNameSpace != null) {
+                                    object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                                            propDesc.getName(), elemntNameSpace.getPrefix()));
+                                } else {
+                                    object.add(new QName(beanName.getNamespaceURI(),
+                                            propDesc.getName(), beanName.getPrefix()));
+                                }
+                                object.add(o);
                             }
-                            object.add(o);
                         }
                     }
-
                 } else if (SimpleTypeMapper.isArrayList(ptype)) {
                     Object value = propDesc.getReadMethod().invoke(beanObject,
                             null);
@@ -178,11 +181,10 @@ public class BeanUtil {
 
                     }
                 } else {
-                    if (typeTable != null) {
-                        QName qNamefortheType = typeTable.getQNamefortheType(ptype.getName());
-                        object.add(new QName(qNamefortheType.getNamespaceURI(),
-                                propDesc.getName(), qNamefortheType.getPrefix()));
-                    } else {
+                    if (elemntNameSpace != null) {
+                        object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                                propDesc.getName(), elemntNameSpace.getPrefix()));
+                    } else{
                         object.add(new QName(beanName.getNamespaceURI(),
                                 propDesc.getName(), beanName.getPrefix()));
                     }

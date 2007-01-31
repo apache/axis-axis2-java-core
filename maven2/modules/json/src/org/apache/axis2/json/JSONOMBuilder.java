@@ -25,7 +25,6 @@ import org.apache.axiom.om.impl.OMNamespaceImpl;
 import org.apache.axiom.om.impl.builder.OMBuilder;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.om.impl.llom.factory.OMLinkedListImplFactory;
-import org.apache.axis2.JScriptConstants;
 
 public class JSONOMBuilder implements OMBuilder {
     InputStream jsonInputStream = null;
@@ -46,8 +45,12 @@ public class JSONOMBuilder implements OMBuilder {
         if (localName == null) {
             localName = getLocalName();
         }
-        JSONDataSource jsonDataSource = new JSONDataSource(this.jsonInputStream, localName);
+        JSONDataSource jsonDataSource = getDataSource();
         return new OMSourcedElementImpl(localName.substring(1, localName.length() - 1), ns, factory, jsonDataSource);
+    }
+
+    protected JSONDataSource getDataSource(){
+        return new JSONDataSource(this.jsonInputStream, localName);
     }
 
     private String getLocalName() {
@@ -71,7 +74,7 @@ public class JSONOMBuilder implements OMBuilder {
 	}
 
 	public String getMessageType() {
-		return JScriptConstants.MEDIA_TYPE_APPLICATION_JSON;
+		return null;
 	}
 
 }

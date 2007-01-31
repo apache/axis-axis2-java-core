@@ -57,7 +57,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
 
         if (toEPR != null) {
             if(isDebugEnabled){
-            log.debug("Checking for Service using target endpoint address : " + toEPR.getAddress());
+            log.debug(messageContext.getLogIDString()+" Checking for Service using target endpoint address : " + toEPR.getAddress());
             }
             String filePart = toEPR.getAddress();
             //REVIEW: (nagy) Parsing the RequestURI will also give us the operationName if present, so we could conceivably store it in the MessageContext, but doing so and retrieving it is probably no faster than simply reparsing the URI
@@ -72,13 +72,13 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
                 return registry.getService(values[0]);
             } else {
                 if(isDebugEnabled){
-                log.debug("Attempted to check for Service using target endpoint URI, but the service fragment was missing");
+                log.debug(messageContext.getLogIDString()+" Attempted to check for Service using target endpoint URI, but the service fragment was missing");
                 }
                 return null;
             }
         } else {
             if(isDebugEnabled){
-            log.debug("Attempted to check for Service using null target endpoint URI");
+            log.debug(messageContext.getLogIDString()+" Attempted to check for Service using null target endpoint URI");
             }
             return null;
         }

@@ -28,13 +28,12 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
-import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentMarshaller;
 import org.apache.axis2.jaxws.message.attachments.JAXBAttachmentUnmarshaller;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlock;
@@ -43,6 +42,7 @@ import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.databinding.XSDListUtils;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
+import org.apache.axis2.jaxws.util.JavaUtils;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,6 +55,7 @@ import org.apache.commons.logging.LogFactory;
 public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
     private static final Log log = LogFactory.getLog(JAXBBlockImpl.class);
+    private static final String XMLNS = "xmlns=\"\" xmlns:xmlns=\"http://www.w3.org/2000/xmlns/\"";
     
 	/**
 	 * Called by JAXBBlockFactory
@@ -83,7 +84,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 	}
 
 	@Override
-	protected Object _getBOFromReader(XMLStreamReader reader, Object busContext) throws XMLStreamException, MessageException {
+	protected Object _getBOFromReader(XMLStreamReader reader, Object busContext) throws XMLStreamException, WebServiceException {
 	    // Get the JAXBBlockContext.  All of the necessry information is recorded on it
         JAXBBlockContext ctx = (JAXBBlockContext) busContext;
         try {
@@ -95,8 +96,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 if (log.isDebugEnabled()) 
                     log.debug("Adding JAXBAttachmentUnmarshaller to Unmarshaller");
                 
-                XMLPart xp = getParent();
-                Message msg = xp.getParent();
+                Message msg = getParent();
                 
                 // TODO Pool ?
                 JAXBAttachmentUnmarshaller aum = new JAXBAttachmentUnmarshaller();
@@ -129,12 +129,12 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 } catch (Exception e) {
                 }
             }
-			throw ExceptionFactory.makeMessageException(je);
+			throw ExceptionFactory.makeWebServiceException(je);
 		}
 	}
 
 	@Override
-	protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext) throws XMLStreamException, MessageException {
+	protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext) throws XMLStreamException, WebServiceException {
 		// TODO Review and determine if there is a better solution
 		
 		// This is hard because JAXB does not expose a reader from the business object.
@@ -150,6 +150,21 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 		writer.flush();
 		sw.flush();
 		String str = sw.toString();
+		
+		// REVIEW ALERT
+		// Sometimes JAXB emits xmlns="" xmlns:xmlns..., which is invalid.
+		// The following lines of code removes this attribute.
+		// This seems to be related to MTOM..it has never failed in 
+		// other cases
+		if (isMTOMEnabled()) {
+			if (log.isDebugEnabled()) {
+				log.debug("JAXB marshalled the xml as: " + str);
+			}
+			str = JavaUtils.replace(str, XMLNS, "");
+			if (log.isDebugEnabled()) {
+				log.debug("XML text after inspection: " + str);
+			}
+		}
         writer.close();
 		
 		// Return a reader backed by the string
@@ -158,7 +173,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 	}
 
 	@Override
-	protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer) throws XMLStreamException, MessageException {
+	protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer) throws XMLStreamException, WebServiceException {
         JAXBBlockContext ctx = (JAXBBlockContext) busContext;
         try {
 			// Very easy, use the Context to get the Marshaller.
@@ -171,8 +186,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 if (log.isDebugEnabled())
                     log.debug("Adding JAXBAttachmentMarshaller to Marshaller");
                 
-                XMLPart xp = getParent();
-                Message msg = xp.getParent();
+                Message msg = getParent();
                 
                 // Pool
                 JAXBAttachmentMarshaller am = new JAXBAttachmentMarshaller();
@@ -197,7 +211,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 } catch (Exception e) {
                 }
             }
-			throw ExceptionFactory.makeMessageException(je);
+			throw ExceptionFactory.makeWebServiceException(je);
 		}
 	}
 
@@ -205,7 +219,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 	 * Get the QName from the jaxb object
 	 * @param jaxb
 	 * @param jbc
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
 	private static QName getQName(Object jaxb, JAXBBlockContext ctx) throws JAXBException {
 		JAXBIntrospector jbi = JAXBUtils.getJAXBIntrospector(ctx.getJAXBContext());
@@ -215,14 +229,11 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 	}
     
     private boolean isMTOMEnabled() {
-        XMLPart xp = getParent();
-        if (xp != null) {
-            Message msg = xp.getParent();
-            if (msg != null && msg.isMTOMEnabled())
-                return true;
-        }
-        
-        return false;
+       Message msg = getParent();
+       if (msg != null && msg.isMTOMEnabled()) {
+          return true;
+       }
+       return false;
     }
     
     /**
@@ -231,12 +242,12 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @param m Marshaller
      * @param writer XMLStreamWriter
      */
-    private static void marshalByElement(Object b, Marshaller m, XMLStreamWriter writer) throws MessageException {
+    private static void marshalByElement(Object b, Marshaller m, XMLStreamWriter writer) throws WebServiceException {
         // TODO Log and trace here would be helpful
         try {
             m.marshal(b, writer);
         } catch (Exception e) {
-            throw ExceptionFactory.makeMessageException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
     }
     
@@ -245,14 +256,14 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @param u Unmarshaller
      * @param reader XMLStreamReader
      * @return Object that represents an element 
-     * @throws MessageException
+     * @throws WebServiceException
      */
-    private static Object unmarshalByElement(Unmarshaller u, XMLStreamReader reader) throws MessageException {
+    private static Object unmarshalByElement(Unmarshaller u, XMLStreamReader reader) throws WebServiceException {
         // TODO Log and trace here would be helpful
         try {
             return u.unmarshal(reader);
         } catch (Exception e) {
-            throw ExceptionFactory.makeMessageException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
     }
     
@@ -263,7 +274,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @param writer XMLStreamWriter
      * @param type
      */
-    private static void marshalByType(Object b, Marshaller m, XMLStreamWriter writer, Class type) throws MessageException {
+    private static void marshalByType(Object b, Marshaller m, XMLStreamWriter writer, Class type) throws WebServiceException {
         // TODO Log and trace here would be helpful
         try {
             
@@ -299,7 +310,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             }
             m.marshal(b, writer);
         } catch (Exception e) {
-            throw ExceptionFactory.makeMessageException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
     }
     
@@ -311,9 +322,9 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
      * @param reader XMLStreamReader
      * @param type Class
      * @return Object 
-     * @throws MessageException
+     * @throws WebServiceException
      */
-    private static Object unmarshalByType(Unmarshaller u, XMLStreamReader reader, Class type) throws MessageException {
+    private static Object unmarshalByType(Unmarshaller u, XMLStreamReader reader, Class type) throws WebServiceException {
         // TODO Log and trace here would be helpful
         try {
             // Unfortunately RPC is type based.  Thus a
@@ -340,7 +351,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             } 
             return jaxb;
         } catch (Exception e) {
-            throw ExceptionFactory.makeMessageException(e);
+            throw ExceptionFactory.makeWebServiceException(e);
         }
     }
     

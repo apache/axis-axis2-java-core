@@ -44,7 +44,7 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
         String action = messageContext.getSoapAction();
 
         if(isDebugEnabled){
-        log.debug("Checking for Operation using SOAPAction : " + action);
+        log.debug(messageContext.getLogIDString()+" Checking for Operation using SOAPAction : " + action);
         }
         if (action != null) {
             AxisOperation op = service.getOperationBySOAPAction(action);
@@ -75,7 +75,7 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
      */
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         if(isDebugEnabled){
-        log.debug("Checking for Service using SOAPAction is a TODO item");
+        log.debug(messageContext.getLogIDString()+" Checking for Service using SOAPAction is a TODO item");
         }
         return null;
     }

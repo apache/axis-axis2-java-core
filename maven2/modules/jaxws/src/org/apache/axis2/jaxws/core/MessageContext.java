@@ -21,13 +21,13 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 
 /**
@@ -62,7 +62,7 @@ public class MessageContext {
         properties = new HashMap<String, Object>();
     }
     
-    public MessageContext(org.apache.axis2.context.MessageContext mc) throws MessageException {
+    public MessageContext(org.apache.axis2.context.MessageContext mc) throws WebServiceException {
         properties = new HashMap<String, Object>();
         
         if (mc != null) {

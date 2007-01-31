@@ -26,6 +26,7 @@ import org.apache.axiom.soap.SOAPFaultNode;
 import org.apache.axiom.soap.SOAPFaultReason;
 import org.apache.axiom.soap.SOAPFaultRole;
 import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axis2.context.MessageContext;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.InvocationTargetException;
@@ -85,6 +86,14 @@ public class AxisFault extends RemoteException {
     private String message;
     private Throwable cause;
 
+    /**
+     * If not null, the messageContext represents the fault as it
+     * should be returned.  This is used by higher-level layers
+     * that want to generate the message themselves so that
+     * processing may take place before they return control (e.g. JAX-WS.)
+     */
+    private MessageContext faultMessageContext;
+    
     /**
      * SOAP1.2: URI of faulting node. Null for unknown.
      * <p/>
@@ -237,6 +246,19 @@ public class AxisFault extends RemoteException {
         setFaultCode(faultCode);
     }
 
+    /**
+     * Create an AxisFault by providing a textual message and a MessageContext
+     * that contains the actual fault representation.
+     * 
+     * @param message A string that's really only useful for logging.
+     * @param faultMessageContext
+     */
+    public AxisFault(String message, MessageContext faultMessageContext)
+    {
+      super(message);
+      this.faultMessageContext = faultMessageContext;
+    }
+    
     /**
      * Add a header to the list of fault headers
      *
@@ -429,6 +451,18 @@ public class AxisFault extends RemoteException {
         return cause != null ? cause : super.getCause();
     }
 
+    /**
+     * Returns the MessageContext representation of the fault if the fault
+     * was created by providing that.  
+     * 
+     * @return The MessageContext representing the fault message or null if the
+     * fault was not created with MessageContext representation.
+     */
+    public MessageContext getFaultMessageContext()
+    {
+      return faultMessageContext;
+    }
+    
     class FaultReason {
 
         /**

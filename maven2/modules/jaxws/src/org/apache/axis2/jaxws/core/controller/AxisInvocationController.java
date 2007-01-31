@@ -51,7 +51,6 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -122,7 +121,7 @@ public class AxisInvocationController extends InvocationController {
             // there would be no message on the MessageContext
             faultexception = af;
             if (log.isDebugEnabled()) {
-                log.debug("AxisFault received from client: " + af.getMessage());
+                log.debug(axisRequestMsgCtx.getLogIDString()+" AxisFault received from client: " + af.getMessage());
             }
         }
         
@@ -193,7 +192,7 @@ public class AxisInvocationController extends InvocationController {
             // Whatever exception we get here will not be from the server since a one-way
             // invocation has no response.  This will always be a SENDER fault
             if (log.isDebugEnabled()) {
-                log.debug("AxisFault received from client: " + af.getMessage());
+                log.debug(axisRequestMsgCtx.getLogIDString()+" AxisFault received from client: " + af.getMessage());
             }
         	throw ExceptionFactory.makeWebServiceException(ClassUtils.getRootCause(af));
         }
@@ -362,8 +361,8 @@ public class AxisInvocationController extends InvocationController {
             if (log.isDebugEnabled()) {
                 log.debug("Properties: " + axisRequestMsgCtx.getProperties().toString());
             }
-        } catch (MessageException e) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("prepareRequestFail"), e);
+        } catch (WebServiceException e) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("prepareRequestFail"));
         } catch (AxisFault e) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("prepareRequestFail"), e);
         }
@@ -414,28 +413,45 @@ public class AxisInvocationController extends InvocationController {
     }
     
     /**
-     * Returns the SOAPAction that should be used for the invocation.  This
-     * method will get the information from the MessageContext passed in
-     * either from :
-     * 
-     * a) the JAX-WS properties available on the MessageContext or
-     * b) the WSDL configuration information available from the MessageContext 
+     * Returns the SOAP action that should be used for the invocation.  If the
+     * client has already set the property in the JAX-WS request context, then
+     * that value should be used.  Otherwise, we should grab it from the 
+     * operation description that was configured for the operation.
      * 
      * @param ctx
      * @return
      */
     private String configureSOAPAction(MessageContext ctx) {
+        OperationDescription op = ctx.getOperationDescription();
+        
         Boolean useSoapAction = (Boolean) ctx.getProperties().get(BindingProvider.SOAPACTION_USE_PROPERTY);
         if(useSoapAction != null && useSoapAction.booleanValue()){
             String action = (String) ctx.getProperties().get(BindingProvider.SOAPACTION_URI_PROPERTY);
-            if (debug) {
-                log.debug("Setting SOAPAction to:" + action);
+            if (action != null) {
+                if (debug) {
+                    log.debug("Setting soap action from JAX-WS request context.  Action [" + action + "]");
+                }
+                return action;
             }
-            return action;
+            
+            if (op != null) {
+                action = op.getAction();
+                if (action != null) {
+                    if (debug) {
+                        log.debug("Setting soap action from operation description.  Action [" + action + "]");
+                    }
+                    return action;
+                }                
+            }
+            else {
+                if (debug) {
+                    log.debug("Cannot set the soap action.  No operation description was found.");
+                }
+            }
         }
         else {
             if (debug) {
-                log.debug("SOAPAction usage was disabled");
+                log.debug("Soap action usage was disabled");
             }
         }
         
@@ -491,7 +507,8 @@ public class AxisInvocationController extends InvocationController {
             op.setMessageReceiver(new CallbackReceiver());
     }
     
-    private Message createMessageFromOM(OMElement om) throws MessageException {
+    /*
+    private Message createMessageFromOM(OMElement om) throws WebServiceException {
         try {
             MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
             Message msg = mf.createFrom(om);
@@ -500,6 +517,7 @@ public class AxisInvocationController extends InvocationController {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
+    */
     
     /*
      * TODO: This is a first pass at filtering the properties that are set on the 

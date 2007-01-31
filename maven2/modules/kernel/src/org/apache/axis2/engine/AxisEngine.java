@@ -148,7 +148,7 @@ public class AxisEngine {
      */
     public InvocationResponse receive(MessageContext msgContext) throws AxisFault {
         if(log.isTraceEnabled()){
-            log.trace("receive:"+msgContext.getMessageID());
+            log.trace(msgContext.getLogIDString()+" receive:"+msgContext.getMessageID());
         }
         activateMessageContext(msgContext);
         ConfigurationContext confContext = msgContext.getConfigurationContext();
@@ -171,8 +171,12 @@ public class AxisEngine {
               checkMustUnderstand(msgContext);
               
               MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
-              if (receiver!=null)
-            	  receiver.receive(msgContext);
+              if (receiver==null){
+                  throw new AxisFault(Messages.getMessage(
+                          "nomessagereciever",
+                          msgContext.getAxisOperation().getName().toString()));
+              }
+              receiver.receive(msgContext);
             }
             flowComplete(msgContext, true);
           }
@@ -188,7 +192,7 @@ public class AxisEngine {
           else
           {
             String errorMsg = "Unrecognized InvocationResponse encountered in AxisEngine.receive()";
-            log.error(errorMsg);
+            log.error(msgContext.getLogIDString()+" "+errorMsg);
             throw new AxisFault(errorMsg);
           }
         }
@@ -318,7 +322,7 @@ public class AxisEngine {
      */
     public InvocationResponse resumeReceive(MessageContext msgContext) throws AxisFault {
         if(log.isTraceEnabled()){
-            log.trace("resumeReceive:"+msgContext.getMessageID());
+            log.trace(msgContext.getLogIDString()+" resumeReceive:"+msgContext.getMessageID());
         }
         activateMessageContext(msgContext);
 
@@ -339,6 +343,11 @@ public class AxisEngine {
             // invoke the Message Receivers
             checkMustUnderstand(msgContext);
             MessageReceiver receiver = msgContext.getAxisOperation().getMessageReceiver();
+            if (receiver==null){
+                throw new AxisFault(Messages.getMessage(
+                        "nomessagereciever",
+                        msgContext.getAxisOperation().getName().toString()));
+            }
             receiver.receive(msgContext);
           }
           flowComplete(msgContext, true);
@@ -358,7 +367,7 @@ public class AxisEngine {
      */
     public InvocationResponse resumeSend(MessageContext msgContext) throws AxisFault {
         if(log.isTraceEnabled()){
-            log.trace("resumeSend:"+msgContext.getMessageID());
+            log.trace(msgContext.getLogIDString()+" resumeSend:"+msgContext.getMessageID());
         }
         activateMessageContext(msgContext);
 
@@ -393,7 +402,7 @@ public class AxisEngine {
     public InvocationResponse receiveFault(MessageContext msgContext) throws AxisFault {
 
         activateMessageContext(msgContext);
-    	log.debug(Messages.getMessage("receivederrormessage",
+    	log.debug(msgContext.getLogIDString()+" "+Messages.getMessage("receivederrormessage",
                 msgContext.getMessageID()));
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases =
@@ -433,7 +442,7 @@ public class AxisEngine {
           else
           {
             String errorMsg = "Unrecognized InvocationResponse encountered in AxisEngine.receiveFault()";
-            log.error(errorMsg);
+            log.error(msgContext.getLogIDString()+" "+errorMsg);
             throw new AxisFault(errorMsg);
           }
         }
@@ -455,7 +464,7 @@ public class AxisEngine {
      */
     public InvocationResponse resume(MessageContext msgctx) throws AxisFault {
         if(log.isTraceEnabled()){
-            log.trace("resume:"+msgctx.getMessageID());
+            log.trace(msgctx.getLogIDString()+" resume:"+msgctx.getMessageID());
         }
         activateMessageContext(msgctx);
 
@@ -480,7 +489,7 @@ public class AxisEngine {
      */
     public void send(MessageContext msgContext) throws AxisFault {
         if(log.isTraceEnabled()){
-            log.trace("send:"+msgContext.getMessageID());
+            log.trace(msgContext.getLogIDString()+" send:"+msgContext.getMessageID());
         }
         activateMessageContext(msgContext);
         // find and invoke the Phases
@@ -531,7 +540,7 @@ public class AxisEngine {
           else
           {
             String errorMsg = "Unrecognized InvocationResponse encountered in AxisEngine.send()";
-            log.error(errorMsg);
+            log.error(msgContext.getLogIDString()+" "+errorMsg);
             throw new AxisFault(errorMsg);
           }
         }
@@ -550,7 +559,7 @@ public class AxisEngine {
      */
     public void sendFault(MessageContext msgContext) throws AxisFault {
         if(log.isTraceEnabled()){
-            log.trace("sendFault:"+msgContext.getMessageID());
+            log.trace(msgContext.getLogIDString()+" sendFault:"+msgContext.getMessageID());
         }
         activateMessageContext(msgContext);
         OperationContext opContext = msgContext.getOperationContext();
@@ -574,7 +583,7 @@ public class AxisEngine {
               
               if (pi.equals(InvocationResponse.SUSPEND))
               {
-                log.warn("The resumption of this flow may function incorrectly, as the OutFaultFlow will not be used");
+                log.warn(msgContext.getLogIDString()+" The resumption of this flow may function incorrectly, as the OutFaultFlow will not be used");
                 return;
               }
               else if (pi.equals(InvocationResponse.ABORT))
@@ -585,7 +594,7 @@ public class AxisEngine {
               else if (!pi.equals(InvocationResponse.CONTINUE))
               {
                 String errorMsg = "Unrecognized InvocationResponse encountered in AxisEngine.sendFault()";
-                log.error(errorMsg);
+                log.error(msgContext.getLogIDString()+" "+errorMsg);
                 throw new AxisFault(errorMsg);
               }
             }
@@ -603,7 +612,11 @@ public class AxisEngine {
         if (pi.equals(InvocationResponse.CONTINUE))
         {
           // Actually send the SOAP Fault
-          TransportSender sender = msgContext.getTransportOut().getSender();
+          TransportOutDescription transportOut = msgContext.getTransportOut();
+          if(transportOut == null) {
+              throw new AxisFault("Transport out has not been set");
+          }
+          TransportSender sender = transportOut.getSender();
 
           sender.invoke(msgContext);
           flowComplete(msgContext, false);
@@ -620,7 +633,7 @@ public class AxisEngine {
         else
         {
           String errorMsg = "Unrecognized InvocationResponse encountered in AxisEngine.sendFault()";
-          log.error(errorMsg);
+          log.error(msgContext.getLogIDString()+" "+errorMsg);
           throw new AxisFault(errorMsg);
         }
         
@@ -669,7 +682,7 @@ public class AxisEngine {
             try {
                 sender.invoke(msgctx);
             } catch (Exception e) {
-              log.info(e.getMessage());
+              log.info(msgctx.getLogIDString()+" "+e.getMessage());
               if (msgctx.getProperty(MessageContext.DISABLE_ASYNC_CALLBACK_ON_TRANSPORT_ERROR) == null)
               {
                 AxisOperation axisOperation = msgctx.getAxisOperation();

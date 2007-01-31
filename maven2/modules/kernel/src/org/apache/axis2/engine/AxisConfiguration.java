@@ -19,6 +19,7 @@ package org.apache.axis2.engine;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
+import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
@@ -735,11 +736,11 @@ public class AxisConfiguration extends AxisDescription {
         return this.systemClassLoader;
     }
 
-    public TransportInDescription getTransportIn(QName name) throws AxisFault {
+    public TransportInDescription getTransportIn(QName name) {
         return (TransportInDescription) transportsIn.get(name);
     }
 
-    public TransportOutDescription getTransportOut(QName name) throws AxisFault {
+    public TransportOutDescription getTransportOut(QName name) {
         return (TransportOutDescription) transportsOut.get(name);
     }
 
@@ -950,5 +951,19 @@ public class AxisConfiguration extends AxisDescription {
 
     public boolean isAssertionLocal(QName name) {
         return this.localPolicyAssertions.contains(name);
+    }
+
+    /**
+     * Checks whether some one has changed the system pre-defined phases
+     * for all the flows. If they have been changed,throws a DeploymentException.
+     *
+     * @throws org.apache.axis2.deployment.DeploymentException
+     */
+    public void validateSystemPredefinedPhases() throws DeploymentException {
+        PhasesInfo phasesInfo = getPhasesInfo();
+        setInPhasesUptoAndIncludingPostDispatch(phasesInfo.getGlobalInflow());
+        setInFaultPhases(phasesInfo.getGlobalInFaultPhases());
+        setGlobalOutPhase(phasesInfo.getGlobalOutPhaseList());
+        setOutFaultPhases(phasesInfo.getOUT_FaultPhases());
     }
 }

@@ -34,9 +34,11 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class JAXBDispatch<T> extends BaseDispatch<T> {
-
+    private static final Log log = LogFactory.getLog(JAXBDispatch.class);
     private JAXBContext jaxbContext;
     
     public JAXBDispatch(ServiceDelegate svcDelegate, EndpointDescription epDesc) {
@@ -97,6 +99,17 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
     }
 
     public Object getValueFromMessage(Message message) {
+        return getValue(message, mode, jaxbContext);
+    }
+    
+    /**
+     * Common code to get the value for JAXBDispatch and JAXBDispatchAsyncListener
+     * @param message
+     * @param mode
+     * @param jaxbContext
+     * @return
+     */
+    static Object getValue(Message message, Mode mode, JAXBContext jaxbContext) {
         Object value = null;
         try {
             if (mode.equals(Mode.PAYLOAD)) {
@@ -104,7 +117,17 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
                 JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
                 JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
                 Block block = message.getBodyBlock(0, context, factory);
-                value = block.getBusinessObject(true);
+                
+                if (block != null) {
+                    value = block.getBusinessObject(true);
+                } else {
+                    // REVIEW This seems like the correct behavior.  If the body is empty, return a null
+                    // Any changes here should also be made to XMLDispatch.getValue
+                    if (log.isDebugEnabled()) {
+                        log.debug("There are no elements in the body to unmarshal.  JAXBDispatch returns a null value");
+                    }
+                    value = null;
+                }
             } else {
                 // This is a very strange case, the user would need
                 // to have a JAXB object that represents the message (i.e. SOAPEnvelope)
@@ -118,7 +141,8 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
                 XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
                 Block stringBlock = stringFactory.createFrom(stringValue, null, soapEnvQname);   
                 BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
-                Block block = factory.createFrom(stringBlock, null);
+                JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
+                Block block = factory.createFrom(stringBlock, context);
                 value = block.getBusinessObject(true);   
             }
         } catch (Exception e) {

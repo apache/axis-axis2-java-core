@@ -25,6 +25,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.Constants;
+import org.apache.axis2.jaxws.util.JavaUtils;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,7 +64,7 @@ public class AxisCallback extends Callback {
             catch (Throwable t) {
                 if (log.isDebugEnabled()) {
                     log.debug("JAX-WS AxisCallback caught throwable from ThreadContextMigratorUtil " + t);
-                    log.debug("...caused by " + t.getCause());
+                    log.debug("...caused by " + t.getCause() + " "+ JavaUtils.stackToString(t));
                 }
                 t.printStackTrace();
             }
@@ -75,6 +76,10 @@ public class AxisCallback extends Callback {
             
             responseMsgCtx.setMessage(msg);
         } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("JAX-WS AxisCallback caught " + e);
+                log.debug("...caused by " + e.getCause() + " "+ JavaUtils.stackToString(e));
+            }
             e.printStackTrace();
         }
     }

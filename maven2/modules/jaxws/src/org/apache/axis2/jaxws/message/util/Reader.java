@@ -21,10 +21,10 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.message.MessageInternalException;
 
 /**
  * Reader
@@ -67,9 +67,9 @@ public abstract class Reader implements XMLStreamReader {
 		return resettable;
 	}
 	
-	public void reset() throws MessageInternalException {
+	public void reset() throws WebServiceException {
 		if (!resettable) {
-			throw ExceptionFactory.makeMessageInternalException(Messages.getMessage("resetReaderErr"), null);
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("resetReaderErr"));
 		}
 		reader = newReader();
 	}

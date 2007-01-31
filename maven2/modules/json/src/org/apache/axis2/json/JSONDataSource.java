@@ -15,24 +15,30 @@ package org.apache.axis2.json;
  * limitations under the License.
  */
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.HashMap;
+
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.axiom.om.OMDataSource;
-import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMOutputFormat;
+import org.codehaus.jettison.mapped.MappedXMLInputFactory;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.json.JSONException;
-import org.codehaus.jettison.badgerfish.BadgerFishXMLInputFactory;
-
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamConstants;
-import java.io.*;
 
 public class JSONDataSource implements OMDataSource {
 
     private InputStream jsonInputStream;
     private String jsonString;
     private boolean isRead = false;
-    private String localName;
+    protected String localName;
 
     public JSONDataSource(InputStream jsonInputStream, String localName) {
         this.jsonInputStream = jsonInputStream;
@@ -117,11 +123,27 @@ public class JSONDataSource implements OMDataSource {
     }
 
     public javax.xml.stream.XMLStreamReader getReader() throws javax.xml.stream.XMLStreamException {
-        BadgerFishXMLInputFactory inputFactory = new BadgerFishXMLInputFactory();
-        return inputFactory.createXMLStreamReader(new JSONTokener("{" + localName + ":" + this.getJSONString()));
+
+        //todo-badgerfish
+
+//        BadgerFishXMLInputFactory inputFactory = new BadgerFishXMLInputFactory();
+//        return inputFactory.createXMLStreamReader(new JSONTokener("{" + localName + ":" + this.getJSONString()));
+
+        //todo-end
+
+        //todo-mapped
+
+        HashMap nstojns = new HashMap();
+        nstojns.put("", "");
+
+        MappedXMLInputFactory inputFactory = new MappedXMLInputFactory(nstojns);
+        String jsonString = "{" + localName + ":" + this.getJSONString();          
+        return inputFactory.createXMLStreamReader(new JSONTokener(jsonString));
+
+        //todo-end
     }
 
-    private String getJSONString() {
+    protected String getJSONString() {
         if (isRead) {
             return jsonString;
         } else {
@@ -138,5 +160,9 @@ public class JSONDataSource implements OMDataSource {
             isRead = true;
             return jsonString;
         }
+    }
+
+    public String getCompleteJOSNString(){
+        return localName + getJSONString();
     }
 }

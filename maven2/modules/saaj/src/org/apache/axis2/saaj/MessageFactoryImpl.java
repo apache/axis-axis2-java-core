@@ -126,6 +126,8 @@ public class MessageFactoryImpl extends MessageFactory {
      *
      * @return a new <CODE>SOAPMessage</CODE> object
      * @throws SOAPException if a SOAP error occurs
+     * 		   java.lang.UnsupportedOperationException - if the protocol of this
+     * 		   MessageFactory instance is DYNAMIC_SOAP_PROTOCOL
      */
     public SOAPMessage createMessage() throws SOAPException {
         SOAPEnvelopeImpl soapEnvelope;
@@ -133,7 +135,10 @@ public class MessageFactoryImpl extends MessageFactory {
             soapEnvelope =
                     new SOAPEnvelopeImpl((org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)
                             new SOAP12Factory().getDefaultEnvelope());
-        } else {
+        }else if(soapVersion.equals(SOAPConstants.DYNAMIC_SOAP_PROTOCOL)){
+        	throw new UnsupportedOperationException("createMessage() is not supported for DYNAMIC_SOAP_PROTOCOL");
+        }else {
+        	//SOAP 1.1
             soapEnvelope =
                     new SOAPEnvelopeImpl((org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)
                             new SOAP11Factory().getDefaultEnvelope());

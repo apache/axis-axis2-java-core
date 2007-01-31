@@ -4,6 +4,7 @@
 package org.apache.axis2.jaxws.sample;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.DetailEntry;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.SOAPFaultException;
@@ -171,7 +172,7 @@ public class FaultsServiceTests extends TestCase {
      * Test throwing legacy fault
      * Disabled while I fix this test
      */
-    public void _testFaultsService5(){
+    public void testFaultsService5(){
         Exception exception = null;
         try{
             FaultsServicePortType proxy = getProxy();
@@ -284,11 +285,17 @@ public class FaultsServiceTests extends TestCase {
         SOAPFaultException sfe = (SOAPFaultException) exception;
         SOAPFault soapFault = sfe.getFault();
         assertTrue(soapFault != null);
-        assertTrue(soapFault.getFaultString().equals("hello world"));
+        assertTrue(soapFault.getFaultString().equals("hello world2"));
         QName faultCode = soapFault.getFaultCodeAsQName();
         assertTrue(faultCode.getNamespaceURI().equals("urn://sample"));
-        assertTrue(faultCode.getLocalPart().equals("faultCode"));
-        assertTrue(soapFault.getFaultActor().equals("actor"));
+        assertTrue(faultCode.getLocalPart().equals("faultCode2"));
+        assertTrue(soapFault.getFaultActor().equals("actor2"));
+        assertTrue(soapFault.getDetail() != null);
+        DetailEntry de = (DetailEntry) soapFault.getDetail().getDetailEntries().next();
+        assertTrue(de != null);
+        assertTrue(de.getNamespaceURI().equals("urn://sample"));
+        assertTrue(de.getLocalName().equals("detailEntry"));
+        assertTrue(de.getValue().equals("Texas"));
     }
     
     /**
@@ -315,6 +322,60 @@ public class FaultsServiceTests extends TestCase {
         SOAPFaultException sfe = (SOAPFaultException) exception;
         SOAPFault soapFault = sfe.getFault();
         assertTrue(soapFault != null);
-        assertTrue(soapFault.getFaultString().contains("NullPointerException"));
+        assertTrue(soapFault.getFaultString().equals("java.lang.NullPointerException"));
+    }
+    
+    /**
+     * Tests that that SOAPFaultException (NPE) is thrown 
+     */
+    public void testFaultsService10a(){
+        Exception exception = null;
+        try{
+            FaultsServicePortType proxy = getProxy();
+            
+            // the invoke will throw an exception, if the test is performed right
+            int total = proxy.throwFault(2, "NPE2", 2);  // "NPE" will cause service to throw NPE System Exception
+            
+        }catch(SOAPFaultException e){
+            // Okay
+            exception = e;
+        } catch (Exception e) {
+            fail("Did not get a SOAPFaultException");
+        }
+        
+        System.out.println("----------------------------------");
+        
+        assertNotNull(exception);
+        SOAPFaultException sfe = (SOAPFaultException) exception;
+        SOAPFault soapFault = sfe.getFault();
+        assertTrue(soapFault != null);
+        assertTrue(soapFault.getFaultString().equals("Null Pointer Exception occurred"));
+    }
+    
+    /**
+     * Tests that that SOAPFaultException (for WebServiceException) is thrown 
+     */
+    public void testFaultsService11(){
+        Exception exception = null;
+        try{
+            FaultsServicePortType proxy = getProxy();
+            
+            // the invoke will throw an exception, if the test is performed right
+            int total = proxy.throwFault(2, "WSE", 2);  // "WSE" will cause service to throw WebServiceException System Exception
+            
+        }catch(SOAPFaultException e){
+            // Okay...on the client a SOAPFaultException should be thrown
+            exception = e;
+        } catch (Exception e) {
+            fail("Did not get a SOAPFaultException");
+        }
+        
+        System.out.println("----------------------------------");
+        
+        assertNotNull(exception);
+        SOAPFaultException sfe = (SOAPFaultException) exception;
+        SOAPFault soapFault = sfe.getFault();
+        assertTrue(soapFault != null);
+        assertTrue(soapFault.getFaultString().equals("This is a WebServiceException"));
     }
 }

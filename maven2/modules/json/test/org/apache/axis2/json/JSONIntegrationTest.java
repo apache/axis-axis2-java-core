@@ -35,71 +35,76 @@ import org.apache.axis2.util.Utils;
 
 public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
 
-	private AxisService service;
+    private AxisService service;
 
-	private String expectedString;
+    private String expectedString;
 
-	private SimpleHTTPServer server;
-	
-	private ConfigurationContext configurationContext;
+    private SimpleHTTPServer server;
 
-	public JSONIntegrationTest() {
-	}
+    private ConfigurationContext configurationContext;
 
-	protected void setUp() throws Exception {
+    public JSONIntegrationTest() {
+    }
 
-//		File configFile = new File("test-resources/axis2.xml");
-//		configurationContext = ConfigurationContextFactory
-//				.createConfigurationContextFromFileSystem(null, configFile
-//						.getAbsolutePath());
-//		server = new SimpleHTTPServer(configurationContext, TESTING_PORT);
-//		try {
-//			server.start();
-//		} finally {
-//
-//		}
-//		service = Utils.createSimpleService(serviceName, org.apache.axis2.json.Echo.class.getName(),
-//				operationName);
-//		server.getConfigurationContext().getAxisConfiguration().addService(
-//				service);
-	}
+    protected void setUp() throws Exception {
 
-	protected void tearDown() throws Exception {
-//		server.stop();
-	}
+        File configFile = new File("test-resources/axis2.xml");
+        configurationContext = ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(null, configFile
+                        .getAbsolutePath());
+        server = new SimpleHTTPServer(configurationContext, TESTING_PORT);
+        try {
+            server.start();
+        } finally {
 
-	protected OMElement createEnvelope() throws Exception {
-		OMFactory fac = OMAbstractFactory.getOMFactory();
-		OMNamespace omNs = fac.createOMNamespace("", "");
-		OMElement rpcWrapEle = fac.createOMElement("echoOM", omNs);
-		OMElement data = fac.createOMElement("data", omNs);
-		expectedString = "my json string";
-		data.setText(expectedString);
-		rpcWrapEle.addChild(data);
-		return rpcWrapEle;
-	}
+        }
+        service = Utils.createSimpleService(serviceName, org.apache.axis2.json.Echo.class.getName(),
+                operationName);
+        server.getConfigurationContext().getAxisConfiguration().addService(
+                service);
+    }
 
-	public void testEchoOMWithJSON() throws Exception {
-//		OMElement payload = createEnvelope();
-//		Options options = new Options();
-//		options.setTo(targetEPR);
-//
-//		options.setProperty(Constants.Configuration.MESSAGE_TYPE,
-//				"application/json");
-//		options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-////		options.setTimeOutInMilliSeconds(1000);
-//		
-//		ServiceClient sender = new ServiceClient(configurationContext, null);
-//		options.setAction(null);
-//		sender.setOptions(options);
-//		options.setTo(targetEPR);
-//		OMElement result = sender.sendReceive(payload);
-//		OMElement ele = (OMElement) result.getFirstOMChild();
-//		compareWithCreatedOMText(ele.getText());
-	}
+    protected void tearDown() throws Exception {
+        server.stop();
+    }
 
-	protected void compareWithCreatedOMText(String response) {
-		TestCase.assertEquals(response, expectedString);
-	}
+    protected OMElement createEnvelope() throws Exception {
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMNamespace omNs = fac.createOMNamespace("", "");
+        OMElement rpcWrapEle = fac.createOMElement("echoOM", omNs);
+        OMElement data = fac.createOMElement("data", omNs);
+        OMElement data1 = fac.createOMElement("data", omNs);
+        expectedString = "my json string";
+        String expectedString1 = "my second json string";
+        data.setText(expectedString);
+        data1.setText(expectedString1);
+        rpcWrapEle.addChild(data);
+        rpcWrapEle.addChild(data1);
+        return rpcWrapEle;
+    }
+
+    public void testEchoOMWithJSON() throws Exception {
+        OMElement payload = createEnvelope();
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setProperty(Constants.Configuration.MESSAGE_TYPE, getMessageType());
+        options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+
+        ServiceClient sender = new ServiceClient(configurationContext, null);
+        options.setAction(null);
+        sender.setOptions(options);
+        options.setTo(targetEPR);
+        OMElement result = sender.sendReceive(payload);
+        OMElement ele = (OMElement) result.getFirstOMChild();
+        compareWithCreatedOMText(ele.getText());
+    }
+
+    protected String getMessageType() {
+        return "application/json";
+    }
+
+    protected void compareWithCreatedOMText(String response) {
+        TestCase.assertEquals(response, expectedString);
+    }
 
 }

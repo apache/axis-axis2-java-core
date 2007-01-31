@@ -176,7 +176,7 @@ public class SOAPBodyTest extends TestCase {
     }
 
     //TODO : fix
-    public void _testExtractContentAsDocument(){
+    public void testExtractContentAsDocument(){
     	try
     	{
     		MessageFactory fact = MessageFactory.newInstance();
@@ -208,8 +208,6 @@ public class SOAPBodyTest extends TestCase {
         }
     }
 
-    //TODO : check with azeez
-    //sumedha
     /*
      * For SOAP 1.1 message 
      */

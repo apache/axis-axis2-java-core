@@ -48,7 +48,6 @@ public class AddressingSubmissionInHandler extends AddressingInHandler {
 
     protected void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
         if (!alreadyFoundAddrHeader.contains(WSA_TO)) {
-            // Should write a new SubmissionFaults class but for the moment use the FinalFaults
             AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_TO);
         }
         

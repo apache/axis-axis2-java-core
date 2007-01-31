@@ -122,6 +122,41 @@ public interface DocLitWrap {
         Holder<HeaderPart0> header0,
         @WebParam(name = "headerPart1", targetNamespace = "http://wrap.sample.test.org", header = true, partName = "header1")
         HeaderPart1 header1);
+    
+    
+    /**
+     * The SOAPBinding for this method will default to wrapped.  Yes Wrapped !
+     * However the parameter is a header parameter...which violates wrapped rules.
+     * Unfortunately WSGEN can produce this kind of situation...thus we need to 
+     * handle it
+     * @param headerValue
+     * @return
+     *     returns String
+     */
+    @WebMethod(action = "http://addheaders.sample.test.org/echoStringWSGEN1")
+    @RequestWrapper(localName = "echoStringWSGEN1", targetNamespace = "http://wrap.sample.test.org", className = "org.test.sample.wrap.EchoStringWSGEN1")
+    @ResponseWrapper(localName = "echoStringWSGEN1Response", targetNamespace = "http://wrap.sample.test.org", className = "org.test.sample.wrap.EchoStringWSGEN1Response")
+    public String echoStringWSGEN1(
+        @WebParam(name = "headerValue", targetNamespace = "http://wrap.sample.test.org", header = true)
+        String headerValue
+    );
+    
+    /**
+     * The same as echoStringWSGEN1 except that the return String is in the header
+     * @param data
+     * @return
+     *     returns String
+     */
+    
+    @WebMethod(action = "http://addheaders.sample.test.org/echoStringWSGEN2")
+    @RequestWrapper(localName = "echoStringWSGEN2", targetNamespace = "http://wrap.sample.test.org", className = "org.test.sample.wrap.EchoStringWSGEN2")
+    @ResponseWrapper(localName = "echoStringWSGEN2Response", targetNamespace = "http://wrap.sample.test.org", className = "org.test.sample.wrap.EchoStringWSGEN2Response")
+    @WebResult(name = "headerValue", targetNamespace = "http://wrap.sample.test.org", header = true)
+    public String echoStringWSGEN2(
+        @WebParam(name = "data", targetNamespace = "")
+        String data
+    );
+    
 
 
 }

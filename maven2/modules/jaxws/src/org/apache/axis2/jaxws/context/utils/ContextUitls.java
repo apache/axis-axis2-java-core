@@ -18,6 +18,9 @@
  */
 package org.apache.axis2.jaxws.context.utils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Map;
 
 import javax.xml.ws.handler.MessageContext.Scope;
@@ -29,8 +32,11 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class ContextUitls {
+    private static final Log log = LogFactory.getLog(ContextUitls.class);
 
     /**
      * Adds the appropriate properties to the MessageContext that the user will see
@@ -48,9 +54,17 @@ public class ContextUitls {
         
         // Set the WSDL properties
 		ServiceDescription sd = jaxwsMessageContext.getServiceDescription();
-		WSDLWrapper wsdlWrapper = ((ServiceDescriptionWSDL) sd).getWSDLWrapper();
-		if (wsdlWrapper!=null){
-		    soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlWrapper.getDefinition());
+		URL wsdlLocation = ((ServiceDescriptionWSDL) sd).getWSDLLocation();
+		if (wsdlLocation != null && !"".equals(wsdlLocation)){
+            URI wsdlLocationURI = null;
+            try {
+                wsdlLocationURI = wsdlLocation.toURI();
+            }
+            catch (URISyntaxException ex) {
+                // TODO: NLS/RAS
+                log.warn("Unable to convert WSDL location URL to URI.  URL: " + wsdlLocation.toString() + "; Service: " + sd.getServiceQName() , ex);
+            }
+		    soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlLocationURI);
 			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, Scope.APPLICATION);
         }
         
@@ -94,7 +108,10 @@ public class ContextUitls {
 		soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, null);
 		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, Scope.APPLICATION);
 		   
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS, null);
-		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS, Scope.APPLICATION);
+		soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_INBOUND, null);
+		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_INBOUND, Scope.APPLICATION);
+
+        soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_OUTBOUND, null);
+        soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_OUTBOUND, Scope.APPLICATION);
 	}
 }

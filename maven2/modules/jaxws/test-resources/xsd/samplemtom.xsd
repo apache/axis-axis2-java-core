@@ -5,8 +5,11 @@
     xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
     xmlns:tns="urn://mtom.test.org"
     targetNamespace="urn://mtom.test.org">
+    <!-- Use local file for speed -->
+    <!-- <xs:import namespace="http://www.w3.org/2005/05/xmlmime"
+               schemaLocation="http://www.w3.org/2005/05/xmlmime"/>-->
     <xs:import namespace="http://www.w3.org/2005/05/xmlmime"
-               schemaLocation="http://www.w3.org/2005/05/xmlmime"/>
+               schemaLocation="xmlmime.xsd"/>
     <xs:complexType name="ImageDepot">
        <xs:sequence>
            <xs:element name="imageData" 

@@ -15,23 +15,13 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.impl.llom.OMTextImpl;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.OperationClient;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.saaj.util.IDGenerator;
-import org.apache.axis2.saaj.util.SAAJUtil;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -45,11 +35,25 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+
+import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.impl.llom.OMTextImpl;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.saaj.util.IDGenerator;
+import org.apache.axis2.saaj.util.SAAJUtil;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
@@ -368,6 +372,36 @@ public class SOAPConnectionImpl extends SOAPConnection {
         return null;
     }
 
+    /**
+     * overrided SOAPConnection's get() method 
+     */
+	
+	public SOAPMessage get(Object to) throws SOAPException {
+    	URL url = null;
+    	try 
+    	{
+    		url = (to instanceof URL) ? (URL) to : new URL(to.toString());
+    		if(url != null){
+    			InputStream in = url.openStream();
+    			//TODO : setting null for mime headers
+    			// close the connection??
+    			SOAPMessage soapMessage = new SOAPMessageImpl(in,null);
+    			return soapMessage;
+    		}
+    		return null;
+    	}catch (MalformedURLException e) {
+    		throw new SOAPException(e);
+    	}catch (IOException e) {
+    		throw new SOAPException(e);
+    	}catch (OMException e){
+    		throw new SOAPException(e);
+    	}
+    	
+	}
+
+    
+
+    
     /* private void printOMSOAPEnvelope(final org.apache.axiom.soap.SOAPEnvelope omSOAPEnv) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {

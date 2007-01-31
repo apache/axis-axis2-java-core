@@ -17,27 +17,25 @@
 
 package org.apache.axis2.context;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.util.ObjectStateUtils;
-import org.apache.axis2.util.MetaDataEntry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.util.MetaDataEntry;
+import org.apache.axis2.util.ObjectStateUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * An OperationContext represents a running "instance" of an operation, which is
@@ -105,11 +103,6 @@ public class OperationContext extends AbstractContext implements Externalizable 
      * the set of message contexts associated with this operation
      */
     private transient HashMap messageContexts;
-
-    // this is the global MessageID -> OperationContext map which is stored in
-    // the EngineContext. We're caching it here for faster access.
-    private transient Map operationContextMap;
-
 
     //----------------------------------------------------------------
     // MetaData for data to be restored in activate after readExternal
@@ -203,15 +196,6 @@ public class OperationContext extends AbstractContext implements Externalizable 
         super(serviceContext);
         this.messageContexts = new HashMap();
         this.axisOperation = axisOperation;
-
-        ServiceContext serv = getServiceContext();
-
-        if (serv != null)
-        {
-            this.operationContextMap =
-                    serv.getConfigurationContext()
-                            .getOperationContextMap();
-        }
     }
 
     /**
@@ -241,17 +225,10 @@ public class OperationContext extends AbstractContext implements Externalizable 
      * being complete due to the optional nature of the MEP.
      */
     public void cleanup() {
-        if (key != null) {
-            if (operationContextMap == null) {
-                ServiceContext serv = getServiceContext();
+        ServiceContext serv = getServiceContext();
 
-                if (serv != null) {
-                    this.operationContextMap =
-                            serv.getConfigurationContext()
-                                    .getOperationContextMap();
-                }
-            }
-            operationContextMap.remove(key);
+        if (serv != null) {
+            serv.getConfigurationContext().unregisterOperationContext(key);
         }
     }
 
@@ -325,18 +302,6 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
     public void setComplete(boolean complete) {
         isComplete = complete;
-    }
-
-    public void setParent(AbstractContext context) {
-        super.setParent(context);
-
-        ServiceContext serv = getServiceContext();
-
-        if (serv != null) {
-            this.operationContextMap =
-                    serv.getConfigurationContext()
-                            .getOperationContextMap();
-        }
     }
 
     public void setKey(String key) {
@@ -695,14 +660,6 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         metaMessageContextMap = ObjectStateUtils.readHashMap(in, "OperationContext.metaMessageContextMap metadata table");
 
-
-        //---------------------------------------------------------
-        // other
-        //---------------------------------------------------------
-
-        operationContextMap = null;  //need to reseed from config context
-
-
         //---------------------------------------------------------
         // done
         //---------------------------------------------------------
@@ -850,30 +807,19 @@ public class OperationContext extends AbstractContext implements Externalizable 
             activeCC = cc;
         }
 
-        this.operationContextMap = activeCC.getOperationContextMap(); 
-
-        if ((this.operationContextMap != null) && (key != null))
-        {
-            // is the current key already in the list?
-            if (this.operationContextMap.containsKey(key) == false)
-            {
-                // make sure this OperationContext object is registered in the 
-                // list maintained by the ConfigurationContext object
-                activeCC.registerOperationContext(key, this);
-            }
-            else
-            {
+        if(key!=null){
+            // make sure this OperationContext object is registered in the 
+            // list maintained by the ConfigurationContext object
+            boolean registrationSuceeded = activeCC.registerOperationContext(key, this);
+            if(!registrationSuceeded){
                 // trace point
                 if (log.isTraceEnabled())
                 {
                     log.trace(myClassName+":activate():  OperationContext key ["+key+"] already exists in ConfigurationContext map.  This OperationContext ["+this.toString()+"] was not added to the table.");
                 }
-                //System.out.println(myClassName+":activate():  OperationContext key ["+key+"] already exists in ConfigurationContext map.");
             }
-
         }
-
-
+        
         //-------------------------------------------------------
         // update the modified entries in the messageContexts table
         //-------------------------------------------------------

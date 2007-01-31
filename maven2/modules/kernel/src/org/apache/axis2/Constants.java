@@ -224,13 +224,20 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String ADDRESSING_ACTION = "WS-Addressing:Action";
     public static final String HTTP_FRONTEND_HOST_URL = "httpFrontendHostUrl";
     public static final String DEFAULT_REST_PATH = "rest";
-    
+    public static final String DEFAULT_SERVICES_PATH = "services";
+
     /**
      * Field Builder Selector
      */
     public static final String BUILDER_SELECTOR = "builderselector";
 
-
+    /**
+     * Property name for inbound fault processor to set a fault on the message
+     * context to be thrown by the client code in favour of a simple translation
+     * from SOAPFault to AxisFault 
+     */
+    public static final String INBOUND_FAULT_OVERRIDE = "inboundFaultOverride";
+    
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_REST_THROUGH_GET = "restThroughGet";
@@ -264,11 +271,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
         public static final String DRILL_DOWN_TO_ROOT_CAUSE_FOR_FAULT_REASON = "drillDownToRootCauseForFaultReason";
 
-        public static final String ENABLE_REST_IN_AXIS2_MAIN_SERVLET = "enableRESTInAxis2MainServlet";
-
         public static final String DISABLE_REST = "disableREST";
-
-        public static final String DISABLE_SEPARATE_ENDPOINT_FOR_REST = "disableSeparateEndpointForREST";
 
         // this will contain the keys of all the properties that will be in the message context
         public static final String TRANSPORT_URL = "TransportURL";

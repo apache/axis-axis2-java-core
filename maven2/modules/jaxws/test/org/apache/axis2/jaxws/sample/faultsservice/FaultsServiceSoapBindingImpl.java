@@ -15,11 +15,14 @@ package org.apache.axis2.jaxws.sample.faultsservice;
 
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
+import javax.xml.soap.Detail;
+import javax.xml.soap.DetailEntry;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.Holder;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
@@ -108,8 +111,26 @@ System.out.println("\nIn getQuote(): " + tickerSymbol + "\n");
                 soapFault.setFaultActor("actor");
                 throw new SOAPFaultException(soapFault);
             } catch (SOAPException se) {}
+        } else if (b.equals("SOAPFaultException2")) {
+            try {
+                SOAPFault soapFault = createSOAPFault();
+                soapFault.setFaultString("hello world2");
+                QName faultCode = new QName("urn://sample", "faultCode2");
+                soapFault.setFaultCode(faultCode);
+                soapFault.setFaultActor("actor2");
+                Detail detail = soapFault.addDetail();
+                DetailEntry de = detail.addDetailEntry(new QName("urn://sample", "detailEntry"));
+                de.setValue("Texas");
+                throw new SOAPFaultException(soapFault);
+            } catch (SOAPException se) {}
         } else if (b.equals("NPE")) {
             throw new NullPointerException();
+        } else if (b.equals("NPE2")) {
+            // Throw NPE with a message
+            throw new NullPointerException("Null Pointer Exception occurred");
+        } else if (b.equals("WSE")) {
+            WebServiceException wsf = new WebServiceException("This is a WebServiceException");
+            throw wsf;
         }
         return 0;
     }

@@ -34,14 +34,14 @@ public class RelatesToBasedOperationDispatcher extends AbstractOperationDispatch
     public AxisOperation findOperation(AxisService service, MessageContext messageContext) throws AxisFault {
         RelatesTo relatesTo = messageContext.getRelatesTo();
         if(isDebugEnabled){
-            log.debug("Checking for OperationContext using RelatesTo : " + relatesTo);
+            log.debug(messageContext.getLogIDString()+" Checking for OperationContext using RelatesTo : " + relatesTo);
         }
         if((relatesTo!=null) && (relatesTo.getValue()!=null)){
             ConfigurationContext configurationContext = messageContext.getConfigurationContext();
             OperationContext operationContext = configurationContext.getOperationContext(relatesTo.getValue());
             if(operationContext != null){
                 if(isDebugEnabled){
-                    log.debug("Found OperationContext: " + operationContext);
+                    log.debug(messageContext.getLogIDString()+" Found OperationContext: " + operationContext);
                 }
                 return operationContext.getAxisOperation();
             }

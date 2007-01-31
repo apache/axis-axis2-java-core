@@ -32,7 +32,10 @@ public class FaultyWebServiceTests extends TestCase {
 			
 		}catch(FaultyWebServiceFault_Exception e){
 			exception = e;
-		}
+		}catch(Exception e) {
+           e.printStackTrace();
+           fail(e.toString());
+        }
 		
 		System.out.println("----------------------------------");
 		

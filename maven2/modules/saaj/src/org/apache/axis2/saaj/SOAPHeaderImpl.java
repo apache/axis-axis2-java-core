@@ -18,22 +18,10 @@ package org.apache.axis2.saaj;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMNode;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.SOAPHeaderBlock;
-import org.apache.axiom.om.impl.dom.ElementImpl;
-import org.apache.axiom.om.impl.dom.NamespaceImpl;
-import org.apache.axiom.om.impl.dom.NodeImpl;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
-import org.apache.axiom.soap.impl.dom.soap12.SOAP12HeaderBlockImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 import javax.xml.soap.Node;
-import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
@@ -48,7 +36,9 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12HeaderBlockImpl;
+import org.apache.axis2.namespace.Constants;
 
 public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 
@@ -148,16 +138,14 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
      * @throws SOAPException if a SOAP error occurs
      */
     public SOAPHeaderElement addHeaderElement(Name name) throws SOAPException {
+    	if(name.getURI() == null 
+    			|| name.getURI().trim().length() == 0
+    			|| name.getPrefix() == null
+    			|| name.getPrefix().trim().length() == 0){
+    		throw new SOAPException("SOAP1.1 and SOAP1.2 requires all HeaderElements to have " +
+    				"qualified namespace.");
+    	}
         OMNamespace ns = new NamespaceImpl(name.getURI(), name.getPrefix());
-//        SOAPHeaderBlock headerBlock = null;
-//        if(SOAPConstants.SOAP_1_1_PROTOCOL.equals(getSOAPVersion(this.element))){
-//        	headerBlock = new SOAP11HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader,
-//        			(SOAPFactory)this.element.getOMFactory());
-//        }
-//        else if(SOAPConstants.SOAP_1_2_PROTOCOL.equals(getSOAPVersion(this.element))){
-//        	headerBlock = new SOAP12HeaderBlockImpl(name.getLocalName(), ns, omSOAPHeader,
-//        			(SOAPFactory)this.element.getOMFactory());
-//        }
 
         SOAPHeaderBlock headerBlock = null;
         if (this.element.getOMFactory() instanceof SOAP11Factory) {
@@ -286,24 +274,103 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
         return (SOAPHeaderElement) addChildElement(qname.getLocalPart(), qname.getPrefix(), qname.getNamespaceURI());
     }
 
+    
+    /**
+     * Creates a new NotUnderstood SOAPHeaderElement object initialized with the specified name
+     * and adds it to this SOAPHeader object. This operation is supported only by SOAP 1.2
+     * 
+     * @param name - a QName object with the name of the SOAPHeaderElement object that was not
+     * understood.
+     * @return the new SOAPHeaderElement object that was inserted into this SOAPHeader object
+     * @throws SOAPException- if a SOAP error occurs.
+     *         java.lang.UnsupportedOperationException - if this is a SOAP 1.1 Header.
+     */
+    
     public SOAPHeaderElement addNotUnderstoodHeaderElement(QName qname) throws SOAPException {
-        return null;  //TODO - Not yet implemented
+        SOAPHeaderBlock soapHeaderBlock = null;
+        OMNamespace ns = new NamespaceImpl(qname.getNamespaceURI(), qname.getPrefix());
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        	throw new UnsupportedOperationException();
+        } else {
+        	soapHeaderBlock = this.omSOAPHeader.addHeaderBlock(
+        			Constants.ELEM_NOTUNDERSTOOD, this.element.getNamespace());
+        	soapHeaderBlock.addAttribute(qname.getLocalPart(), qname.getPrefix(),ns);
+        }
+    	SOAPHeaderElementImpl soapHeaderElementImpl = new SOAPHeaderElementImpl(soapHeaderBlock);
+    	return soapHeaderElementImpl;
     }
 
+    /**
+     * Creates a new Upgrade SOAPHeaderElement object initialized with the specified List of
+     * supported SOAP URIs and adds it to this SOAPHeader object. This operation is supported on both
+     * SOAP 1.1 and SOAP 1.2 header.
+     * 
+     * @param supportedSOAPURIs - an Iterator object with the URIs of SOAP versions supported.
+     * @return the new SOAPHeaderElement object that was inserted into this SOAPHeader object
+     * @throws SOAPException - if a SOAP error occurs.
+     */
     public SOAPHeaderElement addUpgradeHeaderElement(Iterator iterator) throws SOAPException {
-        return null;  //TODO - Not yet implemented
+        SOAPHeaderBlock upgrade = this.omSOAPHeader.addHeaderBlock(
+    			Constants.ELEM_UPGRADE, this.element.getNamespace());
+    	
+        int index = 0;
+        String prefix = "ns";
+        while (iterator.hasNext()) {
+        	index++;
+			String supported = (String) iterator.next();
+
+			OMNamespace namespace = new NamespaceImpl(supported,prefix+index);
+			
+	        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+				SOAP11HeaderBlockImpl supportedEnvelop = 
+					new SOAP11HeaderBlockImpl(Constants.ELEM_SUPPORTEDENVELOPE,
+							namespace,(SOAPFactory) this.element.getOMFactory());
+				supportedEnvelop.addAttribute(Constants.ATTR_QNAME, prefix+index+":"+Constants.ELEM_ENVELOPE, null);
+		    	upgrade.addChild(supportedEnvelop);
+	        }
+	        else 
+	        {
+				SOAP12HeaderBlockImpl supportedEnvelop = 
+					new SOAP12HeaderBlockImpl(Constants.ELEM_SUPPORTEDENVELOPE,
+							namespace,(SOAPFactory) this.element.getOMFactory());
+				supportedEnvelop.addAttribute(Constants.ATTR_QNAME, prefix+index+":"+Constants.ELEM_ENVELOPE, null);
+		    	upgrade.addChild(supportedEnvelop);
+	        }
+		}
+    	SOAPHeaderElementImpl soapHeaderElementImpl = new SOAPHeaderElementImpl(upgrade);
+    	return soapHeaderElementImpl;
     }
 
     public SOAPHeaderElement addUpgradeHeaderElement(String[] as) throws SOAPException {
-        return null;  //TODO - Not yet implemented
+    	ArrayList supportedEnvelops = new ArrayList();
+    	for (int a = 0; a < as.length; a++) {
+			String supported = (String)as[a];
+			supportedEnvelops.add(supported);
+		}
+    	if(supportedEnvelops.size()> 0 ){
+    		return addUpgradeHeaderElement(supportedEnvelops.iterator());
+    	}
+    	return null;
     }
 
     public SOAPHeaderElement addUpgradeHeaderElement(String s) throws SOAPException {
-        return null;  //TODO - Not yet implemented
+    	if(s == null && s.trim().length() > 0){
+        	return null;    		
+    	}
+    	ArrayList supportedEnvelops = new ArrayList();
+    	supportedEnvelops.add(s);
+    	return addUpgradeHeaderElement(supportedEnvelops.iterator());
     }
 
     public SOAPElement addTextNode(String text) throws SOAPException {
-        throw new UnsupportedOperationException("Cannot add text node to SOAPHeader");
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        	return super.addTextNode(text);
+        }
+        else if(this.element.getOMFactory() instanceof SOAP12Factory) {
+            throw new SOAPException("Cannot add text node to SOAPHeader");
+        } else {
+        	return null;
+        }
     }
 
     public Iterator getChildElements(Name name) {

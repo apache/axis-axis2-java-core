@@ -35,8 +35,9 @@ import java.io.OutputStream;
 import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.io.ByteArrayBuffer;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.util.ByteArrayBuffer;
 
 public class OutputBuffer implements OutTransportInfo, HttpEntity {
 
@@ -67,7 +68,7 @@ public class OutputBuffer implements OutTransportInfo, HttpEntity {
     }
 
     public Header getContentType() {
-        return new Header(HTTP.CONTENT_TYPE, this.contentType);
+        return new BasicHeader(HTTP.CONTENT_TYPE, this.contentType);
     }
 
     public void consumeContent() throws IOException {

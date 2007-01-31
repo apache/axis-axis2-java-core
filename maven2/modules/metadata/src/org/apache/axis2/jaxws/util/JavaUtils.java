@@ -193,20 +193,28 @@ public class JavaUtils extends org.apache.axis2.util.JavaUtils {
     }
 
     /**
-     * Get a string containing the stack of the specified exception
+     * Get a string containing the stack of the current location
      * @return String
      */
     public static String stackToString(){
-        Exception e = new RuntimeException();
+        return stackToString(new RuntimeException());
+      }
+    
+    /**
+     * Get a string containing the stack of the specified exception
+     * @param e
+     * @return
+     */
+    public static String stackToString(Throwable e) {
         java.io.StringWriter sw= new java.io.StringWriter(); 
         java.io.BufferedWriter bw = new java.io.BufferedWriter(sw);
         java.io.PrintWriter pw= new java.io.PrintWriter(bw); 
         e.printStackTrace(pw);
         pw.close();
         String text = sw.getBuffer().toString();
-        // Jump past the "RuntimeException"
+        // Jump past the throwable
         text = text.substring(text.indexOf("at"));
         text = replace(text, "at ", "DEBUG_FRAME = ");
         return text;
-      }
+    }
 }

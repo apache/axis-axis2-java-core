@@ -30,6 +30,7 @@ import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPFault;
 import javax.xml.stream.XMLStreamException;
@@ -46,7 +47,6 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
@@ -56,6 +56,7 @@ import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.axis2.jaxws.util.ConvertUtils;
+import org.apache.axis2.jaxws.util.SAAJFactory;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -144,7 +145,7 @@ public class MethodMarshallerUtils  {
             Message message, 
             Set<String> packages, 
             boolean isInput, 
-            boolean usePartName) throws MessageException, XMLStreamException {
+            boolean usePartName) throws XMLStreamException {
         
         List<PDElement> pvList = new ArrayList<PDElement>();
             
@@ -313,14 +314,14 @@ public class MethodMarshallerUtils  {
      * @param isRPC 
      * @throws MessageException
      */
-    static void toMessage(List<PDElement> pvList, Message message, Set<String> packages, boolean isRPC) throws MessageException {
+    static void toMessage(List<PDElement> pvList, Message message, Set<String> packages, boolean isRPC) throws WebServiceException {
         
         int index = message.getNumBodyBlocks();
         for (int i=0; i<pvList.size(); i++) {
             PDElement pv = pvList.get(i);
             
             // Create the JAXBBlockContext
-            // RPC uses type marshalling, so recored the rpcType
+            // RPC uses type marshalling, so use the rpcType
             JAXBBlockContext context = new JAXBBlockContext(packages);
             if (isRPC) {
                 context.setRPCType(pv.getParam().getParameterActualType());
@@ -357,6 +358,7 @@ public class MethodMarshallerUtils  {
      * @param packages
      * @param message
      * @param isRPC
+     * @param isHeader
      * @throws MessageException
      */
     static void toMessage(Object returnValue, 
@@ -365,8 +367,9 @@ public class MethodMarshallerUtils  {
             String returnLocalPart, 
             Set<String> packages, 
             Message message, 
-            boolean isRPC) 
-            throws MessageException {
+            boolean isRPC,
+            boolean isHeader)
+            throws WebServiceException {
         
         // Create the JAXBBlockContext
         // RPC uses type marshalling, so recored the rpcType
@@ -385,20 +388,33 @@ public class MethodMarshallerUtils  {
         Block block = factory.createFrom(returnValue, 
                 context, 
                 null);  // The factory will get the qname from the value
-        message.setBodyBlock(0, block);
+        
+        if (isHeader) {
+            message.setHeaderBlock(returnNS, returnLocalPart, block);
+        } else {
+            message.setBodyBlock(0, block);
+        }
     }
     
     /**
      * Unmarshal the return object from the message
      * @param packages
      * @param message
-     * @param rpcType RPC Declared Type class (only used for RPC processing
+     * @param rpcType RPC Declared Type class (only used for RPC processing)
+     * @param isHeader
+     * @param headerNS (only needed if isHeader)
+     * @param headerLocalPart (only needed if isHeader)
      * @return type enabled object
-     * @throws MessageException
+     * @throws WebService
      * @throws XMLStreamException
      */
-    static Object getReturnValue(Set<String> packages, Message message, Class rpcType) 
-        throws MessageException, XMLStreamException {
+    static Object getReturnValue(Set<String> packages, 
+            Message message, 
+            Class rpcType,
+            boolean isHeader,
+            String headerNS, 
+            String headerLocalPart)
+        throws WebServiceException, XMLStreamException {
         
         
         // The return object is the first block in the body
@@ -406,7 +422,12 @@ public class MethodMarshallerUtils  {
         if (rpcType != null) {
             context.setRPCType(rpcType);  // RPC is type-based, so the unmarshalled type must be provided
         }
-        Block block = message.getBodyBlock(0, context, factory);
+        Block block = null;
+        if (isHeader) {
+            block = message.getHeaderBlock(headerNS, headerLocalPart, context, factory);
+        } else {
+            block = message.getBodyBlock(0, context, factory);
+        }
         
         // Get the business object.  We want to return the object that represents the type.
         Object returnValue = block.getBusinessObject(true);
@@ -423,14 +444,12 @@ public class MethodMarshallerUtils  {
      * @param packages Packages needed to marshal the object
      * @param message Message
      * @param isRPC
-     * @throws MessageException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
-    static void marshalFaultResponse(Throwable throwable, OperationDescription operationDesc,  Set<String> packages, Message message, boolean isRPC)
-     throws MessageException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        
+    static void marshalFaultResponse(Throwable throwable, 
+            OperationDescription operationDesc,  
+            Set<String> packages, 
+            Message message, 
+            boolean isRPC) {
         // Get the root cause of the throwable object
         Throwable t = ClassUtils.getRootCause(throwable);
         if (log.isDebugEnabled()) {
@@ -438,80 +457,172 @@ public class MethodMarshallerUtils  {
             log.debug("  rootCause =" + t.getClass().getName());
             log.debug("  exception=" + t.toString());
         }
-
-        XMLFault xmlfault = null;
-      
-        // There are 5 different categories of exceptions.  Each category has a little different marshaling code.
-        // A) Service Exception that matches the JAX-WS specification (chapter 2.5 of the spec)
-        // B) Service Exception that matches the JAX-WS "legacy" exception (chapter 3.7 of the spec)
-        // C) SOAPFaultException
-        // D) WebServiceException
-        // E) Other runtime exceptions (i.e. NullPointerException)
         
-        // Get the FaultDescriptor matching this Exception.
-        // If FaultDescriptor is found, this is a JAX-B Service Exception.
-        // If not found, this is a System Exception
-        FaultDescription fd = operationDesc.resolveFaultByExceptionName(t.getClass().getName());
-
-        if (t instanceof SOAPFaultException) {
-            // Category C: SOAPFaultException 
-            // Construct the xmlFault from the SOAPFaultException's Fault
-            SOAPFaultException sfe = (SOAPFaultException) t;
-            SOAPFault soapFault = sfe.getFault();
-            if (soapFault == null) {
-                // No fault ?  I will treat this like category E
-                xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
-                        new XMLFaultReason(t.toString()));  // Assumes text is the language supported by the current Locale
-            } else {
-                xmlfault = XMLFaultUtils.createXMLFault(soapFault);
+        XMLFault xmlfault = null;
+        
+        try {
+             
+            // There are 5 different categories of exceptions.  Each category has a little different marshaling code.
+            // A) Service Exception that matches the JAX-WS specification (chapter 2.5 of the spec)
+            // B) Service Exception that matches the JAX-WS "legacy" exception (chapter 3.7 of the spec)
+            // C) SOAPFaultException
+            // D) WebServiceException
+            // E) Other runtime exceptions (i.e. NullPointerException)
+            
+            // Get the FaultDescriptor matching this Exception.
+            // If FaultDescriptor is found, this is a JAX-B Service Exception.
+            // If not found, this is a System Exception
+            FaultDescription fd = operationDesc.resolveFaultByExceptionName(t.getClass().getCanonicalName());
+            
+            if (fd != null) {
+                if (log.isErrorEnabled()) {
+                    log.debug("Marshal as a Service Exception");
+                }
+                // The exception is a Service Exception.  It may be (A) JAX-WS compliant exception or (B) JAX-WS legacy exception
+                
+                // The faultBeanObject is a JAXB object that represents the data of the exception.  It is marshalled in the detail
+                // section of the soap fault.  The faultBeanObject is obtained direction from the exception (A) or via 
+                // the legacy exception rules (B).
+                Object faultBeanObject = null;
+                
+                if (LegacyExceptionUtil.isLegacyException(t.getClass())) {
+                    // Legacy Exception case
+                    faultBeanObject = LegacyExceptionUtil.createFaultBean(t, fd);
+                } else {
+                    // Normal case
+                    // Get the fault bean object.  
+                    Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
+                    faultBeanObject = getFaultInfo.invoke(t, null);
+                }
+                
+                if (log.isErrorEnabled()) {
+                    log.debug("The faultBean type is" + faultBeanObject.getClass().getName());
+                }
+                // Make sure the faultBeanObject can be marshalled as an element
+                if (!XMLRootElementUtil.isElementEnabled(faultBeanObject.getClass())) {
+                    faultBeanObject = XMLRootElementUtil.getElementEnabledObject(fd.getTargetNamespace(), fd.getName(), 
+                            faultBeanObject.getClass(), faultBeanObject);
+                }
+                
+                
+                // Create the JAXBBlockContext
+                // RPC uses type marshalling, so recored the rpcType
+                JAXBBlockContext context = new JAXBBlockContext(packages);
+                if (isRPC) {
+                    context.setRPCType(faultBeanObject.getClass());
+                }
+                
+                // Create a detailblock representing the faultBeanObject
+                Block[] detailBlocks = new Block[1];
+                detailBlocks[0] = factory.createFrom(faultBeanObject,context,null);
+                
+                if (log.isErrorEnabled()) {
+                    log.debug("Create the xmlFault for the Service Exception");
+                }
+                // Get the fault text using algorithm defined in JAX-WS 10.2.2.3
+                String text = t.getMessage();
+                if (text == null || text.length() == 0) {
+                    text = t.toString();
+                }
+                // Now make a XMLFault containing the detailblock
+                xmlfault = new XMLFault(null, new XMLFaultReason(text), detailBlocks);
+            }  else {
+                xmlfault = createXMLFaultFromSystemException(t);
             }
-            
-        } else if (fd != null) {
-            // The exception is a Service Exception.  It may be (A) JAX-WS compliant exception or (B) JAX-WS legacy exception
-            
-            // TODO Need to add detection and code to differentiate between (A) and (B)
-            
-            // Get the fault bean object.  Make sure it can be rendered as an element
-            Method getFaultInfo = t.getClass().getMethod("getFaultInfo", null);
-            Object faultBeanObject = getFaultInfo.invoke(t, null);
-            if (!XMLRootElementUtil.isElementEnabled(faultBeanObject.getClass())) {
-                faultBeanObject = XMLRootElementUtil.getElementEnabledObject(fd.getTargetNamespace(), fd.getName(), 
-                        faultBeanObject.getClass(), faultBeanObject);
+        } catch (Throwable e) {
+            // If an exception occurs while demarshalling an exception, then rinse and repeat with a system exception
+            if (log.isDebugEnabled()) {
+                log.debug("An exception (" + e + ") occurred while marshalling exception (" + t + ")");
             }
-            
-            
-            // Create the JAXBBlockContext
-            // RPC uses type marshalling, so recored the rpcType
-            JAXBBlockContext context = new JAXBBlockContext(packages);
-            if (isRPC) {
-                context.setRPCType(faultBeanObject.getClass());
-            }
-            
-            // Create a detailblock representing the faultBeanObject
-            Block[] detailBlocks = new Block[1];
-            detailBlocks[0] = factory.createFrom(faultBeanObject,context,null);
-            
-            // Now make a XMLFault containing the detailblock
-            xmlfault = new XMLFault(null, new XMLFaultReason(t.getMessage()), detailBlocks);
-        } else if (t instanceof WebServiceException) {
-            // Category D: WebServiceException
-            // The reason is constructed with the getMessage of the exception.  
-            // There is no detail
-            WebServiceException wse = (WebServiceException) t;
-            xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
-                    new XMLFaultReason(wse.getMessage()));  // Assumes text is the language supported by the current Locale
-        } else {
-            // Category E: Other System Exception
-            // The reason is constructed with the toString of the exception.  
-            // This places the class name of the exception in the reason
-            // There is no detail.
-            xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
-                    new XMLFaultReason(t.toString()));  // Assumes text is the language supported by the current Locale
+            WebServiceException wse = ExceptionFactory.makeWebServiceException(e);
+            xmlfault = createXMLFaultFromSystemException(wse);
         }
+            
         // Add the fault to the message
         message.setXMLFault(xmlfault);
     }
     
+    /**
+     * This method is used by WebService Impl and Provider to create
+     * an XMLFault (for marshalling) from an exception that is a non-service exception
+     * @param t Throwable that represents a Service Exception
+     * @return XMLFault
+     */
+    public static XMLFault createXMLFaultFromSystemException(Throwable t) {
+        
+        try {
+            XMLFault xmlfault = null;
+            if (t instanceof SOAPFaultException) {
+                if (log.isErrorEnabled()) {
+                    log.debug("Marshal SOAPFaultException");
+                }
+                // Category C: SOAPFaultException 
+                // Construct the xmlFault from the SOAPFaultException's Fault
+                SOAPFaultException sfe = (SOAPFaultException) t;
+                SOAPFault soapFault = sfe.getFault();
+                if (soapFault == null) {
+                    // No fault ?  I will treat this like category E
+                    xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
+                            new XMLFaultReason(t.toString()));  // Assumes text is the language supported by the current Locale
+                } else {
+                    xmlfault = XMLFaultUtils.createXMLFault(soapFault);
+                }
+                
+            } else if (t instanceof WebServiceException) {
+                if (log.isErrorEnabled()) {
+                    log.debug("Marshal as a WebServiceException");
+                }
+                // Category D: WebServiceException
+                // The reason is constructed with the getMessage of the exception.  
+                // There is no detail
+                WebServiceException wse = (WebServiceException) t;
+                
+                // Get the fault text using algorithm defined in JAX-WS 10.2.2.3
+                String text = wse.getMessage();
+                if (text == null || text.length() == 0) {
+                    text = wse.toString();
+                }
+                xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
+                        new XMLFaultReason(text));  // Assumes text is the language supported by the current Locale
+            } else {
+                if (log.isErrorEnabled()) {
+                    log.debug("Marshal as a unchecked System Exception");
+                }
+                // Category E: Other System Exception
+                // The reason is constructed with the toString of the exception.  
+                // This places the class name of the exception in the reason
+                // There is no detail.
+                // Get the fault text using algorithm defined in JAX-WS 10.2.2.3
+                String text = t.getMessage();
+                if (text == null || text.length() == 0) {
+                    text = t.toString();
+                }
+                xmlfault = new XMLFault(null,       // Use the default XMLFaultCode
+                        new XMLFaultReason(text));  // Assumes text is the language supported by the current Locale
+            }
+            return xmlfault;
+        } catch (Throwable e) {
+            try {
+                // If an exception occurs while demarshalling an exception, then rinse and repeat with a webservice exception
+                if (log.isDebugEnabled()) {
+                    log.debug("An exception (" + e + ") occurred while marshalling exception (" + t + ")");
+                }
+                // Get the fault text using algorithm defined in JAX-WS 10.2.2.3
+                String text = e.getMessage();
+                if (text == null || text.length() == 0) {
+                    text = e.toString();
+                }
+                WebServiceException wse = ExceptionFactory.makeWebServiceException(e);
+                
+                return new XMLFault(null,       // Use the default XMLFaultCode
+                        new XMLFaultReason(text));  // Assumes text is the language supported by the current Locale
+            } catch (Exception e2) {
+                // Exception while creating Exception for Exception
+                throw ExceptionFactory.makeWebServiceException(e2);
+            }
+        }
+    }
+            
     /**
      * Unmarshal the service/system exception from a Message.
      * This is used by all of the marshallers
@@ -520,7 +631,7 @@ public class MethodMarshallerUtils  {
      * @param message
      * @param isRPC
      * @return Throwable
-     * @throws MessageException
+     * @throws WebServiceException
      * @throws ClassNotFoundException
      * @throws IllegalAccessException
      * @throws InstantiationException
@@ -529,7 +640,7 @@ public class MethodMarshallerUtils  {
      * @throws NoSuchMethodException
      */
     static Throwable demarshalFaultResponse(OperationDescription operationDesc, Set<String> packages,Message message, boolean isRPC) 
-        throws MessageException, ClassNotFoundException, IllegalAccessException,
+        throws WebServiceException, ClassNotFoundException, IllegalAccessException,
                InstantiationException, XMLStreamException, InvocationTargetException, NoSuchMethodException {
         
         Throwable exception = null;
@@ -537,14 +648,28 @@ public class MethodMarshallerUtils  {
         XMLFault xmlfault = message.getXMLFault();
         Block[] detailBlocks = xmlfault.getDetailBlocks();
         
+        // Sometimes Axis2 will flow a single detail element with the name "Exception".  
+        // "Exception" contains stack information.  This is a violation of the WSI specification; however
+        // we still need to work around it.
+        boolean isStack = false;
+        QName elementName = null;
+        if (detailBlocks !=null && detailBlocks.length == 1) {
+            elementName = detailBlocks[0].getQName();
+            isStack = (elementName.getNamespaceURI().length() == 0 && elementName.getLocalPart().equals("Exception"));
+        }
+        
         
         if ((operationDesc.getFaultDescriptions().length == 0) || 
+                isStack ||
                 (detailBlocks == null) || 
                 (detailBlocks.length > 1))  {
             // This is a system exception if the method does not throw a checked exception or if 
             // the detail block is missing or contains multiple items.
             exception = createSystemException(xmlfault, message);
-        } else {            
+        } else {        
+            if (log.isErrorEnabled()) {
+                log.debug("Ready to demarshal service exception.  The detail entry name is " + elementName);
+            }
             // Get the JAXB object from the block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
             
@@ -553,9 +678,6 @@ public class MethodMarshallerUtils  {
                 // Since RPC is type based, JAXB needs the declared type
                 // to unmarshal the object.  But we don't know the declared
                 // type without knowing the name of the type (sigh)
-                
-                // First get the QName...this might cause a parse
-                QName elementName = detailBlocks[0].getQName();
                 
                 // Now search the FaultDescriptors to find the right 
                 // declared type
@@ -574,7 +696,7 @@ public class MethodMarshallerUtils  {
             
             // TODO This code assumes that the block can be demarshalled as a 
             // known JAXB object.  But what if a detail is flowed that we don't know how to handle.
-            // for example, what if the detail is a stack trace.  To be on the safe side, we should
+            // To be on the safe side, we should
             // probably make a copy of the OMBlock and then throw create a SystemException if
             // with the original detail if JAXB unmarshalling fails.
             // (I agree that this would not be performant, but we are on an exception path)
@@ -593,23 +715,34 @@ public class MethodMarshallerUtils  {
                 faultBeanQName = XMLRootElementUtil.getXmlRootElementQName(faultBeanObject);
             }
             
+            if (log.isErrorEnabled()) {
+                log.debug("Searching for the matching FaultDescription");
+            }
             // Using the faultBeanQName, find the matching faultDescription 
             FaultDescription faultDesc = null;
             for(int i=0; i<operationDesc.getFaultDescriptions().length && faultDesc == null; i++) {
                 FaultDescription fd = operationDesc.getFaultDescriptions()[i];
                 QName tryQName = new QName(fd.getTargetNamespace(), fd.getName());
-                                
+                if (log.isErrorEnabled()) {
+                    log.debug("  FaultDescription qname is (" + tryQName + ") and demarshalled bean qname is (" + faultBeanQName + ")");
+                }
                 if (faultBeanQName == null || faultBeanQName.equals(tryQName)) {
                     faultDesc = fd;
                     
                 }
             }
             if (faultDesc == null) {
+                if (log.isErrorEnabled()) {
+                    log.debug("A FaultDescription was not found");
+                }
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("MethodMarshallerErr1", faultBeanObject.getClass().toString()));
             }
             
             // Construct the JAX-WS generated exception that holds the faultBeanObject
             Class exceptionClass = loadClass(faultDesc.getExceptionClassName());
+            if (log.isErrorEnabled()) {
+                log.debug("Found FaultDescription.  The exception name is " + exceptionClass.getName());
+            }
             Class faultBeanFormalClass = loadClass(faultDesc.getFaultBean());  // Note that faultBean may not be a bean, it could be a primitive     
             exception =createServiceException(xmlfault.getReason().getText(), exceptionClass, faultBeanObject, faultBeanFormalClass);
         }
@@ -682,15 +815,21 @@ public class MethodMarshallerUtils  {
      * @throws NoSuchMethodException
      */
     private static Exception createServiceException(String message, Class exceptionclass, Object bean, Class beanFormalType) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
-        // All webservice exception classes are required to have a constructor that takes a (String, bean) argument
-        // TODO necessary to be more careful here with instantiating, cassting, etc?
+        
         if (log.isDebugEnabled()) {
             log.debug("Constructing JAX-WS Exception:" + exceptionclass);
         }
-        Constructor constructor = exceptionclass.getConstructor(new Class[] { String.class, beanFormalType });
-        Object exception = constructor.newInstance(new Object[] { message, bean });
+        Exception exception = null;
+        if (LegacyExceptionUtil.isLegacyException(exceptionclass)) {
+            // Legacy Exception
+            exception = LegacyExceptionUtil.createFaultException(exceptionclass, bean);
+        } else {
+            // Normal case, use the contstructor to create the exception
+            Constructor constructor = exceptionclass.getConstructor(new Class[] { String.class, beanFormalType });
+            exception = (Exception) constructor.newInstance(new Object[] { message, bean });
+        }
 
-        return (Exception) exception;
+        return exception;
 
     }
     
@@ -703,16 +842,20 @@ public class MethodMarshallerUtils  {
         ProtocolException e = null;
         Protocol protocol = message.getProtocol();
         String text = xmlFault.getReason().getText();
+        
         if (protocol == Protocol.soap11 || protocol == Protocol.soap12) {
             // Throw a SOAPFaultException
             if (log.isDebugEnabled()) {
                 log.debug("Constructing SOAPFaultException for " + text);
             }
+            String protocolNS = (protocol == Protocol.soap11) ? 
+                    SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE : 
+                        SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE;
             try {
                 // The following set of instructions is used to avoid 
                 // some unimplemented methods in the Axis2 SAAJ implementation
-                SOAPEnvelope env = message.getAsSOAPEnvelope();
-                SOAPBody body = env.getBody();
+                javax.xml.soap.MessageFactory mf = SAAJFactory.createMessageFactory(protocolNS);
+                SOAPBody body = mf.createMessage().getSOAPBody();
                 SOAPFault soapFault = XMLFaultUtils.createSAAJFault(xmlFault, body);
                 e = new SOAPFaultException(soapFault);
             } catch (Exception ex) {

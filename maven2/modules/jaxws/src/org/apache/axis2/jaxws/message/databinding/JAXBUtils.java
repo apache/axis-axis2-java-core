@@ -41,9 +41,13 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.message.factory.ClassFinderFactory;
+import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.util.ClassUtils;
+import org.apache.axis2.jaxws.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 
 /**
  * JAXB Utilites to pool JAXBContext and related objects.
@@ -69,6 +73,14 @@ public class JAXBUtils {
     private static Map<JAXBContext,JAXBIntrospector> imap = 
         Collections.synchronizedMap(new WeakHashMap<JAXBContext, JAXBIntrospector>());
 	
+    // From Lizet:
+    //"If you really care about the performance, 
+    // and/or your application is going to read a lot of small documents, 
+    // then creating Unmarshaller could be relatively an expensive operation. 
+    // In that case, consider pooling Unmarshaller objects.
+    // Different threads may reuse one Unmarshaller instance, 
+    // as long as you don't use one instance from two threads at the same time. 
+
     private static boolean ENABLE_ADV_POOLING = false;
 	
 	/**
@@ -79,7 +91,12 @@ public class JAXBUtils {
 	 */
 	public static JAXBContext getJAXBContext(Set<String> contextPackages) throws JAXBException {
 		// JAXBContexts for the same class can be reused and are supposed to be thread-safe
-        
+        if(log.isDebugEnabled()){
+        	log.debug("Following packages are in this batch of getJAXBContext() :");
+        	for(String pkg:contextPackages){
+        		log.debug(pkg);
+        	}
+        }
 	    // The JAXBContexts are keyed by ClassLoader and the set of Strings
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         
@@ -123,7 +140,12 @@ public class JAXBUtils {
     private static JAXBContext createJAXBContext(Set<String> contextPackages, ClassLoader cl) throws JAXBException {
 
        JAXBContext context = null;
-       
+       if(log.isDebugEnabled()){
+       	log.debug("Following packages are in this batch of getJAXBContext() :");
+       	for(String pkg:contextPackages){
+       		log.debug(pkg);
+       	}
+       }
         // The contextPackages is a set of package names that are constructed using PackageSetBuilder.
         // PackageSetBuilder gets the packages names from the following sources.
         //   a) It walks the various annotations on the WebService collecting package names.
@@ -192,26 +214,19 @@ public class JAXBUtils {
                     log.debug("Package " + p + " does not contain an ObjectFactory or package-info class.  Searching for JAXB classes");
                 }
                 List<Class> classes = null;
-                try {
-                    classes = getAllClassesFromPackage(p, cl);
-                    if (classes == null || classes.size() == 0) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("Package " + p + " does not have any JAXB classes.  It is removed from the JAXB context path.");
-                        }
-                        it.remove();
-                    } else {
-                        // Classes are found in the package.  We cannot use the CONTEXT construction
-                        contextConstruction = false;
-                        if (log.isDebugEnabled()) {
-                            log.debug("Package " + p + " does not contain ObjectFactory, but it does contain other JAXB classes.");
-                        }
-                    }
-                } catch(Exception e) {
+                classes = getAllClassesFromPackage(p, cl);
+                if (classes == null || classes.size() == 0) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Package " + p + " does not appear to be a valid package.  It is excluded.");
+                        log.debug("Package " + p + " does not have any JAXB classes.  It is removed from the JAXB context path.");
                     }
                     it.remove();
-                }               
+                } else {
+                    // Classes are found in the package.  We cannot use the CONTEXT construction
+                    contextConstruction = false;
+                    if (log.isDebugEnabled()) {
+                        log.debug("Package " + p + " does not contain ObjectFactory, but it does contain other JAXB classes.");
+                    }
+                }
             }
         }
         
@@ -226,11 +241,7 @@ public class JAXBUtils {
             List<Class> fullList = new ArrayList<Class>();
             while (it.hasNext()) {
                 String pkg = it.next();
-                try {
-                    fullList.addAll(getAllClassesFromPackage(pkg, cl));
-                } catch (ClassNotFoundException e) {
-                    throw new JAXBException(e);
-                }
+                fullList.addAll(getAllClassesFromPackage(pkg, cl));
             }
             Class[] classArray = fullList.toArray(new Class[0]);
             context = JAXBContext.newInstance(classArray);
@@ -377,14 +388,23 @@ public class JAXBUtils {
 	private static boolean checkPackage(String p, ClassLoader cl) {
 	    
 	    // Each package must have an ObjectFactory
-	    
+		if(log.isDebugEnabled()){
+        	log.debug("checking package :" + p);
+        	
+        }
 	    try {
 	        Class cls = Class.forName(p + ".ObjectFactory",false, cl);
 	        if (cls != null) {
 	            return true;
 	        }
-	    } catch (Exception e) {
-	        // Exception is thrown if class does not exist.  
+	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+	        //does not extend Exception. So we will absorb any Throwable exception here.
+	    } catch (Throwable e) {
+	       log.info("ObjectFactory Class Not Found");
+           if (log.isDebugEnabled()) {
+               log.debug("ObjectFactory Class Not Found " + e);
+               log.debug("...caused by " + e.getCause() + " "+ JavaUtils.stackToString(e));
+           }
 	    }
 	    
         try {
@@ -392,8 +412,14 @@ public class JAXBUtils {
             if (cls != null) {
                 return true;
             }
-        } catch (Exception e) {
-            // Exception is thrown if class does not exist.  
+            //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+	        //does not extend Exception. So we will absorb any Throwable exception here.
+        } catch (Throwable e) {
+            log.info("package-info Class Not Found");
+            if (log.isDebugEnabled()) {
+                log.debug("package-info Class Not Found " + e);
+                log.debug("...caused by " + e.getCause() + " "+ JavaUtils.stackToString(e));
+            }
         }
 
 	    return false;
@@ -443,16 +469,38 @@ public class JAXBUtils {
      * @return
      * @throws ClassNotFoundException if error occurs getting package
      */
-    private static List<Class> getAllClassesFromPackage(String pkg, ClassLoader cl) throws ClassNotFoundException {
+    private static List<Class> getAllClassesFromPackage(String pkg, ClassLoader cl) {
         if (pkg == null) {
             return new ArrayList<Class>();
         }   
         
+        /*
+         * This method is a best effort method.  We should always return an object.
+         */
+        
         ArrayList<Class> classes = new ArrayList<Class>();
-        //This will load classes from directory
-        classes.addAll(getClassesFromDirectory(pkg, cl));
-        //This will load classes from jar file.
-        classes.addAll(getClassesFromJarFile(pkg, cl));
+
+        try {
+            // This will load classes from directory
+            classes.addAll(getClassesFromDirectory(pkg, cl));
+        } catch (ClassNotFoundException e) {
+        	 if(log.isDebugEnabled()){
+                 log.debug("getClassesFromDirectory failed to get Classes");
+        	 }          
+        }
+        try {
+           //If Calsses not found in directory then look for jar that has these classes
+        	if(classes.size() <=0){
+        		//This will load classes from jar file.
+        		ClassFinderFactory cff = (ClassFinderFactory)FactoryRegistry.getFactory(ClassFinderFactory.class);
+	        	ClassFinder cf = cff.getClassFinder();
+	            classes.addAll(cf.getClassesFromJarFile(pkg, cl));
+        	}
+        } catch (ClassNotFoundException e) {
+        	 if(log.isDebugEnabled()){
+                 log.debug("getClassesFromJarFile failed to get Classes");
+        	 }
+        }
         
         return classes;
     }
@@ -521,10 +569,13 @@ public class JAXBUtils {
                                 
                                 //Class aClazz = Class.forName(loadableName, false, Thread.currentThread().getContextClassLoader());
                             }
-                        } catch (Exception e) {
+                	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+                	        //does not extend Exception
+                        } catch (Throwable e) {
                             if (log.isDebugEnabled()) {
                                 log.debug("Tried to load class " + className + " while constructing a JAXBContext.  This class will be skipped.  Processing Continues." );
                                 log.debug("  The reason that class could not be loaded:" + e.toString());
+                                log.debug(JavaUtils.stackToString(e));
                             }
                             e.printStackTrace();
                         }
@@ -536,64 +587,6 @@ public class JAXBUtils {
         return classes;
     }
     
-    private static ArrayList<Class> getClassesFromJarFile(String pkg, ClassLoader cl)throws ClassNotFoundException{
-    	ArrayList<Class> classes = new ArrayList<Class>();
-    	URLClassLoader ucl = (URLClassLoader)cl;
-        URL[] srcURL = ucl.getURLs();
-        String path = pkg.replace('.', '/');
-        //Read resources as URL from class loader.
-        for(URL url:srcURL){
-        	if("file".equals(url.getProtocol())){
-        		File f = new File(url.getPath());
-        		//If file is not of type directory then its a jar file
-        		if(f.exists() && !f.isDirectory()){
-        			try{
-	        			JarFile jf = new JarFile(f);
-	        			Enumeration<JarEntry> entries = jf.entries();
-	        			//read all entries in jar file
-	        			while(entries.hasMoreElements()){
-	        				JarEntry je = entries.nextElement();
-	        				String clazzName = je.getName();
-	        				if(clazzName!=null && clazzName.endsWith(".class")){
-		        				//Add to class list here.
-		        				clazzName = clazzName.substring (0, clazzName.length() - 6);
-		        	            clazzName = clazzName.replace ('/', '.').replace ('\\', '.').replace (':', '.');
-		        	            //We are only going to add the class that belong to the provided package.
-		        				if(clazzName.startsWith(pkg)){
-	        						 try {
-	        	                            Class clazz = Class.forName(clazzName, 
-	        	                                    false, 
-	        	                                    Thread.currentThread().getContextClassLoader());
-	        	                            // Don't add any interfaces or JAXWS specific classes.  
-	        	                            // Only classes that represent data and can be marshalled 
-	        	                            // by JAXB should be added.
-	        	                            if(!clazz.isInterface()
-	        	                                    && ClassUtils.getDefaultPublicConstructor(clazz) != null
-	        	                                    && !ClassUtils.isJAXWSClass(clazz)){
-	        	                                if (log.isDebugEnabled()) {
-	        	                                    log.debug("Adding class: " + clazzName);
-	        	                                }
-	        	                                classes.add(clazz);
-	        	                                
-	        	                            }
-	        	                        } catch (Exception e) {
-	        	                            if (log.isDebugEnabled()) {
-	        	                                log.debug("Tried to load class " + clazzName + " while constructing a JAXBContext.  This class will be skipped.  Processing Continues." );
-	        	                                log.debug("  The reason that class could not be loaded:" + e.toString());
-	        	                            }
-	        	                            e.printStackTrace();
-	        	                        }
-	        					}
-	        				}
-	        			}
-        			}catch(IOException e){
-        				throw new ClassNotFoundException(Messages.getMessage("ClassUtilsErr4"));
-        			}
-        		}
-        	}
-        }
-    	return classes;
-    }
     private static  String[] commonArrayClasses = new String[] { 
         // primitives
         "boolean[]",
@@ -624,7 +617,9 @@ public class JAXBUtils {
                 // Load and add the class
                 Class cls = Class.forName(ClassUtils.getLoadableClassName(className), false, cl);
                 list.add(cls);
-            } catch (Exception e) {
+    	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+    	        //does not extend Exception
+            } catch (Throwable e) {
                 if (log.isDebugEnabled()) {
                     log.debug("Tried to load class " + className + " while constructing a JAXBContext.  This class will be skipped.  Processing Continues." );
                     log.debug("  The reason that class could not be loaded:" + e.toString());

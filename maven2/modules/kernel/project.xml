@@ -186,7 +186,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>incubator-woden</groupId>
+            <groupId>org.apache.woden</groupId>
             <artifactId>woden</artifactId>
             <version>${woden.version}</version>
             <properties>
@@ -210,6 +210,14 @@
 					<include>**/*.xsl</include>
 				</includes>
 			</resource>
+			<resource>
+      <directory>../../</directory>
+      <targetPath>META-INF</targetPath>
+      <includes>
+        <include>NOTICE.txt</include>
+        <include>LICENSE.txt</include>
+      </includes>
+   </resource>
 		</resources>
 	<unitTest>
 	  <resources>

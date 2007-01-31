@@ -27,8 +27,10 @@ import javax.jws.WebService;
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
+import javax.wsdl.PortType;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
@@ -301,26 +303,8 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
 			DescriptionBuilderComposite seic = 
 					getServiceDescriptionImpl().getDBCMap().get(composite.getWebServiceAnnot().endpointInterface());
 	
-			//TODO: This functionality is intended to fix the bug that potentially places the 
-			// wsdlDefinition on the wrong composite. This code should be moved to 
-			// ServiceDescriptionImpl.setupWsdlDefinition() eventually
-			try { 
-				WSDL4JWrapper wsdl4jWrapper = null;
-
-				if (seic.getWsdlDefinition() != null) {
-					//set the sdimpl from the SEI composite
-					wsdl4jWrapper = new WSDL4JWrapper(seic.getWsdlURL(), seic.getWsdlDefinition());
-					getServiceDescriptionImpl().setWsdlWrapper(wsdl4jWrapper);
-				} else if (composite.getWsdlDefinition() != null) {
-					//set the sdimpl from the impl. class composite
-					wsdl4jWrapper = new WSDL4JWrapper(composite.getWsdlURL(), composite.getWsdlDefinition());
-					getServiceDescriptionImpl().setWsdlWrapper(wsdl4jWrapper);
-				} 
-			} catch (WSDLException e) {
-				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
-			}
 			
-			//If this is not null, then we don't bother generating wsdl
+			//Only generate WSDL if a definition doesn't already exist
 			if (seic.getWsdlDefinition() == null)	
 				wsdlComposite = generateWSDL(composite);	
     	}
@@ -465,7 +449,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     				try {
     					// TODO: Using Class.forName() is probably not the best long-term way to get the SEI class from the annotation
     					seiClass = Class.forName(seiClassName, false, Thread.currentThread().getContextClassLoader());
-    				} catch (ClassNotFoundException e) {
+    			    // Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+    			    // does not extend Exception, so lets catch everything that extends Throwable
+                    // rather than just Exception.
+    				} catch (Throwable e) {
     					// TODO: Throwing wrong exception
     					e.printStackTrace();
     					throw new UnsupportedOperationException("Can't create SEI class: " + e);
@@ -627,9 +614,11 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         isAxisServiceBuiltFromWSDL = false;
         if (getServiceDescriptionImpl().getWSDLWrapper() != null) {
             isAxisServiceBuiltFromWSDL = buildAxisServiceFromWSDL();
+            
         }
         
         if (!isAxisServiceBuiltFromWSDL) {
+        	//generateWSDL(composite);
             buildAxisServiceFromAnnotations();
         }
         
@@ -704,10 +693,24 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     		axisService = serviceBuilder.populateService();
     		axisService.setName(createAxisServiceName());
             isBuiltFromWSDL = true;
+            
     	} catch (AxisFault e) {
-    		// TODO We should not swallow a fault here.
-    		log.warn(Messages.getMessage("warnAxisFault", e.toString()));
+    		// REVIEW: If we couldn't use the WSDL, should we fail instead of continuing to process using annotations?  
+            //         Note that if we choose to fail, we need to distinguish the partial WSDL case (which can not fail)
+            // TODO: RAS/NLS  Need to update the message with the appropriate inserts
+//    		log.warn(Messages.getMessage("warnAxisFault", e.toString()), e);
+            String wsdlLocation = (getServiceDescriptionImpl().getWSDLLocation() != null) ? getServiceDescriptionImpl().getWSDLLocation().toString() : null;
+            String implClassName = null;
+            if (getServiceDescriptionImpl().isDBCMap()) {
+                implClassName = composite.getClassName();
+            }
+            else {
+                implClassName = (implOrSEIClass != null) ? implOrSEIClass.getName() : null;
+            }
+            log.warn("The WSDL file could not be used due to an exception.  The WSDL will be ignored and annotations will be used.  Implementaiton class: "
+                    + implClassName + "; WSDL Location: " + wsdlLocation +"; Exception: " + e.toString(), e);
             isBuiltFromWSDL = false;
+            return isBuiltFromWSDL;
     	}
         return isBuiltFromWSDL;
     }
@@ -1181,7 +1184,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         if (wsdlBinding != null) {
             // If a WSDL binding was found, we need to find the proper extensibility
             // element and return the namespace.  The namespace will be different
-            // for SOAP 1.1 vs. SOAP 1.2 bindings.
+            // for SOAP 1.1 vs. SOAP 1.2 bindings and HTTP.
             // TODO: What do we do if no extensibility element exists?
             List<ExtensibilityElement> elements = wsdlBinding.getExtensibilityElements();
             Iterator<ExtensibilityElement> itr = elements.iterator();
@@ -1190,12 +1193,17 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
                 if (javax.wsdl.extensions.soap.SOAPBinding.class.isAssignableFrom(e.getClass())) {
                     javax.wsdl.extensions.soap.SOAPBinding soapBnd = (javax.wsdl.extensions.soap.SOAPBinding) e;
                     wsdlBindingType = soapBnd.getElementType().getNamespaceURI();
-                    return wsdlBindingType;
+                    break;
                 }
                 else if (SOAP12Binding.class.isAssignableFrom(e.getClass())) {
                     SOAP12Binding soapBnd = (SOAP12Binding) e;
                     wsdlBindingType = soapBnd.getElementType().getNamespaceURI();
-                    return wsdlBindingType;
+                    break;
+                }
+                else if (HTTPBinding.class.isAssignableFrom(e.getClass())) {
+                    HTTPBinding httpBnd = (HTTPBinding) e;
+                    wsdlBindingType = httpBnd.getElementType().getNamespaceURI();
+                    break;
                 }
             }
         }
@@ -1427,14 +1435,19 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     	
     	WsdlComposite wsdlComposite = null;
      	Definition defn = dbc.getWsdlDefinition();
-    	
-    	if (defn == null ) {
+    	if (defn == null || !isAxisServiceBuiltFromWSDL) {
     		
         	//Invoke the callback for generating the wsdl
             if (dbc.getCustomWsdlGenerator() != null) {
-            	
+            	String implName = null;
+            	if(axisService == null) {
+            		implName = DescriptionUtils.javifyClassName(composite.getClassName());
+            	}
+            	else {
+            		implName = (String)axisService.getParameterValue(MDQConstants.SERVICE_CLASS);
+            	}
             	wsdlComposite = 
-            		dbc.getCustomWsdlGenerator().generateWsdl((String)axisService.getParameterValue(MDQConstants.SERVICE_CLASS), getBindingType());
+            		dbc.getCustomWsdlGenerator().generateWsdl(implName, getBindingType());
  
             	if (wsdlComposite != null) {
             		wsdlComposite.setWsdlFileName((this.getAnnoWebServiceServiceName() + ".wsdl").toLowerCase());
@@ -1458,6 +1471,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     	}
     	return wsdlComposite;
     } 
+   
 }
 
 

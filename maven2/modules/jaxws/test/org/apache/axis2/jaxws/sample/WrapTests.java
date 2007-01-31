@@ -126,4 +126,50 @@ public class WrapTests extends TestCase {
 			fail();
 		}
 	}
+    
+    /**
+     * This is a test of a doc/lit method that passes the 
+     * request in a header.  This can only be reproduced via
+     * annotations and WSGEN.  WSImport will not allow this.
+     */
+    public void testEchoStringWSGEN1() {
+        System.out.println("------------------------------");
+        System.out.println("Test : "+getName());
+        try{
+            String request = "hello world";
+            
+            DocLitWrapService service = new DocLitWrapService();
+            DocLitWrap proxy = service.getDocLitWrapPort();
+            String response = proxy.echoStringWSGEN1(request);
+            assertTrue(response.equals(request));
+            System.out.println("------------------------------");
+        }catch(Exception e){
+            e.printStackTrace();
+            fail();
+        }
+    }
+    
+    /**
+     * This is a test of a doc/lit method that passes the 
+     * response in a header.  This can only be reproduced via
+     * annotations and WSGEN.  WSImport will not allow this.
+     */
+    
+    public void testEchoStringWSGEN2() {
+        System.out.println("------------------------------");
+        System.out.println("Test : "+getName());
+        try{
+            String request = "hello world 2";
+            
+            DocLitWrapService service = new DocLitWrapService();
+            DocLitWrap proxy = service.getDocLitWrapPort();
+            String response = proxy.echoStringWSGEN2(request);
+            assertTrue(response.equals(request));
+            System.out.println("------------------------------");
+        }catch(Exception e){
+            e.printStackTrace();
+            fail();
+        }
+    }
+    
 }

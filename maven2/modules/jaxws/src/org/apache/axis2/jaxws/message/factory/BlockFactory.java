@@ -19,10 +19,10 @@ package org.apache.axis2.jaxws.message.factory;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.Block;
-import org.apache.axis2.jaxws.message.MessageException;
 
 /**
  * BlockFactory
@@ -46,9 +46,9 @@ public interface BlockFactory {
 	 * @param context Associated Context or null
 	 * @param QName if known...if null the Block will determine the QName
 	 * @throws XMLStreamException
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	public Block createFrom(XMLStreamReader reader, Object context, QName qName) throws XMLStreamException, MessageException;
+	public Block createFrom(XMLStreamReader reader, Object context, QName qName) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * createBlock from XMLStreamReader
@@ -56,9 +56,9 @@ public interface BlockFactory {
 	 * @param context Associated Context or null
 	 * @param QName if known...if null the Block will determine the QName
 	 * @throws XMLStreamException
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	public Block createFrom(OMElement omElement, Object context, QName qName) throws XMLStreamException, MessageException;
+	public Block createFrom(OMElement omElement, Object context, QName qName) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * createBlock from another Block
@@ -69,9 +69,9 @@ public interface BlockFactory {
 	 * @param other Block
 	 * @param context Associated Context or null
 	 * @throws XMLStreamException
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	public Block createFrom(Block other, Object context) throws XMLStreamException, MessageException;
+	public Block createFrom(Block other, Object context) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * Create from business object
@@ -79,7 +79,7 @@ public interface BlockFactory {
 	 * @param context Associated Context or null
 	 * @param QName if known...if null the Block will determine the QName
 	 * @throws XMLStreamException
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	public Block createFrom(Object businessObject, Object context, QName qName) throws MessageException;
+	public Block createFrom(Object businessObject, Object context, QName qName) throws WebServiceException;
 }

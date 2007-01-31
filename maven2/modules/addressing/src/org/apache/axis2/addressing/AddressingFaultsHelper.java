@@ -32,6 +32,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingConstants.Submission;
+import org.apache.axis2.addressing.i18n.AddressingMessages;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.commons.logging.Log;
@@ -40,6 +41,79 @@ import org.apache.commons.logging.LogFactory;
 public class AddressingFaultsHelper{
     
     private static final Log log = LogFactory.getLog(AddressingFaultsHelper.class);
+
+    /**
+     * Build an understanndable fault string for the given faultCode and wsa:FaultDetail info.
+     * Should really use a message bundle.
+     * @param faultCodeLocalName
+     * @param faultDetail
+     * @return
+     */
+    public  static String getMessageForAxisFault(String faultCodeLocalName, String faultDetail){
+        String result = null;
+        
+        if(Submission.FAULT_INVALID_HEADER.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = AddressingMessages.getMessage("specificInvalidAddressingHeader", faultDetail);
+            }else{
+                result = AddressingMessages.getMessage("invalidAddressingHeader");
+            }
+        }else if(Final.FAULT_INVALID_HEADER.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = AddressingMessages.getMessage("specificInvalidAddressingHeader", faultDetail);
+            }else{
+                result = AddressingMessages.getMessage("invalidAddressingHeader");
+            }
+        }else if("InvalidCardinality".equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = AddressingMessages.getMessage("specificInvalidCardinality", faultDetail);
+            }else{
+                result = AddressingMessages.getMessage("invalidCardinality");
+            }
+        }else if("MissingAddressInEPR".equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = AddressingMessages.getMessage("specificMissingAddressInEPR", faultDetail);
+            }else{
+                result = AddressingMessages.getMessage("missingAddressInEPR");
+            }
+        }else if("DuplicateMessageID".equals(faultCodeLocalName)){
+                result = AddressingMessages.getMessage("duplicateMessageID");
+        }else if("ActionMismatch".equals(faultCodeLocalName)){
+            result = AddressingMessages.getMessage("actionMismatch");
+        }else if(Final.FAULT_ONLY_ANONYMOUS_ADDRESS_SUPPORTED.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = AddressingMessages.getMessage("specificOnlyAnonymousSupported", faultDetail);
+            }else{
+                result = AddressingMessages.getMessage("onlyAnonymousSupported");
+            }
+        }else if(Final.FAULT_ONLY_NON_ANONYMOUS_ADDRESS_SUPPORTED.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = AddressingMessages.getMessage("specificOnlyNonAnonSupported", faultDetail);
+            }else{
+                result = AddressingMessages.getMessage("onlyNonAnonSupported");
+            }
+        }else if(Submission.FAULT_ADDRESSING_HEADER_REQUIRED.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = AddressingMessages.getMessage("specificAddressingHeaderRequired", faultDetail);
+            }else{
+                result = AddressingMessages.getMessage("addressingHeaderRequired");
+            }
+        }else if(Final.FAULT_ADDRESSING_HEADER_REQUIRED.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = AddressingMessages.getMessage("specificAddressingHeaderRequired", faultDetail);
+            }else{
+                result = AddressingMessages.getMessage("addressingHeaderRequired");
+            }
+        }else if(AddressingConstants.FAULT_ACTION_NOT_SUPPORTED.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = AddressingMessages.getMessage("specificActionNotRecognised", faultDetail);
+            }else{
+                result = AddressingMessages.getMessage("actionNotRecognised");
+            }
+        }
+        
+        return result;
+    }
     
     //    wsa:InvalidAddressingHeader [Reason] the string: "A header representing a Message Addressing Property is not valid and the message cannot be processed"
     //      wsa:InvalidAddress
@@ -51,9 +125,9 @@ public class AddressingFaultsHelper{
         }
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)){
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, AddressingMessages.getMessage("spec.submission.FAULT_INVALID_HEADER_REASON"));
         }else{
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, "InvalidCardinality", Final.FAULT_INVALID_HEADER_REASON);
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, "InvalidCardinality", AddressingMessages.getMessage("spec.final.FAULT_INVALID_HEADER_REASON"));
         }
     }
 
@@ -64,9 +138,9 @@ public class AddressingFaultsHelper{
         }
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)){
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, AddressingMessages.getMessage("spec.submission.FAULT_INVALID_HEADER_REASON"));
         }else{
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, "MissingAddressInEPR", Final.FAULT_INVALID_HEADER_REASON);
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, "MissingAddressInEPR", AddressingMessages.getMessage("spec.final.FAULT_INVALID_HEADER_REASON"));
         }
     }
 
@@ -78,9 +152,9 @@ public class AddressingFaultsHelper{
         }
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)){
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":Action", Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":Action", Submission.FAULT_INVALID_HEADER, null, AddressingMessages.getMessage("spec.submission.FAULT_INVALID_HEADER_REASON"));
         }else{
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":Action", Final.FAULT_INVALID_HEADER, "ActionMismatch", Final.FAULT_INVALID_HEADER_REASON);
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":Action", Final.FAULT_INVALID_HEADER, "ActionMismatch", AddressingMessages.getMessage("spec.final.FAULT_INVALID_HEADER_REASON"));
         }
     }
 
@@ -91,9 +165,9 @@ public class AddressingFaultsHelper{
         }
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)){
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, AddressingMessages.getMessage("spec.submission.FAULT_INVALID_HEADER_REASON"));
         }else{
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, Final.FAULT_ONLY_ANONYMOUS_ADDRESS_SUPPORTED, Final.FAULT_INVALID_HEADER_REASON);
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, Final.FAULT_ONLY_ANONYMOUS_ADDRESS_SUPPORTED, AddressingMessages.getMessage("spec.final.FAULT_INVALID_HEADER_REASON"));
         }
     }
 
@@ -104,9 +178,9 @@ public class AddressingFaultsHelper{
         }
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)){
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, Submission.FAULT_INVALID_HEADER_REASON);
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Submission.FAULT_INVALID_HEADER, null, AddressingMessages.getMessage("spec.submission.FAULT_INVALID_HEADER_REASON"));
         }else{
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, Final.FAULT_ONLY_NON_ANONYMOUS_ADDRESS_SUPPORTED, Final.FAULT_INVALID_HEADER_REASON);
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + incorrectHeaderName, Final.FAULT_INVALID_HEADER, Final.FAULT_ONLY_NON_ANONYMOUS_ADDRESS_SUPPORTED, AddressingMessages.getMessage("spec.final.FAULT_INVALID_HEADER_REASON"));
         }
     }
 
@@ -117,9 +191,9 @@ public class AddressingFaultsHelper{
         }
         String namespace = (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)){
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + missingHeaderName, Submission.FAULT_ADDRESSING_HEADER_REQUIRED, null, Submission.FAULT_ADDRESSING_HEADER_REQUIRED_REASON);
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + missingHeaderName, Submission.FAULT_ADDRESSING_HEADER_REQUIRED, null, AddressingMessages.getMessage("spec.submission.FAULT_ADDRESSING_HEADER_REQUIRED_REASON"));
         }else{
-            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + missingHeaderName, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null, Final.FAULT_ADDRESSING_HEADER_REQUIRED_REASON);
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME, AddressingConstants.WSA_DEFAULT_PREFIX + ":" + missingHeaderName, Final.FAULT_ADDRESSING_HEADER_REQUIRED, null, AddressingMessages.getMessage("spec.final.FAULT_ADDRESSING_HEADER_REQUIRED_REASON"));
         }
     }
 
@@ -128,7 +202,7 @@ public class AddressingFaultsHelper{
         if(log.isDebugEnabled()){
             log.debug("triggerActionNotSupportedFault: messageContext: "+messageContext+" problemAction: "+problemAction);
         }
-        triggerAddressingFault(messageContext, Final.FAULT_PROBLEM_ACTION_NAME, problemAction, AddressingConstants.FAULT_ACTION_NOT_SUPPORTED, null, AddressingConstants.FAULT_ACTION_NOT_SUPPORTED_REASON);
+        triggerAddressingFault(messageContext, Final.FAULT_PROBLEM_ACTION_NAME, problemAction, AddressingConstants.FAULT_ACTION_NOT_SUPPORTED, null, AddressingMessages.getMessage("spec.FAULT_ACTION_NOT_SUPPORTED_REASON"));
     }
 
     //    wsa:EndpointUnavailable [Reason] the string "The endpoint is unable to process the message at this time"

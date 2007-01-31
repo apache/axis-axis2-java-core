@@ -13,48 +13,49 @@
 */
 package org.apache.axis2.dispatchers;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.TestCase;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 
+import javax.xml.namespace.QName;
+
 public class SOAPMessageBodyBasedOperationDispatcherTest extends TestCase {
 
-    public void testFindOperation() throws AxisFault{
+    public void testFindOperation() throws AxisFault {
         MessageContext messageContext = new MessageContext();
         AxisService as1 = new AxisService("Service1");
-        AxisConfiguration ac = new AxisConfiguration();
-        ac.addService(as1);
-        
+
+
         AxisOperation operation1 = new InOnlyAxisOperation(new QName("operation1"));
         AxisOperation operation2 = new InOnlyAxisOperation(new QName("operation2"));
         as1.addOperation(operation1);
         as1.addOperation(operation2);
-        
-        ConfigurationContext cc = new ConfigurationContext(ac);
+
+        ConfigurationContext cc = ConfigurationContextFactory.createEmptyConfigurationContext();
+        AxisConfiguration ac = cc.getAxisConfiguration();
+        ac.addService(as1);
         messageContext.setConfigurationContext(cc);
-        
+
         messageContext.setAxisService(as1);
-        
+
         SOAPEnvelope se = OMAbstractFactory.getSOAP11Factory().createSOAPEnvelope();
         SOAPBody sb = OMAbstractFactory.getSOAP11Factory().createSOAPBody(se);
         sb.addChild(OMAbstractFactory.getSOAP11Factory().createOMElement("operation2", "http://test", "pfx"));
         messageContext.setEnvelope(se);
-        
-        
+
+
         SOAPMessageBodyBasedOperationDispatcher ruisd = new SOAPMessageBodyBasedOperationDispatcher();
         ruisd.invoke(messageContext);
-        
+
         assertEquals(operation2, messageContext.getAxisOperation());
     }
 

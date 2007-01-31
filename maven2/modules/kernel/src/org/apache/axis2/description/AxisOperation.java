@@ -324,7 +324,7 @@ public abstract class AxisOperation extends AxisDescription
                     configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
             if (null == operationContext && log.isDebugEnabled()) {
-                log.debug("Cannot correlate inbound message RelatesTo value [" + msgContext.getRelatesTo() + "] to in-progree MEP");
+                log.debug(msgContext.getLogIDString()+" Cannot correlate inbound message RelatesTo value [" + msgContext.getRelatesTo() + "] to in-progree MEP");
             }
         }
 
@@ -567,22 +567,12 @@ public abstract class AxisOperation extends AxisDescription
         faultMessages.add(faultMessage);
     }
 
-    public String getSoapAction() {
-        return soapAction;
-    }
-
     public void setSoapAction(String soapAction) {
         this.soapAction = soapAction;
     }
 
     public String getInputAction() {
-        String result = this.soapAction;
-        if (result == null || "".equals(result)) {
-            if (wsamappingList != null && !wsamappingList.isEmpty()) {
-                result = wsamappingList.get(0).toString();
-            }
-        }
-        return result;
+        return  soapAction;
     }
 
     public String getOutputAction() {

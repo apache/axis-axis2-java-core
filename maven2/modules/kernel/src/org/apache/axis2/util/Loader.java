@@ -19,6 +19,8 @@ package org.apache.axis2.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -106,7 +108,11 @@ public class Loader {
      * @throws InvocationTargetException
      */
     static public ClassLoader getTCL() throws IllegalAccessException, InvocationTargetException {
-        return Thread.currentThread().getContextClassLoader();
+    	return (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
+    		public Object run() {
+    			return Thread.currentThread().getContextClassLoader();
+    		}
+    	});
     }
 
     /**

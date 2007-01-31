@@ -104,7 +104,7 @@
             </properties>
         </dependency>
         <dependency>
-            <groupId>incubator-woden</groupId>
+            <groupId>org.apache.woden</groupId>
             <artifactId>woden</artifactId>
             <version>${woden.version}</version>
             <properties>

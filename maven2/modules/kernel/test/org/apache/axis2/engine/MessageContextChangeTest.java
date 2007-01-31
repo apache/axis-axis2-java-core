@@ -56,6 +56,8 @@ public class MessageContextChangeTest extends TestCase
 
     private FieldDescription[] knownList = {
         new FieldDescription("org.apache.commons.logging.Log", "log"),
+        new FieldDescription("java.lang.String", "logCorrelationID"),
+        new FieldDescription("java.lang.String", "logCorrelationIDString"),
         new FieldDescription("java.lang.String", "myClassName"),
         new FieldDescription("long", "serialVersionUID"),
         new FieldDescription("int", "REVISION_1"),

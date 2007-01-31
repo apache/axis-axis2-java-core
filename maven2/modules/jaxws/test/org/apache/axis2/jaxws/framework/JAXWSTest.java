@@ -68,14 +68,16 @@ import org.apache.axis2.jaxws.sample.FaultyWebServiceTests;
 import org.apache.axis2.jaxws.sample.MtomSampleTests;
 import org.apache.axis2.jaxws.sample.NonWrapTests;
 import org.apache.axis2.jaxws.sample.ParallelAsyncTests;
+import org.apache.axis2.jaxws.sample.WSGenTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
+import org.apache.log4j.BasicConfigurator;
 
 public class JAXWSTest extends TestCase {
     
     static {
-        // Uncomment the followign line to enable debug
-//        BasicConfigurator.configure();
+        // Uncomment the following line to enable debug
+        // BasicConfigurator.configure();
     }
     
     /**
@@ -130,6 +132,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(MtomSampleTests.class);
         suite.addTestSuite(BareTests.class);
         suite.addTestSuite(NonWrapTests.class);
+        suite.addTestSuite(WSGenTests.class);
         suite.addTestSuite(WrapTests.class);
         suite.addTestSuite(NonAnonymousComplexTypeTests.class);
         suite.addTestSuite(AddNumbersTests.class);

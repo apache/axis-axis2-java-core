@@ -15,18 +15,6 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axis2.transport.http.HTTPConstants;
-
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPPart;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.MimeHeaders;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,6 +23,19 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+
+import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axis2.transport.http.HTTPConstants;
 
 public class SOAPMessageImpl extends SOAPMessage {
 
@@ -350,12 +351,72 @@ public class SOAPMessageImpl extends SOAPMessage {
         return props.get(property);
     }
 
+    /**
+     * Returns an AttachmentPart object that is associated with an attachment that is referenced by
+     * this SOAPElement or null if no such attachment exists. References can be made via an href
+     * attribute as described in SOAP Messages with Attachments
+     * (http://www.w3.org/TR/SOAPattachments#SOAPReferenceToAttachements) , or via a single Text 
+     * child node containing a URI as described in the WS-I Attachments Profile 1.0 for elements of 
+     * schema type ref:swaRef(ref:swaRef 
+     * (http://www.wsi.org/Profiles/AttachmentsProfile-1.0-2004-08-24.html") ). These two 
+     * mechanisms must be supported. The support for references via href attribute also implies 
+     * that this method should also be supported on an element that is an xop:Include element (XOP
+     * (http://www.w3.org/2000/xp/Group/3/06/Attachments/XOP.html) ). other reference mechanisms 
+     * may be supported by individual implementations of this standard. Contact your vendor for 
+     * details.
+     * 
+     * @param element - The SOAPElement containing the reference to an Attachment
+     * @return the referenced AttachmentPart or null if no such AttachmentPart exists or no
+     * reference can be found in this SOAPElement.
+     * @throws SOAPException - if there is an error in the attempt to access the attachment
+     * 
+     */
     public AttachmentPart getAttachment(SOAPElement soapelement) throws SOAPException {
-        return null;  //TODO - Not yet implemented
+
+        Collection matchingAttachmentParts = new ArrayList();
+        Iterator iterator = getAttachments();
+        {
+            AttachmentPartImpl part;
+            while (iterator.hasNext()) {
+                part = (AttachmentPartImpl) iterator.next();
+                if (part.matches(null)) {
+                    matchingAttachmentParts.add(part);
+                }
+            }
+        }
+        return null;  //TODO - Not yet implemented        
     }
 
-    public void removeAttachments(MimeHeaders mimeheaders) {
-        //TODO - Not yet implemented
+    /**
+     * Removes all the AttachmentPart objects that have header entries that match the specified
+     * headers. Note that the removed attachment could have headers in addition to those 
+     * specified.
+     * @param headers - a MimeHeaders object containing the MIME headers for which to search
+     * @since SAAJ 1.3
+     */
+    public void removeAttachments(MimeHeaders headers) {
+        //TODO - check
+    	
+    	Collection newAttachmentParts = new ArrayList();
+    	Iterator attachmentPartsItr = attachmentParts.iterator();
+    	for (Iterator iter = attachmentPartsItr; iter.hasNext();) {
+			AttachmentPart attachmentPart = (AttachmentPart) iter.next();
+			
+			//Get all the headers
+			Iterator allMIMEHeaders = headers.getAllHeaders();
+			for (Iterator iterator = allMIMEHeaders; iterator.hasNext();) {
+				MimeHeader mimeHeader = (MimeHeader) iterator.next();
+				String[] headerValues = attachmentPart.getMimeHeader(mimeHeader.getName());
+				//if values for this header name, do not remove it
+				if(headerValues.length != 0){
+					if(!(headerValues[0].equals(mimeHeader.getValue()))){
+						newAttachmentParts.add(attachmentPart);
+					}
+				}
+			}
+		}
+    	attachmentParts.clear();
+    	this.attachmentParts = newAttachmentParts;
     }
 
     /**

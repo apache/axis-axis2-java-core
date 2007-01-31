@@ -22,6 +22,7 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -30,7 +31,6 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -51,7 +51,7 @@ public class MessageFactoryImpl implements MessageFactory {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(javax.xml.stream.XMLStreamReader)
 	 */
-	public Message createFrom(XMLStreamReader reader) throws XMLStreamException, MessageException {
+	public Message createFrom(XMLStreamReader reader) throws XMLStreamException, WebServiceException {
 		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, null);  // Pass null has the version to trigger autodetection
 		SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
 		return createFrom(omEnvelope);
@@ -60,14 +60,14 @@ public class MessageFactoryImpl implements MessageFactory {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.MessageFactory#createFrom(org.apache.axiom.om.OMElement)
 	 */
-	public Message createFrom(OMElement omElement) throws XMLStreamException, MessageException {
+	public Message createFrom(OMElement omElement) throws XMLStreamException, WebServiceException {
 		return new MessageImpl(omElement);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.MessageFactory#create(org.apache.axis2.jaxws.message.Protocol)
 	 */
-	public Message create(Protocol protocol) throws XMLStreamException, MessageException {
+	public Message create(Protocol protocol) throws XMLStreamException, WebServiceException {
 		return new MessageImpl(protocol);
 	}
 
@@ -75,7 +75,7 @@ public class MessageFactoryImpl implements MessageFactory {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(javax.xml.soap.SOAPMessage)
 	 */
-	public Message createFrom(SOAPMessage message) throws XMLStreamException, MessageException {
+	public Message createFrom(SOAPMessage message) throws XMLStreamException, WebServiceException {
 		try {
             // Create a Message with an XMLPart from the SOAPEnvelope
 			Message m = new MessageImpl(message.getSOAPPart().getEnvelope());
@@ -89,14 +89,14 @@ public class MessageFactoryImpl implements MessageFactory {
             }
 			return m;
 		} catch (Exception e) {
-			throw ExceptionFactory.makeMessageException(e);
+			throw ExceptionFactory.makeWebServiceException(e);
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(org.apache.axis2.jaxws.message.Block, java.lang.Object)
 	 */
-	public Message createFrom(Block block, Object context) throws XMLStreamException, MessageException {
+	public Message createFrom(Block block, Object context) throws XMLStreamException, WebServiceException {
 		
 		// Small optimization to quickly consider the SOAPEnvelope case
 		if (block instanceof SOAPEnvelopeBlock) {

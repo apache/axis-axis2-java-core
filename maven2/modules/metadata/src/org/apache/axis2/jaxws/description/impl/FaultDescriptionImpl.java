@@ -19,8 +19,10 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.ws.WebFault;
 
 import org.apache.axis2.jaxws.description.FaultDescription;
@@ -28,6 +30,8 @@ import org.apache.axis2.jaxws.description.FaultDescriptionJava;
 import org.apache.axis2.jaxws.description.FaultDescriptionWSDL;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
+import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 
 /**
  * @see ../FaultDescription
@@ -83,51 +87,55 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         return annotation;
     }
 
+    
     public String getFaultBean() {
         if (faultBean.length() > 0) {
+            // Return the faultBean if it was already calculated
             return faultBean;
-        }
-        else if (annotation.faultBean().length() > 0) {
-            faultBean = annotation.faultBean();
-        }
-        else {
-            /*
-             * we need to figure out a default.  The JAXWS spec
-             * has no defaults defined, except what can be interpreted
-             * from 2.5, 2.8, 2.8.1, and 7.2
-             *
-             * specifically, section 2.5 says "using the mapping
-             * described in section 2.4."
-             * 
-             * I have a better way:
-             * The exception class defined by the JAXWS spec has two constructors where the second parameter
-             * of each is the faultBean.  Let's see if we can figure what the faultBean is from that:
-             */
-
-        	if (!isDBC()) {
-        		try {
-        			Constructor[] cons = exceptionClass.getConstructors();
-        			Class[] parms = cons[0].getParameterTypes();
-        			faultBean = parms[1].getCanonicalName();
-        		} catch (Exception e) {
-        			/* 
-        			 * if faultBean is still not set, then something is wrong with the exception
-        			 * class that the code generators generated, or someone instantiated a FaultDescription
-        			 * object for a generic exception.
-        			 *
-        			 * TODO log it?  I don't think we need to worry about throwing an exception here, as we're just
-        			 * doing a best-effort to determine the faultBean name.  If the try{} fails, something is really
-        			 * messed up in the generated code anyway, and I suspect nothing would work right.
-        			 */
-        		}
-        		
-        		// If all else fails, this might get us what we want:
-        		if ((faultBean == null) || (faultBean.length() == 0))
-        			faultBean = getOperationDescription().getRequestWrapperClassName().toString() + FAULT;
-        	} else {
-        		//REVIEW: Need to verify that this is the name we need...hmm, seems to easy
-        		faultBean = composite.getClassName();
-        	}
+        } else {
+            // Load up the WebFault annotation and get the faultBean.
+            // @WebFault may not be present
+            WebFault annotation = getAnnoWebFault();
+            
+            if (annotation != null && annotation.faultBean() != null && 
+                annotation.faultBean().length() > 0) {
+                faultBean = annotation.faultBean();
+            } else {
+                // We don't have a faultBean. Try looking at the getFaultInfo method.
+                if (!isDBC()) {
+                    try {
+                        Method method = exceptionClass.getMethod("getFaultInfo", null);
+                        faultBean = method.getReturnType().getCanonicalName();
+                    } catch (Exception e) {
+                        // This must be a legacy exception
+                    }
+                }  else {
+                    MethodDescriptionComposite mdc = 
+                        composite.getMethodDescriptionComposite("getFaultInfo", 1);
+                    if (mdc != null) {
+                        faultBean = mdc.getReturnType();
+                    }
+                }
+                
+                // Still not found, this must be a non-compliant exception.
+                // Use the JAX-WS chap 3.7 algorithm
+                if (faultBean.length() <= 0) {
+                    String simpleName = getSimpleName(getExceptionClassName()) + "Bean";
+                    String packageName = null;
+                    if (!isDBC()) {
+                        Class clazz = getOperationDescription().getSEIMethod().getDeclaringClass();
+                        packageName = clazz.getPackage().getName();
+                    } else {
+                        // Similar algorithm as the OperationDesc RequestWrapper and ResponseWrapper
+                        String declaringClazz = ((OperationDescriptionImpl )getOperationDescription()).getMethodDescriptionComposite().getDeclaringClass();
+                        packageName = declaringClazz.substring(0, declaringClazz.lastIndexOf("."));
+                    }
+                    faultBean = packageName + "." + simpleName;
+                    
+                    // The following call adjusts the package name if necessary
+                    faultBean = DescriptionUtils.determineActualAritfactPackage(faultBean);
+                }
+            }
         }
         return faultBean;
     }
@@ -135,13 +143,24 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
     public String getName() {
         if (name.length() > 0) {
             return name;
-        }
-        else if (annotation.name().length() > 0) {
-            name = annotation.name();
-        }
-        else {
-            // need to figure out a default.  Let's use the logic in getFaultBean()
-            name = getSimpleName(getFaultBean());
+        } else {
+            // Load the annotation. The annotation may not be present in WSGen cases
+            WebFault annotation = this.getAnnoWebFault();
+            if (annotation != null && 
+                annotation.name().length() > 0) {
+                name = annotation.name();
+            } else {
+                // The default is the name on the @XmlRootElement of the FaultBean since this
+                // is what is flowed over the wire.
+                try {
+                    Class clazz = DescriptionUtils.loadClass(getFaultBean());
+                    XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
+                    name = root.name();
+                } catch (Exception e) {
+                    // All else fails use the faultBean name
+                    name = getSimpleName(getFaultBean());
+                }
+            }
         }
         return name;
     }
@@ -149,15 +168,23 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
     public String getTargetNamespace() {
         if (targetNamespace.length() > 0) {
             return targetNamespace;
-        }
-        else if (annotation.targetNamespace().length() > 0) {
-            targetNamespace = annotation.targetNamespace();
-        }
-        else {
-            // need to figure out a default.  Let's use the logic in getFaultBean() 
-        	//and make a namespace out of the package
-            
-            targetNamespace = makeNamespace(getFaultBean());
+        } else {
+            // Load the annotation. The annotation may not be present in WSGen cases
+            WebFault annotation = this.getAnnoWebFault();
+            if (annotation != null && 
+                annotation.targetNamespace().length() > 0) {
+                targetNamespace = annotation.targetNamespace();
+            } else {
+                // The default is the namespace on the @XmlRootElement of the FaultBean since this
+                // is what is flowed over the wire.
+                try {
+                    Class clazz = DescriptionUtils.loadClass(getFaultBean());
+                    targetNamespace = XMLRootElementUtil.getXmlRootElementQName(clazz).getNamespaceURI();
+                } catch (Exception e) {
+                    // All else fails use the faultBean to calculate a namespace
+                    targetNamespace = makeNamespace(getFaultBean());
+                }
+            }
         }
         return targetNamespace;
     }

@@ -174,17 +174,20 @@ public class ExtensionUtility {
      */
     private static void setComplexTypeName(AxisMessage axisMessage) throws AxisFault {
 
-        XmlSchemaType schemaType = axisMessage.getSchemaElement().getSchemaType();
-        if (schemaType instanceof XmlSchemaComplexType){
-            XmlSchemaComplexType complexType = (XmlSchemaComplexType) schemaType;
-            if ((complexType.getName() != null) && (complexType.getQName() != null)) {
-                Map metaInfo = complexType.getMetaInfoMap();
-                String complexTypeName = (String)
-                        metaInfo.get(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY);
-                // store the complext type name to process later
-               axisMessage.addParameter(new Parameter(Constants.COMPLEX_TYPE, complexTypeName));
+        if (axisMessage.getSchemaElement() != null){
+            XmlSchemaType schemaType = axisMessage.getSchemaElement().getSchemaType();
+            if (schemaType instanceof XmlSchemaComplexType){
+                XmlSchemaComplexType complexType = (XmlSchemaComplexType) schemaType;
+                if ((complexType.getName() != null) && (complexType.getQName() != null)) {
+                    Map metaInfo = complexType.getMetaInfoMap();
+                    String complexTypeName = (String)
+                            metaInfo.get(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY);
+                    // store the complext type name to process later
+                   axisMessage.addParameter(new Parameter(Constants.COMPLEX_TYPE, complexTypeName));
+                }
             }
         }
+
 
     }
 

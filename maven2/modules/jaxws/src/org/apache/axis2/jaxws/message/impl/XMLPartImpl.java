@@ -17,9 +17,9 @@
 package org.apache.axis2.jaxws.message.impl;
 
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
@@ -41,9 +41,9 @@ public class XMLPartImpl extends  XMLPartBase {
 	 * XMLPart should be constructed via the XMLPartFactory.
 	 * This constructor constructs an empty XMLPart with the specified protocol
 	 * @param protocol
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	XMLPartImpl(Protocol protocol) throws MessageException {
+	XMLPartImpl(Protocol protocol) throws WebServiceException {
 		super(protocol);
 	}
 	
@@ -51,9 +51,9 @@ public class XMLPartImpl extends  XMLPartBase {
 	 * XMLPart should be constructed via the XMLPartFactory.
 	 * This constructor creates an XMLPart from the specified root.
 	 * @param root
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	XMLPartImpl(OMElement root) throws MessageException {
+	XMLPartImpl(OMElement root) throws WebServiceException {
 		super(root);
 	}
 	
@@ -61,46 +61,46 @@ public class XMLPartImpl extends  XMLPartBase {
 	 * XMLPart should be constructed via the XMLPartFactory.
 	 * This constructor creates an XMLPart from the specified root.
 	 * @param root
-	 * @throws MessageException
+	 * @throws WebServiceException
 	 */
-	XMLPartImpl(SOAPEnvelope root) throws MessageException {
+	XMLPartImpl(SOAPEnvelope root) throws WebServiceException {
 		super(root);
 	}
 	
 	@Override
-	protected OMElement _convertSE2OM(SOAPEnvelope se) throws MessageException {
+	protected OMElement _convertSE2OM(SOAPEnvelope se) throws WebServiceException {
 		return getSAAJConverter().toOM(se);
 	}
 
 	@Override
-	protected OMElement _convertSpine2OM(XMLSpine spine) throws MessageException {
+	protected OMElement _convertSpine2OM(XMLSpine spine) throws WebServiceException {
 		
 		OMElement omEnvelope = spine.getAsOMElement();
 		return omEnvelope;
 	}
 
 	@Override
-	protected SOAPEnvelope _convertOM2SE(OMElement om) throws MessageException {
+	protected SOAPEnvelope _convertOM2SE(OMElement om) throws WebServiceException {
 		return getSAAJConverter().toSAAJ((org.apache.axiom.soap.SOAPEnvelope) om);
 	}
 
 	@Override
-	protected SOAPEnvelope _convertSpine2SE(XMLSpine spine) throws MessageException {
+	protected SOAPEnvelope _convertSpine2SE(XMLSpine spine) throws WebServiceException {
 		return _convertOM2SE(_convertSpine2OM(spine));
 	}
 
 	@Override
-	protected XMLSpine _convertOM2Spine(OMElement om) throws MessageException {
+	protected XMLSpine _convertOM2Spine(OMElement om) throws WebServiceException {
 		return new XMLSpineImpl((org.apache.axiom.soap.SOAPEnvelope) om, getStyle());
 	}
 
 	@Override
-	protected XMLSpine _convertSE2Spine(SOAPEnvelope se) throws MessageException {
+	protected XMLSpine _convertSE2Spine(SOAPEnvelope se) throws WebServiceException {
 		return _convertOM2Spine(_convertSE2OM(se));
 	}
 
 	@Override
-	protected XMLSpine _createSpine(Protocol protocol) throws MessageException {
+	protected XMLSpine _createSpine(Protocol protocol) throws WebServiceException {
 		// Use the default implementation provided in XMLPartBase
 		return super._createSpine(protocol);
 	}

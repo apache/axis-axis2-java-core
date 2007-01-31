@@ -15,13 +15,14 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.soap.SOAPHeaderBlock;
-import org.apache.axiom.om.impl.dom.ElementImpl;
-
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
+
+import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 
 public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeaderElement {
 
@@ -98,21 +99,54 @@ public class SOAPHeaderElementImpl extends SOAPElementImpl implements SOAPHeader
         return this.headerElem.getMustUnderstand();
     }
 
-    public void setRole(String s) throws SOAPException {
-    	//    		TODO - Not yet implemented
-
+    /**
+     * Sets the Role associated with this SOAPHeaderElement object to the specified Role.
+     * @param uri - the URI of the Role
+     * @throws SOAPException - if there is an error in setting the role
+     *         java.lang.UnsupportedOperationException - if this message does not support 
+     *         the SOAP 1.2 concept of Fault Role.
+     */
+    public void setRole(String uri) throws SOAPException {
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        	throw new UnsupportedOperationException();
+        } else {
+        	this.headerElem.setRole(uri);
+        }
     }
 
     public String getRole() {
-        return this.headerElem.getRole();
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        	throw new UnsupportedOperationException();
+        } else {
+            return this.headerElem.getRole();        
+        }
     }
 
+    /**
+     * Sets the relay attribute for this SOAPHeaderElement to be either true or false.
+     * The SOAP relay attribute is set to true to indicate that the SOAP header block must be relayed by
+     * any node that is targeted by the header block but not actually process it. This attribute is ignored on
+     * header blocks whose mustUnderstand attribute is set to true or that are targeted at the ultimate
+     * reciever (which is the default). The default value of this attribute is false.
+     * @param relay - the new value of the relay attribute
+     * @throws SOAPException - if there is a problem in setting the relay attribute.
+     * 		   java.lang.UnsupportedOperationException - if this message does not support
+     * 		   the SOAP 1.2 concept of Relay attribute.
+     */
     public void setRelay(boolean flag) throws SOAPException {
-        //TODO - Not yet implemented
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        	throw new UnsupportedOperationException();
+        } else {
+        	this.headerElem.setRelay(flag);
+        }
     }
 
     public boolean getRelay() {
-        return false;  //TODO - Not yet implemented
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+        	throw new UnsupportedOperationException();
+        } else {
+            return this.headerElem.getRelay();    
+        }
     }
 
     public void setParentElement(SOAPElement parent) throws SOAPException {

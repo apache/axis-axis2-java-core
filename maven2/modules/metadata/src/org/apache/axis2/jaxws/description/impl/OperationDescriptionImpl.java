@@ -143,6 +143,8 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     // Default value per JSR-181 MR sec 4.5, pg 24
     public static final Boolean WebResult_Header_DEFAULT = new Boolean(false);
     private Boolean             webResultHeader;
+    private Method serviceImplMethod;
+    private boolean serviceImplMethodFound = false;
 
     OperationDescriptionImpl(Method method, EndpointInterfaceDescription parent) {
         // TODO: Look for WebMethod anno; get name and action off of it
@@ -159,81 +161,85 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         this.operationName = axisOperation.getName();
     }
 
-    OperationDescriptionImpl(MethodDescriptionComposite mdc, EndpointInterfaceDescription parent) {
+    OperationDescriptionImpl(	MethodDescriptionComposite mdc, 
+    							EndpointInterfaceDescription parent, 
+    							AxisOperation axisOperation) {
 
         parentEndpointInterfaceDescription = parent;
         methodComposite = mdc;
         this.operationName = new QName(getOperationName());
         webMethodAnnotation = methodComposite.getWebMethodAnnot();
 
-        AxisOperation axisOperation = null;
-        
-        try {
-            if (isOneWay()) {               
-                axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY);
-            } else {
-                axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT);
-            }
-            //TODO: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
-            //                                              ROBUST_IN_ONLY
-            //      Determine how these MEP's should be handled, if at all
-                    
-        } catch (Exception e) {
-            AxisFault ex = new AxisFault("OperationDescriptionImpl:cons - unable to build AxisOperation ");
-        }
-            
-        if (axisOperation != null){
-            
-            axisOperation.setName(determineOperationQName(this.methodComposite));
-            axisOperation.setSoapAction(this.getAction());
-
-        
-            //TODO: Determine other axisOperation values that may need to be set
-            //      Currently, the following values are being set on AxisOperation in 
-            //      ServiceBuilder.populateService which we are not setting:
-            //          AxisOperation.setPolicyInclude()
-            //          AxisOperation.setWsamappingList()
-            //          AxisOperation.setOutputAction()
-            //          AxisOperation.addFaultAction()
-            //          AxisOperation.setFaultMessages()
-            
-            // TODO: The WSMToAxisServiceBuilder sets the message receiver, not sure why this is done
-            //       since AxisService.addOperation does this as well by setting it to a default
-            //       MessageReceiver...it appears that this code is also setting it to a default
-            //       receiver..need to understand this
-
-            /*
-            String messageReceiverClass = "org.apache.axis2.rpc.receivers.RPCMessageReceiver";
-            if(wsmOperation.isOneWay()){
-                messageReceiverClass = "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver";
-            }
-            try{
-                MessageReceiver msgReceiver = (MessageReceiver)Class.forName(messageReceiverClass).newInstance();
-                axisOperation.setMessageReceiver(msgReceiver);
-
-            }catch(Exception e){
-            }
-            */
-
-            parameterDescriptions = createParameterDescriptions();
-            faultDescriptions = createFaultDescriptions();
-            
-            //TODO: Need to process the other annotations that can exist, on the server side
-            //      and at the method level.
-            //      They are, as follows:       
-            //          WebResultAnnot (181)
-            //          HandlerChain
-            //          SoapBinding (181)
-            //          WebServiceRefAnnot (List) (JAXWS)
-            //          WebServiceContextAnnot (JAXWS via injection)
-            //          RequestWrapper (JAXWS)
-            //          ResponseWrapper (JAXWS)
-            
-//System.out.println("OperationDescription: Finished setting operation");
-            
-        }
-        
         this.axisOperation = axisOperation;
+        
+        //If an AxisOperation was already created for us by populateService then just use that onw
+        //Otherwise, build it up here
+        if (this.axisOperation == null) {
+        	
+        	try {
+        		if (isOneWay()) {               
+        			axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY);
+        		} else {
+        			axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT);
+        		}
+        		//TODO: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
+        		//                                              ROBUST_IN_ONLY
+        		//      Determine how these MEP's should be handled, if at all
+        		
+        	} catch (Exception e) {
+        		AxisFault ex = new AxisFault("OperationDescriptionImpl:cons - unable to build AxisOperation ");
+        	}
+            
+        	if (axisOperation != null){
+        		
+        		axisOperation.setName(determineOperationQName(this.methodComposite));
+        		axisOperation.setSoapAction(this.getAction());
+        		
+        		
+        		//TODO: Determine other axisOperation values that may need to be set
+        		//      Currently, the following values are being set on AxisOperation in 
+        		//      ServiceBuilder.populateService which we are not setting:
+        		//          AxisOperation.setPolicyInclude()
+        		//          AxisOperation.setWsamappingList()
+        		//          AxisOperation.setOutputAction()
+        		//          AxisOperation.addFaultAction()
+        		//          AxisOperation.setFaultMessages()
+        		
+        		// TODO: The WSMToAxisServiceBuilder sets the message receiver, not sure why this is done
+        		//       since AxisService.addOperation does this as well by setting it to a default
+        		//       MessageReceiver...it appears that this code is also setting it to a default
+        		//       receiver..need to understand this
+        		
+        		/*
+        		 String messageReceiverClass = "org.apache.axis2.rpc.receivers.RPCMessageReceiver";
+        		 if(wsmOperation.isOneWay()){
+        		 messageReceiverClass = "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver";
+        		 }
+        		 try{
+        		 MessageReceiver msgReceiver = (MessageReceiver)Class.forName(messageReceiverClass).newInstance();
+        		 axisOperation.setMessageReceiver(msgReceiver);
+        		 
+        		 }catch(Exception e){
+        		 }
+        		 */
+        		
+        		//TODO: Need to process the other annotations that can exist, on the server side
+        		//      and at the method level.
+        		//      They are, as follows:       
+        		//          WebResultAnnot (181)
+        		//          HandlerChain
+        		//          SoapBinding (181)
+        		//          WebServiceRefAnnot (List) (JAXWS)
+        		//          WebServiceContextAnnot (JAXWS via injection)
+        		//          RequestWrapper (JAXWS)
+        		//          ResponseWrapper (JAXWS)	
+        	}
+        	
+        	this.axisOperation = axisOperation;
+        }
+        
+		parameterDescriptions = createParameterDescriptions();
+		faultDescriptions = createFaultDescriptions();
     }
     
     void setSEIMethod(Method method) {
@@ -367,11 +373,15 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             Class[] webFaultClasses = seiMethod.getExceptionTypes();
 
             for(Class wfClass:webFaultClasses) {
+                // according to JAXWS 3.7, the @WebFault annotation is only used for customizations,
+                // so we'll add all declared exceptions
+                WebFault wfanno = null;
                 for (Annotation anno:wfClass.getAnnotations()) {
                     if (anno.annotationType() == WebFault.class) {
-                        buildFaultList.add(new FaultDescriptionImpl(wfClass, (WebFault)anno, this));
+                        wfanno = (WebFault)anno;
                     }
                 }
+                buildFaultList.add(new FaultDescriptionImpl(wfClass, wfanno, this));
             }
         } else {
             // TODO do I care about methodComposite like the paramDescription does?
@@ -380,9 +390,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         	// 1. If this is a generic exception, ignore it
         	// 2. If this is not a generic exception, then find it in the DBC Map
         	//       If not found in map, then throw not found exception
-        	//       Else it was found, Verify that it has a WebFault Annotation, if not
-        	//        then throw exception
-        	//3. Pass the validated WebFault dbc and possibly the classImpl dbc to FaultDescription
+         	//3. Pass the validated WebFault dbc and possibly the classImpl dbc to FaultDescription
         	//4. Possibly set AxisOperation.setFaultMessages array...or something like that
         	
         	String[] webFaultClassNames = methodComposite.getExceptions();
@@ -398,13 +406,11 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
 					DescriptionBuilderComposite faultDBC = dbcMap.get(wfClassName);
 					
 					if (faultDBC != null){
-						if (faultDBC.getWebFaultAnnot() == null) {
-							throw ExceptionFactory.makeWebServiceException("OperationDescription: custom exception does not contain WebFault annotation");
-						} else {
-							//We found a valid exception composite thats annotated
-							buildFaultList.add(new FaultDescriptionImpl(faultDBC, this));
-						}
-					}
+                        // JAXWS 3.7 does not require @WebFault annotation
+                        // We found a valid exception composite thats annotated
+                        buildFaultList.add(new FaultDescriptionImpl(faultDBC, this));
+     			    }
+                                       
 				}
 			}
         }
@@ -425,7 +431,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     
     //TODO: For now, we are overriding the above method only because it is static, these should
     //be combined at some point
-    static QName determineOperationQName(MethodDescriptionComposite mdc) {
+    public static QName determineOperationQName(MethodDescriptionComposite mdc) {
         return new QName(determineOperationName(mdc));
     }
     
@@ -607,14 +613,17 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                 // says the entire annotation "...MAY be omitted if all its properties would have default vaules."
                 // implying there IS some sort of default.  We'll try this for now:
                 if (isDBC()) {
-                    requestWrapperClassName = this.methodComposite.getDeclaringClass(); 
+                	String declaringClazz = this.methodComposite.getDeclaringClass();
+                	String packageName = declaringClazz.substring(0, declaringClazz.lastIndexOf("."));
+                    requestWrapperClassName = packageName + "." + DescriptionUtils.javaMethodtoClassName(methodComposite.getMethodName());
+                
                 } else {
                     Class clazz = seiMethod.getDeclaringClass();
                     String packageName = clazz.getPackage().getName();
                     String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
                     requestWrapperClassName = packageName + "." + className;
                 }
-                requestWrapperClassName = determineActualAritfactPackage(requestWrapperClassName);
+                requestWrapperClassName = DescriptionUtils.determineActualAritfactPackage(requestWrapperClassName);
             }
         }
         return requestWrapperClassName;
@@ -715,9 +724,13 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                     String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
                     responseWrapperClassName = packageName + "." + className + "Response";
                 } else {
-                    responseWrapperClassName = methodComposite.getDeclaringClass() + "Response";
+                	//JAXWS Spec is not clear on what default should be added. We think its the endpoint impls package + OperationName + Response.
+                	//In situation where wsGen uses sei's package to store jaxb bean.
+                	String declaringClazz = methodComposite.getDeclaringClass();
+                	String packageName = declaringClazz.substring(0, declaringClazz.lastIndexOf("."));
+                    responseWrapperClassName = packageName + "." + DescriptionUtils.javaMethodtoClassName(methodComposite.getMethodName()) + "Response";
                 }
-                responseWrapperClassName = determineActualAritfactPackage(responseWrapperClassName);
+                responseWrapperClassName = DescriptionUtils.determineActualAritfactPackage(responseWrapperClassName);
             }
         }
         return responseWrapperClassName;
@@ -747,17 +760,21 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public FaultDescription resolveFaultByFaultBeanName(String faultBeanName) {
-        for(FaultDescription fd: faultDescriptions) {
-            if (faultBeanName.equals(fd.getFaultBean()))
-                return fd;
+        if (faultDescriptions != null) {
+            for(FaultDescription fd: faultDescriptions) {
+                if (faultBeanName.equals(fd.getFaultBean()))
+                    return fd;
+            }
         }
         return null;
     }
     
     public FaultDescription resolveFaultByExceptionName(String exceptionClassName) {
-        for(FaultDescription fd: faultDescriptions) {
-            if (exceptionClassName.equals(fd.getExceptionClassName()))
-                return fd;
+        if (faultDescriptions != null) {
+            for(FaultDescription fd: faultDescriptions) {
+                if (exceptionClassName.equals(fd.getExceptionClassName()))
+                    return fd;
+            }
         }
         return null;
     }
@@ -1091,59 +1108,6 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             return false;
     }
 
-    /**
-     * Determine the actual packager name for the generated artifacts by trying to load the class from one of two
-     * packages.  This is necessary because the RI implementations of WSGen and WSImport generate the artifacts 
-     * in different packages:
-     * - WSImport generates the artifacts in the same package as the SEI
-     * - WSGen generates the artifacts in a "jaxws" sub package under the SEI package.
-     * Note that from reading the JAX-WS spec, it seems that WSGen is doing that correctly; See
-     * the conformance requirement in JAX-WS 2.0 Spec Section 3.6.2.1 Document Wrapped on page 36:
-     *     Conformance (Default wrapper bean package): In the absence of customizations, the wrapper beans package
-     *     MUST be a generated jaxws subpackage of the SEI package.
-     *                         ^^^^^^^^^^^^^^^^
-     * @param requestWrapperClassName
-     * @return
-     */
-    private static final String JAXWS_SUBPACKAGE = "jaxws";
-    private static String determineActualAritfactPackage(String wrapperClassName) {
-        String returnWrapperClassName = null;
-
-        // Try to load the class that was passed in
-        try {
-            DescriptionUtils.loadClass(wrapperClassName);
-            returnWrapperClassName = wrapperClassName;
-        }
-        catch (ClassNotFoundException e) {
-            // Couldn't load the class; we'll try another one below.
-        }
-
-        // If the original class couldn't be loaded, try adding ".jaxws." to the package
-        if (returnWrapperClassName == null) {
-            String originalPackage = DescriptionUtils.getJavaPackageName(wrapperClassName);
-            if (originalPackage != null) {
-                String alternatePackage = originalPackage + "." + JAXWS_SUBPACKAGE;
-                String className = DescriptionUtils.getSimpleJavaClassName(wrapperClassName);
-                String alternateWrapperClass = alternatePackage + "." + className;
-                try {
-                    DescriptionUtils.loadClass(alternateWrapperClass);
-                    returnWrapperClassName = alternateWrapperClass;
-                }
-                catch (ClassNotFoundException e) {
-                    // Couldn't load the class
-                }
-            }
-        }
-        
-        if (returnWrapperClassName == null){
-            // Couldn't load either class, so stick with the original wrapper class name
-            // REVIEW: Is this correct behavior?  Note that some of the annotation unit tests don't have the actual
-            //         classes available, and so will fail if this is changed.
-            returnWrapperClassName = wrapperClassName;
-        }
-        return returnWrapperClassName;
-    }
-
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.description.OperationDescription#getResultType()
      */
@@ -1270,7 +1234,6 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
 
     public Method getMethodFromServiceImpl(Class serviceImpl) {
-        Method serviceImplMethod = null;
         
         // TODO: This doesn't support overloaded methods in the service impl  This is
         //       DIFFERENT than overloaded WSDL operations (which aren't supported).  We
@@ -1287,29 +1250,69 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         //  There will be two OpDescs, Foo1 and Foo2; the incoming wsdl operation will correctly identify
         //  which OpDesc.  However, to return the correct service impl method, we need to compare the
         //  signatures, not just the method names.
-        
-        Method[] methods = serviceImpl.getMethods();
-        String opDescMethodName = getJavaMethodName();
-        ParameterDescription[] paramDesc = getParameterDescriptions();
-        // TODO: As noted above, a full signature is necessary, not just number of params
-        int numberOfParams = 0;
-        if (paramDesc != null) {
-            numberOfParams = paramDesc.length;
-        }
-        
-        // Loop through all the methods on the service impl and find the method that maps
-        // to this OperationDescripton
-        for (Method checkMethod : methods) {
-            if (checkMethod.getName().equals(opDescMethodName)) {
-                Class[] methodParams = checkMethod.getParameterTypes();
-                // TODO: As noted above, a full signature is necessary, not just number of params
-                if (methodParams.length == numberOfParams) {
-                    serviceImplMethod = checkMethod;
-                    break;
+        if(!serviceImplMethodFound) {
+        	Method[] methods = serviceImpl.getMethods();
+            String opDescMethodName = getJavaMethodName();
+            ParameterDescription[] paramDesc = getParameterDescriptions();
+            // TODO: As noted above, a full signature is necessary, not just number of params
+            int numberOfParams = 0;
+            if (paramDesc != null) {
+                numberOfParams = paramDesc.length;
+            }
+            
+            // Loop through all the methods on the service impl and find the method that maps
+            // to this OperationDescripton
+            for (Method checkMethod : methods) {
+                if (checkMethod.getName().equals(opDescMethodName)) {
+                    Class[] methodParams = checkMethod.getParameterTypes();
+                    // TODO: As noted above, a full signature is necessary, not just number of params
+                    if (methodParams.length == numberOfParams) {
+                       if (paramTypesMatch(paramDesc, methodParams)) {
+                        	serviceImplMethod = checkMethod;
+                        	break;
+                       }
+                    }
                 }
             }
+            serviceImplMethodFound = true;
         }
-        
         return serviceImplMethod;
     } 
+    
+    /**
+     * This method will compare the types of the parameters in a 
+     * <code>ParameterDescription</code> vs. the type of the arguments in 
+     * the parameters of a <code>Method</code>.
+     * @param paramDescs - <code>ParameterDescription</code>[]
+     * @param methodParams - <code>Class</code>[]
+     * @return - <code>boolean</code>
+     */
+    private boolean paramTypesMatch(ParameterDescription[] paramDescs, Class[] 
+        methodParams) {
+    	for(int i=0; i < paramDescs.length; i++) {
+    		String mParamType = methodParams[i].getName();
+    		String pdType = getPDType(paramDescs[i]);
+    		if(mParamType == null || !mParamType.equals(pdType)) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
+    /**
+     * This will get a <code>String</code> representing the parameter class of a 
+     * <code>ParameterDescription</code>.
+     * @param pd - <code>ParameterDescrition</code>
+     * @return - <code>String</code>
+     */
+    private String getPDType(ParameterDescription pd) {
+    	String type = null;
+    	if(pd.getParameterType() != null) {
+    		type = pd.getParameterType().getName();
+    	}
+    	else if(pd.getParameterActualType() != null) {
+    		type = pd.getParameterActualType().getName();
+    	}
+    	return type;
+    }
 }

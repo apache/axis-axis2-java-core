@@ -15,9 +15,10 @@
  */
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Iterator;
 
 import javax.activation.DataHandler;
 import javax.xml.parsers.DocumentBuilder;
@@ -33,10 +34,11 @@ import javax.xml.soap.Text;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.util.Iterator;
+
+import junit.framework.TestCase;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * 
@@ -94,8 +96,8 @@ public class SOAPPartTest extends TestCase {
             assertEquals("soapenv", header.getPrefix());
 
             Node firstChild = header.getFirstChild();
-//            assertEquals("Hello", firstChild.getLocalName());
-//            assertEquals("shw", firstChild.getPrefix());
+            //assertEquals("Hello", firstChild.getLocalName());
+            //assertEquals("shw", firstChild.getPrefix());
 
             SOAPBody body = envelope.getBody();
             assertEquals("Body", body.getLocalName());

@@ -15,6 +15,11 @@
  */
 package javax.xml.soap;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * A point-to-point connection that a client can use for sending messages
  * directly to a remote party (represented by a URL, for instance).
@@ -61,8 +66,33 @@ public abstract class SOAPConnection {
      */
     public abstract void close() throws SOAPException;
 
-    public SOAPMessage get(Object obj)
+    /**
+     * Gets a message from a specific endpoint and blocks until it receives,
+     * @param to - an Object that identifies where the request should be sent. Objects of type
+     * java.lang.String and java.net.URL must be supported.
+     * @return the SOAPMessage object that is the response to the get message request
+     * @throws SOAPException - if there is a SOAP error
+     */
+    public SOAPMessage get(Object to)
             throws SOAPException {
-        throw new UnsupportedOperationException();
+    	URL url = null;
+    	try 
+    	{
+    		url = (to instanceof URL) ? (URL) to : new URL(to.toString());
+    		if(url != null){
+    			//InputStream in = url.openStream();
+    			//TODO : setting null for mime headers
+    			// close the connection??
+    			SOAPMessage soapMessage = null;
+    			//new SOAPMessageImpl(in,null);
+    			return soapMessage;
+    		}
+    		return null;
+    	}catch (MalformedURLException e) {
+    		throw new SOAPException(e);
+    	}catch (IOException e) {
+    		throw new SOAPException(e);
+    	}    	
+    	
     }
 }

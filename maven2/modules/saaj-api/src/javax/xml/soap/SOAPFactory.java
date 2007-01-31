@@ -161,19 +161,14 @@ public abstract class SOAPFactory {
      * @see <CODE>SAAJMetaFactory</CODE>
      */
     public static SOAPFactory newInstance(String protocol) throws SOAPException {
-    	//TODO : check, how to load from SAAJMetaFactory
-    	//this is what was here earlier
-    	// s == protocol
-        //return (SOAPFactory) Class.forName(s).newInstance();
-    	//Is returning classes from axiom correct?
-    	//what about DYNAMIC_SOAP_PROTOCOL?
         try {
-        	if(SOAPConstants.DEFAULT_SOAP_PROTOCOL.equals(protocol) || SOAPConstants.SOAP_1_1_PROTOCOL.equals(protocol)){
-                return (SOAPFactory) Class.forName("org.apache.axis2.saaj.SOAPFactoryImpl").newInstance();
-        	}else if(SOAPConstants.SOAP_1_2_PROTOCOL.equals(protocol)) {
-        		return (SOAPFactory) Class.forName("org.apache.axis2.saaj.SOAPFactoryImpl").newInstance();
+        	if(SOAPConstants.DEFAULT_SOAP_PROTOCOL.equals(protocol) 
+        			|| SOAPConstants.SOAP_1_1_PROTOCOL.equals(protocol)
+        			|| SOAPConstants.SOAP_1_2_PROTOCOL.equals(protocol)){
+        		SAAJMetaFactory saajMetaFactory = SAAJMetaFactory.getInstance();
+        		return saajMetaFactory.newSOAPFactory(protocol);
         	}else{
-        		return null;
+        		throw new SOAPException("Unknown protocol :"+protocol);
         	}
         } catch (Exception exception) {
             throw new SOAPException("Unable to create SOAP Factory: "
@@ -181,9 +176,24 @@ public abstract class SOAPFactory {
         }
     }
 
+    /**
+     * Creates a SOAPElement object from an existing DOM Element. If the DOM Element that is
+     * passed in as an argument is already a SOAPElement then this method must return it unmodified
+     * without any further work. Otherwise, a new SOAPElement is created and a deep copy is made of
+     * the domElement argument. The concrete type of the return value will depend on the name of 
+     * the domElement argument. If any part of the tree rooted in domElement violates SOAP rules, 
+     * a SOAPException will be thrown.
+     * 
+     * @param domElement - the Element to be copied.
+     * @return a new SOAPElement that is a copy of domElement.
+     * @throws SOAPException - if there is an error in creating the SOAPElement object
+     * @since SAAJ 1.3
+     * @see SOAPFactoryImpl
+     */
     public SOAPElement createElement(org.w3c.dom.Element element)
                           throws SOAPException {
-        throw new UnsupportedOperationException("Not yet implemented");
+    	//see SOAPFactoryImpl
+        return null; 
     }
 
     
@@ -196,22 +206,11 @@ public abstract class SOAPFactory {
      * @param qname - a QName object with the XML name for the new element
      * @return the new SOAPElement object that was created
      * @throws SOAPException - if there is an error in creating the SOAPElement object
+     * @see SOAPFactoryImpl
      */
     public SOAPElement createElement(javax.xml.namespace.QName qname)
                           throws SOAPException {
-        //throw new UnsupportedOperationException("Not yet implemented");
-    	//TODO : check
-        String localName = qname.getLocalPart();
-        String prefix = qname.getPrefix();
-        String uri = qname.getNamespaceURI();
-
-        //TODO: WIP
-        
-        //OMElement omElement = DOOMAbstractFactory.getOMFactory().createOMElement(localName, uri, prefix);
         return null;
-        //dependancy would create a cyclic reference
-        //return new SOAPElementImpl((ElementImpl) omElement);
-        
     }
 
     public abstract SOAPFault createFault()

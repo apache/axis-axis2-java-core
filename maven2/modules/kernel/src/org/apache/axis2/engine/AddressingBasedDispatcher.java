@@ -47,7 +47,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
         if(isDebugEnabled){
-        log.debug(Messages.getMessage("checkingoperation",
+        log.debug(messageContext.getLogIDString()+" "+Messages.getMessage("checkingoperation",
                 messageContext.getWSAAction()));
         }
         String action = messageContext.getWSAAction();
@@ -70,7 +70,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             
             String address = toEPR.getAddress();
             if(isDebugEnabled){
-            log.debug(Messages.getMessage("checkingserviceforepr", address));
+            log.debug(messageContext.getLogIDString()+" "+Messages.getMessage("checkingserviceforepr", address));
             }
             QName serviceName;
             ConfigurationContext configurationContext = messageContext.getConfigurationContext();
@@ -81,7 +81,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             }
 
             if(isDebugEnabled){
-            log.debug(Messages.getMessage("checkingserviceforepr", values[0]));
+            log.debug(messageContext.getLogIDString()+" "+Messages.getMessage("checkingserviceforepr", values[0]));
             }
             if (values[0] != null) {
                 serviceName = new QName(values[0]);
@@ -111,7 +111,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             String relatesTo = msgctx.getRelatesTo().getValue();
 
             if(isDebugEnabled){
-            log.debug(Messages.getMessage("checkingrelatesto",
+            log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("checkingrelatesto",
                     relatesTo));
             }
             if ((relatesTo != null) || "".equals(relatesTo)) {

@@ -18,6 +18,9 @@
  */
 package org.apache.axis2.jaxws.description.validator;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * 
  */
@@ -26,7 +29,7 @@ public abstract class Validator {
     public static final boolean VALID = true;
     public static final boolean INVALID = false;
     
-    private ValidationFailures validationFailures = new ValidationFailures();
+    protected ValidationFailures validationFailures = new ValidationFailures();
     // TODO: turn on validation and change the ValidateWSDL test to start checking for failures.
     private ValidationLevel validationLevel = ValidationLevel.FULL;
 
@@ -39,5 +42,21 @@ public abstract class Validator {
     ValidationLevel getValidationLevel() {
         return validationLevel;
     }
-
+    
+    public String toString() {
+    	String messageString = "";
+    	Iterator<ValidationFailure> failureIter = validationFailures.
+    		getValidationFailures().iterator();
+    	while(failureIter.hasNext()) {
+    		ValidationFailure failure = failureIter.next();
+    		messageString = messageString + " :: " + failure.getMessage();
+    		Validator validator = failure.getValidator();
+    		// if this is a different validator reference we want to call
+    		// toString on it also
+    		if(validator != this) {
+    			messageString = messageString + " :: " + validator.toString();
+    		}
+    	}
+    	return messageString;
+    }
 }

@@ -259,8 +259,11 @@ public class MessageTests extends TestCase {
      * Create a Block representing an empty XMLString and simulate a 
      * normal Dispatch<String> flow with an application handler.
      * @throws Exception
+     * 
+     * DISABLED THIS TEST. THE TEST IS NOT VALID BECAUSE AN ATTEMPT WAS 
+     * MADE TO ADD A BLOCK THAT IS NOT AN ELEMENT.
      */
-    public void testStringOutflowEmptyString() throws Exception {
+    public void _testStringOutflowEmptyString() throws Exception {
         
         // Create a SOAP 1.1 Message
         MessageFactory mf = (MessageFactory)

@@ -55,44 +55,49 @@ public class SimpleTypeMapper {
     private static final String CHAR = "char";
 
     public static Object getSimpleTypeObject(Class parameter, OMElement value) {
-        if (parameter.getName().equals(STRING)) {
-            return value.getText();
-        } else if (parameter.getName().equals(INT)) {
-            return new Integer(value.getText());
-        } else if (parameter.getName().equals(BOOLEAN)) {
-            return Boolean.valueOf(value.getText());
-        } else if (parameter.getName().equals(BYTE)) {
-            return new Byte(value.getText());
-        } else if (parameter.getName().equals(DOUBLE)) {
-            return new Double(value.getText());
-        } else if (parameter.getName().equals(SHORT)) {
-            return new Short(value.getText());
-        } else if (parameter.getName().equals(LONG)) {
-            return new Long(value.getText());
-        } else if (parameter.getName().equals(FLOAT)) {
-            return new Float(value.getText());
-        } else if (parameter.getName().equals(CHAR)) {
-            return new Character(value.getText().toCharArray()[0]);
-        } else if (parameter.getName().equals(W_INT)) {
-            return new Integer(value.getText());
-        } else if (parameter.getName().equals(W_BOOLEAN)) {
-            return Boolean.valueOf(value.getText());
-        } else if (parameter.getName().equals(W_BYTE)) {
-            return new Byte(value.getText());
-        } else if (parameter.getName().equals(W_DOUBLE)) {
-            return new Double(value.getText());
-        } else if (parameter.getName().equals(W_SHORT)) {
-            return new Short(value.getText());
-        } else if (parameter.getName().equals(W_LONG)) {
-            return new Long(value.getText());
-        } else if (parameter.getName().equals(W_FLOAT)) {
-            return new Float(value.getText());
-        } else if (parameter.getName().equals(W_CHAR)) {
-            return new Character(value.getText().toCharArray()[0]);
-        } else if (parameter.getName().equals(W_CALENDAR)) {
-            return makeCalendar(value.getText(), false);
-        } else if (parameter.getName().equals(W_DATE)) {
-            return makeCalendar(value.getText(), true);
+        String name = parameter.getName();
+        String text = value.getText();
+
+        if (text == null || text.length() == 0) {
+            return null;
+        } else if (name.equals(STRING)) {
+            return text;
+        } else if (name.equals(INT)) {
+            return new Integer(text);
+        } else if (name.equals(BOOLEAN)) {
+            return Boolean.valueOf(text);
+        } else if (name.equals(BYTE)) {
+            return new Byte(text);
+        } else if (name.equals(DOUBLE)) {
+            return new Double(text);
+        } else if (name.equals(SHORT)) {
+            return new Short(text);
+        } else if (name.equals(LONG)) {
+            return new Long(text);
+        } else if (name.equals(FLOAT)) {
+            return new Float(text);
+        } else if (name.equals(CHAR)) {
+            return new Character(text.toCharArray()[0]);
+        } else if (name.equals(W_INT)) {
+            return new Integer(text);
+        } else if (name.equals(W_BOOLEAN)) {
+            return Boolean.valueOf(text);
+        } else if (name.equals(W_BYTE)) {
+            return new Byte(text);
+        } else if (name.equals(W_DOUBLE)) {
+            return new Double(text);
+        } else if (name.equals(W_SHORT)) {
+            return new Short(text);
+        } else if (name.equals(W_LONG)) {
+            return new Long(text);
+        } else if (name.equals(W_FLOAT)) {
+            return new Float(text);
+        } else if (name.equals(W_CHAR)) {
+            return new Character(text.toCharArray()[0]);
+        } else if (name.equals(W_CALENDAR)) {
+            return makeCalendar(text, false);
+        } else if (name.equals(W_DATE)) {
+            return makeCalendar(text, true);
         } else {
             return null;
         }
@@ -176,7 +181,9 @@ public class SimpleTypeMapper {
             return true;
         } else if (objClassName.equals(W_DATE)) {
             return true;
-        } else return objClassName.equals(W_CHAR);
+        } else {
+            return objClassName.equals(W_CHAR);
+        }
     }
 
     public static String getStringValue(Object obj) {
@@ -204,6 +211,7 @@ public class SimpleTypeMapper {
         }
         return obj.toString();
     }
+
     public static Object makeCalendar(String source, boolean returnDate) {
         Calendar calendar = Calendar.getInstance();
         Date date;
@@ -211,8 +219,7 @@ public class SimpleTypeMapper {
 
         // validate fixed portion of format
         if (source == null || source.length() == 0) {
-            throw new NumberFormatException(
-                    "badDateTime00");
+            throw new NumberFormatException("Calendar cannot be null");
         }
         if (source.charAt(0) == '+') {
             source = source.substring(1);
@@ -222,15 +229,14 @@ public class SimpleTypeMapper {
             bc = true;
         }
         if (source.length() < 19) {
-            throw new NumberFormatException(
-                    "badDateTime00");
+            throw new NumberFormatException("Calendar string too short");
         }
         if (source.charAt(4) != '-' || source.charAt(7) != '-' ||
                 source.charAt(10) != 'T') {
-            throw new NumberFormatException("badDate00");
+            throw new NumberFormatException("Invalid date format");
         }
         if (source.charAt(13) != ':' || source.charAt(16) != ':') {
-            throw new NumberFormatException("badTime00");
+            throw new NumberFormatException("Invalid time format");
         }
         // convert what we have validated so far
         try {
@@ -275,8 +281,7 @@ public class SimpleTypeMapper {
                     source.charAt(pos + 3) != ':' ||
                     !Character.isDigit(source.charAt(pos + 4)) ||
                     !Character.isDigit(source.charAt(pos + 5))) {
-                throw new NumberFormatException(
-                        "badTimezone00");
+                throw new NumberFormatException("Invalid timezone");
             }
             int hours = (source.charAt(pos + 1) - '0') * 10
                     + source.charAt(pos + 2) - '0';
@@ -296,7 +301,7 @@ public class SimpleTypeMapper {
             calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
         }
         if (pos < source.length()) {
-            throw new NumberFormatException("badChars00");
+            throw new NumberFormatException("Unknown chars after calendar string");
         }
         calendar.setTime(date);
 

@@ -24,6 +24,8 @@ import java.util.Iterator;
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -347,5 +349,31 @@ public class Utils {
 
         return mepConstant;
     }
-
+    
+    /**
+     * Get an AxisFault object to represent the SOAPFault in the SOAPEnvelope attached
+     * to the provided MessageContext. This first check for an already extracted AxisFault
+     * and otherwise does a simple extract.
+     * 
+     * MUST NOT be passed a MessageContext which does not contain a SOAPFault
+     * 
+     * @param messageContext
+     * @return
+     */
+    public static AxisFault getInboundFaultFromMessageContext(MessageContext messageContext){
+        // Get the fault if it's already been extracted by a handler
+        AxisFault result = (AxisFault)messageContext.getProperty(Constants.INBOUND_FAULT_OVERRIDE);
+        // Else, extract it from the SOAPBody
+        if(result == null){
+            SOAPEnvelope envelope = messageContext.getEnvelope();
+            if(envelope == null || envelope.getBody() ==null || envelope.getBody().getFault()==null){
+                // Not going to be able to 
+                throw new IllegalArgumentException("The MessageContext does not have an associated SOAPFault.");
+            }
+            SOAPFault soapFault = envelope.getBody().getFault();
+            result = new AxisFault(soapFault.getCode(), soapFault.getReason(),
+                soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
+        }
+        return result;
+    }
 }

@@ -2,13 +2,13 @@
 <head>
   <meta http-equiv="content-type" content="">
   <title>Apache Axis2/Java - Next Generation Web Services</title>
-  <link href="css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
+  <link href="css/axis-docs.css" rel="stylesheet" type="text/css" media="all">
 </head>
 
 <body lang="en">
 <h1>Welcome to Apache Axis2/Java</h1>
 
-<h2>13th November 2006 - Apache Axis2/Java Version 1.1 Released!</h2>
+<h2>09th January 2006 - Apache Axis2/Java Version 1.1.1 Released!</h2>
 
 <p>[ <a
 href="http://ws.apache.org/axis2/download.cgi"><strong>Download</strong></a>
@@ -16,7 +16,7 @@ href="http://ws.apache.org/axis2/download.cgi"><strong>Download</strong></a>
 
 <p>Apache Axis2 is the core engine for Web services. It is a complete
 re-design and re-write of the widely used <a
-href="http://ws.apache.org/axis/">Apache Axis</a> SOAP stack to build on the
+href="http://ws.apache.org/axis/">Apache Axis</a> SOAP stack, built on the
 lessons learnt from Apache Axis.</p>
 
 <h3><em>Apache Axis Project in a Nutshell:</em></h3>
@@ -45,22 +45,22 @@ this project.</p>
 <h3><em>Why Apache Axis2:</em></h3>
 
 <p>A new architecture for Axis was introduced during the August 2004 Summit
-in Colombo, Sri Lanka. This new architecture Axis2 is based on is more
-flexible, efficient and configurable in comparison to <a
+in Colombo, Sri Lanka. The new architecture on which Axis2 is based on is
+more flexible, efficient and configurable in comparison to <a
 href="http://ws.apache.org/axis/java/architecture-guide.html">Axis1.x
 architecture</a>. Some well established concepts from Axis 1.x, like handlers
-etc., have been preserved in this new architecture.</p>
+etc., have been preserved in the new architecture.</p>
 
 <p>Apache Axis2 not only supports SOAP 1.1 and SOAP 1.2, but it also has
 integrated support for the widely popular <a
 href="http://www.xfront.com/REST-Web-Services.html">REST style of Web
-services</a>: the same business logic implementation can offer both a WS-*
+services</a>. The same business logic implementation can offer both a WS-*
 style interface as well as a REST style interface simultaneously.</p>
 
 <p>Apache Axis2 is more efficient, more modular and more XML-oriented than
 the older version. It is carefully designed to support the easy addition of
-plug-in "modules" that extend its functionality for features such as security
-and reliability. <a
+plug-in "modules" that extend their functionality for features such as
+security and reliability. The <a
 href="http://ws.apache.org/axis2/modules/index.html">Modules</a> currently
 available or under development include:</p>
 <ul>
@@ -77,15 +77,16 @@ available or under development include:</p>
   <li><a
     href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=wss"
     target="_blank">WS-Security</a> - Supported by <a
-    href="http://ws.apache.org/axis2/modules/index.html">Apache
-  Rampart</a></li>
+    href="http://ws.apache.org/axis2/modules/rampart/1_1/security-module.html">Apache
+    Rampart</a></li>
   <li><a href="http://www.w3.org/Submission/ws-addressing/"
     target="_blank">WS-Addressing</a> -Module included as part of Axis2
   core</li>
 </ul>
 
 <p>Apache Axis2 is built on <a
-href="http://ws.apache.org/commons/axiom/index.html">Apache AXIOM</a>, a high performant, pull-based XML object model.</p>
+href="http://ws.apache.org/commons/axiom/index.html">Apache AXIOM</a>, a new
+high performant, pull-based XML object model.</p>
 
 <p>Axis2 comes with many new features, enhancements and industry
 specification implementations. The key features offered are as follows:</p>
@@ -102,17 +103,17 @@ specification implementations. The key features offered are as follows:</p>
     extensible, highly performant and is developer convenient.</p>
   </li>
   <li><p style="margin-bottom: 0in"><strong><a name="Hot_Deployment"></a>Hot
-    Deployment</strong> - Axis2 is equipped with the capability of
-    deploying Web service &amp; handlers while the system is up and running.
-    In other words, new services can be added to the system without having to
-    shut down the server. Simply drop the required Web service archive into
-    the services directory in the repository and the deployment model will
+    Deployment</strong> - Axis2 is equipped with the capability of deploying
+    Web services and handlers while the system is up and running. In other
+    words, new services can be added to the system without having to shut
+    down the server. Simply drop the required Web service archive into the
+    services directory in the repository, and the deployment model will
     automatically deploy the service and make it available for use.</p>
   </li>
   <li><p style="margin-bottom: 0in"><strong>Asynchronous Web
-    services</strong> - Axis2 now supports asynchronous Web services &amp;
+    services</strong> - Axis2 now supports asynchronous Web services and
     asynchronous Web services invocation using non-blocking clients and
-    transports .</p>
+    transports.</p>
   </li>
   <li><p style="margin-bottom: 0in"><strong>MEP Support</strong> - Axis2 now
     comes handy with the flexibility to support Message Exchange Patterns
@@ -156,10 +157,10 @@ specification implementations. The key features offered are as follows:</p>
   </li>
   <li><p style="margin-bottom: 0in"><strong>Composition and
     Extensibility</strong> - Modules and phases improve support for
-    composability and extensibility. Modules supports composability and is
-    able to add support for new WS-* specifications in a simple and clean
-    manner. They are however not <a href="#Hot_Deployment">hot deployable</a>
-    as they change the overall behavior of the system.</p>
+    composability and extensibility. Modules support composability and can
+    also support new WS-* specifications in a simple and clean manner. They
+    are however not <a href="#Hot_Deployment">hot deployable</a> as they
+    change the overall behavior of the system.</p>
   </li>
 </ul>
 
@@ -174,11 +175,8 @@ to prefix the subject of the mail with [Axis2].</p>
 
 <h2>Features of Axis2 Latest Version</h2>
 
-<p>Apache Axis2 Version 1.1 comes to you with better Axis2 Databinding
-Framework (ADB) support, <a
-href="http://www.w3.org/TR/SOAP-attachments">attachments API</a>, Spring and
-complete support for SOAP with Attachments (SwA). Check out the complete
-features list below.</p>
+<p>Apache Axis2 Version 1.1.1 comes with performance improvements and bug
+fixes over the 1.1 release. Check out the complete list of features below.</p>
 
 <h3>Programming Model</h3>
 <ul>
@@ -192,8 +190,8 @@ features list below.</p>
   <li><a href="#Hot_Deployment">Hot deployment</a></li>
   <li>WS-Policy driven code generation extensions</li>
   <li>Flexible service life cycle model</li>
-  <li>Support for querying service's WSDL (using ?wsdl), schema (using ?xsd)
-    and policies (using ?policy)</li>
+  <li>Support for querying a service's WSDL (using ?wsdl), schema (using
+    ?xsd) and policies (using ?policy)</li>
 </ul>
 
 <h3>Supported Specifications</h3>
@@ -223,7 +221,7 @@ features list below.</p>
   <li>JaxMe</li>
 </ul>
 
-<h2><a name="Tools_included_in this_Release">Tools Included In This
+<h2><a name="Tools_included_in this_Release">Tools Included in This
 Release</a></h2>
 
 <p>[<a href="http://ws.apache.org/axis2/tools/index.html"
@@ -232,8 +230,8 @@ target="_blank">Download Tool Plug-ins</a>]</p>
   <li>Axis2 Web Application (Web App)</li>
   <li>WSDL2WS- <a href="tools/1_1/eclipse/wsdl2java-plugin.html"
     target="_blank">eclipse plug-in</a><a>/</a> <a
-    href="tools/1_1/CodegenToolReference.html" target="_blank">Command
-    line version</a><a>/</a><a
+    href="tools/1_1/CodegenToolReference.html" target="_blank">Command line
+    version</a><a>/</a><a
     href="tools/1_1/idea/Idea_plug-in_userguide.html#WSDL2Java_Code_Generation"
     target="_blank">IntelliJ IDEA plug-in</a><a>/</a><a
     href="tools/1_1/maven-plugins/maven-wsdl2code-plugin.html"
@@ -245,9 +243,9 @@ target="_blank">Download Tool Plug-ins</a>]</p>
     target="_blank">IntelliJ IDEA plug-in</a>/ <a
     href="tools/1_1/maven-plugins/maven-aar-plugin.html"
     target="_blank">Maven2 AAR Plug-in</a></li>
-  <li>Java2WSDL- <a href="tools/1_1/maven-plugins/maven-java2wsdl-plugin.html"
-    target="_blank">Maven2 Java2WSDL Plug-in</a>
-    </li>
+  <li>Java2WSDL- <a
+    href="tools/1_1/maven-plugins/maven-java2wsdl-plugin.html"
+    target="_blank">Maven2 Java2WSDL Plug-in</a></li>
 </ol>
 
 <h2>Extension Modules</h2>
@@ -259,26 +257,19 @@ target="_blank">Download Tool Plug-ins</a>]</p>
 
 <h2>Known Issues and Limitations</h2>
 <ul>
+  <li>ADB does not support unwrapping of response messages(coming in 1.2)</li>
+  <li>JSR 181/183 Annotation support (coming in 1.2)</li>
   <li>JaxMe and JAXBRI data binding support is experimental</li>
-  <li>AXIS2-595: Hot re-deployment in Apache Tomcat has problems</li>
-  <li>Axis Data Binding (ADB) does not support the following construct(s):
-    <ol>
-      <li>AXIS2-983: Support for Simple Type Union and Simple Type List</li>
-      <li>AXIS2-1092: Support for xs:list inside an xs:simpleType</li>
-      <li>AXIS2-1093: Support for xs:union inside xs:simpleType</li>
-    </ol>
-  </li>
-  <li>No support yet for unwrapping of doc/lit WSDL files (in stub
-  generation)</li>
-  <li>No support yet for rpc/encoded style WSDL documents (in stub
-  generation)</li>
-   <li>Idea plugin shows random behavior when XMLBeans is used</li>
+  <li>Simple Axis Server does not support POX/REST</li>
+  <li>RPC Message Receiver does not validate a request against the schema
+    (AXIS2-1943)</li>
+  <li>Axis2 Idea plugin shows random behavior when XMLBeans is used</li>
 </ul>
 
 <h2>Archived News</h2>
 
 <p>For information on previous Axis2 releases running up to the current
-release see <a href="archived_news.html" target="_blank">'Axis2 Archived
+release see the <a href="archived_news.html" target="_blank">'Axis2 Archived
 News'</a> page.</p>
 For other news items from Apache Software Foundation see:
 <ul>

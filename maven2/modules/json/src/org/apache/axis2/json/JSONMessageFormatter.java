@@ -23,40 +23,41 @@ import java.net.URL;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.JScriptConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.codehaus.jettison.badgerfish.BadgerFishXMLStreamWriter;
+import org.codehaus.jettison.mapped.MappedNamespaceConvention;
+import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 
 
 public class JSONMessageFormatter implements MessageFormatter {
 
     public String getContentType(MessageContext msgCtxt, OMOutputFormat format, String soapActionString) {
-            String contentType;
-            String encoding = format.getCharSetEncoding();
-            if (msgCtxt.getProperty(Constants.Configuration.CONTENT_TYPE) != null) {
-                contentType = (String) msgCtxt.getProperty(Constants.Configuration.CONTENT_TYPE);
-            } else {
-                contentType = JScriptConstants.MEDIA_TYPE_APPLICATION_JSON;
-            }
+        String contentType;
+        String encoding = format.getCharSetEncoding();
+        if (msgCtxt.getProperty(Constants.Configuration.CONTENT_TYPE) != null) {
+            contentType = (String) msgCtxt.getProperty(Constants.Configuration.CONTENT_TYPE);
+        } else {
+            contentType = (String) msgCtxt.getProperty(Constants.Configuration.MESSAGE_TYPE);
 
-            if (encoding != null) {
-                contentType += "; charset=" + encoding;
-            }
-            return contentType;
+        }
+
+        if (encoding != null) {
+            contentType += "; charset=" + encoding;
+        }
+        return contentType;
     }
 
     public byte[] getBytes(MessageContext msgCtxt, OMOutputFormat format) throws AxisFault {
-    	OMElement element = msgCtxt.getEnvelope().getBody().getFirstElement();
+        OMElement element = msgCtxt.getEnvelope().getBody().getFirstElement();
         try {
             ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-            BadgerFishXMLStreamWriter jsonWriter = new BadgerFishXMLStreamWriter(new OutputStreamWriter(bytesOut));
+            XMLStreamWriter jsonWriter = getJSONWriter(bytesOut);
             element.serializeAndConsume(jsonWriter);
             jsonWriter.writeEndDocument();
 
@@ -73,10 +74,16 @@ public class JSONMessageFormatter implements MessageFormatter {
         return null;
     }
 
+    protected XMLStreamWriter getJSONWriter(OutputStream outStream) {
+        MappedNamespaceConvention mnc = new MappedNamespaceConvention();
+        return new MappedXMLStreamWriter(mnc, new OutputStreamWriter(outStream));
+    }
+
     public void writeTo(MessageContext msgCtxt, OMOutputFormat format,
-			OutputStream out, boolean preserve) throws AxisFault {
-    	OMElement element = msgCtxt.getEnvelope().getBody().getFirstElement();
-    	BadgerFishXMLStreamWriter jsonWriter = new BadgerFishXMLStreamWriter(new OutputStreamWriter(out));
+                        OutputStream out, boolean preserve) throws AxisFault {
+        OMElement element = msgCtxt.getEnvelope().getBody().getFirstElement();
+        XMLStreamWriter jsonWriter = getJSONWriter(out);
+
         try {
             element.serializeAndConsume(jsonWriter);
             jsonWriter.writeEndDocument();

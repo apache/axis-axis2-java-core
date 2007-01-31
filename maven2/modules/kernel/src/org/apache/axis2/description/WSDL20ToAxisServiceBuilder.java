@@ -197,6 +197,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
         try {
             if (description == null) {
+
                 Description description = null;
                 DescriptionElement descriptionElement = null;
                 if (wsdlURI != null && !"".equals(wsdlURI)) {
@@ -221,7 +222,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 savedTargetNamespace = descriptionElement.getTargetNamespace().toString();
                 namespacemap = descriptionElement.getNamespaces();
-                this.description = descriptionElement.toComponent();
+                this.description = description;
 
             }
             // Create the namespacemap
@@ -482,8 +483,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         }
                         axisOperation.setSoapAction(unknownElement
                                 .getAttributeValue("soapAction"));
-                        if(axisOperation.getSoapAction() != null){
-                            axisService.mapActionToOperation(axisOperation.getSoapAction(), axisOperation);
+                        if(axisOperation.getInputAction() != null){
+                            axisService.mapActionToOperation(axisOperation.getInputAction(), axisOperation);
                         }
                     }
                 } else if (WSDLConstants.WSDL11Constants.SOAP_12_HEADER.equals(unknown
@@ -997,7 +998,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         return false;
     }
 
-    private Description  readInTheWSDLFile(String wsdlURI)
+    private Description readInTheWSDLFile(String wsdlURI)
             throws WSDLException {
 
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();

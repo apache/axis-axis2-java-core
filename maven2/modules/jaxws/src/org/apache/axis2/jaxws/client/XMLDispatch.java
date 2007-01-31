@@ -21,6 +21,7 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.om.OMElement;
@@ -29,7 +30,6 @@ import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -86,8 +86,6 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
     			blockFactoryType = getBlockFactory();
     			return createEmptyMessage(Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()));
     			
-    		}catch(MessageException e){
-    			throw ExceptionFactory.makeWebServiceException(e);
     		}catch(XMLStreamException e){
     			throw ExceptionFactory.makeWebServiceException(e);
     		}
@@ -136,6 +134,15 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
     }
 
     public Object getValueFromMessage(Message message) {
+        return getValue(message, mode, blockFactoryType);
+    }
+    
+    /**
+     * Common code used by XMLDispatch and XMLDispatchAsyncListener
+     * @param message
+     * @return object
+     */
+    static Object getValue(Message message, Mode mode, Class blockFactoryType) {
         Object value = null;
         Block block = null;
         
@@ -148,7 +155,16 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
 				BlockFactory factory = (BlockFactory) FactoryRegistry
 						.getFactory(blockFactoryType);
 				block = message.getBodyBlock(0, null, factory);
-				value = block.getBusinessObject(true);
+                if (block != null) {
+                    value = block.getBusinessObject(true);
+                } else {
+                    // REVIEW This seems like the correct behavior.  If the body is empty, return a null
+                    // Any changes here should also be made to XMLDispatch.getValue
+                    if (log.isDebugEnabled()) {
+                        log.debug("There are no elements in the body to unmarshal.  XMLDispatch returns a null value");
+                    }
+                    value = null;
+                }
 				
 			} else if (mode.equals(Mode.MESSAGE)) {
 			   if (blockFactoryType.equals(SOAPEnvelopeBlockFactory.class)) {
@@ -252,7 +268,7 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         }
         return null;
     }
-    private Message createEmptyMessage(Protocol protocol)throws MessageException, XMLStreamException{
+    private Message createEmptyMessage(Protocol protocol)throws WebServiceException, XMLStreamException{
     	MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
     	Message m = mf.create(protocol);
     	return m;

@@ -6,6 +6,11 @@
 
     <module ref="addressing"/>
 
+    <!--Configuring module , providing parameters for modules whether they refer or not-->
+    <moduleConfig name="addressing">
+        <parameter name="includeOptionalHeaders" locked="false">true</parameter>
+    </moduleConfig>
+
     <!-- Test with addressing and MTOM: Client's Configuration:START-->
 
     <parameter name="OutflowSecurity">

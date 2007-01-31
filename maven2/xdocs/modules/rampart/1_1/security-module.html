@@ -2,22 +2,31 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="">
+  <link href="../../../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
   <title>Rampart : WS-Security module for Axis2</title>
-  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
 </head>
 
 <body>
-<h1>Securing SOAP Messages with WSS4J</h1>
+<h1>Securing SOAP Messages with Rampart</h1>
 
-<p>Axis2 comes with a module based on WSS4J [1] to provide WS-Security
-features, called "rampart". This document explains how to engage and
-configure rampart module.</p>
+<p>Axis2 comes with a module based on Apache WSS4J [1] to provide WS-Security
+features, called "Rampart". This document explains how to engage and
+configure Rampart module.</p>
 
 <h2>Content</h2>
 <ul>
   <li><a href="#intro">Introduction</a></li>
+    <li><a href="#1_1_config">Rampart-1.1 Configuration</a>
+	<ul>
+	<li><a href="#1_1_assetions">Rampart Specific Assertions</a></li>
+	<li><a href="#1_1_service_config">Service Configration</a></li>
+	<li><a href="#1_1_client_config">Client Confiuration</a></li>
+	</ul></li>
+  <li><a href="#1_0_config">Rampart-1.0 Configuration</a>
+  <ul>
   <li><a href="#outflowsecurity">OutflowSecurity Parameter</a></li>
   <li><a href="#inflowsecurity">InflowSecurity Parameter</a></li>
+  </ul></li>
   <li><a href="#references">References</a></li>
   <li><a href="#examples">Examples</a></li>
 </ul>
@@ -25,12 +34,14 @@ configure rampart module.</p>
 
 <h2>Introduction</h2>
 
-<p>Since rampart module inserts handlers in the system specific pre-dispatch
-phase, it must be engaged globally. But it is possible to activate rampart
-module for the inflow or the outflow when required by the service or the
-clients.</p>
+<p>Since rampart module inserts handlers in the system specific security
+phase, it must be engaged globally. These handlers can be configured 
+using WS-SecurityPolicy[2] and Rampart specific policy assertions. 
+Rampart-1.0 used two axis2 parameters for configuration and these are
+still supported in the 1.1 release as well.</p>
 
-<p>The rampart module (rampart.mar) is available with the Axis2 release.</p>
+<p>The rampart-1.1 release is available 
+<a href="http://www.apache.org/dyn/closer.cgi/ws/rampart/1_1">here</a>.</p>
 
 <p>First it should be engaged by inserting the following in the axis2.xml
 file.</p>
@@ -43,16 +54,49 @@ container such as Apache Tomcat.</p>
 The configuration parameters should be set in the service.xml file of the
 service. The client side config parameters should be set in the axis2.xml of
 the client's Axis2 repository.</p>
+<a id="1_1_config"></a>
+<h2>Rampart-1.1 Configuration</h2>
+<a id="1_1_assetions"></a>
+<h3>Rampart Specific Assertions</h3>
 
-<p>Aegis module uses two parameters:</p>
+<p>Rampart uses the standard WS-SecurityPolicy[2] assertions and also defines its own 
+assertions to be able capture the configuration information that is not provided 
+in WS-SecurityPolicy.</p>
+<p>The Rampart specific assertion's xsd can be found <a href="sec-conf/rampart-config.xsd">here
+</a>.</p>
+
+<p>The <strong>ramp:RampartConfig</strong> assertion must be available as a one of the top 
+level assertions of the policy as shown <a href="sec-conf/sample-policy.xml">here</a>.</p>
+<a id="1_1_service_config"></a>
+<h3>Service Configration</h3>
+
+To configure the service one will simply have to add the policy element into the 
+sevices.xml file. A sample service.xml file is available 
+<a href="sec-conf/sample-services.xml">here</a>.
+<a id="1_1_client_config"></a>
+<h3>Client Confiuration</h3>
+<p>On the client side, a policy object should be created and loaded into options. Creating the policy object can be done using a "policy.xml" file as follows.</p>
+	
+<pre>
+	//Creating the object
+  	StAXOMBuilder builder = new StAXOMBuilder(pathToPolicyfile);
+        Policy clientPolicy = PolicyEngine.getPolicy(builder.getDocumentElement());
+	//setting the object
+	Options options = new Options();
+        options.setProperty(RampartMessageData.KEY_RAMPART_POLICY, clientPolicy);
+</pre>
+<a id="1_0_config"></a>
+<h2>Rampart-1.0 Configuration</h2>
+
+<p>Rampart module uses two parameters:</p>
 <ul>
-  <li>OutflowSecurity</li>
-  <li>InflowSecurity</li>
+  <li><a href="outflowsecurity">OutflowSecurity</a></li>
+  <li><a href="inflowsecurity">InflowSecurity</a></li>
 </ul>
 The configuration that can go in each of these parameters are described
 below: <a name="outflowsecurity"></a>
 
-<h2>OutflowSecurity Parameter</h2>
+<h3>OutflowSecurity Parameter</h3>
 This parameter is used to configure the outflow security handler. The outflow
 handler can be invoked more than once in the outflow one can provide
 configuration for each of these invocations. The 'action' element describes
@@ -157,7 +201,7 @@ element of the OutflowSecurity parameter</p>
 </table>
 <a name="inflowsecurity"></a>
 
-<h2>InflowSecurity Parameter</h2>
+<h3>InflowSecurity Parameter</h3>
 
 <p>This parameter is used to configure the inflow security handler. The
 'action' element is used to encapsulate the configuration elements here as
@@ -228,6 +272,9 @@ name="references"></a>
 
 <p>1. <a href="http://ws.apache.org/wss4j">Apache WSS4J -Home</a></p>
 <a name="examples"></a>
+<p>2. <a href="http://specs.xmlsoap.org/ws/2005/07/securitypolicy/ws-securitypolicy.pdf">ws-securitypolicy.pdf</a></p>
+<a name="examples"></a>
+
 
 <h2>Examples</h2>
 

@@ -59,7 +59,7 @@
                                                                         "<xsl:value-of select="qname/@localname"/>");
                         org.apache.axiom.om.OMNamespace namespace = factory.createOMNamespace("<xsl:value-of select="qame/@nsuri"/>",
                                                                            null);
-                        return factory.createOMElement(source, "<xsl:value-of select="qname/@localname"/>"/>", namespace);
+                        return factory.createOMElement(source, "<xsl:value-of select="qname/@localname"/>", namespace);
                     } catch (javax.xml.bind.JAXBException bex){
                         throw new RuntimeException(bex);
                     }

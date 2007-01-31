@@ -68,7 +68,7 @@ follows:</p>
 
 <p>The code for the document can be found at Axis2_HOME/samples/pojoguide
 &amp; Axis2_HOME/samples/pojoguidespring once you extract the <a
-href="../../download/1_1/download.html#std-bin">Axis2 Stadard
+href="../../download/1_1_1/download.html#std-bin">Axis2 Stadard
 Distribution</a>, and it might help to go grab it now to help you as you
 follow along. Let's get started.</p>
 <a name="pojo"></a>
@@ -204,14 +204,14 @@ here are the main Ant tasks you'll be using:</p>
 </ul>
 
 <p>Before you can build the source, however, you'll need to download the
-Axis2 1.1-bin and 1.1-war distributions <a
-href="../../download/1_1/download.html">here</a>. Then modify the following
+Axis2 1.1.1-bin and 1.1.1-war distributions <a
+href="../../download/1_1_1/download.html">here</a>. Then modify the following
 line inside the build.xml file (in the Axis2_HOME/samples/pojoguide directory
-in the extracted Axis2 1.1 Standard Binary (bin) Distribution) :</p>
+in the extracted Axis2 1.1.1 Standard Binary (bin) Distribution) :</p>
 <pre>&lt;property name="axis2.home" value="c:\apps\axis2" /&gt;</pre>
 
 <p>This modification contains the path to the root of the unzipped Axis2
-1.1-bin <a href="../../download/1_1/download.html#std-bin">download</a>. With
+1.1.1-bin <a href="../../download/1_1_1/download.html#std-bin">download</a>. With
 that explanation, you'll now build the source by typing the following: ant</p>
 
 <p>The following directory format should now exist at
@@ -231,7 +231,7 @@ development.</p>
 
 <p>Now get a <a href="http://tomcat.apache.org/">Tomcat</a> distribution (I
 used v5.5), and start it up by running <em>bin/startup.bat</em> or
-<em>bin/startup.sh</em>. Once it's running, deploy the Axis2 1.1-war by
+<em>bin/startup.sh</em>. Once it's running, deploy the Axis2 1.1.1-war by
 copying the axis2.war file to Tomcat's webapps directory. Tomcat will proceed
 by deploying axis2 and un-archive it into the webapps directory. Now copy the
 WeatherService directory created when building our project to:
@@ -249,7 +249,7 @@ with the class constructs, creating the RPCServiceClient and initializing the
 values of the Weather class within the Web service (See Code Listing 4).</p>
 
 <p><b>Code Listing 4: Setting the weather</b></p>
-<pre>package sample.pojo.rpcclient;
+<p><pre>package sample.pojo.rpcclient;
 
 import javax.xml.namespace.QName;
 
@@ -287,7 +287,7 @@ public class WeatherRPCClient {
         Object[] opSetWeatherArgs = new Object[] { w };
 
         serviceClient.invokeRobust(opSetWeather, opSetWeatherArgs);</b>
-...</pre>
+...</pre></p>
 
 <p>The most interesting code to note is in bold font. Notice the targetEPR
 variable you create, setting the endpoint reference to
@@ -302,7 +302,7 @@ invoke the Web service, which initializes the weather data (you'll verify
 this soon). Next you get back the weather data (see Code Listing 5).</p>
 
 <p><b>Code Listing 5: Getting the weather data</b></p>
-<pre>...
+<p><pre>...
         serviceClient.invokeRobust(opSetWeather, opSetWeatherArgs);
 
         // Getting the weather
@@ -321,7 +321,7 @@ this soon). Next you get back the weather data (see Code Listing 5).</p>
             System.out.println("Weather didn't initialize!");
             return;
         }</b>
-...</pre>
+...</pre></p>
 
 <p>First you set the operation in opGetWeather to getWeather. Then you create
 an empty argument list. Note this time you expect something back from the Web
@@ -333,7 +333,7 @@ setWeather. Now display the data to verify that it is indeed what you set it
 to (see Code Listing 6).</p>
 
 <p><b>Code Listing 6: Displaying the data</b></p>
-<pre>...
+<p><pre>...
             return;
         }
 
@@ -348,7 +348,7 @@ to (see Code Listing 6).</p>
                            result.getHowMuchRain());
         
     }</b>
-}</pre>
+}</pre></p>
 
 <p>You should receive the data shown in Code Listing 7.</p>
 
@@ -408,7 +408,7 @@ services.xml file. It's a bit longer this time because it instantiates two
 services in one file (see Code Listing 7).</p>
 
 <p><b>Code Listing 7: Defining the services: services.xml</b></p>
-<pre>&lt;serviceGroup&gt;
+<p><pre>&lt;serviceGroup&gt;
   &lt;service <b>name="SpringInit" 
 class="sample.spring.service.SpringInit</b>"&gt;
     &lt;description&gt;
@@ -444,7 +444,7 @@ org.apache.axis2.extensions.spring.receivers.SpringAppContextAwareObjectSupplier
       class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/&gt;
     &lt;/messageReceivers&gt;
   &lt;/service&gt;
-&lt;/serviceGroup&gt;</pre>
+&lt;/serviceGroup&gt;</pre></p>
 
 <p>You'll see a few familiar items in the above listing, and several changes.
 Once again, the items in bold are most important. The ServiceTCCL property
@@ -466,7 +466,7 @@ defined. For this example, you'll define three of them (see Code Listing
 
 <p><b>Code Listing 8: Defining the application context:
 applicationContext.xml</b></p>
-<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<p><pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
 "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
 
@@ -485,7 +485,7 @@ applicationContext.xml</b></p>
     &lt;property name="rain" value="false"/&gt;
     &lt;property name="howMuchRain" value="0.2"/&gt;
   &lt;/bean&gt;</b>
-&lt;/beans&gt;</pre>
+&lt;/beans&gt;</pre></p>
 
 <p>The first one is Axis2's hook into Spring's application context (needed
 since AAR deployment is quite different from regular WAR deployment). Next,
@@ -512,7 +512,7 @@ property is set in the serices.xml file). The only code worth mentioning in
 this class is shown in Code Listing 9.</p>
 
 <p><b>Code Listing 9: SpringInit's startUp method</b></p>
-<pre>    public void startUp(ConfigurationContext ignore,
+<p><pre>    public void startUp(ConfigurationContext ignore,
                         AxisService service) {
         <b>ClassLoader classLoader = service.getClassLoader();
         ClassPathXmlApplicationContext appCtx = new
@@ -525,7 +525,7 @@ this class is shown in Code Listing 9.</p>
             logger.debug("\n\nstartUp() set spring classloader " +
                          "via axisService.getClassLoader() ... ");
         }
-    }</pre>
+    }</pre></p>
 
 <p>Note that this method retrieves the Spring class loader, creates an
 application context with applicationContext.xml as the parameters. This new
@@ -535,7 +535,7 @@ The Spring Framework is now up and ready for our WeatherSpringService.</p>
 <h3>Build and Deploy Using Apache Axis2 and Tomcat</h3>
 
 <p>Great, your POJO is now ready for primetime within the Spring Framework.
-Before you build, you'll first need to make sure the axis2-spring-1.1.jar and
+Before you build, you'll first need to make sure the axis2-spring-1.1.1.jar and
 spring.jar files are in the project's <em>Axis2_HOME/lib</em> directory.</p>
 
 <p><strong>Note:</strong> The service will not deploy if you add the above jars files to the service archive due to cloass loding issues.</p>
@@ -563,7 +563,7 @@ have been set by the Spring framework at startup.</p>
 
 <p>Thus, you should get the following as output from the client:</p>
 <pre>run.client:
-    [javac] Compiling 1 source file to C:\axis2-1.1\samples\pojoguidespring\build\cl
+    [javac] Compiling 1 source file to C:\axis2-1.1.1\samples\pojoguidespring\build\cl
 asses
      <b>[java] Temperature               : 89.9
      [java] Forecast                  : Sunny

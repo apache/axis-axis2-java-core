@@ -217,21 +217,33 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                  AxisService service = generator.getAxisService(wsdlSelectionPage.getFileName());
                  monitor.worked(1);
                  
+                 //The generate all fix (Axis2-1862)
+                 boolean isServerside,isServiceXML,isGenerateServerSideInterface  = false;
+                 if (optionsPage.getGenerateAll()){
+                         isServerside = true;
+                         isServiceXML = true;
+                         isGenerateServerSideInterface = true;
+                 }else{
+                         isServerside = optionsPage.isServerside();
+                         isServiceXML =optionsPage.isServerXML();
+                         isGenerateServerSideInterface = optionsPage.getGenerateServerSideInterface();
+                 }
                  Map optionsMap = generator.fillOptionMap(optionsPage.isAsyncOnlyOn(),
-                         									optionsPage.isSyncOnlyOn(),
-                         									optionsPage.isServerside(),
-                         									optionsPage.isServerXML(),
-                         									optionsPage.isGenerateTestCase(),
-                         									optionsPage.getGenerateAll(),
-                         									optionsPage.getServiceName(),
-                         									optionsPage.getPortName(),
-                         									optionsPage.getDatabinderName(),
-                         									wsdlSelectionPage.getFileName(),
-                         									optionsPage.getPackageName(),
-                         									optionsPage.getSelectedLanguage(),
-                         									outputPage.getOutputLocation(),
-                         									optionsPage.getNs2PkgMapping(),
-                         									optionsPage.getGenerateServerSideInterface());
+                                                                                                optionsPage.isSyncOnlyOn(),
+                                                                                                isServerside,
+                                                                                                isServiceXML,
+                                                                                                optionsPage.isGenerateTestCase(),
+                                                                                                optionsPage.getGenerateAll(),
+                                                                                                optionsPage.getServiceName(),
+                                                                                                optionsPage.getPortName(),
+                                                                                                optionsPage.getDatabinderName(),
+                                                                                                wsdlSelectionPage.getFileName(),
+                                                                                                optionsPage.getPackageName(),
+                                                                                                optionsPage.getSelectedLanguage(),
+                                                                                                outputPage.getOutputLocation(),
+                                                                                                optionsPage.getNs2PkgMapping(),
+                                                                                                isGenerateServerSideInterface);
+
                  
                  CodeGenConfiguration codegenConfig = new CodeGenConfiguration(service, optionsMap);
                  //set the baseURI

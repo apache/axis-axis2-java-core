@@ -16,7 +16,13 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Iterator;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -29,13 +35,8 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Iterator;
+
+import junit.framework.TestCase;
 
 public class AttachmentSerializationTest extends TestCase {
 

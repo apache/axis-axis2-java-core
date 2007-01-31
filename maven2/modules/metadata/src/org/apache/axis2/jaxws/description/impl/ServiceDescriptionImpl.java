@@ -16,7 +16,10 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import java.io.FileNotFoundException;
+import java.net.ConnectException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -46,6 +49,7 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
+import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
@@ -406,27 +410,66 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     	
     	if (isDBCMap()) {
 
-    		//TODO: Currently, there is a bug which allows the wsdlDefinition to be placed
+    		//  Currently, there is a bug which allows the wsdlDefinition to be placed
     		//  on either the impl class composite or the sei composite, or both. We need to 
-    		//  look in both places and find the correct one, if it exists. There is a patch 
-    		//  in EndpointDescriptionImpl constructor which will reset the wsdlWrapper, if necessary. But
-    		//  that functionality should be moved here at some point.
-    		if (composite.getWsdlDefinition() != null) {
-    			this.wsdlURL = composite.getWsdlURL();
-                
-    			try {
-                    this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL, 
-                    				composite.getWsdlDefinition());
+    		//  look in both places and find the correct one, if it exists.
 
-                } catch (WSDLException e) {
-                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
-                }
-    		}
+    	    if (((composite.getWebServiceAnnot() != null) && 
+    	          DescriptionUtils.isEmpty(composite.getWebServiceAnnot().endpointInterface()))  	                    
+    	               || 
+    	          (!(composite.getWebServiceProviderAnnot() == null))) {
+    	        //This is either an implicit SEI, or a WebService Provider
+    	        if (composite.getWsdlDefinition() != null) {
+    	            this.wsdlURL = composite.getWsdlURL();
+    	            
+    	            try {
+    	                this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL, 
+    	                        composite.getWsdlDefinition());
+    	            } catch (WSDLException e) {
+    	                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
+    	            }
+    	        }
+    	        
+    	    } else if (composite.getWebServiceAnnot() != null) {
+    	        //This impl class specifies an SEI...this is a special case. There is a bug
+    	        //in the tooling that allows for the wsdllocation to be specifed on either the
+    	        //impl. class, or the SEI, or both. So, we need to look for the wsdl as follows:
+    	        //          1. If the Wsdl exists on the SEI, then check for it on the impl.
+    	        //          2. If it is not found in either location, in that order, then generate
+    	        
+    	        DescriptionBuilderComposite seic = 
+    	            getDBCMap().get(composite.getWebServiceAnnot().endpointInterface());
+    	        
+    	        try { 
+    	            if (seic.getWsdlDefinition() != null) {
+    	                //set the sdimpl from the SEI composite
+    	                this.wsdlURL = seic.getWsdlURL();
+    	                this.wsdlWrapper = new WSDL4JWrapper(seic.getWsdlURL(), seic.getWsdlDefinition());
+    	            } else if (composite.getWsdlDefinition() != null) {
+    	                //set the sdimpl from the impl. class composite
+    	                this.wsdlURL = composite.getWsdlURL();
+    	                this.wsdlWrapper = new WSDL4JWrapper(composite.getWsdlURL(), composite.getWsdlDefinition());
+    	            } 
+    	        } catch (WSDLException e) {
+    	            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
+    	        }
+    	    }           
+    	    
         //Deprecate this code block when MDQ is fully integrated
     	} else if (wsdlURL != null) {
             try {
                 this.wsdlWrapper = new WSDL4JWrapper(this.wsdlURL);
-            } catch (WSDLException e) {
+            }
+            catch(FileNotFoundException e) {
+            	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlNotFoundErr", e.getMessage()), e);
+            }
+            catch(UnknownHostException e) {
+            	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("unknownHost", e.getMessage()), e);
+            }
+            catch(ConnectException e) {
+            	throw ExceptionFactory.makeWebServiceException(Messages.getMessage("connectionRefused", e.getMessage()), e);
+            }
+            catch (WSDLException e) {
                 throw ExceptionFactory.makeWebServiceException(Messages.getMessage("wsdlException", e.getMessage()), e);
             }
         }
@@ -507,7 +550,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     	this.wsdlWrapper = wrapper;
     }
     
-	private void validateDBCLIntegrity(){
+	private void validateDBCLIntegrity() {
 		
 		//First, check the integrity of this input composite
 		//and retrieve
@@ -524,8 +567,11 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 			validateIntegrity();
 		}
 		catch (Exception ex) {
-			//com.ibm.ws.ffdc.FFDCFilter.processException(ex, "org.apache.axis2.jaxws.description.ServiceDescription", "329", this);				
-			//Tr.error(_tc, msg, inserts);
+            if (log.isDebugEnabled()) {
+                log.debug("Validation phase 1 failure: " + ex.toString(), ex);
+                log.debug("Failing composite: " + composite.toString());
+            }
+            throw ExceptionFactory.makeWebServiceException("Validation Exception " + ex, ex);
 		}
 	}
 
@@ -549,18 +595,20 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         Iterator<String> iter = 
                     composite.getInterfacesList().iterator();
 
+        // Remember if we've validated the Provider interface.  Later we'll make sure that if we have an 
+        // WebServiceProvider annotation, we found a valid interface here.
+        boolean providerInterfaceValid = false;
         while (iter.hasNext()) {
             String interfaceString = iter.next();
-            // REVIEW: These string compares may not be sufficient; they assume, for example Provider<SOAPMessage>.  What about endpoint impls that:
-            //         (1) ... implement Provider<javax.xml.soap.SOAPMessage>
-            //         (2) import wrong.package.SOAPMessage;
-            //             ... implement Provider<SOAPMessage>;
             if (interfaceString.equals(MDQConstants.PROVIDER_SOURCE)
                     || interfaceString.equals(MDQConstants.PROVIDER_SOAP)
-                    || interfaceString.equals(MDQConstants.PROVIDER_DATASOURCE)) {
-                //This is a provider based SEI, make sure the annotation exists
+                    || interfaceString.equals(MDQConstants.PROVIDER_DATASOURCE)
+                    || interfaceString.equals(MDQConstants.PROVIDER_STRING)) {
+                providerInterfaceValid = true;
+                //This is a provider based endpoint, make sure the annotation exists
                 if (composite.getWebServiceProviderAnnot() == null) {
-                    throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: This is a Provider based SEI that does not contain a WebServiceProvider annotation");
+                    // TODO: RAS/NLS
+                    throw ExceptionFactory.makeWebServiceException("Validation error: This is a Provider based endpoint that does not contain a WebServiceProvider annotation.  Provider class: " + composite.getClassName());
                 }
             }
         }
@@ -570,17 +618,30 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 		//Verify that WebService and WebServiceProvider are not both specified
 		//per JAXWS - Sec. 7.7
 		if (composite.getWebServiceAnnot() != null && composite.getWebServiceProviderAnnot() != null) {
-			throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: WebService annotation and WebServiceProvider annotation cannot coexist");
+            // TODO: RAS/NLS
+			throw ExceptionFactory.makeWebServiceException("Validation error: WebService annotation and WebServiceProvider annotation cannot coexist.  Implementation class: " + composite.getClassName());
 		}
 		
-//		Make sure that we're only validating against WSDL, if there is WSDL...duh
 		if (composite.getWebServiceProviderAnnot() != null ) {
-			// TODO: Verify that this Provider based WebService has a method named invoke
-			
+            if (!providerInterfaceValid) {
+                // TODO: RAS/NLS
+                throw ExceptionFactory.makeWebServiceException("Validation error: This is a Provider that does not specify a valid Provider interface.   Implementation class: " + composite.getClassName());
+            }
+            // There must be a public default constructor per JAXWS - Sec 5.1
+            if (!validateDefaultConstructor()) {
+                // TODO: RAS/NLS
+                throw ExceptionFactory.makeWebServiceException("Validation error: Provider must have a public default constructor.  Implementation class: " + composite.getClassName());
+            }
+            // There must be an invoke method per JAXWS - Sec 5.1.1
+            if (!validateInvokeMethod()) {
+                // TODO: RAS/NLS
+                throw ExceptionFactory.makeWebServiceException("Validation error: Provider must have a public invoke method.  Implementation class: " + composite.getClassName());
+            }
 		} else if (composite.getWebServiceAnnot() != null) {
 			
 			if ( composite.getServiceModeAnnot() != null) {
-				throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: ServiceMode annotation can only be specified for WebServiceProvider");
+                // TODO: RAS/NLS
+				throw ExceptionFactory.makeWebServiceException("Validation error: ServiceMode annotation can only be specified for WebServiceProvider.   Implementation class: " + composite.getClassName());
 			}
 			
 			//TODO: hmmm, will we ever actually validate an interface directly...don't think so
@@ -591,7 +652,9 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 				// TODO: Validate on the class that a finalize() method does not exist
 				if (!DescriptionUtils.isEmpty(composite.getWebServiceAnnot().wsdlLocation())) {
 					if (composite.getWsdlDefinition() == null && composite.getWsdlURL() == null) {
-						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: cannot find WSDL Definition pertaining to this WebService annotation");
+                        // TODO: RAS/NLS
+						throw ExceptionFactory.makeWebServiceException("Validation error: cannot find WSDL Definition specified by this WebService annotation. Implementation class: " 
+                                + composite.getClassName() + "; WSDL location: " + composite.getWebServiceAnnot().wsdlLocation());
 					}
 				}
 				
@@ -603,7 +666,9 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 					
 					//Verify that we can find the SEI in the composite list
 					if (seic == null){
-						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: cannot find SEI composite specified by the endpoint interface");
+                        // TODO: RAS/NLS
+						throw ExceptionFactory.makeWebServiceException("Validation error: cannot find SEI specified by the WebService.endpointInterface.  Implementaiton class: " 
+                                + composite.getClassName() + "; EndpointInterface: " + composite.getWebServiceAnnot().endpointInterface());
 					}
 					
 					// Verify that the only class annotations are WebService and HandlerChain
@@ -615,26 +680,30 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 							|| composite.getWebServiceContextAnnot()!= null
 							|| !composite.getAllWebServiceRefAnnots().isEmpty()
 					) {
-						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: invalid annotations specified when WebService annotation specifies an endpoint interface");
+                        // TODO: RAS/NLS
+						throw ExceptionFactory.makeWebServiceException("Validation error: invalid annotations specified when WebService annotation specifies an endpoint interface.  Implemntation class:  "
+								+ composite.getClassName());
 					}
 					
 					//Verify that WebService annotation does not contain a name attribute
 					//(per JSR181 Sec. 3.1)
 					if (composite.getWebServiceAnnot().name() != null) {
-						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: invalid annotations specified when WebService annotation specifies an endpoint interface");
+                        // TODO: RAS/NLS
+                        throw ExceptionFactory.makeWebServiceException("Validation error: WebService.name must not be specified when the bean specifies an endpoint interface.  Implentation class: "  
+                                + composite.getClassName() + "; WebService.name: " + composite.getWebServiceAnnot().name());
 					}
 					
+                    validateSEI(seic);
 					//Verify that that this implementation class implements all methods in the interface
 					validateImplementation(seic);
 					
 					//Verify that this impl. class does not contain any @WebMethod annotations
 					if (webMethodAnnotationsExist()) {
-						throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: WebMethod annotations cannot exist on class when WebService.endpointInterface is set");	
+                        // TODO: RAS/NLS
+						throw ExceptionFactory.makeWebServiceException("Validation error: WebMethod annotations cannot exist on implentation when WebService.endpointInterface is set.  Implementation class: " +
+                                composite.getClassName());	
 					}
 					
-					//TODO: validateSEI() ...this should really be done here. No sense in validating
-					//		an interface just because its in the list
-					validateSEI(seic);
 					
 				} else { //this is an implicit SEI (i.e. impl w/out endpointInterface
 					
@@ -644,7 +713,9 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 					//
 				}
 			} else { //this is an interface...we should not be processing interfaces here
-				throw ExceptionFactory.makeWebServiceException("ValidateIntegrity: Improper usage: cannot invoke this method with an interface");	
+                // TODO: RAS/NLS
+				throw ExceptionFactory.makeWebServiceException("Validation error: Improper usage: cannot invoke this method with an interface.  Implementation class: "
+                        + composite.getClassName());	
 			}
 					
 			//TODO: don't think this is necessary
@@ -652,7 +723,41 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 		}
 	}
 	
-	private void validateImplementation(DescriptionBuilderComposite seic) {
+    /**
+     * Validate there is an invoke method on the composite.
+     * @return
+     */
+	private boolean validateInvokeMethod() {
+        boolean validInvokeMethod = false;
+        List<MethodDescriptionComposite> invokeMethodList = composite.getMethodDescriptionComposite("invoke");
+        if (invokeMethodList != null && !invokeMethodList.isEmpty()) {
+            validInvokeMethod = true;
+        }
+        return validInvokeMethod;
+    }
+
+    /**
+     * Validate there is a default no-argument constructor on the composite.
+     * @return
+     */
+    private boolean validateDefaultConstructor() {
+        boolean validDefaultCtor = false;
+        List<MethodDescriptionComposite> constructorList = composite.getMethodDescriptionComposite("<init>");
+        if (constructorList != null && !constructorList.isEmpty()) {
+            // There are public constructors; make sure there is one that takes no arguments.
+            for (MethodDescriptionComposite checkCtor : constructorList) {
+                List<ParameterDescriptionComposite> paramList = checkCtor.getParameterDescriptionCompositeList();
+                if (paramList == null || paramList.isEmpty()) {
+                    validDefaultCtor = true;
+                    break;
+                }
+            }
+        }
+        
+        return validDefaultCtor;
+    }
+
+    private void validateImplementation(DescriptionBuilderComposite seic) {
 		/*
 		 *	Verify that an impl class implements all the methods of the SEI. We
 		 *  have to verify this because an impl class is not required to actually use
@@ -663,26 +768,56 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 		 */
 		
 		HashMap compositeHashMap = new HashMap();
-		Iterator<MethodDescriptionComposite> compIterator = 
-					composite.getMethodDescriptionsList().iterator();
-
+		Iterator<MethodDescriptionComposite> compIterator = composite.getMethodDescriptionsList().iterator();
 		while (compIterator.hasNext()) {
 			MethodDescriptionComposite mdc = compIterator.next();
 			compositeHashMap.put(mdc.getMethodName(),mdc);
 		}
+        // Add methods declared in the implementation's superclass
+        addSuperClassMethods(compositeHashMap, composite);
 		
-		Iterator<MethodDescriptionComposite> seiIterator = 
-					seic.getMethodDescriptionsList().iterator();
+        HashMap seiMethodHashMap = new HashMap();
+        Iterator<MethodDescriptionComposite> seiMethodIterator =  seic.getMethodDescriptionsList().iterator();
+        while (seiMethodIterator.hasNext()) {
+            MethodDescriptionComposite mdc = seiMethodIterator.next();
+            seiMethodHashMap.put(mdc.getMethodName(),mdc);
+        }
+        // Add any methods declared in superinterfaces of the SEI
+        addSuperClassMethods(seiMethodHashMap, seic);
 		
-		while (seiIterator.hasNext()) {
-			MethodDescriptionComposite mdc = seiIterator.next();
-
+        // Make sure all the methods in the SEI (including any inherited from superinterfaces) are
+        // implemented by the bean (including inherited methods on the bean).
+        Iterator<MethodDescriptionComposite> verifySEIIterator = seiMethodHashMap.values().iterator();
+		while (verifySEIIterator.hasNext()) {
+			MethodDescriptionComposite mdc = verifySEIIterator.next();
+			// REVIEW:  Only the names are checked; this isn't checking signatures
 			if (compositeHashMap.get(mdc.getMethodName()) == null) {
-				throw ExceptionFactory.makeWebServiceException("ServiceDescription: subclass does not implement method on specified interface");				
+                // TODO: RAS/NLS
+			    throw ExceptionFactory.makeWebServiceException("Validation error: Implementation subclass does not implement method on specified interface.  Implementation class: "
+                        + composite.getClassName() + "; missing method name: " + mdc.getMethodName() + "; endpointInterface: " + seic.getClassName());				
 			}
 		}
-		
 	}
+    /**
+     * Adds any methods declared in superclasses to the HashMap.  The hierachy starting with the DBC will be walked
+     * up recursively, adding methods from each parent DBC encountered.  
+     * 
+     * Note that this can be used for either classes or interfaces.
+     * @param methodMap
+     * @param dbc
+     */
+    private void addSuperClassMethods(HashMap methodMap, DescriptionBuilderComposite dbc) {
+        DescriptionBuilderComposite superDBC = dbcMap.get(dbc.getSuperClassName());
+        if(superDBC != null) {
+            Iterator<MethodDescriptionComposite> mIter = superDBC.getMethodDescriptionsList().iterator();
+            while(mIter.hasNext()) {
+                MethodDescriptionComposite mdc = mIter.next();
+                methodMap.put(mdc.getMethodName(), mdc);
+            }
+            addSuperClassMethods(methodMap, superDBC);
+        }
+    }
+
 	
 	/*
 	 * This method verifies that, if there are any WebMethod with exclude == false, then
@@ -733,9 +868,16 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 		
 		//TODO: Validate SEI superclasses -- hmmm, may be doing this below
 		//		
-		
+		if (seic.getWebServiceAnnot() == null) {
+            // TODO: RAS & NLS
+            throw ExceptionFactory.makeWebServiceException("Validation error: SEI does not contain a WebService annotation.  Implementation class: "
+                    + composite.getClassName() + "; SEI: " + seic.getClassName());
+        }
 		if (!seic.getWebServiceAnnot().endpointInterface().equals("")) {
-			throw ExceptionFactory.makeWebServiceException("DescriptionBuilderComposite: WebService annotation contains a non-empty field for the SEI");
+            // TODO: RAS & NLS
+			throw ExceptionFactory.makeWebServiceException("Validation error: SEI must not set a value for @WebService.endpointInterface.  Implementation class: "
+                    + composite.getClassName() + "; SEI: " + seic.getClassName() 
+                    + "; Invalid endpointInterface value: " + seic.getWebServiceAnnot().endpointInterface());  
 		}
 
 		checkSEIAgainstWSDL();
@@ -907,4 +1049,5 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         }
         return portsUsingAddress;
     }
+    
 }

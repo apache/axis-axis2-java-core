@@ -21,6 +21,7 @@ import java.util.List;
 import javax.activation.DataHandler;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.WebServiceException;
 
 /**
  * Message
@@ -47,7 +48,7 @@ public interface Message extends XMLPart {
 	 * Get the xml part as a read/write SOAPEnvelope
 	 * @return SOAPEnvelope
 	 */
-	public SOAPMessage getAsSOAPMessage() throws MessageException;
+	public SOAPMessage getAsSOAPMessage() throws WebServiceException;
 	
     /**
      * Adds an attachment part to the message

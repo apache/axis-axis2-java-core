@@ -82,7 +82,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
 
             if (axisService != null) {
                 if (isDebugEnabled) {
-                    log.debug(Messages.getMessage("servicefound",
+                    log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("servicefound",
                             axisService.getName()));
                 }
                 msgctx.setAxisService(axisService);
@@ -94,7 +94,7 @@ public abstract class AbstractDispatcher extends AbstractHandler {
 
             if (axisOperation != null) {
                 if (isDebugEnabled) {
-                    log.debug(Messages.getMessage("operationfound",
+                    log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("operationfound",
                             axisOperation.getName().getLocalPart()));
                 }
 

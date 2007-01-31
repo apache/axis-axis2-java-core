@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.impl;
 
 import java.util.concurrent.Callable;
 
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 
 import org.apache.axiom.om.OMElement;
@@ -27,7 +28,6 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 
 /**
  * The AsyncListener is responsible for holding the callback that was passed
@@ -100,12 +100,8 @@ public class AsyncListener implements Callable {
      * @param msg
      */
     protected Object getResponseValueObject(MessageContext mc) {
-        try {
-            Message msg = mc.getMessage();
-            OMElement om = msg.getAsOMElement();
-            return om.toString();
-        } catch (MessageException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
+        Message msg = mc.getMessage();
+        OMElement om = msg.getAsOMElement();
+        return om.toString();
     }
 }

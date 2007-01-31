@@ -79,8 +79,7 @@ public class RawXMLINOnlyMessageReceiver extends AbstractInMessageReceiver
                 method.invoke(
                         obj, new Object[]{msgContext.getEnvelope().getBody().getFirstElement()});
             } else {
-                throw new AxisFault(Messages.getMessage("methodDoesNotExistInOnly",
-                        op.getName().toString()));
+                throw new AxisFault(Messages.getMessage("methodDoesNotExistInOnly"));
             }
 
         } catch (Exception e) {

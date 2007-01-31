@@ -148,7 +148,7 @@
             </properties>
         </dependency>
 	  <dependency>
-            <groupId>incubator-woden</groupId>
+            <groupId>org.apache.woden</groupId>
             <artifactId>woden</artifactId>
             <version>${woden.version}</version>
             <properties>
@@ -158,7 +158,7 @@
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
-            <version>1.0-alpha-1</version>
+            <version>${jettison.version}</version>
             <properties>
                 <module>true</module>
             </properties>

@@ -84,4 +84,12 @@ public class DocLitWrapImpl implements DocLitWrap {
     	return response;
     }
 
+    public String echoStringWSGEN1(String headerValue) {
+        return headerValue;
+    }
+    
+    public String echoStringWSGEN2(String data) {
+        return data;
+    }
+
 }

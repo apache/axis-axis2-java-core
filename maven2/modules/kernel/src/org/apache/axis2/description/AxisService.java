@@ -388,7 +388,7 @@ public class AxisService extends AxisDescription {
             axisOperation.setMessageReceiver(
                     loadDefaultMessageReceiver(axisOperation.getMessageExchangePattern(), this));
         }
-        if (axisOperation.getSoapAction() == null) {
+        if (axisOperation.getInputAction() == null) {
             axisOperation.setSoapAction("urn:" + axisOperation.getName().getLocalPart());
         }
         addChild(axisOperation);
@@ -413,7 +413,7 @@ public class AxisService extends AxisDescription {
 
         mapActionToOperation(operationName, axisOperation);
 
-        String action = axisOperation.getSoapAction();
+        String action = axisOperation.getInputAction();
         if (action.length() > 0) {
             mapActionToOperation(action, axisOperation);
         }
@@ -529,10 +529,6 @@ public class AxisService extends AxisDescription {
 
         while (operations.hasNext()) {
             AxisOperation axisOperation = (AxisOperation) operations.next();
-            if (moduleImpl != null) {
-                // notyfying module for service engagement
-                moduleImpl.engageNotify(axisOperation);
-            }
             axisOperation.engageModule(axisModule, axisConfig);
         }
         engagedModules.add(axisModule);
@@ -547,6 +543,11 @@ public class AxisService extends AxisDescription {
      * @param axisOperation the operation to map to
      */
     public void mapActionToOperation(String action, AxisOperation axisOperation) {
+        if(action == null || "".equals(action)){
+            if(log.isDebugEnabled()){
+                log.debug("mapActionToOperation: A null or empty action cannot be used to map to an operation.");
+            }
+        }
         operationsAliasesMap.put(action, axisOperation);
     }
 

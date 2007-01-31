@@ -16,7 +16,8 @@
 
 package org.apache.axis2.saaj;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.util.Iterator;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
@@ -25,6 +26,7 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.Name;
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
@@ -34,8 +36,8 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
-import java.io.ByteArrayInputStream;
-import java.util.Iterator;
+
+import junit.framework.TestCase;
 
 public class SOAPEnvelopeTest extends TestCase {
 
@@ -236,7 +238,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(envelope.getBody() != null);
     }
 
-    public void testFaults() throws Exception {
+    public void _testFaults() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
 
@@ -253,7 +255,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertEquals("CODE", soapFault.getFaultCode());
     }
 
-    public void testFaults2() throws Exception {
+    public void _testFaults2() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         SOAPBody body = envelope.getBody();
         SOAPFault fault = body.addFault();
@@ -535,5 +537,33 @@ public class SOAPEnvelopeTest extends TestCase {
                 validateBody(childElementIter);
             }
         }
+    }
+    
+    //TODO : check
+    public void _testSetEncodingStyle() throws Exception {
+        SOAPEnvelope envelope = getSOAPEnvelope();
+        envelope.setEncodingStyle("http://example.com/MyEncodings");
+        assertNotNull(envelope.getEncodingStyle());
+    }
+    
+    public void testElementAfterBody() throws Exception{
+    	MessageFactory factory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    	SOAPMessage message = factory.createMessage();
+    	SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
+
+    	try
+    	{
+    		System.out.println("SOAP1.2 does not allow trailing blocks after" +
+    				"the Body");
+    		System.out.println("Call SOAPEnvelope.addChildElement() and " +
+    				"(expect SOAPException)");
+    		Name elementAfterBody = envelope.createName("AfterBody", "e", "some-uri");
+    		envelope.addChildElement(elementAfterBody);
+    		System.out.println("Did not throw expected SOAPException");
+    	} catch (SOAPException e) {
+    		System.out.println("Did throw expected SOAPException");
+    	} catch (Exception e) {
+    		System.out.println("Unexpected Exception: " + e.getMessage());
+    	}
     }
 }

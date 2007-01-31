@@ -29,21 +29,92 @@
 
 package org.apache.axis2.transport.http.server;
 
+import java.io.IOException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.http.ConnectionClosedException;
+import org.apache.http.HttpException;
 import org.apache.http.HttpServerConnection;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpExecutionContext;
 import org.apache.http.protocol.HttpService;
 
 /**
- * Abstract base class to process requests and fill in respnses.
+ * I/O processor intended to process requests and fill in responses.
+ * 
  * @author Chuck Williams
  */
+public class HttpServiceProcessor implements IOProcessor {
 
-public abstract class HttpServiceProcessor extends HttpService implements IOProcessor {
+    private static final Log LOG = LogFactory.getLog(HttpServiceProcessor.class);
     
-    /** Create an HttpServiceProcessor
-     * @param conn the connection we are receiving the request on
-     */
-    public HttpServiceProcessor(HttpServerConnection conn) {
-        super(conn);
+    private volatile boolean terminated;
+    
+    private final HttpService httpservice;
+    private final HttpServerConnection conn;
+    private final IOProcessorCallback callback;
+    
+    public HttpServiceProcessor(
+            final HttpService httpservice, 
+            final HttpServerConnection conn,
+            final IOProcessorCallback callback) {
+        super();
+        this.httpservice = httpservice;
+        this.conn = conn;
+        this.callback = callback;
+        this.terminated = false;
+    }
+    
+    public void run() {
+        LOG.debug("New connection thread");
+        HttpContext context = new HttpExecutionContext(null);
+        try {
+            while (!Thread.interrupted() && !isDestroyed() && this.conn.isOpen()) {
+                this.httpservice.handleRequest(this.conn, context);
+            }
+        } catch (ConnectionClosedException ex) {
+            LOG.debug("Client closed connection");
+        } catch (IOException ex) {
+            if (ex instanceof SocketTimeoutException) {
+                LOG.debug(ex.getMessage());
+            } else if (ex instanceof SocketException) {
+                LOG.debug(ex.getMessage());
+            } else {
+                LOG.warn(ex.getMessage(), ex);
+            }
+        } catch (HttpException ex) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("HTTP protocol error: " + ex.getMessage());
+            }
+        } finally {
+            destroy();
+            if (this.callback != null) {
+                this.callback.completed(this);
+            }
+        }
+    }
+
+    public void close() throws IOException {
+        this.conn.close();
+    }
+
+    public void destroy() {
+        if (this.terminated) {
+            return;
+        }
+        this.terminated = true;
+        try {
+            this.conn.shutdown();
+        } catch (IOException ex) {
+            LOG.debug("I/O error shutting down connection");
+        }
+    }
+
+    public boolean isDestroyed() {
+        return this.terminated;
     }
 
 }

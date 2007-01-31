@@ -37,8 +37,18 @@ import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.HttpResponseFactory;
 import org.apache.http.HttpServerConnection;
+import org.apache.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.BasicHttpProcessor;
+import org.apache.http.protocol.HttpProcessor;
+import org.apache.http.protocol.ResponseConnControl;
+import org.apache.http.protocol.ResponseContent;
+import org.apache.http.protocol.ResponseDate;
+import org.apache.http.protocol.ResponseServer;
 
 public class DefaultHttpConnectionManager implements HttpConnectionManager {
 
@@ -120,6 +130,38 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         // Evict destroyed processors
         cleanup();
         
+        // Assemble new Axis HTTP service
+        HttpProcessor httpProcessor;
+        ConnectionReuseStrategy connStrategy;
+        HttpResponseFactory responseFactory;
+        
+        if (httpFactory != null) {
+            httpProcessor = httpFactory.newHttpProcessor(); 
+            connStrategy = httpFactory.newConnStrategy();
+            responseFactory = httpFactory.newResponseFactory();
+        } else {
+            BasicHttpProcessor p = new BasicHttpProcessor();
+            p.addInterceptor(new RequestSessionCookie());
+            p.addInterceptor(new ResponseDate());
+            p.addInterceptor(new ResponseServer());
+            p.addInterceptor(new ResponseContent());
+            p.addInterceptor(new ResponseConnControl());
+            p.addInterceptor(new ResponseSessionCookie());
+            httpProcessor =  new LoggingProcessorDecorator(p);
+            connStrategy = new DefaultConnectionReuseStrategy();
+            responseFactory = new DefaultHttpResponseFactory();
+        }
+
+        AxisHttpService httpService = new AxisHttpService(
+                httpProcessor,
+                connStrategy,
+                responseFactory,
+                this.configurationContext,
+                this.sessionManager,
+                this.workerfactory.newWorker());
+        httpService.setParams(this.params);
+        
+        // Create I/O processor to execute HTTP service
         IOProcessorCallback callback = new IOProcessorCallback() {
           
             public void completed(final IOProcessor processor) {
@@ -130,16 +172,11 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
             }
             
         };
-        HttpServiceProcessor processor;
-        if (httpFactory != null) {
-            processor = httpFactory.newRequestServiceProcessor(
-                    conn, sessionManager, workerfactory.newWorker(), callback);
-        } else {
-            processor = new DefaultHttpServiceProcessor(
-                    conn, configurationContext, sessionManager, workerfactory.newWorker(), callback);
-        }
+        IOProcessor processor = new HttpServiceProcessor(
+                httpService,
+                conn,
+                callback);
 
-        processor.setParams(this.params);
         addProcessor(processor);
         this.executor.execute(processor);
     }

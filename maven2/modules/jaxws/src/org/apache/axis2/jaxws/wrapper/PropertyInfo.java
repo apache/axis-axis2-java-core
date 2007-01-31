@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.jaxws.wrapper.impl;
+package org.apache.axis2.jaxws.wrapper;
 
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.PropertyDescriptor;
@@ -26,6 +26,7 @@ import java.util.Collection;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.ConvertUtils;
+import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,6 +37,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class PropertyInfo {
 	PropertyDescriptor descriptor;
+    Class propertyType = null;
+    String propertyName = null;
 	private static Log log = LogFactory.getLog(PropertyInfo.class);
 	/**
 	 * @param propertyName
@@ -46,6 +49,27 @@ public class PropertyInfo {
 		this.descriptor = descriptor;
 	}
 	
+    /**
+     * @return property type
+     */
+    public Class getPropertyType() {
+        // Get once and remember so that we can avoid syncronization penalties
+        if (propertyType == null) {
+            propertyType = descriptor.getPropertyType();
+        }
+        return propertyType;
+    }
+    
+    /**
+     * @return property name
+     */
+    public String getPropertyName() {
+        // Get once and remember so that we can avoid syncronization penalties
+        if (propertyName == null) {
+            propertyName = descriptor.getName();
+        }
+        return propertyName;
+    }
 	
 	/**
      * Get the object 
@@ -193,5 +217,13 @@ public class PropertyInfo {
                     Messages.getMessage("convertProblem", objectClass, destType.getName()));
 
         }
+    }
+    
+    public String toString() {
+        String value = "PropertyInfo[";
+        value += " name="+ this.getPropertyName();
+        value += " type=" + this.getPropertyType().getName();
+        value += " propertyDecriptor=" + this.descriptor;
+        return value +"]";
     }
 }

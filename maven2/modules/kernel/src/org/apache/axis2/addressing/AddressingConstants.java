@@ -81,6 +81,12 @@ public interface AddressingConstants {
     public static final String MESSAGEID_ATTRIBUTES = "messageidAttributes";
     
     /**
+     * When set to Boolean.TRUE this will cause the addressing out handler to output all
+     * populated addressing headers in a message, including any optional ones.
+     */
+    public static final String INCLUDE_OPTIONAL_HEADERS = "includeOptionalHeaders";
+    
+    /**
      * This property, if set to Boolean.TRUE, will mean that the addressing handler allows partially
      * ws-addressed messages to be sent even if they are then invalid rather than throwing a fault.
      * 

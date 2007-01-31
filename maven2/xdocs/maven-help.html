@@ -4,7 +4,7 @@
 <head>
   <title>Quick Guide to Maven for Axis 2.0</title>
   <meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
-  <link href="css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
+  <link href="css/axis-docs.css" rel="stylesheet" type="text/css" media="all">
 </head>
 
 <body lang="en">
@@ -13,8 +13,8 @@
 <h2 align="left">Introduction</h2>
 
 <p align="left"><a href="http://maven.apache.org">Maven</a> is used as the
-build tool of Axis 2.0. This document will provide a quick guide to use maven
-with your developments.</p>
+build tool of Axis 2.0. This document will provide a quick guide on how to
+use Maven with your developments.</p>
 
 <h2 align="left">Commands</h2>
 
@@ -37,14 +37,14 @@ with your developments.</p>
       </td>
       <td>
         <div align="left">
-        download relevant jars, if not available and compile and run tests of
-        the system.</div>
+        Downloads relevant jars if not available, and compiles and runs the
+        tests in the system.</div>
       </td>
     </tr>
     <tr>
       <td>maven clean</td>
-      <td>Clean all the stuff build so far, that are in the target folder.
-        This will not clean the jar repository</td>
+      <td>Cleans all the content built so far in the target folder. This will
+        not clean the jar repository.</td>
     </tr>
     <tr>
       <td>
@@ -53,8 +53,8 @@ with your developments.</p>
       </td>
       <td>
         <div align="left">
-        run only the tests. Will do automatic compilation of changed sources
-        as well. This will not run soap interop tests</div>
+        Runs only the tests. Performs automatic compilation of the changed
+        sources as well. This will not run SOAP interop tests</div>
       </td>
     </tr>
     <tr>
@@ -64,7 +64,7 @@ with your developments.</p>
       </td>
       <td>
         <div align="left">
-        Clean up and run all off line and on line tests</div>
+        Cleans up and runs all offline and online tests</div>
       </td>
     </tr>
     <tr>
@@ -74,7 +74,7 @@ with your developments.</p>
       </td>
       <td>
         <div align="left">
-        To run the online-mode tests for say the modules/integration Run
+        To run the online-mode tests for say the modules/integration, run
         "maven itest" from modules/integration</div>
       </td>
     </tr>
@@ -85,7 +85,7 @@ with your developments.</p>
       </td>
       <td>
         <div align="left">
-        To run all tests for say the modules/integration Run "maven test
+        To run all the tests for say the modules/integration, run "maven test
         itest" from modules/integration</div>
       </td>
     </tr>
@@ -96,7 +96,7 @@ with your developments.</p>
       </td>
       <td>
         <div align="left">
-        List down all the commands available with maven</div>
+        Lists down all the commands available with Maven.</div>
       </td>
     </tr>
     <tr>
@@ -106,7 +106,7 @@ with your developments.</p>
       </td>
       <td>
         <div align="left">
-        generate this site</div>
+        Generates the site.</div>
       </td>
     </tr>
     <tr>
@@ -116,7 +116,7 @@ with your developments.</p>
       </td>
       <td>
         <div align="left">
-        generate IDEA .ipr, .iml and .iws project files</div>
+        Generates IDEA .ipr, .iml and .iws project files.</div>
       </td>
     </tr>
     <tr>
@@ -127,7 +127,7 @@ with your developments.</p>
       <td>
         <div align="left">
         </div>
-        Builds Axis2 and skips all the tests</td>
+        Builds Axis2 and skips all the tests.</td>
     </tr>
   </tbody>
 </table>
@@ -136,16 +136,19 @@ with your developments.</p>
 
 <h2 align="left">Maven FAQ</h2>
 
-<p><i>1. I have problems with maven 1.1</i></p>
+<p><i>1. I have problems with Maven 1.1</i></p>
 
-<p>It seems that maven 1.1 doesn't come bundled with the required itest
-plugin and artifact plugin. Run followings to get it updated<br>
-1. maven plugin:download -DgroupId=maven-itest-plugin
--DartifactId=maven-itest-plugin -Dversion=1.0
--Dmaven.repo.remote=http://www.openejb.org/maven,http://www.ibiblio.org/maven
-<br>
-2. maven plugin:Download -DgroupId=maven -DartifactId=maven-artifact-plugin
--Dversion=1.6</p>
+<p style="text-indent: 10pt">It seems that Maven 1.1 doesn't come bundled
+with the required itest plug-in and artifact plug-in. Run the following to
+get it updated.<br>
+</p>
+<ol>
+  <li>maven plugin:download -DgroupId=maven-itest-plugin
+    -DartifactId=maven-itest-plugin -Dversion=1.0
+    -Dmaven.repo.remote=http://www.openejb.org/maven,http://www.ibiblio.org/maven</li>
+  <li>maven plugin:Download -DgroupId=maven
+    -DartifactId=maven-artifact-plugin -Dversion=1.6</li>
+</ol>
 
 <p align="left"> </p>
 

@@ -69,10 +69,7 @@ public class CallbackReceiver implements MessageReceiver {
 					callback.onComplete(result);
 				} else {
 					// else call the on error method with the fault
-					AxisFault axisFault = new AxisFault(fault.getCode(), fault
-							.getReason(), fault.getNode(), fault.getRole(),
-							fault.getDetail());
-
+					AxisFault axisFault = Utils.getInboundFaultFromMessageContext(messageCtx);
 					callback.onError(axisFault);
 				}
 			} finally {

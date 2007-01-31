@@ -31,6 +31,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
+import org.w3c.dom.Element;
 
 /**
  * 
@@ -173,7 +174,15 @@ public class SOAPFactoryImpl extends SOAPFactory {
      */
     public SOAPFault createFault() throws SOAPException {
         //TODO - check
-    	return new SOAPFaultImpl(DOOMAbstractFactory.getSOAP11Factory().createSOAPFault());
+    	OMDOMFactory omdomFactory = null;
+    	org.apache.axiom.soap.SOAPFactory soapFactory;
+        if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
+        	soapFactory = DOOMAbstractFactory.getSOAP12Factory();
+        	return new SOAPFaultImpl(soapFactory.createSOAPFault());        	
+        } else {
+        	soapFactory = DOOMAbstractFactory.getSOAP11Factory();
+        	return new SOAPFaultImpl(soapFactory.createSOAPFault());
+        }
     }
 
     /**
@@ -186,14 +195,43 @@ public class SOAPFactoryImpl extends SOAPFactory {
      */
     public SOAPFault createFault(String reasonText, QName faultCode) throws SOAPException {
         //TODO - check
-    	//using english as the default locale
-    	SOAPFault soapFault =  new SOAPFaultImpl(DOOMAbstractFactory.getSOAP11Factory().createSOAPFault());
+    	SOAPFault soapFault;
+        if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
+        	soapFault =  new SOAPFaultImpl(DOOMAbstractFactory.getSOAP12Factory().createSOAPFault());
+        } else {
+        	soapFault =  new SOAPFaultImpl(DOOMAbstractFactory.getSOAP11Factory().createSOAPFault());
+        }
     	soapFault.setFaultCode(faultCode);
-    	soapFault.addFaultReasonText(reasonText, Locale.ENGLISH);
+    	soapFault.addFaultReasonText(reasonText, Locale.getDefault());
     	return soapFault;
     }
 
     public void setSOAPVersion(String soapVersion){
         this.soapVersion = soapVersion;
     }
+
+
+	public SOAPElement createElement(QName qname) throws SOAPException {
+        String localName = qname.getLocalPart();
+        String prefix = qname.getPrefix();
+        String uri = qname.getNamespaceURI();
+        OMElement omElement = DOOMAbstractFactory.getOMFactory().createOMElement(localName, uri, prefix);
+        return new SOAPElementImpl((ElementImpl) omElement);
+	}
+
+	public SOAPElement createElement(Element element) throws SOAPException {
+        OMDOMFactory omdomFactory = null;
+        if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
+            omdomFactory = (OMDOMFactory) DOOMAbstractFactory.getSOAP12Factory();
+        } else {
+            omdomFactory = (OMDOMFactory) DOOMAbstractFactory.getSOAP11Factory();
+        }
+        OMNamespace ns = omdomFactory.createOMNamespace(element.getNamespaceURI(),element.getPrefix());
+        OMElement omElement = omdomFactory.createOMElement(element.getLocalName(), ns);
+        return new SOAPElementImpl((ElementImpl) omElement);
+	}
+    
+	
+	
+    
 }

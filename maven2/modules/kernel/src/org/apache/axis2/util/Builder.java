@@ -199,7 +199,12 @@ public class Builder {
 					MTOMConstants.SWA_TYPE)) {
 				builder = new StAXSOAPModelBuilder(streamReader,
 						soapEnvelopeNamespaceURI);
-			}
+			} else if (attachments.getAttachmentSpecType().equals(
+                    MTOMConstants.SWA_TYPE_12) ) {
+                builder = new StAXSOAPModelBuilder(streamReader,
+                        soapEnvelopeNamespaceURI);
+            }
+
 		}
 		// To handle REST XOP case
 		else {
@@ -212,7 +217,10 @@ public class Builder {
 			} else if (attachments.getAttachmentSpecType().equals(
 					MTOMConstants.SWA_TYPE)) {
 				builder = new StAXOMBuilder(streamReader);
-			}
+			} else if (attachments.getAttachmentSpecType().equals(
+                    MTOMConstants.SWA_TYPE_12) ) {
+                builder = new StAXOMBuilder(streamReader);
+            }
 		}
 
 		return builder;
@@ -315,7 +323,7 @@ public class Builder {
     public static OMBuilder getBuilderFromSelector(String contentType,
 			InputStream inputStream, MessageContext msgContext) throws AxisFault {
     	int index = contentType.indexOf(';');
-		if (index!= 0)
+		if (index>0)
     	{
     		contentType = contentType.substring(0,index);
     	}
@@ -325,12 +333,10 @@ public class Builder {
 			try {
 				OMBuilder builder = (OMBuilder) builderClass.newInstance();
 				builder.init(inputStream);
-				
-				// Setting the message type to make sure that we respond using the same message format
-				String messageType = builder.getMessageType();
-				if (messageType != null) {
-					msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, messageType);
-				}
+				// Setting the received content-type as the messageType to make
+				// sure that we respond using the received message serialisation
+				// format.
+				msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, contentType);
 				return builder;
 			} catch (InstantiationException e) {
 				throw new AxisFault("Cannot instantiate the specified Builder Class  : "

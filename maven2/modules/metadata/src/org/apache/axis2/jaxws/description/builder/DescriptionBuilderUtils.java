@@ -310,8 +310,11 @@ class DescriptionBuilderUtils {
             // Use the specified classloader to load the class.
             try {
                 returnClass = Class.forName(classToLoad, false, classLoader);
-            } 
-            catch (ClassNotFoundException ex) {
+            }
+	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+	        //does not extend Exception, so lets catch everything that extends Throwable
+            //rather than just Exception.
+            catch (Throwable ex) {
                 throw ExceptionFactory.makeWebServiceException("DescriptionBuilderUtils: Class not found for parameter: " +classToLoad);
             }
         } 
@@ -320,7 +323,9 @@ class DescriptionBuilderUtils {
             try {
                 returnClass = Class.forName(classToLoad);
             } 
-            catch (ClassNotFoundException ex) {
+	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+	        //does not extend Exception
+            catch (Throwable ex) {
                 throw ExceptionFactory.makeWebServiceException("DescriptionBuilderUtils: Class not found for parameter: " +classToLoad);
             }
         }

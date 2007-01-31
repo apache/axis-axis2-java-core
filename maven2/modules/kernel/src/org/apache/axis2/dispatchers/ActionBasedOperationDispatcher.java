@@ -33,7 +33,7 @@ public class ActionBasedOperationDispatcher extends AbstractOperationDispatcher 
         String action = messageContext.getSoapAction();
 
         if(isDebugEnabled){
-        log.debug("Checking for Operation using Action : " + action);
+        log.debug(messageContext.getLogIDString()+" Checking for Operation using Action : " + action);
         }
         if (action != null) {
             AxisOperation op = service.getOperationBySOAPAction(action);

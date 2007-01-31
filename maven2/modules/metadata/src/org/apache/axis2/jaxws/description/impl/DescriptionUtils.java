@@ -27,6 +27,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.CONSTRUCTOR_METHOD;
 
 /**
  * Utilities used throughout the Description package.
@@ -249,4 +250,73 @@ class DescriptionUtils {
         // Don't make this public, its a security exposure
         return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
     }
+    
+    /**
+     * Determines whether a method should have an OperationDescription created for it
+     * based on the name. This is a convenience method to allow us to exlude methods
+     * such as constructors.
+     * @param methodName
+     * @return 
+     */
+    static boolean createOperationDescription(String methodName) {
+    	if(methodName.equals(CONSTRUCTOR_METHOD)) {
+    		return false;
+    	}
+    	return true;
+    }
+
+    /**
+     * Determine the actual packager name for the generated artifacts by trying to load the class from one of two
+     * packages.  This is necessary because the RI implementations of WSGen and WSImport generate the artifacts 
+     * in different packages:
+     * - WSImport generates the artifacts in the same package as the SEI
+     * - WSGen generates the artifacts in a "jaxws" sub package under the SEI package.
+     * Note that from reading the JAX-WS spec, it seems that WSGen is doing that correctly; See
+     * the conformance requirement in JAX-WS 2.0 Spec Section 3.6.2.1 Document Wrapped on page 36:
+     *     Conformance (Default wrapper bean package): In the absence of customizations, the wrapper beans package
+     *     MUST be a generated jaxws subpackage of the SEI package.
+     *                         ^^^^^^^^^^^^^^^^
+     * @param requestWrapperClassName
+     * @return
+     */
+    static final String JAXWS_SUBPACKAGE = "jaxws";
+    static String determineActualAritfactPackage(String wrapperClassName) {
+        String returnWrapperClassName = null;
+    
+        // Try to load the class that was passed in
+        try {
+            loadClass(wrapperClassName);
+            returnWrapperClassName = wrapperClassName;
+        }
+        catch (ClassNotFoundException e) {
+            // Couldn't load the class; we'll try another one below.
+        }
+    
+        // If the original class couldn't be loaded, try adding ".jaxws." to the package
+        if (returnWrapperClassName == null) {
+            String originalPackage = getJavaPackageName(wrapperClassName);
+            if (originalPackage != null) {
+                String alternatePackage = originalPackage + "." + DescriptionUtils.JAXWS_SUBPACKAGE;
+                String className = getSimpleJavaClassName(wrapperClassName);
+                String alternateWrapperClass = alternatePackage + "." + className;
+                try {
+                    loadClass(alternateWrapperClass);
+                    returnWrapperClassName = alternateWrapperClass;
+                }
+                catch (ClassNotFoundException e) {
+                    // Couldn't load the class
+                }
+            }
+        }
+        
+        if (returnWrapperClassName == null){
+            // Couldn't load either class, so stick with the original wrapper class name
+            // REVIEW: Is this correct behavior?  Note that some of the annotation unit tests don't have the actual
+            //         classes available, and so will fail if this is changed.
+            returnWrapperClassName = wrapperClassName;
+        }
+        return returnWrapperClassName;
+    }
+
+    
 }

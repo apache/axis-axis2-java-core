@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.HashMap;
 
 import javax.jws.WebParam.Mode;
 import javax.xml.bind.JAXBElement;
@@ -38,7 +38,6 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
@@ -92,8 +91,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // or null
             Object returnValue = null;
             Class returnType = operationDesc.getResultActualType();
-            boolean isChildReturn = (operationDesc instanceof OperationDescriptionJava) &&
-                ((OperationDescriptionJava) operationDesc).isWebResultAnnotationSpecified();
+            boolean isChildReturn = !operationDesc.isJAXWSAsyncClientMethod() && (operationDesc.getResultPartName() != null);
             boolean isNoReturn = (returnType == void.class);
             
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
@@ -263,12 +261,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
-            try {
-                protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
-            } catch (MessageException e) {
-                // TODO better handling than this?
-                e.printStackTrace();
-            }
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
         }
         
         // Note all exceptions are caught and rethrown with a WebServiceException
@@ -305,13 +298,12 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                         signatureArgs, 
                         false,  // output
                         true);   // use partNames (which are child names)
-                        
 
             // Now we want to create a single JAXB element that contains the 
             // ParameterValues.  We will use the wrapper tool to do this.
             // Create the inputs to the wrapper tool
             ArrayList<String> nameList = new ArrayList<String>();
-            Map<String, Object> objectList = new WeakHashMap<String, Object>();
+            Map<String, Object> objectList = new HashMap<String, Object>();
             
             for(PDElement pv:pvList) {
                 String name = pv.getParam().getParameterName();
@@ -367,13 +359,8 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
-        Protocol protocol = null;
-        try {
-            protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()); 
-        } catch (MessageException e) {
-            // TODO better handling than this?
-            e.printStackTrace();
-        }
+        Protocol protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()); 
+       
         
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
@@ -411,7 +398,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // ParameterValues.  We will use the wrapper tool to do this.
             // Create the inputs to the wrapper tool
             ArrayList<String> nameList = new ArrayList<String>();
-            Map<String, Object> objectList = new WeakHashMap<String, Object>();
+            Map<String, Object> objectList = new HashMap<String, Object>();
             
             for(PDElement pv:pvList){
                 String name = pv.getParam().getParameterName();
@@ -461,12 +448,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
-            try {
-                protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
-            } catch (MessageException e) {
-                // TODO better handling than this?
-                e.printStackTrace();
-            }
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
         }
         
         // Note all exceptions are caught and rethrown with a WebServiceException

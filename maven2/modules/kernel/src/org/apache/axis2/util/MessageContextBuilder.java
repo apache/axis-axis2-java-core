@@ -68,6 +68,7 @@ public class MessageContextBuilder {
         newmsgCtx.setTransportIn(inMessageContext.getTransportIn());
         newmsgCtx.setTransportOut(inMessageContext.getTransportOut());
         newmsgCtx.setMessageID(UUIDGenerator.getUUID());
+        newmsgCtx.setServerSide(inMessageContext.isServerSide());
         newmsgCtx.addRelatesTo(new RelatesTo(inMessageContext.getOptions().getMessageId()));
         
         newmsgCtx.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
@@ -118,10 +119,16 @@ public class MessageContextBuilder {
             targetResolver.resolveTarget(newmsgCtx);
         }
 
-        // Determine ReplyTo for respome message. Normally 'None URI' but has a value if SOAP Session support is in use
+        // Determine ReplyTo for respome message.
         AxisService axisService = inMessageContext.getAxisService();
         if (axisService != null && Constants.SCOPE_SOAP_SESSION.equals(axisService.getScope())) {
-            newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
+            //If the wsa 2004/08 (submission) spec is in effect use the wsa anonymous URI as the default replyTo value.
+            //This is necessary because the wsa none URI is not available in that spec.
+            if (AddressingConstants.Submission.WSA_NAMESPACE.equals(inMessageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION)))
+                newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Submission.WSA_ANONYMOUS_URL));
+            else
+                newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
+            
             // add the service group id as a reference parameter
             String serviceGroupContextId = inMessageContext.getServiceGroupContextId();
             if (serviceGroupContextId != null && !"".equals(serviceGroupContextId)) {
@@ -145,7 +152,6 @@ public class MessageContextBuilder {
         newmsgCtx.setAxisMessage(ao.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
 
         newmsgCtx.setDoingMTOM(inMessageContext.isDoingMTOM());
-        newmsgCtx.setServerSide(inMessageContext.isServerSide());
         newmsgCtx.setServiceGroupContextId(inMessageContext.getServiceGroupContextId());
 
         // Ensure transport settings match the scheme for the To EPR
@@ -166,6 +172,29 @@ public class MessageContextBuilder {
             throw new AxisFault(Messages.getMessage("errorwhileProcessingFault"));
         }
 
+        // See if the throwable is an AxisFault and if it already contains the
+        // fault MessageContext
+        if (e instanceof AxisFault)
+        {
+          MessageContext faultMessageContext = ((AxisFault)e).getFaultMessageContext();
+          if (faultMessageContext != null)
+          {
+            // These may not have been set correctly when the original context
+            // was created -- an example of this is with the SimpleHTTPServer.
+            // I'm not sure if this is the correct thing to do, or if the
+            // code that created this context in the first place should
+            // expect that the transport out info was set correctly, as
+            // it may need to use that info at some point before we get to
+            // this code.
+            faultMessageContext.setProperty(MessageContext.TRANSPORT_OUT,
+                                  processingContext.getProperty(MessageContext.TRANSPORT_OUT));
+            faultMessageContext.setProperty(Constants.OUT_TRANSPORT_INFO,
+                                  processingContext.getProperty(Constants.OUT_TRANSPORT_INFO));
+            faultMessageContext.setProcessingFault(true);            
+            return faultMessageContext;
+          }
+        }
+        
         // Create a basic response MessageContext with basic fields copied
         MessageContext faultContext = createResponseMessageContext(processingContext);
         
@@ -175,7 +204,6 @@ public class MessageContextBuilder {
         }
 
         faultContext.setProcessingFault(true);
-        faultContext.setServerSide(true);
         
         // Not worth setting up the session information on a fault flow
         faultContext.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));

@@ -43,7 +43,6 @@ import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.commons.logging.Log;
@@ -127,19 +126,16 @@ public abstract class BaseDispatch<T> extends BindingProvider
             MessageContext responseMsgCtx = invocationContext.getResponseMessageContext();
             
             Message responseMsg = responseMsgCtx.getMessage();
-            try {
-                if (responseMsg.isFault()) {
-                    XMLFault fault = responseMsg.getXMLFault();
-                    // 4.3.2 conformance bullet 1 requires a ProtocolException here
-                    ProtocolException pe = MethodMarshallerUtils.createSystemException(responseMsg.getXMLFault(), responseMsg);
-                    throw  pe;
-                }
-                else if (responseMsgCtx.getLocalException() != null) {
-                    // use the factory, it'll throw the right thing:
-                    throw ExceptionFactory.makeWebServiceException(responseMsgCtx.getLocalException());
-                }
-            } catch (MessageException e) {
-                throw ExceptionFactory.makeWebServiceException(e);
+            
+            if (responseMsg.isFault()) {
+                XMLFault fault = responseMsg.getXMLFault();
+                // 4.3.2 conformance bullet 1 requires a ProtocolException here
+                ProtocolException pe = MethodMarshallerUtils.createSystemException(responseMsg.getXMLFault(), responseMsg);
+                throw  pe;
+            }
+            else if (responseMsgCtx.getLocalException() != null) {
+                // use the factory, it'll throw the right thing:
+                throw ExceptionFactory.makeWebServiceException(responseMsgCtx.getLocalException());
             }
             
             Object returnObj = getValueFromMessage(responseMsg);

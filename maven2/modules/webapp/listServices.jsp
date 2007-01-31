@@ -55,16 +55,10 @@
 %><h2><font color="blue"><a href="<%=prefix + axisService.getName()%>?wsdl"><%=serviceName%></a></font></h2>
 <font color="blue">Service EPR : </font><font color="black"><%=prefix + axisService.getName()%></font><br>
 <%
-    // do we need to enable REST in the main servlet so that it handles both REST and SOAP messages
-    boolean enableRESTInAxis2MainServlet = false;
     boolean disableREST = false;
-    boolean disableSeperateEndpointForREST = false;
     AxisConfiguration axisConfiguration = axisService.getAxisConfiguration();
 
-    Parameter parameter = axisConfiguration.getParameter(Constants.Configuration.ENABLE_REST_IN_AXIS2_MAIN_SERVLET);
-    if (parameter != null) {
-        enableRESTInAxis2MainServlet = !JavaUtils.isFalseExplicitly(parameter.getValue());
-    }
+    Parameter parameter ;
 
     // do we need to completely disable REST support
     parameter = axisConfiguration.getParameter(Constants.Configuration.DISABLE_REST);
@@ -72,30 +66,11 @@
         disableREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
     }
 
-    // Do we need to have a separate endpoint for REST
-    parameter = axisConfiguration.getParameter(Constants.Configuration.DISABLE_SEPARATE_ENDPOINT_FOR_REST);
-    if (parameter != null) {
-        disableSeperateEndpointForREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
-    }
+    if (!disableREST ) {
 
-    if (enableRESTInAxis2MainServlet) {
-%>
-<font color="blue">Service REST epr : </font><font color="black"><%=prefix + axisService.getName()%></font>
-<%
-    }
-    if (!disableREST && !disableSeperateEndpointForREST) {
-        if (!enableRESTInAxis2MainServlet) {
-%>
-<font color="blue">Service REST epr : </font><font color="black"><%=restPrefix + axisService.getName()%></font>
-<%
-} else {
 %>
 <br />
-<font color="blue">                  : </font><font color="black"><%=restPrefix + axisService.getName()%></font>
-<%
-
-    }
-%>
+<font color="blue">Service REST epr : </font><font color="black"><%=restPrefix + axisService.getName()%></font>
 <%
     }
 

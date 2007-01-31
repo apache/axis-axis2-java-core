@@ -1,4 +1,4 @@
-<module name="addressing">
+<module name="addressing" class="org.apache.axis2.addressing.AddressingModule">
     <Description>This is WS-Addressing implementation on Axis2. Currently we have implemented Submission version (2004/08) and Proposed Recommendation. </Description>
     <InFlow>
         <handler name="AddressingFinalInHandler" class="org.apache.axis2.handlers.addressing.AddressingFinalInHandler">
@@ -7,7 +7,7 @@
         <handler name="AddressingSubmissionInHandler" class="org.apache.axis2.handlers.addressing.AddressingSubmissionInHandler">
             <order phase="PreDispatch"/>
         </handler>
-        <handler name="AddressingWSDLValidationHandler" class="org.apache.axis2.handlers.addressing.AddressingWSDLValidationHandler">
+        <handler name="AddressingValidationHandler" class="org.apache.axis2.handlers.addressing.AddressingValidationHandler">
             <order phase="Dispatch" after="AddressingBasedDispatcher" />
         </handler>
     </InFlow>
@@ -32,6 +32,9 @@
         <handler name="AddressingSubmissionInHandler" class="org.apache.axis2.handlers.addressing.AddressingSubmissionInHandler">
             <order phase="PreDispatch"/>
         </handler>
-        <!-- AddressingWSDLValidationHandler not present on the INfaultflow so that we don't get faults bouncing around forever -->
+        <handler name="AddressingInFaultHandler" class="org.apache.axis2.handlers.addressing.AddressingInFaultHandler">
+            <order phase="Dispatch"/>
+        </handler>
+        <!-- AddressingValidationHandler not present on the INfaultflow so that we don't get faults bouncing around forever -->
     </InFaultFlow>
 </module>

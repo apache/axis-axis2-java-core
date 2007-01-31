@@ -133,6 +133,7 @@ public class ListenerManager {
             }
         }
         stopped = false;
+        Runtime.getRuntime().addShutdownHook(new ListenerManagerShutdownThread(this));
     }
 
     public synchronized void startSystem(ConfigurationContext configurationContext) {
@@ -144,12 +145,49 @@ public class ListenerManager {
      * Stop all the transports and notify modules of shutdown.
      */
     public synchronized void stop() throws AxisFault {
+        if (stopped) {
+            return;
+        }
         Iterator itr_st = startedTransports.values().iterator();
         while (itr_st.hasNext()) {
             TransportListener transportListener = (TransportListener) itr_st.next();
             transportListener.stop();
         }
 
+        /*Stop the transport senders*/
+        HashMap transportOut = configctx.getAxisConfiguration().getTransportsOut();
+        if (transportOut.size() > 0) {
+            Iterator trsItr = transportOut.values().iterator();
+            while (trsItr.hasNext()) {
+                TransportOutDescription outDescription = (TransportOutDescription) trsItr.next();
+                TransportSender trsSededer = outDescription.getSender();
+                if (trsSededer != null) {
+                    trsSededer.stop();
+                }
+            }
+        }
+        /*Shut down the modules*/
+        HashMap modules = configctx.getAxisConfiguration().getModules();
+        if (modules != null) {
+            Iterator moduleitr = modules.values().iterator();
+            while (moduleitr.hasNext()) {
+                AxisModule axisModule = (AxisModule) moduleitr.next();
+                Module module = axisModule.getModule();
+                if (module != null) {
+                    module.shutdown(configctx);
+                }
+            }
+        }
+        configctx.cleanupContexts();
+        /*Shut down the services*/
+        Iterator services = configctx.getAxisConfiguration().getServices().values().iterator();
+        while (services.hasNext()) {
+            AxisService axisService = (AxisService) services.next();
+            ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
+            if (serviceLifeCycle != null) {
+                serviceLifeCycle.shutDown(configctx, axisService);
+            }
+        }
         stopped = true;
     }
 
@@ -177,5 +215,24 @@ public class ListenerManager {
 
     public boolean isStopped() {
         return stopped;
+    }
+
+    static class ListenerManagerShutdownThread extends Thread {
+        ListenerManager listenerManager;
+
+        public ListenerManagerShutdownThread(ListenerManager listenerManager) {
+            super();
+            this.listenerManager = listenerManager;
+        }
+
+        public void run() {
+            try {
+                if (!listenerManager.stopped) {
+                    listenerManager.stop();
+                }
+            } catch (AxisFault axisFault) {
+                log.error(axisFault);
+            }
+        }
     }
 }

@@ -28,9 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -54,10 +52,10 @@ public class SessionContext extends AbstractContext implements Externalizable {
     private static final long serialVersionUID = -1100610673067568556L;
 
     /**
-     * @serial Tracks the revision level of a class to identify changes to the 
+     * @serial Tracks the revision level of a class to identify changes to the
      * class definition that are compatible to serialization/externalization.
      * If a class definition changes, then the serialization/externalization
-     * of the class is affected. 
+     * of the class is affected.
      * Refer to the writeExternal() and readExternal() methods.
      */
     // supported revision levels, add a new level to manage compatible changes
@@ -171,27 +169,23 @@ public class SessionContext extends AbstractContext implements Externalizable {
         Iterator serviceContecxtes = serviceGroupContext.getServiceContexts();
         while (serviceContecxtes.hasNext()) {
             ServiceContext serviceContext = (ServiceContext) serviceContecxtes.next();
-            try {
                 DependencyManager.destroyServiceObject(serviceContext);
-            } catch (AxisFault axisFault) {
-                log.info(axisFault.getMessage());
-            }
         }
     }
 
 
     /* ===============================================================
-     * Externalizable support 
+     * Externalizable support
      * ===============================================================
      */
-    
+
     /**
      * Save the contents of this object.
      * <p>
      * NOTE: Transient fields and static fields are not saved.
      *
      * @param out    The stream to write the object contents to
-     * 
+     *
      * @exception IOException
      */
     public void writeExternal(ObjectOutput out) throws IOException
@@ -254,15 +248,15 @@ public class SessionContext extends AbstractContext implements Externalizable {
 
 
     /**
-     * Restore the contents of the MessageContext that was 
-     * previously saved. 
-     * <p> 
+     * Restore the contents of the MessageContext that was
+     * previously saved.
+     * <p>
      * NOTE: The field data must read back in the same order and type
-     * as it was written.  Some data will need to be validated when 
+     * as it was written.  Some data will need to be validated when
      * resurrected.
      *
-     * @param in    The stream to read the object contents from 
-     * 
+     * @param in    The stream to read the object contents from
+     *
      * @exception IOException
      * @exception ClassNotFoundException
      */
@@ -324,7 +318,7 @@ public class SessionContext extends AbstractContext implements Externalizable {
         //---------------------------------------------------------
 
         // parent
-        Object tmpParent = ObjectStateUtils.readObject(in, "SessionContext.parent"); 
+        Object tmpParent = ObjectStateUtils.readObject(in, "SessionContext.parent");
 
         if (tmpParent != null)
         {

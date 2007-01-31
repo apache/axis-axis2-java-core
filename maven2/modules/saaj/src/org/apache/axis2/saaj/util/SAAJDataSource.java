@@ -26,6 +26,9 @@ import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.axis2.Constants;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
 
 /**
  * 
@@ -161,13 +164,13 @@ public class SAAJDataSource implements javax.activation.DataSource {
         // for now read all in to disk.
         if (readall) {
             byte[] readbuffer = new byte[READ_CHUNK_SZ];
+            
             int read = 0;
-
             do {
                 read = ss.read(readbuffer);
 
                 if (read > 0) {
-                    write(readbuffer, read);
+                    writeToMemory(readbuffer, read);
                 }
             } while (read > -1);
             close();
@@ -220,12 +223,26 @@ public class SAAJDataSource implements javax.activation.DataSource {
                             ? null
                             : mc.getStrProp(
                     MessageContext.ATTACHMENTS_DIR);*/
-                    String attdir = "temp";
+                	
+                	
+                	MessageContext messageContext = MessageContext.getCurrentMessageContext();
+                	String attachementDir = "";
+                	attachementDir = (String)messageContext.getProperty
+                			(Constants.Configuration.ATTACHMENT_TEMP_DIR);
+
+                	if (attachementDir.equals("")) {
+                		Parameter param  = (Parameter)messageContext.getParameter
+                			(Constants.Configuration.ATTACHMENT_TEMP_DIR);
+                		if(param != null){
+                			attachementDir = (String)param.getValue();
+                		}
+                	}
+                    
                     diskCacheFile = java.io.File.createTempFile("Axis", ".att",
-                                                                (attdir == null)
+                                                                (attachementDir == null)
                                                                 ? null
                                                                 : new File(
-                                                                        attdir));
+                                                                		attachementDir));
                     cachediskstream = new BufferedOutputStream(new FileOutputStream(diskCacheFile));
                     int listsz = ml.size();
 
@@ -323,6 +340,53 @@ public class SAAJDataSource implements javax.activation.DataSource {
     }
 
 
+    /**
+     * This method is a low level write.
+     * Writes only to memory
+     * 
+     * @param data
+     * @param length
+     * @throws java.io.IOException
+     */
+    protected synchronized void writeToMemory(byte[] data, int length) throws java.io.IOException {
+
+        if (closed) {
+            throw new java.io.IOException("streamClosed");
+        }
+
+        int byteswritten = 0;
+        if (memorybuflist != null) {    // Can write to memory.
+            do {
+                if (null == currentMemoryBuf) {
+                    currentMemoryBuf = new byte[READ_CHUNK_SZ];
+                    currentMemoryBufSz = 0;
+
+                    memorybuflist.add(currentMemoryBuf);
+                }
+
+                // bytes to write is the min. between the remaining bytes and what is left in this buffer.
+                int bytes2write = Math.min((length - byteswritten),
+                                           (currentMemoryBuf.length
+                                            - currentMemoryBufSz));
+
+                // copy the data.
+                System.arraycopy(data, byteswritten, currentMemoryBuf,
+                                 currentMemoryBufSz, bytes2write);
+
+                byteswritten += bytes2write;
+                currentMemoryBufSz += bytes2write;
+
+                if (byteswritten
+                    < length) {    // only get more if we really need it.
+                    currentMemoryBuf = new byte[READ_CHUNK_SZ];
+                    currentMemoryBufSz = 0;
+                    memorybuflist.add(currentMemoryBuf);    // add it to the chain.
+                }
+            } while (byteswritten < length);
+        }
+        totalsz += length;
+    }
+    
     /**
      * get the filename of the content if it is cached to disk.
      *

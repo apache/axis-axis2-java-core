@@ -18,8 +18,11 @@
  */
 package org.apache.axis2.jaxws.description.validator;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
@@ -64,13 +67,54 @@ public class EndpointInterfaceDescriptionValidator extends Validator {
             // TODO: Need more validation here, including: operation name, parameters, faults
             List wsdlOperationList = portType.getOperations(); 
             OperationDescription[] opDescArray = epInterfaceDesc.getOperations();
+            
             if (wsdlOperationList.size() != opDescArray.length) {
-                addValidationFailure(this, "Operations did not match WSDL");
+                addValidationFailure(this, "The number of operations in the WSDL " +
+                		"portType does not match the number of methods in the SEI or " +
+                		"Web service implementation class.");
+                return INVALID;
+            }
+            
+            // If they are the same size, let's check to see if the operation names match
+            
+            if(!checkOperationsMatchMethods(wsdlOperationList, opDescArray)) {
+            	addValidationFailure(this, "The operation names in the WSDL portType " +
+            			"do not match the method names in the SEI or Web service i" +
+            			"mplementation class.");
                 return INVALID;
             }
         }
         return VALID;
     }
+    
+    private boolean checkOperationsMatchMethods(List wsdlOperationList, OperationDescription[] 
+        opDescArray) {
+    	List<String> opNameList = createWSDLOperationNameList(wsdlOperationList);
+    	for(int i=0; i < opDescArray.length; i++) {
+    		OperationDescription opDesc = opDescArray[i];
+    		if(opNameList.contains(opDesc.getOperationName())) {
+    			opNameList.remove(opDesc.getOperationName());
+    		}
+    		else {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+                                                                                      
+    private List<String> createWSDLOperationNameList(List wsdlOperationList) {
+    	List<String> opNameList = new ArrayList<String>();
+    	Iterator wsdlOpIter = wsdlOperationList.iterator();
+    	while(wsdlOpIter.hasNext()) {
+    		Object obj = wsdlOpIter.next();
+    		if(obj instanceof Operation) {
+    			Operation operation = (Operation) obj;
+    			opNameList.add(operation.getName());
+    		}
+    	}
+    	return opNameList;
+    }
+    
     private boolean validateSEIvsImplementation() {
         // REVIEW: This level of validation is currently being done by the DBC Composite validation
         return VALID;

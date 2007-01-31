@@ -20,14 +20,17 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.io.ByteArrayInputStream;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.AttributeHelper;
 import org.apache.axiom.om.util.ElementHelper;
 import org.apache.axiom.soap.SOAPFactory;
@@ -99,7 +102,24 @@ public class EndpointReferenceHelper {
         //Second pass, identify the properties.
         fromOM(epr, eprOMElement, map, isFinalAddressingNamespace);
     }
-    
+
+    /**
+     * Populates an endpoint reference based on the <code>String</code> that is
+     * passed in. If the http://schemas.xmlsoap.org/ws/2004/08/addressing namespace
+     * is in effect then any reference properties will be saved as reference parameters.
+     * Regardless of the addressing namespace in effect, any elements present in the
+     * <code>String</code> that are not recognised are saved as extensibility elements.
+     *
+     * @param eprString string from the element of endpoint reference type
+     * @throws AxisFault if unable to locate an address element
+     */
+    public static EndpointReference fromOM(String eprString) throws AxisFault {
+        try {
+            return fromOM(new StAXOMBuilder(new ByteArrayInputStream(eprString.getBytes())).getDocumentElement());
+        } catch (XMLStreamException e) {
+            throw new AxisFault(e);
+        }
+    }
     /**
      * Populates an endpoint reference based on the <code>OMElement</code> that is
      * passed in. If the http://schemas.xmlsoap.org/ws/2004/08/addressing namespace
@@ -270,7 +290,6 @@ public class EndpointReferenceHelper {
                 while (allAddrAttributes.hasNext()) {
                     OMAttribute attribute = (OMAttribute) allAddrAttributes.next();
                     addressAttributes.add(attribute);
-                    System.out.println("fromOM attr: "+attribute);
                 }
                 epr.setAddressAttributes(addressAttributes);
             }

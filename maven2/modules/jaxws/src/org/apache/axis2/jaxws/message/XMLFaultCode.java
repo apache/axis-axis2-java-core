@@ -91,6 +91,10 @@ public enum XMLFaultCode {
      * @return corresponding XMLPart
      */
     public static XMLFaultCode fromQName(QName qName) {
+        if (qName == null) {
+            // Spec indicates that the default is receiver
+            return RECEIVER;
+        }
         String namespace = qName.getNamespaceURI();
         String localPart = qName.getLocalPart();
         XMLFaultCode xmlFaultCode= RECEIVER;

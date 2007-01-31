@@ -29,6 +29,16 @@ import org.apache.axis2.jaxws.util.Constants;
  * 
  */
 public interface EndpointDescriptionWSDL {
+    /**
+     * Strings representing the SOAP Binding.  These correspond to the namespace of the binding extensibility element under 
+     * the WSDL binding.  This could be SOAP or HTTP 
+     */
+    public static final String SOAP11_WSDL_BINDING = "http://schemas.xmlsoap.org/wsdl/soap/";
+    public static final String SOAP12_WSDL_BINDING = "http://schemas.xmlsoap.org/wsdl/soap12/";
+    public static final String HTTP_WSDL_BINDING = "http://schemas.xmlsoap.org/wsdl/http/";
+    /**
+     * QNames for the SOAP address extensiblity element under the WSDL Port element
+     */
     public static final QName SOAP_11_ADDRESS_ELEMENT = new QName(Constants.URI_WSDL_SOAP11, "address");
     public static final QName SOAP_12_ADDRESS_ELEMENT = new QName(Constants.URI_WSDL_SOAP12, "address");
     
@@ -43,7 +53,7 @@ public interface EndpointDescriptionWSDL {
      * Typically, this is the <soap:binding> element that defines either a SOAP 1.1
      * or a SOAP 1.2 binding.
      * 
-     * @return
+     * @return String constants defined in javax.xml.ws.soap.SOAPBinding
      */
     public String getWSDLBindingType();
     

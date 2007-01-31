@@ -51,7 +51,7 @@ public class AddressingFinalInHandler extends AddressingInHandler {
                 log.trace("extractToEprReferenceParameters: Checking header: "+headerElement.getQName());
             }
             if (isRefParamAttr != null && "true".equals(isRefParamAttr.getAttributeValue())) {
-                toEPR.addReferenceParameter(headerElement.getQName(), headerElement.getText());
+                toEPR.addReferenceParameter(headerElement);
                 if (log.isTraceEnabled()){
                     log.trace("extractToEprReferenceParameters: Header: "+headerElement.getQName()+" has IsReferenceParameter attribute. Adding to toEPR.");
                 }
@@ -59,7 +59,13 @@ public class AddressingFinalInHandler extends AddressingInHandler {
         }
     }
 
+    /**
+     * @see AddressingValidationHandler#checkMessageIDHeader
+     */
     protected void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
+        //Unable to validate the wsa:MessageID header here as we do not yet know which MEP
+        //is in effect.
+        
         if (!alreadyFoundAddrHeader.contains(WSA_ACTION)) {
             AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_ACTION);
         } 
@@ -80,7 +86,7 @@ public class AddressingFinalInHandler extends AddressingInHandler {
             }
             
             if (log.isTraceEnabled()){
-                log.trace("setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
+                log.trace(messageContext.getLogIDString()+" setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
             }
             
             epr.setAddress(Final.WSA_ANONYMOUS_URL);

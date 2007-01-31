@@ -34,18 +34,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.axiom.om.util.UUIDGenerator;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.engine.DependencyManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class SessionManager {
 
-    private static final Log LOG = LogFactory.getLog(SessionManager.class);
-    
     private final Map sessionmap;
     
     public SessionManager() {
@@ -91,11 +86,7 @@ public class SessionManager {
     private void cleanupServiceContexts(final ServiceGroupContext serviceGroupContext) {
         for (Iterator it = serviceGroupContext.getServiceContexts(); it.hasNext(); ) {
             ServiceContext serviceContext = (ServiceContext) it.next();
-            try {
-                DependencyManager.destroyServiceObject(serviceContext);
-            } catch (AxisFault axisFault) {
-                LOG.info(axisFault.getMessage());
-            }
+            DependencyManager.destroyServiceObject(serviceContext);
         }
     }
     

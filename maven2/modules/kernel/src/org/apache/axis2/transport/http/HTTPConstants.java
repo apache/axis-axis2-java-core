@@ -431,6 +431,8 @@ public class HTTPConstants {
 
     public static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
     public static final String HEADER_CONTENT_ENCODING = "Content-Encoding";
+    public static final String HEADER_CONTENT_ENCODING_LOWERCASE = HEADER_CONTENT_ENCODING.toLowerCase();
+    
 
     public static final String COMPRESSION_GZIP = "gzip";
 

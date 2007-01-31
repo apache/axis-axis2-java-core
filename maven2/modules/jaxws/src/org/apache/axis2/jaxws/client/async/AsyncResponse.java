@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.client.async;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -31,7 +32,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,26 +46,56 @@ import org.apache.commons.logging.LogFactory;
 public class AsyncResponse implements Response {
 
     private static final Log log = LogFactory.getLog(AsyncResponse.class);
+    private static final boolean debug = log.isDebugEnabled();
     
     private boolean cancelled;
-    private Object responseObj;
     private MessageContext response;
     private Map<String, Object> responseContext;
     private Throwable fault;
     private CountDownLatch latch;
+    private boolean cacheValid = false;
+    private Object cachedObject = null;
     
     protected AsyncResponse() {
         latch = new CountDownLatch(1);
     }
     
     protected void onError(Throwable t) {
+        if (debug) {
+            log.debug("AsyncResponse received a fault.  Counting down latch.");
+            log.debug("Fault type = " + t.getClass());
+        }
+        
         fault = t;
         latch.countDown();
+        
+        // Probably a good idea to invalidate the cache
+        cacheValid = false;
+        cachedObject = null;
+        
+        if (debug) {
+            log.debug("New latch count = [" + latch.getCount() + "]");
+        }
     }
     
     protected void onComplete(MessageContext mc) {
+        if (debug) {
+            log.debug("AsyncResponse received a MessageContext. Counting down latch.");
+        }
+        
+        // A new message context invalidates the cached object retrieved
+        // during the last get()
+        if (response != mc) {
+            cachedObject = null;
+            cacheValid = false;
+        }
+        
         response = mc;
         latch.countDown();
+        
+        if (debug) {
+            log.debug("New latch count = [" + latch.getCount() + "]");
+        }
     }
     
     //-------------------------------------
@@ -73,66 +103,55 @@ public class AsyncResponse implements Response {
     //-------------------------------------
     
     public boolean cancel(boolean mayInterruptIfRunning) {
-        // If the task has been cancelled or has completed, then we must
-        // return false because the call failed.
-        // If the task has NOT been cancelled or completed, then we must
-        // set the appropriate flags and not allow the task to continue.
-
-        // TODO: Do we actually need to do some level of interrupt on the
-        // processing in the get() call?  If so, how?  
-        if (!cancelled || !(latch.getCount() == 0)) {
+        // The task cannot be cancelled if it has already been cancelled
+        // before or if it has already completed.
+        if (cancelled || latch.getCount() == 0) {
+            if (debug) {
+                log.debug("Cancellation attempt failed.");
+            }
             return false;
         }
-        else {
-            //TODO: Implement the actual cancellation.
-            return false;
-        }
+        
+        cancelled = true;
+        return cancelled;
     }
 
     public Object get() throws InterruptedException, ExecutionException {
+        if (cancelled) {
+            throw new CancellationException("The task was cancelled.");
+        }
+        
         // Wait for the response to come back
+        if (debug) {
+            log.debug("Waiting for async response delivery.");
+        }
         latch.await();
         
-        if (hasFault()) {
-            throw new ExecutionException(ExceptionFactory.makeWebServiceException(fault));
-        }
-        if (response == null) {
-            throw new ExecutionException(ExceptionFactory.makeWebServiceException("null response"));
-        }
-        
-        // TODO: Check the type of the object to make sure it corresponds with
-        // the parameterized generic type.
-        if (responseObj == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Demarshalling the async response message");
-            }
-            responseObj = getResponseValueObject(response);
-        }
-
-        return responseObj;
+        Object obj = processAsyncResponse(response);
+        return obj;
     }
 
     public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        if (cancelled) {
+            throw new CancellationException("The task was cancelled.");
+        }
+        
         // Wait for the response to come back
+        if (debug) {
+            log.debug("Waiting for async response delivery with time out.");
+            log.debug("timeout = " + timeout);
+            log.debug("units   = " + unit);
+        }
         latch.await(timeout, unit);
         
-        if (hasFault()) {
-            throw new ExecutionException(ExceptionFactory.makeWebServiceException(fault));
-        }
-        if (response == null) {
-            throw new ExecutionException(ExceptionFactory.makeWebServiceException("null response"));
+        // If the response still hasn't been returned, then we've timed out
+        // and must throw a TimeoutException
+        if (latch.getCount() > 0) {
+            throw new TimeoutException("The client timed out while waiting for an asynchronous response");
         }
         
-        // TODO: Check the type of the object to make sure it corresponds with
-        // the parameterized generic type.
-        if (responseObj == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Demarshalling the async response message");
-            }
-            responseObj = getResponseValueObject(response);
-        }
-
-        return responseObj;
+        Object obj = processAsyncResponse(response);
+        return obj;
     }
 
     public boolean isCancelled() {
@@ -144,9 +163,6 @@ public class AsyncResponse implements Response {
     }
 
     public Map getContext() {
-        if (responseContext == null) {
-            responseContext = new HashMap<String, Object>();
-        }
         return responseContext;
     }
     
@@ -155,6 +171,55 @@ public class AsyncResponse implements Response {
             return true;
         else
             return false;
+    }
+    
+    private void initResponseContext() {
+        responseContext = new HashMap<String, Object>();
+    }
+    
+    private Object processAsyncResponse(MessageContext ctx) throws ExecutionException {
+        if (hasFault()) {
+            throw new ExecutionException(ExceptionFactory.makeWebServiceException(fault));
+        }
+        if (ctx == null) {
+            throw new ExecutionException(ExceptionFactory.makeWebServiceException("null response"));
+        }
+        
+        // Avoid a reparse of the message. If we already retrived the object, return
+        // it now.
+        if (cacheValid) {
+            if (log.isDebugEnabled()) {
+                log.debug("Return object cached from last get()");
+            }
+            return cachedObject;
+        }
+
+        // TODO: Check the type of the object to make sure it corresponds with
+        // the parameterized generic type.
+        Object obj = null;
+        try {
+            if (debug) {
+                log.debug("Unmarshalling the async response message.");
+             }
+             obj = getResponseValueObject(ctx);
+             // Cache the object in case it is required again
+             cacheValid = true;
+             cachedObject = obj;      
+        }
+        catch (Throwable t) {
+            if (debug) {
+                log.debug("An error occurred while processing the response");
+            }
+            throw new ExecutionException(ExceptionFactory.makeWebServiceException(t));
+        }
+
+        if (debug && obj != null) {
+            log.debug("Unmarshalled response object of type: " + obj.getClass());
+        }
+        
+        initResponseContext();
+        
+        return obj;
     }
     
     /**
@@ -167,13 +232,9 @@ public class AsyncResponse implements Response {
         if (log.isDebugEnabled()) {
             log.debug("Demarshalling response message as a String");
         }
-        try {
-            Message msg = mc.getMessage();
-            OMElement om = msg.getAsOMElement();
-            return om.toString();
-        } catch (MessageException e) {
-            throw ExceptionFactory.makeWebServiceException(e);
-        }
+        Message msg = mc.getMessage();
+        OMElement om = msg.getAsOMElement();
+        return om.toString();
     }
 
 }

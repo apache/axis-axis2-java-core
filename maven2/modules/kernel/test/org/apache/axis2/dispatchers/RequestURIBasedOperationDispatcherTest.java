@@ -13,41 +13,42 @@
 */
 package org.apache.axis2.dispatchers;
 
-import javax.xml.namespace.QName;
-
+import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 
-import junit.framework.TestCase;
+import javax.xml.namespace.QName;
 
 public class RequestURIBasedOperationDispatcherTest extends TestCase {
 
-    public void testFindService() throws AxisFault{
+    public void testFindService() throws AxisFault {
         MessageContext messageContext = new MessageContext();
         AxisService as1 = new AxisService("Service1");
-        AxisConfiguration ac = new AxisConfiguration();
-        ac.addService(as1);
-        
+
+
         AxisOperation operation1 = new InOnlyAxisOperation(new QName("operation1"));
         AxisOperation operation2 = new InOnlyAxisOperation(new QName("operation2"));
         as1.addOperation(operation1);
         as1.addOperation(operation2);
-        
-        ConfigurationContext cc = new ConfigurationContext(ac);
+
+        ConfigurationContext cc = ConfigurationContextFactory.createEmptyConfigurationContext();
+        AxisConfiguration ac = cc.getAxisConfiguration();
+        ac.addService(as1);
         messageContext.setConfigurationContext(cc);
-        
+
         messageContext.setTo(new EndpointReference("http://127.0.0.1:8080/axis2/services/Service1/operation2"));
         messageContext.setAxisService(as1);
-        
+
         RequestURIBasedOperationDispatcher ruisd = new RequestURIBasedOperationDispatcher();
         ruisd.invoke(messageContext);
-        
+
         assertEquals(operation2, messageContext.getAxisOperation());
     }
 

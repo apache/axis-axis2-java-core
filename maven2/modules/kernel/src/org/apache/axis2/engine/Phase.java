@@ -358,7 +358,7 @@ public class Phase implements Handler {
      */
     public final InvocationResponse invoke(MessageContext msgctx) throws AxisFault {
         if (isDebugEnabled) {
-            log.debug("Checking pre-condition for Phase \"" + phaseName + "\"");
+            log.debug(msgctx.getLogIDString()+" Checking pre-condition for Phase \"" + phaseName + "\"");
         }
         
         InvocationResponse pi = InvocationResponse.CONTINUE;
@@ -370,14 +370,14 @@ public class Phase implements Handler {
         }
 
         if (isDebugEnabled) {
-            log.debug("Invoking phase \"" + phaseName + "\"");
+            log.debug(msgctx.getLogIDString()+" Invoking phase \"" + phaseName + "\"");
         }
 
         while (currentIndex < handlers.size()) {
             Handler handler = (Handler) handlers.get(currentIndex);
 
             if (isDebugEnabled) {
-                log.debug("Invoking Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
+                log.debug(msgctx.getLogIDString()+" Invoking Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
             }
             pi = handler.invoke(msgctx);
 
@@ -391,7 +391,7 @@ public class Phase implements Handler {
         }
 
         if (isDebugEnabled) {
-            log.debug("Checking post-conditions for phase \"" + phaseName + "\"");
+            log.debug(msgctx.getLogIDString()+" Checking post-conditions for phase \"" + phaseName + "\"");
         }
 
         msgctx.setCurrentPhaseIndex(0);
@@ -405,7 +405,7 @@ public class Phase implements Handler {
       
       if (isDebugEnabled)
       {
-        log.debug("Invoking flowComplete() in Phase \"" + phaseName + "\"");
+        log.debug(msgContext.getLogIDString()+" Invoking flowComplete() in Phase \"" + phaseName + "\"");
       }
       
       /*This will be non-zero if we failed during execution of one of the
@@ -428,7 +428,7 @@ public class Phase implements Handler {
         
         if (isDebugEnabled)
         {
-          log.debug("Invoking flowComplete() for Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
+          log.debug(msgContext.getLogIDString()+" Invoking flowComplete() for Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
         }
         
         handler.flowComplete(msgContext);

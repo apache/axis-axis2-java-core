@@ -202,10 +202,16 @@ public class PackageSetBuilder {
        
        // Also consider the request and response wrappers
        String pkg = getPackageFromClassName(opDesc.getRequestWrapperClassName());
+       if(log.isDebugEnabled()){
+    	   log.debug("Package from Request Wrapper annotation = "+ pkg);
+       }
        if (pkg != null) {
            set.add(pkg);
        }
        pkg = getPackageFromClassName(opDesc.getResponseWrapperClassName());
+       if(log.isDebugEnabled()){
+    	   log.debug("Package from Response Wrapper annotation = "+ pkg);
+       }
        if (pkg != null) {
            set.add(pkg);
        }
@@ -214,6 +220,9 @@ public class PackageSetBuilder {
        Class cls = opDesc.getResultActualType();
        if (cls != null && cls != void.class && cls != Void.class) {
            Package returnTypePkg = cls.getPackage();
+           if(log.isDebugEnabled()){
+        	   log.debug("Package from Return Type = "+ pkg);
+           }
            if (returnTypePkg != null) {
            	   pkg = returnTypePkg.getName();
                set.add(pkg);
@@ -368,8 +377,10 @@ public class PackageSetBuilder {
             // TODO J2W AccessController Needed
             // Don't make this public, its a security exposure
             return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
-            
-        } catch (ClassNotFoundException e) {
+	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+	        //does not extend Exception, so lets catch everything that extends Throwable
+            //rather than just Exception.
+        } catch (Throwable e) {
             // TODO Should the exception be swallowed ?
             if (log.isDebugEnabled()) {
                 log.debug("PackageSetBuilder cannot load the following class:" + className);

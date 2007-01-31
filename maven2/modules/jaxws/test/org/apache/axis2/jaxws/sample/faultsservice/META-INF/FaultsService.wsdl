@@ -11,11 +11,12 @@
     <xsd:schema targetNamespace="http://org/test/polymorphicfaults">
         
       <xsd:element name="SimpleFault" type="xsd:int"/>
-      <xsd:element name="InvalidTickerFault" type="ts:InvalidTickerFaultBean"/>
-      <xsd:complexType name="InvalidTickerFaultBean">
+      <xsd:element name="InvalidTickerFault" type="ts:InvalidTickerFault_ExceptionBean"/>
+      <xsd:complexType name="InvalidTickerFault_ExceptionBean">
         <xsd:sequence>
            <xsd:element name="legacyData1" type="xsd:string" />
            <xsd:element name="legacyData2" type="xsd:int" />
+           <xsd:element name="message" type="xsd:string" />
         </xsd:sequence>
       </xsd:complexType>
 

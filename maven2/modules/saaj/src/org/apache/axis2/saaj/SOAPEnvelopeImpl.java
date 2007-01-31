@@ -15,22 +15,23 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.om.impl.dom.DocumentImpl;
-import org.apache.axiom.om.impl.dom.NodeImpl;
-import org.apache.axiom.om.impl.dom.TextImpl;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11BodyImpl;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderImpl;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
-import org.apache.axiom.soap.impl.dom.soap12.SOAP12HeaderImpl;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
+
+import org.apache.axiom.om.impl.dom.DocumentImpl;
+import org.apache.axiom.om.impl.dom.NodeImpl;
+import org.apache.axiom.om.impl.dom.TextImpl;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11BodyImpl;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderImpl;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12HeaderImpl;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -222,4 +223,48 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
         }
         return this;
     }
+
+    /**
+     * Override SOAPElementImpl.setEncodingStyle
+     */
+	public void setEncodingStyle(String encodingStyle) throws SOAPException {
+        if(this.element.getOMFactory() instanceof SOAP12Factory) {
+    		throw new SOAPException("SOAP1.2 does not allow encodingStyle to be set on Envelope");
+        }else{
+        	super.setEncodingStyle(encodingStyle);
+        }
+	}
+    
+	/**
+	 * Override SOAPElement.addAttribute
+	 * SOAP1.2 should not allow encodingStyle attribute to be set on Envelop
+	 */
+    public SOAPElement addAttribute(Name name, String value) throws SOAPException {
+        if(this.element.getOMFactory() instanceof SOAP12Factory) {
+        	if("encodingStyle".equals(name.getLocalName())){
+        		throw new SOAPException("SOAP1.2 does not allow encodingStyle attribute to be set " +
+        				"on Envelope");
+        	}
+        }	
+        return super.addAttribute(name, value);
+    }
+
+	/**
+	 * Override SOAPElement.addChildElement
+	 * SOAP 1.2 should not allow element to be added after body element
+	 */
+	public SOAPElement addChildElement(Name name) throws SOAPException {
+		//TODO : complete
+        if(this.element.getOMFactory() instanceof SOAP12Factory) {
+        	//return super.addChildElement(name);
+        	throw new SOAPException("Cannot add elements after body element");
+        }else if(this.element.getOMFactory() instanceof SOAP11Factory){
+        	//Let elements to be added any where.
+        	return super.addChildElement(name);
+        }
+		return null;
+	}  
+    
+    
+	
 }

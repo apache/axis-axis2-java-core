@@ -42,7 +42,10 @@ public class ClientUtils {
             int index = transportURI.indexOf(':');
             String transport = (index > 0) ? transportURI.substring(0, index) : null;
             if (transport != null) {
-                return ac.getTransportOut(new QName(transport));
+                TransportOutDescription transportOut = ac.getTransportOut(new QName(transport));
+                if (transportOut == null) {
+                    throw new AxisFault("No Tranport Sender found for : " + transport);
+                } else return ac.getTransportOut(new QName(transport));
             } else {
                 throw new AxisFault(Messages.getMessage("cannotInferTransport", transportURI));
             }

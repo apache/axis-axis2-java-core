@@ -12,6 +12,7 @@
 			xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
 			<xsd:element name="MyFault" type="xsd:string" />
+			<xsd:element name="headerValue" type="xsd:string" />
 
 			<xsd:element name="oneWayVoid">
 				<xsd:complexType>
@@ -159,6 +160,31 @@
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
+			
+			<xsd:element name="echoStringWSGEN1">
+				<xsd:complexType />
+			</xsd:element>
+
+			<xsd:element name="echoStringWSGEN1Response">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="return" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			
+			<xsd:element name="echoStringWSGEN2">
+			    <xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="data" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="echoStringWSGEN2Response">
+				<xsd:complexType />
+			</xsd:element>
+			
 		</xsd:schema>
 	</wsdl:types>
 
@@ -212,6 +238,26 @@
 		<wsdl:part name="payload" element="tns:headerResponse" />
 		<wsdl:part name="header0" element="tns:headerPart0" />
 	</wsdl:message>
+	
+	<wsdl:message name="echoStringWSGEN1Request">
+		<wsdl:part name="bodyPart" element="tns:echoStringWSGEN1" />
+		<wsdl:part name="headerPart" element="tns:headerValue" />
+	</wsdl:message>
+
+	<wsdl:message name="echoStringWSGEN1Response">
+		<wsdl:part name="bodyPart" element="tns:echoStringWSGEN1Response" />
+	</wsdl:message>
+	
+	<wsdl:message name="echoStringWSGEN2Request">
+		<wsdl:part name="bodyPart" element="tns:echoStringWSGEN2" />
+	</wsdl:message>
+
+	<wsdl:message name="echoStringWSGEN2Response">
+		<wsdl:part name="bodyPart" element="tns:echoStringWSGEN2Response" />
+	    <wsdl:part name="headerPart" element="tns:headerValue" />
+	</wsdl:message>
+	
+	
 	<wsdl:portType name="DocLitWrap">
 
 		<wsdl:operation name="oneWayVoid">
@@ -244,6 +290,16 @@
 		<wsdl:operation name="finOp">
 			<wsdl:input message="tns:finOpRequest" />
 			<wsdl:output message="tns:finOpResponse" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="echoStringWSGEN1">
+			<wsdl:input message="tns:echoStringWSGEN1Request" />
+			<wsdl:output message="tns:echoStringWSGEN1Response" />
+		</wsdl:operation>
+		
+		<wsdl:operation name="echoStringWSGEN2">
+			<wsdl:input message="tns:echoStringWSGEN2Request" />
+			<wsdl:output message="tns:echoStringWSGEN2Response" />
 		</wsdl:operation>
 
 	</wsdl:portType>
@@ -329,6 +385,32 @@
 				<soap:body use="literal" />
 			</wsdl:output>
 
+		</wsdl:operation>
+		
+		<wsdl:operation name="echoStringWSGEN1">
+			<soap:operation
+				soapAction="http://addheaders.sample.test.org/echoStringWSGEN1" />
+        
+			<wsdl:input>
+				<soap:header use="literal" message="tns:echoStringWSGEN1Request" part="headerPart"/>			
+				<soap:body use="literal" message="tns:echoStringWSGEN1Request" part="bodyPart"/>			
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />		
+			</wsdl:output>
+		</wsdl:operation>
+		
+		<wsdl:operation name="echoStringWSGEN2">
+			<soap:operation
+				soapAction="http://addheaders.sample.test.org/echoStringWSGEN2" />
+        
+			<wsdl:input>
+                 <soap:body use="literal" />	
+			</wsdl:input>
+			<wsdl:output>
+			    <soap:header use="literal" message="tns:echoStringWSGEN2Response" part="headerPart"/>			
+				<soap:body use="literal" message="tns:echoStringWSGEN2Response" part="bodyPart"/>			
+			</wsdl:output>
 		</wsdl:operation>
 
 	</wsdl:binding>

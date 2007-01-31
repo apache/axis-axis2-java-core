@@ -107,6 +107,11 @@
                 <module>true</module>
             </properties>
         </dependency>
+         <dependency>
+            <groupId>org.apache.ws.commons.schema</groupId>
+            <artifactId>XmlSchema</artifactId>
+            <version>${XmlSchema.version}</version>
+        </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>

@@ -43,15 +43,15 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
     protected String addressingNamespace = Final.WSA_NAMESPACE;  // defaulting to final version
     protected String addressingVersion = null;
     private static final Log log = LogFactory.getLog(AddressingInHandler.class);
+    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // if another handler has already processed the addressing headers, do not do anything here.
         if (JavaUtils.isTrueExplicitly(msgContext.getProperty(IS_ADDR_INFO_ALREADY_PROCESSED))) {
-            if(log.isDebugEnabled()) {
+            if(isDebugEnabled) {
                 log.debug("Another handler has processed the addressing headers. Nothing to do here.");
             }
-
             return InvocationResponse.CONTINUE;
         }
         
@@ -61,7 +61,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             namespace = addressingNamespace;
         }
         else if (!namespace.equals(addressingNamespace)) {
-            if(log.isDebugEnabled()) {
+            if(isDebugEnabled) {
                 log.debug("This addressing handler does not match the specified namespace, " + namespace);
             }
 
@@ -79,9 +79,10 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             return InvocationResponse.CONTINUE;
         }
 
-		if(log.isDebugEnabled()) {
-			log.debug("Starting " + addressingVersion + " IN handler ...");
-		}
+        if(isDebugEnabled) {
+            log.debug("Starting " + addressingVersion + " IN handler ...");
+        }
+
 
         ArrayList addressingHeaders;
         addressingHeaders = header.getHeaderBlocksWithNSURI(namespace);
@@ -89,16 +90,17 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             msgContext.setProperty(WS_ADDRESSING_VERSION, namespace);
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.FALSE);
 
-			if(log.isDebugEnabled()) {
-				log.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
-			}
+            if(isDebugEnabled) {
+                log.debug(addressingVersion + " Headers present in the SOAP message. Starting to process ...");
+            }
+
             extractAddressingInformation(header, msgContext, addressingHeaders, namespace);
             msgContext.setProperty(IS_ADDR_INFO_ALREADY_PROCESSED, Boolean.TRUE);
         } else {
             msgContext.setProperty(DISABLE_ADDRESSING_FOR_OUT_MESSAGES, Boolean.TRUE);
-			if(log.isDebugEnabled()) {
-				log.debug("No Headers present corresponding to " + addressingVersion);
-			}
+            if(isDebugEnabled) {
+                log.debug("No Headers present corresponding to " + addressingVersion);
+            }
         }
         
         return InvocationResponse.CONTINUE;
@@ -121,18 +123,18 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         while (addressingHeadersIt.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt.next();
             if (!SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole())){
-                if (WSA_TO.equals(soapHeaderBlock.getLocalName())) {
+                if (WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
+                    ignoreAction = checkDuplicateHeaders(WSA_ACTION, checkedHeaderNames, duplicateHeaderNames);
+                } else if (WSA_TO.equals(soapHeaderBlock.getLocalName())) {
                     ignoreTo = checkDuplicateHeaders(WSA_TO, checkedHeaderNames, duplicateHeaderNames);
-                } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
-                    ignoreFrom = checkDuplicateHeaders(WSA_FROM, checkedHeaderNames, duplicateHeaderNames);
+                } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
+                    ignoreMessageID = checkDuplicateHeaders(WSA_MESSAGE_ID, checkedHeaderNames, duplicateHeaderNames);
                 } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName())) {
                     ignoreReplyTo = checkDuplicateHeaders(WSA_REPLY_TO, checkedHeaderNames, duplicateHeaderNames);
                 } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName())) {
                     ignoreFaultTo = checkDuplicateHeaders(WSA_FAULT_TO, checkedHeaderNames, duplicateHeaderNames);
-                } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName())) {
-                    ignoreMessageID = checkDuplicateHeaders(WSA_MESSAGE_ID, checkedHeaderNames, duplicateHeaderNames);
-                } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
-                    ignoreAction = checkDuplicateHeaders(WSA_ACTION, checkedHeaderNames, duplicateHeaderNames);
+                } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName())) {
+                    ignoreFrom = checkDuplicateHeaders(WSA_FROM, checkedHeaderNames, duplicateHeaderNames);
                 }
             }
         }
@@ -142,20 +144,20 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         while (addressingHeadersIt2.hasNext()) {
             SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt2.next();
             if (!SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole())){
-                if (WSA_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreTo) {
+                if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
+                    extractActionInformation(soapHeaderBlock, namespace, messageContext);
+                } else if (WSA_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreTo) {
                     extractToEPRInformation(soapHeaderBlock, messageContextOptions, header, namespace);
-                } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName()) && !ignoreFrom) {
-                    extractFromEPRInformation(soapHeaderBlock, namespace, messageContext);
+                } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName()) && !ignoreMessageID) {
+                    extractMessageIDInformation(soapHeaderBlock, namespace, messageContext);
                 } else if (WSA_REPLY_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreReplyTo) {
                     extractReplyToEPRInformation(soapHeaderBlock, namespace, messageContext);
                 } else if (WSA_FAULT_TO.equals(soapHeaderBlock.getLocalName()) && !ignoreFaultTo) {
                     extractFaultToEPRInformation(soapHeaderBlock, namespace, messageContext);
-                } else if (WSA_MESSAGE_ID.equals(soapHeaderBlock.getLocalName()) && !ignoreMessageID) {
-                    extractMessageIDInformation(soapHeaderBlock, addressingNamespace, messageContext);
-                } else if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
-                    extractActionInformation(soapHeaderBlock, namespace, messageContext);
                 } else if (WSA_RELATES_TO.equals(soapHeaderBlock.getLocalName())) {
                     extractRelatesToInformation(soapHeaderBlock, namespace, messageContextOptions);
+                } else if (WSA_FROM.equals(soapHeaderBlock.getLocalName()) && !ignoreFrom) {
+                    extractFromEPRInformation(soapHeaderBlock, namespace, messageContext);
                 }
             }
         }
@@ -209,17 +211,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
                 soapHeaderBlock.getAttribute(
                         new QName(AddressingConstants.WSA_RELATES_TO_RELATIONSHIP_TYPE));
         
-        String relationshipTypeString = null;
-        
-        // If an attribute was found, use the value from it 
-        if(relationshipType!=null){
-            relationshipTypeString = relationshipType.getAttributeValue();
-        }else{ // Else use the appropriate default (depends on namespace in use)
-            relationshipTypeString =
-                Submission.WSA_NAMESPACE.equals(addressingNamespace)
-                        ? Submission.WSA_DEFAULT_RELATIONSHIP_TYPE
-                        : Final.WSA_DEFAULT_RELATIONSHIP_TYPE;
-        }
+        String relationshipTypeString = relationshipType == null ? null : relationshipType.getAttributeValue();
         
         if(log.isTraceEnabled()){
             log.trace("extractRelatesToInformation: Extracted Relationship. Value="+address+" RelationshipType="+relationshipTypeString);

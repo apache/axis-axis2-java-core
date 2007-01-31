@@ -33,6 +33,7 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -40,7 +41,6 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.message.util.SOAPElementReader;
 import org.apache.axis2.jaxws.util.SAAJFactory;
@@ -62,7 +62,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 	 * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toSAAJ(org.apache.axiom.soap.SOAPEnvelope)
 	 */
 	public SOAPEnvelope toSAAJ(org.apache.axiom.soap.SOAPEnvelope omEnvelope)
-			throws MessageException {
+			throws WebServiceException {
 		SOAPEnvelope soapEnvelope = null;
 		try {
 			// Build the default envelope
@@ -91,10 +91,10 @@ public class SAAJConverterImpl implements SAAJConverter {
 			
 			NameCreator nc = new NameCreator(soapEnvelope);
 			buildSOAPTree(nc, soapEnvelope, null, reader, false);
-		} catch (MessageException e) {
+		} catch (WebServiceException e) {
 			throw e;
 		} catch (SOAPException e) {
-			throw ExceptionFactory.makeMessageException(e);
+			throw ExceptionFactory.makeWebServiceException(e);
 		}
 		return soapEnvelope;
 	}
@@ -103,7 +103,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 	 * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toOM(javax.xml.soap.SOAPEnvelope)
 	 */
 	public org.apache.axiom.soap.SOAPEnvelope toOM(SOAPEnvelope saajEnvelope)
-			throws MessageException {
+			throws WebServiceException {
 		// Get a XMLStreamReader backed by a SOAPElement tree
 		XMLStreamReader reader = new SOAPElementReader(saajEnvelope);
 		// Get a SOAP OM Builder.  Passing null causes the version to be automatically triggered
@@ -118,7 +118,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toOM(javax.xml.soap.SOAPElement)
 	 */
-	public OMElement toOM(SOAPElement soapElement) throws MessageException {
+	public OMElement toOM(SOAPElement soapElement) throws WebServiceException {
 		// Get a XMLStreamReader backed by a SOAPElement tree
 		XMLStreamReader reader = new SOAPElementReader(soapElement);
 		// Get a OM Builder.  
@@ -131,7 +131,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toSAAJ(org.apache.axiom.om.OMElement, javax.xml.soap.SOAPElement)
 	 */
-	public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent) throws MessageException {
+	public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent) throws WebServiceException {
 		XMLStreamReader reader = null;
 		
 		// If the OM element is not attached to a parser (builder), then the OM
@@ -148,7 +148,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 			env = env.getParentElement();
 		}
 		if (env == null) {
-			throw ExceptionFactory.makeMessageException(Messages.getMessage("SAAJConverterErr1"));
+			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("SAAJConverterErr1"));
 		}
 		NameCreator nc = new NameCreator((SOAPEnvelope) env);
 		return buildSOAPTree(nc, null, parent, reader, false);
@@ -158,7 +158,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.util.SAAJConverter#toSAAJ(org.apache.axiom.om.OMElement, javax.xml.soap.SOAPElement, javax.xml.soap.SOAPFactory)
 	 */
-	public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent, SOAPFactory sf) throws MessageException {
+	public SOAPElement toSAAJ(OMElement omElement, SOAPElement parent, SOAPFactory sf) throws WebServiceException {
 		XMLStreamReader reader = null;
 		
 		// If the OM element is not attached to a parser (builder), then the OM
@@ -191,7 +191,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 					SOAPElement parent, 
 					XMLStreamReader reader, 
 					boolean quitAtBody) 
-		throws MessageException {
+		throws WebServiceException {
 		try {
 			while(reader.hasNext()) {
 				int eventID = reader.next();	
@@ -272,12 +272,12 @@ public class SAAJConverterImpl implements SAAJConverter {
 					this._unexpectedEvent("EventID " +String.valueOf(eventID));
 				}
 			}	
-		} catch (MessageException e) {
+		} catch (WebServiceException e) {
 			throw e;
 		} catch (XMLStreamException e) {
-			throw ExceptionFactory.makeMessageException(e);
+			throw ExceptionFactory.makeWebServiceException(e);
 		} catch (SOAPException e) {
-			throw ExceptionFactory.makeMessageException(e);
+			throw ExceptionFactory.makeWebServiceException(e);
 		}
 		return root;
 	}
@@ -405,11 +405,11 @@ public class SAAJConverterImpl implements SAAJConverter {
 		}
 	}
 	
-	private void _unexpectedEvent(String event) throws MessageException {
+	private void _unexpectedEvent(String event) throws WebServiceException {
 		// Review We need NLS for this message, but this code will probably 
 		// be added to JAX-WS.  So for now we there is no NLS.
 		// TODO NLS
-		throw ExceptionFactory.makeMessageException(Messages.getMessage("SAAJConverterErr2", event));
+		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("SAAJConverterErr2", event));
 	}
 	
 	/**
@@ -447,7 +447,7 @@ public class SAAJConverterImpl implements SAAJConverter {
 		
 	}
 
-    public MessageFactory createMessageFactory(String namespace) throws SOAPException, MessageException {
+    public MessageFactory createMessageFactory(String namespace) throws SOAPException, WebServiceException {
         return SAAJFactory.createMessageFactory(namespace);
     }
 }

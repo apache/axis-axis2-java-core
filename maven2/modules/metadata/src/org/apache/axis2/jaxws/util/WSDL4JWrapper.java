@@ -17,9 +17,12 @@
 
 package org.apache.axis2.jaxws.util;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +45,8 @@ public class WSDL4JWrapper implements WSDLWrapper {
 	private Definition wsdlDefinition = null;
 	private URL wsdlURL;
 	
-    public WSDL4JWrapper(URL wsdlURL)throws WSDLException{
+    public WSDL4JWrapper(URL wsdlURL)throws FileNotFoundException, UnknownHostException, 
+    	ConnectException, WSDLException{
 		super();
 		this.wsdlURL = wsdlURL;
 		WSDLFactory factory = WSDLFactory.newInstance();
@@ -54,10 +58,18 @@ public class WSDL4JWrapper implements WSDLWrapper {
 			InputStream is = urlCon.getInputStream();
 			is.close();
 			String explicitWsdl = urlCon.getURL().toString();
-			
 			wsdlDefinition = reader.readWSDL(explicitWsdl);
-			
-		} catch (Exception ex) {
+		}
+		catch(FileNotFoundException ex) {
+			throw ex;
+		}
+		catch(UnknownHostException ex) {
+			throw ex;
+		}
+		catch(ConnectException ex) {
+			throw ex;
+		}
+		catch (Exception ex) {
             throw new WSDLException("WSDL4JWrapper : ", ex.getMessage());
 		}
 	}

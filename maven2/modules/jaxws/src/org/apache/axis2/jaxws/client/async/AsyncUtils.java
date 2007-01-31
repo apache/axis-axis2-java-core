@@ -18,10 +18,11 @@
  */
 package org.apache.axis2.jaxws.client.async;
 
+import javax.xml.ws.WebServiceException;
+
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;
@@ -30,9 +31,9 @@ import org.apache.commons.logging.LogFactory;
 public class AsyncUtils {
 
     private static final Log log = LogFactory.getLog(AsyncUtils.class);
+    private static final boolean debug = log.isDebugEnabled();
     
-    public static MessageContext createMessageContext(AsyncResult result) throws MessageException {
-        boolean debug = log.isDebugEnabled();
+    public static MessageContext createMessageContext(AsyncResult result) throws WebServiceException {
         MessageContext response = null;
         
         if (debug) {
@@ -50,10 +51,10 @@ public class AsyncUtils {
         }
         catch (Throwable t) {
             if (debug) {
-                log.debug("An error occurred in the ThreadContextMigratorUtil " + t);
+                log.debug(axisResponse.getLogIDString()+" An error occurred in the ThreadContextMigratorUtil " + t);
                 log.debug("...caused by " + t.getCause());
             }
-            ExceptionFactory.makeWebServiceException(t);
+            throw ExceptionFactory.makeWebServiceException(t);
         }
         
         return response;

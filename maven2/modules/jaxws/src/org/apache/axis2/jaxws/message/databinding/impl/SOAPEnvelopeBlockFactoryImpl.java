@@ -6,10 +6,10 @@ package org.apache.axis2.jaxws.message.databinding.impl;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.Block;
-import org.apache.axis2.jaxws.message.MessageException;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
 
@@ -38,7 +38,7 @@ public class SOAPEnvelopeBlockFactoryImpl extends BlockFactoryImpl implements
 	 * @see org.apache.axis2.jaxws.message.factory.BlockFactory#createFrom(java.lang.Object, java.lang.Object, javax.xml.namespace.QName)
 	 */
 	public Block createFrom(Object businessObject, Object context, QName qName)
-			throws MessageException {
+			throws WebServiceException {
 		return new SOAPEnvelopeBlockImpl((SOAPEnvelope) businessObject, null, qName, this);
 	}
 
