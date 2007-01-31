@@ -97,7 +97,7 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
             // @WebFault may not be present
             WebFault annotation = getAnnoWebFault();
             
-            if (annotation != null &&
+            if (annotation != null && annotation.faultBean() != null && 
                 annotation.faultBean().length() > 0) {
                 faultBean = annotation.faultBean();
             } else {
