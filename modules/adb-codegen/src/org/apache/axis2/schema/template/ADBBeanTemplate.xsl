@@ -94,7 +94,7 @@
 
         <xsl:for-each select="property">
             <!-- Write only the NOT inherited properties-->
-            <xsl:if test="not(@inherited)">
+            <xsl:if test="not(@inherited) or ($simple and $extension)">
 
             <xsl:variable name="propertyType"><xsl:value-of select="@type"></xsl:value-of></xsl:variable>
             <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
@@ -226,31 +226,54 @@
                         * This field was an array in <xsl:value-of select="$restriction"/>.</xsl:if>
                         */
 
-                        protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
+                        <xsl:if test="not(@inherited)">
+                            protected <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text><xsl:value-of select="$varName" /> ;
+                        </xsl:if>
                         <xsl:if test="enumFacet">
-                        private static java.util.HashMap _table_ = new java.util.HashMap();
+                            private static java.util.HashMap _table_ = new java.util.HashMap();
 
                         // Constructor
-                        protected <xsl:value-of select="$name"/>(<xsl:value-of select="$propertyType"/> value) {
-                            <xsl:value-of select="$varName" /> = value;
-                            <xsl:choose>
+                        <xsl:if test="not(@inherited)">
+                            protected <xsl:value-of select="$name"/>(<xsl:value-of select="$propertyType"/> value, boolean isRegisterValue) {
+                                <xsl:value-of select="$varName" /> = value;
+                                if (isRegisterValue){
+                                    <xsl:choose>
                                        <xsl:when test="@primitive">
                                          _table_.put(<xsl:value-of select="$varName" /> + "", this);
                                        </xsl:when>
                                        <xsl:otherwise>
                                            _table_.put(<xsl:value-of select="$varName" />, this);
                                        </xsl:otherwise>
-                                   </xsl:choose>
+                                    </xsl:choose>
+                                }
 
-                        }
+                            }
+                        </xsl:if>
+                        <xsl:if test="@inherited">
+                            protected <xsl:value-of select="$name"/>(<xsl:value-of select="$propertyType"/> value, boolean isRegisterValue) {
+                                super(value,false);
+                                if (isRegisterValue){
+                                    <xsl:choose>
+                                       <xsl:when test="@primitive">
+                                         _table_.put(<xsl:value-of select="$varName" /> + "", this);
+                                       </xsl:when>
+                                       <xsl:otherwise>
+                                           _table_.put(<xsl:value-of select="$varName" />, this);
+                                       </xsl:otherwise>
+                                    </xsl:choose>
+                                }
+                            }
+                        </xsl:if>
+                        <xsl:if test="not(@inherited)">
+                            <xsl:for-each select="enumFacet">
+                                public static final <xsl:value-of select="$propertyType"/> _<xsl:value-of select="@id"/> =
+                                    org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>("<xsl:value-of select="@value"/>");
+                            </xsl:for-each>
+                        </xsl:if>
 
-                        <xsl:for-each select="enumFacet">
-                            public static final <xsl:value-of select="$propertyType"/> _<xsl:value-of select="@id"/> =
-                                org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>("<xsl:value-of select="@value"/>");
-                        </xsl:for-each>
                         <xsl:for-each select="enumFacet">
                             public static final <xsl:value-of select="$name"/><xsl:text> </xsl:text><xsl:value-of select="@id"/> =
-                                new <xsl:value-of select="$name"/>(_<xsl:value-of select="@id"/>);
+                                new <xsl:value-of select="$name"/>(_<xsl:value-of select="@id"/>,true);
                         </xsl:for-each>
 
                             public <xsl:value-of select="$propertyType"/> getValue() { return <xsl:value-of select="$varName" />;}
@@ -1282,7 +1305,7 @@
                                                      writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                                 </xsl:when>
                                                 <xsl:otherwise>
-                                                     throw new RuntimeException("testValue cannot be null !!");
+                                                     throw new RuntimeException("Value cannot be null !!");
                                                 </xsl:otherwise>
                                             </xsl:choose>
                                          }else{
@@ -1680,8 +1703,15 @@
         *                If this object is a complex type, the reader is positioned at the end element of its outer element
         */
         public static <xsl:value-of select="$name"/> parse(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception{
-            <xsl:if test="not(property/enumFacet)"><xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();</xsl:if>
-            <xsl:if test="property/enumFacet"><xsl:value-of select="$name"/> object = null;</xsl:if>
+            <xsl:variable name="isEnumFacet" select="property/enumFacet"/>
+            <xsl:if test="not($isEnumFacet)"><xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();</xsl:if>
+            <xsl:if test="$isEnumFacet">
+                <xsl:value-of select="$name"/> object = null;
+                // initialize a hash map to keep values
+                java.util.Map attributeMap = new java.util.HashMap();
+                java.util.List extraAttributeList = new java.util.ArrayList();
+            </xsl:if>
+
             int event;
             String nillableValue = null;
             try {
@@ -1706,7 +1736,7 @@
 
                    }
                 </xsl:if>
-                  <xsl:if test="$isType or $anon">
+                <xsl:if test="$isType or $anon">
                 if (reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","type")!=null){
                   java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                         "type");
@@ -1731,7 +1761,9 @@
                 // Note all attributes that were handled. Used to differ normal attributes
                 // from anyAttributes.
                 java.util.Vector handledAttributes = new java.util.Vector();
-                <xsl:for-each select="property[@attribute]">
+                <!-- if this is an enumeration then we have to read attributes after-->
+
+                 <xsl:for-each select="property[@attribute]">
                     <xsl:variable name="propertyName" select="@name"/>
                     <xsl:variable name="propertyType" select="@type"/>
                     <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
@@ -1756,14 +1788,30 @@
                                      prefix = <xsl:value-of select="$attribName"/>.substring(0,index);
                                      namespaceuri = reader.getNamespaceURI(prefix);
                                  }
-                                 object.set<xsl:value-of select="$javaName"/>(
-                                      org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(<xsl:value-of select="$attribName"/>,namespaceuri));
+                                 <xsl:choose>
+                                     <xsl:when test="$isEnumFacet">
+                                        attributeMap.put("<xsl:value-of select="$javaName"/>",
+                                            org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(<xsl:value-of select="$attribName"/>,namespaceuri));
+                                     </xsl:when>
+                                     <xsl:otherwise>
+                                         object.set<xsl:value-of select="$javaName"/>(
+                                            org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(<xsl:value-of select="$attribName"/>,namespaceuri));
+                                     </xsl:otherwise>
+                                 </xsl:choose>
+
                             </xsl:when>
                             <xsl:otherwise>
-                         object.set<xsl:value-of select="$javaName"/>(
-                           org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(
-                                <xsl:value-of select="$attribName"/>));
-                            </xsl:otherwise>
+                                <xsl:choose>
+                                    <xsl:when test="$isEnumFacet">
+                                        attributeMap.put("<xsl:value-of select="$javaName"/>",
+                                          org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(<xsl:value-of select="$attribName"/>));
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        object.set<xsl:value-of select="$javaName"/>(
+                                              org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(<xsl:value-of select="$attribName"/>));
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                             </xsl:otherwise>
                         </xsl:choose>
                     }
                     handledAttributes.add("<xsl:value-of select="$propertyName"/>");
@@ -1786,12 +1834,21 @@
                                             org.apache.axiom.om.OMAbstractFactory.getOMFactory());
 
                                 // and add it to the extra attributes
-                                object.addExtraAttributes(attr);
+                                <xsl:choose>
+                                    <xsl:when test="property/enumFacet">
+                                         extraAttributeList.add(attr);
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                         object.addExtraAttributes(attr);
+                                    </xsl:otherwise>
+                                </xsl:choose>
+
                             }
                         }
                     </xsl:if>
 
                 </xsl:for-each>
+
 
                 <xsl:if test="($isType or $anon) and not($simple)">
                     <!-- Skip the outer start element in order to process the subelements. -->
@@ -2370,7 +2427,42 @@
                                         </xsl:choose>
                                     </xsl:if>
                                     <xsl:if test="(enumFacet)">
-                                    object = <xsl:value-of select="$name"/>.fromString(content);
+                                        object = <xsl:value-of select="$name"/>.fromString(content);
+                                        <!-- set the attribute values here since onbject is not initalized yet -->
+                                        <xsl:for-each select="../property[@attribute]">
+                                            <xsl:variable name="propertyName" select="@name"/>
+                                            <xsl:variable name="propertyType" select="@type"/>
+                                            <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
+                                            <xsl:variable name="shortTypeName"
+                                            select="concat(translate(substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
+                                            <xsl:variable name="javaName" select="@javaname"/>
+                                            <xsl:variable name="attribName">tempObjectAttrib<xsl:value-of select="$propertyName"/></xsl:variable>
+
+                                            <xsl:if test="$propertyName != 'extraAttributes'">
+                                                // handle attribute "<xsl:value-of select="$propertyName"/>"
+                                                java.lang.Object <xsl:value-of select="$attribName"/> =
+                                                                attributeMap.get("<xsl:value-of select="$javaName"/>");
+                                               if (<xsl:value-of select="$attribName"/>!=null){
+                                                    <xsl:choose>
+                                                        <xsl:when test="$propertyType='javax.xml.namespace.QName'">
+                                                           object.set<xsl:value-of select="$javaName"/>((javax.xml.namespace.QName)<xsl:value-of select="$attribName"/>);
+                                                        </xsl:when>
+                                                        <xsl:otherwise>
+                                                            object.set<xsl:value-of select="$javaName"/>((<xsl:value-of select="$shortTypeName"/>)<xsl:value-of select="$attribName"/>);
+                                                        </xsl:otherwise>
+                                                    </xsl:choose>
+                                                }
+                                            </xsl:if>
+
+                                            <!-- Handle anyAttributes here -->
+                                            <xsl:if test="$propertyName = 'extraAttributes'">
+                                                for(java.util.Iterator iter = extraAttributeList.iterator();iter.hasNext();){
+                                                    object.addExtraAttributes((org.apache.axiom.om.impl.llom.OMAttributeImpl)iter.next());
+                                                }
+                                            </xsl:if>
+
+                                        </xsl:for-each>
+
                                     </xsl:if>
                                     <xsl:if test="@nillable">
                                        } else {

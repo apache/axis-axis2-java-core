@@ -6,6 +6,7 @@ import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
+import org.apache.axis2.schema.typemap.JavaTypeMap;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.commons.logging.Log;
@@ -1187,10 +1188,9 @@ public class SchemaCompiler {
                                 SchemaCompilerMessages.getMessage("schema.unknowncontenterror"));
                     }
                 }
-
-                //Do the actual parent setting
-                metaInfHolder.setAsParent(baseMetaInfoHolder);
             }
+            //Do the actual parent setting
+            metaInfHolder.setAsParent(baseMetaInfoHolder);
         }
     }
 
@@ -1227,7 +1227,7 @@ public class SchemaCompiler {
         	}
         	
         	//process extension base type
-        	processSimpleExtensionBaseType(extension.getBaseTypeName(),metaInfHolder);
+        	processSimpleExtensionBaseType(extension.getBaseTypeName(),metaInfHolder,parentSchema);
         	
         	//process attributes 
             XmlSchemaObjectCollection attribs = extension.getAttributes();
@@ -1278,21 +1278,37 @@ public class SchemaCompiler {
     * @param extBaseType
     * @param metaInfHolder
     */
-    public void processSimpleExtensionBaseType(QName extBaseType,BeanWriterMetaInfoHolder metaInfHolder) throws SchemaCompilationException {
+    public void processSimpleExtensionBaseType(QName extBaseType,
+                                               BeanWriterMetaInfoHolder metaInfHolder,
+                                               XmlSchema parentSchema) throws SchemaCompilationException {
     	
         //find the class name
         String className = findClassName(extBaseType, false);
 
-        //this means the schema type actually returns a different QName
-        if (changedTypeMap.containsKey(extBaseType)) {
-        	metaInfHolder.registerMapping(extBaseType,
-                    (QName) changedTypeMap.get(extBaseType),
-                    className,SchemaConstants.ELEMENT_TYPE);
-        } else {
-        	metaInfHolder.registerMapping(extBaseType,
-        			extBaseType,
-                    className,SchemaConstants.ELEMENT_TYPE);
+        // if the base type is an primitive then we do not have to extend them
+        // and it is considered as a property
+        // on the otherhand if the base type is an generated class then we have to
+        // extend from it
+
+        if (baseSchemaTypeMap.containsKey(extBaseType)){
+            //this means the schema type actually returns a different QName
+            if (changedTypeMap.containsKey(extBaseType)) {
+                metaInfHolder.registerMapping(extBaseType,
+                        (QName) changedTypeMap.get(extBaseType),
+                        className,SchemaConstants.ELEMENT_TYPE);
+            } else {
+                metaInfHolder.registerMapping(extBaseType,
+                        extBaseType,
+                        className,SchemaConstants.ELEMENT_TYPE);
+            }
+        } else if (processedTypemap.containsKey(extBaseType)) {
+            //set the extension base class name
+            metaInfHolder.setExtension(true);
+            metaInfHolder.setExtensionClassName(className);
+
+            copyMetaInfoHierarchy(metaInfHolder,extBaseType,parentSchema);
         }
+
 
         //get the binary state and add that to the status map
         if (isBinary(extBaseType)){
