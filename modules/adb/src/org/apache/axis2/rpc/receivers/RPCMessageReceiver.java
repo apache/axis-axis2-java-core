@@ -125,7 +125,7 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
             // Handling the response
             AxisMessage outaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-            if (inAxisMessage != null) {
+            if (outaxisMessage != null) {
                 messageNameSpace = outaxisMessage.getElementQName().getNamespaceURI();
             }
 
