@@ -5,30 +5,30 @@
 <head>
   <meta http-equiv="content-type" content="" />
   <title>Axis2 RPC Support</title>
-  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
+  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
+  media="all" />
 </head>
 
 <body>
 <h1>Axis2 RPC Support</h1>
 
-<p>This documents talks about the Axis2's Remote Procedure Calls support in a
-set of easy to understand implementation steps.</p>
+<p>This document describes Axis2's Remote Procedure Call support in a set of
+easy to understand implementation steps.</p>
 
 <h2>Introduction</h2>
 
-<p>Axis2 Remote Procedure Calls (RPC) support may seem somewhat tricky and
-confusing at first glance. However, Axis2 RPC strategy is based on a well
-defined set of rules and once the details are in place, it becomes clear as
-day. This document aims to drill down to the details of this strategy and
-fills up most of the fairly unknown bits and pieces. Note that Axis2
-currently does not support the rpc/encoded style fully. It's main support is
+<p>Axis2 Remote Procedure Call (RPC) support may seem somewhat tricky and
+confusing at first glance. However, Axis2 RPC strategy is based on a set of
+well defined rules. This document aims to drill down to the details of the
+strategy and resolve most of the unknown bits and pieces. Note that Axis2
+currently does not support the rpc/encoded style fully. Its main support is
 for the rpc/lit style.</p>
 
 <p>We will discuss the Axis2 RPC strategy in the following steps</p>
 
 <h2>Step 1 - Converting RPC Style WSDL's into Doc/Lit Style WSDL</h2>
 
-<p>This is probably the most confusing part of the rpc strategy. Since the
+<p>This is probably the most confusing part of the RPC strategy. Since the
 Axis2 code generator is based on pure doc/lit style, the first step of the
 code generation process is to generate a wrapper schema. This wrapper
 generation can be easily explained by using an example.</p>
@@ -66,8 +66,8 @@ generation can be easily explained by using an example.</p>
 need wrapping in the following order.</p>
 <ol>
   <li>The first element needs to have the operation name as the local name
-    and the operation namespace (which happens to be the namespace of the
-    porttype - in this case the targetnamespace of the WSDL)</li>
+    and the operation namespace. (This happens to be the namespace of the
+    porttype - in this case the targetnamespace of the WSDL.)</li>
   <li>The children of this element are non namespace qualified elements with
     the part names as local names (referred to as <strong>part
     element</strong>)</li>
@@ -78,19 +78,19 @@ need wrapping in the following order.</p>
     binding is rpc is invalid.</li>
 </ol>
 
-<p>For example the input wire message for the echo operation mentioned in the
-above WSDL fragment would look like this:</p>
+<p>For example, the input wire message for the echo operation mentioned in
+the above WSDL fragment would look like this:</p>
 <pre> &lt;op:<strong>echo</strong> xmlns:op="porttype namespace"&gt;
   &lt;<strong>part1</strong>&gt;Hello World&lt;/part1&gt;
   &lt;<strong>part2</strong>&gt;123&lt;/part2&gt;
  &lt;/op:echo&gt;</pre>
 
 <p>Note that the element name is in bold. The first one is the operation
-name, the second and third are part names. It can be seen that it is quite
-possible to generate a schema, representing this structure and then treat the
-whole service as pure doc/lit service. In this case, following is the piece
-of schema generated to make this rpc to doc conversion. Note that in this
-case the wire message stays unchanged. It is only a different WSDL authoring
+name, the second and third are part names. It can be seen that it is possible
+to generate a schema representing this structure, and then treat the whole
+service as a pure doc/lit service. In this case, the following piece of
+schema is generated to make the rpc to doc conversion. Note that in this case
+the wire message stays unchanged. It is only a different WSDL authoring
 style</p>
 <pre> &lt;xs:element name="echo"&gt;
     &lt;xs:complexType&gt;
@@ -109,30 +109,29 @@ place!</p>
 
 <h2>Step 2 - Unwrapping the Schema</h2>
 
-<p>If the schema needs to be unwrapped then that brings up a few issues
+<p>If the schema needs to be unwrapped, it brings up a few issues. This is
 mainly because the only thing that the emitters rely on when generating code
-is a mapping table!</p>
+is a mapping table.</p>
 <ol>
-  <li>When the schema is unwrapped where would that unwrapping information
-    stay?
-    <p>Good question - It needs to be a store that keeps the information
-    seperated. Hmm.. What can we use here ? Why of course, the Axis *
-    hierarchy! It has nicely separated information holders and a parameter
-    store that can hold a information bean.</p>
+  <li>When the schema is unwrapped, where will the unwrapping information
+    remain?
+    <p>There has to be a store to keep the information seperated. The Axis *
+    hierarchy ca be used for this. It has nicely separated information
+    holders and a parameter store that can hold an information bean.</p>
   </li>
   <li>How do we maintain uniqueness among message part names?
-    <p>Another Good question - part names are only unique across a message
-    and not globally. But due to the fact that we have a global mapping table
-    we need a way to differentiate between parts of different messages. The
-    technique used here is to generate a QName that has the operation name as
-    a namespace and a suffix (like _input) appended to the local name</p>
+    <p>Part names are only unique across a message and not globally. However,
+    due to the fact that we have a global mapping table, we need a way to
+    differentiate between parts of different messages. The technique used
+    here is to generate a QName that has the operation name as a namespace
+    and a suffix (like _input) appended to the local name.</p>
   </li>
 </ol>
 
-<p>Given these solutions the first step in unwrapping is to walk the schema
+<p>Given these solutions, the first step in unwrapping is to walk the schema
 and figure out the unwrappable items. The key player of the unwrapping
-process is the unwrapping extension. What it does is to walk a given schema
-and figure out the unwrappable parts if there are any.</p>
+process is the unwrapping extension. It walks a given schema and figure out
+the unwrappable parts if there are any.</p>
 
 <p>The current unwrapper looks for the following patterns and fails if it is
 not found!</p>
@@ -145,12 +144,12 @@ not found!</p>
   &lt; /element &gt;
  </pre>
 
-<p>Once this pattern is detected the unwrapper details will be added to the
-relevant AxisMessage component</p>
+<p>Once this pattern is detected, the unwrapper details will be added to the
+relevant AxisMessage component.</p>
 
-<h2>Step 3 - Populate type Information</h2>
+<h2>Step 3 - Populate Type Information</h2>
 
-<p>The next step is to populate the type information for the parts. This has
+<p>The next step is to populate the Type information for the parts. This has
 to be explicitly done by the data binding extensions, and currently the ADB
 and XMLbeans extensions populate the relevant AxisMessage by looking up their
 generated type systems. This type information goes into the AxisMessage
@@ -215,7 +214,7 @@ almost the same for the XMLBeans extension. Note the items in bold.</p>
 
 <p>The next step is generating the actual code. The
 AxisServiceBasedMultiLanguageEmitter has a method that generates the XML
-model for the input parameters and that method includes the relevant part
+model for the input parameters, and that method includes the relevant part
 parameters inside the relavant top level input parameter element.</p>
 
 <p>The relevant part of the XML model looks like this. Note that this
@@ -229,18 +228,18 @@ generate the code.</p>
   &lt;/param&gt;
 &lt;/input&gt;</pre>
 
-<p>The next part is upto the template to handle. Basically, the template
-looks after the generation of multiple parameters into the method signatures
-and then the generating of the relevant serialization and deserialization
-code for the parameters.</p>
+<p>The next part is handled by the template. Basically, the template looks
+after the generation of multiple parameters into the method signatures, and
+then the generating of the relevant serialization and deserialization code
+for the parameters.</p>
 
 <h2>Bringing the Parameters Together and Exploding Them</h2>
 
 <p>This is a somewhat controversial area. The current Axis2 code generator
-does the wrapping and unwrapping at the object level and not the XML level. In
-short the exploded parameters are only a convenience and the explosion does
-not run down to the XML level. The following example of generated source code
-makes this clear:</p>
+does the wrapping and unwrapping at the object level and not the XML level.
+In short, the exploded parameters are only a convenience and the explosion
+does not run down to the XML level. The following example of generated source
+code makes this clear:</p>
 <pre> private org.apache.axiom.soap.SOAPEnvelope toEnvelope(
         org.apache.axiom.soap.SOAPFactory factory, java.lang.String param1,
         int param2, boolean optimizeContent) {
@@ -260,7 +259,7 @@ parameters happens in a similar way!</p>
 
 <h2>Conclusion</h2>
 
-<p>Axis2 RPC support is a sort of misty area, but it is based on a well
+<p>Axis2 RPC support is sort of a misty area, but it is based on a well
 defined set of rules which makes it not <em>that</em> misty after all!</p>
 <hr />
 </body>
