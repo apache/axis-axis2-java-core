@@ -25,11 +25,11 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.description.ClientUtils;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.util.TargetResolver;
+import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import java.util.Iterator;
@@ -47,31 +47,31 @@ import java.util.Map;
  */
 public abstract class OperationClient {
 
-     protected AxisOperation axisOp;
- 
-     protected ServiceContext sc;
- 
-     protected Options options;
- 
-     protected OperationContext oc;
- 
-     protected Callback callback;
- 
-     /*
-      * indicates whether the MEP execution has completed (and hence ready for
-      * resetting)
-      */
-     protected boolean completed;
- 
-     protected OperationClient(AxisOperation axisOp, ServiceContext sc,
-                               Options options) {
-         this.axisOp = axisOp;
-         this.sc = sc;
-         this.options = options;
-         this.completed = false;
-         this.oc = new OperationContext(axisOp);
-         this.oc.setParent(this.sc);
-     }
+    protected AxisOperation axisOp;
+
+    protected ServiceContext sc;
+
+    protected Options options;
+
+    protected OperationContext oc;
+
+    protected Callback callback;
+
+    /*
+    * indicates whether the MEP execution has completed (and hence ready for
+    * resetting)
+    */
+    protected boolean completed;
+
+    protected OperationClient(AxisOperation axisOp, ServiceContext sc,
+                              Options options) {
+        this.axisOp = axisOp;
+        this.sc = sc;
+        this.options = new Options(options);
+        this.completed = false;
+        this.oc = new OperationContext(axisOp);
+        this.oc.setParent(this.sc);
+    }
 
     /**
      * Sets the options that should be used for this particular client. This
@@ -162,11 +162,11 @@ public abstract class OperationClient {
 
 
     /**
-     * To close the transport if necessary , can call this method. The main 
-     * usage of this method is when client uses two tarnsports for sending and 
-     * receiving , and we need to remove entries for waiting calls in the 
+     * To close the transport if necessary , can call this method. The main
+     * usage of this method is when client uses two tarnsports for sending and
+     * receiving , and we need to remove entries for waiting calls in the
      * transport listener queue.
-     * Note : DO NOT call this method if you are not using two transports to 
+     * Note : DO NOT call this method if you are not using two transports to
      * send and receive
      *
      * @param msgCtxt : MessageContext# which has all the transport information
@@ -215,7 +215,8 @@ public abstract class OperationClient {
 
     protected void addReferenceParameters(MessageContext msgctx) {
         EndpointReference to = msgctx.getTo();
-        if (options.isManageSession()) {
+        if (options.isManageSession() || (options.getParent() != null &&
+                options.getParent().isManageSession())) {
             EndpointReference tepr = sc.getTargetEPR();
             if (tepr != null) {
                 Map map = tepr.getAllReferenceParameters();
@@ -232,7 +233,7 @@ public abstract class OperationClient {
         }
     }
 
-    protected void prepareMessageContext(ConfigurationContext cc, MessageContext mc)  throws AxisFault{
+    protected void prepareMessageContext(ConfigurationContext cc, MessageContext mc) throws AxisFault {
         // set options on the message context
         if (mc.getSoapAction() == null || "".equals(mc.getSoapAction())) {
             mc.setSoapAction(options.getAction());
