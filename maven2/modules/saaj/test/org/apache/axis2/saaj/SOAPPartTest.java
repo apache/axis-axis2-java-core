@@ -66,7 +66,7 @@ public class SOAPPartTest extends TestCase {
         DOMSource domSource;
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document document = builder.parse(new File("test-resources" + File.separator + "soap-part.xml"));
+            Document document = builder.parse(new File(System.getProperty("basedir")+"/test-resources" + File.separator + "soap-part.xml"));
             domSource = new DOMSource(document);
 
             SOAPMessage message = MessageFactory.newInstance().createMessage();

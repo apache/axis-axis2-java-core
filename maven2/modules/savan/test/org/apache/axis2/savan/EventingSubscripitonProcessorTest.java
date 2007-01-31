@@ -95,8 +95,7 @@ public class EventingSubscripitonProcessorTest extends TestCase {
 	}
 	
 	private SavanMessageContext getSubscriptionMessage () throws IOException {
-        File baseDir = new File("");
-        String testRource = baseDir.getAbsolutePath() + File.separator + "test-resources";
+        String testRource = System.getProperty("basedir")+ File.separator + "test-resources";
 
 		SOAPEnvelope envelope = CommonUtil.getTestEnvelopeFromFile(testRource,"eventing-subscription.xml");
 		
@@ -138,8 +137,7 @@ public class EventingSubscripitonProcessorTest extends TestCase {
 	}
 	
 	private SavanMessageContext getRenewMessage () throws IOException {
-        File baseDir = new File("");
-        String testRource = baseDir.getAbsolutePath() + File.separator + "test-resources";
+        String testRource = System.getProperty("basedir")+ File.separator + "test-resources";
 
 		SOAPEnvelope envelope = CommonUtil.getTestEnvelopeFromFile(testRource,"eventing-renew-datetime.xml");
 		

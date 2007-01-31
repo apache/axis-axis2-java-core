@@ -57,8 +57,7 @@ public class EventingExpirationTypesTest extends TestCase {
 	}
 	
 	private SavanMessageContext getRenewMessage (String name) throws IOException {
-        File baseDir = new File("");
-        String testRource = baseDir.getAbsolutePath() + File.separator + "test-resources";
+        String testRource = System.getProperty("basedir")+ File.separator + "test-resources";
 
 		SOAPEnvelope envelope = CommonUtil.getTestEnvelopeFromFile(testRource,name);
 		

@@ -61,7 +61,7 @@ public class IntegrationTest extends TestCase {
     public static final QName SERVICE_NAME = new QName("Echo");
     public static final QName OPERATION_NAME = new QName("echo");
 
-    public static final String SAAJ_REPO = "target/test-resources/saaj-repo";
+    public static final String SAAJ_REPO = System.getProperty("basedir")+"/"+"target/test-resources/saaj-repo";
 
     public IntegrationTest(String name) {
         super(name);
@@ -145,7 +145,7 @@ public class IntegrationTest extends TestCase {
         request.addAttachmentPart(textAttach);
 
         //Attach a java.awt.Image object to the SOAP request
-        String jpgfilename = "test-resources/axis2.jpg";
+        String jpgfilename = System.getProperty("basedir")+"/"+"test-resources/axis2.jpg";
         File myfile = new File(jpgfilename);
         FileDataSource fds = new FileDataSource(myfile);
         DataHandler imageDH = new DataHandler(fds);
@@ -174,7 +174,7 @@ public class IntegrationTest extends TestCase {
                 byte[] b = new byte[15000];
                 final int lengthRead = bais.read(b);
                 FileOutputStream fos =
-                        new FileOutputStream(new File("target/test-resources/result" + (i++) + ".jpg"));
+                        new FileOutputStream(new File(System.getProperty("basedir")+"/"+"target/test-resources/result" + (i++) + ".jpg"));
                 fos.write(b, 0, lengthRead);
                 fos.flush();
                 fos.close();

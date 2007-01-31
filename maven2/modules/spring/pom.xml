@@ -59,6 +59,11 @@
             <artifactId>spring-web</artifactId>
             <version>1.2.8</version>
         </dependency>
+        <dependency>
+          <groupId>servletapi</groupId>
+          <artifactId>servletapi</artifactId>
+          <version>2.3</version>
+        </dependency>
 	</dependencies>
 
 	<build>

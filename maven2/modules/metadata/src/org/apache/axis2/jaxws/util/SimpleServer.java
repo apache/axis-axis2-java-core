@@ -31,7 +31,7 @@ public class SimpleServer {
     private int port = 8080;
     
 	public void init() {
-        repositoryDir = System.getProperty("build.repository");
+        repositoryDir = System.getProperty("basedir")+"/"+System.getProperty("build.repository");
         System.out.println(">> repositoryDir = " + repositoryDir);
         
         String axis2xml = System.getProperty("axis2.config");

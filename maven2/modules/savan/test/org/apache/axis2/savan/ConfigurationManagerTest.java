@@ -26,9 +26,7 @@ import junit.framework.TestCase;
 public class ConfigurationManagerTest extends TestCase {
 
 	public void testFromXMLFile () throws SavanException {
-		
-        File baseDir = new File("");
-        String testRource = baseDir.getAbsolutePath() + File.separator + "test-resources";
+		String testRource = System.getProperty("basedir") + File.separator + "test-resources";
         String testConfigurationFile = testRource + File.separator + "savan-config-test.xml";
         
 		File f = new File (testConfigurationFile);  //test-resources configuration file.
