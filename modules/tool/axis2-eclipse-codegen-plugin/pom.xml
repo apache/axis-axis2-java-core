@@ -88,27 +88,27 @@
             <version>2.0.4</version>
         </dependency>
         <dependency>
-            <groupId>axis2</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-codegen</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>axis2</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>axis2</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>axis2</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb-codegen</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>axis2</groupId>
+            <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
@@ -228,7 +228,7 @@
         <dependency>
             <groupId>ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.6.2</version>
+            <version>1.6.5</version>
         </dependency>
     </dependencies>
 </project>
