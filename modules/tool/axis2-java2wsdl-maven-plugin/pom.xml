@@ -26,7 +26,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>axis2-java2wsdl-maven-plugin</artifactId>
-  <name>Axis 2 Java2WSDL Maven Plugin</name>
+  <name>Apache Axis 2.0 - Java2WSDL Maven Plugin</name>
   <description>
     A Maven 2 plugin for creating WSDL files from Java source.
   </description>

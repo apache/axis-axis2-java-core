@@ -26,7 +26,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>axis2-eclipse-service-plugin</artifactId>
-    <name>Axis 2 WSDL2Code Maven Plugin</name>
+    <name>Apache Axis 2.0 - Eclipse Service Plugin</name>
     <packaging>maven-plugin</packaging>
     <description>The Axis 2 Plugin for Maven allows client side and server side sources from a WSDL.</description>
     <repositories>

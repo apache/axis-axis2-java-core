@@ -28,7 +28,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.axis2.maven2</groupId>
   <artifactId>axis2-maven-tools</artifactId>
-  <name>Maven 2 tools for Axis 2</name>
+  <name>Apache Axis 2.0 - Tools for Axis2</name>
   <description>
     This is a set of Maven 2 plugins for working with Axis 2.
   </description>
