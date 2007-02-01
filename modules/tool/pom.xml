@@ -41,8 +41,14 @@
   </scm>
 
   <modules>
+    <module>axis2-aar-maven-plugin</module>
+    <module>axis2-ant-plugin</module>
+    <module>axis2-eclipse-codegen-plugin</module>
+    <module>axis2-eclipse-service-plugin</module>
+    <module>axis2-idea-plugin</module>
     <module>axis2-java2wsdl-maven-plugin</module>
     <module>axis2-wsdl2code-maven-plugin</module>
+    <module>axis2-mar-maven-plugin</module>
   </modules>
 
   <repositories>
