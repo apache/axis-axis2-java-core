@@ -20,7 +20,7 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <id>axis2-Json</id>
+    <id>axis2-json</id>
     <name>Apache Axis 2.0 - JSON</name>
     <groupId>org.apache.axis2</groupId>
     <description>Axis2 JSON module</description>
