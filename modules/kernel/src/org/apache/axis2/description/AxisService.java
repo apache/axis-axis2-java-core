@@ -547,6 +547,7 @@ public class AxisService extends AxisDescription {
             if(log.isDebugEnabled()){
                 log.debug("mapActionToOperation: A null or empty action cannot be used to map to an operation.");
             }
+            return;
         }
         operationsAliasesMap.put(action, axisOperation);
     }
