@@ -277,7 +277,9 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 
 		portNameCombo.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				// do something here
+				// update the settings
+				settings.put(PREF_COMBO_PORTNAME_INDEX, portNameCombo
+						.getSelectionIndex());
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
