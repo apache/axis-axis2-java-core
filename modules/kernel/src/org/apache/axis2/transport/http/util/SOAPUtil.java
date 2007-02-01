@@ -54,7 +54,6 @@ public class SOAPUtil {
                                       HttpServletResponse response) throws AxisFault {
         try {
             response.setHeader("Content-Type","text/html");
-            response.addHeader(HTTPConstants.HEADER_USER_AGENT, getUserAgent(msgContext));
 
             if(server(msgContext) != null){
                 response.setHeader("Server",server(msgContext));
@@ -101,18 +100,6 @@ public class SOAPUtil {
         catch (IOException ioException) {
             throw new AxisFault(ioException);
         }
-    }
-
-    private String getUserAgent(MessageContext messageContext) {
-        String userAgentString = "Axis2";
-        if (messageContext.getParameter(HTTPConstants.USER_AGENT) != null){
-            OMElement userAgentElement = messageContext.getParameter(HTTPConstants.USER_AGENT).getParameterElement();
-            return userAgentElement.getText().trim();
-
-        }
-
-
-        return userAgentString;
     }
 
     private String server(MessageContext messageContext) {
