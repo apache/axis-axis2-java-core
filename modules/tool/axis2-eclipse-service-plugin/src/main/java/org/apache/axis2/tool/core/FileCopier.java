@@ -33,8 +33,6 @@ public class FileCopier extends Copy{
 
     public void copyFiles(File sourceFile,File destinationDirectory,String filter){
 
-        this.filesets.clear();
-
         if (sourceFile.isFile())
             this.setFile(sourceFile);
         else {
