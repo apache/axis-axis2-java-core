@@ -48,7 +48,7 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
 
     protected void setUp() throws Exception {
 
-        File configFile = new File("test-resources/axis2.xml");
+        File configFile = new File(System.getProperty("basedir",".") + "/test-resources/axis2.xml");
         configurationContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(null, configFile
                         .getAbsolutePath());
