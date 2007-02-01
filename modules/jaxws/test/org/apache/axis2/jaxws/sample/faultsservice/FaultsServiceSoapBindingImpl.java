@@ -106,8 +106,6 @@ System.out.println("\nIn getQuote(): " + tickerSymbol + "\n");
             try {
                 SOAPFault soapFault = createSOAPFault();
                 soapFault.setFaultString("hello world");
-                QName faultCode = new QName("urn://sample", "faultCode");
-                soapFault.setFaultCode(faultCode);
                 soapFault.setFaultActor("actor");
                 throw new SOAPFaultException(soapFault);
             } catch (SOAPException se) {}
@@ -115,8 +113,6 @@ System.out.println("\nIn getQuote(): " + tickerSymbol + "\n");
             try {
                 SOAPFault soapFault = createSOAPFault();
                 soapFault.setFaultString("hello world2");
-                QName faultCode = new QName("urn://sample", "faultCode2");
-                soapFault.setFaultCode(faultCode);
                 soapFault.setFaultActor("actor2");
                 Detail detail = soapFault.addDetail();
                 DetailEntry de = detail.addDetailEntry(new QName("urn://sample", "detailEntry"));

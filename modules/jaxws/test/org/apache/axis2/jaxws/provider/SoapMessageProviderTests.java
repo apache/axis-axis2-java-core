@@ -26,6 +26,7 @@ import javax.xml.soap.DetailEntry;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
@@ -203,6 +204,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
                 SOAPFault fault = e.getFault();
                 assertTrue(fault != null);
                 assertTrue(fault.getFaultString().equals("sample fault"));
+                assertTrue(fault.getFaultCodeAsQName().getNamespaceURI().equals(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE));
                 assertTrue(fault.getDetail() != null);
                 DetailEntry de = (DetailEntry) fault.getDetail().getDetailEntries().next();
                 assertTrue(de != null);

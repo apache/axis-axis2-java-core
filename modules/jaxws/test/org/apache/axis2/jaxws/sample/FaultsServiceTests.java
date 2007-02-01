@@ -261,10 +261,8 @@ public class FaultsServiceTests extends TestCase {
     
     /**
      * Tests that that SOAPFaultException is thrown 
-     * The AXIS2 SAAJ Fault model contains problems, which 
-     * cause the following test to fail.
      */
-    public void _testFaultsService9(){
+    public void testFaultsService9a(){
         Exception exception = null;
         try{
             FaultsServicePortType proxy = getProxy();
@@ -285,10 +283,36 @@ public class FaultsServiceTests extends TestCase {
         SOAPFaultException sfe = (SOAPFaultException) exception;
         SOAPFault soapFault = sfe.getFault();
         assertTrue(soapFault != null);
+        assertTrue(soapFault.getFaultString().equals("hello world"));
+        assertTrue(soapFault.getFaultActor().equals("actor"));
+        assertTrue(soapFault.getDetail() == null);
+    }
+    
+    /**
+     * Tests that that SOAPFaultException is thrown 
+     */
+    public void testFaultsService9b(){
+        Exception exception = null;
+        try{
+            FaultsServicePortType proxy = getProxy();
+            
+            // the invoke will throw an exception, if the test is performed right
+            int total = proxy.throwFault(2, "SOAPFaultException2", 2);  // "SOAPFaultException" will cause service to throw SOAPFaultException
+            
+        }catch(SOAPFaultException e){
+            // Okay
+            exception = e;
+        } catch (Exception e) {
+            fail("Did not get a SOAPFaultException");
+        }
+        
+        System.out.println("----------------------------------");
+        
+        assertNotNull(exception);
+        SOAPFaultException sfe = (SOAPFaultException) exception;
+        SOAPFault soapFault = sfe.getFault();
+        assertTrue(soapFault != null);
         assertTrue(soapFault.getFaultString().equals("hello world2"));
-        QName faultCode = soapFault.getFaultCodeAsQName();
-        assertTrue(faultCode.getNamespaceURI().equals("urn://sample"));
-        assertTrue(faultCode.getLocalPart().equals("faultCode2"));
         assertTrue(soapFault.getFaultActor().equals("actor2"));
         assertTrue(soapFault.getDetail() != null);
         DetailEntry de = (DetailEntry) soapFault.getDetail().getDetailEntries().next();

@@ -648,94 +648,71 @@ public class MethodMarshallerUtils  {
         XMLFault xmlfault = message.getXMLFault();
         Block[] detailBlocks = xmlfault.getDetailBlocks();
         
-        // Sometimes Axis2 will flow a single detail element with the name "Exception".  
-        // "Exception" contains stack information.  This is a violation of the WSI specification; however
-        // we still need to work around it.
-        boolean isStack = false;
-        QName elementName = null;
+        // If there is only one block, get the element name of that block.
+        QName elementQName = null;
         if (detailBlocks !=null && detailBlocks.length == 1) {
-            elementName = detailBlocks[0].getQName();
-            isStack = (elementName.getNamespaceURI().length() == 0 && elementName.getLocalPart().equals("Exception"));
+            elementQName = detailBlocks[0].getQName();
+        }
+        
+        // Use the element name to find the matching FaultDescriptor
+        FaultDescription faultDesc = null;
+        if (elementQName != null) {
+            for(int i=0; i<operationDesc.getFaultDescriptions().length && faultDesc == null; i++) {
+                FaultDescription fd = operationDesc.getFaultDescriptions()[i];
+                QName tryQName = new QName(fd.getTargetNamespace(), fd.getName());
+                if (log.isErrorEnabled()) {
+                    log.debug("  FaultDescription qname is (" + tryQName + ") and detail element qname is (" + elementQName + ")");
+                }
+                if (elementQName.equals(tryQName)) {
+                    faultDesc = fd;
+                }
+            }
+        }
+        
+        if (faultDesc == null && isRPC && elementQName != null) {
+            // If not found and RPC, retry the search using just the local name
+            for(int i=0; i<operationDesc.getFaultDescriptions().length && faultDesc == null; i++) {
+                FaultDescription fd = operationDesc.getFaultDescriptions()[i];
+                String tryName = fd.getName();
+                if (elementQName.getLocalPart().equals(tryName)) {
+                    faultDesc = fd;
+                }
+            }
         }
         
         
-        if ((operationDesc.getFaultDescriptions().length == 0) || 
-                isStack ||
-                (detailBlocks == null) || 
-                (detailBlocks.length > 1))  {
+        if (faultDesc == null) {
             // This is a system exception if the method does not throw a checked exception or if 
             // the detail block is missing or contains multiple items.
             exception = createSystemException(xmlfault, message);
         } else {        
             if (log.isErrorEnabled()) {
-                log.debug("Ready to demarshal service exception.  The detail entry name is " + elementName);
+                log.debug("Ready to demarshal service exception.  The detail entry name is " + elementQName);
             }
             // Get the JAXB object from the block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
             
             if (isRPC) {
-                // RPC is problem ! We have a chicken and egg problem.
+                // RPC is problem ! 
                 // Since RPC is type based, JAXB needs the declared type
-                // to unmarshal the object.  But we don't know the declared
-                // type without knowing the name of the type (sigh)
-                
-                // Now search the FaultDescriptors to find the right 
-                // declared type
-                Class rpcType = null;
-                for(int i=0; i<operationDesc.getFaultDescriptions().length && rpcType == null; i++) {
-                    FaultDescription fd = operationDesc.getFaultDescriptions()[i];
-                    String tryName = fd.getName();
-                    if (elementName.getLocalPart().equals(tryName)) {
-                        rpcType = fd.getClass();
-                    }
-                }
-                // Now set it on the context
+                // to unmarshal the object.
+                Class rpcType = faultDesc.getClass();
                 blockContext.setRPCType(rpcType);
                 
             }
             
-            // TODO This code assumes that the block can be demarshalled as a 
-            // known JAXB object.  But what if a detail is flowed that we don't know how to handle.
-            // To be on the safe side, we should
-            // probably make a copy of the OMBlock and then throw create a SystemException if
-            // with the original detail if JAXB unmarshalling fails.
-            // (I agree that this would not be performant, but we are on an exception path)
-            //
+            // Get the jaxb block and business object
             Block jaxbBlock = factory.createFrom(detailBlocks[0], blockContext);
             Object faultBeanObject = jaxbBlock.getBusinessObject(true); 
             
             // At this point, faultBeanObject is an object that can be rendered as an
-            // element.  We want the object that represents the type.  Also get the 
-            // name of the element.
-            QName faultBeanQName = null;
+            // element.  We want the object that represents the type.
             if (faultBeanObject instanceof JAXBElement) {
-                faultBeanQName = ((JAXBElement)faultBeanObject).getName();
                 faultBeanObject = ((JAXBElement)faultBeanObject).getValue();
-            } else {
-                faultBeanQName = XMLRootElementUtil.getXmlRootElementQName(faultBeanObject);
-            }
+            } 
             
             if (log.isErrorEnabled()) {
-                log.debug("Searching for the matching FaultDescription");
-            }
-            // Using the faultBeanQName, find the matching faultDescription 
-            FaultDescription faultDesc = null;
-            for(int i=0; i<operationDesc.getFaultDescriptions().length && faultDesc == null; i++) {
-                FaultDescription fd = operationDesc.getFaultDescriptions()[i];
-                QName tryQName = new QName(fd.getTargetNamespace(), fd.getName());
-                if (log.isErrorEnabled()) {
-                    log.debug("  FaultDescription qname is (" + tryQName + ") and demarshalled bean qname is (" + faultBeanQName + ")");
-                }
-                if (faultBeanQName == null || faultBeanQName.equals(tryQName)) {
-                    faultDesc = fd;
-                    
-                }
-            }
-            if (faultDesc == null) {
-                if (log.isErrorEnabled()) {
-                    log.debug("A FaultDescription was not found");
-                }
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("MethodMarshallerErr1", faultBeanObject.getClass().toString()));
+                log.debug("Unmarshalled the detail element into a JAXB object");
             }
             
             // Construct the JAX-WS generated exception that holds the faultBeanObject
