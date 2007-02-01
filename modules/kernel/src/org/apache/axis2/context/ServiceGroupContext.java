@@ -116,13 +116,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
     }
 
     public AxisServiceGroup getDescription() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getDescription(): ****WARNING**** ServiceGroupContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getDescription(): ****WARNING**** ServiceGroupContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getDescription");
         return axisServiceGroup;
     }
 
@@ -480,13 +474,6 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         // done
         //---------------------------------------------------------
 
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal():  END");
-        }
-        //System.out.println(myClassName+":readExternal():  END");
-
     }
 
     
@@ -505,15 +492,6 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
             // return quick
             return;
         }
-
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":activate():  BEGIN");
-        }
-        //System.out.println(myClassName+":activate():  BEGIN");
-
-
 
         // get the axis configuration 
         AxisConfiguration axisConfig = cc.getAxisConfiguration();
@@ -539,11 +517,6 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         //-------------------------------------------------------
         needsToBeReconciled = false;
 
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":activate():  END");
-        }
-        //System.out.println(myClassName+":activate():  END");
     }
 
     /**
@@ -598,5 +571,18 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         // TODO: consider checking fields from the super class for equivalency
 
         return true;
+    }
+
+    /**
+     * Trace a warning message, if needed, indicating that this 
+     * object needs to be activated before accessing certain fields.
+     * 
+     * @param methodname The method where the warning occurs
+     */
+    private void checkActivateWarning(String methodname)
+    {
+        if (needsToBeReconciled) {
+            log.warn(myClassName+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
+        }
     }
 }

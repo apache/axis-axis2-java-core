@@ -17,6 +17,7 @@
 
 package org.apache.axis2.context;
 
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisOperation;
@@ -52,6 +53,13 @@ public class ServiceContext extends AbstractContext implements Externalizable {
     private static final Log log = LogFactory.getLog(ServiceContext.class);
 
     private static final String myClassName = "ServiceContext";
+
+    /**
+     * An ID which can be used to correlate operations on an instance of 
+     * this object in the log files
+     */
+    private String logCorrelationIDString = myClassName +"@"+ UUIDGenerator.getUUID();
+    
 
     /**
      * @serial The serialization version ID tracks the version of the class.
@@ -150,35 +158,17 @@ public class ServiceContext extends AbstractContext implements Externalizable {
     }
 
     public AxisService getAxisService() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getAxisService(): ****WARNING**** ServiceContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getAxisService(): ****WARNING**** ServiceContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getAxisService");
         return axisService;
     }
 
     public ConfigurationContext getConfigurationContext() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getConfigurationContext(): ****WARNING**** ServiceContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getConfigurationContext(): ****WARNING**** ServiceContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getConfigurationContext");
         return configContext;
     }
 
     public ServiceGroupContext getServiceGroupContext() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getServiceGroupContext(): ****WARNING**** ServiceContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getServiceGroupContext(): ****WARNING**** ServiceContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getServiceGroupContext");
         return serviceGroupContext;
     }
 
@@ -344,12 +334,36 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
         out.writeBoolean(cachingOperationContext);
 
+        ObjectStateUtils.writeString(out, logCorrelationIDString, logCorrelationIDString+".logCorrelationIDString");
 
-        // EndpointReference targetEPR
-        ObjectStateUtils.writeObject(out, targetEPR, "ServiceContext.targetEPR");
+        // put some try..catch blocks around the following objects
+        // so that the writing to the output stream continues
+        // even if one of the objects can't be serialized
 
-        // EndpointReference myEPR
-        ObjectStateUtils.writeObject(out, myEPR, "ServiceContext.myEPR");
+        try
+        {
+            // EndpointReference targetEPR
+            ObjectStateUtils.writeObject(out, targetEPR, "ServiceContext.targetEPR");
+        }
+        catch (Exception e1)
+        {
+            // note that the utility class will provide the trace for the 
+            // exception so we won't have to
+            // so just consume the exception for now
+        }
+
+
+        try
+        {
+            // EndpointReference myEPR
+            ObjectStateUtils.writeObject(out, myEPR, "ServiceContext.myEPR");
+        }
+        catch (Exception e2)
+        {
+            // note that the utility class will provide the trace for the 
+            // exception so we won't have to
+            // so just consume the exception for now
+        }
 
 
         //---------------------------------------------------------
@@ -419,11 +433,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
 
         // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
-        }
-        //System.out.println(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
+        log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
 
 
         //---------------------------------------------------------
@@ -457,6 +467,12 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         setLastTouchedTime(time);
 
         cachingOperationContext = in.readBoolean();
+
+        logCorrelationIDString = ObjectStateUtils.readString(in, myClassName+".logCorrelationIDString");
+
+        // trace point
+        log.trace(myClassName+":readExternal():  reading input stream for ["+logCorrelationIDString+"]  ");
+
 
         // EndpointReference targetEPR
         targetEPR = (EndpointReference) ObjectStateUtils.readObject(in, "ServiceContext.targetEPR");
@@ -518,14 +534,6 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         //---------------------------------------------------------
         // done
         //---------------------------------------------------------
-
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal():  END");
-        }
-        //System.out.println(myClassName+":readExternal():  END");
-
     }
 
     
@@ -548,14 +556,6 @@ public class ServiceContext extends AbstractContext implements Externalizable {
             // return quick
             return;
         }
-
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":activate():  BEGIN");
-        }
-        //System.out.println(myClassName+":activate():  BEGIN");
-
 
         // use the supplied configuration context
         configContext = cc;
@@ -642,11 +642,6 @@ public class ServiceContext extends AbstractContext implements Externalizable {
             metaParent.addServiceContext(this);
         }
 
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":activate():  END");
-        }
-        //System.out.println(myClassName+":activate():  END");
     }
 
     /**                         
@@ -761,4 +756,30 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         return true;
     }
 
+
+    /**
+     * Get the ID associated with this object instance.
+     * 
+     * @return A string that can be output to a log file as an identifier
+     * for this object instance.  It is suitable for matching related log
+     * entries. 
+     */
+    public String getLogCorrelationIDString()
+    {
+        return logCorrelationIDString;
+    }
+
+
+    /**
+     * Trace a warning message, if needed, indicating that this 
+     * object needs to be activated before accessing certain fields.
+     * 
+     * @param methodname The method where the warning occurs
+     */
+    private void checkActivateWarning(String methodname)
+    {
+        if (needsToBeReconciled) {
+            log.warn(logCorrelationIDString+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
+        }
+    }
 }

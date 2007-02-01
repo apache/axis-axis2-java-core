@@ -178,8 +178,6 @@ public class ObjectStateUtils
                 log.trace("ObjectStateUtils:writeString(): ACTIVE string: str_desc ["+str_desc+"]    string ["+str+"]   desc ["+desc+"]   output byte buffer size ["+outSize+"]");
                 log.trace("ObjectStateUtils:writeString(): ACTIVE string: outBuffer ["+outBuffer.toString()+"]");
             }
-            //System.out.println("ObjectStateUtils:writeString(): ACTIVE string: str_desc ["+str_desc+"]    string ["+str+"]   desc ["+desc+"]   output byte buffer size ["+outSize+"]");
-            //System.out.println("ObjectStateUtils:writeString(): ACTIVE string: outBuffer ["+outBuffer.toString()+"]");
 
         }
         else
@@ -195,7 +193,6 @@ public class ObjectStateUtils
             //  {
             //      log.trace("ObjectStateUtils:writeString(): EMPTY String    desc ["+desc+"]  ");
             //  }
-            //  //System.out.println("ObjectStateUtils:writeString(): EMPTY String   desc ["+desc+"]  ");
         }
 
     }
@@ -248,8 +245,6 @@ public class ObjectStateUtils
                 {
                     log.trace("ObjectStateUtils:readString(): ACTIVE string: the ["+desc+"] string with saved description ["+str_desc+"] has ["+numberStringSections+"] sections");
                 }
-                //System.out.println("ObjectStateUtils:readString(): ACTIVE string: the ["+desc+"] string with saved description ["+str_desc+"] has ["+numberStringSections+"] sections");
-
 
                 // TODO: read the sections and concatenate them together
                 //       may need to adjust the saved information to make 
@@ -282,8 +277,6 @@ public class ObjectStateUtils
                 {
                     log.trace("ObjectStateUtils:readString(): ACTIVE string: str_desc ["+str_desc+"]    bufSize ["+bufSize+"]   bytesRead ["+bytesRead+"]   desc ["+desc+"]");
                 }
-                //System.out.println("ObjectStateUtils:readString(): ACTIVE string: str_desc ["+str_desc+"]    bufSize ["+bufSize+"]   bytesRead ["+bytesRead+"]   desc ["+desc+"]");
-
 
                 if (bytesRead > 0)
                 {
@@ -323,9 +316,8 @@ public class ObjectStateUtils
 
         if (log.isTraceEnabled())
         {
-            log.trace("ObjectStateUtils:readString(): ["+desc+"]  returning  ["+value+"]");
+            log.trace("ObjectStateUtils:readString(): ["+desc+"]  returning  ["+value+"]  for  saved ["+str_desc+"]");
         }
-        //System.out.println("ObjectStateUtils:readString(): ["+desc+"]  returning  ["+value+"]");
 
         return str;
     }
@@ -396,7 +388,6 @@ public class ObjectStateUtils
                 if (log.isTraceEnabled())
                 {
                     log.trace("ObjectStateUtils:writeObject(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc2.getClass().getName()+" : "+exc2.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc2);
-                    //System.out.println("ObjectStateUtils:writeObject(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
                     //exc2.printStackTrace();
                 }
             }
@@ -413,7 +404,6 @@ public class ObjectStateUtils
                     {
                         log.trace("ObjectStateUtils:writeObject(): Object ["+objClassName+"]  desc ["+desc+"]");
                     }
-                    //System.out.println("ObjectStateUtils:writeObject(): Object ["+objClassName+"]  desc ["+desc+"]");
                 }
                 catch (NotSerializableException nse)
                 {
@@ -430,7 +420,6 @@ public class ObjectStateUtils
                     if (log.isTraceEnabled())
                     {
                         log.trace("ObjectStateUtils:writeObject(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
-                        //System.out.println("ObjectStateUtils:writeObject(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
                         //exc.printStackTrace();
                     }
                 }
@@ -456,13 +445,11 @@ public class ObjectStateUtils
 
             out.writeBoolean(EMPTY_OBJECT);
 
-            // for now, don't trace the EMPTY lines
-            //  // trace point
-            //  if (log.isTraceEnabled())
-            //  {
-            //      log.trace("ObjectStateUtils:writeObject(): EMPTY Object ["+desc+"]  ");
-            //  }
-            //  //System.out.println("ObjectStateUtils:writeObject(): EMPTY Object ["+desc+"]  ");
+            // trace point
+            if (log.isTraceEnabled())
+            {
+                log.trace("ObjectStateUtils:writeObject(): EMPTY Object ["+desc+"]  ");
+            }
         }
     }
 
@@ -547,7 +534,7 @@ public class ObjectStateUtils
                     // trace the inconsistency
                     if (log.isTraceEnabled())
                     {
-                        log.trace("ObjectStateUtils:readObject(): Inconsistent results reading the stream for ["+desc+"]  ");
+                        log.trace("ObjectStateUtils:readObject(): Inconsistent results reading the stream for ["+desc+"]  for saved ["+str_desc+"]");
                     }
                     //System.trace.println("ObjectStateUtils:readObject(): Inconsistent results reading the stream for ["+desc+"]  ");
                 }
@@ -559,15 +546,14 @@ public class ObjectStateUtils
 
         if (obj != null)
         {
-            value = str_desc + ":" + obj.getClass().getName();
+            value = "("+str_desc+")" + ":" + obj.getClass().getName();
         }
 
         // trace point
         if (log.isTraceEnabled())
         {
-            log.trace("ObjectStateUtils:readObject(): ["+desc+"]  returning  ["+value+"]");
+            log.trace("ObjectStateUtils:readObject(): ["+desc+"]  returning  ["+value+"]   for saved ["+str_desc+"]");
         }
-        //System.out.println("ObjectStateUtils:readObject(): ["+desc+"]  returning  ["+value+"]");
 
         return obj;
     }
@@ -618,13 +604,11 @@ public class ObjectStateUtils
 
             out.writeBoolean(EMPTY_OBJECT);
 
-            // for now, don't trace the EMPTY lines
-            //  // trace point
-            //  if (log.isTraceEnabled())
-            //  {
-            //      log.trace("ObjectStateUtils:writeArrayList(): EMPTY List ["+desc+"]  ");
-            //  }
-            //  //System.out.println("ObjectStateUtils:writeArrayList(): EMPTY List ["+desc+"]  ");
+            // trace point
+            if (log.isTraceEnabled())
+            {
+                log.trace("ObjectStateUtils:writeArrayList(): EMPTY List ["+desc+"]  ");
+            }
         }
         else
         {
@@ -672,7 +656,6 @@ public class ObjectStateUtils
                     if (log.isTraceEnabled())
                     {
                         log.trace("ObjectStateUtils:writeArrayList(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
-                        //System.out.println("ObjectStateUtils:writeArrayList(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
                         //exc.printStackTrace();
                     }
                 }
@@ -690,7 +673,6 @@ public class ObjectStateUtils
                         {
                             log.trace("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]");
                         }
-                        //System.out.println("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]");
 
                     }
                     catch (NotSerializableException nse)
@@ -706,7 +688,6 @@ public class ObjectStateUtils
                         if (log.isTraceEnabled())
                         {
                             log.trace("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM, ex);
-                            //System.out.println("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
                             //ex.printStackTrace();
                         }
                     }
@@ -727,7 +708,6 @@ public class ObjectStateUtils
             {
                 log.trace("ObjectStateUtils:writeArrayList(): List ["+desc+"]   members saved ["+savedListSize+"]");
             }
-            //System.out.println("ObjectStateUtils:writeArrayList(): List ["+desc+"]   members saved ["+savedListSize+"]");
 
             test_outBuffer.close();
             test_objOut.close();
@@ -827,9 +807,8 @@ public class ObjectStateUtils
                             // trace point
                             if (log.isTraceEnabled())
                             {
-                                log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  index ["+count+"]  object ["+tmpClassName+"] ");
+                                log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  index ["+count+"]  object ["+tmpClassName+"]   for saved ["+str_desc+"]");
                             }
-                            //System.out.println("ObjectStateUtils:readArrayList(): ["+desc+"]  index ["+count+"]  object ["+tmpClassName+"]  ");
                         }
                     }
                     else
@@ -839,9 +818,8 @@ public class ObjectStateUtils
                         // trace point
                         if (log.isTraceEnabled())
                         {
-                            log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"] ***Unexpected null object***");
+                            log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"] ***Unexpected null object***   for saved ["+str_desc+"]");
                         }
-                        //System.out.println("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"] ***Unexpected null object***");
                         keepGoing = false;
                     }
                 }
@@ -852,8 +830,7 @@ public class ObjectStateUtils
                     // trace point
                     if (log.isTraceEnabled())
                     {
-                        log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM, ex);
-                        //System.out.println("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM);
+                        log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"]   for saved ["+str_desc+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM, ex);
                         //ex.printStackTrace();
                     }
 
@@ -867,20 +844,17 @@ public class ObjectStateUtils
             // trace point
             if (log.isTraceEnabled())
             {
-                log.trace("ObjectStateUtils:readArrayList(): adjusted number of entries ["+adjustedNumberEntries+"]    ");
+                log.trace("ObjectStateUtils:readArrayList(): adjusted number of entries ["+adjustedNumberEntries+"]     for saved ["+str_desc+"] ");
             }
-            //System.out.println("ObjectStateUtils:readArrayList(): adjusted number of entries ["+adjustedNumberEntries+"]    ");
 
 
             if (list.isEmpty())
             {
-                // for now, don't trace the EMPTY lines
-                //  // trace point
-                //  if (log.isTraceEnabled())
-                //  {
-                //      log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]");
-                //  }
-                //  //System.out.println("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]");
+                // trace point
+                if (log.isTraceEnabled())
+                {
+                    log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]  for saved ["+str_desc+"]");
+                }
 
                 return null;
             }
@@ -889,9 +863,8 @@ public class ObjectStateUtils
                 // trace point
                 if (log.isTraceEnabled())
                 {
-                    log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [listsize="+list.size()+"]");
+                    log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [listsize="+list.size()+"]  for saved ["+str_desc+"]");
                 }
-                //System.out.println("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [listsize="+list.size()+"]");
 
                 return list;
             }
@@ -901,9 +874,8 @@ public class ObjectStateUtils
             // trace point
             if (log.isTraceEnabled())
             {
-                log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]");
+                log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]    for saved ["+str_desc+"]");
             }
-            //System.out.println("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]");
 
             return null;
         }
@@ -955,13 +927,11 @@ public class ObjectStateUtils
 
             out.writeBoolean(EMPTY_OBJECT);
 
-            // for now, don't trace the EMPTY lines
-            //  // trace point
-            //  if (log.isTraceEnabled())
-            //  {
-            //      log.trace("ObjectStateUtils:writeHashMap(): EMPTY map ["+desc+"]  ");
-            //  } 
-            //  //System.out.println("ObjectStateUtils:writeHashMap(): EMPTY map ["+desc+"]  ");
+            // trace point
+            if (log.isTraceEnabled())
+            {
+                log.trace("ObjectStateUtils:writeHashMap(): EMPTY map ["+desc+"]  ");
+            } 
         }
         else
         {
@@ -1022,7 +992,6 @@ public class ObjectStateUtils
                         if (log.isTraceEnabled())
                         {
                             log.trace("ObjectStateUtils:writeHashMap(): map value ["+value.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM, ex);
-                            //System.out.println("ObjectStateUtils:writeHashMap(): map value ["+value.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
                             //ex.printStackTrace();
                         }
                     }
@@ -1040,7 +1009,6 @@ public class ObjectStateUtils
                     if (log.isTraceEnabled())
                     {
                         log.trace("ObjectStateUtils:writeHashMap(): map key ["+key.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
-                        //System.out.println("ObjectStateUtils:writeHashMap(): map key ["+key.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
                         //exc.printStackTrace();
                     }
                 }
@@ -1075,7 +1043,6 @@ public class ObjectStateUtils
                             if (log.isTraceEnabled())
                             {
                                 log.trace("ObjectStateUtils:writeHashMap(): output error: map value ["+value.getClass().getName()+"]  ***Exception***  ["+excp.getClass().getName()+" : "+excp.getMessage()+"]  "+OBJ_SAVE_PROBLEM, excp);
-                                //System.out.println("ObjectStateUtils:writeHashMap(): output error: map value ["+value.getClass().getName()+"]  ***Exception***  ["+excp.getClass().getName()+" : "+excp.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
                                 //excp.printStackTrace();
                             }
 
@@ -1099,7 +1066,6 @@ public class ObjectStateUtils
                         if (log.isTraceEnabled())
                         {
                             log.trace("ObjectStateUtils:writeHashMap(): output error: map key ["+key.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM, ex);
-                            //System.out.println("ObjectStateUtils:writeHashMap(): output error: map key ["+key.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
                             //ex.printStackTrace();
                         }
                     }
@@ -1122,7 +1088,6 @@ public class ObjectStateUtils
             {
                 log.trace("ObjectStateUtils:writeHashMap(): map ["+desc+"]   members saved ["+savedListSize+"]");
             }
-            //System.out.println("ObjectStateUtils:writeHashMap(): map ["+desc+"]   members saved ["+savedListSize+"]");
 
             pair_outBuffer.close();
             pair_objOut.close();
@@ -1235,9 +1200,8 @@ public class ObjectStateUtils
                             // trace point
                             if (log.isTraceEnabled())
                             {
-                                log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"]  will be skipped because the value object is unavailable.");
+                                log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"]  will be skipped because the value object is unavailable.    For saved ["+str_desc+"]");
                             }
-                            //System.out.println("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"]  will be skipped because the value object is unavailable.");
                         }
                         else if (tmpvalue.equalsIgnoreCase(NULL_OBJECT) == true)
                         {
@@ -1252,9 +1216,8 @@ public class ObjectStateUtils
                         // trace point
                         if (log.isTraceEnabled())
                         {
-                            log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"] ");
+                            log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"]   for saved ["+str_desc+"]");
                         }
-                        //System.out.println("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"] ");
                     }
 
                     obtainedListSize++;
@@ -1267,8 +1230,7 @@ public class ObjectStateUtils
                     // trace point
                     if (log.isTraceEnabled())
                     {
-                        log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM,ex);
-                        //System.out.println("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM);
+                        log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"]   for saved ["+str_desc+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM,ex);
                         //ex.printStackTrace();
                     }
                 }
@@ -1281,13 +1243,11 @@ public class ObjectStateUtils
 
             if (map.isEmpty())
             {
-                // for now, don't trace the EMPTY lines
-                //  // trace point
-                //  if (log.isTraceEnabled())
-                //  {
-                //      log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]");
-                //  }
-                //  //System.out.println("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]");
+                // trace point
+                if (log.isTraceEnabled())
+                {
+                    log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]  for saved ["+str_desc+"]");
+                }
 
                 return null;
             }
@@ -1296,9 +1256,8 @@ public class ObjectStateUtils
                 // trace point
                 if (log.isTraceEnabled())
                 {
-                    log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [mapsize="+map.size()+"]");
+                    log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [mapsize="+map.size()+"]    for saved ["+str_desc+"]");
                 }
-                //System.out.println("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [mapsize="+map.size()+"]");
 
                 return map;
             }
@@ -1309,9 +1268,8 @@ public class ObjectStateUtils
             // trace point
             if (log.isTraceEnabled())
             {
-                log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]");
+                log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]    for saved ["+str_desc+"]");
             }
-            //System.out.println("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]");
 
             return null;
         }
@@ -1363,13 +1321,10 @@ public class ObjectStateUtils
 
             out.writeBoolean(EMPTY_OBJECT);
 
-            // for now, don't trace the EMPTY lines
-            //  // trace point
-            //  if (log.isTraceEnabled())
-            //  {
-            //      log.trace("ObjectStateUtils:writeLinkedList(): EMPTY List ["+desc+"]  ");
-            //  }
-            //  //System.out.println("ObjectStateUtils:writeLinkedList(): EMPTY List ["+desc+"]  ");
+            if (log.isTraceEnabled())
+            {
+                log.trace("ObjectStateUtils:writeLinkedList(): EMPTY List ["+desc+"]  ");
+            }
         }
         else
         {
@@ -1417,7 +1372,6 @@ public class ObjectStateUtils
                     if (log.isTraceEnabled())
                     {
                         log.trace("ObjectStateUtils:writeLinkedList(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
-                        //System.out.println("ObjectStateUtils:writeLinkedList(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM);
                         //exc.printStackTrace();
                     }
                 }
@@ -1435,7 +1389,6 @@ public class ObjectStateUtils
                         {
                             log.trace("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]");
                         }
-                        //System.out.println("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]");
 
                     }
                     catch (NotSerializableException nse)
@@ -1451,7 +1404,6 @@ public class ObjectStateUtils
                         if (log.isTraceEnabled())
                         {
                             log.trace("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"] "+OBJ_SAVE_PROBLEM, ex);
-                            //System.out.println("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"] "+OBJ_SAVE_PROBLEM);
                             //ex.printStackTrace();
                         }
                     }
@@ -1472,7 +1424,6 @@ public class ObjectStateUtils
             {
                 log.trace("ObjectStateUtils:writeLinkedList(): List ["+desc+"]   members saved ["+savedListSize+"]");
             }
-            //System.out.println("ObjectStateUtils:writeLinkedList(): List ["+desc+"]   members saved ["+savedListSize+"]");
 
             test_outBuffer.close();
             test_objOut.close();
@@ -1572,9 +1523,8 @@ public class ObjectStateUtils
                             // trace point
                             if (log.isTraceEnabled())
                             {
-                                log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  index ["+count+"]  object ["+tmpClassName+"] ");
+                                log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  index ["+count+"]  object ["+tmpClassName+"]   for saved ["+str_desc+"]");
                             }
-                            //System.out.println("ObjectStateUtils:readLinkedList(): ["+desc+"]  index ["+count+"]  object ["+tmpClassName+"]  ");
                         }
                     }
                     else
@@ -1584,9 +1534,8 @@ public class ObjectStateUtils
                         // trace point
                         if (log.isTraceEnabled())
                         {
-                            log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"] ***Unexpected null object***");
+                            log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"] ***Unexpected null object***   for saved ["+str_desc+"]");
                         }
-                        //System.out.println("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"] ***Unexpected null object***");
                         keepGoing = false;
                     }
                 }
@@ -1597,8 +1546,7 @@ public class ObjectStateUtils
                     // trace point
                     if (log.isTraceEnabled())
                     {
-                        log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM,ex);
-                        //System.out.print("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM);
+                        log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"]   for saved ["+str_desc+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM,ex);
                         //ex.printStackTrace();
                     }
 
@@ -1612,20 +1560,17 @@ public class ObjectStateUtils
             // trace point
             if (log.isTraceEnabled())
             {
-                log.trace("ObjectStateUtils:readLinkedList(): adjusted number of entries ["+adjustedNumberEntries+"]    ");
+                log.trace("ObjectStateUtils:readLinkedList(): adjusted number of entries ["+adjustedNumberEntries+"]     for saved ["+str_desc+"] ");
             }
-            //System.out.println("ObjectStateUtils:readLinkedList(): adjusted number of entries ["+adjustedNumberEntries+"]    ");
 
 
             if (list.isEmpty())
             {
-                // for now, don't trace the EMPTY lines
-                //  // trace point
-                //  if (log.isTraceEnabled())
-                //  {
-                //      log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]");
-                //  }
-                //  //System.out.println("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]");
+                // trace point
+                if (log.isTraceEnabled())
+                {
+                    log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]  for saved ["+str_desc+"]");
+                }
 
                 return null;
             }
@@ -1634,9 +1579,8 @@ public class ObjectStateUtils
                 // trace point
                 if (log.isTraceEnabled())
                 {
-                    log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [listsize="+list.size()+"]");
+                    log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [listsize="+list.size()+"]   for saved ["+str_desc+"]");
                 }
-                //System.out.println("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [listsize="+list.size()+"]");
 
                 return list;
             }
@@ -1646,9 +1590,8 @@ public class ObjectStateUtils
             // trace point
             if (log.isTraceEnabled())
             {
-                log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]");
+                log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]   for saved ["+str_desc+"]");
             }
-            //System.out.println("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]");
 
             return null;
         }
@@ -1697,7 +1640,6 @@ public class ObjectStateUtils
                     {
                         log.trace("ObjectStateUtils:findOperation(axisCfg): returning  ["+opClassName+"]   ["+opQName.toString()+"]");
                     }
-                    //System.out.println("ObjectStateUtils:findOperation(axisCfg): returning  ["+opClassName+"]   ["+opQName.toString()+"]");
 
                     return operation;
                 }
@@ -1709,7 +1651,6 @@ public class ObjectStateUtils
         {
             log.trace("ObjectStateUtils:findOperation(axisCfg): ["+opClassName+"]   ["+opQName.toString()+"]  returning  [null]");
         }
-        //System.out.println("ObjectStateUtils:findOperation(axisCfg): ["+opClassName+"]   ["+opQName.toString()+"]  returning  [null]");
 
         return null;
     }
@@ -1749,7 +1690,6 @@ public class ObjectStateUtils
                 {
                     log.trace("ObjectStateUtils:findOperation(service): returning  ["+opClassName+"]   ["+opQName.toString()+"]");
                 }
-                //System.out.println("ObjectStateUtils:findOperation(service): returning  ["+opClassName+"]   ["+opQName.toString()+"]");
 
                 return operation;
             }
@@ -1760,7 +1700,6 @@ public class ObjectStateUtils
         {
             log.trace("ObjectStateUtils:findOperation(service): ["+opClassName+"]   ["+opQName.toString()+"]  returning  [null]");
         }
-        //System.out.println("ObjectStateUtils:findOperation(service): ["+opClassName+"]   ["+opQName.toString()+"]  returning  [null]");
 
         return null;
     }
@@ -1798,7 +1737,6 @@ public class ObjectStateUtils
                 {
                     log.trace("ObjectStateUtils:findService(): returning  ["+serviceClassName+"]   ["+serviceName+"]");
                 }
-                //System.out.println("ObjectStateUtils:findService(): returning  ["+serviceClassName+"]   ["+serviceName+"]");
 
                 return service;
             }
@@ -1809,7 +1747,6 @@ public class ObjectStateUtils
         {
             log.trace("ObjectStateUtils:findService(): ["+serviceClassName+"]   ["+serviceName+"]  returning  [null]");
         }
-        //System.out.println("ObjectStateUtils:findService(): ["+serviceClassName+"]   ["+serviceName+"]  returning  [null]");
 
         return null;
     }
@@ -1862,7 +1799,6 @@ public class ObjectStateUtils
                     {
                         log.trace("ObjectStateUtils:findServiceGroup(): returning  ["+serviceGrpClassName+"]   ["+serviceGrpName+"]");
                     }
-                    //System.out.println("ObjectStateUtils:findServiceGroup(): returning  ["+serviceGrpClassName+"]   ["+serviceGrpName+"]");
 
                     return serviceGroup;
                 }
@@ -1874,7 +1810,6 @@ public class ObjectStateUtils
         {
             log.trace("ObjectStateUtils:findServiceGroup(): ["+serviceGrpClassName+"]   ["+serviceGrpName+"]  returning  [null]");
         }
-        //System.out.println("ObjectStateUtils:findServiceGroup(): ["+serviceGrpClassName+"]   ["+serviceGrpName+"]  returning  [null]");
 
         return null;
     }
@@ -1905,7 +1840,6 @@ public class ObjectStateUtils
             {
                 log.trace("ObjectStateUtils:findMessage(): ["+msgName+"]  ["+msgElementName+"] returning  [null] - no AxisOperation");
             }
-            //System.out.println("ObjectStateUtils:findMessage(): ["+msgName+"]  ["+msgElementName+"] returning  [null] - no AxisOperation");
 
             return null;
         }
@@ -1918,7 +1852,6 @@ public class ObjectStateUtils
             {
                 log.trace("ObjectStateUtils:findMessage(): ["+msgName+"]  ["+msgElementName+"] returning  [null] - message name is not set");
             }
-            //System.out.println("ObjectStateUtils:findMessage(): ["+msgName+"]  ["+msgElementName+"] returning  [null] - message name is not set");
 
             return null;
         }
@@ -1962,7 +1895,6 @@ public class ObjectStateUtils
             {
                 log.trace("ObjectStateUtils:findMessage(): returning OUT message  ["+msgName+"]  ["+msgElementName+"] ");
             }
-            //System.out.println("ObjectStateUtils:findMessage(): returning OUT message  ["+msgName+"]  ["+msgElementName+"] ");
 
             return out;
         }
@@ -2007,7 +1939,6 @@ public class ObjectStateUtils
             {
                 log.trace("ObjectStateUtils:findMessage(): returning IN message ["+msgName+"]  ["+msgElementName+"] ");
             }
-            //System.out.println("ObjectStateUtils:findMessage(): returning IN message  ["+msgName+"]  ["+msgElementName+"] ");
 
             return in;
         }
@@ -2019,7 +1950,6 @@ public class ObjectStateUtils
         {
             log.trace("ObjectStateUtils:findMessage(): ["+msgName+"]  ["+msgElementName+"] returning  [null]");
         }
-        //System.out.println("ObjectStateUtils:findMessage(): ["+msgName+"]  ["+msgElementName+"] returning  [null]");
 
         return null;
     }
@@ -2105,7 +2035,6 @@ public class ObjectStateUtils
                     {
                         log.trace(title+" ["+handlerClassName+"]  name ["+qNameAsString+"]  returned");
                     }
-                    //System.out.println(title+" ["+handlerClassName+"]  name ["+qNameAsString+"]  returned");
 
                     return(Handler)(existingHandlers.get(i));
                 }
@@ -2117,7 +2046,6 @@ public class ObjectStateUtils
         {
             log.trace(title + " ["+handlerClassName+"]  name ["+qNameAsString+"] was not found in the existingHandlers list");
         }
-        //System.out.println(title + " ["+handlerClassName+"]  name ["+qNameAsString+"] was not found in the existingHandlers list");
         
         return null;
     }
@@ -2161,7 +2089,6 @@ public class ObjectStateUtils
                 {
                     log.trace("ObjectStateUtils:findTransportListener():  ["+listenerClassName+"]  returned");
                 }
-                //System.out.println("ObjectStateUtils:findTransportListener():  ["+listenerClassName+"]  returned");
 
                 return tl;
             }
@@ -2172,7 +2099,6 @@ public class ObjectStateUtils
         {
             log.trace("ObjectStateUtils:findTransportListener(): returning  [null]");
         }
-        //System.out.println("ObjectStateUtils:findTransportListener(): returning  [null]");
 
         return null;
     }
@@ -2205,7 +2131,6 @@ public class ObjectStateUtils
                 {
                     log.trace("ObjectStateUtils:isEquivalent(ArrayList,ArrayList): FALSE - size mismatch ["+size1+"] != ["+size2+"]");
                 }
-                //System.out.println("ObjectStateUtils:isEquivalent(ArrayList,ArrayList): FALSE - size mismatch ["+size1+"] != ["+size2+"]");
                 return false;
             }
 
@@ -2232,7 +2157,6 @@ public class ObjectStateUtils
                         {
                             log.trace("ObjectStateUtils:isEquivalent(ArrayList,ArrayList): FALSE - mismatch with element ["+obj1.getClass().getName()+"] ");
                         }
-                        //System.out.println("ObjectStateUtils:isEquivalent(ArrayList,ArrayList): FALSE - mismatch with element ["+obj1.getClass().getName()+"] ");
                         return false;
                     }
                 }
@@ -2270,7 +2194,6 @@ public class ObjectStateUtils
             {
                 log.trace("ObjectStateUtils:isEquivalent(ArrayList,ArrayList): FALSE - mismatch in lists");
             }
-            //System.out.println("ObjectStateUtils:isEquivalent(ArrayList,ArrayList): FALSE - mismatch in lists");
             return false;
         }
     }
@@ -2409,7 +2332,6 @@ public class ObjectStateUtils
 
                 // trace point
                 log.trace("ObjectStateUtils: ***NotSerializableException*** ["+nse.getMessage()+"] in method ["+methodName+"] for object ["+objName+"]  associated with ["+objDesc+"].  "+desc);
-                //System.out.println("ObjectStateUtils: ***NotSerializableException*** ["+nse.getMessage()+"] in method ["+methodName+"] for object ["+objName+"]  associated with ["+objDesc+"].  "+desc);
             }
 
         }

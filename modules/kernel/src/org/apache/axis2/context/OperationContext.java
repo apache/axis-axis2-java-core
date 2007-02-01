@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -59,6 +60,13 @@ public class OperationContext extends AbstractContext implements Externalizable 
     private static final Log log = LogFactory.getLog(OperationContext.class);
 
     private static final String myClassName = "OperationContext";
+
+    /**
+     * An ID which can be used to correlate operations on an instance of 
+     * this object in the log files
+     */
+    private String logCorrelationIDString = myClassName +"@"+ UUIDGenerator.getUUID();
+    
 
     /**
      * @serial The serialization version ID tracks the version of the class.
@@ -237,10 +245,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
      */
     public AxisOperation getAxisOperation() {
         if (needsToBeReconciled && !suppressWarnings) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getAxisOperation(): ****WARNING**** OperationContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getAxisOperation(): ****WARNING**** OperationContext.activate(configurationContext) needs to be invoked.");
+            log.warn(logCorrelationIDString+":getAxisOperation(): ****WARNING**** OperationContext.activate(configurationContext) needs to be invoked.");
         }
 
         return axisOperation;
@@ -330,13 +335,6 @@ public class OperationContext extends AbstractContext implements Externalizable 
      */
     public void writeExternal(ObjectOutput out) throws IOException
     {
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":writeExternal():  BEGIN  ");
-        }
-        //System.out.println(myClassName+":writeExternal():  BEGIN  ");
-
         //---------------------------------------------------------
         // in order to handle future changes to the message 
         // context definition, be sure to maintain the 
@@ -356,7 +354,9 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         out.writeBoolean(isComplete);
 
-        ObjectStateUtils.writeString(out, key, "OperationContext.key");
+        ObjectStateUtils.writeString(out, key, logCorrelationIDString+".key");
+
+        ObjectStateUtils.writeString(out, logCorrelationIDString, logCorrelationIDString+".logCorrelationIDString");
 
         //---------------------------------------------------------
         // properties
@@ -370,13 +370,13 @@ public class OperationContext extends AbstractContext implements Externalizable 
             tmpHashMap = new HashMap(tmpMap);
         }
 
-        ObjectStateUtils.writeHashMap(out, tmpHashMap, "OperationContext.properties");
+        ObjectStateUtils.writeHashMap(out, tmpHashMap, logCorrelationIDString+".properties");
 
 
         //---------------------------------------------------------
         // AxisOperation axisOperation
         //---------------------------------------------------------
-        String axisOpMarker = "OperationContext.axisOperation";
+        String axisOpMarker = logCorrelationIDString+".axisOperation";
         ObjectStateUtils.writeString(out, axisOpMarker, axisOpMarker);
 
         if (axisOperation == null)
@@ -387,13 +387,13 @@ public class OperationContext extends AbstractContext implements Externalizable 
         {
         	out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
         	metaAxisOperation = new MetaDataEntry(axisOperation.getClass().getName(), axisOperation.getName().toString());
-        	ObjectStateUtils.writeObject(out, metaAxisOperation, "OperationContext.metaAxisOperation");
+        	ObjectStateUtils.writeObject(out, metaAxisOperation, logCorrelationIDString+".metaAxisOperation");
         }
 
         // save the meta data for the corresponding axis service to better
         // match up the axis operation 
 
-        String axisServMarker = "OperationContext.metaAxisService";
+        String axisServMarker = logCorrelationIDString+".metaAxisService";
         ObjectStateUtils.writeString(out, axisServMarker, axisServMarker);
 
         AxisService axisService = (AxisService) axisOperation.getParent();
@@ -406,7 +406,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         {
         	out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
         	metaAxisService = new MetaDataEntry(axisService.getClass().getName(), axisService.getName().toString());
-        	ObjectStateUtils.writeObject(out, metaAxisService, "OperationContext.metaAxisService");
+        	ObjectStateUtils.writeObject(out, metaAxisService, logCorrelationIDString+".metaAxisService");
         }
         
 
@@ -415,7 +415,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         //---------------------------------------------------------
         ServiceContext myParent = (ServiceContext) this.getServiceContext();
 
-        ObjectStateUtils.writeObject(out, myParent, "OperationContext.parent ServiceContext"); 
+        ObjectStateUtils.writeObject(out, myParent, logCorrelationIDString+".parent ServiceContext"); 
 
 
         //---------------------------------------------------------
@@ -504,27 +504,23 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
                 // put the modified entry in the list
                 tmpMsgCtxMap.put(keyObj2,modifiedValue2);
+
+                // trace point
+                log.trace(logCorrelationIDString+":writeExternal():  getting working set entry  key ["+keyObj2+"]   message context ID["+modifiedValue2.getMessageID()+"]");
             }
 
         }
 
-        ObjectStateUtils.writeHashMap(out, tmpMsgCtxMap, "OperationContext.messageContexts modified table");
+        ObjectStateUtils.writeHashMap(out, tmpMsgCtxMap, logCorrelationIDString+".messageContexts working set");
 
         // next, deal with the metadata table of messageContexts
-        ObjectStateUtils.writeHashMap(out, metaMessageContextMap, "OperationContext.metaMessageContextMap metadata table");
+        ObjectStateUtils.writeHashMap(out, metaMessageContextMap, logCorrelationIDString+".metaMessageContextMap metadata table");
 
 
         //---------------------------------------------------------
         // done
         //---------------------------------------------------------
 
-
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":writeExternal():  END  ");
-        }
-        //System.out.println(myClassName+":writeExternal():  END  ");
     }
 
 
@@ -548,12 +544,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         needsToBeReconciled = true;
 
         // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
-        }
-        //System.out.println(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
-
+        log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
 
         //---------------------------------------------------------
         // object level identifiers
@@ -588,6 +579,11 @@ public class OperationContext extends AbstractContext implements Externalizable 
         isComplete = in.readBoolean();
 
         key = ObjectStateUtils.readString(in,"OperationContext.key"); 
+
+        logCorrelationIDString = ObjectStateUtils.readString(in, "OperationContext.logCorrelationIDString");
+
+        // trace point
+        log.trace(myClassName+":readExternal():  reading input stream for ["+logCorrelationIDString+"]  ");
 
         //---------------------------------------------------------
         // properties
@@ -656,20 +652,14 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // set to empty until this can be activiated
         messageContexts = new HashMap();
 
-        workingSet = ObjectStateUtils.readHashMap(in, "OperationContext.messageContexts working set");
+        workingSet = ObjectStateUtils.readHashMap(in, logCorrelationIDString+".messageContexts working set");
 
-        metaMessageContextMap = ObjectStateUtils.readHashMap(in, "OperationContext.metaMessageContextMap metadata table");
+        metaMessageContextMap = ObjectStateUtils.readHashMap(in, logCorrelationIDString+".metaMessageContextMap metadata table");
 
         //---------------------------------------------------------
         // done
         //---------------------------------------------------------
 
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal():  END");
-        }
-        //System.out.println(myClassName+":readExternal():  END");
 
     }
 
@@ -693,14 +683,6 @@ public class OperationContext extends AbstractContext implements Externalizable 
             // return quick
             return;
         }
-
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":activate():  BEGIN");
-        }
-        //System.out.println(myClassName+":activate():  BEGIN");
-
 
         // get the axis configuration 
         AxisConfiguration axisConfig = cc.getAxisConfiguration();
@@ -813,10 +795,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
             boolean registrationSuceeded = activeCC.registerOperationContext(key, this);
             if(!registrationSuceeded){
                 // trace point
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":activate():  OperationContext key ["+key+"] already exists in ConfigurationContext map.  This OperationContext ["+this.toString()+"] was not added to the table.");
-                }
+                log.trace(logCorrelationIDString+":activate():  OperationContext key ["+key+"] already exists in ConfigurationContext map.  This OperationContext ["+this.toString()+"] was not added to the table.");
             }
         }
         
@@ -844,7 +823,8 @@ public class OperationContext extends AbstractContext implements Externalizable 
                 // activate that object 
                 if (value != null)
                 {
-                    //System.out.println(myClassName+":activate():  key ["+keyObj+"]  message id ["+value.getMessageID()+"]");
+                    // trace point
+                    log.trace(logCorrelationIDString+":activate():  key ["+keyObj+"]  message id ["+value.getMessageID()+"]");
 
                     suppressWarnings = true;
                     value.activateWithOperationContext(this);
@@ -868,11 +848,6 @@ public class OperationContext extends AbstractContext implements Externalizable 
         //-------------------------------------------------------
         needsToBeReconciled = false;
 
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":activate():  END");
-        }
-        //System.out.println(myClassName+":activate():  END");
     }
 
     /**
@@ -942,6 +917,8 @@ public class OperationContext extends AbstractContext implements Externalizable 
                     MetaDataEntry metaData = new MetaDataEntry(value.getClass().getName(), value.getMessageID(), keyObj.toString());
 
                     // put the meta data entry in the list
+                    // note that if the entry was already in the list,
+                    // this will replace that entry
                     metaMessageContextMap.put(keyObj,metaData);
 
                     // don't change the original table - there's potentially lots of areas that 
@@ -955,15 +932,13 @@ public class OperationContext extends AbstractContext implements Externalizable 
                         isolatedMessageContexts = new HashMap();
                     }
 
+                    // note that if the entry was already in the list,
+                    // this will replace that entry
                     isolatedMessageContexts.put(keyObj,value);
 
 
                     // trace point
-                    if (log.isTraceEnabled())
-                    {
-                        log.trace(myClassName+":isolateMessageContext():  set up message context id["+valueID+"]  with key ["+keyObj.toString()+"] from messageContexts table to prepare for serialization.");
-                    }
-                    //System.out.println(myClassName+":isolateMessageContext():  set up message context id["+valueID+"]  with key ["+keyObj.toString()+"] from messageContexts table to prepare for serialization.");
+                    log.trace(logCorrelationIDString+":isolateMessageContext():  set up message context id["+valueID+"]  with key ["+keyObj.toString()+"] from messageContexts table to prepare for serialization.");
 
                     break;
                 }
@@ -986,11 +961,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         if (needsToBeReconciled == true)
         {
             // nope, need to do the activation first
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":restoreMessageContext(): *** WARNING : need to invoke activate() prior to restoring the MessageContext to the list.");
-            }
-            //System.out.println(myClassName+":restoreMessageContext(): *** WARNING : need to invoke activate() prior to restoring the MessageContext to the list.");
+            log.trace(logCorrelationIDString+":restoreMessageContext(): *** WARNING : need to invoke activate() prior to restoring the MessageContext to the list.");
 
             return;
         }
@@ -1005,11 +976,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         if (msgID == null)
         {
             // can't identify message context
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":restoreMessageContext(): *** WARNING : MessageContext does not have a message ID.");
-            }
-            //System.out.println(myClassName+":restoreMessageContext(): *** WARNING : MessageContext does not have a message ID.");
+            log.trace(logCorrelationIDString+":restoreMessageContext(): *** WARNING : MessageContext does not have a message ID.");
             return;
         }
 
@@ -1047,7 +1014,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
                         // remove the metadata from the metadata table
                         metaMessageContextMap.remove(keyM);
 
-                        //System.out.println(myClassName+":restoreMessageContext():  restored   label ["+label+"]    message ID ["+msg.getMessageID()+"]");
+                        log.trace(logCorrelationIDString+":restoreMessageContext():  restored   label ["+label+"]    message ID ["+msg.getMessageID()+"]");
 
                         break;
                     }
@@ -1190,4 +1157,29 @@ public class OperationContext extends AbstractContext implements Externalizable 
     }
 
 
+    /**
+     * Get the ID associated with this object instance.
+     * 
+     * @return A string that can be output to a log file as an identifier
+     * for this object instance.  It is suitable for matching related log
+     * entries. 
+     */
+    public String getLogCorrelationIDString()
+    {
+        return logCorrelationIDString;
+    }
+
+
+    /**
+     * Trace a warning message, if needed, indicating that this 
+     * object needs to be activated before accessing certain fields.
+     * 
+     * @param methodname The method where the warning occurs
+     */
+    private void checkActivateWarning(String methodname)
+    {
+        if (needsToBeReconciled) {
+            log.warn(logCorrelationIDString+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
+        }
+    }
 }

@@ -561,6 +561,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
       return logCorrelationIDString;
     }
 
+
     /**
      * Pause the execution of the current handler chain
      */
@@ -569,24 +570,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     public AxisOperation getAxisOperation() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getAxisOperation(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getAxisOperation(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getAxisOperation");
         return axisOperation;
     }
 
     public AxisService getAxisService() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getAxisService(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getAxisService(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getAxisService");
         return axisService;
     }
 
@@ -596,24 +585,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * so the service might not match up with this serviceGroup
     */
     public AxisServiceGroup getAxisServiceGroup() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getAxisServiceGroup(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getAxisServiceGroup(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getAxisServiceGroup");
         return axisServiceGroup;
     }
 
     public ConfigurationContext getConfigurationContext() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getConfigurationContext(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getConfigurationContext(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getConfigurationContext");
         return configurationContext;
     }
 
@@ -633,13 +610,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     public ArrayList getExecutionChain() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getExecutionChain(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getExecutionChain(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getExecutionChain");
         return executionChain;
     }
 
@@ -675,13 +646,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
      */
     public Iterator getInboundExecutedPhases()
     {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getInboundExecutedPhases(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getInboundExecutedPhases(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getInboundExecutedPhases");
         if (inboundExecutedPhases == null)
         {
             inboundExecutedPhases = new LinkedList();
@@ -733,13 +698,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
      */
     public Iterator getOutboundExecutedPhases()
     {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getOutboundExecutedPhases(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getOutboundExecutedPhases(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getOutboundExecutedPhases");
         if (outboundExecutedPhases == null)
         {
             outboundExecutedPhases = new LinkedList();
@@ -911,13 +870,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     public OperationContext getOperationContext() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getOperationContext(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getOperationContext(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getOperationContext");
         return operationContext;
     }
 
@@ -978,12 +931,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * @return the value of the property, or null if the property is not found
      */
     public Object getProperty(String name) {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getProperty(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getProperty(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
+        checkActivateWarning("getProperty");
 
         // search in my own options
         Object obj = options.getProperty(name);
@@ -1078,13 +1026,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * @return Returns ServiceContext.
      */
     public ServiceContext getServiceContext() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getServiceContext(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getServiceContext(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getServiceContext");
         return serviceContext;
     }
 
@@ -1096,13 +1038,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     public ServiceGroupContext getServiceGroupContext() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getServiceGroupContext(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getServiceGroupContext(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getServiceGroupContext");
         return serviceGroupContext;
     }
 
@@ -1140,13 +1076,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * @return Returns TransportInDescription.
      */
     public TransportInDescription getTransportIn() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getTransportIn(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getTransportIn(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getTransportIn");
         return transportIn;
     }
 
@@ -1154,13 +1084,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * @return Returns TransportOutDescription.
      */
     public TransportOutDescription getTransportOut() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getTransportOut(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getTransportOut(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getTransportOut");
         return transportOut;
     }
 
@@ -1241,10 +1165,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
     public AxisMessage getAxisMessage() {
         if (reconcileAxisMessage) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getAxisMessage(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getAxisMessage(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
+            log.warn(logCorrelationIDString+":getAxisMessage(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
         }
 
         return axisMessage;
@@ -1541,13 +1462,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     public Options getOptions() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getOptions(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getOptions(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getOptions");
         return options;
     }
 
@@ -1577,13 +1492,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
 
     public Policy getEffectivePolicy() {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":getEffectivePolicy(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":getEffectivePolicy(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("getEffectivePolicy");
         if (axisMessage != null) {
             return axisMessage.getPolicyInclude().getEffectivePolicy();
         }
@@ -1598,13 +1507,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
 
     public boolean isEngaged(QName moduleName) {
-        if (needsToBeReconciled) {
-            if (log.isWarnEnabled()) {
-                log.warn(myClassName+":isEngaged(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-            }
-            //System.out.println(myClassName+":isEngaged(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
-        }
-
+        checkActivateWarning("isEngaged");
         boolean enegage;
         if (configurationContext != null) {
             AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
@@ -1708,7 +1611,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     /*
      * character to delimit strings
      */
-    private static final String selfManagedDataDelimiter = "*";
+    private String selfManagedDataDelimiter = "*";
     
 
     /**
@@ -1864,8 +1767,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 Object key = it2.next();
                 Handler value = (Handler) map.get(key);
                 String name = value.getName();
-                log.trace(myClassName+":flattenPhaseListToHandlers():  key ["+(String)key+"]    handler name ["+name+"]");
-                //System.out.println(myClassName+":flattenPhaseListToHandlers():  key ["+(String)key+"]    handler name ["+name+"]");
+                log.trace(logCorrelationIDString+":flattenPhaseListToHandlers():  key ["+(String)key+"]    handler name ["+name+"]");
             }
         }
 
@@ -1933,13 +1835,6 @@ public class MessageContext extends AbstractContext implements Externalizable {
 	 */
     private void serializeSelfManagedData(ObjectOutput out) 
     {
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":serializeSelfManagedData(): BEGIN");
-        }
-        //System.out.println(myClassName+":serializeSelfManagedData(): BEGIN");
-
-
         selfManagedDataHandlerCount = 0;
 
         try
@@ -1951,19 +1846,13 @@ public class MessageContext extends AbstractContext implements Externalizable {
             {
                 out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":serializeSelfManagedData(): No data : END");
-                }
-                //System.out.println(myClassName+":serializeSelfManagedData(): No data : END");
+                log.trace(logCorrelationIDString+":serializeSelfManagedData(): No data : END");
 
                 return;
             }
 
             // let's create a temporary list with the handlers
             ArrayList flatExecChain = flattenPhaseListToHandlers(executionChain, null);
-
-            //System.out.println(myClassName+":serializeSelfManagedData():  number of handlers to check ["+flatExecChain.size()+"]");
 
             //ArrayList selfManagedDataHolderList = serializeSelfManagedDataHelper(flatExecChain.iterator(), new ArrayList()); 
             ArrayList selfManagedDataHolderList = serializeSelfManagedDataHelper(flatExecChain);
@@ -1972,11 +1861,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             {
                 out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":serializeSelfManagedData(): No data : END");
-                }
-                //System.out.println(myClassName+":serializeSelfManagedData(): No data : END");
+                log.trace(logCorrelationIDString+":serializeSelfManagedData(): No data : END");
 
                 return;
             }
@@ -1998,21 +1883,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
         }
         catch (IOException e)
         {
-            if (log.isTraceEnabled())
-            {
-                log.trace("MessageContext:serializeSelfManagedData(): Exception ["+e.getClass().getName()+"]  description ["+e.getMessage()+"]"); 
-
-                e.printStackTrace();
-            }
-            //System.out.println("MessageContext:serializeSelfManagedData(): Exception ["+e.getClass().getName()+"]  description ["+e.getMessage()+"]"); 
-
+            log.trace("MessageContext:serializeSelfManagedData(): Exception ["+e.getClass().getName()+"]  description ["+e.getMessage()+"]",e); 
         }
 
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":serializeSelfManagedData(): END");
-        }
-        //System.out.println(myClassName+":serializeSelfManagedData(): END");
     }
     
 
@@ -2027,8 +1900,6 @@ public class MessageContext extends AbstractContext implements Externalizable {
     //private ArrayList serializeSelfManagedDataHelper(ArrayList handlers, ArrayList selfManagedDataHolderList)
     private ArrayList serializeSelfManagedDataHelper(ArrayList handlers)
     {
-        //System.out.println("MessageContext:serializeSelfManagedDataHelper():  number of handlers ["+handlers.size()+"]");
-
         ArrayList selfManagedDataHolderList = new ArrayList();
         Iterator it = handlers.iterator();
 
@@ -2047,12 +1918,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 {
                     // only call the handler's serializeSelfManagedData if it implements SelfManagedDataManager
 
-                    if (log.isTraceEnabled())
-                    {
-                        log.trace("MessageContext:serializeSelfManagedDataHelper(): calling handler  ["+handler.getClass().getName()+"]  name ["+handler.getName().toString()+"]   serializeSelfManagedData method");
-                    }
-                    //System.out.println("MessageContext:serializeSelfManagedDataHelper(): calling handler  ["+handler.getClass().getName()+"]  name ["+handler.getName().toString()+"]   serializeSelfManagedData method");
-
+                    log.trace("MessageContext:serializeSelfManagedDataHelper(): calling handler  ["+handler.getClass().getName()+"]  name ["+handler.getName().toString()+"]   serializeSelfManagedData method");
 
             		ByteArrayOutputStream baos_fromHandler = ((SelfManagedDataManager)handler).serializeSelfManagedData(this);
 
@@ -2068,12 +1934,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                         }
             			catch (Exception exc)
                         {
-            				log.warn("MessageContext:serializeSelfManagedData(): exception ["+exc.getClass().getName()+"]["+exc.getMessage()+"]  in setting up SelfManagedDataHolder object for ["+handler.getClass().getName()+" / "+handler.getName().toString()+"] ");
-
-            				//System.out.println("MessageContext:serializeSelfManagedData(): exception ["+exc.getClass().getName()+"]["+exc.getMessage()+"]  in setting up SelfManagedDataHolder object for ["+handler.getClass().getName()+" / "+handler.getName().toString()+"] ");
-
-            				exc.printStackTrace();
-
+            				log.trace("MessageContext:serializeSelfManagedData(): exception ["+exc.getClass().getName()+"]["+exc.getMessage()+"]  in setting up SelfManagedDataHolder object for ["+handler.getClass().getName()+" / "+handler.getName().toString()+"] ",exc);
             			}
             		}
             	}
@@ -2083,12 +1944,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         }
         catch (Exception ex)
         {
-        	log.warn("MessageContext:serializeSelfManagedData(): exception ["+ex.getClass().getName()+"]["+ex.getMessage()+"]");
-
-        	//System.out.println("MessageContext:serializeSelfManagedData(): exception ["+ex.getClass().getName()+"]["+ex.getMessage()+"]");
-
-            ex.printStackTrace();
-
+        	log.trace("MessageContext:serializeSelfManagedData(): exception ["+ex.getClass().getName()+"]["+ex.getMessage()+"]",ex);
             return null;
         }
         
@@ -2138,12 +1994,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     		// implementation than the one we saved during serializeSelfManagedData.
     		// NOTE: the exception gets absorbed!
 
-        	log.warn("MessageContext:deserialize_getHandlerFromExecutionChain(): ClassCastException thrown: " + e.getMessage());
-
-        	//System.out.println("MessageContext:deserialize_getHandlerFromExecutionChain(): ClassCastException thrown: " + e.getMessage());
-
-            e.printStackTrace();
-
+        	log.trace("MessageContext:deserialize_getHandlerFromExecutionChain(): ClassCastException thrown: " + e.getMessage(),e);
             return null;
     	}
     }
@@ -2170,9 +2021,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
     			if (handler == null)
                 {
-    				log.warn(myClassName+":deserializeSelfManagedData():  ["+classname+"]  was not found in the executionChain associated with the message context.");
-
-    				//System.out.println(myClassName+":deserializeSelfManagedData():  ["+classname+"]  was not found in the executionChain associated with the message context.");
+    				log.trace(logCorrelationIDString+":deserializeSelfManagedData():  ["+classname+"]  was not found in the executionChain associated with the message context.");
 
     				throw new IOException("The class ["+classname+"] was not found in the executionChain associated with the message context.");
     			}
@@ -2182,11 +2031,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     			// the handler implementing SelfManagedDataManager is responsible for repopulating
     			// the SelfManagedData in the MessageContext (this)
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":deserializeSelfManagedData(): calling handler ["+classname+"] ["+qNameAsString+"]  deserializeSelfManagedData method");
-                }
-    			//System.out.println(myClassName+":deserializeSelfManagedData(): calling handler ["+classname+"] ["+qNameAsString+"]  deserializeSelfManagedData method");
+                log.trace(logCorrelationIDString+":deserializeSelfManagedData(): calling handler ["+classname+"] ["+qNameAsString+"]  deserializeSelfManagedData method");
 
     			handler.deserializeSelfManagedData(handlerData, this);
     			handler.restoreTransientData(this);
@@ -2194,12 +2039,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         }
     	catch (IOException ioe)
         {
-        	log.warn(myClassName+":deserializeSelfManagedData(): IOException thrown: " + ioe.getMessage());
-
-        	//System.out.println(myClassName+":deserializeSelfManagedData(): IOException thrown: " + ioe.getMessage());
-
-            ioe.printStackTrace();
-
+        	log.trace(logCorrelationIDString+":deserializeSelfManagedData(): IOException thrown: " + ioe.getMessage(), ioe);
     		throw ioe;
     	}
     	
@@ -2228,12 +2068,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
      */
     public void writeExternal(ObjectOutput out) throws IOException
     {
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":writeExternal():  BEGIN  ");
-        }
-        //System.out.println(myClassName+":writeExternal():  BEGIN  ");
-
+        log.trace(logCorrelationIDString+":writeExternal(): writing to output stream");
 
         //---------------------------------------------------------
         // in order to handle future changes to the message 
@@ -2314,19 +2149,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 
                 msgBuffer.write(msgData.toByteArray() ,0, msgData.size());
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":writeExternal(): msg data ["+msgData+"]");
-                }
-
-                //System.out.println(myClassName+":writeExternal(): msg data ["+msgData+"]");
+                log.trace(logCorrelationIDString+":writeExternal(): msg data ["+msgData+"]");
 
             }
             catch (Exception e) 
             {
-                log.warn(myClassName+":writeExternal(): can not serialize the SOAP message ***Exception***  ["+e.getClass().getName()+" : "+e.getMessage()+"]");
-
-                //System.out.println(myClassName+":writeExternal(): can not serialize the SOAP message ***Exception***  ["+e.getClass().getName()+" : "+e.getMessage()+"]");
+                log.trace(logCorrelationIDString+":writeExternal(): can not serialize the SOAP message ***Exception***  ["+e.getClass().getName()+" : "+e.getMessage()+"]");
             }
 
             //---------------------------------------------
@@ -2371,22 +2199,14 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 out.writeInt(msgSize);
                 out.write(msgBuffer.toByteArray());
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":writeExternal(): msg  charSetEnc=["+charSetEnc+"]  namespaceURI=["+namespaceURI+"]  msgSize=["+msgSize+"]");
-                }
-                //System.out.println(myClassName+":writeExternal(): msg  charSetEnc=["+charSetEnc+"]  namespaceURI=["+namespaceURI+"]  msgSize=["+msgSize+"]");
+                log.trace(logCorrelationIDString+":writeExternal(): msg  charSetEnc=["+charSetEnc+"]  namespaceURI=["+namespaceURI+"]  msgSize=["+msgSize+"]");
             }
             else
             {
                 // the envelope is null
                 out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":writeExternal(): msg  is Empty");
-                }
-                //System.out.println(myClassName+":writeExternal(): msg  is Empty");
+                log.trace(logCorrelationIDString+":writeExternal(): msg  is Empty");
             }
 
             // close out internal stream
@@ -2398,11 +2218,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             out.writeUTF("MessageContext.envelope");
             out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
 
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":writeExternal(): msg  is Empty");
-            }
-            //System.out.println(myClassName+":writeExternal(): msg  is Empty");
+            log.trace(logCorrelationIDString+":writeExternal(): msg  is Empty");
         }
 
 
@@ -2432,7 +2248,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //    UTF          - description string
         //    boolean      - empty flag
         //---------------------------------------------------------
-        String execChainDesc = "Messagecontext.executionChain";
+        String execChainDesc = logCorrelationIDString+".executionChain";
 
         int listSize = 0;
 
@@ -2496,24 +2312,16 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 // update the index for the entry in the chain
                 executionChainEntry++;
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":writeExternal(): ***BEFORE OBJ WRITE*** executionChain entry class ["+objClass+"] qname ["+qnameAsString+"]");
-                }
-                //System.out.println(myClassName+":writeExternal(): ***BEFORE OBJ WRITE*** executionChain entry class ["+objClass+"] qname ["+qnameAsString+"]");
+                log.trace(logCorrelationIDString+":writeExternal(): ***BEFORE OBJ WRITE*** executionChain entry class ["+objClass+"] qname ["+qnameAsString+"]");
 
-                ObjectStateUtils.writeObject(out, mdEntry, "Messagecontext.executionChain:entry class ["+objClass+"] qname ["+qnameAsString+"]");
+                ObjectStateUtils.writeObject(out, mdEntry, logCorrelationIDString+".executionChain:entry class ["+objClass+"] qname ["+qnameAsString+"]");
 
                 // update the index so that the index 
                 // now indicates the next entry that
                 // will be attempted
                 nextIndex++;
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":writeExternal(): ***AFTER OBJ WRITE*** executionChain entry class ["+objClass+"] qname ["+qnameAsString+"]");
-                }
-                //System.out.println(myClassName+":writeExternal(): ***AFTER OBJ WRITE*** executionChain entry class ["+objClass+"] qname ["+qnameAsString+"]");
+                log.trace(logCorrelationIDString+":writeExternal(): ***AFTER OBJ WRITE*** executionChain entry class ["+objClass+"] qname ["+qnameAsString+"]");
 
             } // end while entries in execution chain
 
@@ -2522,7 +2330,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             MetaDataEntry lastEntry = new MetaDataEntry();
             lastEntry.setClassName(MetaDataEntry.END_OF_LIST);
 
-            ObjectStateUtils.writeObject(out, lastEntry, "Messagecontext.executionChain:  last entry ");
+            ObjectStateUtils.writeObject(out, lastEntry, logCorrelationIDString+".executionChain:  last entry ");
             nextIndex++;
 
             // nextIndex also gives us the number of entries 
@@ -2538,12 +2346,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             out.writeUTF(execChainDesc);
             out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
 
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":writeExternal(): executionChain is NULL");
-            }
-            //System.out.println(myClassName+":writeExternal(): executionChain is NULL");
-
+            log.trace(logCorrelationIDString+":writeExternal(): executionChain is NULL");
         }
 
 
@@ -2570,7 +2373,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //    UTF          - description string
         //    boolean      - empty flag
         //---------------------------------------------------------
-        String inExecListDesc = "Messagecontext.inboundExecutedPhases";
+        String inExecListDesc = logCorrelationIDString+".inboundExecutedPhases";
 
         int inExecListSize = 0;
 
@@ -2627,24 +2430,16 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 inMdEntry.setQName(inQnameAsString);
 
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":writeExternal(): ***BEFORE Inbound Executed List OBJ WRITE*** inboundExecutedPhases entry class ["+inObjClass+"] qname ["+inQnameAsString+"]");
-                }
-                //System.out.println(myClassName+":writeExternal(): ***BEFORE Inbound Executed List OBJ WRITE*** inboundExecutedPhases entry class ["+inObjClass+"] qname ["+inQnameAsString+"]");
+                log.trace(logCorrelationIDString+":writeExternal(): ***BEFORE Inbound Executed List OBJ WRITE*** inboundExecutedPhases entry class ["+inObjClass+"] qname ["+inQnameAsString+"]");
 
-                ObjectStateUtils.writeObject(out, inMdEntry, "Messagecontext.inboundExecutedPhases:entry class ["+inObjClass+"] qname ["+inQnameAsString+"]");
+                ObjectStateUtils.writeObject(out, inMdEntry, logCorrelationIDString+".inboundExecutedPhases:entry class ["+inObjClass+"] qname ["+inQnameAsString+"]");
 
                 // update the index so that the index 
                 // now indicates the next entry that
                 // will be attempted
                 inExecNextIndex++;
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":writeExternal(): ***AFTER Inbound Executed List OBJ WRITE*** inboundExecutedPhases entry class ["+inObjClass+"] qname ["+inQnameAsString+"]");
-                }
-                //System.out.println(myClassName+":writeExternal(): ***AFTER Inbound Executed List OBJ WRITE*** inboundExecutedPhases entry class ["+inObjClass+"] qname ["+inQnameAsString+"]");
+                log.trace(logCorrelationIDString+":writeExternal(): ***AFTER Inbound Executed List OBJ WRITE*** inboundExecutedPhases entry class ["+inObjClass+"] qname ["+inQnameAsString+"]");
 
             } // end while entries in execution chain
 
@@ -2653,7 +2448,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             MetaDataEntry inLastEntry = new MetaDataEntry();
             inLastEntry.setClassName(MetaDataEntry.END_OF_LIST);
 
-            ObjectStateUtils.writeObject(out, inLastEntry, "Messagecontext.inboundExecutedPhases:  last entry ");
+            ObjectStateUtils.writeObject(out, inLastEntry, logCorrelationIDString+".inboundExecutedPhases:  last entry ");
             inExecNextIndex++;
 
             // inExecNextIndex also gives us the number of entries 
@@ -2669,12 +2464,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             out.writeUTF(inExecListDesc);
             out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
 
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":writeExternal(): inboundExecutedPhases is NULL");
-            }
-            //System.out.println(myClassName+":writeExternal(): inboundExecutedPhases is NULL");
-
+            log.trace(logCorrelationIDString+":writeExternal(): inboundExecutedPhases is NULL");
         }
 
 
@@ -2701,7 +2491,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //    UTF          - description string
         //    boolean      - empty flag
         //---------------------------------------------------------
-        String outExecListDesc = "Messagecontext.outboundExecutedPhases";
+        String outExecListDesc = logCorrelationIDString+".outboundExecutedPhases";
 
         int outExecListSize = 0;
 
@@ -2757,24 +2547,16 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
                 outMdEntry.setQName(outQnameAsString);
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":writeExternal(): ***BEFORE Outbound Executed List OBJ WRITE*** outboundExecutedPhases entry class ["+outObjClass+"] qname ["+outQnameAsString+"]");
-                }
-                //System.out.println(myClassName+":writeExternal(): ***BEFORE Outbound Executed List OBJ WRITE*** outboundExecutedPhases entry class ["+outObjClass+"] qname ["+outQnameAsString+"]");
+                log.trace(logCorrelationIDString+":writeExternal(): ***BEFORE Outbound Executed List OBJ WRITE*** outboundExecutedPhases entry class ["+outObjClass+"] qname ["+outQnameAsString+"]");
 
-                ObjectStateUtils.writeObject(out, outMdEntry, "Messagecontext.outboundExecutedPhases:entry class ["+outObjClass+"] qname ["+outQnameAsString+"]");
+                ObjectStateUtils.writeObject(out, outMdEntry, logCorrelationIDString+".outboundExecutedPhases:entry class ["+outObjClass+"] qname ["+outQnameAsString+"]");
 
                 // update the index so that the index 
                 // now indicates the next entry that
                 // will be attempted
                 outExecNextIndex++;
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":writeExternal(): ***AFTER Outbound Executed List OBJ WRITE*** outboundExecutedPhases entry class ["+outObjClass+"] qname ["+outQnameAsString+"]");
-                }
-                //System.out.println(myClassName+":writeExternal(): ***AFTER Outbound Executed List OBJ WRITE*** outboundExecutedPhases entry class ["+outObjClass+"] qname ["+outQnameAsString+"]");
+                log.trace(logCorrelationIDString+":writeExternal(): ***AFTER Outbound Executed List OBJ WRITE*** outboundExecutedPhases entry class ["+outObjClass+"] qname ["+outQnameAsString+"]");
 
             } // end while entries 
 
@@ -2783,7 +2565,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             MetaDataEntry outLastEntry = new MetaDataEntry();
             outLastEntry.setClassName(MetaDataEntry.END_OF_LIST);
 
-            ObjectStateUtils.writeObject(out, outLastEntry, "Messagecontext.outboundExecutedPhases:  last entry ");
+            ObjectStateUtils.writeObject(out, outLastEntry, logCorrelationIDString+".outboundExecutedPhases:  last entry ");
             outExecNextIndex++;
 
             // outExecNextIndex also gives us the number of entries 
@@ -2799,12 +2581,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             out.writeUTF(outExecListDesc);
             out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
 
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":writeExternal(): outboundExecutedPhases is NULL");
-            }
-            //System.out.println(myClassName+":writeExternal(): outboundExecutedPhases is NULL");
-
+            log.trace(logCorrelationIDString+":writeExternal(): outboundExecutedPhases is NULL");
         }
 
 
@@ -2822,11 +2599,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         if (log.isInfoEnabled())
         {
-            log.info(myClassName+":writeExternal():   message ID ["+tmpID+"]");
+            log.info(logCorrelationIDString+":writeExternal():   message ID ["+tmpID+"]");
         }
-        //System.out.println(myClassName+":writeExternal():   message ID ["+tmpID+"]");
 
-        ObjectStateUtils.writeObject(out, options, "MessageContext.options");
+        ObjectStateUtils.writeObject(out, options, logCorrelationIDString+".options   for  ["+options.getLogCorrelationIDString()+"]");
 
 
         //---------------------------------------------------------
@@ -2834,7 +2610,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //---------------------------------------------------------
         // axis operation 
         //---------------------------------------------------------
-        String axisOpMarker = "MessageContext.axisOperation";
+        String axisOpMarker = logCorrelationIDString+".axisOperation";
         ObjectStateUtils.writeString(out, axisOpMarker, axisOpMarker);
 
         if (axisOperation == null)
@@ -2858,7 +2634,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             }
 
         	metaAxisOperation = new MetaDataEntry(axisOperation.getClass().getName(), axisOperation.getName().toString());
-        	ObjectStateUtils.writeObject(out, metaAxisOperation, "MessageContext.metaAxisOperation");
+        	ObjectStateUtils.writeObject(out, metaAxisOperation, logCorrelationIDString+".metaAxisOperation");
         }
 
         //---------------------------------------------------------
@@ -2868,13 +2644,15 @@ public class MessageContext extends AbstractContext implements Externalizable {
         // In order to avoid having multiple copies of the object graph
         // being saved at different points in the serialization,
         // it is important to isolate this message context object.
+        String oc_desc = logCorrelationIDString+".operationContext";
         if (operationContext != null)
         {
             operationContext.isolateMessageContext(this);
+            oc_desc = oc_desc + "  for  ["+operationContext.getLogCorrelationIDString()+"]";
         }
 
         // NOTE: expect this to be the parent of the message context
-        ObjectStateUtils.writeObject(out, operationContext, "MessageContext.operationContext" );
+        ObjectStateUtils.writeObject(out, operationContext, oc_desc);
 
 
         //---------------------------------------------------------
@@ -2883,7 +2661,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         // axis service
         //-------------------------
         // this is expected to be the parent of the axis operation object
-        String axisServMarker = "MessageContext.axisService";
+        String axisServMarker = logCorrelationIDString+".axisService";
         ObjectStateUtils.writeString(out, axisServMarker, axisServMarker);
 
         if (axisService == null)
@@ -2894,14 +2672,14 @@ public class MessageContext extends AbstractContext implements Externalizable {
         {
         	out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
         	metaAxisService = new MetaDataEntry(axisService.getClass().getName(), axisService.getName().toString());
-        	ObjectStateUtils.writeObject(out, metaAxisService, "MessageContext.metaAxisService");
+        	ObjectStateUtils.writeObject(out, metaAxisService, logCorrelationIDString+".metaAxisService");
         }
         
 
         //-------------------------
         // serviceContextID string
         //-------------------------
-        ObjectStateUtils.writeString(out, serviceContextID, "MessageContext.serviceContextID");
+        ObjectStateUtils.writeString(out, serviceContextID, logCorrelationIDString+".serviceContextID");
 
 
         //-------------------------
@@ -2924,7 +2702,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             }
         }
 
-        String servCtxMarker = "MessageContext.serviceContext";
+        String servCtxMarker = logCorrelationIDString+".serviceContext";
         ObjectStateUtils.writeString(out, servCtxMarker, servCtxMarker);
 
         if (serviceContext == null)
@@ -2939,7 +2717,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             // only write out the object if it is not the parent
             if (!isParent)
             {
-                ObjectStateUtils.writeObject(out, serviceContext, "MessageContext.serviceContext");
+                ObjectStateUtils.writeObject(out, serviceContext, logCorrelationIDString+".serviceContext");
             }
         }
 
@@ -2948,7 +2726,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         // axisServiceGroup
         //---------------------------------------------------------
 
-        String axisServGrpMarker = "MessageContext.axisServiceGroup";
+        String axisServGrpMarker = logCorrelationIDString+".axisServiceGroup";
         ObjectStateUtils.writeString(out, axisServGrpMarker, axisServGrpMarker);
 
         if (axisServiceGroup == null)
@@ -2959,13 +2737,13 @@ public class MessageContext extends AbstractContext implements Externalizable {
         {
         	out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
         	metaAxisServiceGroup = new MetaDataEntry(axisServiceGroup.getClass().getName(), axisServiceGroup.getServiceGroupName());
-        	ObjectStateUtils.writeObject(out, metaAxisServiceGroup, "MessageContext.metaAxisServiceGroup");
+        	ObjectStateUtils.writeObject(out, metaAxisServiceGroup, logCorrelationIDString+".metaAxisServiceGroup");
         }
         
         //-----------------------------
         // serviceGroupContextId string
         //-----------------------------
-        ObjectStateUtils.writeString(out, serviceGroupContextId, "MessageContext.serviceGroupContextId");
+        ObjectStateUtils.writeString(out, serviceGroupContextId, logCorrelationIDString+".serviceGroupContextId");
 
         
         //-------------------------
@@ -2989,7 +2767,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             }
         }
 
-        String servGrpCtxMarker = "MessageContext.serviceGroupContext";
+        String servGrpCtxMarker = logCorrelationIDString+".serviceGroupContext";
         ObjectStateUtils.writeString(out, servGrpCtxMarker, servGrpCtxMarker);
 
         if (serviceGroupContext == null)
@@ -3004,7 +2782,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             // only write out the object if it is not the parent
             if (!isParent)
             {
-                ObjectStateUtils.writeObject(out, serviceGroupContext, "MessageContext.serviceGroupContext");
+                ObjectStateUtils.writeObject(out, serviceGroupContext, logCorrelationIDString+".serviceGroupContext");
             }
         }
 
@@ -3013,7 +2791,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //---------------------------------------------------------
         // axis message
         //---------------------------------------------------------
-        String axisMsgMarker = "MessageContext.axisMessage";
+        String axisMsgMarker = logCorrelationIDString+".axisMessage";
         ObjectStateUtils.writeString(out, axisMsgMarker, axisMsgMarker);
 
         if (axisMessage == null)
@@ -3050,7 +2828,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         	metaAxisMessage = new MetaDataEntry(axisMessage.getClass().getName(), axisMessage.getName(), amTmpElemQNameString);
 
-        	ObjectStateUtils.writeObject(out, metaAxisMessage, "MessageContext.metaAxisMessage");
+        	ObjectStateUtils.writeObject(out, metaAxisMessage, logCorrelationIDString+".metaAxisMessage");
         }
 
         //---------------------------------------------------------
@@ -3069,7 +2847,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //---------------------------------------------------------
         // session context
         //---------------------------------------------------------
-        ObjectStateUtils.writeObject(out, sessionContext, "MessageContext.sessionContext" );
+        ObjectStateUtils.writeObject(out, sessionContext, logCorrelationIDString+".sessionContext" );
         
 
         //---------------------------------------------------------
@@ -3079,7 +2857,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //------------------------------
         // incomingTransportName string
         //------------------------------
-        ObjectStateUtils.writeString(out, incomingTransportName, "MessageContext.incomingTransportName");
+        ObjectStateUtils.writeString(out, incomingTransportName, logCorrelationIDString+".incomingTransportName");
 
         // TransportInDescription transportIn
         if (transportIn != null)
@@ -3090,7 +2868,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         {
             metaTransportIn = null;
         }
-        ObjectStateUtils.writeObject(out, metaTransportIn, "MessageContext.transportIn");
+        ObjectStateUtils.writeObject(out, metaTransportIn, logCorrelationIDString+".transportIn");
 
 
         // TransportOutDescription transportOut
@@ -3102,7 +2880,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         {
             metaTransportOut = null;
         }
-        ObjectStateUtils.writeObject(out, metaTransportOut, "MessageContext.transportOut");
+        ObjectStateUtils.writeObject(out, metaTransportOut, logCorrelationIDString+".transportOut");
 
 
 
@@ -3118,14 +2896,14 @@ public class MessageContext extends AbstractContext implements Externalizable {
             tmpHashMap = new HashMap(tmpMap);
         }
 
-        ObjectStateUtils.writeHashMap(out, tmpHashMap, "MessageContext.properties");
+        ObjectStateUtils.writeHashMap(out, tmpHashMap, logCorrelationIDString+".properties");
 
 
         //---------------------------------------------------------
         // special data
         //---------------------------------------------------------
 
-        String selfManagedDataMarker = "MessageContext.selfManagedData";
+        String selfManagedDataMarker = logCorrelationIDString+".selfManagedData";
         ObjectStateUtils.writeString(out, selfManagedDataMarker, selfManagedDataMarker);
 
         // save the data, which the handlers themselves will serialize
@@ -3138,11 +2916,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         // done
         //---------------------------------------------------------
 
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":writeExternal():  END  ");
-        }
-        //System.out.println(myClassName+":writeExternal():  END  ");
+        log.trace(logCorrelationIDString+":writeExternal(): completed writing to output stream for "+logCorrelationIDString);
 
     }
 
@@ -3170,11 +2944,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         needsToBeReconciled = true;
 
         // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
-        }
-        //System.out.println(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
+        log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
 
 
         //---------------------------------------------------------
@@ -3225,6 +2995,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
         logCorrelationID = ObjectStateUtils.readString(in, "logCorrelationID");
         logCorrelationIDString = "[MessageContext: logID="+logCorrelationID+"]";
         
+        // trace point
+        log.trace(myClassName+":readExternal():  reading the input stream for  "+logCorrelationIDString);
+
         boolean persistedWithOptimizedMTOM = in.readBoolean();
         
         String contentType = null;
@@ -3259,8 +3032,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
               {
                   // TODO: What should we do if the reconstitution fails?
                   // For now, log the event
-                  log.warn(myClassName+":readExternal(): ***WARNING*** unexpected end to message   bytesRead ["+bytesRead+"]    msgSize ["+msgSize+"]");
-                  //System.out.println(myClassName+":readExternal(): ***WARNING*** unexpected end to message   bytesRead ["+bytesRead+"]    msgSize ["+msgSize+"]");
+                  log.trace(logCorrelationIDString+":readExternal(): ***WARNING*** unexpected end to message   bytesRead ["+bytesRead+"]    msgSize ["+msgSize+"]");
                   break;
               }
 
@@ -3269,14 +3041,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
 
             String tmpMsg = new String(buffer);
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":readExternal(): msg  charSetEnc=["+charSetEnc+"]  namespaceURI=["+namespaceURI+"]  msgSize=["+msgSize+"]   bytesRead ["+bytesRead+"]");
-                log.trace(myClassName+":readExternal(): msg  ["+tmpMsg+"]");
-            }
-            //System.out.println(myClassName+":readExternal(): msg  charSetEnc=["+charSetEnc+"]  namespaceURI=["+namespaceURI+"]  msgSize=["+msgSize+"]   bytesRead ["+bytesRead+"]");
-            //System.out.println(myClassName+":readExternal(): msg  ["+tmpMsg+"]");
 
+            log.trace(logCorrelationIDString+":readExternal(): msg  charSetEnc=["+charSetEnc+"]  namespaceURI=["+namespaceURI+"]  msgSize=["+msgSize+"]   bytesRead ["+bytesRead+"]");
+            log.trace(logCorrelationIDString+":readExternal(): msg  ["+tmpMsg+"]");
 
             ByteArrayInputStream msgBuffer = null;
 
@@ -3307,9 +3074,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 {
                     // TODO: what to do if can't get the XML stream reader
                     // For now, log the event
-                    log.error(myClassName+":readExternal(): Error when deserializing persisted envelope: ["+ex.getClass().getName()+" : "+ex.getLocalizedMessage()+"]");
-                    //System.out.println(myClassName+":readExternal(): Error when deserializing persisted envelope: ["+ex.getClass().getName()+" : "+ex.getLocalizedMessage()+"]");
-                    ex.printStackTrace(System.err);
+                    log.error(logCorrelationIDString+":readExternal(): Error when deserializing persisted envelope: ["+ex.getClass().getName()+" : "+ex.getLocalizedMessage()+"]",ex);
                     envelope = null;
                 }
 
@@ -3320,11 +3085,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 // no message
                 envelope = null;
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":readExternal(): no message from the input stream");
-                }
-                //System.out.println(myClassName+":readExternal(): no message from the input stream");
+                log.trace(logCorrelationIDString+":readExternal(): no message from the input stream");
             }
 
         }
@@ -3333,11 +3094,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             // no message
             envelope = null;
 
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":readExternal(): no message present");
-            }
-            //System.out.println(myClassName+":readExternal(): no message present");
+            log.trace(logCorrelationIDString+":readExternal(): no message present");
         }
 
 
@@ -3368,13 +3125,6 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //    boolean      - empty flag
         //---------------------------------------------------------
 
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal(): BEGIN EXECUTION CHAIN PROCESSING");
-        }
-        //System.out.println(myClassName+":readExternal(): BEGIN EXECUTION CHAIN PROCESSING");
-
-
         // the local chain is not enabled until the 
         // list has been reconstituted
         executionChain = null;
@@ -3392,11 +3142,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
             int expectedNumberEntries = in.readInt();
 
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":readExternal(): execution chain:  expected number of entries ["+expectedNumberEntries+"]");
-            }
-            //System.out.println(myClassName+":readExternal(): execution chain:  expected number of entries ["+expectedNumberEntries+"]");
+            log.trace(logCorrelationIDString+":readExternal(): execution chain:  expected number of entries ["+expectedNumberEntries+"]");
 
             // setup the list
             metaExecutionChain = new ArrayList();
@@ -3442,11 +3188,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                             tmpHasList = "has list";
                         }
 
-                        if (log.isTraceEnabled())
-                        {
-                            log.trace(myClassName+":readExternal(): meta data class ["+tmpClassNameStr+"] qname ["+tmpQNameAsStr+"]  index ["+count+"]   ["+tmpHasList+"]");
-                        }
-                        //System.out.println(myClassName+":readExternal(): meta data class ["+tmpClassNameStr+"] qname ["+tmpQNameAsStr+"]  index ["+count+"]   ["+tmpHasList+"]");
+                        log.trace(logCorrelationIDString+":readExternal(): meta data class ["+tmpClassNameStr+"] qname ["+tmpQNameAsStr+"]  index ["+count+"]   ["+tmpHasList+"]");
                     }
                 }
                 else
@@ -3459,27 +3201,13 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
             int adjustedNumberEntries = in.readInt();
 
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":readExternal(): adjusted number of entries ExecutionChain ["+adjustedNumberEntries+"]    ");
-            }
-            //System.out.println(myClassName+":readExternal(): adjusted number of entries ExecutionChain ["+adjustedNumberEntries+"]    ");
+            log.trace(logCorrelationIDString+":readExternal(): adjusted number of entries ExecutionChain ["+adjustedNumberEntries+"]    ");
         }
 
         if ((metaExecutionChain == null) || (metaExecutionChain.isEmpty()))
         {
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":readExternal(): meta data for Execution Chain is NULL");
-            }
-            //System.out.println(myClassName+":readExternal(): meta data for Execution Chain is NULL");
+            log.trace(logCorrelationIDString+":readExternal(): meta data for Execution Chain is NULL");
         }
-
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal(): END EXECUTION CHAIN PROCESSING");
-        }
-        //System.out.println(myClassName+":readExternal(): END EXECUTION CHAIN PROCESSING");
 
 
         //---------------------------------------------------------
@@ -3506,13 +3234,6 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //    boolean      - empty flag
         //---------------------------------------------------------
 
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal(): BEGIN Inbound Executed Phases List PROCESSING");
-        }
-        //System.out.println(myClassName+":readExternal(): BEGIN Inbound Executed Phases List PROCESSING");
-
-
         // the local chain is not enabled until the 
         // list has been reconstituted
         inboundExecutedPhases = null;
@@ -3525,11 +3246,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         {
             int expectedNumberInExecList = in.readInt();
 
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":readExternal(): inbound executed phases:  expected number of entries ["+expectedNumberInExecList+"]");
-            }
-            //System.out.println(myClassName+":readExternal(): inbound executed phases:  expected number of entries ["+expectedNumberInExecList+"]");
+            log.trace(logCorrelationIDString+":readExternal(): inbound executed phases:  expected number of entries ["+expectedNumberInExecList+"]");
 
             // setup the list
             metaInboundExecuted = new LinkedList();
@@ -3575,11 +3292,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                             tmpHasList = "has list";
                         }
 
-                        if (log.isTraceEnabled())
-                        {
-                            log.trace(myClassName+":readExternal(): meta data class ["+tmpClassNameStr+"] qname ["+tmpQNameAsStr+"]  index ["+count+"]   ["+tmpHasList+"]");
-                        }
-                        //System.out.println(myClassName+":readExternal(): meta data class ["+tmpClassNameStr+"] qname ["+tmpQNameAsStr+"]  index ["+count+"]   ["+tmpHasList+"]");
+                        log.trace(logCorrelationIDString+":readExternal(): meta data class ["+tmpClassNameStr+"] qname ["+tmpQNameAsStr+"]  index ["+count+"]   ["+tmpHasList+"]");
                     }
                 }
                 else
@@ -3592,28 +3305,13 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
             int adjustedNumberInExecList = in.readInt();
 
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":readExternal(): adjusted number of entries InboundExecutedPhases ["+adjustedNumberInExecList+"]    ");
-            }
-            //System.out.println(myClassName+":readExternal(): adjusted number of entries InboundExecutedPhases ["+adjustedNumberInExecList+"]    ");
+            log.trace(logCorrelationIDString+":readExternal(): adjusted number of entries InboundExecutedPhases ["+adjustedNumberInExecList+"]    ");
         }
 
         if ((metaInboundExecuted == null) || (metaInboundExecuted.isEmpty()))
         {
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":readExternal(): meta data for InboundExecutedPhases list is NULL");
-            }
-            //System.out.println(myClassName+":readExternal(): meta data for InboundExecutedPhases list is NULL");
+            log.trace(logCorrelationIDString+":readExternal(): meta data for InboundExecutedPhases list is NULL");
         }
-
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal(): END Inbound Executed Phases list PROCESSING");
-        }
-        //System.out.println(myClassName+":readExternal(): END Inbound Executed Phases list PROCESSING");
-
 
         //---------------------------------------------------------
         // LinkedList outboundExecutedPhases
@@ -3639,13 +3337,6 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //    boolean      - empty flag
         //---------------------------------------------------------
 
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal(): BEGIN Outbound Executed Phases List PROCESSING");
-        }
-        //System.out.println(myClassName+":readExternal(): BEGIN Outbound Executed Phases List PROCESSING");
-
-
         // the local chain is not enabled until the 
         // list has been reconstituted
         outboundExecutedPhases = null;
@@ -3658,11 +3349,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         {
             int expectedNumberOutExecList = in.readInt();
 
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":readExternal(): outbound executed phases:  expected number of entries ["+expectedNumberOutExecList+"]");
-            }
-            //System.out.println(myClassName+":readExternal(): outbound executed phases:  expected number of entries ["+expectedNumberOutExecList+"]");
+            log.trace(logCorrelationIDString+":readExternal(): outbound executed phases:  expected number of entries ["+expectedNumberOutExecList+"]");
 
             // setup the list
             metaOutboundExecuted = new LinkedList();
@@ -3708,11 +3395,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                             tmpHasList = "has list";
                         }
 
-                        if (log.isTraceEnabled())
-                        {
-                            log.trace(myClassName+":readExternal(): OutboundExecutedPhases: meta data class ["+tmpClassNameStr+"] qname ["+tmpQNameAsStr+"]  index ["+count+"]   ["+tmpHasList+"]");
-                        }
-                        //System.out.println(myClassName+":readExternal(): OutboundExecutedPhases: meta data class ["+tmpClassNameStr+"] qname ["+tmpQNameAsStr+"]  index ["+count+"]   ["+tmpHasList+"]");
+                        log.trace(logCorrelationIDString+":readExternal(): OutboundExecutedPhases: meta data class ["+tmpClassNameStr+"] qname ["+tmpQNameAsStr+"]  index ["+count+"]   ["+tmpHasList+"]");
                     }
                 }
                 else
@@ -3725,28 +3408,13 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
             int adjustedNumberOutExecList = in.readInt();
 
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":readExternal(): adjusted number of entries OutboundExecutedPhases ["+adjustedNumberOutExecList+"]    ");
-            }
-            //System.out.println(myClassName+":readExternal(): adjusted number of entries OutboundExecutedPhases ["+adjustedNumberOutExecList+"]    ");
+            log.trace(logCorrelationIDString+":readExternal(): adjusted number of entries OutboundExecutedPhases ["+adjustedNumberOutExecList+"]    ");
         }
 
         if ((metaOutboundExecuted == null) || (metaOutboundExecuted.isEmpty()))
         {
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":readExternal(): meta data for OutboundExecutedPhases list is NULL");
-            }
-            //System.out.println(myClassName+":readExternal(): meta data for OutboundExecutedPhases list is NULL");
+            log.trace(logCorrelationIDString+":readExternal(): meta data for OutboundExecutedPhases list is NULL");
         }
-
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal(): END Outbound Executed Phases list PROCESSING");
-        }
-        //System.out.println(myClassName+":readExternal(): END Outbound Executed Phases list PROCESSING");
-
 
         //---------------------------------------------------------
         // options
@@ -3754,6 +3422,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         options = (Options) ObjectStateUtils.readObject(in, "MessageContext.options");
 
+        if (options != null)
+        {
+            log.trace(logCorrelationIDString+":readExternal(): restored Options ["+options.getLogCorrelationIDString()+"]");
+        }
 
         //---------------------------------------------------------
         // operation
@@ -3778,6 +3450,11 @@ public class MessageContext extends AbstractContext implements Externalizable {
         // operation context is not usable until it has been activated
         // NOTE: expect this to be the parent
         operationContext = (OperationContext) ObjectStateUtils.readObject(in, "MessageContext.operationContext");
+
+        if (operationContext != null)
+        {
+            log.trace(logCorrelationIDString+":readExternal(): restored OperationContext ["+operationContext.getLogCorrelationIDString()+"]");
+        }
 
 
         //---------------------------------------------------------
@@ -4008,12 +3685,8 @@ public class MessageContext extends AbstractContext implements Externalizable {
         // done
         //---------------------------------------------------------
 
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal():  END");
-        }
-        //System.out.println(myClassName+":readExternal():  END");
-
+        // trace point
+        log.trace(logCorrelationIDString+":readExternal():  message context object created for  "+logCorrelationIDString);
     }
 
     
@@ -4036,13 +3709,6 @@ public class MessageContext extends AbstractContext implements Externalizable {
             // return quick
             return;
         }
-
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":activate():  BEGIN");
-        }
-        //System.out.println(myClassName+":activate():  BEGIN");
 
         // use the supplied configuration context
         setConfigurationContext(cc);
@@ -4165,11 +3831,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         String tmpID = getMessageID();
 
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":activate():   message ID ["+tmpID+"]");
-        }
-        //System.out.println(myClassName+":activate():   message ID ["+tmpID+"]");
+        log.trace(logCorrelationIDString+":activate():   message ID ["+tmpID+"] for "+logCorrelationIDString);
 
 
         //---------------------------------------------------------------------
@@ -4188,9 +3850,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             catch (Exception exin)
             {
                 // if a fault is thrown, log it and continue
-                log.info(myClassName+"activate():  exception caught when getting the TransportInDescription ["+qin.toString()+"]  from the AxisConfiguration ["+exin.getClass().getName()+" : "+exin.getMessage()+"]");
-
-                //System.out.println(myClassName+"activate():  exception caught when getting the TransportInDescription ["+qin.toString()+"]  from the AxisConfiguration ["+exin.getClass().getName()+" : "+exin.getMessage()+"]");
+                log.trace(logCorrelationIDString+"activate():  exception caught when getting the TransportInDescription ["+qin.toString()+"]  from the AxisConfiguration ["+exin.getClass().getName()+" : "+exin.getMessage()+"]");
             }
 
             if (tmpIn != null)
@@ -4219,9 +3879,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             catch (Exception exout)
             {
                 // if a fault is thrown, log it and continue
-                log.info(myClassName+"activate():  exception caught when getting the TransportOutDescription ["+qout.toString()+"]  from the AxisConfiguration ["+exout.getClass().getName()+" : "+exout.getMessage()+"]");
-
-                //System.out.println(myClassName+"activate():  exception caught when getting the TransportOutDescription ["+qout.toString()+"]  from the AxisConfiguration ["+exout.getClass().getName()+" : "+exout.getMessage()+"]");
+                log.info(logCorrelationIDString+"activate():  exception caught when getting the TransportOutDescription ["+qout.toString()+"]  from the AxisConfiguration ["+exout.getClass().getName()+" : "+exout.getMessage()+"]");
             }
 
             if (tmpOut != null)
@@ -4244,11 +3902,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //-------------------------------------------------------
         if (metaExecutionChain != null)
         {
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":activate(): reconciling the execution chain...");
-            }
-            //System.out.println(myClassName+":activate(): reconciling the execution chain...");
+            log.trace(logCorrelationIDString+":activate(): reconciling the execution chain...");
 
             currentHandlerIndex = metaHandlerIndex;
             currentPhaseIndex   = metaPhaseIndex;
@@ -4261,11 +3915,8 @@ public class MessageContext extends AbstractContext implements Externalizable {
             }
             catch (Exception ex) 
             {
-                //System.out.println(myClassName+":activate(): *** WARNING *** deserializing the self managed data encountered Exception ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
-
                 // log the exception
-                log.warn(myClassName+":activate(): *** WARNING *** deserializing the self managed data encountered Exception ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
-                ex.printStackTrace();
+                log.trace(logCorrelationIDString+":activate(): *** WARNING *** deserializing the self managed data encountered Exception ["+ex.getClass().getName()+" : "+ex.getMessage()+"]", ex);
             }
         }
 
@@ -4275,11 +3926,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //-------------------------------------------------------
         if (metaInboundExecuted != null)
         {
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":activate(): reconciling the inbound executed chain...");
-            }
-            //System.out.println(myClassName+":activate(): reconciling the inbound executed chain...");
+            log.trace(logCorrelationIDString+":activate(): reconciling the inbound executed chain...");
 
             if (inboundReset == false)
             {
@@ -4295,11 +3942,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         if (metaOutboundExecuted != null)
         {
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":activate(): reconciling the outbound executed chain...");
-            }
-            //System.out.println(myClassName+":activate(): reconciling the outbound executed chain...");
+            log.trace(logCorrelationIDString+":activate(): reconciling the outbound executed chain...");
 
             if (outboundReset == false)
             {
@@ -4326,12 +3969,6 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //-------------------------------------------------------
         needsToBeReconciled = false;
 
-
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":activate():  END");
-        }
-        //System.out.println(myClassName+":activate():  END");
     }
 
 
@@ -4358,17 +3995,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
         }
 
         // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":activateWithOperationContext():  BEGIN");
-        }
-        //System.out.println(myClassName+":activateWithOperationContext():  BEGIN");
+        log.trace(logCorrelationIDString+":activateWithOperationContext():  BEGIN");
 
         if (operationCtx == null)
         {
             // won't be able to finish
-            log.warn(myClassName+":activateWithOperationContext():  *** WARNING ***  No active OperationContext object is available.");
-            //System.out.println(myClassName+":activateWithOperationContext():  no active OperationContext object is available.");
+            log.trace(logCorrelationIDString+":activateWithOperationContext():  *** WARNING ***  No active OperationContext object is available.");
             return;
         }
 
@@ -4381,8 +4013,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         if (configCtx == null)
         {
             // won't be able to finish
-            log.warn(myClassName+":activateWithOperationContext():  *** WARNING ***  No active ConfigurationContext object is available.");
-            //System.out.println(myClassName+":activateWithOperationContext():  no active ConfigurationContext object is available.");
+            log.trace(logCorrelationIDString+":activateWithOperationContext():  *** WARNING ***  No active ConfigurationContext object is available.");
             return;
         }
 
@@ -4446,12 +4077,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         String tmpID = getMessageID();
 
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":activateWithOperationContext():   message ID ["+tmpID+"]");
-        }
-        //System.out.println(myClassName+":activateWithOperationContext():   message ID ["+tmpID+"]");
-
+        log.trace(logCorrelationIDString+":activateWithOperationContext():   message ID ["+tmpID+"]");
 
         //---------------------------------------------------------------------
         // transports
@@ -4469,9 +4095,8 @@ public class MessageContext extends AbstractContext implements Externalizable {
             catch (Exception exin)
             {
                 // if a fault is thrown, log it and continue
-                log.info(myClassName+"activateWithOperationContext():  exception caught when getting the TransportInDescription ["+qin.toString()+"]  from the AxisConfiguration ["+exin.getClass().getName()+" : "+exin.getMessage()+"]");
+                log.info(logCorrelationIDString+"activateWithOperationContext():  exception caught when getting the TransportInDescription ["+qin.toString()+"]  from the AxisConfiguration ["+exin.getClass().getName()+" : "+exin.getMessage()+"]");
 
-                //System.out.println(myClassName+"activateWithOperationContext():  exception caught when getting the TransportInDescription ["+qin.toString()+"]  from the AxisConfiguration ["+exin.getClass().getName()+" : "+exin.getMessage()+"]");
             }
 
             if (tmpIn != null)
@@ -4500,9 +4125,8 @@ public class MessageContext extends AbstractContext implements Externalizable {
             catch (Exception exout)
             {
                 // if a fault is thrown, log it and continue
-                log.info(myClassName+"activateWithOperationContext():  exception caught when getting the TransportOutDescription ["+qout.toString()+"]  from the AxisConfiguration ["+exout.getClass().getName()+" : "+exout.getMessage()+"]");
+                log.info(logCorrelationIDString+"activateWithOperationContext():  exception caught when getting the TransportOutDescription ["+qout.toString()+"]  from the AxisConfiguration ["+exout.getClass().getName()+" : "+exout.getMessage()+"]");
 
-                //System.out.println(myClassName+"activateWithOperationContext():  exception caught when getting the TransportOutDescription ["+qout.toString()+"]  from the AxisConfiguration ["+exout.getClass().getName()+" : "+exout.getMessage()+"]");
             }
 
             if (tmpOut != null)
@@ -4525,11 +4149,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //-------------------------------------------------------
         if (metaExecutionChain != null)
         {
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":activateWithOperationContext(): reconciling the execution chain...");
-            }
-            //System.out.println(myClassName+":activateWithOperationContext(): reconciling the execution chain...");
+            log.trace(logCorrelationIDString+":activateWithOperationContext(): reconciling the execution chain...");
 
             currentHandlerIndex = metaHandlerIndex;
             currentPhaseIndex   = metaPhaseIndex;
@@ -4542,11 +4162,8 @@ public class MessageContext extends AbstractContext implements Externalizable {
             }
             catch (Exception ex) 
             {
-                //System.out.println(myClassName+":activateWithOperationContext(): *** WARNING *** deserializing the self managed data encountered Exception ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
-
                 // log the exception
-                log.warn(myClassName+":activateWithOperationContext(): *** WARNING *** deserializing the self managed data encountered Exception ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
-                ex.printStackTrace();
+                log.trace(logCorrelationIDString+":activateWithOperationContext(): *** WARNING *** deserializing the self managed data encountered Exception ["+ex.getClass().getName()+" : "+ex.getMessage()+"]",ex);
             }
         }
 
@@ -4556,11 +4173,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //-------------------------------------------------------
         if (metaInboundExecuted != null)
         {
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":activateWithOperationContext(): reconciling the inbound executed chain...");
-            }
-            //System.out.println(myClassName+":activateWithOperationContext(): reconciling the inbound executed chain...");
+            log.trace(logCorrelationIDString+":activateWithOperationContext(): reconciling the inbound executed chain...");
 
             if (inboundReset == false)
             {
@@ -4576,11 +4189,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         if (metaOutboundExecuted != null)
         {
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":activateWithOperationContext(): reconciling the outbound executed chain...");
-            }
-            //System.out.println(myClassName+":activateWithOperationContext(): reconciling the outbound executed chain...");
+            log.trace(logCorrelationIDString+":activateWithOperationContext(): reconciling the outbound executed chain...");
 
             if (outboundReset == false)
             {
@@ -4599,12 +4208,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         //-------------------------------------------------------
         needsToBeReconciled = false;
 
-
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":activateWithOperationContext():  END");
-        }
-        //System.out.println(myClassName+":activateWithOperationContext():  END");
+        log.trace(logCorrelationIDString+":activateWithOperationContext():  END");
     }
 
 
@@ -4770,11 +4374,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 // so add it to the parent
                 mdPhase.addToList(mdEntry);
 
-                if (log.isTraceEnabled())
-                {
-                    log.trace(myClassName+":setupPhaseList(): list entry class ["+objClass+"] qname ["+qnameAsString+"]");
-                }
-                //System.out.println(myClassName+":setupPhaseList(): list entry class ["+objClass+"] qname ["+qnameAsString+"]");
+                log.trace(logCorrelationIDString+":setupPhaseList(): list entry class ["+objClass+"] qname ["+qnameAsString+"]");
 
             } // end while entries in list
         }
@@ -4803,14 +4403,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
      */
     public MessageContext extractCopyMessageContext()
     {
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":extractCopyMessageContext():  BEGIN  ");
-        }
-        //System.out.println(myClassName+":extractCopyMessageContext():  BEGIN  ");
-
-
         MessageContext copy = new MessageContext();
+
+        log.trace(logCorrelationIDString+":extractCopyMessageContext():  based on "+logCorrelationIDString+"   into copy "+copy.getLogIDString());
 
 
         //---------------------------------------------------------
@@ -4841,11 +4436,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         }
         catch (Exception ex)
         {
-            log.warn(myClassName+":extractCopyMessageContext():  Exception caught when setting the copy with the envelope ["+ex.getClass().getName()+"]["+ex.getMessage()+"]");
-            if (log.isTraceEnabled())
-            {
-                log.trace(myClassName+":extractCopyMessageContext():  Exception caught when setting the copy with the envelope",ex);
-            }
+            log.trace(logCorrelationIDString+":extractCopyMessageContext():  Exception caught when setting the copy with the envelope",ex);
         }
 
         copy.setAttachmentMap(attachments);
@@ -4965,12 +4556,6 @@ public class MessageContext extends AbstractContext implements Externalizable {
         // done
         //---------------------------------------------------------
 
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":extractCopyMessageContext():  END  ");
-        }
-        //System.out.println(myClassName+":extractCopyMessageContext():  END  ");
-
         return copy;
     }
 
@@ -5004,4 +4589,17 @@ public class MessageContext extends AbstractContext implements Externalizable {
         this.options = op;
     }
     
+
+    /**
+     * Trace a warning message, if needed, indicating that this 
+     * object needs to be activated before accessing certain fields.
+     * 
+     * @param methodname The method where the warning occurs
+     */
+    private void checkActivateWarning(String methodname)
+    {
+        if (needsToBeReconciled) {
+           log.warn(logCorrelationIDString+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
+        }
+    }
 }
