@@ -16,8 +16,6 @@
  */
 package org.apache.axis2.jaxws.core.util;
 
-import javax.xml.ws.WebServiceException;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -30,16 +28,13 @@ import org.apache.axis2.util.MessageContextBuilder;
 public class MessageContextUtils {
 
     /**
-     * Given a MessageContext, create a new MessageContext from there with the
-     * necessary information to make sure the new MessageContext is related
-     * to the existing one.  An example of a usage for this would be to create
-     * the MessageContext for a response based on the MessageContext of a 
-     * particular request. 
+     * Given a request MessageContext, create a new MessageContext from there with the necessary 
+     * information to make sure the new MessageContext is related to the existing one.  
      * 
      * @param mc - the MessageContext to use as the source
      * @return
      */
-    public static MessageContext createMessageMessageContext(MessageContext mc) {
+    public static MessageContext createResponseMessageContext(MessageContext mc) {
         try {
             org.apache.axis2.context.MessageContext sourceAxisMC = mc.getAxisMessageContext();
             
@@ -54,6 +49,25 @@ public class MessageContextUtils {
         } catch (AxisFault e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
+    }
+    
+    /**
+     * Given a request MessageContext, create a new MessageContext for a fault response.
+     * 
+     * @param mc
+     * @return
+     */
+    public static MessageContext createFaultMessageContext(MessageContext mc) {
+        try {
+            org.apache.axis2.context.MessageContext faultMC = MessageContextBuilder.createFaultMessageContext(
+                    mc.getAxisMessageContext(), null);
+            MessageContext jaxwsFaultMC = new MessageContext(faultMC);
+            return jaxwsFaultMC;
+        }
+        catch (AxisFault e) {
+            
+        }
+        return null;
     }
     
 }

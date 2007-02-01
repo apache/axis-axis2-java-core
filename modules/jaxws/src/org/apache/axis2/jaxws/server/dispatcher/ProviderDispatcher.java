@@ -204,7 +204,7 @@ public class ProviderDispatcher extends JavaDispatcher{
             }
             
             responseMsgCtx = MessageContextUtils.
-                createMessageMessageContext(mc);
+                createResponseMessageContext(mc);
             
             responseMsgCtx.setMessage(responseMsg);            
         }

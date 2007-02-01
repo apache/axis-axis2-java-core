@@ -44,8 +44,9 @@ import org.apache.commons.logging.LogFactory;
 public class JavaBeanDispatcher extends JavaDispatcher {
 
     private static final Log log = LogFactory.getLog(JavaBeanDispatcher.class);
+    private static final boolean debug = log.isDebugEnabled();
+    
     private EndpointDescription endpointDesc = null;
-    //private MethodMarshaller methodMarshaller = null;
     
     public JavaBeanDispatcher(Class implClass, Object serviceInstance) {
         super(implClass, serviceInstance);
@@ -56,7 +57,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
      * @see org.apache.axis2.jaxws.server.EndpointDispatcher#invoke(org.apache.axis2.jaxws.core.MessageContext)
      */
     public MessageContext invoke(MessageContext mc) throws Exception {
-        if (log.isDebugEnabled()) {
+        if (debug) {
             log.debug("Preparing to invoke service endpoint implementation " +
                     "class: " + serviceImplClass.getName());
         }
@@ -72,18 +73,20 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         //the parameter data to invoke it with, so we use the instance and 
         //do the invoke.
         //Passing method input params to grab holder values, if any.
+        boolean faultThrown = false;
+        Throwable fault = null;
         Object response = null;
         try {
         	response = target.invoke(serviceInstance, methodInputParams);
         } catch (Exception e) {
-        	response = e;
-            if (log.isDebugEnabled()) {
+        	faultThrown = true;
+            fault = e;
+            if (debug) {
                 log.debug("Exception invoking a method of " + 
                         serviceImplClass.toString() + " of instance " +
                         serviceInstance.toString());
-                        
+                log.debug("Exception type thrown: " + e.getClass().getName());
                 log.debug("Method = " + target.toGenericString());
-              
                 for (int i=0; i<methodInputParams.length; i++) {
                     String value = (methodInputParams[i] == null) ? "null" :
                         methodInputParams[i].getClass().toString();
@@ -93,13 +96,13 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         }
         
         Message message = null;
-        // If the operation is one-way, then we can just return null because
-        // we cannot create a MessageContext for one-way responses.
         if(operationDesc.isOneWay()){
-        	return null;
+            // If the operation is one-way, then we can just return null because
+            // we cannot create a MessageContext for one-way responses.
+            return null;
         }
-        else if (response instanceof Throwable) {
-        	message = methodMarshaller.marshalFaultResponse((Throwable)response, mc.getOperationDescription(), 
+        else if (faultThrown) {
+        	message = methodMarshaller.marshalFaultResponse(fault, mc.getOperationDescription(), 
                         requestProtocol); // Send the response using the same protocol as the request
         }
         else if(target.getReturnType().getName().equals("void")){
@@ -111,8 +114,15 @@ public class JavaBeanDispatcher extends JavaDispatcher {
                     requestProtocol); // Send the response using the same protocol as the request
         }
         
-        MessageContext responseMsgCtx = MessageContextUtils.createMessageMessageContext(mc);
-        responseMsgCtx.setMessage(message);
+        MessageContext responseMsgCtx = null;
+        if (faultThrown) {
+            responseMsgCtx = MessageContextUtils.createFaultMessageContext(mc);
+            responseMsgCtx.setMessage(message);
+        }
+        else {
+            responseMsgCtx = MessageContextUtils.createResponseMessageContext(mc);
+            responseMsgCtx.setMessage(message);            
+        }
         
         //Enable MTOM if necessary
         EndpointInterfaceDescription epInterfaceDesc = operationDesc.getEndpointInterfaceDescription();
