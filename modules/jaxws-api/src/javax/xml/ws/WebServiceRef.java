@@ -25,13 +25,13 @@ import java.lang.annotation.Target;
 
 public @interface WebServiceRef {
 
-    public String name();
+    public String name() default "";
 
-    public Class type();
+    public Class type() default Object.class;
 
-    public String mappedName();
+    public String mappedName() default "";
 
-    public Class value();
+    public Class value() default Object.class;
 
-    public String wsdlLocation();
+    public String wsdlLocation() default "";
 }

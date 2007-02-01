@@ -25,9 +25,9 @@ import java.lang.annotation.Target;
 
 public @interface WebServiceClient {
 
-    public String name();
+    public String name() default "";
 
-    public String targetNamespace();
+    public String targetNamespace() default "";
 
-    public String wsdlLocation();
+    public String wsdlLocation() default "";
 }
