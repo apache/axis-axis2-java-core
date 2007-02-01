@@ -332,6 +332,22 @@
       <name>Apache ws.zones - 2</name>
       <url>http://ws.zones.apache.org/repository2/</url>
     </repository>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+        <checksumPolicy>warn</checksumPolicy>
+      </snapshots>
+      <id>maven2</id>
+      <name>Maven2 repo</name>
+      <url>http://repo1.maven.org/maven2/</url>
+    </repository>
+    
   </repositories>
 
     <pluginRepositories>
