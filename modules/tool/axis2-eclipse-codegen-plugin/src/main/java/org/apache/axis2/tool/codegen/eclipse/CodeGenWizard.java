@@ -16,8 +16,17 @@
 
 package org.apache.axis2.tool.codegen.eclipse;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.tool.core.JarFileWriter;
 import org.apache.axis2.tool.codegen.WSDL2JavaGenerator;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.ui.AbstractWizardPage;
@@ -30,14 +39,13 @@ import org.apache.axis2.tool.codegen.eclipse.ui.ToolSelectionPage;
 import org.apache.axis2.tool.codegen.eclipse.ui.WSDLFileSelectionPage;
 import org.apache.axis2.tool.codegen.eclipse.util.SettingsConstants;
 import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
+import org.apache.axis2.tool.core.JarFileWriter;
 import org.apache.axis2.tool.core.SrcCompiler;
+import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
-import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -49,15 +57,6 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The main wizard for the codegen wizard

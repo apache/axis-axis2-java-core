@@ -17,6 +17,9 @@ package org.apache.axis2.tool.codegen.eclipse.ui;
 
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.util.ClassFileReader;
 import org.eclipse.swt.SWT;
@@ -25,9 +28,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Device;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GCData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -37,9 +37,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
-
-import java.util.ArrayList;
-import java.util.Iterator;
 
 public class JavaSourceSelectionPage extends AbstractWizardPage{
 

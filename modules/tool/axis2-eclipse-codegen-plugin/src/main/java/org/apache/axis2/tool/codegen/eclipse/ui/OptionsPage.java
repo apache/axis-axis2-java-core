@@ -23,12 +23,10 @@ import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
 import org.apache.axis2.tool.codegen.eclipse.util.WSDLPropertyReader;
 import org.apache.axis2.util.URLProcessor;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -38,10 +36,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -132,7 +128,6 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 	private java.util.List serviceQNameList = null;
 	
 	private final int EDITABLECOLUMN = 1;
-	
 	private String defaultPackageName = null;
 	
 	private Combo codegenOptionSelectionComboBox;
@@ -784,7 +779,7 @@ public class OptionsPage extends AbstractWizardPage implements UIConstants {
 				portNameCombo.select(0);
 			} else {
 				updateStatus(CodegenWizardPlugin
-						.getResourceString("page2.noports.message"));// TODO
+						.getResourceString("page2.noports.message"));
 			}
 		}
 	}

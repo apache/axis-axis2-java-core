@@ -14,17 +14,11 @@ package org.apache.axis2.tool.core;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import java.io.File;
+
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.Path;
-import org.apache.tools.ant.types.Reference;
-import org.apache.tools.ant.Project;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.FilenameFilter;
-import java.io.FileFilter;
-import java.net.URL;
-import java.util.Properties;
 
 /**
  * This is the custom class for compiling the source 

@@ -15,7 +15,6 @@
  */
 package org.apache.axis2.tool.codegen.eclipse.ui;
 
-import org.apache.axis2.tool.codegen.eclipse.CodeGenWizard;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
 import org.apache.axis2.tool.codegen.eclipse.util.NamespaceFinder;
 import org.eclipse.swt.SWT;
