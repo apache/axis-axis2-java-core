@@ -39,7 +39,7 @@ public class ProxyTests extends TestCase {
     private String axisEndpoint = "http://localhost:8080/axis2/services/ProxyDocLitWrappedService";
     private QName portName = new QName("http://doclitwrapped.proxy.test.org",
             "ProxyDocLitWrappedPort");
-    private String wsdlLocation = "test/org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/ProxyDocLitWrapped.wsdl";
+    private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test/org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/ProxyDocLitWrapped.wsdl";
     private boolean runningOnAxis = true;
     
     public void testMultipleServiceCalls(){

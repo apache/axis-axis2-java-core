@@ -42,7 +42,7 @@ public class SOAPMessageDispatch extends TestCase {
 	
 	public void testSOAPMessageSyncMessageMode() throws Exception {
 		
-        String basedir = new File(".").getAbsolutePath();
+        String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
         String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
         
 		System.out.println("---------------------------------------");
@@ -68,7 +68,7 @@ public class SOAPMessageDispatch extends TestCase {
 	
 	public void testSOAPMessageAsyncCallbackMessageMode() throws Exception {
 		
-        String basedir = new File(".").getAbsolutePath();
+        String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
         String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
         
 		System.out.println("---------------------------------------");
@@ -102,7 +102,7 @@ public class SOAPMessageDispatch extends TestCase {
     
     public void testSOAPMessageAsyncPollingMessageMode() throws Exception {
         
-        String basedir = new File(".").getAbsolutePath();
+        String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();
         String messageResource = new File(basedir, this.messageResource).getAbsolutePath();
         
         System.out.println("---------------------------------------");

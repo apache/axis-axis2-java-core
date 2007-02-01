@@ -42,7 +42,7 @@ public class GorillaDLWProxyTests extends TestCase {
     private String axisEndpoint = "http://localhost:8080/axis2/services/GorillaService";
     private QName portName = new QName("http://org.apache.axis2.jaxws.proxy.rpclit",
             "GorillaPort");
-    private String wsdlLocation = "test/org/apache/axis2/jaxws/proxy/gorilla_dlw/META-INF/gorilla_dlw.wsdl";
+    private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test/org/apache/axis2/jaxws/proxy/gorilla_dlw/META-INF/gorilla_dlw.wsdl";
     
     /**
      * Utility method to get the proxy

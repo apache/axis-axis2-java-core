@@ -25,7 +25,7 @@ public class ImportTest extends AbstractSchemaCompilerTester{
 
     protected XmlSchemaCollection getSchemaReader() {
         XmlSchemaCollection reader = new XmlSchemaCollection();
-        reader.setBaseUri("test-resources/xsd");
+        reader.setBaseUri(System.getProperty("basedir",".")+"/"+"test-resources/xsd");
         return reader;
     }
 }

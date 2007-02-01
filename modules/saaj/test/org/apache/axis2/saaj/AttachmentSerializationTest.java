@@ -88,7 +88,7 @@ public class AttachmentSerializationTest extends TestCase {
         msg.addAttachmentPart(ap);
 
         // Second attachment
-        String jpgfilename = "test-resources/axis2.jpg";
+        String jpgfilename = System.getProperty("basedir",".")+"/"+"test-resources/axis2.jpg";
         File myfile = new File(jpgfilename);
         FileDataSource fds = new FileDataSource(myfile);
         DataHandler dh = new DataHandler(fds);
@@ -114,7 +114,7 @@ public class AttachmentSerializationTest extends TestCase {
                 byte[] b = new byte[15000];
                 final int lengthRead = fis.read(b);
                 FileOutputStream fos =
-                        new FileOutputStream(new File("target/test-resources/atts-op" + (i++) + ".jpg"));
+                        new FileOutputStream(new File(System.getProperty("basedir",".")+"/"+"target/test-resources/atts-op" + (i++) + ".jpg"));
                 fos.write(b, 0, lengthRead);
                 fos.flush();
                 fos.close();

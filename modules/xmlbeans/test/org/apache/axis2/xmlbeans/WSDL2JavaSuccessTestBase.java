@@ -28,17 +28,19 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.types.Path;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class WSDL2JavaSuccessTestBase extends TestCase{
 
-    public static final String OUTPUT_LOCATION_BASE = "./out_put_classes";
+    public static final String OUTPUT_LOCATION_BASE = System.getProperty("basedir",".")+"/out_put_classes";
     public static final String OUTPUT_LOCATION_PREFIX = "/test";
     protected static int folderCount = 0;
-    public static final String WSDL_BASE_DIR = "test-resources/";
-    public static final String CLASSES_DIR = "/target/classes/";
+    public static final String WSDL_BASE_DIR = System.getProperty("basedir",".")+"/test-resources/";
+    public static final String CLASSES_DIR = System.getProperty("basedir",".")+"/target/classes/";
     private String[] moduleNames={"xml","common","core"};
     private static final String MODULE_PATH_PREFIX = "../modules/";
     private static final String COMPILE_TARGET_NAME = "compile";
@@ -172,6 +174,17 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase{
      * @param outputLocation
      */
     private void compile(String outputLocation){
+        String cp = null;
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(System.getProperty("basedir",".")+"/target/cp.txt"));
+            cp = br.readLine();
+        }catch(Exception e){
+            // Don't care
+        }
+        if(cp == null){
+            cp = "";
+        }
+        
         //using the ant javac task for compilation
         Javac javaCompiler = new Javac();
         Project codeGenProject = new Project();
@@ -200,6 +213,9 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase{
         for (int i = 0; i < moduleNames.length; i++) {
             classPath.add(new Path(codeGenProject,MODULE_PATH_PREFIX +moduleNames[i]+CLASSES_DIR));
         }
+        
+        classPath.add(new Path(codeGenProject, cp));
+        
         javaCompiler.setClasspath(classPath);
 
         //set sourcePath - The generated output directories also become part of the sourcepath

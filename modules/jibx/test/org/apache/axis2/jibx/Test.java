@@ -15,7 +15,9 @@
  */
 package org.apache.axis2.jibx;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -48,14 +50,14 @@ import org.apache.tools.ant.types.Commandline.Argument;
  */
 public class Test extends TestCase
 {
-    private static final String TEST_CLASSES_DIR = "target/test-classes";
-    private static final String OUTPUT_LOCATION_BASE = "target/gen";
+    private static final String TEST_CLASSES_DIR = System.getProperty("basedir",".")+"/target/test-classes";
+    private static final String OUTPUT_LOCATION_BASE = System.getProperty("basedir",".")+"/target/gen";
     private static final String OUTPUT_LOCATION_PREFIX = "/test";
-    private static final String WSDL_BASE_DIR = "test-resources/wsdl/";
-    private static final String BINDING_BASE_DIR = "test-resources/binding/";
-    private static final String REPOSITORY_DIR = "test-resources/repo/";
-    private static final String CLASSES_DIR = "/target/classes/";
-    private static final String[] moduleNames= {"common", "core"};
+    private static final String WSDL_BASE_DIR = System.getProperty("basedir",".")+"/test-resources/wsdl/";
+    private static final String BINDING_BASE_DIR = System.getProperty("basedir",".")+"/test-resources/binding/";
+    private static final String REPOSITORY_DIR = System.getProperty("basedir",".")+"/test-resources/repo/";
+    private static final String CLASSES_DIR = System.getProperty("basedir",".")+"/target/classes/";
+    private static final String[] moduleNames= {"kernel", "core"};
     private static final String MODULE_PATH_PREFIX = "../modules/";
     private static final String COMPILE_TARGET_NAME = "compile";
     private static final String STUB_CLASS =
@@ -177,6 +179,16 @@ public class Test extends TestCase
      * @param outdir
      */
     private void compile(String outdir) throws Exception {
+        String cp = null;
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(System.getProperty("basedir",".")+"/target/cp.txt"));
+            cp = br.readLine();
+        }catch(Exception e){
+            // Don't care
+        }
+        if(cp == null){
+            cp = "";
+        }
         
         //using the ant javac task for compilation
         Javac javaCompiler = new Javac();
@@ -210,6 +222,8 @@ public class Test extends TestCase
             classPath.add(new Path(codeGenProject,
                 MODULE_PATH_PREFIX + moduleNames[i] + CLASSES_DIR));
         }
+        classPath.add(new Path(codeGenProject, cp));
+
         javaCompiler.setClasspath(classPath);
 
         //set sourcePath - The generated output directories also become part of the sourcepath
@@ -236,8 +250,8 @@ public class Test extends TestCase
         compile(outdir);
         
         // finish by testing a roundtrip call to the echo server
-        File classesdir = new File(outdir + "/classes");
-        URLClassLoader loader = new URLClassLoader(new URL[] {classesdir.toURL()});
+        File classesdir = new File(outdir + "/classes/");
+        URLClassLoader loader = new URLClassLoader(new URL[] {classesdir.toURL()}, this.getClass().getClassLoader());
         Class stub = loader.loadClass(STUB_CLASS);
         Object inst = stub.newInstance();
         Person person = new Person(42, "John", "Smith");

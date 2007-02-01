@@ -121,7 +121,7 @@ public class SOAPBodyTest extends TestCase {
             factory.setNamespaceAware(true);
 
             DocumentBuilder builder = factory.newDocumentBuilder();
-            document = builder.parse(new File("test-resources" + File.separator + "soap-body.xml"));
+            document = builder.parse(new File(System.getProperty("basedir",".")+"/"+"test-resources" + File.separator + "soap-body.xml"));
             MessageFactory fact = MessageFactory.newInstance();
             SOAPMessage message = fact.createMessage();
 

@@ -42,7 +42,7 @@ public class ValidateWSDLTests extends TestCase {
      * defined on the PortType
      */
     public void testValidatePortType() {
-        String wsdlRelativeLocation = "test-resources/wsdl/";
+        String wsdlRelativeLocation = System.getProperty("basedir",".")+"/"+"test-resources/wsdl/";
         String wsdlFileName = "ValidateWSDL1.wsdl"; 
         
         String targetNamespace = "http://serverPartial1.checkexception.webfault.annotations/";

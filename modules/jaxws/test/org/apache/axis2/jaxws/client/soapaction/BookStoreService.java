@@ -18,6 +18,7 @@
  */
 package org.apache.axis2.jaxws.client.soapaction;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -31,18 +32,25 @@ public class BookStoreService
     extends Service
 {
 
-    private final static URL BOOKSTORESERVICE_WSDL_LOCATION;
-
+    private static URL BOOKSTORESERVICE_WSDL_LOCATION;
+    private static String wsdlLocation="/target/test-classes/services/BookStoreService/META-INF/SOAPActionTest.wsdl";
     static {
         URL url = null;
         try {
-            url = new URL("file:./target/test-classes/services/BookStoreService/META-INF/SOAPActionTest.wsdl");
+            try{
+                String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
+                wsdlLocation = new File(baseDir + wsdlLocation).getAbsolutePath();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            File file = new File(wsdlLocation);
+            url = file.toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         BOOKSTORESERVICE_WSDL_LOCATION = url;
     }
-
+    
     public BookStoreService(URL wsdlLocation, QName serviceName) {
         super(wsdlLocation, serviceName);
     }
