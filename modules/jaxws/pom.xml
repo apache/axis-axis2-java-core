@@ -155,6 +155,13 @@
 
     	<!-- Run JAXB schema compiler with designated schemas -->
         <echo>Generating JAX-B classes from XSDs</echo>    
+
+        <echo>Generating java from soap 11</echo>
+        <java classname="com.sun.tools.xjc.Driver" fork="true">
+                <classpath refid="maven.runtime.classpath"/>
+                <classpath location="${compiled.classes.dir}"/>
+            <arg line="-d ${schema.generated.src.dir} -quiet  ${schema.source.dir}/soap11.xsd"/>
+        </java>
         
     	<echo>Generating java from echo.xsd</echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
