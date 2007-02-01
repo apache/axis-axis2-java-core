@@ -32,6 +32,12 @@
   <name>Apache Axis 2.0 - Savan</name>
   <description>Publisher/Subscriber implememtation for Axis2</description>
 
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/savan</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/savan</developerConnection>
+    <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/savan</url>
+  </scm>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
