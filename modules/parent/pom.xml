@@ -318,7 +318,38 @@
       <layout>legacy</layout>
     </repository>
   </repositories>
-  
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache-m2</id>
+            <name>Apache M2 Repository</name>
+            <url>http://people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+        <pluginRepository>
+            <id>apache-snapshots</id>
+            <name>Apache Snapshots Repository</name>
+            <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
