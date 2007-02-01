@@ -42,8 +42,6 @@ import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
-import org.apache.axis2.jaxws.message.XMLFaultCode;
-import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
@@ -88,6 +86,7 @@ public class ProviderDispatcher extends JavaDispatcher{
 	public ProviderDispatcher(Class _class, Object serviceInstance) {
 		super(_class, serviceInstance);
 	}
+    
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.server.EndpointDispatcher#execute()
      */
@@ -171,6 +170,8 @@ public class ProviderDispatcher extends JavaDispatcher{
         }
 
         // Invoke the actual Provider.invoke() method
+        boolean faultThrown = false;
+        XMLFault fault = null;
         Object responseParamValue = null;
         try {
             responseParamValue = (Object) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedAction() {
@@ -180,33 +181,45 @@ public class ProviderDispatcher extends JavaDispatcher{
             });
         } catch (Exception e) {
             Throwable t = ClassUtils.getRootCause(e);
+            faultThrown = true;
+            fault = MethodMarshallerUtils.createXMLFaultFromSystemException(t);
+            
             if (log.isDebugEnabled()) {
                 log.debug("Marshal Throwable =" + e.getClass().getName());
                 log.debug("  rootCause =" + t.getClass().getName());
                 log.debug("  exception=" + t.toString());
             }
-            responseParamValue =MethodMarshallerUtils.createXMLFaultFromSystemException(t);
         }
 
-        // If we have a one-way operation, then we cannot create a MessageContext 
-        // for the response.  
+        // Create the response MessageContext
         MessageContext responseMsgCtx = null;
         if (!isOneWay(mc.getAxisMessageContext())) {
-            Message responseMsg = createMessageFromValue(responseParamValue);
-            
-            // Enable MTOM if indicated by the binding
-            String bindingType = endpointDesc.getBindingType();
-            if (bindingType != null) {
-                if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
-                    bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
-                    responseMsg.setMTOMEnabled(true);
-                }
+            if (faultThrown) {
+                // If a fault was thrown, we need to create a slightly different
+                // MessageContext, than in the response path.
+                Message responseMsg = createMessageFromValue(fault);
+                responseMsgCtx = MessageContextUtils.createFaultMessageContext(mc);
+                responseMsgCtx.setMessage(responseMsg);
             }
-            
-            responseMsgCtx = MessageContextUtils.
-                createResponseMessageContext(mc);
-            
-            responseMsgCtx.setMessage(responseMsg);            
+            else {
+                Message responseMsg = createMessageFromValue(responseParamValue);
+                
+                // Enable MTOM if indicated by the binding
+                String bindingType = endpointDesc.getBindingType();
+                if (bindingType != null) {
+                    if (bindingType.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
+                        bindingType.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING)) {
+                        responseMsg.setMTOMEnabled(true);
+                    }
+                }
+                
+                responseMsgCtx = MessageContextUtils.createResponseMessageContext(mc);
+                responseMsgCtx.setMessage(responseMsg);                
+            }
+        }
+        else {
+            // If we have a one-way operation, then we cannot create a MessageContext for the response.
+            return null;
         }
                 
         return responseMsgCtx;        
@@ -339,12 +352,14 @@ public class ProviderDispatcher extends JavaDispatcher{
     		try{
     			paramType = (ParameterizedType)giType;
     		}catch(ClassCastException e){
+                //TODO NLS
     			throw new Exception("Provider based SEI Class has to implement javax.xml.ws.Provider as javax.xml.ws.Provider<String>, javax.xml.ws.Provider<SOAPMessage>, javax.xml.ws.Provider<Source> or javax.xml.ws.Provider<JAXBContext>");
     		}
     		Class interfaceName = (Class)paramType.getRawType();
     		
     		if(interfaceName == javax.xml.ws.Provider.class){
     			if(paramType.getActualTypeArguments().length > 1){
+                    //TODO NLS
     				throw new Exception("Provider cannot have more than one Generic Types defined as Per JAX-WS Specification");
     			}
     			providerType = (Class)paramType.getActualTypeArguments()[0];
