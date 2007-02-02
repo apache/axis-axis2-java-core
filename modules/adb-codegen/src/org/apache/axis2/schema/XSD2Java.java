@@ -72,6 +72,7 @@ public class XSD2Java {
 
             CompilerOptions compilerOptions = new CompilerOptions();
             compilerOptions.setOutputLocation(outputFolder);
+            compilerOptions.setGenerateAll(true);
 
             //todo - this should come from the users preferences
              compilerOptions.setWrapClasses(false);

@@ -230,7 +230,9 @@ public class BeanWriterMetaInfoHolder {
      * @param restrictionBaseType
      */
     public boolean isRestrictionBaseType(QName restrictionBaseType) {
-        return (this.restrictionBaseType == restrictionBaseType);
+        QName baseTypeQName = (QName) this.elementToSchemaQNameMap.get(restrictionBaseType);
+        return (this.restrictionBaseType != null) && (baseTypeQName != null) &&
+                this.restrictionBaseType.equals(baseTypeQName);
     }
 
     /**

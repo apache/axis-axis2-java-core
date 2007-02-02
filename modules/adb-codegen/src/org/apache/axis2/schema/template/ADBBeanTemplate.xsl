@@ -232,95 +232,95 @@
                         <xsl:if test="enumFacet">
                             private static java.util.HashMap _table_ = new java.util.HashMap();
 
-                        // Constructor
-                        <xsl:if test="not(@inherited)">
-                            protected <xsl:value-of select="$name"/>(<xsl:value-of select="$propertyType"/> value, boolean isRegisterValue) {
-                                <xsl:value-of select="$varName" /> = value;
-                                if (isRegisterValue){
-                                    <xsl:choose>
-                                       <xsl:when test="@primitive">
-                                         _table_.put(<xsl:value-of select="$varName" /> + "", this);
-                                       </xsl:when>
-                                       <xsl:otherwise>
-                                           _table_.put(<xsl:value-of select="$varName" />, this);
-                                       </xsl:otherwise>
-                                    </xsl:choose>
-                                }
+                            // Constructor
+                            <xsl:if test="not(@inherited)">
+                                protected <xsl:value-of select="$name"/>(<xsl:value-of select="$propertyType"/> value, boolean isRegisterValue) {
+                                    <xsl:value-of select="$varName" /> = value;
+                                    if (isRegisterValue){
+                                        <xsl:choose>
+                                           <xsl:when test="@primitive">
+                                             _table_.put(<xsl:value-of select="$varName" /> + "", this);
+                                           </xsl:when>
+                                           <xsl:otherwise>
+                                               _table_.put(<xsl:value-of select="$varName" />, this);
+                                           </xsl:otherwise>
+                                        </xsl:choose>
+                                    }
 
-                            }
-                        </xsl:if>
-                        <xsl:if test="@inherited">
-                            protected <xsl:value-of select="$name"/>(<xsl:value-of select="$propertyType"/> value, boolean isRegisterValue) {
-                                super(value,false);
-                                if (isRegisterValue){
-                                    <xsl:choose>
-                                       <xsl:when test="@primitive">
-                                         _table_.put(<xsl:value-of select="$varName" /> + "", this);
-                                       </xsl:when>
-                                       <xsl:otherwise>
-                                           _table_.put(<xsl:value-of select="$varName" />, this);
-                                       </xsl:otherwise>
-                                    </xsl:choose>
                                 }
-                            }
-                        </xsl:if>
-                        <xsl:if test="not(@inherited)">
+                            </xsl:if>
+                            <xsl:if test="@inherited">
+                                protected <xsl:value-of select="$name"/>(<xsl:value-of select="$propertyType"/> value, boolean isRegisterValue) {
+                                    super(value,false);
+                                    if (isRegisterValue){
+                                        <xsl:choose>
+                                           <xsl:when test="@primitive">
+                                             _table_.put(<xsl:value-of select="$varName" /> + "", this);
+                                           </xsl:when>
+                                           <xsl:otherwise>
+                                               _table_.put(<xsl:value-of select="$varName" />, this);
+                                           </xsl:otherwise>
+                                        </xsl:choose>
+                                    }
+                                }
+                            </xsl:if>
+                            <xsl:if test="not(@inherited)">
+                                <xsl:for-each select="enumFacet">
+                                    public static final <xsl:value-of select="$propertyType"/> _<xsl:value-of select="@id"/> =
+                                        org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>("<xsl:value-of select="@value"/>");
+                                </xsl:for-each>
+                            </xsl:if>
+
                             <xsl:for-each select="enumFacet">
-                                public static final <xsl:value-of select="$propertyType"/> _<xsl:value-of select="@id"/> =
-                                    org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>("<xsl:value-of select="@value"/>");
+                                public static final <xsl:value-of select="$name"/><xsl:text> </xsl:text><xsl:value-of select="@id"/> =
+                                    new <xsl:value-of select="$name"/>(_<xsl:value-of select="@id"/>,true);
                             </xsl:for-each>
-                        </xsl:if>
 
-                        <xsl:for-each select="enumFacet">
-                            public static final <xsl:value-of select="$name"/><xsl:text> </xsl:text><xsl:value-of select="@id"/> =
-                                new <xsl:value-of select="$name"/>(_<xsl:value-of select="@id"/>,true);
-                        </xsl:for-each>
+                                public <xsl:value-of select="$propertyType"/> getValue() { return <xsl:value-of select="$varName" />;}
+                                public static <xsl:value-of select="$name"/> fromValue(<xsl:value-of select="$propertyType"/> value)
+                                      throws java.lang.IllegalArgumentException {
+                                    <xsl:value-of select="$name"/> enumeration = (<xsl:value-of select="$name"/>)
+                                <xsl:choose>
+                                           <xsl:when test="@primitive">
+                                             _table_.get(value + "");
+                                           </xsl:when>
+                                           <xsl:otherwise>
+                                               _table_.get(value);
+                                           </xsl:otherwise>
+                                       </xsl:choose>
 
-                            public <xsl:value-of select="$propertyType"/> getValue() { return <xsl:value-of select="$varName" />;}
-                            public static <xsl:value-of select="$name"/> fromValue(<xsl:value-of select="$propertyType"/> value)
-                                  throws java.lang.IllegalArgumentException {
-                                <xsl:value-of select="$name"/> enumeration = (<xsl:value-of select="$name"/>)
-                            <xsl:choose>
-                                       <xsl:when test="@primitive">
-                                         _table_.get(value + "");
-                                       </xsl:when>
-                                       <xsl:otherwise>
-                                           _table_.get(value);
-                                       </xsl:otherwise>
-                                   </xsl:choose>
-
-                                if (enumeration==null) throw new java.lang.IllegalArgumentException();
-                                return enumeration;
-                            }
-                            public static <xsl:value-of select="$name"/> fromString(java.lang.String value)
-                                  throws java.lang.IllegalArgumentException {
-                                try {
-                                   <xsl:choose>
-                                       <xsl:when test="@primitive">
-                                         return fromValue(org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(value));
-                                       </xsl:when>
-                                       <xsl:otherwise>
-                                           return fromValue(new <xsl:value-of select="$propertyType"/>(value));
-                                       </xsl:otherwise>
-                                   </xsl:choose>
-
-                                } catch (java.lang.Exception e) {
-                                    throw new java.lang.IllegalArgumentException();
+                                    if (enumeration==null) throw new java.lang.IllegalArgumentException();
+                                    return enumeration;
                                 }
-                            }
-                            public boolean equals(java.lang.Object obj) {return (obj == this);}
-                            public int hashCode() { return toString().hashCode();}
-                            public java.lang.String toString() {
-                            <xsl:choose>
-                                <xsl:when test="@primitive">
-                                    return <xsl:value-of select="$varName"/> + "";
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    return <xsl:value-of select="$varName"/>.toString();
-                                </xsl:otherwise>
-                            </xsl:choose>
+                                public static <xsl:value-of select="$name"/> fromString(java.lang.String value)
+                                      throws java.lang.IllegalArgumentException {
+                                    try {
+                                       <xsl:choose>
+                                           <xsl:when test="@primitive">
+                                             return fromValue(org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(value));
+                                           </xsl:when>
+                                           <xsl:otherwise>
+                                               return fromValue(new <xsl:value-of select="$propertyType"/>(value));
+                                           </xsl:otherwise>
+                                       </xsl:choose>
 
-                            }
+                                    } catch (java.lang.Exception e) {
+                                        throw new java.lang.IllegalArgumentException();
+                                    }
+                                }
+                                public boolean equals(java.lang.Object obj) {return (obj == this);}
+                                public int hashCode() { return toString().hashCode();}
+                                public java.lang.String toString() {
+                                <xsl:choose>
+                                    <xsl:when test="@primitive">
+                                        return <xsl:value-of select="$varName"/> + "";
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        return <xsl:value-of select="$varName"/>.toString();
+                                    </xsl:otherwise>
+                                </xsl:choose>
+
+                                }
 
                         </xsl:if>
                         <xsl:if test="not(enumFacet)">
@@ -483,55 +483,77 @@
                             </xsl:if>
 
                                <xsl:choose>
-                            <xsl:when test="(@restrictionBaseType)">
-                               <xsl:choose>
-                                <xsl:when test="(@patternFacet)">
-                                    if ( param.matches( "<xsl:value-of select="$patternFacet"/>" )) {
-                                        this.<xsl:value-of select="$varName"/>=param;
-                                    }
-                                    else {
-                                        throw new java.lang.RuntimeException();
-                                    }
-                                </xsl:when>
-                                <xsl:when test="(@lenFacet)">
-                                    if ( param.length() == <xsl:value-of select="@lenFacet"/> ) {
-                                        this.<xsl:value-of select="$varName"/>=param;
-                                    }
-                                    else {
-                                        throw new java.lang.RuntimeException();
-                                    }
-                                </xsl:when>
-                                <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
-                                    if ( <xsl:if test="(@minLenFacet)"> <xsl:value-of select="$minLenFacet"/> &lt; </xsl:if> param.length() <xsl:if test="(@maxLenFacet)"> &gt; <xsl:value-of select="$maxLenFacet"/> = </xsl:if> ) {
-                                        this.<xsl:value-of select="$varName"/>=param;
-                                    }
-                                    else {
-                                        throw new java.lang.RuntimeException();
-                                    }
-                                </xsl:when>
-                                <xsl:when test="(@maxExFacet) or (@minExFacet) or (@maxInFacet) or (@minInFacet)">
-                                    if ( <xsl:if test="(@minExFacet)"> <xsl:value-of select="$minExFacet"/> &lt; </xsl:if> <xsl:if test="(@minInFacet)"> <xsl:value-of select="$minInFacet"/> &lt;= </xsl:if> param <xsl:if test="(@maxExFacet)"> &gt; <xsl:value-of select="$maxExFacet"/> </xsl:if> <xsl:if test="(@maxInFacet)"> &gt;= <xsl:value-of select="$maxInFacet"/> </xsl:if> ) {
+                                    <xsl:when test="(@restrictionBaseType)">
+                                       <xsl:choose>
+                                        <xsl:when test="(@patternFacet)">
+                                            if (param.matches("<xsl:value-of select="$patternFacet"/>")) {
+                                                this.<xsl:value-of select="$varName"/>=param;
+                                            }
+                                            else {
+                                                throw new java.lang.RuntimeException();
+                                            }
+                                        </xsl:when>
+                                        <xsl:when test="(@lenFacet)">
+                                            if ( param.length() == <xsl:value-of select="@lenFacet"/> ) {
+                                                this.<xsl:value-of select="$varName"/>=param;
+                                            }
+                                            else {
+                                                throw new java.lang.RuntimeException();
+                                            }
+                                        </xsl:when>
+                                        <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
+                                            if ( <xsl:if test="(@minLenFacet)"> <xsl:value-of select="$minLenFacet"/> &lt; </xsl:if> param.length() <xsl:if test="(@maxLenFacet)"> &gt; <xsl:value-of select="$maxLenFacet"/> = </xsl:if> ) {
+                                                this.<xsl:value-of select="$varName"/>=param;
+                                            }
+                                            else {
+                                                throw new java.lang.RuntimeException();
+                                            }
+                                        </xsl:when>
+                                        <xsl:when test="(@maxExFacet) or (@minExFacet) or (@maxInFacet) or (@minInFacet)">
+                                            if ( <xsl:if test="(@minExFacet)"> <xsl:value-of select="$minExFacet"/> &lt; </xsl:if> <xsl:if test="(@minInFacet)"> <xsl:value-of select="$minInFacet"/> &lt;= </xsl:if> param <xsl:if test="(@maxExFacet)"> &gt; <xsl:value-of select="$maxExFacet"/> </xsl:if> <xsl:if test="(@maxInFacet)"> &gt;= <xsl:value-of select="$maxInFacet"/> </xsl:if> ) {
 
-                                        this.<xsl:value-of select="$varName"/>=param;
-                                    }
-                                    else {
-                                        throw new java.lang.RuntimeException();
-                                    }
-                                </xsl:when>
-                                <xsl:otherwise>
-                                     this.<xsl:value-of select="$varName"/>=param;
-                                </xsl:otherwise>
-                            </xsl:choose>
-                            </xsl:when>
+                                                this.<xsl:value-of select="$varName"/>=param;
+                                            }
+                                            else {
+                                                throw new java.lang.RuntimeException();
+                                            }
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                             this.<xsl:value-of select="$varName"/>=param;
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                    </xsl:when>
 
-                            <xsl:otherwise>
-                                    this.<xsl:value-of select="$varName"/>=param;
-                            </xsl:otherwise>
-                            </xsl:choose>
+                                    <xsl:otherwise>
+                                            this.<xsl:value-of select="$varName"/>=param;
+                                    </xsl:otherwise>
+                                </xsl:choose>
 
                                }
                             </xsl:otherwise>
                         </xsl:choose>
+                        </xsl:if>
+
+                         <!-- generate from string and to string methods for
+                          simple types to be ued in attribute handling -->
+                        <xsl:if test="$simple and not(@attribute) and not(enumFacet)">
+                            public static <xsl:value-of select="$name"/> fromString(String value){
+                                <xsl:value-of select="$name"/> returnValue = new  <xsl:value-of select="$name"/>();
+                                returnValue.set<xsl:value-of select="$javaName"/>(
+                                org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(value));
+                                return returnValue;
+                            }
+
+                            public String toString(){
+                                <xsl:choose>
+                                    <xsl:when test="@primitive">
+                                        return <xsl:value-of select="$varName"/> + "";
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        return <xsl:value-of select="$varName"/>.toString();
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            }
                         </xsl:if>
 
                       </xsl:otherwise>
@@ -656,20 +678,40 @@
                         <!-- there can never be attribute arrays in the normal case-->
                         <xsl:when test="@optional">
                              // optional attribute <xsl:value-of select="$propertyName"/>
-                             try {
-                                writeAttribute("<xsl:value-of select="$namespace"/>",
+                            try {
+                                <xsl:choose>
+                                    <xsl:when test="@ours">
+                                        <!--  this can only be a simple type -->
+                                        writeAttribute("<xsl:value-of select="$namespace"/>",
+                                               "<xsl:value-of select="$propertyName"/>",
+                                               <xsl:value-of select="$varName"/>.toString(), xmlWriter);
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                         writeAttribute("<xsl:value-of select="$namespace"/>",
                                                "<xsl:value-of select="$propertyName"/>",
                                                org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);
+                                    </xsl:otherwise>
+                                </xsl:choose>
+
                             } catch (NullPointerException e) {
                                 // If <xsl:value-of select="$varName"/> was null
                                 // it can not be serialized.
                             }
                         </xsl:when>
                         <xsl:otherwise>
-                             writeAttribute("<xsl:value-of select="$namespace"/>",
-                                                     "<xsl:value-of select="$propertyName"/>",
-                                                      org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>),
-                            xmlWriter);
+                             <xsl:choose>
+                                <xsl:when test="@ours">
+                                    <!--  this can only be a simple type -->
+                                    writeAttribute("<xsl:value-of select="$namespace"/>",
+                                           "<xsl:value-of select="$propertyName"/>",
+                                           <xsl:value-of select="$varName"/>.toString(), xmlWriter);
+                                </xsl:when>
+                                <xsl:otherwise>
+                                     writeAttribute("<xsl:value-of select="$namespace"/>",
+                                           "<xsl:value-of select="$propertyName"/>",
+                                           org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:for-each>
@@ -1627,8 +1669,14 @@
                         <xsl:otherwise>
                             attribList.add(
                             new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"));
-                            attribList.add(
-                            org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                            <xsl:choose>
+                                <xsl:when test="@ours">
+                                      attribList.add(<xsl:value-of select="$varName"/>.toString());
+                                </xsl:when>
+                                <xsl:otherwise>
+                                      attribList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:for-each>
@@ -1807,8 +1855,16 @@
                                           org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(<xsl:value-of select="$attribName"/>));
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        object.set<xsl:value-of select="$javaName"/>(
-                                              org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(<xsl:value-of select="$attribName"/>));
+                                        <xsl:choose>
+                                            <xsl:when test="@ours">
+                                                 object.set<xsl:value-of select="$javaName"/>(
+                                                  <xsl:value-of select="@type"/>.fromString(<xsl:value-of select="$attribName"/>));
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                 object.set<xsl:value-of select="$javaName"/>(
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(<xsl:value-of select="$attribName"/>));
+                                            </xsl:otherwise>
+                                        </xsl:choose>
                                     </xsl:otherwise>
                                 </xsl:choose>
                              </xsl:otherwise>
