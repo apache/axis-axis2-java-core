@@ -262,6 +262,7 @@ public class XMLFaultUtils {
             List<QName> list = new ArrayList<QName>();
             while (it.hasNext()) {
                 QName qName = (QName) it.next();
+                list.add(qName);
             }
             if (list.size() > 0) {
                 QName[] subCodes = new QName[list.size()];
