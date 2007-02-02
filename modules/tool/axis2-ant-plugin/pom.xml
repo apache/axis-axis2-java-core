@@ -67,7 +67,7 @@
             </snapshots>
             <id>ws-zones</id>
             <name>ws.zones maven repository</name>
-            <url>http://ws.zones.apache.org/repository/</url>
+            <url>http://ws.zones.apache.org/repository2/</url>
             <layout>legacy</layout>
         </repository>
     </repositories>

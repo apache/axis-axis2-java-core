@@ -303,22 +303,6 @@
     </repository>
     <repository>
       <releases>
-        <enabled>false</enabled>
-        <updatePolicy>always</updatePolicy>
-        <checksumPolicy>warn</checksumPolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-        <checksumPolicy>warn</checksumPolicy>
-      </snapshots>
-      <id>apache-ws-snapshots</id>
-      <name>Apache ws.zones</name>
-      <url>http://ws.zones.apache.org/repository/</url>
-      <layout>legacy</layout>
-    </repository>
-    <repository>
-      <releases>
         <enabled>true</enabled>
         <updatePolicy>always</updatePolicy>
         <checksumPolicy>warn</checksumPolicy>
