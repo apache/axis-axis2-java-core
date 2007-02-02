@@ -28,6 +28,7 @@ import javax.xml.ws.WebServiceException;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.OMElementImpl;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -280,6 +281,8 @@ class XMLSpineImpl implements XMLSpine {
             log.debug("getBodyBlock PERFORMANT: Get the block using the block factory, " + blockFactory);
         }
         
+        // TODO Need to upgrade the code to get Blocks that represent text and elements.
+        
         // Calling getBodyBlock assumes that there is only one or zero body blocks in the message.  Subsequent
         // Blocks are lost.  If the caller needs access to multiple body blocks, then getBodyBlocks(index,...) should be used
         
@@ -335,12 +338,29 @@ class XMLSpineImpl implements XMLSpine {
             it.remove();
         }
         
-        // The block is supposed to represent a single element.  
-        // But if it does not represent an element , the following will fail.
-        QName qName = block.getQName();
+        if (block.isElementData()) {
+            // If the block is element data then  it is safe to create
+            // an OMElement representing the block
+
+            // The block is supposed to represent a single element.  
+            // But if it does not represent an element , the following will fail.
+            QName qName = block.getQName();
         
-        OMElement newOM = _createOMElementFromBlock(qName, block, soapFactory);
-        bElement.addChild(newOM);
+            OMElement newOM = _createOMElementFromBlock(qName, block, soapFactory);
+            bElement.addChild(newOM);
+        } else {
+            // This needs to be fixed, but for now we will require that there must be an element...otherwise no block is added
+            try {
+                QName qName = block.getQName();
+
+                OMElement newOM = _createOMElementFromBlock(qName, block, soapFactory);
+                bElement.addChild(newOM);
+            } catch (Throwable t) {
+                if (log.isDebugEnabled()) {
+                    log.debug("An attempt was made to pass a Source or String that does not have an xml element. Processing continues with an empty payload.");
+                }
+            }
+        }
     }
 
 	public void removeBodyBlock(int index) throws WebServiceException {

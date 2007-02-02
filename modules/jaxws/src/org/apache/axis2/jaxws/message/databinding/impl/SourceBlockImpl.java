@@ -215,6 +215,11 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("SourceMissingSupport", busObject.getClass().getName()));
 		}
 	}
+
+
+    public boolean isElementData() {
+        return false;  // The source could be a text or element etc.
+    }
 	
 	
 }

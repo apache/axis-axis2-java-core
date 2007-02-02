@@ -96,4 +96,8 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
 	private static QName getQName(SOAPEnvelope env) {
 		return new QName(env.getNamespaceURI(), env.getLocalName(),env.getPrefix());
 	}
+
+    public boolean isElementData() {
+        return true;
+    }
 }

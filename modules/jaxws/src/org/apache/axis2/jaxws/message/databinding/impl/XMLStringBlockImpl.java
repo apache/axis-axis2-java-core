@@ -80,4 +80,9 @@ public class XMLStringBlockImpl extends BlockImpl implements XMLStringBlock {
 		XMLStreamReader reader = _getReaderFromBO(busObject, busContext);
 		_outputFromReader(reader, writer);
 	}
+
+
+    public boolean isElementData() {
+        return false;  // The text could be element or text or something else
+    }
 }

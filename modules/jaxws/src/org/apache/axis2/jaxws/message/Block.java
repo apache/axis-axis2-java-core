@@ -141,4 +141,9 @@ public interface Block extends OMDataSource {
      * @param parent
      */
     public void setParent(Message parent);
+    
+    /**
+     * @return true if data is always an element; false if possibly mixed content or multiple elements
+     */
+    public boolean isElementData();
 }

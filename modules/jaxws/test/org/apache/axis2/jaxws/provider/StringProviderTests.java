@@ -17,10 +17,12 @@
 package org.apache.axis2.jaxws.provider;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPFault;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.Service;
+import javax.xml.ws.soap.SOAPFaultException;
 
 public class StringProviderTests extends ProviderTestCase {
 
@@ -40,49 +42,128 @@ public class StringProviderTests extends ProviderTestCase {
         super(name);
     }
     
-    public void testProviderString() throws Exception {
-
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
-        
+    private Dispatch<String> getDispatch() {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, null, endpointUrl);
         
         Dispatch<String> dispatch = svc
                 .createDispatch(portName, String.class, Service.Mode.PAYLOAD);
         
-        System.out.println(">> Invoking Dispatch<String> StringProviderService");
-        String retVal = dispatch.invoke(xmlString);
-        System.out.println(">> Response [" + retVal + "]");
-        Exception ex = null;
-        try {
-            String re = dispatch.invoke("<invoke>throwException</invoke>");
-        } catch (Exception e) {
-            ex = e;
-            assertTrue(e instanceof ProtocolException);
-        }
-        assertNotNull(ex);
-    }
-    
-    public void testSyncPayloadModeWithNull() throws Exception {
-        System.out.println("---------------------------------------");
-        System.out.println("test: " + getName());
-        
-        Service svc = Service.create(serviceName);
-        svc.addPort(portName, null, endpointUrl);
-        
-        Dispatch<String> dispatch = svc
-                .createDispatch(portName, String.class, Service.Mode.PAYLOAD);
-        
-        System.out.println(">> Invoking Dispatch<String> StringProviderService");
+        // Force soap action because we are passing junk over the wire
         dispatch.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
         dispatch.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY,"echoString");
-        // Invoke the Dispatch
-        System.out.println(">> Invoking sync Dispatch With Null Object");
-        String response = dispatch.invoke(null);
-
-        assertNotNull("dispatch invoke returned null", response);
-        System.out.println(response);
         
-	}
+        return dispatch;
+        
+    }
+    public void testNormal() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        Dispatch<String> dispatch = getDispatch();
+        
+        String request = "<invoke>hello world</invoke>";
+        String response = dispatch.invoke(request);
+        assertTrue(request.equals(response));
+    }
+    
+    public void testEmptyString() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        Dispatch<String> dispatch = getDispatch();
+        
+        String request = "";
+        String response = dispatch.invoke(request);
+        
+        // The current belief is that this should return a null indicating
+        // the nothing is echo'ed 
+        assertTrue(response == null);
+        
+        //assertTrue(request.equals(response));
+    }
+    
+    public void testNullString() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        Dispatch<String> dispatch = getDispatch();
+        
+        String request = null;
+        String response = dispatch.invoke(request);
+        
+        // The current belief is that this should return a null indicating
+        // the nothing is echo'ed 
+        assertTrue(response == null);
+    }
+    
+    public void testNonNullString() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        Dispatch<String> dispatch = getDispatch();
+        
+        String request = "mixedContent";
+        String response = dispatch.invoke(request);
+        
+        // The current implementation does not send the mixedContent over the wire, so the
+        // expectation is that the echo'd response is null
+        assertTrue(response == null);
+    }
+    
+    public void testCommentString() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        Dispatch<String> dispatch = getDispatch();
+        
+        String request = "<!--comment-->";
+        String response = dispatch.invoke(request);
+        // The current implementation does not send the comment over the wire, so the
+        // expectation is that the echo'd response is null
+        assertTrue(response == null);
+    }
+    
+    public void testTwoElementsString() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        Dispatch<String> dispatch = getDispatch();
+        
+        String request = "<a>hello</a><b>world</b>";
+        String response = dispatch.invoke(request);
+        
+        // The current implementatin only sends the first element
+        // So the echo'd response is just the first one.
+        assertTrue("<a>hello</a>".equals(response));
+    }
+    
+    public void testTwoElementsAndMixedContentString() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        Dispatch<String> dispatch = getDispatch();
+        
+        String request = "mixed1<a>hello</a>mixed2<b>world</b>mixed3";
+        String response = dispatch.invoke(request);
+        // The current implementation only sends the first element.
+        // The mixed content (mixed1) interferes and thus nothing is sent.
+        assertTrue(response == null);
+    }
+    
+    public void testException() throws Exception {
+        System.out.println("---------------------------------------");
+        System.out.println("test: " + getName());
+        
+        Dispatch<String> dispatch = getDispatch();
+        
+        String request = "<invoke>throwWebServiceException</invoke>";
+        try {
+            String response = dispatch.invoke(request);
+            fail("Expected Exception");
+        } catch (SOAPFaultException e) {
+            SOAPFault sf = e.getFault();
+            assertTrue(sf.getFaultString().equals("provider"));
+        }
+    }
 }

@@ -52,4 +52,8 @@ public class OMBlockFactoryImpl extends BlockFactoryImpl implements OMBlockFacto
 		return new OMBlockImpl((OMElement) businessObject, this);
 	}
 
+    public boolean isElement() {
+        return true;
+    }
+
 }

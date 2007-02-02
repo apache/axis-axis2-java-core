@@ -53,4 +53,8 @@ public class XMLStringBlockFactoryImpl extends BlockFactoryImpl implements XMLSt
 		return new XMLStringBlockImpl(omElement, qName, this);
 	}
 
+    public boolean isElement() {
+        return false;
+    }
+
 }

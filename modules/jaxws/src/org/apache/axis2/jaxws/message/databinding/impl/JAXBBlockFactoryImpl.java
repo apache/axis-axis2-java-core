@@ -97,4 +97,8 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
 		}
 	}
 
+    public boolean isElement() {
+       return true;
+    }
+
 }

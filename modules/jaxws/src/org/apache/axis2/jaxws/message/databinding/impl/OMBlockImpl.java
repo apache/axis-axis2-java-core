@@ -62,4 +62,8 @@ public class OMBlockImpl extends BlockImpl implements OMBlock {
 		OMElement om = (OMElement) busObject;
 		om.serialize(writer);
 	}
+
+    public boolean isElementData() {
+        return true;
+    }
 }

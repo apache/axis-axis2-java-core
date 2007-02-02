@@ -42,4 +42,8 @@ public class SOAPEnvelopeBlockFactoryImpl extends BlockFactoryImpl implements
 		return new SOAPEnvelopeBlockImpl((SOAPEnvelope) businessObject, null, qName, this);
 	}
 
+    public boolean isElement() {
+        return true;
+    }
+
 }

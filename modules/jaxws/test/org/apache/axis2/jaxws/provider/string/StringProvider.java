@@ -22,25 +22,14 @@ import javax.xml.ws.WebServiceProvider;
 
 @WebServiceProvider()
 public class StringProvider implements Provider<String> {
-
-    private static String responseGood = "<provider><message>request processed</message></provider>";
-    private static String responseBad  = "<provider><message>ERROR:null request received</message></provider>";
     
-    public String invoke(String obj) {
-        if (obj != null) {
-            
-            // TODO probably not the ideal place for a provider fault scenario test, but it serves its purpose
-            if (obj.equals("<invoke>throwException</invoke>")) {
-                throw new WebServiceException("provider");
-            }
-            
-            String str = (String) obj;
-            System.out.println(">> StringProvider received a new request");
-            System.out.println(">> request [" + str + "]");
-            
-            return responseGood;
+    public String invoke(String text) {
+        System.out.println("StringProvider invoke received the message [" + text + "]");
+        if (text != null && text.contains("throwWebServiceException")) {
+            throw new WebServiceException("provider");
+        } else {
+            // Echo the input
+            return text;
         }
-        System.out.println(">> ERROR:null request received");
-        return responseBad;
     }
 }

@@ -45,6 +45,8 @@ public class SourceMessageProviderTests extends ProviderTestCase {
         super(name);
     }
     
+
+    
     public void testProviderSource(){
         try{
         	String resourceDir = new File(providerResourceDir, xmlDir).getAbsolutePath();

@@ -378,4 +378,8 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
         // </xsd:simpleType>
         return (t.isArray() || List.class.isAssignableFrom(t));
     }
+
+    public boolean isElementData() {
+        return true;
+    }
 }

@@ -55,4 +55,8 @@ public class SourceBlockFactoryImpl extends BlockFactoryImpl implements SourceBl
 		return new SourceBlockImpl(omElement, qName, this);
 	}
 
+    public boolean isElement() {
+        return false;
+    }
+
 }

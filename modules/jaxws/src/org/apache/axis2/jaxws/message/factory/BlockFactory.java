@@ -82,4 +82,11 @@ public interface BlockFactory {
 	 * @throws WebServiceException
 	 */
 	public Block createFrom(Object businessObject, Object context, QName qName) throws WebServiceException;
+
+    /**
+     * @return true if business object must be rendered as an element
+     * example JAXBFactory ...true
+     * example SourceFactory...false
+     */
+    public boolean isElement();
 }
