@@ -65,7 +65,6 @@ public class AxisEngine {
     }
 
     private void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
-        activateMessageContext(msgContext);
 
         if (!msgContext.isHeaderPresent()) {
             return;
@@ -132,7 +131,6 @@ public class AxisEngine {
      */
     public MessageContext createFaultMessageContext(MessageContext processingContext, Throwable e)
             throws AxisFault {
-        activateMessageContext(processingContext);
         return MessageContextBuilder.createFaultMessageContext(processingContext, e);
     }
    
@@ -150,7 +148,6 @@ public class AxisEngine {
         if(log.isTraceEnabled()){
             log.trace(msgContext.getLogIDString()+" receive:"+msgContext.getMessageID());
         }
-        activateMessageContext(msgContext);
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases =
                 confContext.getAxisConfiguration().getGlobalInFlow();
@@ -217,7 +214,6 @@ public class AxisEngine {
      */
     public InvocationResponse invoke(MessageContext msgContext, boolean inbound, boolean resuming) throws AxisFault {
 
-        activateMessageContext(msgContext);
         if (msgContext.getCurrentHandlerIndex() == -1) {
             msgContext.setCurrentHandlerIndex(0);
         }
@@ -324,7 +320,6 @@ public class AxisEngine {
         if(log.isTraceEnabled()){
             log.trace(msgContext.getLogIDString()+" resumeReceive:"+msgContext.getMessageID());
         }
-        activateMessageContext(msgContext);
 
       //REVIEW: This name is a little misleading, as it seems to indicate that there should be a resumeReceiveFault as well, when, in fact, this does both 
       //REVIEW: Unlike with receive, there is no wrapping try/catch clause which would
@@ -369,7 +364,6 @@ public class AxisEngine {
         if(log.isTraceEnabled()){
             log.trace(msgContext.getLogIDString()+" resumeSend:"+msgContext.getMessageID());
         }
-        activateMessageContext(msgContext);
 
       //REVIEW: This name is a little misleading, as it seems to indicate that there should be a resumeSendFault as well, when, in fact, this does both 
       //REVIEW: Unlike with send, there is no wrapping try/catch clause which would
@@ -401,7 +395,6 @@ public class AxisEngine {
      */
     public InvocationResponse receiveFault(MessageContext msgContext) throws AxisFault {
 
-        activateMessageContext(msgContext);
     	log.debug(msgContext.getLogIDString()+" "+Messages.getMessage("receivederrormessage",
                 msgContext.getMessageID()));
         ConfigurationContext confContext = msgContext.getConfigurationContext();
@@ -466,7 +459,6 @@ public class AxisEngine {
         if(log.isTraceEnabled()){
             log.trace(msgctx.getLogIDString()+" resume:"+msgctx.getMessageID());
         }
-        activateMessageContext(msgctx);
 
         msgctx.setPaused(false);
         if (msgctx.getFLOW() == MessageContext.IN_FLOW) {
@@ -491,7 +483,6 @@ public class AxisEngine {
         if(log.isTraceEnabled()){
             log.trace(msgContext.getLogIDString()+" send:"+msgContext.getMessageID());
         }
-        activateMessageContext(msgContext);
         // find and invoke the Phases
         OperationContext operationContext = msgContext.getOperationContext();
         ArrayList executionChain = operationContext.getAxisOperation().getPhasesOutFlow();
@@ -561,7 +552,6 @@ public class AxisEngine {
         if(log.isTraceEnabled()){
             log.trace(msgContext.getLogIDString()+" sendFault:"+msgContext.getMessageID());
         }
-        activateMessageContext(msgContext);
         OperationContext opContext = msgContext.getOperationContext();
 
         //FIXME: If this gets paused in the operation-specific phases, the resume is not going to function correctly as the phases will not have all been set 
@@ -639,22 +629,6 @@ public class AxisEngine {
         
     }
 
-
-    /**
-     * Make sure that the MessageContext is in an active state.
-     * This means that the MessageContext is fully usable.
-     * If a message context had been re-constituted from 
-     * persistent storage, the message context may need
-     * to complete the restoration in order to be fully
-     * usable.
-     * 
-     * @param mc     MessageContext
-     */
-    private void activateMessageContext(MessageContext mc)
-    {
-        // make sure that the message context is in an active state
-        mc.activate(engineContext);
-    }
 
     /**
      * This class is used when someone invoke a service invocation with two transports

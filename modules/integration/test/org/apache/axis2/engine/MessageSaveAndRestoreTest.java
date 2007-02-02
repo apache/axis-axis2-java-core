@@ -204,6 +204,7 @@ public class MessageSaveAndRestoreTest extends UtilServerBasedTestCase implement
                 System.out.println("MessageSaveAndRestoreTest:Resuming processing");
                 ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(serializedMessageContext));
                 MessageContext reconstitutedMessageContext = (MessageContext)objectInputStream.readObject();
+                reconstitutedMessageContext.activate(configurationContext);
                 axisEngine.resume(reconstitutedMessageContext);
             }
             catch (Exception e)

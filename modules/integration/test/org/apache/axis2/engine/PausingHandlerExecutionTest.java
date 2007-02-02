@@ -454,6 +454,7 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
 
             System.out.println("Worker thread restoring message context from file");
             reconstitutedMessageContext = (MessageContext)objectInputStream.readObject();
+            reconstitutedMessageContext.activate(configurationContext);
         }
         else if (serializedMessageContext != null)
         {
@@ -462,6 +463,7 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
 
             System.out.println("Worker thread restoring message context from byte array");
             reconstitutedMessageContext = (MessageContext)objectInputStream.readObject();
+            reconstitutedMessageContext.activate(configurationContext);
         }
         else if (msgContext != null)
         {

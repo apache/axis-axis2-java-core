@@ -261,6 +261,7 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase i
                 System.out.println("MessageSaveAndRestoreWithMTOMTest:Resuming processing");
                 ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(serializedMessageContext));
                 MessageContext reconstitutedMessageContext = (MessageContext)objectInputStream.readObject();
+                reconstitutedMessageContext.activate(configurationContext);
                 axisEngine.resume(reconstitutedMessageContext);
             }
             catch (Exception e)
