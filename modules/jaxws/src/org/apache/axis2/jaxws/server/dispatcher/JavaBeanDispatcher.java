@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.context.utils.ContextUitls;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -64,6 +65,8 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         
         initialize(mc);
         OperationDescription operationDesc = getOperationDescription(mc); //mc.getOperationDescription();
+        //Set SOAP Operation Related properties in SOAPMessageContext.
+        ContextUitls.addWSDLProperties(mc);
         Protocol requestProtocol = mc.getMessage().getProtocol();
         MethodMarshaller methodMarshaller = getMethodMarshaller(mc.getMessage().getProtocol(), mc.getOperationDescription());
         Object[] methodInputParams = methodMarshaller.demarshalRequest(mc.getMessage(), mc.getOperationDescription());

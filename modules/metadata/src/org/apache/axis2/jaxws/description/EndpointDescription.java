@@ -117,4 +117,6 @@ public interface EndpointDescription {
      * @return Set<Package>
      */
     public Set<String> getPackages();
+    
+    public QName getPortType();
 }

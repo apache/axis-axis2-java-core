@@ -91,7 +91,7 @@ public interface EndpointInterfaceDescription {
     public abstract OperationDescription[] getOperationForJavaMethod(String javaMethodName);
     
     public abstract Class getSEIClass();
-
+    public abstract QName getPortType();
     // TODO: These should return a locally defined Enums
     public abstract javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle();
     public abstract javax.jws.soap.SOAPBinding.Style getSoapBindingStyle();

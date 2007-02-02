@@ -69,6 +69,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
     // ANNOTATION: @WebService
     private WebService          webServiceAnnotation;
     private String              webServiceTargetNamespace;
+    private String              webService_Name;
     
     
     // ANNOTATION: @SOAPBinding
@@ -721,6 +722,27 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
             }
         }
         return webServiceTargetNamespace;
+    }
+   
+    public String getAnnoWebServiceName() {
+        //REVIEW the following, used to get Port
+    	if (webService_Name == null) {
+    		
+    		if (getAnnoWebService() != null 
+    				&& !DescriptionUtils.isEmpty(getAnnoWebService().name())) {
+    			webService_Name = getAnnoWebService().name();
+     		}
+    		else {
+    			webService_Name = "";
+    		}
+    	}
+        return webService_Name;
+    }
+    
+    public QName getPortType(){
+    	String name = getAnnoWebServiceName();
+    	String tns = getAnnoWebServiceTargetNamespace();
+    	return new QName(tns, name);
     }
 
 }

@@ -21,22 +21,34 @@ package org.apache.axis2.jaxws.context.utils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.wsdl.PortType;
+import javax.xml.namespace.QName;
+import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext.Scope;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
-import org.apache.axis2.Constants;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionWSDL;
+import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
-import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
 public class ContextUitls {
     private static final Log log = LogFactory.getLog(ContextUitls.class);
+    private static final String WEBSERVICE_MESSAGE_CONTEXT = "javax.xml.ws.WebServiceContext";
 
     /**
      * Adds the appropriate properties to the MessageContext that the user will see
@@ -67,36 +79,94 @@ public class ContextUitls {
 		    soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlLocationURI);
 			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, Scope.APPLICATION);
         }
-        
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_OPERATION, axisMsgContext.getAxisOperation().getName());
-		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_OPERATION, Scope.APPLICATION);
-			   
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_PORT, null);
-		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_PORT, Scope.APPLICATION);
-			   
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, axisMsgContext.getAxisService().getName());
-		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_SERVICE,Scope.APPLICATION );
-		   
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_INTERFACE, null);
-		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_INTERFACE, Scope.APPLICATION);
-		  
+		
+		if(sd!=null){
+			soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, sd.getServiceQName());
+			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_SERVICE,Scope.APPLICATION );
+			if(log.isDebugEnabled()){
+				log.debug("WSDL_SERVICE :"+sd.getServiceQName());
+			}
+		}
+		
+		
 		// If we are running within a servlet container, then JAX-WS requires that the
         // servlet related properties be set on the MessageContext
 		soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT, axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT));
 		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT, Scope.APPLICATION);
-		   
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_REQUEST, axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST));
-		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.SERVLET_REQUEST, Scope.APPLICATION);
-		   
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_RESPONSE, axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE));
-		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.SERVLET_RESPONSE, Scope.APPLICATION);
-		   
+		if(log.isDebugEnabled()){
+			if(axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT) != null){
+				log.debug("Servlet Context Set");
+			}
+			else{
+				log.debug("Servlet Context not found");
+			}
+		}  
+		
+		HttpServletRequest req = (HttpServletRequest)axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
+		if(req == null){
+			if(log.isDebugEnabled()){
+				log.debug("HTTPServletRequest not found");
+			}
+		}
+		if(req != null){
+			soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_REQUEST, req);
+			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.SERVLET_REQUEST, Scope.APPLICATION);
+			if(log.isDebugEnabled()){
+				log.debug("SERVLET_REQUEST Set");
+			}
+			
+			String pathInfo = req.getPathInfo();
+			soapMessageContext.put(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_PATHINFO, pathInfo);
+			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_PATHINFO, Scope.APPLICATION);
+			if(log.isDebugEnabled()){
+				if(pathInfo != null){
+					log.debug("HTTP_REQUEST_PATHINFO Set");
+				}
+				else{
+					log.debug("HTTP_REQUEST_PATHINFO not found");
+				}
+			}
+			String queryString = req.getQueryString();
+			soapMessageContext.put(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_QUERYSTRING, queryString);
+			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_QUERYSTRING, Scope.APPLICATION);
+			if(log.isDebugEnabled()){
+				if(queryString != null){
+					log.debug("HTTP_REQUEST_QUERYSTRING Set");
+				}
+				else{
+					log.debug("HTTP_REQUEST_QUERYSTRING not found");
+				}
+			}
+			String method = req.getMethod();
+			soapMessageContext.put(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_METHOD, method);
+			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_METHOD, Scope.APPLICATION);
+			if(log.isDebugEnabled()){
+				if(method != null){
+					log.debug("HTTP_REQUEST_METHOD Set");
+				}
+				else{
+					log.debug("HTTP_REQUEST_METHOD not found");
+				}
+			}
+			
+		}
+		HttpServletResponse res = (HttpServletResponse)axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE);
+		if(res == null){
+			if(log.isDebugEnabled()){
+				log.debug("Servlet Response not found");
+			}
+		}
+		if(res!=null){
+			soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_RESPONSE, res);
+			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.SERVLET_RESPONSE, Scope.APPLICATION);
+			if(log.isDebugEnabled()){
+				log.debug("SERVLET_RESPONSE Set");	
+			}   
+		}
 		// Set the transport properties
 		soapMessageContext.put(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS, axisMsgContext.getProperty(org.apache.axis2.context.MessageContext.TRANSPORT_HEADERS));
 		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS, Scope.APPLICATION);
-		   
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_METHOD, axisMsgContext.getProperty(Constants.Configuration.HTTP_METHOD));
-		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_METHOD, Scope.APPLICATION);
+		
 		   
 		soapMessageContext.put(javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_CODE, axisMsgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE));
 		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_CODE, Scope.APPLICATION);
@@ -105,13 +175,64 @@ public class ContextUitls {
 		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_RESPONSE_HEADERS, Scope.APPLICATION);
 		   
 		// Set the message properties
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, null);
-		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_OUTBOUND_PROPERTY, Scope.APPLICATION);
-		   
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_INBOUND, null);
+		
+		soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_INBOUND, axisMsgContext.getAttachmentMap());
 		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_INBOUND, Scope.APPLICATION);
-
+		
         soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_OUTBOUND, null);
         soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_OUTBOUND, Scope.APPLICATION);
+        
 	}
+	
+	public static void addWSDLProperties(MessageContext jaxwsMessageContext){
+		org.apache.axis2.context.MessageContext msgContext = jaxwsMessageContext.getAxisMessageContext();
+        ServiceContext serviceContext = msgContext.getServiceContext();
+        SOAPMessageContext soapMessageContext = null;
+        if(serviceContext !=null){
+        	WebServiceContext wsc =(WebServiceContext) serviceContext.getProperty(WEBSERVICE_MESSAGE_CONTEXT);
+        	soapMessageContext = (SOAPMessageContext)wsc.getMessageContext();
+        }
+		OperationDescription op = jaxwsMessageContext.getOperationDescription();
+		
+		if(op!=null && soapMessageContext !=null){
+			soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_OPERATION, op.getName());
+			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_OPERATION, Scope.APPLICATION);
+			if(log.isDebugEnabled()){
+				log.debug("WSDL_OPERATION :"+op.getName());
+			}
+			
+			EndpointInterfaceDescription eid = op.getEndpointInterfaceDescription();
+			if(eid!=null){
+				EndpointDescription ed = eid.getEndpointDescription();
+				QName portType = eid.getPortType();
+				
+				if(ed !=null){
+					soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_PORT, ed.getPortQName());
+					soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_PORT, Scope.APPLICATION);
+					if(log.isDebugEnabled()){
+						log.debug("WSDL_PORT :"+ed.getPortQName());
+					}	
+					if(portType == null || portType.getLocalPart() == ""){
+						if(log.isDebugEnabled()){
+							log.debug("Did not get port type from EndpointInterfaceDescription, attempting to get PortType from EndpointDescription");
+						}
+						portType = ed.getPortType();
+					}
+					
+					
+				}
+				soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_INTERFACE, portType);
+				soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_INTERFACE, Scope.APPLICATION);
+				if(log.isDebugEnabled()){
+					log.debug("WSDL_INTERFACE :"+portType);
+				}
+			}
+		}
+		else{
+			if(log.isDebugEnabled()){
+				log.debug("Unable to read WSDL operation, port and interface properties");
+			}
+		}
+	}
+	
 }
