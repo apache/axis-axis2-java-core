@@ -152,7 +152,7 @@ public class MessageTests extends TestCase {
 		Block block = f.createFrom(sampleText, null, null);
 		
 		// Add the block to the message as normal body content.
-		m.setBodyBlock(0, block);
+		m.setBodyBlock(block);
 		
 		// Check to see if the message is a fault.  The client/server will always call this method.
         // The Message must respond appropriately without doing a conversion.
@@ -217,7 +217,7 @@ public class MessageTests extends TestCase {
 		Block block = f.createFrom(sampleText, null, null);
 		
 		// Add the block to the message as normal body content.
-		m.setBodyBlock(0, block);
+		m.setBodyBlock(block);
 		
 		// If there is a JAX-WS handler, the Message is converted into a SOAPEnvelope
 		SOAPEnvelope soapEnvelope = m.getAsSOAPEnvelope();
@@ -282,7 +282,7 @@ public class MessageTests extends TestCase {
         Block block = f.createFrom(whiteSpaceText, null, null);
         
         // Add the block to the message as normal body content.
-        m.setBodyBlock(0, block);
+        m.setBodyBlock(block);
         
         // If there is a JAX-WS handler, the Message is converted into a SOAPEnvelope
         SOAPEnvelope soapEnvelope = m.getAsSOAPEnvelope();
@@ -344,7 +344,7 @@ public class MessageTests extends TestCase {
         Block block = f.createFrom(this.sampleDouble, null, null);
         
         // Add the block to the message as normal body content.
-        m.setBodyBlock(0, block);
+        m.setBodyBlock(block);
         
         // If there is a JAX-WS handler, the Message is converted into a SOAPEnvelope
         SOAPEnvelope soapEnvelope = m.getAsSOAPEnvelope();
@@ -421,7 +421,7 @@ public class MessageTests extends TestCase {
 		// is the proxy code will ask for the business object (String).
 		XMLStringBlockFactory blockFactory = 
 			(XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
-		Block block = m.getBodyBlock(0, null, blockFactory);
+		Block block = m.getBodyBlock(null, blockFactory);
 		Object bo = block.getBusinessObject(true);
 		assertTrue(bo instanceof String);
 		
@@ -491,7 +491,7 @@ public class MessageTests extends TestCase {
 		// is the proxy code will ask for the business object (String).
 		XMLStringBlockFactory blockFactory = 
 			(XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
-		Block block = m.getBodyBlock(0, null, blockFactory);
+		Block block = m.getBodyBlock(null, blockFactory);
 		Object bo = block.getBusinessObject(true);
 		assertTrue(bo instanceof String);
 		
@@ -561,7 +561,7 @@ public class MessageTests extends TestCase {
 		// is the proxy code will ask for the business object (String).
 		XMLStringBlockFactory blockFactory = 
 			(XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
-		Block block = m.getBodyBlock(0, null, blockFactory);
+		Block block = m.getBodyBlock(null, blockFactory);
 		Object bo = block.getBusinessObject(true);
 		assertTrue(bo instanceof String);
 		
@@ -609,7 +609,7 @@ public class MessageTests extends TestCase {
         // is the proxy code will ask for the business object (String).
         XMLStringBlockFactory blockFactory = 
             (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
-        Block block = m.getBodyBlock(0, null, blockFactory);
+        Block block = m.getBodyBlock(null, blockFactory);
         Object bo = block.getBusinessObject(true);
         assertTrue(bo instanceof String);
         
@@ -649,7 +649,7 @@ public class MessageTests extends TestCase {
         Block block = bf.createFrom(obj, context, null);
         
         // Add the block to the message as normal body content.
-        m.setBodyBlock(0, block);
+        m.setBodyBlock(block);
         
         // Check to see if the message is a fault.  The client/server will always call this method.
         // The Message must respond appropriately without doing a conversion.
@@ -715,7 +715,7 @@ public class MessageTests extends TestCase {
         Block block = bf.createFrom(obj, context, null);
         
         // Add the block to the message as normal body content.
-        m.setBodyBlock(0, block);
+        m.setBodyBlock(block);
         
         // Check to see if the message is a fault.  The client/server will always call this method.
         // The Message must respond appropriately without doing a conversion.
@@ -793,7 +793,7 @@ public class MessageTests extends TestCase {
         JAXBBlockContext context = new JAXBBlockContext(EchoStringResponse.class.getPackage().getName());
         
         // Get the JAXBBlock that wraps the content
-        Block b = m.getBodyBlock(0, context, bf);
+        Block b = m.getBodyBlock(context, bf);
      
         // Check to see if the message is a fault.  The client/server will always call this method.
         // The Message must respond appropriately without doing a conversion.

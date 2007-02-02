@@ -420,4 +420,12 @@ public class MessageImpl implements Message {
         }
     }
 
+    public Block getBodyBlock(Object context, BlockFactory blockFactory) throws WebServiceException {
+        return xmlPart.getBodyBlock(context, blockFactory);
+    }
+
+    public void setBodyBlock(Block block) throws WebServiceException {
+        xmlPart.setBodyBlock(block);
+    }
+
 }

@@ -108,7 +108,7 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
                 // on the binding information available.
                 Protocol proto = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());               
                 message = mf.create(proto);
-                message.setBodyBlock(0, block);
+                message.setBodyBlock(block);
             } catch (Exception e) {
             	throw ExceptionFactory.makeWebServiceException(e);
             }
@@ -154,7 +154,7 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
             if (mode.equals(Mode.PAYLOAD)) {
 				BlockFactory factory = (BlockFactory) FactoryRegistry
 						.getFactory(blockFactoryType);
-				block = message.getBodyBlock(0, null, factory);
+				block = message.getBodyBlock(null, factory);
                 if (block != null) {
                     value = block.getBusinessObject(true);
                 } else {

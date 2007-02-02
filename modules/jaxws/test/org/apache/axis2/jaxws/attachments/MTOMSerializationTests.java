@@ -129,7 +129,7 @@ public class MTOMSerializationTests extends TestCase {
         MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
         Message msg = msgFactory.create(Protocol.soap11);
         
-        msg.setBodyBlock(0, block);
+        msg.setBodyBlock(block);
         
         msg.setMTOMEnabled(true);
         

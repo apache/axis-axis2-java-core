@@ -144,7 +144,7 @@ public class ProviderDispatcher extends JavaDispatcher{
             }
             else {
                 // If it is not MESSAGE, then it is PAYLOAD (which is the default); only work with the body 
-                Block block = message.getBodyBlock(0, null, factory);
+                Block block = message.getBodyBlock(null, factory);
                 if(block != null){
             		requestParamValue = block.getBusinessObject(true);
             	} else {
@@ -294,7 +294,7 @@ public class ProviderDispatcher extends JavaDispatcher{
                 // PAYLOAD mode deals only with the body of the message.
                 Block block = factory.createFrom(value, null, null);
                 message = msgFactory.create(messageProtocol);
-                message.setBodyBlock(0, block);
+                message.setBodyBlock(block);
             }
         }
         

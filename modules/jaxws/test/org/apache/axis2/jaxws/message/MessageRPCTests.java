@@ -126,7 +126,7 @@ public class MessageRPCTests extends TestCase {
         Block block = bf.createFrom(e, context, null);
         
         // Add the block to the message as normal body content.
-        m.setBodyBlock(0, block);
+        m.setBodyBlock(block);
         
         // Check to see if the message is a fault.  The client/server will always call this method.
         // The Message must respond appropriately without doing a conversion.
@@ -201,7 +201,7 @@ public class MessageRPCTests extends TestCase {
         Block block = bf.createFrom(e, context, null);
         
         // Add the block to the message as normal body content.
-        m.setBodyBlock(0, block);
+        m.setBodyBlock(block);
         
         // Check to see if the message is a fault.  The client/server will always call this method.
         // The Message must respond appropriately without doing a conversion.
@@ -284,7 +284,7 @@ public class MessageRPCTests extends TestCase {
         JAXBBlockContext context = new JAXBBlockContext(StockPrice.class.getPackage().getName());
         
         // Get the JAXBBlock that wraps the content
-        Block b = m.getBodyBlock(0, context, bf);
+        Block b = m.getBodyBlock(context, bf);
      
         // Check to see if the message is a fault.  The client/server will always call this method.
         // The Message must respond appropriately without doing a conversion.

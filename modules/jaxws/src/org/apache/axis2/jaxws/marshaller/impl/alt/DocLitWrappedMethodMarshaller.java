@@ -98,7 +98,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Get this block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
             JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
-            Block block = message.getBodyBlock(0, blockContext, factory);
+            Block block = message.getBodyBlock(blockContext, factory);
             Object wrapperObject = block.getBusinessObject(true);
             
             // The child elements are within the object that 
@@ -199,7 +199,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Get this block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
             JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
-            Block block = message.getBodyBlock(0, blockContext, factory);
+            Block block = message.getBodyBlock(blockContext, factory);
             Object wrapperObject = block.getBusinessObject(true);
             
             // The child elements are within the object that 
@@ -347,7 +347,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             Block block = factory.createFrom(object, 
                     new JAXBBlockContext(endpointDesc.getPackages()), 
                     null);  // The factory will get the qname from the value
-            m.setBodyBlock(0, block);
+            m.setBodyBlock(block);
             
             return m;
         } catch(Exception e) {
@@ -433,7 +433,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             Block block = factory.createFrom(object, 
                     new JAXBBlockContext(endpointDesc.getPackages()), 
                     null);  // The factory will get the qname from the value
-            m.setBodyBlock(0, block);
+            m.setBodyBlock(block);
             
             return m;
         } catch(Exception e) {

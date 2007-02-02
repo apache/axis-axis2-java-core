@@ -147,7 +147,21 @@ public class MethodMarshallerUtils  {
             boolean isInput, 
             boolean usePartName) throws XMLStreamException {
         
-        List<PDElement> pvList = new ArrayList<PDElement>();
+        List<PDElement> pdeList = new ArrayList<PDElement>();
+        
+        // Count 
+        int totalBodyBlocks = 0;
+        for (int i=0; i<params.length; i++) {
+            ParameterDescription pd = params[i];
+         
+            if (pd.getMode() == Mode.IN && isInput ||
+                pd.getMode() == Mode.INOUT ||
+                pd.getMode() == Mode.OUT && !isInput) {
+                if (!pd.isHeader()) {
+                    totalBodyBlocks++;
+                }
+            }
+        }
             
         int index = 0; 
         for (int i=0; i<params.length; i++) {
@@ -180,17 +194,25 @@ public class MethodMarshallerUtils  {
                     String localName = (usePartName) ? pd.getPartName() : pd.getParameterName();
                     block = message.getHeaderBlock(pd.getTargetNamespace(), localName, context, factory);
                 } else {
-                    block = message.getBodyBlock(index, context, factory);
+                    if (totalBodyBlocks > 1) {
+                        // You must use this method if there are more than one body block
+                        // This method may cause OM expansion
+                        block = message.getBodyBlock(index, context, factory);
+                    } else {
+                        // Use this method if you know there is only one body block.
+                        // This method prevents OM expansion.
+                        block = message.getBodyBlock(context, factory);
+                    }
                     index++;
                 }
                 
                 // The object is now ready for marshalling
                 PDElement pv = new PDElement(pd, block.getBusinessObject(true));
-                pvList.add(pv);
+                pdeList.add(pv);
             }
         }
         
-        return pvList;
+        return pdeList;
     }
     
     /**
@@ -308,34 +330,42 @@ public class MethodMarshallerUtils  {
     
     /**
      * Marshal the element enabled objects (pvList) to the Message
-     * @param pvList element enabled objects
+     * @param pdeList element enabled objects
      * @param message Message
      * @param packages Packages needed to do a JAXB Marshal
      * @param isRPC 
      * @throws MessageException
      */
-    static void toMessage(List<PDElement> pvList, Message message, Set<String> packages, boolean isRPC) throws WebServiceException {
+    static void toMessage(List<PDElement> pdeList, Message message, Set<String> packages, boolean isRPC) throws WebServiceException {
+        
+        int totalBodyBlocks = 0;
+        for (int i=0; i<pdeList.size(); i++) {
+            PDElement pde = pdeList.get(i);
+            if (!pde.getParam().isHeader()) {
+                totalBodyBlocks++;
+            }
+        }
         
         int index = message.getNumBodyBlocks();
-        for (int i=0; i<pvList.size(); i++) {
-            PDElement pv = pvList.get(i);
+        for (int i=0; i<pdeList.size(); i++) {
+            PDElement pde = pdeList.get(i);
             
             // Create the JAXBBlockContext
             // RPC uses type marshalling, so use the rpcType
             JAXBBlockContext context = new JAXBBlockContext(packages);
             if (isRPC) {
-                context.setRPCType(pv.getParam().getParameterActualType());
+                context.setRPCType(pde.getParam().getParameterActualType());
             }
                 
             // Create a JAXBBlock out of the value.
             // (Note that the PDElement.getValue always returns an object
             // that has an element rendering...ie. it is either a JAXBElement o
             // has @XmlRootElement defined
-            Block block = factory.createFrom(pv.getElementValue(), 
+            Block block = factory.createFrom(pde.getElementValue(), 
                     context, 
                     null);  // The factory will get the qname from the value
             
-            if (pv.getParam().isHeader()) {
+            if (pde.getParam().isHeader()) {
                 // Header block
                 QName qname = block.getQName();
                 message.setHeaderBlock(qname.getNamespaceURI(), 
@@ -343,7 +373,12 @@ public class MethodMarshallerUtils  {
                         block);
             } else {
                 // Body block
-                message.setBodyBlock(index, block);
+                if (totalBodyBlocks <= 1) {
+                    // If there is only one block, use the following "more performant" method
+                    message.setBodyBlock(block);
+                } else {
+                    message.setBodyBlock(index, block);
+                }
                 index++;
             }
         }
@@ -392,7 +427,7 @@ public class MethodMarshallerUtils  {
         if (isHeader) {
             message.setHeaderBlock(returnNS, returnLocalPart, block);
         } else {
-            message.setBodyBlock(0, block);
+            message.setBodyBlock(block);
         }
     }
     
@@ -426,7 +461,7 @@ public class MethodMarshallerUtils  {
         if (isHeader) {
             block = message.getHeaderBlock(headerNS, headerLocalPart, context, factory);
         } else {
-            block = message.getBodyBlock(0, context, factory);
+            block = message.getBodyBlock(context, factory);
         }
         
         // Get the business object.  We want to return the object that represents the type.

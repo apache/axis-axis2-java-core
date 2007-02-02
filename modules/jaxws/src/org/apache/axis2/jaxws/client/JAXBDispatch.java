@@ -83,7 +83,7 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
                 // on the binding information available.
                 Protocol proto = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());
                 message = mf.create(proto);
-                message.setBodyBlock(0, block);
+                message.setBodyBlock(block);
             } else {
                 // Message mode..rare case
                 
@@ -116,7 +116,7 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
                 // Normal Case
                 JAXBBlockFactory factory = (JAXBBlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
                 JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
-                Block block = message.getBodyBlock(0, context, factory);
+                Block block = message.getBodyBlock(context, factory);
                 
                 if (block != null) {
                     value = block.getBusinessObject(true);

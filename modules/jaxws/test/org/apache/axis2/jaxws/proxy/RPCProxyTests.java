@@ -88,7 +88,25 @@ public class RPCProxyTests extends TestCase {
            
             String response = proxy.testSimple(request);
             assertTrue(response != null);
-            assert(response.equals(request));
+            assertTrue(response.equals(request));
+        }catch(Exception e){ 
+            e.printStackTrace(); 
+            fail("Exception received" + e);
+        }
+    }
+    
+    /**
+     * Simple test that ensures that we can echo a string to an rpc/lit web service
+     */
+    public void testSimple2() throws Exception {
+        try{ 
+            RPCLit proxy = getProxy();
+            String request1 = "hello";
+            String request2 = "world";
+           
+            String response = proxy.testSimple2(request1, request2);
+            assertTrue(response != null);
+            assertTrue(response.equals("helloworld"));
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);
@@ -134,6 +152,33 @@ public class RPCProxyTests extends TestCase {
         assertTrue(response.contains("PAYLOAD WITH XSI:TYPE"));
     }
     
+    public void testSimple2_DispatchWithoutXSIType() throws Exception {
+        // Send a payload that simulates
+        // the rpc message
+        String request = "<tns:testSimple2 xmlns:tns='http://org/apache/axis2/jaxws/proxy/rpclit'>" +
+        "<tns:simple2In1>" +
+        "HELLO" +
+        "</tns:simple2In1>" +
+        "<tns:simple2In2>" +
+        "WORLD" +
+        "</tns:simple2In2></tns:testSimple2>";
+        Dispatch<String> dispatch = getDispatch();
+        String response = dispatch.invoke(request);
+        
+
+        assertNotNull("dispatch invoke returned null", response);
+        System.out.println(response);
+        
+        // Check to make sure the content is correct
+        assertTrue(!response.contains("soap"));
+        assertTrue(!response.contains("Envelope"));
+        assertTrue(!response.contains("Body"));
+        assertTrue(!response.contains("Fault"));
+        assertTrue(response.contains("simple2Out"));
+        assertTrue(response.contains("testSimple2Response"));
+        assertTrue(response.contains("HELLOWORLD"));
+    }
+    
     public void testSimple_DispatchWithoutXSIType() throws Exception {
         // Send a payload that simulates
         // the rpc message
@@ -171,7 +216,6 @@ public class RPCProxyTests extends TestCase {
             assertTrue(response.length==2);
             assertTrue(response[0].equals("Hello"));
             assertTrue(response[1].equals("World"));
-            assert(response.equals(request));
         }catch(Exception e){ 
             e.printStackTrace(); 
             fail("Exception received" + e);

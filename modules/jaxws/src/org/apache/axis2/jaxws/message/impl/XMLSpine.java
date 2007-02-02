@@ -126,17 +126,35 @@ interface XMLSpine {
     
     /**
      * getBodyBlock
-     * Get the body block as the specificed index.
+     * Get the body block at the specificed index.
      * The BlockFactory and object context are passed in to help create the 
      * proper kind of block.
+     * Calling this method will cache the OM.  Avoid it in performant situations.
      * 
      * @param index
      * @param context
      * @param blockFactory
-     * @return Block
+     * @return Block or null
      * @throws WebServiceException
+     * @see getBodyBlock
      */
     public Block getBodyBlock(int index, Object context, BlockFactory blockFactory)  
+        throws WebServiceException;
+    
+    /**
+     * getBodyBlock
+     * Get the single Body Block.
+     * The BlockFactory and object context are passed in to help create the 
+     * proper kind of block.
+     * This method should only be invoked when it is known that there is zero or one block.
+     * 
+     * @param index
+     * @param context
+     * @param blockFactory
+     * @return Block or null
+     * @throws WebServiceException
+     */
+    public Block getBodyBlock(Object context, BlockFactory blockFactory)  
         throws WebServiceException;
     
     /**
@@ -151,7 +169,17 @@ interface XMLSpine {
     public void setBodyBlock(int index, Block block) throws WebServiceException;
     
     /**
-     * removePayload
+     * setBodyBlock
+     * Set this as block as the single block for the message.
+     * 
+     * @param index
+     * @param block
+     * @throws WebServiceException
+     */
+    public void setBodyBlock(Block block) throws WebServiceException;
+    
+    /**
+     * removeBodyBlock
      * Removes the indicated BodyBlock
      * @param index
      * @throws WebServiceException

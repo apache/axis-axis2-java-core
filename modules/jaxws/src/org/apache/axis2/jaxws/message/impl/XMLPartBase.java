@@ -478,6 +478,17 @@ public abstract class XMLPartBase implements XMLPart {
         }
         return block;
     }
+    
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.XMLPart#getBodyBlock(java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
+     */
+    public Block getBodyBlock(Object context, BlockFactory blockFactory) throws WebServiceException {
+        Block block = getContentAsXMLSpine().getBodyBlock(context, blockFactory);
+        if (block != null) {
+            block.setParent(getParent());
+        }
+        return block;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getHeaderBlock(java.lang.String, java.lang.String, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
@@ -523,6 +534,14 @@ public abstract class XMLPartBase implements XMLPart {
 		block.setParent(getParent());
         getContentAsXMLSpine().setBodyBlock(index, block);
 	}
+    
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.XMLPart#setBodyBlock(int, org.apache.axis2.jaxws.message.Block)
+     */
+    public void setBodyBlock(Block block) throws WebServiceException {
+        block.setParent(getParent());
+        getContentAsXMLSpine().setBodyBlock(block);
+    }
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#setHeaderBlock(java.lang.String, java.lang.String, org.apache.axis2.jaxws.message.Block)

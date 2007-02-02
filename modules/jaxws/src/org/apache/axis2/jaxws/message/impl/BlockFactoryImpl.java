@@ -61,9 +61,9 @@ public abstract class BlockFactoryImpl implements BlockFactory {
 	}
 
 	public Block createFrom(XMLStreamReader reader, Object context, QName qName) throws XMLStreamException, WebServiceException {
-		StAXOMBuilder builder = new StAXOMBuilder(reader);  
+		StAXOMBuilder builder = new StAXOMBuilder(reader); 
 		OMElement omElement = builder.getDocumentElement();
-		return createFrom(omElement, context, qName);
+		return createFrom(omElement, context, omElement.getQName());
 	}
 
 	

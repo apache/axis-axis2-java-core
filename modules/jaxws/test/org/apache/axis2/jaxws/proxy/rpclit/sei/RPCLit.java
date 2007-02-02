@@ -38,6 +38,20 @@ public interface RPCLit {
     public String testSimple(
         @WebParam(name = "simpleIn", partName = "simpleIn")
         String simpleIn);
+    
+    /**
+     * 
+     * @param simpleIn
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(name = "simple2Out", partName = "simple2Out")
+    public String testSimple2(
+        @WebParam(name = "simple2In1", partName = "simpleIn1")
+        String simple2In1, 
+        @WebParam(name = "simple2In2", partName = "simple2In2")
+        String simple2In2);
 
     /**
      * 

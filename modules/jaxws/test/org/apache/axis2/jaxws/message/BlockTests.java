@@ -174,9 +174,6 @@ public class BlockTests extends TestCase {
 		// In this case, we know the QName prior to creating the Block...so let's pass it in.
 		Block block = f.createFrom(sampleText, null, sampleQName);
 		
-		// We passed in a qname, so it should be immediately available
-		assertTrue(block.isQNameAvailable());
-		
 		// Make sure the QName is correct.
 		QName qName = block.getQName();
 		assertTrue(sampleQName.equals(qName));
@@ -214,9 +211,6 @@ public class BlockTests extends TestCase {
 		// Create a Block from the inflow.  
 		Block block = f.createFrom(inflow, null, null);
 		
-		// We didn't pass in a qname, so the following should return false
-		assertTrue(!block.isQNameAvailable());
-		
 		// Assuming no handlers are installed, the next thing that will happen
 		// is the proxy code will ask for the business object (String).
 		Object bo = block.getBusinessObject(true);
@@ -247,9 +241,6 @@ public class BlockTests extends TestCase {
 		
 		// Create a Block from the inflow.  
 		Block block = f.createFrom(inflow, null, null);
-		
-		// We didn't pass in a qname, so the following should return false
-		assertTrue(!block.isQNameAvailable());
 		
 		// Let's assume we need to get the QName to find the operation name.
 		// This will cause an underlying parse
@@ -286,9 +277,6 @@ public class BlockTests extends TestCase {
 		
 		// Create a Block from the inflow.  Assume that we know the QName already
 		Block block = f.createFrom(inflow, null, sampleQName);
-		
-		// We passed in a qname, so the following should return false
-		assertTrue(block.isQNameAvailable());
 		
 		// Let's assume we need to get the QName to find the operation name.
 		QName qName = block.getQName();
@@ -436,9 +424,6 @@ public class BlockTests extends TestCase {
 		// Create a Block from the inflow.  
 		Block block = f.createFrom(inflow, context, null);
 		
-		// We didn't pass in a qname, so the following should return false
-		assertTrue(!block.isQNameAvailable());
-		
 		// Assuming no handlers are installed, the next thing that will happen
 		// is the proxy code will ask for the business object.
 		Object bo = block.getBusinessObject(true);
@@ -485,10 +470,7 @@ public class BlockTests extends TestCase {
 		
 		// Create a Block from the inflow.  
 		Block block = f.createFrom(inflow, context, null);
-		
-		// We didn't pass in a qname, so the following should return false
-		assertTrue(!block.isQNameAvailable());
-		
+        
 		// Assume that we need to find the QName (perhaps to identify the operation and 
 		// determine if handlers are installed).   This is not very perfomant since 
 		// it causes an underlying parse of the String...but we need to support this.
@@ -809,9 +791,6 @@ public class BlockTests extends TestCase {
 		// Create a Block from the inflow.  
 		Block block = f.createFrom(inflow, null, null);
 		
-		// We didn't pass in a qname, so the following should return false
-		assertTrue(!block.isQNameAvailable());
-		
 		// Assuming no handlers are installed, the next thing that will happen
 		// is the proxy code will ask for the business object (String).
 		Object bo = block.getBusinessObject(true);
@@ -846,9 +825,6 @@ public class BlockTests extends TestCase {
 		
 		// Create a Block from the inflow.  
 		Block block = f.createFrom(inflow, null, null);
-		
-		// We didn't pass in a qname, so the following should return false
-		assertTrue(!block.isQNameAvailable());
 		
 		// Let's assume we need to get the QName to find the operation name.
 		// This will cause an underlying parse
@@ -932,7 +908,7 @@ public class BlockTests extends TestCase {
 	        
 	        MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
 	        Message msg = mf.create(Protocol.soap11);
-	        msg.setBodyBlock(0,block);
+	        msg.setBodyBlock(block);
 	        org.apache.axiom.soap.SOAPEnvelope env = (org.apache.axiom.soap.SOAPEnvelope)msg.getAsOMElement();
 	        // Serialize the Envelope using the same mechanism as the 
 	        // HTTP client.

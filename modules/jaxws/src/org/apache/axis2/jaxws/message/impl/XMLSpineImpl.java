@@ -252,7 +252,39 @@ class XMLSpineImpl implements XMLSpine {
         if (log.isDebugEnabled()) {
             log.debug("getBodyBlock: Get the " + index + "block using the block factory, " + blockFactory);
         }
+        
+        // Forces the parser to read all of the blocks
+        getNumBodyBlocks();
+        
+        // Get the indicated block
         OMElement omElement = _getChildOMElement(_getBodyBlockParent(), index);
+        if (omElement == null) {
+            // Null indicates that no block is available
+            if (log.isDebugEnabled()) {
+                log.debug("getBodyBlock: The block was not found " );
+            }
+            return null;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("getBodyBlock: Found omElement " + omElement.getQName() );
+        }
+        return this._getBlockFromOMElement(omElement, context, blockFactory);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.impl.XMLSpine#getBodyBlock(int, java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
+     */
+    public Block getBodyBlock(Object context, BlockFactory blockFactory) throws WebServiceException {
+        
+        if (log.isDebugEnabled()) {
+            log.debug("getBodyBlock PERFORMANT: Get the block using the block factory, " + blockFactory);
+        }
+        
+        // Calling getBodyBlock assumes that there is only one or zero body blocks in the message.  Subsequent
+        // Blocks are lost.  If the caller needs access to multiple body blocks, then getBodyBlocks(index,...) should be used
+        
+        // Get the indicated block
+        OMElement omElement = _getChildOMElement(_getBodyBlockParent(), 0);
         if (omElement == null) {
             // Null indicates that no block is available
             if (log.isDebugEnabled()) {
@@ -267,6 +299,9 @@ class XMLSpineImpl implements XMLSpine {
     }
 
 	public void setBodyBlock(int index, Block block) throws WebServiceException {
+        
+	    // Forces the parser to read all of the blocks
+        getNumBodyBlocks();
         
         block.setParent(getParent());
         OMElement bElement = _getBodyBlockParent();
@@ -284,8 +319,34 @@ class XMLSpineImpl implements XMLSpine {
             om.detach();
         }
 	}
+    
+	public void setBodyBlock(Block block) throws WebServiceException {
+        
+	    // Forces the parser to read all of the blocks
+        getNumBodyBlocks();
+        
+        block.setParent(getParent());
+        
+        // Remove all of the children
+        OMElement bElement = _getBodyBlockParent();
+        Iterator it = bElement.getChildren();
+        while (it.hasNext()) {
+            it.next();
+            it.remove();
+        }
+        
+        // The block is supposed to represent a single element.  
+        // But if it does not represent an element , the following will fail.
+        QName qName = block.getQName();
+        
+        OMElement newOM = _createOMElementFromBlock(qName, block, soapFactory);
+        bElement.addChild(newOM);
+    }
 
 	public void removeBodyBlock(int index) throws WebServiceException {
+	    // Forces the parser to read all of the blocks
+        getNumBodyBlocks();
+        
         OMElement om = this._getChildOMElement(_getBodyBlockParent(), index);
         if (om != null) {
             om.detach();

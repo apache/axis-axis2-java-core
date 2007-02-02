@@ -145,7 +145,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             // Get this block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
             JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
-            Block block = message.getBodyBlock(0, blockContext, factory);
+            Block block = message.getBodyBlock(blockContext, factory);
             Object wrapperObject = block.getBusinessObject(true);
             
             // The child elements are within the object that 
@@ -276,7 +276,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             // Get this block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
             JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
-            Block block = message.getBodyBlock(0, blockContext, factory);
+            Block block = message.getBodyBlock(blockContext, factory);
             Object wrapperObject = block.getBusinessObject(true);
             
             // The child elements are within the object that 
@@ -469,7 +469,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             Block block = factory.createFrom(object, 
                     new JAXBBlockContext(packages), 
                     null);  // The factory will get the qname from the value
-            m.setBodyBlock(0, block);
+            m.setBodyBlock(block);
             
             //  Now place the headers in the message
             if (headerPDEList.size() > 0) {
@@ -573,7 +573,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             Block block = factory.createFrom(object, 
                     new JAXBBlockContext(packages), 
                     null);  // The factory will get the qname from the value
-            m.setBodyBlock(0, block);
+            m.setBodyBlock(block);
             
             // Now place the headers in the message
             if (headerPDEList.size() > 0) {

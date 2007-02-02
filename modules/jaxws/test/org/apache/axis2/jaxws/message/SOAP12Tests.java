@@ -81,7 +81,7 @@ public class SOAP12Tests extends TestCase {
         Block block = f.createFrom(sampleText, null, null);
         
         // Add the block to the message as normal body content.
-        m.setBodyBlock(0, block);
+        m.setBodyBlock(block);
         
         // Assuming no handlers are installed, the next thing that will happen
         // is a XMLStreamReader will be requested...to go to OM.   At this point the
@@ -183,7 +183,7 @@ public class SOAP12Tests extends TestCase {
         // is the proxy code will ask for the business object (String).
         XMLStringBlockFactory blockFactory = 
             (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
-        Block block = m.getBodyBlock(0, null, blockFactory);
+        Block block = m.getBodyBlock(null, blockFactory);
         Object bo = block.getBusinessObject(true);
         assertTrue(bo instanceof String);
         

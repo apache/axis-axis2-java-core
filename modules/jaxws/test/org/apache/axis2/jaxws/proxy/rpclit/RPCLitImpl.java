@@ -62,6 +62,13 @@ public class RPCLitImpl implements RPCLit {
         return simpleIn;
     }
     
+    /**
+     * Echo the input
+     */
+    public String testSimple2(String simple2In1, String simple2In2) {
+        return simple2In1 + simple2In2;
+    }
+    
     public QName[] testLists(
             QName[] qNames,
             XMLGregorianCalendar[] calendars,
