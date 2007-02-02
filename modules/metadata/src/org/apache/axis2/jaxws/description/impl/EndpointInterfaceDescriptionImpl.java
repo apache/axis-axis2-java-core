@@ -137,7 +137,6 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
 //        BasicConfigurator.configure();
         
         //TODO: yikes! ...too much redirection, consider setting this in higher level
-        getEndpointDescription().getAxisService().setName(getEndpointDescriptionImpl().getServiceQName().getLocalPart());
         getEndpointDescription().getAxisService().setTargetNamespace(getEndpointDescriptionImpl().getTargetNamespace());
 		        
         //TODO: Determine if the isClass parameter is really necessary
