@@ -309,8 +309,6 @@ public class Parameter implements Externalizable {
         {
             log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
         }
-        //System.out.println(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
-
 
         // serialization version ID
         long suid = in.readLong();
@@ -392,13 +390,6 @@ public class Parameter implements Externalizable {
         //---------------------------------------------------------
         // done
         //---------------------------------------------------------
-
-        // trace point
-        if (log.isTraceEnabled())
-        {
-            log.trace(myClassName+":readExternal():  END");
-        }
-        //System.out.println(myClassName+":readExternal():  END");
 
     }
 }

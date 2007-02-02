@@ -387,8 +387,6 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         {
             log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
         }
-        //System.out.println(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
-
 
         // serialization version ID
         long suid = in.readLong();
