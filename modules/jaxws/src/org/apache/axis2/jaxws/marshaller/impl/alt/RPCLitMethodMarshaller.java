@@ -66,7 +66,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // ..
             // <soapenv:body>
             //    <m:op xmlns:m="urn://api">
-            //       <m:param xsi:type="data:foo" xmlns:data="urn://mydata" >...</m:param>
+            //       <param xsi:type="data:foo" >...</param>
             //    </m:op>
             // </soapenv:body>
             //
@@ -75,8 +75,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //      wsdl operation.
             //   2) The data blocks are located underneath the operation element.  (In doc/lit
             //      the data elements are underneath the body.
-            //   3) The name of the data blocks (m:param) are defined by the wsdl:part not the
-            //      schema.  
+            //   3) The name of the data blocks (param) are defined by the wsdl:part not the
+            //      schema.  Note that the param is unqualified...per WS-I BP.
             //   4) The type of the data block (data:foo) is defined by schema (thus there is 
             //      JAXB type rendering.  Since we are using JAXB to marshal the data, 
             //      we always generate an xsi:type attribute.  This is an implemenation detail
@@ -87,17 +87,19 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
             Set<String> packages = endpointDesc.getPackages();
             
+            // TODO This needs more work.  We need to check inside holders of input params.  We also
+            // may want to exclude header params from this check
             //Validate input parameters for operation and make sure no input parameters are null.
             //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
             //to a method then an implementation MUST throw WebServiceException.
             if(pds.length > 0){
             	if(signatureArguments == null){
-            		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RPCLitMethodMarshallerErr1"));
+            		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RPCLitMethodMarshallerErr1", "Input"));
             	}
             	if(signatureArguments !=null){
             		for(Object argument:signatureArguments){
             			if(argument == null){
-            				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RPCLitMethodMarshallerErr1"));
+            				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RPCLitMethodMarshallerErr1", "Input"));
             			}
             		}
             	}
@@ -110,7 +112,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // Indicate the style and operation element name.  This triggers the message to
             // put the data blocks underneath the operation element
             m.setStyle(Style.RPC);
-            m.setOperationElement(operationDesc.getName());
+            m.setOperationElement(getRPCOperationQName(operationDesc));
             
             // The input object represent the signature arguments.
             // Signature arguments are both holders and non-holders
@@ -119,7 +121,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 MethodMarshallerUtils.getPDElements(pds, 
                         signatureArguments,
                         true,  // input
-                        true); // use partName since this is rpc/lit
+                        false, true); // use partName since this is rpc/lit
                         
             
             // Put values onto the message
@@ -143,7 +145,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // ..
             // <soapenv:body>
             //    <m:op xmlns:m="urn://api">
-            //       <m:param xsi:type="data:foo" xmlns:data="urn://mydata" >...</m:param>
+            //       <param xsi:type="data:foo" >...</param>
             //    </m:op>
             // </soapenv:body>
             //
@@ -152,8 +154,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //      wsdl operation.
             //   2) The data blocks are located underneath the operation element.  (In doc/lit
             //      the data elements are underneath the body.
-            //   3) The name of the data blocks (m:param) are defined by the wsdl:part not the
-            //      schema.  
+            //   3) The name of the data blocks (param) are defined by the wsdl:part not the
+            //      schema.  Note that it is unqualified per WSI-BP
             //   4) The type of the data block (data:foo) is defined by schema (thus there is 
             //      JAXB type rendering.  
             //   5) We always send an xsi:type, but other vendor's may not.
@@ -166,11 +168,24 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             message.setStyle(Style.RPC);
             
             // Unmarshal the ParamValues from the Message
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, true, true);
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, true);
             
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
             
+            
+            // TODO This needs more work.  We need to check inside holders of input params.  We also
+            // may want to exclude header params from this check
+            //Validate input parameters for operation and make sure no input parameters are null.
+            //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
+            //to a method then an implementation MUST throw WebServiceException.
+            if(sigArguments !=null){
+                for(Object argument:sigArguments){
+                    if(argument == null){
+                        throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RPCLitMethodMarshallerErr1", "Input"));
+                    }
+                }
+            }
             return sigArguments;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
@@ -182,6 +197,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
     public Message marshalResponse(Object returnObject, Object[] signatureArgs, 
             OperationDescription operationDesc, Protocol protocol)
             throws WebServiceException {
+        
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
@@ -202,7 +218,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // ..
             // <soapenv:body>
             //    <m:opResponse xmlns:m="urn://api">
-            //       <m:param xsi:type="data:foo" xmlns:data="urn://mydata" >...</m:param>
+            //       <param xsi:type="data:foo" >...</param>
             //    </m:op>
             // </soapenv:body>
             //
@@ -211,8 +227,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //      wsdl operation.
             //   2) The data blocks are located underneath the operation element.  (In doc/lit
             //      the data elements are underneath the body.
-            //   3) The name of the data blocks (m:param) are defined by the wsdl:part not the
-            //      schema.  
+            //   3) The name of the data blocks (param) are defined by the wsdl:part not the
+            //      schema.  Note that it is unqualified.
             //   4) The type of the data block (data:foo) is defined by schema (thus there is 
             //      JAXB type rendering.  Since we are using JAXB to marshal the data, 
             //      we always generate an xsi:type attribute.  This is an implemenation detail
@@ -231,17 +247,37 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             m.setStyle(Style.RPC);
             
             // TODO Is there an annotation for the operation element response ?
-            String localPart = operationDesc.getName().getLocalPart() + "Response";
-            QName responseOp = new QName(operationDesc.getName().getNamespaceURI(), localPart);
+            QName rpcOpQName = getRPCOperationQName(operationDesc);
+            String localPart = rpcOpQName.getLocalPart() + "Response";
+            QName responseOp = new QName(rpcOpQName.getNamespaceURI(), localPart, rpcOpQName.getPrefix());
             m.setOperationElement(responseOp);
             
             // Put the return object onto the message
             Class returnType = operationDesc.getResultActualType();
+            String returnNS = null;
+            String returnLocalPart = null;
+            if (operationDesc.isResultHeader()) {
+                returnNS = operationDesc.getResultTargetNamespace();
+                returnLocalPart = operationDesc.getResultName();
+            } else {
+                returnNS = "";  // According to WSI BP the body part is unqualified
+                returnLocalPart = operationDesc.getResultPartName();
+            }
+            
             if (returnType != void.class) {
+                
+                // TODO should we allow null if the return is a header?
+                //Validate input parameters for operation and make sure no input parameters are null.
+                //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
+                //to a method then an implementation MUST throw WebServiceException.
+                if(returnObject == null){
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RPCLitMethodMarshallerErr1", "Return"));
+                }
+                
                 MethodMarshallerUtils.toMessage(returnObject, 
                         returnType, 
-                        operationDesc.getResultTargetNamespace(),
-                        operationDesc.getResultPartName(), 
+                        returnNS,
+                        returnLocalPart, 
                         packages, 
                         m,
                         true, // forceXSI since this is rpc/lit
@@ -253,8 +289,9 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 MethodMarshallerUtils.getPDElements(pds, 
                         signatureArgs, 
                         false,  // output
-                        true);   // use partName since this is rpc/lit
+                        false, true);   // use partName since this is rpc/lit
 
+            // TODO Should we check for null output body values?  Should we check for null output header values ?
             // Put values onto the message
             MethodMarshallerUtils.toMessage(pvList, m, packages, true);
             
@@ -277,7 +314,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // ..
             // <soapenv:body>
             //    <m:opResponse xmlns:m="urn://api">
-            //       <m:param xsi:type="data:foo" xmlns:data="urn://mydata" >...</m:param>
+            //       <param xsi:type="data:foo" >...</param>
             //    </m:op>
             // </soapenv:body>
             //
@@ -286,8 +323,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //      wsdl operation.
             //   2) The data blocks are located underneath the operation element.  (In doc/lit
             //      the data elements are underneath the body.
-            //   3) The name of the data blocks (m:param) are defined by the wsdl:part not the
-            //      schema.  
+            //   3) The name of the data blocks (param) are defined by the wsdl:part not the
+            //      schema.  Note that it is unqualified per WSI-BP
             //   4) The type of the data block (data:foo) is defined by schema (thus there is 
             //      JAXB type rendering.  
             //   5) We always send an xsi:type, but other vendor's may not.
@@ -310,10 +347,19 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 } else {
                     returnValue = MethodMarshallerUtils.getReturnValue(packages, message, returnType, false, null, null);
                 }
+                // TODO should we allow null if the return is a header?
+                //Validate input parameters for operation and make sure no input parameters are null.
+                //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
+                //to a method then an implementation MUST throw WebServiceException.
+                if (returnValue == null){
+                    throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RPCLitMethodMarshallerErr1", "Return"));
+                }
             }
             
             // Unmarshall the ParamValues from the Message
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, false, true);
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, false);
+            
+            // TODO Should we check for null output body values?  Should we check for null output header values ?
             
             // Populate the response Holders
             MethodMarshallerUtils.updateResponseSignatureArgs(pds, pvList, signatureArgs);
@@ -370,6 +416,25 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
+    }
+    
+    /**
+     * @param opDesc
+     * @return qualified qname to use in the rpc message to represent the operation
+     * (per WSI BP)
+     */
+    private static QName getRPCOperationQName(OperationDescription opDesc) {
+        QName qName = opDesc.getName();
+        
+        String localPart = qName.getLocalPart();
+        String uri = (qName.getNamespaceURI().length() == 0) ? 
+                      opDesc.getEndpointInterfaceDescription().getTargetNamespace() :
+                      qName.getNamespaceURI();
+        String prefix = "rpcOp";  // Prefer using an actual prefix
+                
+        
+        qName = new QName(uri, localPart, prefix);
+        return qName;
     }
 
 }

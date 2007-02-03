@@ -59,6 +59,12 @@ public class RPCLitImpl implements RPCLit {
      * Echo the input
      */
     public String testSimple(String simpleIn) {
+        assert(simpleIn != null);  // According to JAX-WS an RPC service should never receive a null
+        
+        // Test to ensure that returning null causes the proper exception 
+        if (simpleIn.contains("returnNull")) {
+            return null;
+        }
         return simpleIn;
     }
     
@@ -142,5 +148,9 @@ public class RPCLitImpl implements RPCLit {
             System.out.println("Test FAILURE=" +re);
             throw re;
         }
+    }
+
+    public String testHeader(String bodyParam, String headerParam) {
+        return bodyParam + headerParam;
     }
 }

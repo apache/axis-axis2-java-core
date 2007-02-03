@@ -83,11 +83,11 @@ public class MethodMarshallerUtils  {
      * @param params ParameterDescription for this operation
      * @param sigArguments arguments 
      * @param isInput indicates if input or output  params(input args on client, output args on server)
-     * @param usePartName indicates whether to use the partName or name for the name of the xml element
-     *        partName is used for RPC and doc/lit wrapped, name is used for doc/lit bare
+     * @param isDocLitWrapped 
+     * @param isRPC
      * @return PDElements
      */
-    static List<PDElement> getPDElements(ParameterDescription[] params, Object[] sigArguments, boolean isInput, boolean usePartName) {
+    static List<PDElement> getPDElements(ParameterDescription[] params, Object[] sigArguments, boolean isInput, boolean isDocLitWrapped, boolean isRPC) {
         List<PDElement> pvList = new ArrayList<PDElement>();
         
         int index = 0;
@@ -118,8 +118,27 @@ public class MethodMarshallerUtils  {
                 // If this value is element enabled, then we are okay
                 // Otherwise make an element enabled value
                 if (!XMLRootElementUtil.isElementEnabled(formalType)) {
-                    String localName = (usePartName) ? pd.getPartName() : pd.getParameterName();
-                    value = XMLRootElementUtil.getElementEnabledObject(pd.getTargetNamespace(), localName, formalType, value);
+                    
+                    // The namespace and local name are obtained differently depending on the style/use and header
+                    String localName = "";
+                    String uri = "";
+                    if (pd.isHeader()) {
+                        // Headers (even rpc) are marshalled with the name defined by the element= attribute on the wsd:part
+                        localName = pd.getParameterName();
+                        uri = pd.getTargetNamespace();
+                        
+                    } else if (isDocLitWrapped) {
+                        // For doc/lit wrapped, the localName comes from the PartName
+                        localName = pd.getPartName();
+                        uri = pd.getTargetNamespace();
+                    } else if (isRPC) {
+                        localName = pd.getPartName();
+                        uri = "";  // Per WSI-BP, the namespace uri is unqualified
+                    } else {
+                        localName = pd.getParameterName();
+                        uri = pd.getTargetNamespace();
+                    }
+                    value = XMLRootElementUtil.getElementEnabledObject(uri, localName, formalType, value);
                 }
                 
                 // The object is now ready for marshalling
@@ -138,14 +157,12 @@ public class MethodMarshallerUtils  {
      * @param message Message
      * @param packages set of packages needed to unmarshal objects for this operation
      * @param isInput indicates if input or output  params (input on server, output on client)
-     * @param usePartName indicates whether to use the partName or name for the name of the xml element
      * @return ParamValues
      */
     static List<PDElement> getPDElements(ParameterDescription[] params, 
             Message message, 
             Set<String> packages, 
-            boolean isInput, 
-            boolean usePartName) throws XMLStreamException {
+            boolean isInput) throws XMLStreamException {
         
         List<PDElement> pdeList = new ArrayList<PDElement>();
         
@@ -191,7 +208,8 @@ public class MethodMarshallerUtils  {
                 if (pd.isHeader()) {
 
                     // Get the Block from the header
-                    String localName = (usePartName) ? pd.getPartName() : pd.getParameterName();
+                    // NOTE The parameter name is always used to get the header element...even if the style is RPC.
+                    String localName = pd.getParameterName();
                     block = message.getHeaderBlock(pd.getTargetNamespace(), localName, context, factory);
                 } else {
                     if (totalBodyBlocks > 1) {

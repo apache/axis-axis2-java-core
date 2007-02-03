@@ -297,7 +297,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 MethodMarshallerUtils.getPDElements(pds,
                         signatureArgs, 
                         false,  // output
-                        true);   // use partNames (which are child names)
+                        true, false); 
 
             // Now we want to create a single JAXB element that contains the 
             // ParameterValues.  We will use the wrapper tool to do this.
@@ -392,7 +392,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
                     signatureArguments, 
                     true,   // input
-                    true);   // use partName (which are the child element names)
+                    true, false);  
             
             // Now we want to create a single JAXB element that contains the 
             // ParameterValues.  We will use the wrapper tool to do this.

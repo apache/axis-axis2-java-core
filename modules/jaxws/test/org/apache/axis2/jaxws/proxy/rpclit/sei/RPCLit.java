@@ -41,7 +41,8 @@ public interface RPCLit {
     
     /**
      * 
-     * @param simpleIn
+     * @param simple2In1
+     * @param simple2In2
      * @return
      *     returns java.lang.String
      */
@@ -53,6 +54,21 @@ public interface RPCLit {
         @WebParam(name = "simple2In2", partName = "simple2In2")
         String simple2In2);
 
+    /**
+     * 
+     * @param bodyParam
+     * @param headerParam
+     * @return
+     *     returns java.lang.String
+     */
+    @WebMethod
+    @WebResult(name = "headerReturn", header=true)
+    public String testHeader(
+        @WebParam(partName = "bodyParam")
+        String bodyParam, 
+        @WebParam(name = "headerParam", header=true)
+        String headerParam);
+    
     /**
      * 
      * @param arg70

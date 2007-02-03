@@ -114,6 +114,21 @@ public class RPCProxyTests extends TestCase {
     }
     
     /**
+     * Simple test that ensures that we can echo a string to an rpc/lit web service.
+     * This test passes the information in headers
+     */
+    public void testHeader() throws Exception {
+        RPCLit proxy = getProxy();
+        String request1 = "hello";
+        String request2 = "world";
+        
+        String response = proxy.testHeader(request1, request2);
+        assertTrue(response != null);
+        assertTrue(response.equals("helloworld"));
+        
+    }
+    
+    /**
      * Simple test that ensures that we can echo a string to an rpc/lit web service
      */
     public void testForNull() throws Exception {
@@ -129,13 +144,30 @@ public class RPCProxyTests extends TestCase {
         }
     }
     
+    /**
+     * Simple test that ensures that we can echo a string to an rpc/lit web service
+     */
+    public void testForNullReturn() throws Exception {
+        try{ 
+            RPCLit proxy = getProxy();
+           
+            String response = proxy.testSimple("returnNull");
+            fail("RPC/LIT should throw webserviceException when operation is invoked with null out parameter");
+        }catch(Exception e){ 
+            assertTrue(e instanceof WebServiceException);
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    
+    
     public void testSimple_Dispatch() throws Exception {
         // Send a payload that simulates
         // the rpc message
         String request = "<tns:testSimple xmlns:tns='http://org/apache/axis2/jaxws/proxy/rpclit'>" +
-        "<tns:simpleIn xsi:type='xsd:string' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>" +
+        "<simpleIn xsi:type='xsd:string' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>" +
         "PAYLOAD WITH XSI:TYPE" +
-        "</tns:simpleIn></tns:testSimple>";
+        "</simpleIn></tns:testSimple>";
         Dispatch<String> dispatch = getDispatch();
         String response = dispatch.invoke(request);
 
@@ -148,7 +180,8 @@ public class RPCProxyTests extends TestCase {
         assertTrue(!response.contains("Body"));
         assertTrue(!response.contains("Fault"));
         assertTrue(response.contains("simpleOut"));
-        assertTrue(response.contains("testSimpleResponse"));
+        assertTrue(!response.contains(":simpleOut"));  // Make sure simple out is not namespace qualified
+        assertTrue(response.contains(":testSimpleResponse"));  // Make sure response is namespace qualified  
         assertTrue(response.contains("PAYLOAD WITH XSI:TYPE"));
     }
     
@@ -156,12 +189,12 @@ public class RPCProxyTests extends TestCase {
         // Send a payload that simulates
         // the rpc message
         String request = "<tns:testSimple2 xmlns:tns='http://org/apache/axis2/jaxws/proxy/rpclit'>" +
-        "<tns:simple2In1>" +
+        "<simple2In1>" +
         "HELLO" +
-        "</tns:simple2In1>" +
-        "<tns:simple2In2>" +
+        "</simple2In1>" +
+        "<simple2In2>" +
         "WORLD" +
-        "</tns:simple2In2></tns:testSimple2>";
+        "</simple2In2></tns:testSimple2>";
         Dispatch<String> dispatch = getDispatch();
         String response = dispatch.invoke(request);
         
@@ -175,7 +208,8 @@ public class RPCProxyTests extends TestCase {
         assertTrue(!response.contains("Body"));
         assertTrue(!response.contains("Fault"));
         assertTrue(response.contains("simple2Out"));
-        assertTrue(response.contains("testSimple2Response"));
+        assertTrue(!response.contains(":simple2Out"));// Make sure simpleOut is not namespace qualified
+        assertTrue(response.contains(":testSimple2Response")); 
         assertTrue(response.contains("HELLOWORLD"));
     }
     
@@ -183,9 +217,9 @@ public class RPCProxyTests extends TestCase {
         // Send a payload that simulates
         // the rpc message
         String request = "<tns:testSimple xmlns:tns='http://org/apache/axis2/jaxws/proxy/rpclit'>" +
-        "<tns:simpleIn>" +
+        "<simpleIn>" +
         "PAYLOAD WITHOUT XSI:TYPE" +
-        "</tns:simpleIn></tns:testSimple>";
+        "</simpleIn></tns:testSimple>";
         Dispatch<String> dispatch = getDispatch();
         String response = dispatch.invoke(request);
         
@@ -199,7 +233,8 @@ public class RPCProxyTests extends TestCase {
         assertTrue(!response.contains("Body"));
         assertTrue(!response.contains("Fault"));
         assertTrue(response.contains("simpleOut"));
-        assertTrue(response.contains("testSimpleResponse"));
+        assertTrue(!response.contains(":simpleOut"));  // Make sure simpleOut is not namespace qualified
+        assertTrue(response.contains(":testSimpleResponse")); 
         assertTrue(response.contains("PAYLOAD WITHOUT XSI:TYPE"));
     }
     

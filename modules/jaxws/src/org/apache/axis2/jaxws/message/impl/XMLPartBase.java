@@ -495,7 +495,9 @@ public abstract class XMLPartBase implements XMLPart {
 	 */
 	public Block getHeaderBlock(String namespace, String localPart, Object context, BlockFactory blockFactory) throws WebServiceException {
 		Block block = getContentAsXMLSpine().getHeaderBlock(namespace, localPart, context, blockFactory);
-        block.setParent(getParent());
+        if (block != null) {
+            block.setParent(getParent());
+        }
         return block;
 	}
 

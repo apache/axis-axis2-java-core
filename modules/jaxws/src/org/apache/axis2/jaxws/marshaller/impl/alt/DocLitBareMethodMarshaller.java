@@ -84,7 +84,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             }
             
             // Unmarshall the ParamValues from the Message
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, false, false);
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, false);
             
             // Populate the response Holders
             MethodMarshallerUtils.updateResponseSignatureArgs(pds, pvList, signatureArgs);
@@ -120,7 +120,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             
             
             // Unmarshal the ParamValues from the message
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, true, false);
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, true);
             
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
@@ -185,7 +185,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
                     signatureArgs, 
                     false, // output
-                    false); // use name (element name) not wsd:part name
+                    false, false);
                    
 
             // Put values onto the message
@@ -233,7 +233,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
                     signatureArguments, 
                     true,  // input
-                    false);// use name (element name) not wsd:part name
+                    false, false);
                     
             
             // Put values onto the message

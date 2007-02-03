@@ -85,6 +85,9 @@
           <xsd:element name="myEnumList2" type="impl:EnumList2"/>
       </xsd:all>
    </xsd:complexType>
+   
+   <xsd:element name="headerParam" type="xsd:string" />
+   <xsd:element name="headerReturn" type="xsd:string" />
   </schema>
  </wsdl:types>
 
@@ -223,6 +226,19 @@
       <wsdl:part name="simple2Out" type="xsd:string"/>
 
    </wsdl:message>
+   
+   <wsdl:message name="testHeaderRequest">
+
+      <wsdl:part name="bodyParam" type="xsd:string"/>
+      <wsdl:part name="headerParam" element="impl:headerParam"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="testHeaderResponse">
+
+      <wsdl:part name="headerReturn" element="impl:headerReturn"/>
+
+   </wsdl:message>
 
 
   
@@ -242,6 +258,14 @@
          <wsdl:input message="impl:testSimple2Request" name="testSimple2Request"/>
 
          <wsdl:output message="impl:testSimple2Response" name="testSimple2Response"/>
+
+      </wsdl:operation>
+      
+      <wsdl:operation name="testHeader" parameterOrder="bodyParam headerParam">
+
+         <wsdl:input message="impl:testHeaderRequest" name="testHeaderRequest"/>
+
+         <wsdl:output message="impl:testHeaderResponse" name="testHeaderResponse"/>
 
       </wsdl:operation>
 
@@ -335,6 +359,19 @@
 
          <wsdl:output name="testSimple2Response">
                <wsdlsoap:body namespace="http://org/apache/axis2/jaxws/proxy/rpclit" use="literal"/>
+         </wsdl:output>
+
+      </wsdl:operation>
+      
+      <wsdl:operation name="testHeader">
+			
+         <wsdl:input name="testHeaderRequest">
+               <wsdlsoap:body parts="bodyParam" use="literal"/>
+               <wsdlsoap:header message="impl:testHeaderRequest" part="headerParam" use="literal"/>
+         </wsdl:input>
+
+         <wsdl:output name="testHeaderResponse">
+               <wsdlsoap:header message="impl:testHeaderResponse" part="headerReturn" use="literal"/>
          </wsdl:output>
 
       </wsdl:operation>

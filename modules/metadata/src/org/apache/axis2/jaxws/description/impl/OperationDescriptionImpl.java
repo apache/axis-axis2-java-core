@@ -75,7 +75,7 @@ import org.apache.axis2.wsdl.WSDLConstants;
 class OperationDescriptionImpl implements OperationDescription, OperationDescriptionJava, OperationDescriptionWSDL {
     private EndpointInterfaceDescription parentEndpointInterfaceDescription;
     private AxisOperation axisOperation;
-    private QName operationName;
+    private QName operationQName;
     private Method seiMethod;
     private MethodDescriptionComposite methodComposite;
     private ParameterDescription[] parameterDescriptions;
@@ -151,14 +151,16 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         parentEndpointInterfaceDescription = parent;
         setSEIMethod(method);
 
-        
-        this.operationName = new QName(getOperationName());
+        // The operationQName is intentionally unqualified to be consistent with the remaining parts of the system. 
+        // Using a qualified name will cause breakage.
+        // Don't do --> this.operationQName = new QName(parent.getTargetNamespace(), getOperationName());
+        this.operationQName = new QName("", getOperationName());
     }
     
     OperationDescriptionImpl(AxisOperation operation, EndpointInterfaceDescription parent) {
         parentEndpointInterfaceDescription = parent;
         axisOperation = operation;
-        this.operationName = axisOperation.getName();
+        this.operationQName = axisOperation.getName();
     }
 
     OperationDescriptionImpl(	MethodDescriptionComposite mdc, 
@@ -167,7 +169,11 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
 
         parentEndpointInterfaceDescription = parent;
         methodComposite = mdc;
-        this.operationName = new QName(getOperationName());
+        // The operationQName is intentionally unqualified to be consistent with the remaining parts of the system. 
+        // Using a qualified name will cause breakage.
+        // Don't do --> this.operationQName = new QName(parent.getTargetNamespace(), getOperationName());
+        this.operationQName = new QName("", getOperationName());
+        
         webMethodAnnotation = methodComposite.getWebMethodAnnot();
 
         this.axisOperation = axisOperation;
@@ -268,7 +274,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     
     public QName getName() {
-        return operationName;
+        return operationQName;
     }
     
     // Java-related getters
@@ -556,7 +562,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                     && !DescriptionUtils.isEmpty(getAnnoRequestWrapper().localName())) {
                 requestWrapperLocalName = getAnnoRequestWrapper().localName();
             } else {
-                // The default value of localName is the value of operationName as
+                // The default value of localName is the value of operationQName as
                 // defined in the WebMethod annotation. [JAX-WS Sec. 7.3, p. 80]
                 requestWrapperLocalName = getAnnoWebMethodOperationName();
             }
@@ -660,7 +666,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                 responseWrapperLocalName = getAnnoResponseWrapper().localName();
             }
             else { 
-                // The default value of localName is the value of operationName as 
+                // The default value of localName is the value of operationQName as 
                 // defined in the WebMethod annotation appended with "Response". [JAX-WS Sec. 7.4, p. 81]
                 responseWrapperLocalName = getAnnoWebMethodOperationName() + "Response";
             }
