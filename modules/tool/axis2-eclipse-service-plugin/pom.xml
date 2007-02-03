@@ -19,16 +19,14 @@
         xmlns="http://maven.apache.org/POM/4.0.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.apache.axis2.maven2</groupId>
-        <artifactId>axis2-maven-tools</artifactId>
-        <version>SNAPSHOT</version>
-    </parent>
+
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>axis2-eclipse-service-plugin</artifactId>
-    <name>Apache Axis 2.0 - Eclipse Service Plugin</name>
+    <groupId>org.apache.axis2</groupId>
+    <artifactId>eclipse.service.plugin</artifactId>
+    <version>SNAPSHOT</version>
+    <name>Apache Axis 2.0 - Eclipse service Plugin</name>
     <packaging>maven-plugin</packaging>
-    <description>The Axis 2 Plugin for Maven allows client side and server side sources from a WSDL.</description>
+    <description>The Axis 2 Eclipse Service Plugin for Service archive creation</description>
     <repositories>
         <repository>
             <id>repo1</id>
@@ -70,64 +68,18 @@
             <url>http://ws.zones.apache.org/repository2/</url>
             <layout>legacy</layout>
         </repository>
+        <repository>
+            <id>eclipse-repo</id>
+            <name>eclipse maven repository</name>
+            <url>http://repo1.maven.org/eclipse</url>
+        </repository>
     </repositories>
+
     <dependencies>
         <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-artifact</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-project</artifactId>
-            <version>2.0.4</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-codegen</artifactId>
+            <artifactId>axis2</artifactId>
             <version>SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-kernel</artifactId>
-            <version>SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-adb</artifactId>
-            <version>SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-adb-codegen</artifactId>
-            <version>SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-java2wsdl</artifactId>
-            <version>SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>1.0-beta-1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j</artifactId>
-            <version>1.5.2</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -135,56 +87,12 @@
             <version>1.1</version>
         </dependency>
         <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.0.1</version>
-            <scope>runtime</scope>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.13</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.neethi</groupId>
-            <artifactId>neethi</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ws.commons.schema</groupId>
-            <artifactId>XmlSchema</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-api</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ws.commons.axiom</groupId>
-            <artifactId>axiom-impl</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>woodstox</groupId>
-            <artifactId>wstx</artifactId>
-            <version>asl-3.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax-api</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-            <version>1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-utils</artifactId>
-            <version>1.0.5</version>
-        </dependency>
+
+
         <dependency>
             <groupId>org.eclipse.core</groupId>
             <artifactId>runtime</artifactId>
@@ -226,4 +134,148 @@
             <version>1.6.2</version>
         </dependency>
     </dependencies>
+
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <id>distribution-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>./eclipse-service-plugin-assembly.xml</descriptor>
+                            </descriptors>
+                            <finalName>dist</finalName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <property name="service.plugin.version" value="Axis2_Service_Archiver_1.0.0"></property>
+                                <property name="service.plugin.zip.name" value="axis2-eclipse-service-archiver-wizard.zip"></property>
+                                <property name="service.plugin.jar.name" value="Axis_Service_Archiver.jar"></property>
+
+                                <property name="src" value="./src"></property>
+                                <property name="service.src.dir" value="../axis2-eclipse-service-plugin/src/main/java"></property>
+                                <property name="output" value="../target/eclipse_plugins"></property>
+                                <property name="output.target" value="${output}/release"></property>
+                                <property name="service.output.dir" value="${output}/service-archiver"></property>
+                                <property name="plugin.output.dir" value="${output}/plugin"></property>
+                                <property name="service.plugin.output.dir" value="${plugin.output.dir}/${service.plugin.version}"></property>
+
+                                <property name="source.dir.name" value="src"></property>
+                                <property name="lib.dir.name" value="lib"></property>
+                                <property name="bin.dir.name" value="bin"></property>
+                                <property name="help.dir.name" value="help"></property>
+                                <property name="icons.dir.name" value="icons"></property>
+
+                                <property name="plugin.project.file.name" value=".project"></property>
+                                <property name="plugin.classpath.file.name" value=".classpath"></property>
+                                <property name="plugin.help.file.name" value="help_toc.xml"></property>
+
+                                <property name="service.resource.dir" value="../conf/service"></property>
+                                <property name="service.help.resource.file" value="../../../xdocs/tools/1_1/eclipse/servicearchiver-plugin.html"></property>
+                                <property name="service.help.images.dir" value="../../../xdocs/tools/1_1/eclipse/images"></property>
+                                <property name="axis2.lib.dir" value="../../../target/lib"></property>
+
+                                <!--Filter tockens for the copy command to filter the versions of external dependencies -->
+                                <filter token="version_number" value="SNAPSHOT" />
+                                <filter token="ant.version" value="1.6.5" />
+                                <filter token="commons.logging.version" value="1.1" />
+                                <filter token="log4j.version" value="1.2.13" />
+
+
+                                <delete dir="./target/plugin/${service.plugin.version}"/>
+                                <mkdir dir="./target/plugin/${service.plugin.version}"/>
+
+                                <delete dir="./target/dist"/>
+                                <mkdir dir="./target/dist"/>
+
+                                <unzip src="./target/dist-axis2-service-codege-plugin.zip"
+                                       dest="./target/plugin/${service.plugin.version}"/>
+
+                                <!-- Copy to the same position with the filtering on-->
+                                <copy todir="./target/plugin/${service.plugin.version}" filtering="on" >
+                                    <fileset dir="${service.resource.dir}">
+                                        <include name="plugin.xml" />
+                                        <include name="build.properties" />
+                                        <include name="${plugin.classpath.file.name}" />
+                                    </fileset>
+                                </copy>
+
+                                <!-- copy the help directory -->
+                                <mkdir dir="./target/plugin/${service.plugin.version}/${help.dir.name}" />
+                                <mkdir dir="./target/plugin/${service.plugin.version}/${help.dir.name}/${icons.dir.name}" />
+                                <copy todir="./target/plugin/${service.plugin.version}/${help.dir.name}">
+                                    <fileset file="${service.help.resource.file}"></fileset>
+                                </copy>
+                                <copy todir="./target/plugin/${service.plugin.version}/${help.dir.name}/${icons.dir.name}">
+                                    <fileset dir="${service.help.images.dir}"></fileset>
+                                </copy>
+
+                                <!-- copy the  icons-->
+                                <mkdir dir="./target/plugin/${service.plugin.version}/${icons.dir.name}" />
+                                <copy todir="./target/plugin/${service.plugin.version}/${icons.dir.name}">
+                                    <fileset dir="${service.resource.dir}/${icons.dir.name}" />
+                                </copy>
+                                <!-- copy the other project files-->
+                                <copy todir="./target/plugin/${service.plugin.version}">
+                                    <fileset file="${service.resource.dir}/${plugin.project.file.name}" />
+                                    <fileset file="${service.resource.dir}/${plugin.help.file.name}" />
+                                </copy>
+
+                                <!--Zip the classes to a jar file -->
+                                <zip destfile="./target/plugin/${service.plugin.version}/${service.plugin.jar.name}"
+                                     basedir="./target/plugin/${service.plugin.version}/classes"
+                                     update="true"
+                                        />
+
+                                <delete dir="./target/plugin/${service.plugin.version}/classes" />
+
+                                <!--Zip the eclipse plugin to the target/dist directory -->
+                                <zip destfile="./target/dist/${service.plugin.zip.name}"
+                                     basedir="./target/plugin"
+                                     update="true"
+                                        />
+
+                                <delete dir="./target/temp" />
+                                <delete dir="./target/classes" />
+                                <delete dir="./target/test-classes" />
+
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
 </project>
