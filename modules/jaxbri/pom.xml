@@ -56,7 +56,22 @@
 		</dependency>
 	</dependencies>
 
-	<build>
-		<sourceDirectory>src</sourceDirectory>
-	</build>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>conf</directory>
+        <excludes>
+          <exclude>**/*.properties</exclude>
+        </excludes>
+        <filtering>false</filtering>
+      </resource>
+      <resource>
+        <directory>src</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+    </resources>
+  </build>
 </project>
