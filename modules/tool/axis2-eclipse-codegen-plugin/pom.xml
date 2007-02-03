@@ -26,7 +26,7 @@
     <version>SNAPSHOT</version>
     <name>Apache Axis 2.0 - Eclipse Codegen Plugin</name>
     <packaging>maven-plugin</packaging>
-    <description>The Axis 2 Eclipse Plugin</description>
+    <description>The Axis 2 Eclipse Codegen Plugin for wsdl2java and java2wsdl</description>
     <repositories>
         <repository>
             <id>ws-zones</id>
@@ -37,11 +37,6 @@
             <id>eclipse-repo</id>
             <name>eclipse maven repository</name>
             <url>http://repo1.maven.org/eclipse</url>
-        </repository>
-        <repository>
-            <id>maven2</id>
-            <name>maven2 repository</name>
-            <url>http://repo1.maven.org/maven2</url>
         </repository>
         <repository>
             <id>maven2</id>
@@ -304,7 +299,7 @@
                                     <fileset file="${codegen.resource.dir}/${plugin.help.file.name}" />
                                 </copy>
 
-                                <!--Zip the eclipse plugins to eclipse_plugins/target -->
+                                <!--Zip the classes to a jar file-->
                                 <zip destfile="./target/plugin/${codegen.plugin.version}/${codegen.plugin.jar.name}"
                                      basedir="./target/plugin/${codegen.plugin.version}/classes"
                                      update="true"
@@ -312,7 +307,7 @@
 
                                 <delete dir="./target/plugin/${codegen.plugin.version}/classes" />
 
-                                <!--Zip the eclipse plugins to eclipse_plugins/target -->
+                                <!--Zip the eclipse plugin to the target/dist directory -->
                                 <zip destfile="./target/dist/${codegen.plugin.zip.name}"
                                      basedir="./target/plugin"
                                      update="true"
