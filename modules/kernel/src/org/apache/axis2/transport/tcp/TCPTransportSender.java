@@ -129,7 +129,7 @@ public class TCPTransportSender extends AbstractHandler implements TransportSend
                 throw new AxisFault(e.getMessage(), e);
             }
         } else {
-            throw new AxisFault(Messages.getMessage("canNotBeNull", "Can not Be Null"));
+            throw new AxisFault(Messages.getMessage("canNotBeNull", "End point reference"));
         }
     }
 }

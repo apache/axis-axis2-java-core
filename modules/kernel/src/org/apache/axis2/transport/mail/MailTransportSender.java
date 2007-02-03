@@ -143,7 +143,7 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
             String paramValue = Utils.getParameterValue(param);
             if (paramKey == null || paramValue == null) {
                 throw new AxisFault(Messages.getMessage("canNotBeNull",
-                                                        "Parameter name nor value should be null"));
+                                                        "Parameter name and value"));
 
             }
             smtpProperties.setProperty(paramKey, paramValue);

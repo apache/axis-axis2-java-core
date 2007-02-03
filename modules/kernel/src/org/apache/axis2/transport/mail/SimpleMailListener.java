@@ -128,7 +128,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
             String paramValue = Utils.getParameterValue(param);
             if (paramKey == null || paramValue == null) {
                 throw new AxisFault(Messages.getMessage("canNotBeNull",
-                                                        "Parameter name nor value should be null"));
+                                                        "Parameter name and value"));
 
             }
             pop3Properties.setProperty(paramKey, paramValue);
