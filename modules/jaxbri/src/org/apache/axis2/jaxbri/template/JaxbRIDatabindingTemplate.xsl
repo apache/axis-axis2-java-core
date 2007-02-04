@@ -91,7 +91,7 @@
                 javax.xml.bind.JAXBContext context = classContextMap.get(type);
                 javax.xml.bind.Unmarshaller unmarshaller = context.createUnmarshaller();
 
-                return unmarshaller.unmarshal(param.getXMLStreamReader(), type).getValue();
+                return unmarshaller.unmarshal(param.getXMLStreamReaderWithoutCaching(), type).getValue();
             } catch (javax.xml.bind.JAXBException bex){
                 throw new RuntimeException(bex);
             }
