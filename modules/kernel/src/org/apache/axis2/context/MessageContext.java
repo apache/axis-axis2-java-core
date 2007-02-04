@@ -88,6 +88,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * setup for logging
      */
     private static final Log log = LogFactory.getLog(MessageContext.class);
+    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     /**
      * @serial An ID which can be used to correlate operations on a single
@@ -570,12 +571,16 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     public AxisOperation getAxisOperation() {
-        checkActivateWarning("getAxisOperation");
+        if(isDebugEnabled) {
+            checkActivateWarning("getAxisOperation");
+        }
         return axisOperation;
     }
 
     public AxisService getAxisService() {
-        checkActivateWarning("getAxisService");
+        if(isDebugEnabled) {
+            checkActivateWarning("getAxisService");
+        }
         return axisService;
     }
 
@@ -585,12 +590,16 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * so the service might not match up with this serviceGroup
     */
     public AxisServiceGroup getAxisServiceGroup() {
-        checkActivateWarning("getAxisServiceGroup");
+        if(isDebugEnabled) {
+            checkActivateWarning("getAxisServiceGroup");
+        }
         return axisServiceGroup;
     }
 
     public ConfigurationContext getConfigurationContext() {
-        checkActivateWarning("getConfigurationContext");
+        if(isDebugEnabled) {
+            checkActivateWarning("getConfigurationContext");
+        }
         return configurationContext;
     }
 
@@ -610,7 +619,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     public ArrayList getExecutionChain() {
-        checkActivateWarning("getExecutionChain");
+        if(isDebugEnabled) {
+            checkActivateWarning("getExecutionChain");
+        }
         return executionChain;
     }
 
@@ -646,7 +657,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
      */
     public Iterator getInboundExecutedPhases()
     {
-        checkActivateWarning("getInboundExecutedPhases");
+        if(isDebugEnabled) {
+            checkActivateWarning("getInboundExecutedPhases");
+        }
         if (inboundExecutedPhases == null)
         {
             inboundExecutedPhases = new LinkedList();
@@ -698,7 +711,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
      */
     public Iterator getOutboundExecutedPhases()
     {
-        checkActivateWarning("getOutboundExecutedPhases");
+        if(isDebugEnabled) {
+            checkActivateWarning("getOutboundExecutedPhases");
+        }
         if (outboundExecutedPhases == null)
         {
             outboundExecutedPhases = new LinkedList();
@@ -870,7 +885,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     public OperationContext getOperationContext() {
-        checkActivateWarning("getOperationContext");
+        if(isDebugEnabled) {
+            checkActivateWarning("getOperationContext");
+        }
         return operationContext;
     }
 
@@ -931,7 +948,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * @return the value of the property, or null if the property is not found
      */
     public Object getProperty(String name) {
-        checkActivateWarning("getProperty");
+        if(isDebugEnabled) {
+            checkActivateWarning("getProperty");
+        }
 
         // search in my own options
         Object obj = options.getProperty(name);
@@ -1026,7 +1045,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * @return Returns ServiceContext.
      */
     public ServiceContext getServiceContext() {
-        checkActivateWarning("getServiceContext");
+        if(isDebugEnabled) {
+            checkActivateWarning("getServiceContext");
+        }
         return serviceContext;
     }
 
@@ -1038,7 +1059,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     public ServiceGroupContext getServiceGroupContext() {
-        checkActivateWarning("getServiceGroupContext");
+        if(isDebugEnabled) {
+            checkActivateWarning("getServiceGroupContext");
+        }
         return serviceGroupContext;
     }
 
@@ -1076,7 +1099,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * @return Returns TransportInDescription.
      */
     public TransportInDescription getTransportIn() {
-        checkActivateWarning("getTransportIn");
+        if(isDebugEnabled) {
+            checkActivateWarning("getTransportIn");
+        }
         return transportIn;
     }
 
@@ -1084,7 +1109,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * @return Returns TransportOutDescription.
      */
     public TransportOutDescription getTransportOut() {
-        checkActivateWarning("getTransportOut");
+        if(isDebugEnabled) {
+            checkActivateWarning("getTransportOut");
+        }
         return transportOut;
     }
 
@@ -1462,7 +1489,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     public Options getOptions() {
-        checkActivateWarning("getOptions");
+        if(isDebugEnabled) {
+            checkActivateWarning("getOptions");
+        }
         return options;
     }
 
@@ -1492,7 +1521,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
 
     public Policy getEffectivePolicy() {
-        checkActivateWarning("getEffectivePolicy");
+        if(isDebugEnabled) {
+            checkActivateWarning("getEffectivePolicy");
+        }
         if (axisMessage != null) {
             return axisMessage.getPolicyInclude().getEffectivePolicy();
         }
@@ -1507,7 +1538,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
 
     public boolean isEngaged(QName moduleName) {
-        checkActivateWarning("isEngaged");
+        if(isDebugEnabled) {
+            checkActivateWarning("isEngaged");
+        }
         boolean enegage;
         if (configurationContext != null) {
             AxisConfiguration axisConfig = configurationContext.getAxisConfiguration();
