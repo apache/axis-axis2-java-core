@@ -66,6 +66,7 @@ import org.apache.axis2.jaxws.sample.BareTests;
 import org.apache.axis2.jaxws.sample.FaultsServiceTests;
 import org.apache.axis2.jaxws.sample.FaultyWebServiceTests;
 import org.apache.axis2.jaxws.sample.MtomSampleTests;
+import org.apache.axis2.jaxws.sample.MtomSampleByteArrayTests;
 import org.apache.axis2.jaxws.sample.NonWrapTests;
 import org.apache.axis2.jaxws.sample.ParallelAsyncTests;
 import org.apache.axis2.jaxws.sample.WSGenTests;
@@ -130,6 +131,7 @@ public class JAXWSTest extends TestCase {
 
         suite.addTestSuite(AddressBookTests.class);
         suite.addTestSuite(MtomSampleTests.class);
+        suite.addTestSuite(MtomSampleByteArrayTests.class);
         suite.addTestSuite(BareTests.class);
         suite.addTestSuite(NonWrapTests.class);
         suite.addTestSuite(WSGenTests.class);

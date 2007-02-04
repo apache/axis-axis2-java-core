@@ -16,12 +16,16 @@
  */
 package org.apache.axis2.jaxws.message.attachments;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.activation.DataHandler;
 import javax.xml.bind.attachment.AttachmentUnmarshaller;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.commons.logging.Log;
@@ -42,22 +46,43 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
     
     @Override
     public boolean isXOPPackage() {
-        //FIXME: This should really be set based on whether or not we
-        //the SOAP 1.1 or SOAP 1.2 MTOM binding is set.
-        return true;
+        // FIXME: This should really be set based on whether or not the 
+        // incoming message is "application/xop+xml".  Please read the
+        // javadoc for this method.
+        boolean value = true;
+        if (log.isDebugEnabled()){ 
+            log.debug("isXOPPackage returns " + value);
+        }
+        return value;
     }
     
     @Override
     public byte[] getAttachmentAsByteArray(String cid) {
-        if (log.isDebugEnabled())
-            log.debug("Attempting to retreive attachment [" + cid + "] as a byte[]");
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to retrieve attachment [" + cid + "] as a byte[]");
+        }
+        DataHandler dh = getAttachmentAsDataHandler(cid);
+        if (dh != null) {
+            try {
+                return convert(dh);
+            } catch (IOException ioe) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception occurred while getting the byte[] " + ioe);
+                }
+                throw ExceptionFactory.makeWebServiceException(ioe);
+            }
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("returning null byte[]");
+        }
         return null;
     }
 
     @Override
     public DataHandler getAttachmentAsDataHandler(String cid) {
-        if (log.isDebugEnabled())
-            log.debug("Attempting to retreive attachment [" + cid + "] as a DataHandler");
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to retrieve attachment [" + cid + "] as a DataHandler");
+        }
         
         List<Attachment> attachments = message.getAttachments();
         Iterator<Attachment> itr = attachments.iterator();
@@ -68,6 +93,9 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
             }
         }
         
+        if (log.isDebugEnabled()) {
+            log.debug("A dataHandler was not found for [" + cid + "]");
+        }
         return null;
     }
     
@@ -79,4 +107,32 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
         message = msg;
     }
 
+    /**
+     * Read the bytes from the DataHandler
+     * @param dh
+     * @return byte[]
+     * @throws IOException
+     */
+    private byte[] convert(DataHandler dh) throws IOException {
+        if (log.isDebugEnabled()) {
+            log.debug("Reading byte[] from DataHandler " + dh);
+        }
+        InputStream is = dh.getInputStream();
+        if (log.isDebugEnabled()) {
+            log.debug("DataHandler InputStream " + is);
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] b = new byte[1024];
+        int num = is.read(b);
+        if (log.isDebugEnabled()) {
+            if (num <=0) {
+                log.debug("DataHandler InputStream contains no data. num=" + num);
+            }
+        }
+        while (num > 0) {
+            baos.write(b, 0, num);
+            num = is.read(b);
+        }
+        return baos.toByteArray();
+    }
 }

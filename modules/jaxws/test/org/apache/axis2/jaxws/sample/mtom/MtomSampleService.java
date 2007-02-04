@@ -1,6 +1,7 @@
 package org.apache.axis2.jaxws.sample.mtom;
 
-import java.awt.*;
+
+import java.awt.Image;
 import java.io.ByteArrayInputStream;
 
 import javax.activation.DataHandler;
@@ -8,6 +9,7 @@ import javax.activation.DataSource;
 import javax.imageio.ImageIO;
 import javax.jws.WebService;
 import javax.xml.ws.BindingType;
+import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
@@ -34,7 +36,7 @@ public class MtomSampleService implements MtomSample {
             output.setImageData(handler);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            throw new WebServiceException(e);
         }
         return output;
     }

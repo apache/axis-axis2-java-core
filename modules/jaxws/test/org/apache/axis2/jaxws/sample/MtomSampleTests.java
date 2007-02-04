@@ -1,6 +1,7 @@
 package org.apache.axis2.jaxws.sample;
 
-import java.awt.*;
+
+import java.awt.Image;
 import java.io.File;
 
 import javax.activation.DataHandler;

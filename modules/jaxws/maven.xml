@@ -93,6 +93,14 @@
 			<classpath location="${compiled.classes.dir}"/>
 			<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/ProxyDocLitnonWrapped.wsdl"/>
 		</java>
+        
+    	<ant:echo>Generating java from samplemtomjpeg.wsdl</ant:echo>
+        <java classname="com.sun.tools.xjc.Driver" fork="true"> 
+			<jvmarg line="${maven.junit.jvmargs2}"/>
+			<classpath refid="maven.dependency.classpath"/>
+			<classpath location="${compiled.classes.dir}"/>
+			<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/samplemtomjpeg.wsdl"/>
+		</java>
 
     	<ant:echo>Generating java from RPCLit.wsdl</ant:echo>
         <java classname="com.sun.tools.xjc.Driver" fork="true"> 
@@ -332,6 +340,22 @@
                 <ant:include name="org/test/mtom/**"/>
 			</ant:fileset>
 		</ant:copy>
+        
+		<ant:copy toDir="target/test-classes/services/SendImageService/">
+			<ant:fileset dir="target/test-classes">
+				<ant:include name="org/apache/axis2/jaxws/sample/mtom1/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/sample/mtom1">
+                <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+                <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/schema/classes">
+                <ant:include name="org/apache/axis2/jaxws/sample/mtom1/**"/>
+			</ant:fileset>
+		</ant:copy>
+        
 		<ant:copy toDir="target/test-classes/services/SOAP12Service/">
 			<ant:fileset dir="target/test-classes">
 				<ant:include name="org/apache/axis2/jaxws/dispatch/server/**"/>
