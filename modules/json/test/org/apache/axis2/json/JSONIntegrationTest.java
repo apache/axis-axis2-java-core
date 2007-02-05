@@ -17,6 +17,7 @@
 package org.apache.axis2.json;
 
 import java.io.File;
+import java.net.ServerSocket;
 
 import junit.framework.TestCase;
 
@@ -25,6 +26,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -35,13 +37,15 @@ import org.apache.axis2.util.Utils;
 
 public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
 
-    private AxisService service;
+    private static AxisService service;
 
     private String expectedString;
 
-    private SimpleHTTPServer server;
+    private static SimpleHTTPServer server;
 
-    private ConfigurationContext configurationContext;
+    private static ConfigurationContext configurationContext;
+    
+    private static EndpointReference targetEPR;
 
     public JSONIntegrationTest() {
     }
@@ -49,22 +53,27 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
     private static int count = 0;
     protected void setUp() throws Exception {
     	if(count == 0){
-        File configFile = new File(System.getProperty("basedir",".") + "/test-resources/axis2.xml");
-        configurationContext = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null, configFile
-                        .getAbsolutePath());
-        server = new SimpleHTTPServer(configurationContext, TESTING_PORT);
-        try {
-            server.start();
-        } finally {
-
-        }
-        service = Utils.createSimpleService(serviceName, org.apache.axis2.json.Echo.class.getName(),
-                operationName);
-        server.getConfigurationContext().getAxisConfiguration().addService(
-                service);
-        count++;
+    		int testingPort = findAvailablePort();
+    		targetEPR = new EndpointReference(
+    	            "http://127.0.0.1:" + (testingPort)
+    	                    + "/axis2/services/EchoXMLService/echoOM");
+    		
+	        File configFile = new File(System.getProperty("basedir",".") + "/test-resources/axis2.xml");
+	        configurationContext = ConfigurationContextFactory
+	                .createConfigurationContextFromFileSystem(null, configFile
+	                        .getAbsolutePath());
+	        server = new SimpleHTTPServer(configurationContext, testingPort);
+	        try {
+	            server.start();
+	        } finally {
+	
+	        }
+	        service = Utils.createSimpleService(serviceName, org.apache.axis2.json.Echo.class.getName(),
+	                operationName);
+	        server.getConfigurationContext().getAxisConfiguration().addService(
+	                service);
     	}
+    	count++;
     }
 
     protected void tearDown() throws Exception {
@@ -116,4 +125,14 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
         TestCase.assertEquals(response, expectedString);
     }
 
+    protected static int findAvailablePort(){
+    	try{
+    		ServerSocket ss = new ServerSocket(0);
+    		int result = ss.getLocalPort();
+    		ss.close();
+    		return result;
+    	}catch(Exception e){
+    		return 5555;
+    	}
+    }
 }

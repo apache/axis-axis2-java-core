@@ -18,16 +18,8 @@ package org.apache.axis2.json;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis2.addressing.EndpointReference;
-
 public interface JSONTestConstants {
     
-    public static int TESTING_PORT = 5555;
-    
-    public static final EndpointReference targetEPR = new EndpointReference(
-            "http://127.0.0.1:" + (TESTING_PORT)
-                    + "/axis2/services/EchoXMLService/echoOM");
-
     public static final QName serviceName = new QName("EchoXMLService");
 
     public static final QName operationName = new QName("echoOM");
