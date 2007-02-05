@@ -134,7 +134,8 @@ public class MessageContextChangeTest extends TestCase
         new FieldDescription("boolean", "outboundReset"),
         new FieldDescription("java.lang.String", "selfManagedDataDelimiter"),
         new FieldDescription("java.lang.Class", "class$org$apache$axis2$context$MessageContext"),
-        new FieldDescription("java.lang.Class", "class$org$apache$axis2$context$SelfManagedDataManager")
+        new FieldDescription("java.lang.Class", "class$org$apache$axis2$context$SelfManagedDataManager"),
+        new FieldDescription("boolean", "isDebugEnabled"),
     };
 
 
