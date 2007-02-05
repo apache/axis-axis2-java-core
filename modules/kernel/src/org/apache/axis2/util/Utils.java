@@ -379,8 +379,11 @@ public class Utils {
                 throw new IllegalArgumentException("The MessageContext does not have an associated SOAPFault.");
             }
             SOAPFault soapFault = envelope.getBody().getFault();
-            result = new AxisFault(soapFault.getCode(), soapFault.getReason(),
-                soapFault.getNode(), soapFault.getRole(), soapFault.getDetail());
+            
+            // The AxisFault returned needs to have the MessageContext set on it so that 
+            // other programming models can potentially handle the fault with an 
+            // alternate deserialization.
+            result = new AxisFault(soapFault, messageContext);
         }
         return result;
     }

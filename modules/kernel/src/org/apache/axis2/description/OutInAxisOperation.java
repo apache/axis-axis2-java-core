@@ -379,17 +379,12 @@ class OutInAxisOperationClient extends OperationClient {
                     SOAPEnvelope resenvelope = response.getEnvelope();
                     SOAPBody body = resenvelope.getBody();
                     if (body.hasFault()) {
-                        Exception ex = body.getFault().getException();
-
-                        if (ex != null) {
-                            callback.onError(ex);
-                        } else {
-                            callback.onError(new Exception(body.getFault()
-                                    .getReason().getText()));
-                        }
+                        // If a fault was found, create an AxisFault with a MessageContext so that
+                        // other programming models can deserialize the fault to an alternative form.
+                        AxisFault fault = new AxisFault(body.getFault(), response);
+                        callback.onError(fault);
                     } else {
                         AsyncResult asyncResult = new AsyncResult(response);
-
                         callback.onComplete(asyncResult);
                     }
                 }

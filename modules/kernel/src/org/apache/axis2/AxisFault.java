@@ -20,6 +20,7 @@ package org.apache.axis2;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPConstants;
+import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPFaultCode;
 import org.apache.axiom.soap.SOAPFaultDetail;
 import org.apache.axiom.soap.SOAPFaultNode;
@@ -146,7 +147,30 @@ public class AxisFault extends RemoteException {
      */
     public AxisFault(SOAPFaultCode soapFaultCode, SOAPFaultReason soapFaultReason,
                      SOAPFaultNode soapFaultNode, SOAPFaultRole soapFaultRole, SOAPFaultDetail soapFaultDetail) {
+        initializeValues(soapFaultCode, soapFaultReason, soapFaultNode, soapFaultRole, soapFaultDetail);
+    }
+    
+    public AxisFault(SOAPFault fault) { 
+        initializeValues(fault);
+    }
+    
+    public AxisFault(SOAPFault fault, MessageContext faultCtx) {
+        initializeValues(fault);
+        faultMessageContext = faultCtx;
+    }
+    
+    private void initializeValues(SOAPFault fault) {
+        if (fault != null) {
+            initializeValues(fault.getCode(), fault.getReason(), fault.getNode(), 
+                    fault.getRole(), fault.getDetail());
+        }        
+    }
 
+    private void initializeValues(SOAPFaultCode soapFaultCode, 
+                                  SOAPFaultReason soapFaultReason, 
+                                  SOAPFaultNode soapFaultNode, 
+                                  SOAPFaultRole soapFaultRole,
+                                  SOAPFaultDetail soapFaultDetail) {
         if (faultElements == null) {
             // assuming that most of the times fault code, fault string and fault details are set
             faultElements = new HashMap(3);
@@ -177,7 +201,7 @@ public class AxisFault extends RemoteException {
             faultCode = soapFaultCode.getValue().getTextAsQName();
         }
     }
-
+     
     private void setToElementsListIfNotNull(String soapFaultElementName, OMElement soapFaultElement) {
         if (soapFaultElement != null) {
             faultElements.put(soapFaultElementName, soapFaultElement);
