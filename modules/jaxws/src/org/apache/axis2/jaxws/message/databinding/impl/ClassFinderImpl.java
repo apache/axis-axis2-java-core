@@ -22,11 +22,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.databinding.ClassFinder;
 import org.apache.axis2.jaxws.util.ClassUtils;
@@ -66,9 +70,7 @@ public class ClassFinderImpl implements ClassFinder {
 			        	            //We are only going to add the class that belong to the provided package.
 			        				if(clazzName.startsWith(pkg)){
 			        					try {
-		        							 Class clazz = Class.forName(clazzName, 
-		        	                                    false, 
-		        	                                    Thread.currentThread().getContextClassLoader());
+		        							 Class clazz = forName(clazzName, false, getContextClassLoader());
 		        	                            // Don't add any interfaces or JAXWS specific classes.  
 		        	                            // Only classes that represent data and can be marshalled 
 		        	                            // by JAXB should be added.
@@ -107,4 +109,52 @@ public class ClassFinderImpl implements ClassFinder {
 	   
 	}
 
+    /**
+     * Return the class for this name
+     * @return Class
+     */
+    private static Class forName(final String className, final boolean initialize, final ClassLoader classloader) {
+        // NOTE: This method must remain private because it uses AccessController
+        Class cl = null;
+        try {
+            cl = (Class) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Class.forName(className, initialize, classloader);    
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+        
+        return cl;
+    }
+    
+    /**
+     * @return ClassLoader
+     */
+    private static ClassLoader getContextClassLoader() {
+        // NOTE: This method must remain private because it uses AccessController
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Thread.currentThread().getContextClassLoader();      
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+        
+        return cl;
+    }
 }

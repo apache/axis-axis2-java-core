@@ -20,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.namespace.QName;
@@ -40,6 +42,7 @@ import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.databinding.SourceBlock;
@@ -47,6 +50,8 @@ import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
 import org.apache.axis2.jaxws.message.util.DOMReader;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -73,11 +78,12 @@ import org.w3c.dom.Node;
  */
 public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 	
+    private static final Log log = LogFactory.getLog(SourceBlockImpl.class);
 	private static Class staxSource = null;
 	static {
 		try {
 			// Dynamically discover if StAXSource is available
-			staxSource = Class.forName("javax.xml.transform.stax.StAXSource");
+			staxSource = forName("javax.xml.transform.stax.StAXSource");
 		} catch (Exception e) { }
 	}
 	
@@ -221,5 +227,28 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
         return false;  // The source could be a text or element etc.
     }
 	
-	
+    /**
+     * Return the class for this name
+     * @return Class
+     */
+    private static Class forName(final String className) throws ClassNotFoundException {
+        // NOTE: This method must remain private because it uses AccessController
+        Class cl = null;
+        try {
+            cl = (Class) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Class.forName(className);    
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw (ClassNotFoundException) e.getException();
+        } 
+        
+        return cl;
+    }
 }

@@ -23,6 +23,9 @@ import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +43,8 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.java.security.AccessController;
+
 public class WSDL4JWrapper implements WSDLWrapper {
     
 	private Definition wsdlDefinition = null;
@@ -49,8 +54,8 @@ public class WSDL4JWrapper implements WSDLWrapper {
     	ConnectException, WSDLException{
 		super();
 		this.wsdlURL = wsdlURL;
-		WSDLFactory factory = WSDLFactory.newInstance();
-		WSDLReader reader = factory.newWSDLReader();
+		
+        WSDLReader reader = getWSDLReader();
 		
 		try {
 			URL url = new URL(wsdlURL.toString());
@@ -74,6 +79,23 @@ public class WSDL4JWrapper implements WSDLWrapper {
 		}
 	}
 
+    private static WSDLReader getWSDLReader() throws WSDLException {
+        // Keep this method private
+        WSDLReader reader;
+        try {
+            reader = (WSDLReader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws WSDLException {
+                            WSDLFactory factory = WSDLFactory.newInstance();
+                            return factory.newWSDLReader();
+                        }
+                    });
+        } catch (PrivilegedActionException e) {
+            throw (WSDLException) e.getException();
+        }
+        return reader;
+    }
+    
     public WSDL4JWrapper(URL wsdlURL, Definition wsdlDefinition) throws WSDLException{
 		super();
 		this.wsdlURL = wsdlURL;

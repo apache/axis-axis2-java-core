@@ -20,6 +20,9 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +33,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.namespace.QName;
+
+import org.apache.axis2.java.security.AccessController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -217,15 +222,8 @@ public class XMLRootElementUtil {
         
         // Unfortunately the element names are stored on the fields.
         // Get all of the fields in the class and super classes
-        List<Field> fields = new ArrayList<Field>();
-        Class cls = jaxbClass;
-        while(cls != null) {
-            Field[] fieldArray = cls.getDeclaredFields();
-            for (Field field:fieldArray) {
-                fields.add(field);
-            }
-            cls = cls.getSuperclass();
-        }
+        
+        List<Field> fields = getFields(jaxbClass);
         
         // Now match up the fields with the property descriptors...Sigh why didn't JAXB put the @XMLElement annotations on the 
         // property methods!
@@ -302,6 +300,34 @@ public class XMLRootElementUtil {
             }
         }
         return map;
+    }
+    
+    /**
+     * Gets all of the fields in this class and the super classes
+     * @param beanClass
+     * @return
+     */
+    static private List<Field> getFields(final Class beanClass) {
+        // This class must remain private due to Java 2 Security concerns
+        List<Field> fields;
+        fields = (List<Field>) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        List<Field> fields = new ArrayList<Field>();
+                        Class cls = beanClass;
+                        while(cls != null) {
+                            Field[] fieldArray = cls.getDeclaredFields();
+                            for (Field field:fieldArray) {
+                                fields.add(field);
+                            }
+                            cls = cls.getSuperclass();
+                        }
+                        return fields; 
+                    }
+                }
+        );
+        
+        return fields;
     }
     
     /**

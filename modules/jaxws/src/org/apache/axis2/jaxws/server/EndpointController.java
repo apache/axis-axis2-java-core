@@ -16,8 +16,12 @@
  */
 package org.apache.axis2.jaxws.server;
 
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -107,7 +111,7 @@ public class EndpointController {
         
         try {
 		    //TODO: What should be done if the supplied ClassLoader is null?
-            Class _class = Class.forName(className, true, cl);
+            Class _class = forName(className, true, cl);
             return _class;
 	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
 	        //does not extend Exception, so lets catch everything that extends Throwable
@@ -117,6 +121,31 @@ public class EndpointController {
                     "EndpointControllerErr4", className));
 		}
 	}
+    
+    /**
+     * Return the class for this name
+     * @return Class
+     */
+    private static Class forName(final String className, final boolean initialize, final ClassLoader classloader) throws ClassNotFoundException {
+        // NOTE: This method must remain private because it uses AccessController
+        Class cl = null;
+        try {
+            cl = (Class) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Class.forName(className, initialize, classloader);    
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw (ClassNotFoundException) e.getException();
+        } 
+        
+        return cl;
+    }
     
     private String getServiceImplClassName(MessageContext mc) {
         // The PARAM_SERVICE_CLASS property that is set on the AxisService

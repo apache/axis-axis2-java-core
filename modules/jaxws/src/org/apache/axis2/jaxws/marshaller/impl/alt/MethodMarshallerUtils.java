@@ -21,6 +21,8 @@ package org.apache.axis2.jaxws.marshaller.impl.alt;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +42,7 @@ import javax.xml.ws.ProtocolException;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
 
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
@@ -824,14 +827,63 @@ public class MethodMarshallerUtils  {
      * @throws ClassNotFoundException
      */
     static Class loadClass(String className)throws ClassNotFoundException{
-        // TODO J2W AccessController Needed
         // Don't make this public, its a security exposure
         Class cls = ClassUtils.getPrimitiveClass(className);
         if (cls == null) {
-            cls = Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+            cls = forName(className, true, getContextClassLoader());
         }
         return cls;
     }
+    
+    /**
+     * Return the class for this name
+     * @return Class
+     */
+    private static Class forName(final String className, final boolean initialize, final ClassLoader classLoader) {
+        // NOTE: This method must remain private because it uses AccessController
+        Class cl = null;
+        try {
+            cl = (Class) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Class.forName(className, initialize, classLoader);    
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+        
+        return cl;
+    }
+    
+    /**
+     * @return ClassLoader
+     */
+    private static ClassLoader getContextClassLoader() {
+        // NOTE: This method must remain private because it uses AccessController
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Thread.currentThread().getContextClassLoader();      
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+        
+        return cl;
+    }
+    
     
     /** Create a JAX-WS Service Exception (Generated Exception)
      * @param message

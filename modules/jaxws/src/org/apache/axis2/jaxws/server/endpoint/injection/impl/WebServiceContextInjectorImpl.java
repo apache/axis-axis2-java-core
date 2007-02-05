@@ -19,15 +19,20 @@
 package org.apache.axis2.jaxws.server.endpoint.injection.impl;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.server.endpoint.injection.WebServiceContextInjector;
@@ -137,8 +142,7 @@ public class WebServiceContextInjectorImpl implements WebServiceContextInjector 
 		}
 		try{
 			if(!Modifier.isPublic(field.getModifiers())){
-				//TODO: Do I need to put java2 Security around this calls.
-				field.setAccessible(true);
+				setAccessible(field, true);
 			}
 			//Inject Resource.
 			field.set(instance, resource);
@@ -165,9 +169,8 @@ public class WebServiceContextInjectorImpl implements WebServiceContextInjector 
 			throw new ResourceInjectionException(Messages.getMessage("WebServiceContextInjectionImplErr3"));
 		}
 		try{
-			if(!Modifier.isPublic(method.getModifiers())){
-				//TODO: Do I need to put java2 Security around this calls.
-				method.setAccessible(true);
+			if(!Modifier.isPublic(method.getModifiers()))  {
+				setAccessible(method, true);
 			}
 			method.invoke(instance, resource);
 			return;
@@ -180,6 +183,21 @@ public class WebServiceContextInjectorImpl implements WebServiceContextInjector 
 		
 		
 	}
+    
+    /**
+     * Set accessible.  This method must remain private
+     * @param obj AccessibleObject
+     * @param value true or false
+     */
+    private static void setAccessible(final AccessibleObject obj, final boolean value) {
+        AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                obj.setAccessible(value);
+                return null;
+            }
+        });
+        
+    }
 	
 	/*
 	 * Search for Field with @Resource Annotation.
@@ -188,7 +206,7 @@ public class WebServiceContextInjectorImpl implements WebServiceContextInjector 
 		if(bean == null){
 			return null;
 		}
-		Field[] fields =bean.getDeclaredFields();
+		List<Field> fields =getFields(bean);
 		for(Field field: fields){
 			Annotation[] annotations = field.getAnnotations();
 			for(Annotation an:annotations){
@@ -204,6 +222,35 @@ public class WebServiceContextInjectorImpl implements WebServiceContextInjector 
 		}
 		return null;
 	}
+    
+    /**
+     * Gets all of the fields in this class and the super classes
+     * @param beanClass
+     * @return
+     */
+    static private List<Field> getFields(final Class beanClass) {
+        // This class must remain private due to Java 2 Security concerns
+        List<Field> fields;
+        fields = (List<Field>) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        List<Field> fields = new ArrayList<Field>();
+                        Class cls = beanClass;
+                        while(cls != null) {
+                            Field[] fieldArray = cls.getDeclaredFields();
+                            for (Field field:fieldArray) {
+                                fields.add(field);
+                            }
+                            cls = cls.getSuperclass();
+                        }
+                        return fields; 
+                    }
+                }
+        );
+        
+        return fields;
+    }
+    
 	/*
 	 * Search for Method with @Resource Annotation
 	 */

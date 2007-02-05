@@ -20,8 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.URLDecoder;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -31,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -40,6 +39,8 @@ import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.factory.ClassFinderFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -98,7 +99,7 @@ public class JAXBUtils {
         	}
         }
 	    // The JAXBContexts are keyed by ClassLoader and the set of Strings
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = getContextClassLoader();
         
         // Get the innerMap 
         Map<Set<String>, JAXBContext> innerMap = jaxbMap.get(cl);
@@ -244,7 +245,7 @@ public class JAXBUtils {
                 fullList.addAll(getAllClassesFromPackage(pkg, cl));
             }
             Class[] classArray = fullList.toArray(new Class[0]);
-            context = JAXBContext.newInstance(classArray);
+            context = JAXBContext_newInstance(classArray);
         }
         if (log.isDebugEnabled()) {
             log.debug("Successfully created JAXBContext " + context.toString());
@@ -393,7 +394,7 @@ public class JAXBUtils {
         	
         }
 	    try {
-	        Class cls = Class.forName(p + ".ObjectFactory",false, cl);
+	        Class cls = forName(p + ".ObjectFactory",false, cl);
 	        if (cls != null) {
 	            return true;
 	        }
@@ -449,11 +450,11 @@ public class JAXBUtils {
             if (log.isDebugEnabled()) {
                 log.debug("Attempting to create JAXBContext with contextPath=" + contextpath);
             }
-            context = JAXBContext.newInstance(contextpath, cl);
+            context = JAXBContext_newInstance(contextpath, cl);
             if (log.isDebugEnabled()) {
                 log.debug("  Successfully created JAXBContext:" + context);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             if (log.isDebugEnabled()) {
                 log.debug("  Unsuccessful: We will now use an alterative JAXBConstruct construction");
                 log.debug("  Reason " + e.toString());
@@ -544,9 +545,8 @@ public class JAXBUtils {
                         // TODO Java2 Sec
                         String className = pckgname + '.' + file.substring(0, file.length() - 6);
                         try {
-                            Class clazz = Class.forName(className, 
-                                    false, 
-                                    Thread.currentThread().getContextClassLoader());
+                            Class clazz = forName(className, 
+                                    false, getContextClassLoader());
                             // Don't add any interfaces or JAXWS specific classes.  
                             // Only classes that represent data and can be marshalled 
                             // by JAXB should be added.
@@ -608,14 +608,14 @@ public class JAXBUtils {
     
     private static void addCommonArrayClasses(List<Class> list) {
         // Add common primitives arrays (necessary for RPC list type support)
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = getContextClassLoader();
 
        
         for (int i=0; i<commonArrayClasses.length; i++) {
             String className = commonArrayClasses[i];
             try {
                 // Load and add the class
-                Class cls = Class.forName(ClassUtils.getLoadableClassName(className), false, cl);
+                Class cls = forName(ClassUtils.getLoadableClassName(className), false, cl);
                 list.add(cls);
     	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
     	        //does not extend Exception
@@ -629,6 +629,113 @@ public class JAXBUtils {
         }
     }
     
+    /**
+     * @return ClassLoader
+     */
+    private static ClassLoader getContextClassLoader() {
+        // NOTE: This method must remain private because it uses AccessController
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Thread.currentThread().getContextClassLoader();      
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+        
+        return cl;
+    }
     
+    /**
+     * Return the class for this name
+     * @return Class
+     */
+    private static Class forName(final String className, final boolean initialize, final ClassLoader classloader) throws ClassNotFoundException {
+        // NOTE: This method must remain private because it uses AccessController
+        Class cl = null;
+        try {
+            cl = (Class) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Class.forName(className, initialize, classloader);    
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw (ClassNotFoundException) e.getException();
+        } 
+        
+        return cl;
+    }
+    
+    /**
+     * Create JAXBContext from context String and ClassLoader
+     * @param context
+     * @param classloader
+     * @return
+     * @throws Exception
+     */
+    private static JAXBContext JAXBContext_newInstance(final String context, final ClassLoader classloader) throws Exception {
+        // NOTE: This method must remain private because it uses AccessController
+        JAXBContext jaxbContext = null;
+        try {
+            jaxbContext = (JAXBContext) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws JAXBException {
+                            return JAXBContext.newInstance(context, classloader);    
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw e.getException();
+        } 
+        
+        return jaxbContext;
+    }
+    
+    /**
+     * Create JAXBContext from Class[]
+     * @param classArray
+     * @return
+     * @throws Exception
+     */
+    private static JAXBContext JAXBContext_newInstance(final Class[] classArray) throws JAXBException {
+        // NOTE: This method must remain private because it uses AccessController
+        JAXBContext jaxbContext = null;
+        try {
+            jaxbContext = (JAXBContext) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws JAXBException {
+                            return JAXBContext.newInstance(classArray);    
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+                log.debug("  Exception is " + e.getException());
+            }
+            if (e.getException() instanceof JAXBException) {
+                throw (JAXBException) e.getException();
+            } else if (e.getException() instanceof RuntimeException) {
+                ExceptionFactory.makeWebServiceException(e.getException());
+            }
+        } 
+        
+        return jaxbContext;
+    }
     
 }

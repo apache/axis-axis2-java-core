@@ -18,21 +18,29 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.CONSTRUCTOR_METHOD;
 
 /**
  * Utilities used throughout the Description package.
  */
 class DescriptionUtils {
+    private static final Log log = LogFactory.getLog(DescriptionUtils.class);
     
     static boolean isEmpty(String string) {
         return (string == null || "".equals(string));
@@ -246,10 +254,59 @@ class DescriptionUtils {
     }
     
     static Class loadClass(String className)throws ClassNotFoundException {
-        // TODO J2W AccessController Needed
         // Don't make this public, its a security exposure
-        return Class.forName(className, true, Thread.currentThread().getContextClassLoader());
+        return forName(className, true, getContextClassLoader());
     }
+    
+    /**
+     * Return the class for this name
+     * @return Class
+     */
+    static Class forName(final String className, final boolean initialize, final ClassLoader classloader) throws ClassNotFoundException {
+        // NOTE: This method must remain protected because it uses AccessController
+        Class cl = null;
+        try {
+            cl = (Class) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Class.forName(className, initialize, classloader);    
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw (ClassNotFoundException) e.getException();
+        } 
+        
+        return cl;
+    }
+    
+    /**
+     * @return ClassLoader
+     */
+    static ClassLoader getContextClassLoader() {
+        // NOTE: This method must remain private because it uses AccessController
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Thread.currentThread().getContextClassLoader();      
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw (RuntimeException) e.getException();
+        }
+        
+        return cl;
+    }
+    
     
     /**
      * Determines whether a method should have an OperationDescription created for it

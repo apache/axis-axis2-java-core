@@ -447,8 +447,9 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     			}
     			else { 
     				try {
-    					// TODO: Using Class.forName() is probably not the best long-term way to get the SEI class from the annotation
-    					seiClass = Class.forName(seiClassName, false, Thread.currentThread().getContextClassLoader());
+    					// TODO: Using Class forName() is probably not the best long-term way to get the SEI class from the annotation
+    					seiClass = DescriptionUtils.forName(seiClassName, false, 
+                                DescriptionUtils.getContextClassLoader());
     			    // Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
     			    // does not extend Exception, so lets catch everything that extends Throwable
                     // rather than just Exception.

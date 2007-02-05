@@ -21,6 +21,8 @@ package org.apache.axis2.jaxws.spi;
 
 import java.lang.reflect.Proxy;
 import java.net.URL;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -40,6 +42,7 @@ import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.JAXWSClientContext;
 import org.apache.axis2.jaxws.client.JAXBDispatch;
@@ -51,6 +54,8 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The ServiceDelegate serves as the backing implementation for all of the 
@@ -58,6 +63,7 @@ import org.apache.axis2.jaxws.util.WSDLWrapper;
  * point for the client implementation. 
  */
 public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
+    private static final Log log = LogFactory.getLog(ServiceDelegate.class);
     private Executor executor;
 
     private ServiceDescription serviceDescription;
@@ -213,7 +219,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, sei, endpointDesc);
     	
     	Class[] seiClazz = new Class[]{sei, BindingProvider.class};
-    	Object proxyClass = Proxy.newProxyInstance(sei.getClassLoader(), seiClazz, proxyHandler);
+    	Object proxyClass = Proxy.newProxyInstance(getClassLoader(sei), seiClazz, proxyHandler);
     	return sei.cast(proxyClass);
     }
     
@@ -359,6 +365,30 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	return clazz != null && (clazz == String.class || 
     			clazz == Source.class || 
     			clazz == SOAPMessage.class);
+    }
+    
+    /**
+     * @return ClassLoader
+     */
+    private static ClassLoader getClassLoader(final Class cls) {
+        // NOTE: This method must remain private because it uses AccessController
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return cls.getClassLoader();      
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+        
+        return cl;
     }
 }
 /**

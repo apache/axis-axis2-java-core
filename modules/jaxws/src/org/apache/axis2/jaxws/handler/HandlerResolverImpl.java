@@ -1,5 +1,7 @@
 package org.apache.axis2.jaxws.handler;
 
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,10 +12,13 @@ import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.handler.soap.SOAPHandler;
 
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /* 
  * This class should be created by the ServiceDelegate.
@@ -27,6 +32,7 @@ import org.apache.axis2.jaxws.spi.ServiceDelegate;
 
 public class HandlerResolverImpl implements HandlerResolver {
 
+    private static Log log = LogFactory.getLog(HandlerResolverImpl.class);
 	/*
 	 * TODO:  is there any value/reason in caching the list we collect from the
 	 * ports?  It is a "live" list in the sense that we could possibly return
@@ -114,11 +120,60 @@ public class HandlerResolverImpl implements HandlerResolver {
 	
 	private static Class loadClass(String clazz) throws ClassNotFoundException {
 		try {
-			return Class.forName(clazz, true, ClassLoader.getSystemClassLoader());
+			return forName(clazz, true, ClassLoader.getSystemClassLoader());
 		} catch (ClassNotFoundException e) {
 			throw e;
 		}
 	}
+    
+    /**
+     * Return the class for this name
+     * @return Class
+     */
+    private static Class forName(final String className, final boolean initialize, final ClassLoader classLoader) throws ClassNotFoundException {
+        // NOTE: This method must remain protected because it uses AccessController
+        Class cl = null;
+        try {
+            cl = (Class) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Class.forName(className, initialize, classLoader);    
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw (ClassNotFoundException) e.getException();
+        } 
+        
+        return cl;
+    }
+    
+    /**
+     * @return ClassLoader
+     */
+    private static ClassLoader getSystemClassLoader() {
+        // NOTE: This method must remain private because it uses AccessController
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return ClassLoader.getSystemClassLoader();      
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw (RuntimeException) e.getException();
+        }
+        
+        return cl;
+    }
 
 
 	private static void callHandlerPostConstruct(Object handlerClass) {
