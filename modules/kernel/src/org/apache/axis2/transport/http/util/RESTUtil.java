@@ -223,9 +223,11 @@ public class RESTUtil {
             if ((axisOperation = msgContext.getAxisOperation()) != null) {
                 AxisEndpoint axisEndpoint =
                         (AxisEndpoint) msgContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
-                AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisEndpoint
-                        .getBinding().getChild(axisOperation.getName());
-                msgContext.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
+                if (axisEndpoint != null) {
+                    AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisEndpoint
+                            .getBinding().getChild(axisOperation.getName());
+                    msgContext.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
+                }
                 msgContext.setAxisOperation(axisOperation);
             }
 

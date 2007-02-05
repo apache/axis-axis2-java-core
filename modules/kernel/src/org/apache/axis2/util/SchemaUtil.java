@@ -442,7 +442,8 @@ public class SchemaUtil {
             }
         }
 
-        if (request.getContentType().indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1) {
+        String contentType = request.getContentType();
+        if (contentType != null && contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1) {
             ServletRequestContext servletRequestContext = new ServletRequestContext(request);
             try {
                 List items = parseRequest(servletRequestContext);
