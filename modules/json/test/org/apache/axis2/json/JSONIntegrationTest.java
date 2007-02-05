@@ -46,8 +46,9 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
     public JSONIntegrationTest() {
     }
 
+    private static int count = 0;
     protected void setUp() throws Exception {
-
+    	if(count == 0){
         File configFile = new File(System.getProperty("basedir",".") + "/test-resources/axis2.xml");
         configurationContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(null, configFile
@@ -62,10 +63,14 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
                 operationName);
         server.getConfigurationContext().getAxisConfiguration().addService(
                 service);
+        count++;
+    	}
     }
 
     protected void tearDown() throws Exception {
-        server.stop();
+    	if(count == 2){
+    		server.stop();
+    	}
     }
 
     protected OMElement createEnvelope() throws Exception {
@@ -83,14 +88,14 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
         return rpcWrapEle;
     }
 
-    public void testEchoOMWithJSON() throws Exception {
-        OMElement payload = createEnvelope();
+    private void doEchoOM(String messageType) throws Exception{
+    	OMElement payload = createEnvelope();
         Options options = new Options();
         options.setTo(targetEPR);
-        options.setProperty(Constants.Configuration.MESSAGE_TYPE, getMessageType());
+        options.setProperty(Constants.Configuration.MESSAGE_TYPE, messageType);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-
-        ServiceClient sender = new ServiceClient(configurationContext, null);
+        ConfigurationContext clientConfigurationContext = ConfigurationContextFactory.createDefaultConfigurationContext();
+        ServiceClient sender = new ServiceClient(clientConfigurationContext, null);
         options.setAction(null);
         sender.setOptions(options);
         options.setTo(targetEPR);
@@ -98,9 +103,13 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
         OMElement ele = (OMElement) result.getFirstOMChild();
         compareWithCreatedOMText(ele.getText());
     }
-
-    protected String getMessageType() {
-        return "application/json";
+    
+    public void testEchoOMWithJSONBadgerfish() throws Exception{
+    	doEchoOM("application/json/badgerfish");
+    }
+    
+    public void testEchoOMWithJSON() throws Exception {
+    	doEchoOM("application/json");
     }
 
     protected void compareWithCreatedOMText(String response) {
