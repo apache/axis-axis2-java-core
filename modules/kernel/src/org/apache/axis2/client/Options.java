@@ -70,8 +70,7 @@ public class Options implements Externalizable {
      * An ID which can be used to correlate operations on an instance of 
      * this object in the log files
      */
-    private String logCorrelationIDString = myClassName +"@"+ UUIDGenerator.getUUID();
-    
+    private String logCorrelationIDString = null;
 
     /**
      * @serial The serialization version ID tracks the version of the class.
@@ -1028,6 +1027,8 @@ public class Options implements Externalizable {
      */
     public void writeExternal(ObjectOutput out) throws IOException
     {
+        String logCorrelationIDString = getLogCorrelationIDString();
+
         // write out contents of this object
 
         // NOTES: For each item, where appropriate,
@@ -1414,6 +1415,7 @@ public class Options implements Externalizable {
             return;
         }
 
+        String logCorrelationIDString = getLogCorrelationIDString();
         // use the supplied configuration context
 
         // get the axis configuration 
@@ -1750,6 +1752,9 @@ public class Options implements Externalizable {
      */
     public String getLogCorrelationIDString()
     {
+        if(logCorrelationIDString == null) {
+            logCorrelationIDString = myClassName +"@"+ UUIDGenerator.getUUID();
+        }
         return logCorrelationIDString;
     }
 
@@ -1763,7 +1768,7 @@ public class Options implements Externalizable {
     private void checkActivateWarning(String methodname)
     {
         if (needsToBeReconciled) {
-           log.warn(logCorrelationIDString+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
+           log.warn(getLogCorrelationIDString()+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
         }
     }
 }
