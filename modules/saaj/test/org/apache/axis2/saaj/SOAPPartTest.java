@@ -15,12 +15,9 @@
  */
 package org.apache.axis2.saaj;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.util.Iterator;
 
-import javax.activation.DataHandler;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.soap.MessageFactory;
@@ -28,12 +25,11 @@ import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
-import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.TestCase;
 
@@ -44,25 +40,6 @@ import org.w3c.dom.Node;
  * 
  */
 public class SOAPPartTest extends TestCase {
-    public void testGetContents() {
-        try {
-            ByteArrayInputStream ins = new ByteArrayInputStream(new byte[5]);
-            DataHandler dh = new DataHandler(new AttachmentTest("t").new Src(ins, "text/plain"));
-            InputStream in = dh.getInputStream();
-            StreamSource ssrc = new StreamSource(in);
-
-            SOAPPart sp = MessageFactory.newInstance().createMessage().getSOAPPart();
-            sp.setContent(ssrc);
-
-            Source ssrc2 = sp.getContent();
-            if (ssrc2 == null) {
-                fail("Contents were null");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("Unexpected Exception " + e);
-        }
-    }
 
     public void testAddSource() {
         DOMSource domSource;
@@ -81,40 +58,19 @@ public class SOAPPartTest extends TestCase {
             SOAPHeader header = message.getSOAPHeader();
             if (header != null) {
                 Iterator iter1 = header.getChildElements();
-                System.out.println("Header contents:");
                 getContents(iter1, "");
             }
 
             SOAPBody body = message.getSOAPBody();
             Iterator iter2 = body.getChildElements();
-            System.out.println("Body contents:");
             getContents(iter2, "");
 
-            /* SOAPEnvelope envelope = soapPart.getEnvelope();
-            SOAPHeader header = envelope.getHeader();
-            assertEquals("Header", header.getLocalName());
-            assertEquals("soapenv", header.getPrefix());
-
-            Node firstChild = header.getFirstChild();
-            //assertEquals("Hello", firstChild.getLocalName());
-            //assertEquals("shw", firstChild.getPrefix());
-
-            SOAPBody body = envelope.getBody();
-            assertEquals("Body", body.getLocalName());
-            assertEquals("soapenv", body.getPrefix());
-
-            for(Iterator iter=body.getChildElements(); iter.hasNext();){
-                System.err.println("$$$ " + iter.next());
-            }*/
-
         } catch (Exception e) {
-            e.printStackTrace();
             fail("Unexpected Exception : " + e);
         }
     }
 
     public void getContents(Iterator iterator, String indent) {
-        System.err.println(iterator.hasNext());
         while (iterator.hasNext()) {
             Node node = (Node) iterator.next();
             SOAPElement element = null;
@@ -124,28 +80,76 @@ public class SOAPPartTest extends TestCase {
                 element = (SOAPElement) node;
 
                 Name name = element.getElementName();
-                System.out.println(indent + "Name is " + name.getQualifiedName());
 
                 Iterator attrs = element.getAllAttributes();
 
                 while (attrs.hasNext()) {
                     Name attrName = (Name) attrs.next();
-                    System.out.println(indent + " Attribute name is " +
-                                       attrName.getQualifiedName());
-                    System.out.println(indent + " Attribute value is " +
-                                       element.getAttributeValue(attrName));
+                    assertNotNull(attrName);
+                    //System.out.println(indent + " Attribute name is " +
+                    //                   attrName.getQualifiedName());
+                    //System.out.println(indent + " Attribute value is " +
+                    //                   element.getAttributeValue(attrName));
                 }
 
                 Iterator iter2 = element.getChildElements();
                 getContents(iter2, indent + " ");
             } else {
                 text = (Text) node;
-
                 String content = text.getValue();
-                System.out.println(indent + "Content is: " + content);
+                assertNotNull(content);
             }
         }
     }
+    
+    
+    
+    public void testAddSource2() throws Exception {
+        javax.xml.soap.SOAPMessage soapMessage =
+                javax.xml.soap.MessageFactory.newInstance().createMessage();
+        javax.xml.soap.SOAPEnvelope soapEnv =
+                soapMessage.getSOAPPart().getEnvelope();
+        javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
+        javax.xml.soap.SOAPBody body = soapEnv.getBody();
+        
+        assertTrue(header.addChildElement("ebxmlms1", "ch2", "http://test.apache.org") instanceof SOAPHeaderElement);
+        assertTrue(header.addHeaderElement(soapEnv.createName("ebxmlms2", "ch3", "http://test2.apache.org")) != null);
+        assertTrue(header.addHeaderElement(new PrefixedQName("http://test3.apache.org", "ebxmlms3", "ch5")) != null);
+
+        body.addChildElement("bodyEle1", "ele1", "http://ws.apache.org");
+        soapMessage.saveChanges();
+        
+        javax.xml.soap.SOAPMessage soapMessage2 =
+            javax.xml.soap.MessageFactory.newInstance().createMessage();
+        SOAPPart soapPart = soapMessage2.getSOAPPart();
+        soapPart.setContent(soapMessage.getSOAPPart().getContent());
+        soapMessage2.saveChanges();
+        assertNotNull(soapMessage2);
+    }
+    
+    public void testAddSource3() throws Exception {
+        javax.xml.soap.SOAPMessage soapMessage =
+                javax.xml.soap.MessageFactory.newInstance().createMessage();
+        javax.xml.soap.SOAPEnvelope soapEnv =
+                soapMessage.getSOAPPart().getEnvelope();
+        javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
+        javax.xml.soap.SOAPBody body = soapEnv.getBody();
+        
+        assertTrue(header.addChildElement("ebxmlms1", "ch2", "http://test.apache.org") instanceof SOAPHeaderElement);
+        assertTrue(header.addHeaderElement(soapEnv.createName("ebxmlms2", "ch3", "http://test2.apache.org")) != null);
+        assertTrue(header.addHeaderElement(new PrefixedQName("http://test3.apache.org", "ebxmlms3", "ch5")) != null);
+
+        body.addChildElement("bodyEle1", "ele1", "http://ws.apache.org");
+        soapMessage.saveChanges();
+        
+        javax.xml.soap.SOAPMessage soapMessage2 =
+            javax.xml.soap.MessageFactory.newInstance().createMessage();
+        SOAPPart soapPart = soapMessage2.getSOAPPart();
+        soapPart.setContent(soapMessage.getSOAPPart().getContent());
+        soapMessage2.saveChanges();
+        assertNotNull(soapMessage2);
+    }
+
     
     public void _testInputEncoding() {
         try {
@@ -162,17 +166,10 @@ public class SOAPPartTest extends TestCase {
             message.saveChanges();
             
             SOAPPart sp = message.getSOAPPart();
-            //sp.setContent(ssrc);
 
             String inputEncoding = sp.getInputEncoding();
-            if (inputEncoding == null) {
-                fail("Input Encoding is null");
-            }
-            else{
-            	System.out.println(inputEncoding);
-            }
+            assertNotNull(inputEncoding);
         } catch (Exception e) {
-            e.printStackTrace();
             fail("Unexpected Exception " + e);
         }
     }

@@ -90,23 +90,14 @@ public class SOAPConnectionTest extends TestCase {
     {
     	try 
     	{
-    		System.out.println("Create SOAPConnection object");
     		SOAPConnectionFactory sf = new SOAPConnectionFactoryImpl();
     		SOAPConnection con = sf.createConnection();
-    		System.out.println(
-    				"Create a valid non webservice endpoint for invoking HTTP-GET");
+    		//Create a valid non webservice endpoint for invoking HTTP-GET
     		URL urlEndpoint = new URL("http", "java.sun.com", 80, "/index.html");
-    		System.out.println("Valid Non Webservice Endpoint=" + urlEndpoint);
-
-    		System.out.println("Invoking HTTP-GET with a valid non webservice " +
-    		"endpoint should throw a SOAPException");
+    		//invoking HTTP-GET with a valid non webservice endpoint should throw a SOAPException
     		SOAPMessage reply = con.get(urlEndpoint);
-    		System.out.println("HTTP-GET succeeded (unexpected)");
-    		System.out.println("Did not get expected SOAPException");
-    	} catch(SOAPException e) {
-    		System.out.println("Did get expected SOAPException");
-    	} catch(Exception e) {
-    		fail();
+    	}catch(Exception e) {
+    		assertTrue(e instanceof SOAPException);
     	}
     }
 }

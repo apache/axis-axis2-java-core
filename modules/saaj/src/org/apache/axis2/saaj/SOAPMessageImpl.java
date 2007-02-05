@@ -54,30 +54,29 @@ public class SOAPMessageImpl extends SOAPMessage {
         }
 
         setCharsetEncoding(contentType);
-
         soapPart = new SOAPPartImpl(this, soapEnvelope);
-
         this.mimeHeaders = new MimeHeadersEx();
     }
 
-    public SOAPMessageImpl(InputStream inputstream,
-                           javax.xml.soap.MimeHeaders mimeHeaders) throws SOAPException {
-        String contentType = null;
-        if (mimeHeaders != null) {
-            String contentTypes[] = mimeHeaders.getHeader("Content-Type");
-            contentType = (contentTypes != null) ? contentTypes[0] : null;
-        }
+    public SOAPMessageImpl(InputStream inputstream,javax.xml.soap.MimeHeaders mimeHeaders) 
+    		throws SOAPException 
+    {
+    	String contentType = null;
+    	if (mimeHeaders != null) {
+    		String contentTypes[] = mimeHeaders.getHeader("Content-Type");
+    		contentType = (contentTypes != null) ? contentTypes[0] : null;
+    	}
 
-        setCharsetEncoding(contentType);
-        if (contentType != null && contentType.indexOf("multipart/related;") == 0) {
-//            soapPart = new SOAPPartImpl(this, inputstream, mimeHeaders);
-        } else {
-            soapPart = new SOAPPartImpl(this, inputstream);
-        }
-
-        this.mimeHeaders = (mimeHeaders == null) ?
-                           new MimeHeadersEx() :
-                           new MimeHeadersEx(mimeHeaders);
+    	setCharsetEncoding(contentType);
+    	if (contentType != null && contentType.indexOf("multipart/related;") == 0) {
+    		soapPart = new SOAPPartImpl(this, inputstream, mimeHeaders);
+    	} else {
+    		soapPart = new SOAPPartImpl(this, inputstream);
+    	}
+    	
+    	this.mimeHeaders = (mimeHeaders == null) ?
+    			new MimeHeadersEx() :
+    				new MimeHeadersEx(mimeHeaders);
     }
 
     /**
@@ -372,19 +371,45 @@ public class SOAPMessageImpl extends SOAPMessage {
      * 
      */
     public AttachmentPart getAttachment(SOAPElement soapelement) throws SOAPException {
-
-        Collection matchingAttachmentParts = new ArrayList();
+    	//TODO read strings from constants
         Iterator iterator = getAttachments();
         {
-            AttachmentPartImpl part;
+            AttachmentPartImpl attachmentPart;
             while (iterator.hasNext()) {
-                part = (AttachmentPartImpl) iterator.next();
-                if (part.matches(null)) {
-                    matchingAttachmentParts.add(part);
-                }
+            	attachmentPart = (AttachmentPartImpl) iterator.next();
+            	String[] contentIds = attachmentPart.getMimeHeader("Content-Id");
+            	
+            	//References can be made via an href attribute as described in SOAP Messages with Attachments
+            	//or via a single Text child node containing a URI          	
+            	String reference = soapelement.getAttribute("href");
+            	if(reference == null || reference.trim().length() == 0){
+            		reference = soapelement.getValue();
+            		if(reference == null || reference.trim().length() == 0){
+            			return null;
+            		}
+            	}
+            	
+            	for (int a = 0; a < contentIds.length; a++) {
+            		//eg: cid:gifImage scenario
+            		String idPart = reference.substring(reference.indexOf(":")+1);
+            		idPart = "<"+idPart+">";
+					if(idPart.equals(contentIds[a])){
+						return attachmentPart;
+					}
+				}
+            	
+            	String[] contentLocations = attachmentPart.getMimeHeader("Content-Location");
+            	if(!(contentLocations == null)){
+            		//uri scenario
+            		for (int b = 0; b < contentLocations.length; b++) {
+            			if(reference.equals(contentLocations[b])){
+            				return attachmentPart;
+            			}
+            		}
+            	}
             }
         }
-        return null;  //TODO - Not yet implemented        
+        return null;        
     }
 
     /**
@@ -395,8 +420,6 @@ public class SOAPMessageImpl extends SOAPMessage {
      * @since SAAJ 1.3
      */
     public void removeAttachments(MimeHeaders headers) {
-        //TODO - check
-    	
     	Collection newAttachmentParts = new ArrayList();
     	Iterator attachmentPartsItr = attachmentParts.iterator();
     	for (Iterator iter = attachmentPartsItr; iter.hasNext();) {

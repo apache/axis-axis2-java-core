@@ -553,17 +553,15 @@ public class SOAPEnvelopeTest extends TestCase {
 
     	try
     	{
-    		System.out.println("SOAP1.2 does not allow trailing blocks after" +
-    				"the Body");
-    		System.out.println("Call SOAPEnvelope.addChildElement() and " +
-    				"(expect SOAPException)");
+    		//SOAP1.2 does not allow trailing blocks after the Body
+    		//Call SOAPEnvelope.addChildElement() and (expect SOAPException)
     		Name elementAfterBody = envelope.createName("AfterBody", "e", "some-uri");
     		envelope.addChildElement(elementAfterBody);
-    		System.out.println("Did not throw expected SOAPException");
+    		fail("Did not throw expected SOAPException");
     	} catch (SOAPException e) {
-    		System.out.println("Did throw expected SOAPException");
+    		//Did throw expected SOAPException"
     	} catch (Exception e) {
-    		System.out.println("Unexpected Exception: " + e.getMessage());
+    		fail("Unexpected Exception: " + e.getMessage());
     	}
     }
 }

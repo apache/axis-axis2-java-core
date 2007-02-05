@@ -148,7 +148,6 @@ public class SOAPFaultTest extends TestCase {
         soapMessage.writeTo(baos);
         String xml = new String(baos.toByteArray());
 
-        System.out.println(xml);
         assertTrue(xml.indexOf("<faultcode>Client</faultcode>") != -1);
         assertTrue(xml.indexOf("<faultstring>CWMP fault</faultstring>") != -1);
         assertTrue(xml.indexOf("<faultactor>http://gizmos.com/order</faultactor>") != -1);
@@ -229,11 +228,7 @@ public class SOAPFaultTest extends TestCase {
             entry2.addTextNode("Incomplete address: " + "no zip code");
 
             message.saveChanges();
-
-            System.out.println("Here is what the XML message looks like:");
-            message.writeTo(System.out);
-            System.out.println();
-            System.out.println();
+            //message.writeTo(System.out);
 
             // Now retrieve the SOAPFault object and
             // its contents, after checking to see that
@@ -242,22 +237,9 @@ public class SOAPFaultTest extends TestCase {
                 SOAPFault newFault = body.getFault();
 
                 // Get the qualified name of the fault code
-                Name code = newFault.getFaultCodeAsName();
-
-                String string = newFault.getFaultString();
-                String actor = newFault.getFaultActor();
-
-                System.out.println("SOAP fault contains: ");
-                System.out.println("  Fault code = " + code.getQualifiedName());
-                System.out.println("  Local name = " + code.getLocalName());
-                System.out.println("  Namespace prefix = " + code.getPrefix() +
-                                   ", bound to " + code.getURI());
-                System.out.println("  Fault string = " + string);
-
-                if (actor != null) {
-                    System.out.println("  Fault actor = " + actor);
-                }
-
+                assertNotNull(newFault.getFaultCodeAsName());
+                assertNotNull(newFault.getFaultString());
+                assertNotNull(newFault.getFaultActor());
                 Detail newDetail = newFault.getDetail();
 
                 if (newDetail != null) {
@@ -266,12 +248,11 @@ public class SOAPFaultTest extends TestCase {
                     while (entries.hasNext()) {
                         DetailEntry newEntry = (DetailEntry) entries.next();
                         String value = newEntry.getValue();
-                        System.out.println("  Detail entry = " + value);
+                        assertNotNull(value);
                     }
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             fail("Unexpected Exception : " + e);
         }
     }
@@ -280,7 +261,6 @@ public class SOAPFaultTest extends TestCase {
         try {
             SOAPMessage msg = MessageFactory.newInstance().createMessage();
             SOAPFault sf = msg.getSOAPBody().addFault();
-
             sf.setFaultActor("/faultActorURI");
             sf.setFaultActor("/faultActorURI2");
             String result = sf.getFaultActor();
@@ -354,12 +334,12 @@ public class SOAPFaultTest extends TestCase {
     		boolean found1 = false;
     		boolean found2 = false;
 
-    		System.out.println("Appending fault Subcode");
+    		//Appending fault Subcode
     		sf.appendFaultSubcode(expected1);
-    		System.out.println("Appending a second fault Subcode");
+    		//Appending a second fault Subcode
     		sf.appendFaultSubcode(expected2);
 
-    		System.out.println("Getting FaultSubCodes from SOAPFault");
+    		//Getting FaultSubCodes from SOAPFault
     		Iterator i = sf.getFaultSubcodes();
     		int j = 0;
     		while (i.hasNext()){	
@@ -370,30 +350,20 @@ public class SOAPFaultTest extends TestCase {
     					if (actual.equals(expected1)){
     						if (!found1){
     							found1=true;
-    							System.out.println("Subcode= '"+actual+"'");
+    							//System.out.println("Subcode= '"+actual+"'");
     						} else {
-    							System.out.println("Received a duplicate Subcode :'"+actual+"'");
+    							//System.out.println("Received a duplicate Subcode :'"+actual+"'");
     						} 
     					} else if (actual.equals(expected2)){
     						if (!found2){
     							found2=true;
-    							System.out.println("Subcode= '"+actual+"'");
+    							//System.out.println("Subcode= '"+actual+"'");
     						} else {
-    							System.out.println("Received a duplicate Subcode :'"+actual+"'");
+    							//System.out.println("Received a duplicate Subcode :'"+actual+"'");
     						} 
-
-    					} else {
-    						System.out.println("Did not receive expected Subcodes:");
-    						System.out.println("expected= '"+expected1+"' or '"+expected2+"'");
-    						System.out.println("actual= '"+actual+"'");
-    					}
-    				} else {
-    					System.out.println("A null text was returned");
-    				}
-    			} else {
-    				System.out.println("An object that is not an instance of QName was returned");
-    				System.out.println("The object is:"+o);
-    			}
+    					} 
+    				} 
+    			} 
     			j++;
     		}
     		if (j<1){
@@ -426,14 +396,13 @@ public class SOAPFaultTest extends TestCase {
             SOAPBody body = envelope.getBody();
             SOAPFault soapFault = body.addFault();
             soapFault.addFaultReasonText("myReason", new Locale("en"));
-            System.out.println("Adding second text");
             soapFault.addFaultReasonText("de-myReason", new Locale("de"));
             soapFault.addFaultReasonText("si-myReason", new Locale("si"));            
             soapMessage.saveChanges();
             Iterator reasonTexts = soapFault.getFaultReasonTexts(); 
             while(reasonTexts.hasNext()){
             	String reasonText = (String)reasonTexts.next();
-            	System.out.println(reasonText);
+            	assertNotNull(reasonText);
             }
             
         } catch (Exception e) {
@@ -489,11 +458,8 @@ public class SOAPFaultTest extends TestCase {
         	SOAPFault sf = body.addFault();
         	String expected = "Its my fault again";
         	boolean found = false;
-        	System.out.println("Adding FaultReasonText to SOAPFault");
         	sf.addFaultReasonText("Its my fault", Locale.ENGLISH);
-        	System.out.println("Adding another FaultReasonText to SOAPFault");
         	sf.addFaultReasonText(expected, Locale.ENGLISH);
-        	System.out.println("Getting FaultReasonTexts from SOAPFault");
         	Iterator i = sf.getFaultReasonTexts();
         	int j = 0;
         	while (i.hasNext()){	
@@ -504,34 +470,20 @@ public class SOAPFaultTest extends TestCase {
         				if (actual.equals(expected)){
         					if (!found){
         						found=true;
-        						System.out.println("Reason= '"+actual+"'");
-        					} else {
-        						System.out.println("Received a duplicate Reason text:'"+actual+"'");
         					} 
-
-        				} else {
-        					System.out.println("Did not receive expected reason text:");
-        					System.out.println("expected= '"+expected+"'");
-        					System.out.println("actual= '"+actual+"'");
-
-        				}
-        			} else {
-        				System.out.println("A null text was returned");
+        				} 
         			}
-        		} else {
-        			System.out.println("An object that is not an instance of String was returned");
-        			System.out.println("The object is:"+o);
-        		}
+        		} 
         		j++;
         	}
         	if (j<1){
-        		System.out.println("No reason text was returned");
+        		fail("No reason text was returned");
         	}
         	if (j>1){
-        		System.out.println("More than one reason text was returned");
+        		fail("More than one reason text was returned");
         	}
         	if (!found){
-        		System.out.println("The following Reason text was not received: '"+expected+"'");
+        		fail("The following Reason text was not received: '"+expected+"'");
         	}
         } catch (SOAPException e) {
             fail("Unexpected Exception Occurred : " + e);
@@ -553,11 +505,8 @@ public class SOAPFaultTest extends TestCase {
     		String expected2 = "Its my fault again";
     		boolean found1 = false;
     		boolean found2 = false;
-    		System.out.println("Adding FaultReasonText to SOAPFault");
     		sf.addFaultReasonText(expected1, Locale.UK);
-    		System.out.println("Adding another FaultReasonText to SOAPFault");
     		sf.addFaultReasonText(expected2, Locale.ENGLISH);
-    		System.out.println("Getting FaultReasonTexts from SOAPFault");
     		Iterator i = sf.getFaultReasonTexts();
     		int j = 0;
     		while (i.hasNext()){	
@@ -568,45 +517,28 @@ public class SOAPFaultTest extends TestCase {
     					if (actual.equals(expected1)){
     						if (!found1){
     							found1=true;
-    							System.out.println("Reason= '"+actual+"'");
-    						} else {
-    							System.out.println("Received a duplicate Reason text:'"+actual+"'");
-    						} 
-    					} else if (actual.equals(expected2)){
+    						}
+    					}else if (actual.equals(expected2)){
     						if (!found2){
     							found2=true;
-    							System.out.println("Reason= '"+actual+"'");
-    						} else {
-    							System.out.println("Received a duplicate Reason text:'"+actual+"'");
-    						} 
-
-    					} else {
-    						System.out.println("Did not receive expected reason text:");
-    						System.out.println("expected= '"+expected1+"' or '"+expected2+"'");
-    						System.out.println("actual= '"+actual+"'");
-    					}
-    				} else {
-    					System.out.println("A null text was returned");
+    						}
+    					} 
     				}
-    			} else {
-    				System.out.println("An object that is not an instance of String was returned");
-    				System.out.println("The object is:"+o);
     			}
     			j++;
     		}
     		if (j<1){
-    			System.out.println("No reason text was returned");
+    			fail("No reason text was returned");
     		}
     		if (j>2){
-    			System.out.println("More than two reason texts were returned");
+    			fail("More than two reason texts were returned");
     		}
     		if (!found1){
-    			System.out.println("The following Reason text was not received: '"+expected1+"'");
+    			fail("The following Reason text was not received: '"+expected1+"'");
     		}
     		if (!found2){
-    			System.out.println("The following Reason text was not received: '"+expected2+"'");
+    			fail("The following Reason text was not received: '"+expected2+"'");
     		}
-
     	} catch (SOAPException e) {
     		fail("Unexpected Exception Occurred : " + e);
     	}
@@ -626,8 +558,6 @@ public class SOAPFaultTest extends TestCase {
             envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
             SOAPBody body = envelope.getBody();
             SOAPFault soapFault = body.addFault();
-            //soapFault.setFaultCode("mycode");
-
             soapFault.setFaultRole("test");
             soapMessage.saveChanges();
 
@@ -777,55 +707,37 @@ public class SOAPFaultTest extends TestCase {
     					if (actual.equals(expected1)){
     						if (!found1){
     							found1=true;
-    							System.out.println("Locale= '"+actual+"'");
-    						} else {
-    							System.out.println("Received a duplicate Locale:'"+actual+"'");
-    						} 
+    						}
     					} else if (actual.equals(expected2)){
     						if (!found2){
     							found2=true;
-    							System.out.println("Locale '"+actual+"'");
-    						} else {
-    							System.out.println("Received a duplicate Locale:'"+actual+"'");
-    						} 
+    						}
     					} else if (actual.equals(expected3)){
     						if (!found3){
     							found3=true;
-    							System.out.println("Locale '"+actual+"'");
-    						} else {
-    							System.out.println("Received a duplicate Locale:'"+actual+"'");
-    						} 
-    					} else {
-    						System.out.println("Did not receive expected reason text:");
-    						System.out.println("expected= '"+expected1+"' or '"+expected2+"' or '"+expected3+"'");
-    						System.out.println("actual= '"+actual+"'");
+    						}
     					}
-    				} else {
-    					System.out.println("A null text was returned");
     				}
-    			} else {
-    				System.out.println("An object that is not an instance of Locale was returned");
-    				System.out.println("The object is:"+o);
     			}
     			j++;
     		}
     		if (j<1){
-    			System.out.println("No reason text was returned");
+    			fail("No reason text was returned");
     		}
     		if (j>3){
-    			System.out.println("More than 3 Locales were returned");
+    			fail("More than 3 Locales were returned");
     		}
     		if (!found1){
-    			System.out.println("The following Locale was not received: '"+expected1+"'");
+    			fail("The following Locale was not received: '"+expected1+"'");
     		}
     		if (!found2){
-    			System.out.println("The following Locale was not received: '"+expected2+"'");
+    			fail("The following Locale was not received: '"+expected2+"'");
     		}
     		if (!found3){
-    			System.out.println("The following Locale was not received: '"+expected3+"'");
+    			fail("The following Locale was not received: '"+expected3+"'");
     		}
     	} catch(Exception e) {
-    		System.out.println("Exception: " + e);
+    		fail("Exception: " + e);
     	}
     }
     
@@ -840,19 +752,12 @@ public class SOAPFaultTest extends TestCase {
     		SOAPBody body = envelope.getBody();
     		SOAPFault sf = body.addFault();
 
-    		System.out.println("Setting fault string with no Locale");
+    		//Setting fault string with no Locale
     		sf.setFaultString("this is the fault string");
-
-    		System.out.println("calling getFaultStringLocale()");
     		Locale result=sf.getFaultStringLocale();
-    		if (result == null) {
-    			System.out.println("null Locale returned (expected)");
-    		} else {
-    			System.out.println("getFaultStringLocale() returned a non-null result");
-    			System.out.println("result="+result);
-    		}
+    		assertNotNull(result);
     	} catch(Exception e) {
-    		System.out.println("Exception: " + e);
+    		fail("Exception: " + e);
     	}
     }
     
@@ -868,23 +773,13 @@ public class SOAPFaultTest extends TestCase {
     		SOAPBody body = envelope.getBody();
     		SOAPFault sf = body.addFault();
 
-    		System.out.println("Setting fault string with no Locale");
     		sf.setFaultString("this is the fault string");
-
-    		System.out.println("calling getFaultStringLocale()");
     		Locale result=sf.getFaultStringLocale();
-    		if (result == null) {
-    			System.out.println("null Locale returned (unexpected)");
-    		} else {
-    			System.out.println("getFaultStringLocale() returned a non-null result (expected)");
-    			System.out.println("result="+result);
-    			if(!result.equals(Locale.getDefault())) {
-    				System.out.println("Got: "+ result + ", Expected: " + Locale.getDefault());
-    			}
-    		} 
+    		assertNotNull(result);
+    		assertTrue(result.equals(Locale.getDefault()));
     	}
     	catch(Exception e) {
-    		System.out.println("Exception: " + e);
+    		fail("Exception: " + e);
     	}
     }
     
@@ -899,22 +794,12 @@ public class SOAPFaultTest extends TestCase {
     		SOAPFault sf = body.addFault();
 
     		Locale expected = Locale.ENGLISH;
-    		System.out.println("Setting fault string to Locale " + expected );
     		sf.setFaultString("this is the fault string", expected );
-
-    		System.out.println("calling getFaultStringLocale()");
     		Locale result=sf.getFaultStringLocale();
-    		if (result != null){
-    			if (!result.equals(expected)){
-    				System.out.println("setFaultString(string,Locale)/getFaultStringLocale behaved incorrectly");
-    				System.out.println("expected="+expected);
-    			}
-    			System.out.println("result="+result);
-    		} else {
-    			System.out.println("getFaultStringLocale() returned a null result, eventhough the fault string has a locale");
-    		}
+    		assertNotNull(result);
+    		assertTrue(result.equals(expected));
     	} catch(Exception e) {
-    		System.out.println("Exception: " + e);
+    		fail("Exception: " + e);
     	}
     }
 }

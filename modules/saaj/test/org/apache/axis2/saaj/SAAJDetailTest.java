@@ -52,28 +52,22 @@ public class SAAJDetailTest extends TestCase {
     }
 
     
-
+    /*
+     * for soap version 1.1
+     */
     public void testAddDetailEntry() {
     	try 
     	{
-    		System.out.println("Add a SOAPFault object to the SOAPBody");
+    		//Add a SOAPFault object to the SOAPBody
     		SOAPFault sf = body.addFault();
-    		System.out.println("Add a Detail object to the SOAPFault object");
+    		//Add a Detail object to the SOAPFault object
     		Detail d = sf.addDetail();
     		QName name = new QName("http://www.wombat.org/trader", 
     				"GetLastTradePrice", "WOMBAT");
-    		System.out.println("Add a DetailEntry object to the Detail object");
+    		//Add a DetailEntry object to the Detail object
     		DetailEntry de = d.addDetailEntry(name);
-    		System.out.println("Successfully created DetailEntry object");
-    		if(de == null) {
-    			System.out.println("addDetailEntry() returned null");
-    		} else if(!(de instanceof DetailEntry)) {
-    			System.out.println(
-    			"addDetailEntry() did not return a DetailEntry object");
-    		}
-    		else 
-    			System.out.println("Successfully created DetailEntry object");
-
+    		assertNotNull(de);
+    		assertTrue(de instanceof DetailEntry);
     	} catch (Exception e) {
     		fail("Exception: " + e);
     	}
@@ -90,23 +84,17 @@ public class SAAJDetailTest extends TestCase {
             envelope = sp.getEnvelope();
             body = envelope.getBody();
     		
-    		System.out.println("Add a SOAPFault object to the SOAPBody");
+    		//Add a SOAPFault object to the SOAPBody
     		SOAPFault sf = body.addFault();
-    		System.out.println("Add a Detail object to the SOAPFault object");
+    		//Add a Detail object to the SOAPFault object
     		Detail d = sf.addDetail();
     		QName name = new QName("http://www.wombat.org/trader", 
     				"GetLastTradePrice", "WOMBAT");
-    		System.out.println("Add a DetailEntry object to the Detail object");
+    		//Add a DetailEntry object to the Detail object
     		DetailEntry de = d.addDetailEntry(name);
-    		System.out.println("Successfully created DetailEntry object");
-    		if(de == null) {
-    			System.out.println("addDetailEntry() returned null");
-    		} else if(!(de instanceof DetailEntry)) {
-    			System.out.println("addDetailEntry() did not return a DetailEntry object");
-    		}
-    		else 
-    			System.out.println("Successfully created DetailEntry object");
-
+    		//Successfully created DetailEntry object
+    		assertNotNull(de);
+    		assertTrue(de instanceof DetailEntry);
     	} catch (Exception e) {
     		fail("Exception: " + e);
     	}

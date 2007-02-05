@@ -19,9 +19,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
@@ -66,6 +68,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
     private boolean closed = false;
 
     private ServiceClient serviceClient;
+    private HashMap unaccessedAttachments = new HashMap();
 
 	private static final Log log = LogFactory.getLog(SOAPConnectionImpl.class);
 
@@ -154,7 +157,6 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
             MessageContext msgCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             //TODO: get attachments
-
             return getSOAPMessage(msgCtx.getEnvelope());
         } catch (AxisFault e) {
             throw new SOAPException(e);
@@ -212,6 +214,15 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
         // Convert the body
         toSAAJElement(body, respOMSoapEnv.getBody(), response);
+        //if there are unrefferenced attachments, add that to response
+        if(!unaccessedAttachments.isEmpty()){
+        	Collection attachments = unaccessedAttachments.values();
+        	Iterator attachementsIterator = attachments.iterator();
+        	while (attachementsIterator.hasNext()) {
+				AttachmentPart  attachment = (AttachmentPart) attachementsIterator.next();
+				response.addAttachmentPart(attachment);
+			}
+        }
 
         return response;
     }
@@ -297,7 +308,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
         Map attachmentMap = new HashMap();
         final Iterator attachments = saajSOAPMsg.getAttachments();
         while (attachments.hasNext()) {
-            final AttachmentPart attachment = (AttachmentPart) attachments.next();
+        	final AttachmentPart attachment = (AttachmentPart) attachments.next();
             if (attachment.getContentId() == null ||
                 attachment.getContentId().trim().length() == 0) {
                 attachment.setContentId(IDGenerator.generateID());
@@ -308,9 +319,20 @@ public class SOAPConnectionImpl extends SOAPConnection {
             attachmentMap.put(attachment.getContentId(), attachment);
         }
 
-        insertAttachmentNodes(attachmentMap, omSOAPEnv);
-
-//        printOMSOAPEnvelope(omSOAPEnv);
+        //Get keys of attachments to a hashmap
+        //This hashmap will be updated when attachment is accessed atleast once.
+        //Doing this here instead of inside insertAttachmentNodes()is much simpler
+        //as insertAttachmentNodes() has recursive calls
+    	Set keySet = attachmentMap.keySet();
+    	Iterator keySetItr = keySet.iterator();
+    	HashMap keyAccessStatus = new HashMap();
+    	while(keySetItr.hasNext()){
+    		String key = (String)keySetItr.next();
+    		keyAccessStatus.put(key,"not-accessed");
+    	}
+        
+        insertAttachmentNodes(attachmentMap, omSOAPEnv,keyAccessStatus);
+        unaccessedAttachments = getUnReferencedAttachmentNodes(attachmentMap, omSOAPEnv,keyAccessStatus);
 
         return omSOAPEnv;
     }
@@ -323,7 +345,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
      * @throws SOAPException
      */
     private void insertAttachmentNodes(Map attachments,
-                                       OMElement omEnvelope) throws SOAPException {
+                                       OMElement omEnvelope,HashMap keyAccessStatus) throws SOAPException {
 
         Iterator childIter = omEnvelope.getChildElements();
         while (childIter.hasNext()) {
@@ -334,21 +356,42 @@ public class SOAPConnectionImpl extends SOAPConnection {
             if (contentID != null) {//This is an omEnvelope referencing an attachment
                 child.build();
                 AttachmentPart ap = ((AttachmentPart) attachments.get(contentID.trim()));
+                //update the key status as accessed
+                keyAccessStatus.put(contentID.trim(), "accessed");                
                 OMText text = new OMTextImpl(ap.getDataHandler(), true,
                         omEnvelope.getOMFactory());
                 child.removeAttribute(hrefAttr);
                 child.addChild(text);
             } else {
-
                 //possibly there can be references in the children of this omEnvelope
                 //so recurse through.
-                insertAttachmentNodes(attachments, child);
+                insertAttachmentNodes(attachments, child,keyAccessStatus);
             }
         }
-
-        //TODO: Need to handle no referenced attachments
     }
+    
+    
+    private HashMap getUnReferencedAttachmentNodes(Map attachments,
+    		OMElement omEnvelope,HashMap keyAccessStatus) throws SOAPException {
 
+    	HashMap unaccessedAttachments = new HashMap();
+    	//now check for unaccessed keys
+    	Set keySet = keyAccessStatus.keySet();
+    	Iterator keySetItr = keySet.iterator();
+    	while(keySetItr.hasNext()){
+    		String key = (String)keySetItr.next();
+    		String keyStatus = (String)keyAccessStatus.get(key);
+    		if("not-accessed".equals(keyStatus)){
+    			//The value for this key has not been accessed in the 
+    			//referencing attachment scenario.Hence it must be an
+    			//unreferenced one.
+    			AttachmentPart ap = ((AttachmentPart) attachments.get(key));
+    			unaccessedAttachments.put(key, ap);
+    			keyAccessStatus.put(key, "accessed");
+    		}
+    	}
+    	return unaccessedAttachments;
+    }
     /**
      * This method checks the value of attribute and if it is a valid CID then
      * returns the contentID (with cid: prefix stripped off) or else returns null.

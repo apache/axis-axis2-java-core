@@ -55,8 +55,6 @@ public class PrefixesTest extends TestCase {
         msg.writeTo(baos);
 
         String xml = new String(baos.toByteArray());
-
-        System.out.println("########## xml = " + xml);
         assertTrue(xml.indexOf("prefix1") != -1);
         assertTrue(xml.indexOf("prefix2") != -1);
         assertTrue(xml.indexOf("http://www.sun.com") != -1);
@@ -86,7 +84,7 @@ public class PrefixesTest extends TestCase {
         while (iter.hasNext()) {
             final Object obj = iter.next();
             if (obj instanceof Text) {
-                System.out.println("\n- Text Ignored.");
+                //System.out.println("\n- Text Ignored.");
             } else {
                 final SOAPElement soapElement = (SOAPElement) obj;
                 final Iterator attIter = soapElement.getAllAttributes();

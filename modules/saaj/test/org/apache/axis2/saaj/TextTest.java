@@ -144,9 +144,8 @@ public class TextTest extends TestCase {
         SOAPElement postalCode = delivery.addChildElement(name);
         postalCode.addTextNode("PostalCode015");
 
-        System.out.println("The message is:\n");
-        message.writeTo(System.out);
-        System.out.flush();
+        //message.writeTo(System.out);
+        //System.out.flush();
     }
 
     public void testComment() throws SOAPException, IOException {

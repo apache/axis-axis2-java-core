@@ -241,14 +241,13 @@ public class SOAPElementTest extends TestCase {
     		SOAPBody body = msg.getSOAPBody();
 
     		Name name = soapEnvelope.createName("MyChild1");
-    		System.out.println("Add child element Name object with localName=MyChild1");
-    		System.out.println("Calling addChildElement(Name)");
+    		//Add child element Name object with localName=MyChild1
     		SOAPElement se = body.addChildElement(name);
     		if(se == null){
-    			System.out.println("addChildElement() did not return SOAPElement");
-    			pass = false;
+    			fail("addChildElement() did not return SOAPElement");
+    			//pass = false;
     		} else {
-    			System.out.println("Find the child element just added");
+    			//Find the child element just added
     			Iterator childs = body.getChildElements(name);
     			int count = 0;
     			while (childs.hasNext()) {
@@ -257,35 +256,27 @@ public class SOAPElementTest extends TestCase {
     			}
 
     			childs = body.getChildElements(name);
-    			if(count != 1) {
-    				System.out.println("Wrong iterator count returned of "+count + ", expected 1");
-    				pass = false;
-    			} else {
-    				SOAPElement se2 = (SOAPElement)childs.next();
-    				if(!se.equals(se2)) {
-    					System.out.println("SOAPElement se != se2 (unexpected)");
-    					pass = false;
-    				} else{
-    					System.out.println("SOAPElement se = se2 (expected)");
-    				}
-    			} 
-    			if(pass) {
-    				System.out.println("Retrieve the SOAPElement Name");
-    				Name n = se.getElementName();
-    				System.out.println("localName="+n.getLocalName()+" prefix="
-    						+n.getPrefix()+" URI="+n.getURI()+" qualifiedName="
-    						+n.getQualifiedName());
-    				if (!n.equals(name)) {
-    					System.out.println("Name objects are not equal (unexpected)");
-    					System.out.println("addChildElement() did not return " +
-    							"correct Name object expected localName=" + 
-    							name.getLocalName() + ", got localName=" 
-    							+ n.getLocalName());
-    					pass = false;
-    				} else {
-    					System.out.println("Name objects are equal (expected)");
-    				}
-    			}
+    			assertTrue(count == 1);
+    			
+    			SOAPElement se2 = (SOAPElement)childs.next();
+    			assertEquals(se, se2);
+   				//se = se2 (expected)
+
+    			//Retrieve the SOAPElement Name
+    			Name n = se.getElementName();
+    			//System.out.println("localName="+n.getLocalName()+" prefix="
+    			//			+n.getPrefix()+" URI="+n.getURI()+" qualifiedName="
+    			//			+n.getQualifiedName());
+    			assertEquals(n, name);
+    			//if (!n.equals(name)) {
+    			//System.out.println("Name objects are not equal (unexpected)");
+    			//System.out.println("addChildElement() did not return " +
+    			//"correct Name object expected localName=" + 
+    			//name.getLocalName() + ", got localName=" 
+    			//+ n.getLocalName());
+    			//}
+    			
+   				//Name objects are equal (expected)
     		}
 
     	} catch (Exception e) {
@@ -326,7 +317,6 @@ public class SOAPElementTest extends TestCase {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             fail("Exception: " + e);
         }
     }
@@ -346,13 +336,11 @@ public class SOAPElementTest extends TestCase {
             assertFalse("removeAttribute() did not return false", b);
             assertNull(body.getAttributeValue(name));
         } catch (Exception e) {
-            e.printStackTrace();
             fail("Exception: " + e);
         }
     }
     
     public void testRemoveAttribute2() {
-    	boolean pass = true;
     	try 
     	{
     		SOAPMessage msg = MessageFactory.newInstance().createMessage();
@@ -361,86 +349,46 @@ public class SOAPElementTest extends TestCase {
 
     		QName name = new QName("MyAttr1");
     		String value = "MyValue1";
-    		System.out.println("Add attribute qname = " + name.getLocalPart() + 
-    				", value = " + value);
     		body.addAttribute(name, value);
-    		System.out.println("Remove attribute qname = " + name.getLocalPart() + 
-    				", value = " + value);
     		boolean b = body.removeAttribute(name);
-    		if(!b) {
-    			System.out.println("removeAttribute() did not return true");
-    			System.out.println("removeAttributeTest() test FAILED");
-    			pass = false;
-    		} 
-    		if(pass) {
-    			b = body.removeAttribute(name);
-    			if(b) {
-    				System.out.println("removeAttribute() did not return false");
-    				System.out.println("removeAttributeTest() test FAILED");
-    				pass = false;
-    			}
+    		assertTrue(b);
+
+    		b = body.removeAttribute(name);
+    		if(b) {
+    			//removeAttribute() did not return false
+    			fail();
     		}
-    		if(pass) {
-    			if(body.getAttributeValue(name) == null) {
-    				System.out.println("removeAttributeTest() test PASSED");
-    			} else {
-    				System.out.println("removeAttributeTest() test FAILED");
-    				pass = false;
-    			}
-    		}
+    		//getAttributeValue should return null
+    		assertNull(body.getAttributeValue(name));
     	} catch(Exception e) {
-    		System.out.println("Exception: " + e);
-    		pass = false;
+    		fail("Error : "+e);
     	}
     }    
     
-    /*
-     * name
-     */
     public void testRemoveAttributeName(){
-    	boolean pass = true;
-    	try 
-    	{
-            SOAPMessage msg = MessageFactory.newInstance().createMessage();
+    	try{
+    		SOAPMessage msg = MessageFactory.newInstance().createMessage();
             SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
             SOAPBody body = envelope.getBody();
     		
     	    Name name = envelope.createName("MyAttr1");
     	    String value = "MyValue1";
-    	    System.out.println("Add attribute name = " + name.getLocalName() + 
-    			", value = " + value);
     	    body.addAttribute(name, value);
-    	    System.out.println("Remove attribute name = " + name.getLocalName() + 
-    			", value = " + value);
     	    boolean b = body.removeAttribute(name);
-    	    if(!b) {
-    		System.out.println("removeAttribute() did not return true");
-    		pass = false;
-    	    } 
-    	    if(pass) {
-    	        b = body.removeAttribute(name);
-    		if(b) {
-    		    System.out.println("removeAttribute() did not return false");
-    		    pass = false;
-    		}
-    	    }
-    	    if(pass) {
+    	    assertTrue(b);
+    	    
+    	    b = body.removeAttribute(name);
+    	    assertTrue(!b);
+
     		String s = body.getAttributeValue(name);
-    	        if(s != null) {
-    		    System.out.println("getAttributeValue() returned wrong value,"
-    		      + " expected null, got \"" + s + "\"");
-    		    pass = false;
-    	        }
-    	    }
+    		assertNull(s);
     	} catch(Exception e) {
-    	    System.out.println("Exception: " + e);
-    	    pass = false;
+    		fail("Failed : "+e);
     	}
     }
     
 
     public void _testRemoveAttributeQName(){
-    	boolean pass = true;    	
     	try 
     	{
             SOAPMessage msg = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
@@ -449,33 +397,13 @@ public class SOAPElementTest extends TestCase {
     		
     	    QName name = new QName("MyAttr1");
     	    String value = "MyValue1";
-    	    System.out.println("Add attribute qname = " + name.getLocalPart() + 
-    			", value = " + value);
     	    body.addAttribute(name, value);
-    	    System.out.println("Remove attribute qname = " + name.getLocalPart() + 
-    			", value = " + value);
     	    boolean b = body.removeAttribute(name);
-    	    if(!b) {
-    		System.out.println("removeAttribute() did not return true");
-    		System.out.println("removeAttributeTest() test FAILED");
-    		pass = false;
-    	    } 
-    	    if(pass) {
-    	        b = body.removeAttribute(name);
-    		if(b) {
-    		    System.out.println("removeAttribute() did not return false");
-    		    System.out.println("removeAttributeTest() test FAILED");
-    		    pass = false;
-    		}
-    	    }
-    	    if(pass) {
-    	        if(body.getAttributeValue(name) == null) {
-    		    System.out.println("removeAttributeTest() test PASSED");
-    	        } else {
-    	        	System.out.println("removeAttributeTest() test FAILED");
-    		    pass = false;
-    	        }
-    	    }
+    	    assertTrue(b);
+   	        b = body.removeAttribute(name);
+   	        assertTrue(!b);
+   	        
+    	    assertNull(body.getAttributeValue(name));
     	} catch(Exception e) {
     		fail();
     	}
@@ -633,16 +561,7 @@ public class SOAPElementTest extends TestCase {
     		}
 
     		Name n = se.getElementName();
-    		if (!n.equals(name)) {
-    			System.out.println("Name objects are not equal (unexpected)");
-    			System.out.println("getChildElement() did not return " +
-    					"correct Name object expected localName=" + 
-    					name.getLocalName() + ", got localName=" 
-    					+ n.getLocalName());
-    			fail();
-    		} else{
-    			System.out.println("Name objects are equal (expected)");
-    		}
+    		assertEquals(n,name);
     	} catch (SOAPException e) {
     		fail("Unexpected Exception " + e);
     	}
@@ -670,23 +589,10 @@ public class SOAPElementTest extends TestCase {
     		}
     		assertEquals(childCount, 1);
     		SOAPElement se2 = (SOAPElement)childElements.next();
-    		if(!se.equals(se2)) {
-    			fail();
-    		} else {
-    			System.out.println("SOAPElement se = se2 (expected)");
-    		}
+    		assertEquals(se,se2);
 
     		QName n = se.getElementQName();
-    		if (!n.equals(name)) {
-    			System.out.println("Name objects are not equal (unexpected)");
-    			System.out.println("getChildElement() did not return " +
-    					"correct Name object expected localPart=" + 
-    					name.getLocalPart() + ", got localPart=" 
-    					+ n.getLocalPart());
-    			fail();
-    		} else{
-    			System.out.println("Name objects are equal (expected)");
-    		}
+    		assertEquals(n,name);
     	} catch (SOAPException e) {
     		fail("Unexpected Exception " + e);
     	}
@@ -721,7 +627,6 @@ public class SOAPElementTest extends TestCase {
 
     public void _testCreateQName() {
         String prefix ="";
-        String uri = "";
     	try 
     	{
             //SOAPMessage message = MessageFactory.newInstance().createMessage();
@@ -729,17 +634,11 @@ public class SOAPElementTest extends TestCase {
             SOAPPart soapPart = message.getSOAPPart();
             SOAPEnvelope envelope = soapPart.getEnvelope();
             SOAPBody body = envelope.getBody();
-    		
-    	    System.out.println("Create QName from SOAPEnvelope");
-    	    QName qname = envelope.createQName("qname", prefix);
-    	    System.out.println("Create QName of: " + qname);
+
+            QName qname = envelope.createQName("qname", prefix);
     	    String tprefix = qname.getPrefix();
     	    String turi = qname.getNamespaceURI();
     	    String tname = qname.getLocalPart();
-    	    System.out.println("qname prefix="+tprefix);
-    	    System.out.println("qname uri="+turi);
-    	    System.out.println("qname localpart="+tname);
-    	    System.out.println("Verify correct uri and prefix");
     	    if(!tprefix.equals(prefix) || !turi.equals(envelope.getElementName().getURI())) {
     	    	fail("createQName() did not create correct qname\n" +
 	    		    "expected: <uri=" + envelope.getElementName().getURI() +
@@ -747,16 +646,10 @@ public class SOAPElementTest extends TestCase {
 	    		    "got:      <uri=" + turi +
 	    		    ", prefix=" + tprefix + ", localpart=" + tname + ">");
     	    }
-    	    System.out.println("Create QName from SOAPBody");
     	    qname = body.createQName("qname", body.getElementName().getPrefix());
-    	    System.out.println("Create QName of: " + qname);
     	    tprefix = qname.getPrefix();
     	    turi = qname.getNamespaceURI();
     	    tname = qname.getLocalPart();
-    	    System.out.println("qname prefix="+tprefix);
-    	    System.out.println("qname uri="+turi);
-    	    System.out.println("qname localpart="+tname);
-    	    System.out.println("Verify correct uri and prefix");
     	    if(!tprefix.equals(body.getElementName().getPrefix()) || !turi.equals(body.getElementName().getURI())) {
     	    	fail("createQName() did not create correct qname\n" +
 	    		    "expected: <uri=" + body.getElementName().getURI() +
@@ -780,58 +673,29 @@ public class SOAPElementTest extends TestCase {
     		SOAPBody body = envelope.getBody();
 
     		Name name = envelope.createName("MyChild");
-    		System.out.println("Add child element Name object = " +
-    				name.toString());
     		SOAPElement se = body.addChildElement(name);
-    		if(se == null) {
-    			System.out.println("addChildElement() did not return SOAPElement");
-    			System.out.println("removeContentsTest() test FAILED");
-
-    			pass = false;
-    		} else {
-    			Iterator childs = body.getChildElements(name);
-    			int childElementCount = 0;
-    			for (int a = 0; childs.hasNext(); a++) {
-    				childs.next();
-    				childElementCount++;
-    			}
-    			childs = body.getChildElements(name);
-    			if(childElementCount != 1) {
-    				System.out.println("Wrong iterator count returned of " +
-    						childElementCount + ", expected 1");
-    				System.out.println("removeContentsTest() test FAILED");
-    				pass = false;
-    			} 
-
-    			if(pass) {
-    				Name n = se.getElementName();
-    				if (!n.equals(name)) {
-    					System.out.println("removeContentsTest() did not return " +
-    							"correct name object expected localname=" +
-    							name.getLocalName() + ", got localname="
-    							+ n.getLocalName());
-    					System.out.println("removeContentsTest() test FAILED");
-    					pass = false;
-    				} 
-    			}
-    		}
-    		System.out.println("Child addition verified, now call removeContents to delete it");
-    		se.removeContents();
-    		Iterator childs = se.getChildElements();
+    		assertNotNull(se);
+    		Iterator childs = body.getChildElements(name);
     		int childElementCount = 0;
+    		for (int a = 0; childs.hasNext(); a++) {
+    			childs.next();
+    			childElementCount++;
+    		}
+    		childs = body.getChildElements(name);
+    		assertEquals(childElementCount, 1);
+
+    		Name n = se.getElementName();
+    		assertEquals(n, name);
+    		//Child addition verified, now call removeContents to delete it
+    		se.removeContents();
+    		childs = se.getChildElements();
+    		childElementCount = 0;
     		for (int a = 0; childs.hasNext(); a++) {
 				childs.next();    			
     			childElementCount++;
     		}
-    		if ( childElementCount !=0 ) {
-    			System.out.println("Wrong iterator count returned of " +
-    					childElementCount + ", expected 0, after calling removeContents");
-    			System.out.println("removeContentsTest() test FAILED");
-    			pass = false;
-    		}
-
+    		assertEquals(childElementCount, 0);
     	} catch(Exception e) {
-    		e.printStackTrace();
     		fail();
     	}
     }
@@ -846,18 +710,12 @@ public class SOAPElementTest extends TestCase {
             SOAPBody body = envelope.getBody();
 
     	    QName qname1 = new QName("http://fooURI.com", "fooElement", "foo");
-    	    System.out.println("Create QName1 of: " + qname1);
     	    QName qname2 = new QName("http://foo2URI.com", "fooElement2", "foo2");
-    	    System.out.println("Create QName2 of: " + qname2);
-    	    System.out.println("Add a child SOAPElement of: " + qname1);
-            SOAPElement se = body.addChildElement(qname1);
+    	    SOAPElement se = body.addChildElement(qname1);
     	    QName qname = se.getElementQName();
-    	    System.out.println("Get element qname of child SOAPElement: " + qname);
-    	    System.out.println("Reset element qname of child SOAPElement to: " + qname2);
     	    se = se.setElementQName(qname2);
     	    qname = se.getElementQName();
-    	    System.out.println(
-    		"Get element qname of child SOAPElement again: " + qname);
+
     	    if(!qname.getNamespaceURI().equals(qname2.getNamespaceURI()) ||
     	    		!qname.getLocalPart().equals(qname2.getLocalPart()) ||
     	    		!qname.getPrefix().equals(qname2.getPrefix())) {
@@ -868,7 +726,7 @@ public class SOAPElementTest extends TestCase {
 			    		    ", localpart=" + qname.getLocalPart() + ">");
     	    }
     	} catch(Exception e) {
-    	    System.out.println("Exception: " + e);
+    	    fail("Error :"+e);
     	}
     }
     
@@ -883,33 +741,31 @@ public class SOAPElementTest extends TestCase {
     		SOAPHeader header = envelope.getHeader();
 
     		QName qname = new QName("qname");
-    		System.out.println("Create QName of: " + qname);
-    		System.out.println("Try and change element name of SOAPEnvelope " +
-    		"(expect SOAPException)");
+    		//Try and change element name of SOAPEnvelope (expect SOAPException)
     		try {
     			envelope.setElementQName(qname);
-    			System.out.println("Did not throw expected SOAPException");
+    			fail("Did not throw expected SOAPException");
     		} catch (SOAPException e) {
-    			System.out.println("Caught expected SOAPException");
+    			//Caught expected SOAPException
     		}
-    		System.out.println(
-    		"Try and change element name of SOAPHeader (expect SOAPException)");
+    		
+    		//Try and change element name of SOAPHeader (expect SOAPException)
     		try {
     			header.setElementQName(qname);
-    			System.out.println("Did not throw expected SOAPException");
+    			fail("Did not throw expected SOAPException");
     		} catch (SOAPException e) {
-    			System.out.println("Caught expected SOAPException");
+    			//Caught expected SOAPException
     		}
-    		System.out.println(
-    		"Try and change element name of SOAPBody (expect SOAPException)");
+    		
+    		//Try and change element name of SOAPBody (expect SOAPException)
     		try {
     			body.setElementQName(qname);
-    			System.out.println("Did not throw expected SOAPException");
+    			fail("Did not throw expected SOAPException");
     		} catch (SOAPException e) {
-    			System.out.println("Caught expected SOAPException");
+    			//Caught expected SOAPException
     		}
     	} catch(Exception e) {
-    		System.out.println("Exception: " + e);
+    		fail("Error : "+e);
     	}
     }
 }

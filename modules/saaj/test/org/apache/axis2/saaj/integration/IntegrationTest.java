@@ -93,6 +93,7 @@ public class IntegrationTest extends TestCase {
         UtilServer.unDeployClientService();
     }
 
+
     public void testSendReceiveSimpleSOAPMessage() {
         try {
             MessageFactory mf = MessageFactory.newInstance();
@@ -107,7 +108,6 @@ public class IntegrationTest extends TestCase {
 
             String requestStr = printSOAPMessage(request);
             String responseStr = printSOAPMessage(response);
-//            assertEquals(requestStr, responseStr);
             assertTrue(responseStr.indexOf("echo") != -1);
             sCon.close();
         } catch (SOAPException e) {
@@ -186,28 +186,6 @@ public class IntegrationTest extends TestCase {
 
         sCon.close();
 
-        /*final SOAPBody respBody = response.getSOAPPart().getEnvelope().getBody();
-        System.out.println("------------------------------------");
-        for (Iterator childEleIter = respBody.getChildElements(); childEleIter.hasNext();) {
-            SOAPElement o = (SOAPElement) childEleIter.next();
-            System.out.println("@@@@@@@@@ o.tn=" + o.getTagName());
-            System.out.println("------------------------------------------");
-            for (Iterator iter = o.getChildElements(); iter.hasNext();) {
-                SOAPElement p = (SOAPElement) iter.next();
-                System.out.println("@@@@@@@@@ p.o=" + p);
-                System.out.println("@@@@@@@@@ p.pre=" + p.getPrefix());
-                System.out.println("@@@@@@@@@ p.ln=" + p.getLocalName());
-                System.out.println("@@@@@@@@@ p.tn=" + p.getTagName());
-                System.out.println("@@@@@@@@@ p.ns URI=" + p.getNamespaceURI());
-                System.out.println("@@@@@@@@@ p.Val=" + p.getValue());
-            }
-        }
-        System.out.println("------------------------------------");*/
-
-//        response.getSOAPPart().getEnvelope().getHeader().extractAllHeaderElements();
-//        sCon.call(response, ADDRESS);
-
-//        printSOAPMessage(response);
     }
 
     public void testSendReceiveNonRefAttachment() throws Exception {
@@ -220,12 +198,23 @@ public class IntegrationTest extends TestCase {
         //Attach a text/plain object with the SOAP request
         String sampleMessage = "Sample Message: Hello World!";
         AttachmentPart textAttach = request.createAttachmentPart(sampleMessage, "text/plain");
-//        textAttach.addMimeHeader("Content-Transfer-Encoding", "binary");
         request.addAttachmentPart(textAttach);
+        
+        
+        //Attach a java.awt.Image object to the SOAP request
+        String jpgfilename = "test-resources/axis2.jpg";
+        File myfile = new File(jpgfilename);
+        FileDataSource fds = new FileDataSource(myfile);
+        DataHandler imageDH = new DataHandler(fds);
+        AttachmentPart jpegAttach = request.createAttachmentPart(imageDH);
+        jpegAttach.addMimeHeader("Content-Transfer-Encoding", "binary");
+        jpegAttach.setContentType("image/jpg");
+        request.addAttachmentPart(jpegAttach);
+        
 
         SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
         SOAPMessage response = sCon.call(request, ADDRESS);
-/*
+
         int attachmentCount = response.countAttachments();
         assertTrue(attachmentCount == 2);
 
@@ -242,7 +231,7 @@ public class IntegrationTest extends TestCase {
                 byte[] b = new byte[15000];
                 final int lengthRead = bais.read(b);
                 FileOutputStream fos =
-                        new FileOutputStream(new File("target/test-resources/result" + (i++) + ".jpg"));
+                        new FileOutputStream(new File("target/test-resources/axis2.jpg"));
                 fos.write(b, 0, lengthRead);
                 fos.flush();
                 fos.close();
@@ -250,7 +239,7 @@ public class IntegrationTest extends TestCase {
                 assertTrue(attachment.getContentType().equals("image/jpeg")
                            || attachment.getContentType().equals("text/plain"));
             }
-        }*/
+        }
 
         sCon.close();
     }

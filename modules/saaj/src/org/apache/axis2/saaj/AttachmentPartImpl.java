@@ -16,6 +16,7 @@
 package org.apache.axis2.saaj;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -163,22 +164,22 @@ public class AttachmentPartImpl extends AttachmentPart {
         }
         try {
             String contentType = dataHandler.getContentType();
-            //TODO change to text/xml
-            if(contentType.equals("text/xml")){
-            	StringReader stringReader = new StringReader((String)dataHandler.getContent());
+           	if (contentType.equals("text/xml")) {
+           		StringReader stringReader = new StringReader((String)dataHandler.getContent());
             	StreamSource streamSource = new StreamSource(stringReader);
+   	        	streamSource.setInputStream(dataHandler.getInputStream());
             	return streamSource;
-            }else if (contentType.equals("text/plain") ||
-                    contentType.equals("text/html")) {
-
+            	
                 //For these content types underlying DataContentHandler surely does
                 //the conversion to appropriate java object and we will return that java object
-                return dataHandler.getContent();
-            } else {
+                //return dataHandler.getContent();
+            }else if(contentType.equals("text/plain") ||
+            			contentType.equals("text/html")){
+            	return (String)dataHandler.getContent();
+            }else {
                 try {
                     return dataHandler.getContent();
                 } catch (UnsupportedDataTypeException e) {
-
                     //If the underlying DataContentHandler can't handle the object contents,
                     //we will return an inputstream of raw bytes represneting the content data
                     return dataHandler.getDataSource().getInputStream();
@@ -256,15 +257,21 @@ public class AttachmentPartImpl extends AttachmentPart {
             	throw new java.lang.IllegalArgumentException(e);
             }
         }
-        /*
         else if (object instanceof byte[]) {
             try {
-                dataHandler = new DataHandler();
-                contentObject = null; // the stream has been consumed
+                contentObject = null;
+                java.io.ByteArrayInputStream bais = new java.io.ByteArrayInputStream((byte[])object);
+                source = new SAAJDataSource(bais,
+                        SAAJDataSource.MAX_MEMORY_DISK_CACHED,
+                        contentType, true);
+                extractFilename(source);
+                
+                dataHandler = new DataHandler(source);
+                contentObject = object;
             } catch (Exception e) {
             	throw new java.lang.IllegalArgumentException(e);
             }
-        }*/
+        }
         else {
             throw new java.lang.IllegalArgumentException("Illegal Argument");
         }
@@ -280,9 +287,9 @@ public class AttachmentPartImpl extends AttachmentPart {
      *                                      no data in this <CODE>AttachmentPart</CODE> object
      */
     public DataHandler getDataHandler() throws SOAPException {
-//        if (getContent() == null) {
-//            throw new SOAPException("No Content present in the Attachment part");
-//        }
+        //if (getContent() == null) {
+        //    throw new SOAPException("No Content present in the Attachment part");
+        //}
         //commented to fix AXIS2-778
         if (dataHandler == null) {
             throw new SOAPException("No Content present in the Attachment part");
@@ -571,11 +578,11 @@ public class AttachmentPartImpl extends AttachmentPart {
      */
 
     public void setRawContentBytes(byte[] content, int offset, int len, String contentType) throws SOAPException {
-        //TODO - complete
+        //TODO - how to use offset & len?
     	if(content == null){
     		throw new SOAPException("Content is null");
     	}
-    	
+    	setContent(content, contentType);
     }
 
     /**

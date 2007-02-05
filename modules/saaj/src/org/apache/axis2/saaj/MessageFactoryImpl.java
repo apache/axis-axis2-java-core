@@ -17,6 +17,7 @@ package org.apache.axis2.saaj;
 
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
+import org.apache.axis2.saaj.util.IDGenerator;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -166,13 +167,6 @@ public class MessageFactoryImpl extends MessageFactory {
      */
     public SOAPMessage createMessage(MimeHeaders mimeheaders,
                                      InputStream inputstream) throws IOException, SOAPException {
-
-        /*System.err.println("@@@@@@@@@@ MessageFactoryImpl#createMessage");
-        byte[] b = new byte[10240];
-        inputstream.read(b);
-        System.err.println("byte=" + new String(b));
-        System.err.println("@@@@@@@@@@ END MessageFactoryImpl#createMessage");*/
-
         SOAPMessageImpl soapMessage = new SOAPMessageImpl(inputstream, mimeheaders);
         soapMessage.setSaveRequired();
         return soapMessage;

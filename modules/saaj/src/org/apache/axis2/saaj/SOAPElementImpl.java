@@ -41,6 +41,7 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12HeaderBlockImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
@@ -528,17 +529,29 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         return element.removeNamespace(prefix);
     }
 
-    /* (non-Javadoc)
-      * @see javax.xml.soap.SOAPElement#setEncodingStyle(java.lang.String)
-      */
-    
-    //TODO : jira issue
+
+    /**
+     * Sets the encoding style for this SOAPElement object to one specified.
+     * 
+     * @param encodingStyle - a String giving the encoding style
+     * @throws java.lang.IllegalArgumentException - if there was a problem in the encoding
+     *         style being set.
+     *         SOAPException - if setting the encodingStyle is invalid for this SOAPElement.
+     */
     public void setEncodingStyle(String encodingStyle) throws SOAPException {
-    	//TODO : is this check correct?
-    	//if (!encodingStyle.equals(SOAPConstants.URI_NS_SOAP_ENCODING)) {
-        //	throw new IllegalArgumentException("Invalid Encoding style : " + encodingStyle);
-        //}
-        ((DocumentImpl) getOwnerDocument()).setCharsetEncoding(encodingStyle);
+    	if(this.element.getOMFactory() instanceof SOAP11Factory){
+        	if (!encodingStyle.equals(SOAPConstants.URI_NS_SOAP_ENCODING)) {
+            	throw new IllegalArgumentException("Invalid Encoding style : " + encodingStyle);
+            }else{
+            	((DocumentImpl) getOwnerDocument()).setCharsetEncoding(encodingStyle);
+            }
+    	}else if(this.element.getOMFactory() instanceof SOAP12Factory){
+    		if(SOAPConstants.URI_NS_SOAP_1_2_ENCODING.equals(encodingStyle)){
+    			throw new SOAPException("Illegal value : "+SOAPConstants.URI_NS_SOAP_1_2_ENCODING);
+    		}else{
+    			((DocumentImpl) getOwnerDocument()).setCharsetEncoding(encodingStyle);
+    		}
+    	}
     }
 
     /* (non-Javadoc)
