@@ -151,7 +151,7 @@ public class SOAPMessageTest extends TestCase {
 
 			AttachmentPart ap;
 
-			InputStream inputStream = new FileInputStream(new File("test-resources" + File.separator + "attach.xml"));
+			InputStream inputStream = new FileInputStream(new File(System.getProperty("basedir",".") + "/test-resources" + File.separator + "attach.xml"));
 			ap = msg.createAttachmentPart(inputStream, "text/xml");
 			DataHandler dh = new DataHandler(new SAAJDataSource(inputStream,1000,"text/xml",true));
 
