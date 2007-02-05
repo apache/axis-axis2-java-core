@@ -31,4 +31,8 @@ public class ServletBasedOutTransportInfo implements OutTransportInfo {
     public void setContentType(String contentType) {
         response.setContentType(contentType);
     }
+
+    public void addHeader(String headerName, String headerValue) {
+        response.addHeader(headerName, headerValue);
+    }
 }

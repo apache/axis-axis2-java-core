@@ -76,6 +76,14 @@
                 <module>true</module>
             </properties>
         </dependency>
+	<dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>${commons.fileupload.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
         <dependency>
             <groupId>${stax.impl.groupid}</groupId>
             <artifactId>${stax.impl.artifactid}</artifactId>
@@ -155,7 +163,6 @@
 
     </dependencies>
 
-    <reports/>
     <!-- add the build properties-->
     <build>
         <resources>

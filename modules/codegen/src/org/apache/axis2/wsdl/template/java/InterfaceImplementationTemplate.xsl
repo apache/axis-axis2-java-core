@@ -262,10 +262,28 @@
                     <xsl:for-each select="fault/param[@type!='']">
                         ,<xsl:value-of select="@name"/>
                     </xsl:for-each>{
+
+              <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+                   // keep the old address to add later
+                   String oldAdress = null;
+              </xsl:if>
               try{
                org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
               _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
               _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
+
+              <!-- change the EPR if http location available -->
+              <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+                   oldAdress = setAppendAddressToEPR(_operationClient,"<xsl:value-of select="@http_location"/>");
+              </xsl:if>
+
+              <!-- add the other parameter options to operational client -->
+              <xsl:for-each select="optionParam">
+                  addPropertyToOperationClient(_operationClient,<xsl:value-of select="@name"/>,<xsl:value-of select="@value"/>);
+              </xsl:for-each>
+
+              // create a message context
+              org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
 
               <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
@@ -323,13 +341,29 @@
                                         </xsl:otherwise>
                                     </xsl:choose>
 
-                                   <xsl:if test="count(input/param[@location='header']) &gt; 0">
+                                   <xsl:if test="count(input/param[@location='soap_header']) &gt; 0">
                                                env.build();
                                     </xsl:if>
-                                    <xsl:for-each select="input/param[@location='header']">
+                                    <xsl:for-each select="input/param[@location='soap_header']">
                                         // add the children only if the parameter is not null
                                         if (<xsl:value-of select="@name"/>!=null){
-                                        env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                            <xsl:choose>
+                                                <xsl:when test="@mustUnderstand = 'true'">
+                                                    org.apache.axiom.om.OMElement omElement = toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")))
+                                                    setMustUnderstand(omElement);
+                                                    env.getHeader().addChild(omElement);
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        }
+                                    </xsl:for-each>
+
+                                    <xsl:for-each select="input/param[@location='http_header']">
+                                        // add the children only if the parameter is not null
+                                        if (<xsl:value-of select="@name"/>!=null){
+                                            addHttpHeader(_messageContext,"<xsl:value-of select="@headername"/>",<xsl:value-of select="@name"/>);
                                         }
                                     </xsl:for-each>
                                 </xsl:when>
@@ -341,11 +375,17 @@
                         <!-- No input parameters present. So generate assuming no input parameters-->
                         <xsl:otherwise>
                             <xsl:choose>
-                                <xsl:when test="$style='rpc' or $style='document'">
-                                    //Style is taken to be "document". No input parameters
+                                <xsl:when test="$style='rpc'">
+                                    //Style is taken to be "rpc". No input parameters
                                     org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
                                     env = factory.getDefaultEnvelope();
                                     env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
+                                </xsl:when>
+                                <xsl:when test="$style='document'">
+                                    //Style is taken to be "document". No input parameters
+                                    // according to the WS-Basic profile in this case we have to send an empty soap message
+                                    org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
+                                    env = factory.getDefaultEnvelope();
                                 </xsl:when>
                                 <xsl:otherwise>
                                      //Unknown style detected !! No code is generated
@@ -353,10 +393,9 @@
                             </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
-        //adding SOAP headers
+        //adding SOAP soap_headers
          _serviceClient.addHeadersToEnvelope(env);
-        // create message context with that soap envelope
-        org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;
+        // set the message context with that soap envelope
         _messageContext.setEnvelope(env);
 
         // add the message contxt to the operation client
@@ -364,6 +403,11 @@
 
         //execute the operation client
         _operationClient.execute(true);
+
+        <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+           // set the old address again
+           setServiceClientEPR(oldAdress);
+        </xsl:if>
 
          <xsl:choose>
             <xsl:when test="$outputtype=''">
@@ -398,6 +442,10 @@
             </xsl:otherwise>
         </xsl:choose>
          }catch(org.apache.axis2.AxisFault f){
+            <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+               // set the old address again
+               setServiceClientEPR(oldAdress);
+            </xsl:if>
             org.apache.axiom.om.OMElement faultElt = f.getDetail();
             if (faultElt!=null){
                 if (faultExeptionNameMap.containsKey(faultElt.getQName())){
@@ -488,14 +536,31 @@
 
                 throws java.rmi.RemoteException{
 
+              <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+                   // keep the old address to add later
+                   String oldAdress = null;
+              </xsl:if>
+
               org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
              _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
              _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
+
+             <!-- change the EPR if http location available -->
+              <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+                   oldAdress = setAppendAddressToEPR(_operationClient,"<xsl:value-of select="@http_location"/>");
+              </xsl:if>
+
+              <!-- add the other parameter options to operational client -->
+              <xsl:for-each select="optionParam">
+                  addPropertyToOperationClient(_operationClient,<xsl:value-of select="@name"/>,<xsl:value-of select="@value"/>);
+              </xsl:for-each>
 
           <!--todo if the stub was generated with unwrapping, wrap all parameters into a single element-->
 
               // create SOAP envelope with that payload
               org.apache.axiom.soap.SOAPEnvelope env=null;
+              org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
+
                     <xsl:variable name="count" select="count(input/param[@type!=''])"/>
                     <xsl:choose>
                         <!-- test the number of input parameters
@@ -536,10 +601,25 @@
                                         </xsl:otherwise>
                                     </xsl:choose>
 
-                                    <xsl:for-each select="input/param[@location='header']">
-                                         // add the headers only if they are not null
+                                    <xsl:for-each select="input/param[@location='soap_header']">
+                                         // add the soap_headers only if they are not null
                                         if (<xsl:value-of select="@name"/>!=null){
-                                           env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                           <xsl:choose>
+                                                <xsl:when test="@mustUnderstand = 'true'">
+                                                    org.apache.axiom.om.OMElement omElement = toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")))
+                                                    setMustUnderstand(omElement);
+                                                    env.getHeader().addChild(omElement);
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        }
+                                    </xsl:for-each>
+                                     <xsl:for-each select="input/param[@location='http_header']">
+                                        // add the children only if the parameter is not null
+                                        if (<xsl:value-of select="@name"/>!=null){
+                                            addHttpHeader(_messageContext,"<xsl:value-of select="@headername"/>",<xsl:value-of select="@name"/>);
                                         }
                                     </xsl:for-each>
                                 </xsl:when>
@@ -551,11 +631,17 @@
                         <!-- No input parameters present. So generate assuming no input parameters-->
                         <xsl:otherwise>
                             <xsl:choose>
-                                <xsl:when test="$style='document' or $style='rpc'">
+                                <xsl:when test="$style='rpc'">
                                     //Style is Doc. No input parameters
                                     org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
                                     env = factory.getDefaultEnvelope();
                                     env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
+                                </xsl:when>
+                                <xsl:when test="$style='document'">
+                                    //Style is taken to be "document". No input parameters
+                                    // according to the WS-Basic profile in this case we have to send an empty soap message
+                                    org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
+                                    env = factory.getDefaultEnvelope();
                                 </xsl:when>
                                 <xsl:otherwise>
                                     //Unknown style detected !! No code is generated
@@ -563,10 +649,9 @@
                             </xsl:choose>
                         </xsl:otherwise>
                     </xsl:choose>
-        //adding SOAP headers
+        //adding SOAP soap_headers
          _serviceClient.addHeadersToEnvelope(env);
         // create message context with that soap envelope
-        org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;
         _messageContext.setEnvelope(env);
 
         // add the message contxt to the operation client
@@ -604,6 +689,10 @@
 
            //execute the operation client
            _operationClient.execute(false);
+            <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+               // set the old address again
+               setServiceClientEPR(oldAdress);
+            </xsl:if>
 
                     }
                 </xsl:if>
@@ -651,13 +740,29 @@
                 </xsl:if>
                 {
 
+                <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+                   // keep the old address to add later
+                   String oldAdress = null;
+              </xsl:if>
+
                 <xsl:if test="$mep='11'">try {</xsl:if>
                 org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
                 _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
                 _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
 
+                <!-- change the EPR if http location available -->
+               <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+                   oldAdress = setAppendAddressToEPR(_operationClient,"<xsl:value-of select="@http_location"/>");
+               </xsl:if>
+
+                <!-- add the other parameter options to operational client -->
+              <xsl:for-each select="optionParam">
+                  addPropertyToOperationClient(_operationClient,<xsl:value-of select="@name"/>,<xsl:value-of select="@value"/>);
+              </xsl:for-each>
+
                 <xsl:for-each select="input/param[@Action!='']">_operationClient.getOptions().setAction("<xsl:value-of select="@Action"/>");</xsl:for-each>
                 org.apache.axiom.soap.SOAPEnvelope env = null;
+                org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
 
                 <xsl:variable name="count" select="count(input/param[@type!=''])"/>
                                     <xsl:choose>
@@ -700,10 +805,25 @@
                                                         </xsl:otherwise>
                                                   </xsl:choose>
 
-                                                    <xsl:for-each select="input/param[@location='header']">
+                                                    <xsl:for-each select="input/param[@location='soap_header']">
                                                         // add the children only if the parameter is not null
                                                         if (<xsl:value-of select="@name"/>!=null){
-                                                        env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                                            <xsl:choose>
+                                                                <xsl:when test="@mustUnderstand = 'true'">
+                                                                    org.apache.axiom.om.OMElement omElement = toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>")))
+                                                                    setMustUnderstand(omElement);
+                                                                    env.getHeader().addChild(omElement);
+                                                                </xsl:when>
+                                                                <xsl:otherwise>
+                                                                    env.getHeader().addChild(toOM(<xsl:value-of select="@name"/>, optimizeContent(new javax.xml.namespace.QName("<xsl:value-of select="$method-ns"/>", "<xsl:value-of select="$method-name"/>"))));
+                                                                </xsl:otherwise>
+                                                            </xsl:choose>
+                                                        }
+                                                    </xsl:for-each>
+                                                     <xsl:for-each select="input/param[@location='http_header']">
+                                                        // add the children only if the parameter is not null
+                                                        if (<xsl:value-of select="@name"/>!=null){
+                                                            addHttpHeader(_messageContext,"<xsl:value-of select="@headername"/>",<xsl:value-of select="@name"/>);
                                                         }
                                                     </xsl:for-each>
                                                 </xsl:when>
@@ -715,11 +835,17 @@
                                         <!-- No input parameters present. So generate assuming no input parameters-->
                                         <xsl:otherwise>
                                             <xsl:choose>
-                                                <xsl:when test="$style='rpc' or $style='document'">
+                                                <xsl:when test="$style='rpc'">
                                                     //Style is taken to be "document". No input parameters
                                                     org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
                                                     env = factory.getDefaultEnvelope();
                                                     env.getBody().addChild(factory.createOMElement("<xsl:value-of select="$method-name"/>", "<xsl:value-of select="$method-ns"/>", ""));
+                                                </xsl:when>
+                                                <xsl:when test="$style='document'">
+                                                    //Style is taken to be "document". No input parameters
+                                                    // according to the WS-Basic profile in this case we have to send an empty soap message
+                                                    org.apache.axiom.soap.SOAPFactory factory = getFactory(_operationClient.getOptions().getSoapVersionURI());
+                                                    env = factory.getDefaultEnvelope();
                                                 </xsl:when>
                                                 <xsl:otherwise>
                                                      //Unknown style detected !! No code is generated
@@ -728,18 +854,27 @@
                                         </xsl:otherwise>
                                     </xsl:choose>
 
-              //adding SOAP headers
+              //adding SOAP soap_headers
          _serviceClient.addHeadersToEnvelope(env);
                 // create message context with that soap envelope
-            org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext() ;
+
             _messageContext.setEnvelope(env);
 
             // add the message contxt to the operation client
             _operationClient.addMessageContext(_messageContext);
 
              _operationClient.execute(true);
+
+              <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+               // set the old address again
+               setServiceClientEPR(oldAdress);
+            </xsl:if>
            <xsl:if test="$mep='11'">
                }catch(org.apache.axis2.AxisFault f){
+                  <xsl:if test="string-length(normalize-space(@http_location)) > 0">
+                   // set the old address again
+                   setServiceClientEPR(oldAdress);
+                  </xsl:if>
                   org.apache.axiom.om.OMElement faultElt = f.getDetail();
                   if (faultElt!=null){
                       if (faultExeptionNameMap.containsKey(faultElt.getQName())){
@@ -795,6 +930,7 @@
             </xsl:if>
           </xsl:if>
         </xsl:for-each>
+
 
        /**
         *  A utility method that copies the namepaces from the SOAPEnvelope

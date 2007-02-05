@@ -18,10 +18,14 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.AxisEndpoint;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -44,7 +48,8 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
         String action = messageContext.getSoapAction();
 
         if(isDebugEnabled){
-        log.debug(messageContext.getLogIDString()+" Checking for Operation using SOAPAction : " + action);
+            log.debug(messageContext.getLogIDString() +
+                    " Checking for Operation using SOAPAction : " + action);
         }
         if (action != null) {
             AxisOperation op = service.getOperationBySOAPAction(action);
@@ -59,7 +64,7 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
              */
             if ((op == null) && (action.lastIndexOf('/') != -1)) {
                 op = service.getOperation(new QName(action.substring(action.lastIndexOf('/'),
-                        action.length())));
+                                                                     action.length())));
             }
 
             return op;

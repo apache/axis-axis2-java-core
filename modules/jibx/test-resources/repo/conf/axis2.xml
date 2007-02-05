@@ -110,6 +110,10 @@
                      class="org.apache.axis2.engine.RequestURIBasedDispatcher">
                 <order phase="Dispatch"/>
             </handler>
+	    <handler name="RequestURIBasedOperationDispatcher"
+                     class="org.apache.axis2.dispatchers.RequestURIBasedOperationDispatcher">
+                <order phase="Dispatch"/>
+            </handler>
             <handler name="SOAPActionBasedDispatcher"
                      class="org.apache.axis2.engine.SOAPActionBasedDispatcher">
                 <order phase="Dispatch"/>

@@ -18,18 +18,23 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.AxisEndpoint;
+import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import java.util.Map;
 
 /**
  * Dispatcher based on the WS-Addressing properties.
@@ -53,21 +58,22 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         String action = messageContext.getWSAAction();
 
         if (action != null) {
-            return service.getOperationByAction(action);
+            AxisOperation axisOperation = service.getOperationByAction(action);
+            return axisOperation;
         }
 
         return null;
     }
 
     public AxisService findService(MessageContext messageContext) throws AxisFault {
-        EndpointReference toEPR = messageContext.getTo();
+EndpointReference toEPR = messageContext.getTo();
         AxisService service = null;
 
         if (toEPR != null) {
             if (toEPR.hasAnonymousAddress()) {
                 return null;
             }
-            
+
             String address = toEPR.getAddress();
             if(isDebugEnabled){
             log.debug(messageContext.getLogIDString()+" "+Messages.getMessage("checkingserviceforepr", address));
@@ -89,7 +95,25 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                 AxisConfiguration registry =
                         configurationContext.getAxisConfiguration();
 
-                return registry.getService(serviceName.getLocalPart());
+                AxisService axisService = registry.getService(serviceName.getLocalPart());
+
+                // If the axisService is not null we get the binding that the request came to add
+                // add it as a property to the messageContext
+                if (axisService != null) {
+                    Map endpoints = axisService.getEndpoints();
+                    if (endpoints != null) {
+                        if (endpoints.size() == 1) {
+                            messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+                                                       endpoints.get(
+                                                               axisService.getEndpointName()));
+                        } else {
+                            String endpointName = values[0].substring(values[0].indexOf(".") + 1);
+                            messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+                                                       endpoints.get(endpointName));
+                        }
+                    }
+                }
+                return axisService;
             }
         }
 
@@ -116,7 +140,8 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             }
             if ((relatesTo != null) || "".equals(relatesTo)) {
                 OperationContext operationContext =
-                        msgctx.getConfigurationContext().getOperationContext(msgctx.getRelatesTo().getValue());
+                        msgctx.getConfigurationContext()
+                                .getOperationContext(msgctx.getRelatesTo().getValue());
 
                 if (operationContext != null) {
                     operationContext.addMessageContext(msgctx);

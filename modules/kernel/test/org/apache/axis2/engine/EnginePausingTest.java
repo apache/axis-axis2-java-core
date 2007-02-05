@@ -102,6 +102,19 @@ public class EnginePausingTest extends TestCase {
             }
         });
         service.addOperation(axisOp);
+        
+        AxisEndpoint endpoint = new AxisEndpoint();
+        endpoint.setName("NullService");
+
+        AxisBinding binding = new AxisBinding();
+        AxisBindingOperation bindingOp = new AxisBindingOperation();
+
+        bindingOp.setAxisOperation(axisOp);
+        binding.addChild(bindingOp);
+        endpoint.setBinding(binding);
+        service.addEndpoint(endpoint.getName(), endpoint);
+        service.setEndpointName(endpoint.getName());
+        
         service.mapActionToOperation(operationName.getLocalPart(), axisOp);
 
         mc = new MessageContext();

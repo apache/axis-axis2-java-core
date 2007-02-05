@@ -24,9 +24,12 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.Map;
 
 /**
  * Dispatches the service based on the information from the target endpoint URL.
@@ -56,29 +59,52 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
         EndpointReference toEPR = messageContext.getTo();
 
         if (toEPR != null) {
-            if(isDebugEnabled){
-            log.debug(messageContext.getLogIDString()+" Checking for Service using target endpoint address : " + toEPR.getAddress());
+            if (isDebugEnabled) {
+                log.debug(messageContext.getLogIDString() +
+                        " Checking for Service using target endpoint address : " +
+                        toEPR.getAddress());
             }
             String filePart = toEPR.getAddress();
             //REVIEW: (nagy) Parsing the RequestURI will also give us the operationName if present, so we could conceivably store it in the MessageContext, but doing so and retrieving it is probably no faster than simply reparsing the URI
             ConfigurationContext configurationContext = messageContext.getConfigurationContext();
             String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
-                    configurationContext.getServiceContextPath());
+                                                                          configurationContext.getServiceContextPath());
 
             if ((values.length >= 1) && (values[0] != null)) {
                 AxisConfiguration registry =
                         configurationContext.getAxisConfiguration();
 
-                return registry.getService(values[0]);
+                AxisService axisService = registry.getService(values[0]);
+
+                // If the axisService is not null we get the binding that the request came to add
+                // add it as a property to the messageContext
+                if (axisService != null) {
+                    Map endpoints = axisService.getEndpoints();
+                    if (endpoints != null) {
+                        if (endpoints.size() == 1) {
+                            messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+                                                       endpoints.get(
+                                                               axisService.getEndpointName()));
+                        } else {
+                            String endpointName = values[0].substring(values[0].indexOf(".") + 1);
+                            messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+                                                       endpoints.get(endpointName));
+                        }
+                    }
+                }
+
+                return axisService;
             } else {
-                if(isDebugEnabled){
-                log.debug(messageContext.getLogIDString()+" Attempted to check for Service using target endpoint URI, but the service fragment was missing");
+                if (isDebugEnabled) {
+                    log.debug(messageContext.getLogIDString() +
+                            " Attempted to check for Service using target endpoint URI, but the service fragment was missing");
                 }
                 return null;
             }
         } else {
-            if(isDebugEnabled){
-            log.debug(messageContext.getLogIDString()+" Attempted to check for Service using null target endpoint URI");
+            if (isDebugEnabled) {
+                log.debug(messageContext.getLogIDString() +
+                        " Attempted to check for Service using null target endpoint URI");
             }
             return null;
         }

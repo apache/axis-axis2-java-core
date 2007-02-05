@@ -377,7 +377,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                 addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
 
 
-                addSOAPAction(doc, methodElement, axisOperation);
+                addSOAPAction(doc, methodElement, axisOperation.getName());
                 //add header ops for input
                 addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
                 //add header ops for output
@@ -406,6 +406,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                     opsFound = true;
                     List soapHeaderInputParameterList = new ArrayList();
                     List soapHeaderOutputParameterList = new ArrayList();
+                    List soapHeaderFaultParameterList = new ArrayList();
                     methodElement = doc.createElement("method");
                     String localPart = axisOperation.getName().getLocalPart();
                     String opCName = makeCClassName(localPart);
@@ -424,7 +425,7 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                     addAttribute(doc, "mepURI", axisOperation.getMessageExchangePattern(), methodElement);
 
 
-                    addSOAPAction(doc, methodElement, axisOperation);
+                    addSOAPAction(doc, methodElement, axisOperation.getName());
                     addHeaderOperations(soapHeaderInputParameterList, axisOperation, true);
                     addHeaderOperations(soapHeaderOutputParameterList, axisOperation, false);
 
@@ -450,7 +451,6 @@ public class CEmitter extends AxisServiceBasedMultiLanguageEmitter {
                             axisOperation, soapHeaderOutputParameterList));
                     methodElement.appendChild(getFaultElement(doc,
                             axisOperation));
-
                     rootElement.appendChild(methodElement);
                     //////////////////////
                 }

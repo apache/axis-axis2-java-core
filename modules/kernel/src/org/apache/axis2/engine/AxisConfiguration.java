@@ -18,9 +18,16 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.*;
+import org.apache.axis2.deployment.util.PhasesInfo;
+import org.apache.axis2.description.AxisDescription;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.ModuleConfiguration;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.MessageFormatter;
@@ -33,7 +40,13 @@ import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import javax.xml.namespace.QName;
 import java.net.URL;
 import java.security.PrivilegedAction;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class AxisConfiguration
@@ -70,7 +83,7 @@ public class AxisConfiguration extends AxisDescription {
 
     private URL axis2Repository = null;
 
-    private HashMap allservices = new HashMap();
+    private HashMap allServices = new HashMap();
 
     /**
      * Stores the module specified in the server.xml at the document parsing time.
@@ -139,13 +152,13 @@ public class AxisConfiguration extends AxisDescription {
         observersList = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
         systemClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedAction() {
-          public Object run() {
-            return Thread.currentThread().getContextClassLoader();      
-          }
+            public Object run() {
+                return Thread.currentThread().getContextClassLoader();
+            }
         });
-        serviceClassLoader = systemClassLoader; 
+        serviceClassLoader = systemClassLoader;
         moduleClassLoader = systemClassLoader;
-        
+
         this.phasesinfo = new PhasesInfo();
         targetResolvers = new ArrayList();
     }
@@ -246,8 +259,8 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * This method will check whethere for a given service , can we ganerate
-     * valid wsdl or not. So if user derop a wsdl we print that out , else if
-     * all the operation uses RPC message recivers we will generate wsdl
+     * valid wsdl or not. So if user drop a wsdl we print that out , else if
+     * all the operation uses RPC message receivers we will generate wsdl
      *
      * @param axisService
      */
@@ -283,26 +296,28 @@ public class AxisConfiguration extends AxisDescription {
     public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup)
             throws AxisFault {
         notifyObservers(AxisEvent.SERVICE_DEPLOY, axisServiceGroup);
-        Iterator services = axisServiceGroup.getServices();
         axisServiceGroup.setParent(this);
-        AxisService description;
+        AxisService axisService;
+
+        Iterator services = axisServiceGroup.getServices();
         while (services.hasNext()) {
-            description = (AxisService) services.next();
-            if (allservices.get(description.getName()) != null) {
+            axisService = (AxisService) services.next();
+            String serviceName = axisService.getName();
+            if (allServices.get(serviceName) != null) {
                 throw new AxisFault(Messages.getMessage(
-                        "twoservicecannothavesamename", description.getName()));
+                        "twoservicecannothavesamename", axisService.getName()));
             }
-            if (description.getSchematargetNamespace() == null) {
-                description
+            if (axisService.getSchematargetNamespace() == null) {
+                axisService
                         .setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
             }
-            isWSDLEnable(description);
+            isWSDLEnable(axisService);
         }
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
-            description = (AxisService) services.next();
-            if (description.isUseDefaultChains()) {
-                Iterator operations = description.getOperations();
+            axisService = (AxisService) services.next();
+            if (axisService.isUseDefaultChains()) {
+                Iterator operations = axisService.getOperations();
                 while (operations.hasNext()) {
                     AxisOperation operation = (AxisOperation) operations.next();
                     phasesinfo.setOperationPhases(operation);
@@ -316,10 +331,28 @@ public class AxisConfiguration extends AxisDescription {
         }
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
-            description = (AxisService) services.next();
-            allservices.put(description.getName(), description);
-            if (!description.isClientSide()) {
-                notifyObservers(AxisEvent.SERVICE_DEPLOY, description);
+            axisService = (AxisService) services.next();
+
+            Map endpoints = axisService.getEndpoints();
+            String serviceName = axisService.getName();
+
+            if (endpoints.isEmpty()) {
+                allServices.put(serviceName, axisService);
+            } else if (endpoints.size() == 1) {
+                // if we have one endpoint, just process it. This is special case as this will be the case
+                // most of the time
+                allServices.put(serviceName, axisService);
+                allServices.put(serviceName + "." + axisService.getEndpointName(), axisService);
+            } else {
+                Iterator endpointNameIter = endpoints.keySet().iterator();
+                while (endpointNameIter.hasNext()) {
+                    String endpointName = (String) endpointNameIter.next();
+                    allServices.put(serviceName + "." + endpointName, axisService);
+                }
+            }
+
+            if (!axisService.isClientSide()) {
+                notifyObservers(AxisEvent.SERVICE_DEPLOY, axisService);
             }
         }
         // serviceGroups.put(axisServiceGroup.getServiceGroupName(),
@@ -336,7 +369,7 @@ public class AxisConfiguration extends AxisDescription {
         Iterator services = axisServiceGroup.getServices();
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
-            allservices.remove(axisService.getName());
+            allServices.remove(axisService.getName());
             if (!axisService.isClientSide()) {
                 notifyObservers(AxisEvent.SERVICE_REMOVE, axisService);
             }
@@ -523,7 +556,7 @@ public class AxisConfiguration extends AxisDescription {
      * @throws AxisFault
      */
     public synchronized void removeService(String name) throws AxisFault {
-        AxisService service = (AxisService) allservices.remove(name);
+        AxisService service = (AxisService) allServices.remove(name);
 
         if (service != null) {
             log.debug(Messages.getMessage("serviceremoved", name));
@@ -668,7 +701,7 @@ public class AxisConfiguration extends AxisDescription {
      * @return Returns AxisService.
      */
     public AxisService getService(String name) throws AxisFault {
-        AxisService axisService = (AxisService) allservices.get(name);
+        AxisService axisService = (AxisService) allServices.get(name);
         if (axisService != null) {
             if (axisService.isActive()) {
                 return axisService;
@@ -688,7 +721,7 @@ public class AxisConfiguration extends AxisDescription {
      * @return AxisService
      */
     public AxisService getServiceForActivation(String serviceName) {
-        AxisService axisService = (AxisService) allservices.get(serviceName);
+        AxisService axisService = (AxisService) allServices.get(serviceName);
         if (axisService != null) {
             return axisService;
         } else {
@@ -723,11 +756,11 @@ public class AxisConfiguration extends AxisDescription {
             while (servics.hasNext()) {
                 AxisService axisService = (AxisService) servics.next();
 
-                allservices.put(axisService.getName(), axisService);
+                allServices.put(axisService.getName(), axisService);
             }
         }
 
-        return allservices;
+        return allServices;
     }
 
     // the class loder which become the top most parent of all the modules and
@@ -835,7 +868,7 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public void stopService(String serviceName) throws AxisFault {
-        AxisService service = (AxisService) allservices.get(serviceName);
+        AxisService service = (AxisService) allServices.get(serviceName);
         if (service == null) {
             throw new AxisFault(Messages.getMessage("servicenamenotvalid",
                     serviceName));
@@ -845,7 +878,7 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public void startService(String serviceName) throws AxisFault {
-        AxisService service = (AxisService) allservices.get(serviceName);
+        AxisService service = (AxisService) allServices.get(serviceName);
         if (service == null) {
             throw new AxisFault(Messages.getMessage("servicenamenotvalid",
                     serviceName));

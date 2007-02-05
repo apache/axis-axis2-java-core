@@ -940,7 +940,6 @@ public class SchemaCompiler {
      *
      * @param complexType
      * @param metaInfHolder
-     * @param fullyQualifiedClassName the name returned by makeFullyQualifiedClassName() or null if it wasn't called
      * @throws SchemaCompilationException
      */
     private String writeComplexType(XmlSchemaComplexType complexType, BeanWriterMetaInfoHolder metaInfHolder)

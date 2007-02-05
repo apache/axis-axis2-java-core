@@ -23,12 +23,14 @@ import javax.xml.namespace.QName;
 
 public interface WSDLConstants {
 
+    String WSDL_1_1_STYLE = "style";
+    
     String STYLE_RPC = "rpc";
     String STYLE_DOC = "document";
     String STYLE_MSG = "msg";
 
-    String WSDL_4_J_DEFINITION  = "wsdl4jDefinition";
-    String WSDL_20_DESCRIPTION  = "WSDL20Description";
+    String WSDL_4_J_DEFINITION = "wsdl4jDefinition";
+    String WSDL_20_DESCRIPTION = "WSDL20Description";
     /**
      * Field WSDL2_0_NAMESPACE
      */
@@ -44,6 +46,15 @@ public interface WSDLConstants {
      * Field WSDL_MESSAGE_DIRECTION_IN
      */
     public static final String WSDL_MESSAGE_DIRECTION_IN = "in";
+
+    public static final String WSDL_MESSAGE_IN_MESSAGE = "inMessage";
+
+    public static final String WSDL_MESSAGE_OUT_MESSAGE = "outMessage";
+
+    public static final String SOAP_HEADER = "soap_header";
+
+    public static final String HTTP_HEADER = "http_header";
+
 
 
     /**
@@ -86,7 +97,7 @@ public interface WSDLConstants {
     String INPUT_PART_QNAME_SUFFIX = "_input";
 
 
-    public static interface WSDL11Constants{
+    public static interface WSDL11Constants {
 
         /**
          * The Type name for the SOAP Address defined in the Port/Endpoint
@@ -94,77 +105,43 @@ public interface WSDLConstants {
         QName SOAP_11_ADDRESS = new QName(
                 Constants.URI_WSDL11_SOAP, "address");
         QName SOAP_12_ADDRESS = new QName(
-               Constants.URI_WSDL12_SOAP, "address");
+                Constants.URI_WSDL12_SOAP, "address");
         QName SOAP_11_OPERATION = new QName(
-               Constants.URI_WSDL11_SOAP, "operation");
+                Constants.URI_WSDL11_SOAP, "operation");
         QName SOAP_12_OPERATION = new QName(
-               Constants.URI_WSDL12_SOAP, "operation");
+                Constants.URI_WSDL12_SOAP, "operation");
         QName SCHEMA = new QName(
-               Constants.URI_2001_SCHEMA_XSD, "schema");
+                Constants.URI_2001_SCHEMA_XSD, "schema");
         QName SOAP_11_BODY = new QName(
-               Constants.URI_WSDL11_SOAP, "body");
+                Constants.URI_WSDL11_SOAP, "body");
         QName SOAP_12_BODY = new QName(
-               Constants.URI_WSDL12_SOAP, "body");
+                Constants.URI_WSDL12_SOAP, "body");
         QName SOAP_11_HEADER = new QName(
-               Constants.URI_WSDL11_SOAP, "header");
+                Constants.URI_WSDL11_SOAP, "header");
         QName SOAP_12_HEADER = new QName(
-               Constants.URI_WSDL12_SOAP, "header");
+                Constants.URI_WSDL12_SOAP, "header");
         QName SOAP_11_BINDING = new QName(
-               Constants.URI_WSDL11_SOAP, "binding");
+                Constants.URI_WSDL11_SOAP, "binding");
         QName SOAP_12_BINDING = new QName(
-               Constants.URI_WSDL12_SOAP, "binding");
+                Constants.URI_WSDL12_SOAP, "binding");
         QName POLICY = new QName(
-               Constants.URI_POLICY, "Policy");
+                Constants.URI_POLICY, "Policy");
         QName POLICY_REFERENCE = new QName(
-               Constants.URI_POLICY, "PolicyReference");
+                Constants.URI_POLICY, "PolicyReference");
     }
 
-   public static interface WSDL20_2004Constants {
+    public static final int MEP_CONSTANT_OUT_IN = 16;
+    public static final int MEP_CONSTANT_OUT_ONLY = 14;
+    public static final int MEP_CONSTANT_IN_ONLY = 10;
+    public static final int MEP_CONSTANT_ROBUST_IN_ONLY = 11;
+    public static final int MEP_CONSTANT_IN_OUT = 12;
+    public static final int MEP_CONSTANT_IN_OPTIONAL_OUT = 13;
+    int MEP_CONSTANT_OUT_OPTIONAL_IN = 17;
+        int MEP_CONSTANT_INVALID = -1;
+    int MEP_CONSTANT_ROBUST_OUT_ONLY = 15;
 
 
-       /**
-        * Field MEP_URI_IN_ONLY
-        */
-       String MEP_URI_IN_ONLY = "http://www.w3.org/2004/08/wsdl/in-only";
-       int MEP_CONSTANT_IN_ONLY = 10;
-       /**
-        * Field MEP_URI_ROBUST_IN_ONLY
-        */
-       String MEP_URI_ROBUST_IN_ONLY = "http://www.w3.org/2004/08/wsdl/robust-in-only";
-       int MEP_CONSTANT_ROBUST_IN_ONLY = 11;
-       /**
-        * Field MEP_URI_IN_OUT
-        */
-       String MEP_URI_IN_OUT = "http://www.w3.org/2004/08/wsdl/in-out";
-       String MEP_URI_IN_OUT_03 = "http://www.w3.org/2004/03/wsdl/in-out";
-       int MEP_CONSTANT_IN_OUT = 12;
-       /**
-        * Field MEP_URI_IN_OPTIONAL_OUT
-        */
-       String MEP_URI_IN_OPTIONAL_OUT = "http://www.w3.org/2004/08/wsdl/in-opt-out";
-       int MEP_CONSTANT_IN_OPTIONAL_OUT = 13;
-       /**
-        * Field MEP_URI_OUT_ONLY
-        */
-       String MEP_URI_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/out-only";
-       int MEP_CONSTANT_OUT_ONLY = 14;
-       /**
-        * Field MEP_URI_ROBUST_OUT_ONLY
-        */
-       String MEP_URI_ROBUST_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/robust-out-only";
-       int MEP_CONSTANT_ROBUST_OUT_ONLY = 15;
-       /**
-        * Field MEP_URI_OUT_IN
-        */
-       String MEP_URI_OUT_IN = "http://www.w3.org/2004/08/wsdl/out-in";
-       int MEP_CONSTANT_OUT_IN = 16;
-       /**
-        * Field MEP_URI_OUT_OPTIONL_IN
-        */
-       String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/2004/08/wsdl/out-opt-in";
-       int MEP_CONSTANT_OUT_OPTIONAL_IN = 17;
-       int MEP_CONSTANT_INVALID = -1;
-   }
+
     public static interface WSDL20_2006Constants {
 
         // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#in-only
@@ -184,6 +161,25 @@ public interface WSDLConstants {
         // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#out-opt-in
         String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/2006/01/wsdl/out-opt-in";
         String DEFAULT_NAMESPACE_URI = "http://www.w3.org/2006/01/wsdl";
+
+        String NMTOKEN_ANY = "#any";
+        String NMTOKEN_NONE = "#none";
+        String NMTOKEN_OTHER = "#other";
+        String NMTOKEN_ELEMENT = "#element";
+
+    }
+    
+    public static interface WSDL20_2004_Constants {
+
+        String MEP_URI_IN_ONLY = "http://www.w3.org/2004/08/wsdl/in-only";
+        String MEP_URI_ROBUST_IN_ONLY = "http://www.w3.org/2004/08/wsdl/robust-in-only";
+        String MEP_URI_IN_OUT = "http://www.w3.org/2004/08/wsdl/in-out";
+        String MEP_URI_IN_OPTIONAL_OUT = "http://www.w3.org/2004/08/wsdl/in-opt-out";
+        String MEP_URI_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/out-only";
+        String MEP_URI_ROBUST_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/robust-out-only";
+        String MEP_URI_OUT_IN = "http://www.w3.org/2004/08/wsdl/out-in";
+        String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/2004/08/wsdl/out-opt-in";
+        String DEFAULT_NAMESPACE_URI = "http://www.w3.org/2004/08/wsdl";
 
         String NMTOKEN_ANY = "#any";
         String NMTOKEN_NONE = "#none";

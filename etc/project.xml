@@ -120,7 +120,7 @@
         <type>plugin</type>
         <version>${maven.plugin.plugin.version}</version>
        </dependency>
-    </dependencies>
+      </dependencies>
     
     
     <!-- ========== -->

@@ -109,7 +109,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                                                          AxisService service) {
         MessageReceiver messageReceiver;
         if (mepURL == null) {
-            mepURL = WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT;
+            mepURL = WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT;
         }
         if (service != null) {
             messageReceiver = service.getMessageReceiver(mepURL);

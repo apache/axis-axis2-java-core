@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -238,25 +239,26 @@ public class Test extends TestCase
         javaCompiler.execute();
 //        codeGenProject.executeTarget(COMPILE_TARGET_NAME);
     }
-    
+
     public void testBuildAndRun() throws Exception {
         startServer();
-        
+
         // start by generating and compiling the Axis2 interface code
         String outdir =
             OUTPUT_LOCATION_BASE + OUTPUT_LOCATION_PREFIX;
         codeGenerate(WSDL_BASE_DIR + "customer-echo.wsdl",
             BINDING_BASE_DIR + "customer-binding.xml", outdir, false);
         compile(outdir);
-        
-        // finish by testing a roundtrip call to the echo server
+
+//         finish by testing a roundtrip call to the echo server
         File classesdir = new File(outdir + "/classes/");
         URLClassLoader loader = new URLClassLoader(new URL[] {classesdir.toURL()}, this.getClass().getClassLoader());
         Class stub = loader.loadClass(STUB_CLASS);
-        Object inst = stub.newInstance();
         Person person = new Person(42, "John", "Smith");
         Customer customer = new Customer("Redmond", person, "+14258858080",
             "WA", "14619 NE 80th Pl.", new Integer(98052));
+        Constructor constructor = stub.getConstructor(new Class[]{"http://127.0.0.1:5555/axis2/services/EchoCustomerService/echo".getClass()});
+        Object inst = constructor.newInstance(new Object[]{"http://127.0.0.1:5555/axis2/services/EchoCustomerService/echo"});
         Method method = stub.getMethod("echo", new Class[] {Customer.class});
         Object result = method.invoke(inst, new Object[] {customer});
         stopServer();
@@ -265,20 +267,22 @@ public class Test extends TestCase
     }
     
     public void testCompileWrapped() throws Exception {
-        
+
         // generate and compile the Axis2 interface code
         String outdir = OUTPUT_LOCATION_BASE + OUTPUT_LOCATION_PREFIX;
         codeGenerate(WSDL_BASE_DIR + "library.wsdl",
             BINDING_BASE_DIR + "library-binding.xml", outdir, false);
         compile(outdir);
     }
-    
+
     public void testCompileUnwrapped() throws Exception {
-        
+
         // generate and compile the Axis2 interface code
         String outdir = OUTPUT_LOCATION_BASE + OUTPUT_LOCATION_PREFIX;
         codeGenerate(WSDL_BASE_DIR + "library.wsdl",
             BINDING_BASE_DIR + "library-binding.xml", outdir, true);
         compile(outdir);
     }
+
 }
+

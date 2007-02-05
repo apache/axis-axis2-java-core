@@ -4,7 +4,7 @@
 
     <supported-policy-namespaces namespaces="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy"/>
     
-    <operation name="RequestSecurityToken" mep="http://www.w3.org/2004/08/wsdl/in-out">
+    <operation name="RequestSecurityToken" mep="http://www.w3.org/2006/01/wsdl/in-out">
         <messageReceiver class="org.apache.rahas.STSMessageReceiver"/>
 
 		<!-- Action mapping to accept SCT requests -->

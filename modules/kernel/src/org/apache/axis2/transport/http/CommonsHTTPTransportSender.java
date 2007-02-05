@@ -16,15 +16,6 @@
 
 package org.apache.axis2.transport.http;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.MIMEOutputUtils;
@@ -33,7 +24,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
@@ -42,13 +32,27 @@ import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.List;
+import java.util.zip.GZIPOutputStream;
+
 public class CommonsHTTPTransportSender extends AbstractHandler implements
 		TransportSender {
+
 
 	protected static final String PROXY_HOST_NAME = "proxy_host";
 
@@ -70,9 +74,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
 	int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
 
-	public CommonsHTTPTransportSender() {
-	}
-
 	public void cleanup(MessageContext msgContext) throws AxisFault {
 		HttpMethod httpMethod = (HttpMethod) msgContext
 				.getProperty(HTTPConstants.HTTP_METHOD);
@@ -90,7 +91,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 		// checked
 		Parameter version = transportOut
 				.getParameter(HTTPConstants.PROTOCOL_VERSION);
-
 		if (version != null) {
 			if (HTTPConstants.HEADER_PROTOCOL_11.equals(version.getValue())) {
 				httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
@@ -184,12 +184,17 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
 			/**
 			 * Figuringout the REST properties/parameters
-			 */
-			if (msgContext.isDoingREST()) {
-				dataOut = msgContext.getEnvelope().getBody().getFirstElement();
-			} else {
-				dataOut = msgContext.getEnvelope();
-			}
+             */
+            if (msgContext.isDoingREST()) {
+                if (msgContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) {
+                    dataOut = msgContext.getEnvelope().getBody().getFault().getDetail()
+                            .getFirstElement();
+                } else {
+                    dataOut = msgContext.getEnvelope().getBody().getFirstElement();
+                }
+            } else {
+                dataOut = msgContext.getEnvelope();
+            }
 
 			if (epr != null) {
 				if (!epr.hasNoneAddress()) {
@@ -203,7 +208,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 							"Both the TO and MessageContext.TRANSPORT_OUT property are Null, No where to send");
 				}
 			}
-
 			if (msgContext.getOperationContext() != null) {
 				msgContext.getOperationContext().setProperty(
 						Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);
@@ -252,8 +256,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 			throw new AxisFault(Constants.OUT_TRANSPORT_INFO
 					+ " has not been set");
 		}
-		// }
-
 		format.setAutoCloseWriter(true);
 		if (!msgContext.isDoingREST()) {
 			MessageFormatter messageFormatter = TransportUtils
@@ -272,13 +274,43 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 						bufferedSOAPBody, out, msgContext.getAttachmentMap(),
 						format);
 			} else {
-				dataOut.serializeAndConsume(out, format);
-			}
+                ServletBasedOutTransportInfo servletBasedOutTransportInfo =
+                        (ServletBasedOutTransportInfo) transportInfo;
+                List customHheaders = (List) msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
+                if (customHheaders != null) {
+                    Iterator iter = customHheaders.iterator();
+                    while (iter.hasNext()) {
+                        Header header = (Header) iter.next();
+                        if (header != null) {
+                            servletBasedOutTransportInfo
+                                    .addHeader(header.getName(), header.getValue());
+                        }
+                    }
+                }
+                Object gzip = msgContext.getOptions().getProperty(HTTPConstants.MC_GZIP_RESPONSE);
+                if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
+                    servletBasedOutTransportInfo.addHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
+                                                           HTTPConstants.COMPRESSION_GZIP);
+                    GZIPOutputStream gzout = null;
+                    ByteArrayOutputStream compressed = new ByteArrayOutputStream();
+                    try {
+                        gzout = new GZIPOutputStream(compressed);
+                        dataOut.serializeAndConsume(gzout, format);
+                        gzout.flush();
+                        gzout.close();
+                        out.write(compressed.toByteArray());
+                    } catch (IOException e) {
+                        throw new AxisFault("Could not compress response");
+                    }
+                } else {
+                    dataOut.serializeAndConsume(out, format);
+                }
 		}
 
 	}
+    }
 
-	public void writeMessageWithCommons(MessageContext messageContext,
+    public void writeMessageWithCommons(MessageContext messageContext,
 			EndpointReference toEPR, OMElement dataout, OMOutputFormat format)
 			throws AxisFault {
 		try {
@@ -301,7 +333,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 				httpVersion = (String) messageContext
 						.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION);
 			}
-
 			// Following order needed to be preserved because,
 			// HTTP/1.0 does not support chunk encoding
 			sender.setChunked(chunked);

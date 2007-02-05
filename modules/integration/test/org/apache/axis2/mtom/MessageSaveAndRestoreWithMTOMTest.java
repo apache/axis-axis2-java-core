@@ -146,7 +146,7 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase i
         options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+TestConstants.operationName.getLocalPart());
         options.setUseSeparateListener(true);
 
-        ConfigurationContext configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null); 
+        ConfigurationContext configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
 
         ServiceClient sender = new ServiceClient(configurationContext,null);
         sender.setOptions(options);

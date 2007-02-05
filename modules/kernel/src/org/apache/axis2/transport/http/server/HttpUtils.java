@@ -37,7 +37,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpRequest;
 
 public class HttpUtils {
-    
+
     private HttpUtils() {
     }
 
@@ -90,5 +90,4 @@ public class HttpUtils {
     private static boolean isIP(String hostAddress) {
         return hostAddress.split("[.]").length == 4;
     }
-    
 }

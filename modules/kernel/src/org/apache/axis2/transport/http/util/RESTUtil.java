@@ -15,16 +15,10 @@
  */
 package org.apache.axis2.transport.http.util;
 
-import java.io.IOException;
-
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.OMNodeEx;
 import org.apache.axiom.om.impl.builder.OMBuilder;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -32,16 +26,28 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisBindingOperation;
+import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.engine.HTTPLocationBasedDispatcher;
 import org.apache.axis2.engine.RequestURIBasedDispatcher;
-import org.apache.axis2.engine.RequestURIOperationDispatcher ;
+import org.apache.axis2.engine.RequestURIOperationDispatcher;
+import org.apache.axis2.engine.SOAPActionBasedDispatcher;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchemaElement;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
 
 /**
  *
@@ -68,10 +74,12 @@ public class RESTUtil {
                 throw new AxisFault("ContentType should be given to proceed," +
                         " according to WSDL 2.0 HTTP binding rules");
             } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_TEXT_XML) > -1 ||
-                    contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED) > -1) {
+                    contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED) > -1  ||
+                    contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1) {
                 soapEnvelope = handleNonURLEncodedContentTypes(msgContext, request,
-                        OMAbstractFactory.getSOAP11Factory());
-            } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1) {
+                        OMAbstractFactory.getSOAP12Factory());
+            } else if (contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
+                    contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1) {
                 // 2. Else, Dispatch and find out the operation and the service.
                 // Dispatching can only be done using the RequestURI, as others can not be run in the REST case
                 dispatchAndVerify(msgContext);
@@ -86,17 +94,21 @@ public class RESTUtil {
                 soapEnvelope = SchemaUtil.handleMediaTypeURLEncoded(msgContext,
                         request,
                         xmlSchemaElement,
-                        OMAbstractFactory.getSOAP11Factory());
+                        OMAbstractFactory.getSOAP12Factory());
             } else {
-                throw new AxisFault("Content type should be one of /n " + HTTPConstants.MEDIA_TYPE_TEXT_XML +
-                        "/n " + HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
+                throw new AxisFault(
+                        "Content type should be one of /n " + HTTPConstants.MEDIA_TYPE_TEXT_XML +
+                                "/n " + HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
+                        "/n " + HTTPConstants.MEDIA_TYPE_APPLICATION_XML +
                         "/n " + HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED);
             }
 
 
             msgContext.setEnvelope(soapEnvelope);
-            msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD, org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_POST);
-            msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.CONTENT_TYPE, contentType);
+            msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD,
+                                   org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_POST);
+            msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.CONTENT_TYPE,
+                                   contentType);
             msgContext.setDoingREST(true);
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream());
 
@@ -116,9 +128,37 @@ public class RESTUtil {
         // here, only the parameters in the URI are supported. Others will be discarded.
         try {
 
+            // when using the wsdl2 soap response MEP it can contain soap action. We better look for it here,
+            // if its there put it into msgContext so that we can use it later for dispatching purposes.
+
+            String contentType = request.getContentType();
+
+            if (contentType != null) {
+
+                //Check for action header and set it in as soapAction in MessageContext
+                int index = contentType.indexOf("action");
+                if (index > -1) {
+                    String transientString = contentType.substring(index, contentType.length());
+                    int equal = transientString.indexOf("=");
+                    int firstSemiColon = transientString.indexOf(";");
+                    String soapAction; // This will contain "" in the string
+                    if (firstSemiColon > -1) {
+                        soapAction = transientString.substring(equal + 1, firstSemiColon);
+                    } else {
+                        soapAction = transientString.substring(equal + 1, transientString.length());
+                    }
+                    if ((soapAction != null) && soapAction.startsWith("\"")
+                            && soapAction.endsWith("\"")) {
+                        soapAction = soapAction
+                                .substring(1, soapAction.length() - 1);
+                    }
+                    msgContext.setSoapAction(soapAction);
+
+                }
+            }
+
             // set the required properties so that even if there is an error during the dispatch
             // phase the response message will be passed to the client well. 
-            msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD, org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_GET);
             msgContext.setDoingREST(true);
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream());
 
@@ -131,14 +171,15 @@ public class RESTUtil {
 
             XmlSchemaElement xmlSchemaElement = null;
             if (axisOperation != null) {
-                AxisMessage axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                AxisMessage axisMessage =
+                        axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                 xmlSchemaElement = axisMessage.getSchemaElement();
             }
 
             SOAPEnvelope soapEnvelope = SchemaUtil.handleMediaTypeURLEncoded(msgContext,
                     request,
                     xmlSchemaElement,
-                    OMAbstractFactory.getSOAP11Factory());
+                    OMAbstractFactory.getSOAP12Factory());
             msgContext.setEnvelope(soapEnvelope);
 
             invokeAxisEngine(msgContext);
@@ -161,14 +202,39 @@ public class RESTUtil {
     private void dispatchAndVerify(MessageContext msgContext) throws AxisFault {
         RequestURIBasedDispatcher requestDispatcher = new RequestURIBasedDispatcher();
         requestDispatcher.invoke(msgContext);
+        AxisService axisService = msgContext.getAxisService();
+        if (axisService != null) {
+            RequestURIOperationDispatcher requestURIOperationDispatcher =
+                    new RequestURIOperationDispatcher();
+            requestURIOperationDispatcher.invoke(msgContext);
 
-	RequestURIOperationDispatcher opDispatcher = new RequestURIOperationDispatcher();
-        opDispatcher.invoke(msgContext);
+            if (msgContext.getAxisOperation() == null) {
+                HTTPLocationBasedDispatcher httpLocationBasedDispatcher =
+                        new HTTPLocationBasedDispatcher();
+                httpLocationBasedDispatcher.invoke(msgContext);
+            }
 
+            if (msgContext.getAxisOperation() == null) {
+                SOAPActionBasedDispatcher soapActionBasedDispatcher =
+                        new SOAPActionBasedDispatcher();
+                soapActionBasedDispatcher.invoke(msgContext);
+            }
+            AxisOperation axisOperation;
+            if ((axisOperation = msgContext.getAxisOperation()) != null) {
+                AxisEndpoint axisEndpoint =
+                        (AxisEndpoint) msgContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
+                AxisBindingOperation axisBindingOperation = (AxisBindingOperation) axisEndpoint
+                        .getBinding().getChild(axisOperation.getName());
+                msgContext.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
+                msgContext.setAxisOperation(axisOperation);
+            }
 
-
-        // check for the dispatching result
-        if (msgContext.getAxisService() == null || msgContext.getAxisOperation() == null) {
+            // check for the dispatching result
+            if (msgContext.getAxisOperation() == null) {
+                throw new AxisFault("I can not find a service for this request to be serviced." +
+                        " Check the WSDL and the request URI");
+            }
+        } else {
             throw new AxisFault("I can not find a service for this request to be serviced." +
                     " Check the WSDL and the request URI");
         }
@@ -188,28 +254,39 @@ public class RESTUtil {
             // irrespective of the schema, if the media type is text/xml, all the information
             // should be in the body.
             // I'm assuming here that the user is sending this data according to the schema.
-            if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED, contentType)) {
+            if (checkContentType(
+                    org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED,
+                    contentType)) {
                 body.addChild(Builder.getAttachmentsBuilder(msgCtxt,
-                        inputStream,
-                        contentType, false).getDocumentElement());
-            }else if (checkContentType(org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_TEXT_XML, contentType)) {
+                                                            inputStream,
+                                                            contentType,
+                                                            false).getDocumentElement());
+            } else if (checkContentType(
+                    org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_TEXT_XML,
+                    contentType) ||
+                    checkContentType(
+                            org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_APPLICATION_XML,
+                            contentType)) {
 
-                String charSetEnc;
-                if (Builder.getCharSetEncoding(contentType) == null) {
+                String charSetEnc = Builder.getCharSetEncoding(contentType);
+                XMLStreamReader xmlreader;
+                if (charSetEnc == null) {
                     // If charset is not specified
                     charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
-                } else {
-                    // get the type of char encoding
-                    charSetEnc = Builder.getCharSetEncoding(contentType);
                 }
                 // Setting the value in msgCtx
                 msgCtxt.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
 
-                OMBuilder builder = Builder.getBuilder(inputStream, charSetEnc, null);
-                OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
-                documentElement.setParent(null);
-                body.addChild(documentElement);
-            } 
+                // Create documentElement only if the content length is greator than 0
+                if (request.getContentLength() != 0) {
+                    xmlreader = StAXUtils.createXMLStreamReader(inputStream,
+                                                                charSetEnc);
+                    OMBuilder builder = Builder.getBuilder(inputStream, charSetEnc, null);
+                    OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
+                    documentElement.setParent(null);
+                    body.addChild(documentElement);
+                }
+            }
 
             return soapEnvelope;
 
@@ -227,4 +304,18 @@ public class RESTUtil {
         }
         return contentTypeStringFromRequest.indexOf(contentType) > -1;
     }
+
+    public static String getConstantFromHTTPLocation(String httpLocation) {
+        if (httpLocation.charAt(0) != '?') {
+            httpLocation = "/" + httpLocation;
+        }
+        int index = httpLocation.indexOf("{");
+        if (index > -1) {
+            httpLocation = httpLocation.substring(0, index);
+        }
+        return httpLocation;
+    }
+
 }
+
+

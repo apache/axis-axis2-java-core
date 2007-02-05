@@ -75,11 +75,13 @@ public abstract class TypeMappingAdapter implements TypeMapper {
             } else if (Constants.XSD_ANYTYPE.equals(qname) ||
                      Constants.XSD_ANY.equals(qname)) {
                 return defaultClassName;
-            }else{
+            } else if (Constants.XSD_STRING.equals(qname)) {
+                return String.class.getName();
+            } else {
                 throw new UnmatchedTypeException(
                         CodegenMessages.getMessage("databinding.typemapper.typeunmatched",
-                                qname.getLocalPart(),
-                                qname.getNamespaceURI())
+                                                   qname.getLocalPart(),
+                                                   qname.getNamespaceURI())
                 );
             }
         }else{

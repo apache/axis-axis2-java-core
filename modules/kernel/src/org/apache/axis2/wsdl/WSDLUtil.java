@@ -28,13 +28,7 @@ public class WSDLUtil {
      * @param mep
      */
     public static boolean isInputPresentForMEP(String mep) {
-        return WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(mep) ||
-                WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mep) ||
-                WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mep) ||
-                WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mep) ||
-                WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(mep) ||
-                WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(mep) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mep)||
+        return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mep)||
                 WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mep)||
                 WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mep)||
                 WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mep)||
@@ -47,12 +41,7 @@ public class WSDLUtil {
      * @param MEP
      */
     public static boolean isOutputPresentForMEP(String MEP) {
-        return WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(MEP) ||
-                WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT.equals(MEP) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+        return  WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
                 WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(MEP) ||
                 WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(MEP) ||
                 WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(MEP) ||

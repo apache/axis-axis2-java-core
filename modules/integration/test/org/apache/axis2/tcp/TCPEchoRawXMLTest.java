@@ -147,89 +147,89 @@ public class TCPEchoRawXMLTest extends TestCase {
         sender.cleanup();
     }
 
-    public void testEchoXMLSync() throws Exception {
-        OMElement payload = createPayload();
+//    public void testEchoXMLSync() throws Exception {
+//        OMElement payload = createPayload();
+//
+//        Options options = new Options();
+//        options.setTo(targetEPR);
+//        options.setTransportInProtocol(Constants.TRANSPORT_TCP);
+//        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
+//
+//        ServiceClient sender = new ServiceClient(configContext, clientService);
+//        sender.setOptions(options);
+//        OMElement result = sender.sendReceive(operationName, payload);
+//
+//        result.serialize(StAXUtils.createXMLStreamWriter(
+//                System.out));
+//        sender.cleanup();
+//    }
 
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setTransportInProtocol(Constants.TRANSPORT_TCP);
-        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
-                 
-        ServiceClient sender = new ServiceClient(configContext, clientService);
-        sender.setOptions(options);
-        OMElement result = sender.sendReceive(operationName, payload);
-
-        result.serialize(StAXUtils.createXMLStreamWriter(
-                System.out));
-        sender.cleanup();
-    }
-
-    public void testEchoXMLCompleteSync() throws Exception {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement payloadElement = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.setText("Isaac Asimov, The Foundation Trilogy");
-        payloadElement.addChild(value);
-
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
-        options.setTransportInProtocol(Constants.TRANSPORT_TCP);
-        options.setUseSeparateListener(true);
-
-        ServiceClient sender = new ServiceClient(configContext, clientService);
-        sender.setOptions(options);
-        OMElement result = sender.sendReceive(operationName, payloadElement);
-
-        result.serialize(StAXUtils.createXMLStreamWriter(
-                System.out));
-        sender.cleanup();
-
-    }
-
-    public void testEchoXMLSyncMC() throws Exception {
-        ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_REPOSITORY, Constants.TESTING_REPOSITORY + "/conf/axis2.xml");
-
-        AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
-        Options options = new Options();
-        options.setTo(targetEPR);
-        options.setAction(operationName.getLocalPart());
-        options.setTransportInProtocol(Constants.TRANSPORT_TCP);
-
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.setText("Isaac Asimov, The Foundation Trilogy");
-        method.addChild(value);
-        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
-        SOAPEnvelope envelope = factory.getDefaultEnvelope();
-        envelope.getBody().addChild(method);
-
-        MessageContext requestContext = new MessageContext();
-        requestContext.setConfigurationContext(configContext);
-        requestContext.setAxisService(clientService);
-        requestContext.setAxisOperation(opdesc);
-        requestContext.setEnvelope(envelope);
-
-        ServiceClient sender = new ServiceClient(configContext, clientService);
-        sender.setOptions(options);
-        OperationClient opClient = sender.createClient(new QName("echoOMElement"));
-        opClient.addMessageContext(requestContext);
-        opClient.setOptions(options);
-        opClient.execute(true);
-
-        MessageContext response = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-        SOAPEnvelope env = response.getEnvelope();
-        assertNotNull(env);
-        env.getBody().serialize(StAXUtils.createXMLStreamWriter(
-                System.out));
-        sender.cleanup();
-    }
+//    public void testEchoXMLCompleteSync() throws Exception {
+//        OMFactory fac = OMAbstractFactory.getOMFactory();
+//
+//        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+//        OMElement payloadElement = fac.createOMElement("echoOMElement", omNs);
+//        OMElement value = fac.createOMElement("myValue", omNs);
+//        value.setText("Isaac Asimov, The Foundation Trilogy");
+//        payloadElement.addChild(value);
+//
+//        Options options = new Options();
+//        options.setTo(targetEPR);
+//        options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
+//        options.setTransportInProtocol(Constants.TRANSPORT_TCP);
+//        options.setUseSeparateListener(true);
+//
+//        ServiceClient sender = new ServiceClient(configContext, clientService);
+//        sender.setOptions(options);
+//        OMElement result = sender.sendReceive(operationName, payloadElement);
+//
+//        result.serialize(StAXUtils.createXMLStreamWriter(
+//                System.out));
+//        sender.cleanup();
+//
+//    }
+//
+//    public void testEchoXMLSyncMC() throws Exception {
+//        ConfigurationContext configContext =
+//                ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_REPOSITORY, Constants.TESTING_REPOSITORY + "/conf/axis2.xml");
+//
+//        AxisOperation opdesc = new OutInAxisOperation(new QName("echoOMElement"));
+//        Options options = new Options();
+//        options.setTo(targetEPR);
+//        options.setAction(operationName.getLocalPart());
+//        options.setTransportInProtocol(Constants.TRANSPORT_TCP);
+//
+//        OMFactory fac = OMAbstractFactory.getOMFactory();
+//
+//        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+//        OMElement method = fac.createOMElement("echoOMElement", omNs);
+//        OMElement value = fac.createOMElement("myValue", omNs);
+//        value.setText("Isaac Asimov, The Foundation Trilogy");
+//        method.addChild(value);
+//        SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
+//        SOAPEnvelope envelope = factory.getDefaultEnvelope();
+//        envelope.getBody().addChild(method);
+//
+//        MessageContext requestContext = new MessageContext();
+//        requestContext.setConfigurationContext(configContext);
+//        requestContext.setAxisService(clientService);
+//        requestContext.setAxisOperation(opdesc);
+//        requestContext.setEnvelope(envelope);
+//
+//        ServiceClient sender = new ServiceClient(configContext, clientService);
+//        sender.setOptions(options);
+//        OperationClient opClient = sender.createClient(new QName("echoOMElement"));
+//        opClient.addMessageContext(requestContext);
+//        opClient.setOptions(options);
+//        opClient.execute(true);
+//
+//        MessageContext response = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+//        SOAPEnvelope env = response.getEnvelope();
+//        assertNotNull(env);
+//        env.getBody().serialize(StAXUtils.createXMLStreamWriter(
+//                System.out));
+//        sender.cleanup();
+//    }
 
 
 }

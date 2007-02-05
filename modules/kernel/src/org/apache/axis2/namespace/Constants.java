@@ -275,6 +275,7 @@ public class Constants {
     public static final QName XSD_ANYSIMPLETYPE = new QName(URI_DEFAULT_SCHEMA_XSD, "anySimpleType");
     public static final QName XSD_ANYTYPE = new QName(URI_DEFAULT_SCHEMA_XSD, "anyType");
     public static final QName XSD_ANY = new QName(URI_DEFAULT_SCHEMA_XSD, "any");
+    public static final QName AXIS2_NONE = new QName("http://org.apache.axis2", "none");
     public static final QName XSD_QNAME = new QName(URI_DEFAULT_SCHEMA_XSD, "QName");
     public static final QName XSD_DATETIME = new QName(URI_DEFAULT_SCHEMA_XSD, "dateTime");
     public static final QName XSD_DATE = new QName(URI_DEFAULT_SCHEMA_XSD, "date");

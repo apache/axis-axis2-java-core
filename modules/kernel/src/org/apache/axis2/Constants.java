@@ -67,6 +67,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      */
     public static final String MESSAGE_SCOPE = "message";
 
+    public static final String AXIS_BINDING_OPERATION = "AxisBindingOperation";
+
     /**
      * To chenge the conetext path from axis2/service to something else
      */
@@ -112,6 +114,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String TCCL_DEFAULT = "default";
     public static final String TCCL_COMPOSITE = "composite";
     public static final String TCCL_SERVICE = "service";
+    public static final String FAULT_NAME = "faultName";
 
     /**
      * Field REQUEST_URL_PREFIX
@@ -255,10 +258,14 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         
         
         public static final String HTTP_METHOD_GET = "GET";
+        public static final String HTTP_METHOD_DELETE = "DELETE";
+        public static final String HTTP_METHOD_PUT = "PUT";
         public static final String HTTP_METHOD = "HTTP_METHOD";
         public static final String HTTP_METHOD_POST = "POST";
 
         public static final String CONTENT_TYPE = "ContentType";
+        public static final String CONTENT_TYPE_OF_FAULT = "ContentTypeOfFault";
+
         public static final String IS_USING_SEPARATE_LISTENER = "IsUsingSeparateListener";
 
         public static final String CONFIG_CONTEXT_TIMOUT_INTERVAL = "ConfigContextTimeoutInterval";
@@ -266,6 +273,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String TRANSPORT_IN_URL = "TransportInURL";
 
         public static final String URL_PARAMETER_LIST = "URLParameterList";
+        public static final String URL_HTTP_LOCATION_PARAMS_LIST = "HTTPLocationParamsList";
 
         public static final String SEND_STACKTRACE_DETAILS_WITH_FAULTS = "sendStacktraceDetailsWithFaults";
 
@@ -293,7 +301,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
 
         /**
          * If this is set to a Boolean 'true' value, the replyTo value will not be replaced in
-         * an OutIn invocation. This is useful for modules that hope to get the reply message in 
+         * an OutIn invocation. This is useful for modules that hope to get the reply message in
          * its own manner.
          */
         public static final String USE_CUSTOM_LISTENER = "UseCustomListener";

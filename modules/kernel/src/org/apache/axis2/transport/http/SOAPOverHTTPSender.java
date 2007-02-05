@@ -16,10 +16,6 @@
 
 package org.apache.axis2.transport.http;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -35,6 +31,10 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.PostMethod;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
 
@@ -44,10 +44,6 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         // execute the HtttpMethodBase - a connection manager can be given for
         // handle multiple
         HttpClient httpClient = getHttpClient(msgContext);
-        PostMethod postMethod = new PostMethod(url.toString());
-        if (isAuthenticationEnabled(msgContext)) {
-            postMethod.setDoAuthentication(true);
-        }
 
         String charEncoding =
                 (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
@@ -56,22 +52,40 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
-		MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(
-				msgContext);
-		url = messageFormatter.getTargetAddress(msgContext,format,url);
-		postMethod.setPath(url.getPath());
-		postMethod.setRequestEntity(new AxisRequestEntity(messageFormatter,
-				msgContext,format,soapActionString, chunked, isAllowedRetry));
+        MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(
+                msgContext);
+        url = messageFormatter.getTargetAddress(msgContext, format, url);
+        // Check whther the url has httpLocation
+        String urlString = url.toString();
+        int separator = urlString.indexOf('{');
+        if (separator > 0) {
+            String path = urlString.substring(0, separator - 1);
+            String query = urlString.substring(separator - 1);
+            String replacedQuery;
+            replacedQuery = applyURITemplating(msgContext, query, false);
+            url = new URL(path + replacedQuery);
+        }
+        PostMethod postMethod = new PostMethod();
+        postMethod.setPath(url.getPath());
+        postMethod.setQueryString(url.getQuery());
+        postMethod.setPath(url.getPath());
 
-		if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
-			postMethod.setContentChunked(true);
-		}
+        if (isAuthenticationEnabled(msgContext)) {
+            postMethod.setDoAuthentication(true);
+        }
 
-		String soapAction = messageFormatter.formatSOAPAction(msgContext,format,soapActionString);
-		if (soapAction!=null) {
-               postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
-        } 
-		
+        postMethod.setRequestEntity(new AxisRequestEntity(messageFormatter,
+                                                          msgContext, format, soapActionString,
+                                                          chunked, isAllowedRetry));
+        if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
+            postMethod.setContentChunked(true);
+        }
+
+        String soapAction = messageFormatter.formatSOAPAction(msgContext, format, soapActionString);
+        if (soapAction != null) {
+            postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
+        }
+
         //setting the cookie in the out path
         Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
         if (cookieString != null) {
@@ -89,14 +103,14 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                 httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
             } else {
                 postMethod.setRequestHeader(HTTPConstants.HEADER_EXPECT,
-                        HTTPConstants.HEADER_EXPECT_100_Continue);
+                                            HTTPConstants.HEADER_EXPECT_100_Continue);
             }
         }
 
         // set timeout in client
         long timeout = msgContext.getOptions().getTimeOutInMilliSeconds();
         if (timeout != 0) {
-            httpClient.getParams().setSoTimeout((int)timeout);
+            httpClient.getParams().setSoTimeout((int) timeout);
         }
 
         /*
@@ -128,10 +142,13 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
             }
         } else {
             throw new AxisFault(Messages.getMessage("httpTransportError",
-                String.valueOf(postMethod.getStatusCode()), postMethod.getStatusText()), SOAP12Constants.FAULT_CODE_SENDER);
+                                                    String.valueOf(postMethod.getStatusCode()),
+                                                    postMethod.getStatusText()),
+                                SOAP12Constants.FAULT_CODE_SENDER);
         }
 
         throw new AxisFault(Messages.getMessage("transportError",
-                String.valueOf(postMethod.getStatusCode()), postMethod.getResponseBodyAsString()));
+                                                String.valueOf(postMethod.getStatusCode()),
+                                                postMethod.getResponseBodyAsString()));
     }
 }

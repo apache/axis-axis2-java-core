@@ -144,9 +144,9 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
         String mep = axisOperation.getMessageExchangePattern();
         int mepConstant = Utils.getAxisSpecifMEPConstant(mep);
         
-        if (mepConstant == WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_OUT ||
-            mepConstant == WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_IN_OPTIONAL_OUT ||
-            mepConstant == WSDLConstants.WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY)
+        if (mepConstant == WSDLConstants.MEP_CONSTANT_IN_OUT ||
+            mepConstant == WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT ||
+            mepConstant == WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY)
         {
             String messageId = msgContext.getOptions().getMessageId();
             if (messageId == null || "".equals(messageId)) {

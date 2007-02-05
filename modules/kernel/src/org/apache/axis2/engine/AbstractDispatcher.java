@@ -18,10 +18,14 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.AxisEndpoint;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -89,19 +93,29 @@ public abstract class AbstractDispatcher extends AbstractHandler {
             }
         }
 
-        if ((msgctx.getAxisService() != null) && (msgctx.getAxisOperation() == null)) {
+        if ((axisService != null) && (msgctx.getAxisOperation() == null)) {
             AxisOperation axisOperation = findOperation(axisService, msgctx);
 
             if (axisOperation != null) {
                 if (isDebugEnabled) {
-                    log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("operationfound",
-                            axisOperation.getName().getLocalPart()));
+                    log.debug(msgctx.getLogIDString() + " " + Messages.getMessage("operationfound",
+                                                                                  axisOperation
+                                                                                          .getName().getLocalPart()));
                 }
 
                 msgctx.setAxisOperation(axisOperation);
                 //setting axisMessage into messageContext
                 msgctx.setAxisMessage(axisOperation.getMessage(
                         WSDLConstants.MESSAGE_LABEL_IN_VALUE));
+                AxisEndpoint axisEndpoint =
+                        (AxisEndpoint) msgctx.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
+                if (axisEndpoint != null) {
+                    AxisBindingOperation axisBindingOperation =
+                            (AxisBindingOperation) axisEndpoint.getBinding()
+                                    .getChild(axisOperation.getName());
+                    msgctx.setProperty(Constants.AXIS_BINDING_OPERATION, axisBindingOperation);
+                }
+
             }
         }
         return InvocationResponse.CONTINUE;

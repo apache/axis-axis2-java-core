@@ -92,5 +92,4 @@
             </includes>
         </unitTest>
 	</build>
-    <reports/>
 </project>

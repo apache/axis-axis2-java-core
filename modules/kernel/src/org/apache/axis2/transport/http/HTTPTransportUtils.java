@@ -203,13 +203,15 @@ public class HTTPTransportUtils {
         try {
 
             Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+
             if (headers != null) {
                 if (HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING)) ||
                     HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING_LOWERCASE)))
                 {
                     in = new GZIPInputStream(in);
                 }
-            }
+                }
+
 
             // remove the starting and trailing " from the SOAP Action
             if ((soapActionHeader != null) && soapActionHeader.charAt(0) == '\"'

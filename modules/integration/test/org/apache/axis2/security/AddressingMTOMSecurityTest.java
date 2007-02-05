@@ -34,7 +34,7 @@ public class AddressingMTOMSecurityTest extends InteropTestBase {
     public static Test suite() {
         return getTestSetup2(new TestSuite(AddressingMTOMSecurityTest.class),Constants.TESTING_PATH + COMPLETE_SERVICE_REPOSITORY);
     }
-    
+
     protected OutflowConfiguration getOutflowConfiguration() {
 
         OutflowConfiguration ofc = new OutflowConfiguration();
@@ -121,11 +121,11 @@ public class AddressingMTOMSecurityTest extends InteropTestBase {
         prop2.setProperty("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
         prop2.setProperty("org.apache.ws.security.crypto.merlin.keystore.password", "password");
         prop2.setProperty("org.apache.ws.security.crypto.merlin.file", "interop2.jks");
-        
+
         Hashtable table = new Hashtable();
         table.put("key1", prop1);
         table.put("key2", prop2);
-        
+
         return table;
     }
 

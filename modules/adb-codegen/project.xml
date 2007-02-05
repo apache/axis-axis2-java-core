@@ -146,7 +146,6 @@
         </dependency>
     </dependencies>
 
-    <reports/>
     <!-- add the build properties-->
     <build>
         <nagEmailAddress>axis-dev@ws.apache.org</nagEmailAddress>

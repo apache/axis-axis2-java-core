@@ -72,11 +72,16 @@ import java.util.*;
  */
 public class AxisService extends AxisDescription {
 
+    private Map endpointMap = new HashMap();
+
     private Map messageNameToOperationsMap = new HashMap();
 
     private int nsCount = 0;
     private static final Log log = LogFactory.getLog(AxisService.class);
     private URL fileName;
+
+    // Maps httpLocations to corresponding operations. Used to dispatch rest messages.    
+    private HashMap httpLocationDispatcherMap = null;
 
     private HashMap operationsAliasesMap = null;
 //    private HashMap operations = new HashMap();
@@ -170,7 +175,8 @@ public class AxisService extends AxisDescription {
     private NamespaceMap nameSpacesMap;
 
     private String soapNsUri;
-    private String endpoint;
+    private String endpointName;
+    private String endpointURL;
 
     // Flag representing whether WS-Addressing is required to use this service.
     // Reflects the wsaw:UsingAddressing wsdl extension element
@@ -187,8 +193,14 @@ public class AxisService extends AxisDescription {
 
     // name of the  binding used : use in codegeneration
     private String bindingName;
-    // name of the port type used : use in codegeneration
-    private String portTypeName;
+
+    public AxisEndpoint getEndpoint(String key) {
+        return (AxisEndpoint)endpointMap.get(key);
+    }
+
+    public void addEndpoint(String key,AxisEndpoint axisEndpoint) {
+        this.endpointMap.put(key,axisEndpoint);
+    }
 
     public String getWSAddressingFlag() {
         return wsaddressingFlag;
@@ -242,6 +254,7 @@ public class AxisService extends AxisDescription {
         moduleConfigmap = new HashMap();
         //by default service scope is for the request
         scope = Constants.SCOPE_REQUEST;
+        httpLocationDispatcherMap = new HashMap();
         messageReceivers = new HashMap();
         moduleRefs = new ArrayList();
         engagedModules = new ArrayList();
@@ -254,12 +267,20 @@ public class AxisService extends AxisDescription {
         objectSupplier = new DefaultObjectSupplier();
     }
 
+    /**
+     * @deprecated use AxisService#getEndpointName() instead.
+     * @return name of the port type
+     */
     public String getPortTypeName() {
-        return portTypeName;
+        return endpointName;
     }
 
+    /**
+     * @deprecated use AxisService#setEndpointName() instead
+     * @param portTypeName
+     */
     public void setPortTypeName(String portTypeName) {
-        this.portTypeName = portTypeName;
+        this.endpointName = portTypeName;
     }
 
     public String getBindingName() {
@@ -282,14 +303,14 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * get the endpoint
+     * get the endpointName
      */
-    public String getEndpoint() {
-        return endpoint;
+    public String getEndpointName() {
+        return endpointName;
     }
 
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
+    public void setEndpointName(String endpoint) {
+        this.endpointName = endpoint;
     }
 
     /**
@@ -404,7 +425,7 @@ public class AxisService extends AxisDescription {
         Iterator axisMessageIter = axisOperation.getChildren();
 
         while (axisMessageIter.hasNext()) {
-            AxisMessage axisMessage = (AxisMessage) axisMessageIter.next();
+            AxisMessage axisMessage = (AxisMessage) axisMessageIter.next();   
             String messageName = axisMessage.getName();
             if (messageName != null && !messageName.equals(operationName)) {
                 mapActionToOperation(messageName, axisOperation);
@@ -437,7 +458,7 @@ public class AxisService extends AxisDescription {
     private MessageReceiver loadDefaultMessageReceiver(String mepURL, AxisService service) {
         MessageReceiver messageReceiver;
         if (mepURL == null) {
-            mepURL = WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT;
+            mepURL = WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT;
         }
         if (service != null) {
             messageReceiver = service.getMessageReceiver(mepURL);
@@ -552,6 +573,17 @@ public class AxisService extends AxisDescription {
         operationsAliasesMap.put(action, axisOperation);
     }
 
+    /**
+     * Maps an constant string in the whttp:location to the given operation. This is used by
+     * RequestURIOperationDispatcher based dispatching to figure out which operation it is that a
+     * given message is for.
+     *
+     * @param string        the constant drawn from whttp:location
+     * @param axisOperation the operation to map to
+     */
+    public void addHttpLocationDispatcherString(String string, AxisOperation axisOperation) {
+        httpLocationDispatcherMap.put(string, axisOperation);
+    }
 
     public void printSchema(OutputStream out) throws AxisFault {
         for (int i = 0; i < schemaList.size(); i++) {
@@ -709,8 +741,8 @@ public class AxisService extends AxisDescription {
             }
         } else {
             setWsdlFound(true);
-            //pick the endpoint and take it as the epr for the WSDL
-            getWSDL(out, new String[]{this.endpoint}, "services");
+            //pick the endpointName and take it as the epr for the WSDL
+            getWSDL(out, new String[]{this.endpointName}, "services");
         }
     }
 
@@ -790,8 +822,8 @@ public class AxisService extends AxisDescription {
             }
         } else {
             setWsdlFound(true);
-            //pick the endpoint and take it as the epr for the WSDL
-            getWSDL2(out, new String[]{this.endpoint});
+            //pick the endpointName and take it as the epr for the WSDL
+            getWSDL2(out, new String[]{this.endpointName});
         }
     }
 
@@ -1281,7 +1313,7 @@ public class AxisService extends AxisDescription {
                 new WSDL11ToAxisServiceBuilder(wsdlDefinition, wsdlServiceName, portName);
         serviceBuilder.setServerSide(false);
         AxisService axisService = serviceBuilder.populateService();
-        options.setTo(new EndpointReference(axisService.getEndpoint()));
+        options.setTo(new EndpointReference(axisService.getEndpointName()));
         options.setSoapVersionURI(axisService.getSoapNsUri());
         return axisService;
     }
@@ -1831,5 +1863,17 @@ public class AxisService extends AxisDescription {
 
     public void addmessageNameToOperationMapping(String messageName, AxisOperation operation) {
         messageNameToOperationsMap.put(messageName, operation);
+    }
+
+    public String getEndpointURL() {
+        return endpointURL;
+    }
+
+    public void setEndpointURL(String endpointURL) {
+        this.endpointURL = endpointURL;
+    }
+
+    public Map getEndpoints() {
+        return endpointMap;
     }
 }

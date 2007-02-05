@@ -243,16 +243,16 @@ public class AxisService2OM implements Java2WSDLConstants {
                 continue;
             }
             String MEP = axisOperation.getMessageExchangePattern();
-            if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
+            if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage inaxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
@@ -262,14 +262,14 @@ public class AxisService2OM implements Java2WSDLConstants {
                 }
             }
 
-            if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN
+            if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(MEP)
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage outAxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
@@ -369,16 +369,16 @@ public class AxisService2OM implements Java2WSDLConstants {
                     .getPolicyInclude(), operation, fac);
 
             String MEP = axisOperation.getMessageExchangePattern();
-            if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
+            if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage inaxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
@@ -395,14 +395,14 @@ public class AxisService2OM implements Java2WSDLConstants {
                 }
             }
 
-            if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN
+            if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(MEP)
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage outAxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
@@ -607,16 +607,16 @@ public class AxisService2OM implements Java2WSDLConstants {
 
             String MEP = axisOperation.getMessageExchangePattern();
 
-            if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
+            if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage inaxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
@@ -633,14 +633,14 @@ public class AxisService2OM implements Java2WSDLConstants {
                 }
             }
 
-            if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN
+            if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(MEP)
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage outAxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
@@ -741,16 +741,16 @@ public class AxisService2OM implements Java2WSDLConstants {
 
             String MEP = axisOperation.getMessageExchangePattern();
 
-            if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
+            if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage inaxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
@@ -767,14 +767,14 @@ public class AxisService2OM implements Java2WSDLConstants {
                 }
             }
 
-            if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN
+            if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(MEP)
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage outAxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
@@ -842,16 +842,16 @@ public class AxisService2OM implements Java2WSDLConstants {
 
             String MEP = axisOperation.getMessageExchangePattern();
 
-            if (WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
+            if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage inaxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
@@ -867,14 +867,14 @@ public class AxisService2OM implements Java2WSDLConstants {
                 }
             }
 
-            if (WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN
+            if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(MEP)
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY
                     .equals(MEP)
-                    || WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT
+                    || WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT
                     .equals(MEP)) {
                 AxisMessage outAxisMessage = axisOperation
                         .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);

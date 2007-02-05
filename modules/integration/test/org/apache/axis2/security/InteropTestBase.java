@@ -125,7 +125,7 @@ public abstract class InteropTestBase extends UtilServerBasedTestCase {
     private String targetEpr = "http://127.0.0.1:" +
 //            5556 +
             UtilServer.TESTING_PORT +
-            "/axis2/services/PingPort";
+            "/axis2/services/PingPort/Ping";
 
     public InteropTestBase() {
         super();
@@ -189,7 +189,7 @@ public abstract class InteropTestBase extends UtilServerBasedTestCase {
     public void testInteropWithDynamicConfigWithProfRefs() {
         if(getPropertyRefs() != null) {
             try {
-    
+
                 Class interopScenarioClientClass = Class
                         .forName("org.apache.axis2.security.InteropScenarioClient");
                 Constructor c = interopScenarioClientClass

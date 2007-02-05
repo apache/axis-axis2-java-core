@@ -16,18 +16,6 @@
 
 package org.apache.axis2.transport.http;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
@@ -37,6 +25,8 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.WSDL20DefaultValueHolder;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
@@ -55,6 +45,20 @@ import org.apache.commons.httpclient.auth.AuthPolicy;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.woden.wsdl20.extensions.http.HTTPLocation;
+
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 public abstract class AbstractHTTPSender {
     protected static final String ANONYMOUS = "anonymous";
@@ -196,6 +200,7 @@ public abstract class AbstractHTTPSender {
 
         client.getState().setProxyCredentials(AuthScope.ANY, proxyCred);
         config.setProxy(proxyHostName, proxyPort);
+        config.setHost(proxyHostName);
     }
 
     /**
@@ -288,7 +293,7 @@ public abstract class AbstractHTTPSender {
     public abstract void send(MessageContext msgContext, OMElement dataout,
                               URL url,
                               String soapActionString)
-            throws MalformedURLException, AxisFault, IOException;
+            throws AxisFault, IOException;
 
     /**
      * getting host configuration to support standard http/s, proxy and NTLM support
@@ -360,7 +365,8 @@ public abstract class AbstractHTTPSender {
 
                 Credentials creds;
 
-                agent.getParams().setAuthenticationPreemptive(authenticator.getPreemptiveAuthentication());
+                agent.getParams()
+                        .setAuthenticationPreemptive(authenticator.getPreemptiveAuthentication());
 
                 if (host != null) {
                     if (domain != null) {
@@ -532,11 +538,11 @@ public abstract class AbstractHTTPSender {
             method.addRequestHeader(HTTPConstants.HEADER_ACCEPT_ENCODING,
                                     HTTPConstants.COMPRESSION_GZIP);
         }
+
         if (Utils.isExplicitlyTrue(msgContext, HTTPConstants.MC_GZIP_REQUEST)) {
             method.addRequestHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
                                     HTTPConstants.COMPRESSION_GZIP);
         }
-
 
         httpClient.executeMethod(config, method);
     }
@@ -588,5 +594,85 @@ public abstract class AbstractHTTPSender {
         }
 
         return userAgentString;
+    }
+
+    protected String applyURITemplating(MessageContext messageContext, String query,
+                                        boolean detach) throws AxisFault {
+
+        OMElement firstElement;
+        if (detach) {
+            firstElement = messageContext.getEnvelope().getBody().getFirstElement();
+        } else {
+            firstElement =
+                    messageContext.getEnvelope().getBody().getFirstElement().cloneOMElement();
+        }
+
+
+        HTTPLocation httpLocation = new HTTPLocation(query);
+
+        String[] localNames = httpLocation.getLocalNames();
+        String[] values = new String[localNames.length];
+        int i;
+        for (i = 0; i < localNames.length; i++) {
+            String localName = localNames[i];
+
+            try {
+                values[i] = URLEncoder.encode(getOMElementValue(localName, firstElement), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                log.error("Unable to encode Query String");
+                throw new AxisFault("Unable to encode Query String");
+            }
+        }
+
+
+        httpLocation.substitute(values);
+
+        return httpLocation.toString();
+    }
+
+    protected String appendQueryParameters(MessageContext messageContext, String query) {
+
+
+        OMElement firstElement;
+        String queryParameterSeparator = (String) messageContext
+                .getProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
+        // In case queryParameterSeparator is null we better use the default value 
+        if (queryParameterSeparator == null) {
+            queryParameterSeparator = WSDL20DefaultValueHolder
+                    .getDefaultValue(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
+        }
+        firstElement = messageContext.getEnvelope().getBody().getFirstElement();
+        ArrayList values = new ArrayList();
+        if (firstElement != null) {
+            Iterator iter = firstElement.getChildElements();
+            while (iter.hasNext()) {
+                OMElement element = (OMElement) iter.next();
+                values.add(element.getLocalName() + "=" + element.getText());
+            }
+        }
+        if (values.size() > 0) {
+            if (query == null) {
+
+                query = (String) values.get(0);
+            }
+
+            for (int i = 1; i < values.size(); i++) {
+                query = query + queryParameterSeparator + values.get(i);
+            }
+        }
+        return query;
+    }
+
+    private String getOMElementValue(String elementName, OMElement parentElement) {
+        OMElement httpURLParam = parentElement.getFirstChildWithName(new QName(elementName));
+
+        if (httpURLParam != null) {
+            httpURLParam.detach();
+            if (parentElement.getFirstOMChild() == null) {
+                parentElement.detach();
+            }
+        }
+        return httpURLParam.getText();
+
     }
 }

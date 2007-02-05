@@ -49,12 +49,10 @@ public abstract class AxisOperation extends AxisDescription
     public static final String STYLE_DOC = "doc";
 
     private static final Log log = LogFactory.getLog(AxisOperation.class);
-
-
     /**
      * message exchange pattern
      */
-    private int mep = WSDL20_2004Constants.MEP_CONSTANT_INVALID;
+    private int mep = WSDLConstants.MEP_CONSTANT_INVALID;
 
     /**
      * list of engaged modules
@@ -90,7 +88,7 @@ public abstract class AxisOperation extends AxisDescription
      * constructor
      */
     public AxisOperation() {
-        mepURI = WSDL20_2004Constants.MEP_URI_IN_OUT;
+        mepURI = WSDL20_2006Constants.MEP_URI_IN_OUT;
         modulerefs = new ArrayList();
         moduleConfigmap = new HashMap();
         faultMessages = new ArrayList();
@@ -407,31 +405,31 @@ public abstract class AxisOperation extends AxisDescription
      * up value so that the subsequent method calls are extremely efficient.
      */
     public int getAxisSpecifMEPConstant() {
-        if (this.mep != WSDL20_2004Constants.MEP_CONSTANT_INVALID) {
+        if (this.mep != WSDLConstants.MEP_CONSTANT_INVALID) {
             return this.mep;
         }
 
-        int temp = WSDL20_2004Constants.MEP_CONSTANT_INVALID;
+        int temp = WSDLConstants.MEP_CONSTANT_INVALID;
 
-        if (WSDL20_2004Constants.MEP_URI_IN_OUT.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mepURI)) {
-            temp = WSDL20_2004Constants.MEP_CONSTANT_IN_OUT;
-        } else if (WSDL20_2004Constants.MEP_URI_IN_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mepURI)) {
-            temp = WSDL20_2004Constants.MEP_CONSTANT_IN_ONLY;
-        } else if (WSDL20_2004Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI) || WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
-            temp = WSDL20_2004Constants.MEP_CONSTANT_IN_OPTIONAL_OUT;
-        } else if (WSDL20_2004Constants.MEP_URI_OUT_IN.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mepURI)) {
-            temp = WSDL20_2004Constants.MEP_CONSTANT_OUT_IN;
-        } else if (WSDL20_2004Constants.MEP_URI_OUT_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(mepURI)) {
-            temp = WSDL20_2004Constants.MEP_CONSTANT_OUT_ONLY;
-        } else if (WSDL20_2004Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI) || WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
-            temp = WSDL20_2004Constants.MEP_CONSTANT_OUT_OPTIONAL_IN;
-        } else if (WSDL20_2004Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
-            temp = WSDL20_2004Constants.MEP_CONSTANT_ROBUST_IN_ONLY;
-        } else if (WSDL20_2004Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) || WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
-            temp = WSDL20_2004Constants.MEP_CONSTANT_ROBUST_OUT_ONLY;
+        if (WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mepURI)) {
+            temp = WSDLConstants.MEP_CONSTANT_IN_OUT;
+        } else if (WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mepURI)) {
+            temp = WSDLConstants.MEP_CONSTANT_IN_ONLY;
+        } else if (WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
+            temp = WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT;
+        } else if (WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mepURI)) {
+            temp = WSDLConstants.MEP_CONSTANT_OUT_IN;
+        } else if (WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(mepURI)) {
+            temp = WSDLConstants.MEP_CONSTANT_OUT_ONLY;
+        } else if (WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
+            temp = WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN;
+        } else if (WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
+            temp = WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY;
+        } else if (WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
+            temp = WSDLConstants.MEP_CONSTANT_ROBUST_OUT_ONLY;
         }
 
-        if (temp == WSDL20_2004Constants.MEP_CONSTANT_INVALID) {
+        if (temp == WSDLConstants.MEP_CONSTANT_INVALID) {
             throw new AxisError(Messages.getMessage("mepmappingerror"));
         }
 

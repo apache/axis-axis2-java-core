@@ -16,18 +16,13 @@
 
 package org.apache.axis2.util;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPFaultCode;
@@ -35,14 +30,16 @@ import org.apache.axiom.soap.SOAPFaultDetail;
 import org.apache.axiom.soap.SOAPFaultNode;
 import org.apache.axiom.soap.SOAPFaultReason;
 import org.apache.axiom.soap.SOAPFaultRole;
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -51,11 +48,20 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.wsdl.WSDLConstants;
 
+import javax.xml.namespace.QName;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 public class MessageContextBuilder {
-    
+
     /**
      * Creates a new 'response' message context based on a 'request' message context
      * Only deals with properties/fields that are the same for both 'normal' and fault responses.
@@ -70,11 +76,15 @@ public class MessageContextBuilder {
         newmsgCtx.setMessageID(UUIDGenerator.getUUID());
         newmsgCtx.setServerSide(inMessageContext.isServerSide());
         newmsgCtx.addRelatesTo(new RelatesTo(inMessageContext.getOptions().getMessageId()));
-        
+
         newmsgCtx.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
                 inMessageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION));
         newmsgCtx.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
                 inMessageContext.getProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES));
+
+        newmsgCtx.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+                inMessageContext.getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
+        newmsgCtx.setProperty(Constants.AXIS_BINDING_OPERATION,inMessageContext.getProperty(Constants.AXIS_BINDING_OPERATION));
 
         // Setting the charater set encoding
         newmsgCtx.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
@@ -85,28 +95,28 @@ public class MessageContextBuilder {
         newmsgCtx.setDoingREST(inMessageContext.isDoingREST());
 
         newmsgCtx.setOperationContext(inMessageContext.getOperationContext());
-        
+
         ServiceContext serviceContext = inMessageContext.getServiceContext();
         if (serviceContext != null) {
             newmsgCtx.setServiceContext(serviceContext);
         }
-        
+
         newmsgCtx.setProperty(MessageContext.TRANSPORT_OUT,
                 inMessageContext.getProperty(MessageContext.TRANSPORT_OUT));
         newmsgCtx.setProperty(Constants.OUT_TRANSPORT_INFO,
                 inMessageContext.getProperty(Constants.OUT_TRANSPORT_INFO));
-        
+
         return newmsgCtx;
     }
-    
+
     /**
      * Creates a MessageContext for use with a non-fault response based on an request MessageContext
      */
     public static MessageContext createOutMessageContext(MessageContext inMessageContext) throws AxisFault {
-        
+
         // Create a basic response MessageContext with basic fields copied
-        MessageContext newmsgCtx = createResponseMessageContext(inMessageContext); 
-        
+        MessageContext newmsgCtx = createResponseMessageContext(inMessageContext);
+
         // Simple response so set To to value of inbound ReplyTo
         newmsgCtx.setTo(inMessageContext.getReplyTo());
         if(newmsgCtx.getTo() == null){
@@ -137,18 +147,18 @@ public class MessageContextBuilder {
                         Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
             }
         } else {
-            newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));            
+            newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
         }
-        
+
         // Set wsa:Action for response message
         // Use specified value if available
         AxisOperation ao = inMessageContext.getAxisOperation();
-        if ((ao!=null) && (ao.getOutputAction() != null)) {
+        if ((ao != null) && (ao.getOutputAction() != null)) {
             newmsgCtx.setWSAAction(ao.getOutputAction());
         } else { // If not, simply copy the request value. Almost always invalid.
             newmsgCtx.setWSAAction(inMessageContext.getWSAAction());
         }
-        
+
         newmsgCtx.setAxisMessage(ao.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
 
         newmsgCtx.setDoingMTOM(inMessageContext.isDoingMTOM());
@@ -156,7 +166,7 @@ public class MessageContextBuilder {
 
         // Ensure transport settings match the scheme for the To EPR
         setupCorrectTransportOut(newmsgCtx);
-        
+
         return newmsgCtx;
     }
 
@@ -197,26 +207,32 @@ public class MessageContextBuilder {
         
         // Create a basic response MessageContext with basic fields copied
         MessageContext faultContext = createResponseMessageContext(processingContext);
-        
+
+        String contentType = (String)processingContext.getProperty(Constants.Configuration.CONTENT_TYPE_OF_FAULT);
+        if (contentType != null) {
+            faultContext.setProperty(Constants.Configuration.CONTENT_TYPE,contentType);
+        }
+
         // Register the fault message context
-        if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null) {
+        if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null)
+        {
             processingContext.getAxisOperation().addFaultMessageContext(faultContext, processingContext.getOperationContext());
         }
 
         faultContext.setProcessingFault(true);
-        
+
         // Not worth setting up the session information on a fault flow
         faultContext.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
 
         // Set wsa:Action for response message
         // Use specified value if available
         AxisOperation op = processingContext.getAxisOperation();
-        if(op != null && op.getFaultAction()!=null){
+        if (op != null && op.getFaultAction() != null) {
             faultContext.setWSAAction(op.getFaultAction());
-        }else{ //If, for some reason there is no value set, should use a sensible action.
+        } else { //If, for some reason there is no value set, should use a sensible action.
             faultContext.setWSAAction(Final.WSA_SOAP_FAULT_ACTION);
         }
-        
+
         // there are some information  that the fault thrower wants to pass to the fault path.
         // Means that the fault is a ws-addressing one hence use the ws-addressing fault action.
         Object faultInfoForHeaders = processingContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
@@ -250,14 +266,27 @@ public class MessageContextBuilder {
         SOAPEnvelope envelope = createFaultEnvelope(processingContext, e);
         faultContext.setEnvelope(envelope);
 
+        //get the SOAP headers, user is trying to send in the fault
+        List soapHeadersList = (List) processingContext.getProperty(SOAPConstants.HEADER_LOCAL_NAME);
+        if (soapHeadersList != null) {
+            SOAPHeader soapHeaderElement = envelope.getHeader();
+            for (int i = 0; i < soapHeadersList.size(); i++) {
+                OMElement soapHeaderBlock = (OMElement) soapHeadersList.get(i);
+                soapHeaderElement.addChild(soapHeaderBlock);
+            }
+        }
+
+        // now add HTTP Headers
+        faultContext.setProperty(HTTPConstants.HTTP_HEADERS, processingContext.getProperty(HTTPConstants.HTTP_HEADERS));
+
         return faultContext;
     }
-    
+
     /**
      * Ensure that if the scheme of the To EPR for the response is different than the
      * transport used for the request that the correct TransportOut is available
      */
-    private static void setupCorrectTransportOut(MessageContext context) throws AxisFault{
+    private static void setupCorrectTransportOut(MessageContext context) throws AxisFault {
         // Determine that we have the correct transport available.
         TransportOutDescription transportOut = context.getTransportOut();
 
@@ -286,7 +315,7 @@ public class MessageContextBuilder {
             throw new AxisFault(urise);
         }
     }
-    
+
     /**
      * Information to create the SOAPFault can be extracted from different places.
      * 1. Those information may have been put in to the message context by some handler. When someone
@@ -316,7 +345,6 @@ public class MessageContextBuilder {
      * -- EC
      *
      * @param context
-     * @param fault
      * @param e
      */
     private static SOAPEnvelope createFaultEnvelope(MessageContext context, Throwable e) {
@@ -329,7 +357,7 @@ public class MessageContextBuilder {
             envelope = OMAbstractFactory.getSOAP12Factory().getDefaultFaultEnvelope();
         }
         SOAPFault fault = envelope.getBody().getFault();
-        
+
         SOAPProcessingException soapException = null;
         AxisFault axisFault = null;
 
@@ -340,6 +368,14 @@ public class MessageContextBuilder {
                 axisFault = (AxisFault) e.getCause();
             }
         }
+
+        if (axisFault != null) {
+            Iterator iter = axisFault.headerIterator();
+            while (iter.hasNext()) {
+                SOAPHeaderBlock header = (SOAPHeaderBlock)iter.next();
+                envelope.getHeader().addChild(header);
+            }
+        }                                                         
 
         if (e instanceof SOAPProcessingException) {
             soapException = (SOAPProcessingException) e;
@@ -365,7 +401,8 @@ public class MessageContextBuilder {
         } else if (axisFault != null) {
 
             Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME) != null) {
+            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME) != null)
+            {
                 fault.setCode((SOAPFaultCode) faultElementsMap.get(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME));
             } else {
                 QName faultCodeQName = axisFault.getFaultCode();
@@ -402,7 +439,8 @@ public class MessageContextBuilder {
             message = soapException.getMessage();
         } else if (axisFault != null) {
             Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME) != null) {
+            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME) != null)
+            {
                 fault.setReason((SOAPFaultReason) faultElementsMap.get(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME));
             } else {
                 message = axisFault.getReason();
@@ -427,7 +465,8 @@ public class MessageContextBuilder {
             fault.getRole().setText((String) faultRole);
         } else if (axisFault != null) {
             Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME) != null) {
+            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME) != null)
+            {
                 fault.setRole((SOAPFaultRole) faultElementsMap.get(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME));
             }
         }
@@ -437,7 +476,8 @@ public class MessageContextBuilder {
             fault.getNode().setText((String) faultNode);
         } else if (axisFault != null) {
             Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME) != null) {
+            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME) != null)
+            {
                 fault.setNode((SOAPFaultNode) faultElementsMap.get(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME));
             }
         }
@@ -447,12 +487,12 @@ public class MessageContextBuilder {
         boolean sendStacktraceDetailsWithFaults = false;
         OperationContext oc = context.getOperationContext();
         Object flagFromContext = null;
-        if(oc!=null){
+        if (oc != null) {
             flagFromContext = context.getOperationContext().getProperty(Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS);
         }
-        if(flagFromContext!=null){
+        if (flagFromContext != null) {
             sendStacktraceDetailsWithFaults = JavaUtils.isTrue(flagFromContext);
-        }else{
+        } else {
             Parameter param = context.getParameter(Constants.Configuration.SEND_STACKTRACE_DETAILS_WITH_FAULTS);
             if(param != null) {
                 sendStacktraceDetailsWithFaults = JavaUtils.isTrue(param.getValue());    
@@ -464,7 +504,8 @@ public class MessageContextBuilder {
             fault.setDetail((SOAPFaultDetail) faultDetail);
         } else if (axisFault != null) {
             Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME) != null) {
+            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME) != null)
+            {
                 fault.setDetail((SOAPFaultDetail) faultElementsMap.get(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME));
             } else {
                 OMElement detail = axisFault.getDetail();
@@ -484,7 +525,7 @@ public class MessageContextBuilder {
 
         return envelope;
     }
-    
+
     /**
      * By the time the exception comes here it can be wrapped by so many levels. This will crip down
      * to the root cause and get the initial error depending on the property
@@ -502,7 +543,7 @@ public class MessageContextBuilder {
         }
         return throwable.getMessage();
     }
-    
+
     private static String getSenderFaultCode(OMNamespace soapNamespace) {
         return SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(soapNamespace.getNamespaceURI())
                 ? SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX + ":"

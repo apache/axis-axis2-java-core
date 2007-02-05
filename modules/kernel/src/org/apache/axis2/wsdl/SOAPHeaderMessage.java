@@ -35,6 +35,7 @@ public class SOAPHeaderMessage {
     private String use;
     private String namespaceURI;
     private boolean required;
+    private Boolean mustUnderstand;
 
 
     public SOAPHeaderMessage() {
@@ -92,5 +93,15 @@ public class SOAPHeaderMessage {
     public void setRequired(boolean required) {
         this.required = required;
     }
-}
 
+
+    public Boolean isMustUnderstand() {
+        return mustUnderstand;
+    }
+
+    public void setMustUnderstand(Boolean mustUnderstand) {
+        this.mustUnderstand = mustUnderstand;
+    }
+
+
+}
