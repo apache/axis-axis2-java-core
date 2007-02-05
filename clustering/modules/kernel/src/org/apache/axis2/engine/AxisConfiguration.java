@@ -17,6 +17,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.DeploymentException;
@@ -120,6 +121,8 @@ public class AxisConfiguration extends AxisDescription {
     private boolean start;
 
     private ArrayList targetResolvers;
+    
+    private ClusterManager clusterManager;
 
     /**
      * Constructor AxisConfigurationImpl.
@@ -952,6 +955,14 @@ public class AxisConfiguration extends AxisDescription {
     public boolean isAssertionLocal(QName name) {
         return this.localPolicyAssertions.contains(name);
     }
+    
+    public ClusterManager getClusterManager() {
+		return clusterManager;
+	}
+
+	public void setClusterManager(ClusterManager clusterManager) {
+		this.clusterManager = clusterManager;
+	}
 
     /**
      * Checks whether some one has changed the system pre-defined phases
@@ -966,4 +977,5 @@ public class AxisConfiguration extends AxisDescription {
         setGlobalOutPhase(phasesInfo.getGlobalOutPhaseList());
         setOutFaultPhases(phasesInfo.getOUT_FaultPhases());
     }
+
 }

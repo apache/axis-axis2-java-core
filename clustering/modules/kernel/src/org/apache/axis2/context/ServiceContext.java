@@ -17,9 +17,13 @@
 
 package org.apache.axis2.context;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.TransportInDescription;
@@ -101,7 +105,8 @@ public class ServiceContext extends AbstractContext implements Externalizable {
     private boolean cachingOperationContext;
     /** A cache for the last OperationContext */
     private transient OperationContext lastOperationContext;
-
+    private ClusterManager clusterManager;
+    
 
     //----------------------------------------------------------------
     // MetaData for data to be restored in activate after readExternal
@@ -141,6 +146,9 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         this.serviceGroupContext = serviceGroupContext;
         this.axisService = serviceConfig;
         this.configContext = (ConfigurationContext) parent.getParent();
+        
+        clusterManager = configContext.getAxisConfiguration().getClusterManager();
+        clusterManager.addContext(serviceConfig.getName(), serviceGroupContext.getId(),this);
     }
 
     public OperationContext createOperationContext(QName name) {
@@ -247,7 +255,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
     public void setCachingOperationContext(boolean cacheLastOperationContext) {
         this.cachingOperationContext = cacheLastOperationContext;
     }
-
+	
 
     /**
      * Returns a name associated with this ServiceContext.

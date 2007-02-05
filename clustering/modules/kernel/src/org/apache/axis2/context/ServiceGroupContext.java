@@ -18,6 +18,7 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -38,6 +39,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class ServiceGroupContext extends AbstractContext implements Externalizable {
 
@@ -75,7 +77,8 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
     private transient AxisServiceGroup axisServiceGroup;
     private String id;
     private Map serviceContextMap;
-
+    private ClusterManager clusterManager;
+    
     //----------------------------------------------------------------
     // MetaData for data to be restored in activate after readExternal
     //----------------------------------------------------------------
@@ -109,10 +112,14 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         super(parent);
         this.axisServiceGroup = axisServiceGroup;
         serviceContextMap = new HashMap();
+
+        clusterManager = parent.getAxisConfiguration().getClusterManager();
+
         // initially set the id to the axisServiceGroup
         if (axisServiceGroup != null) {
             setId(axisServiceGroup.getServiceGroupName());
         }
+
     }
 
     public AxisServiceGroup getDescription() {
@@ -146,6 +153,8 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         if (serviceContext == null) {
             serviceContext = new ServiceContext(service, this);
             serviceContextMap.put(service.getName(), serviceContext);
+            
+            System.out.println("Added a new Service Ctx " + service.getName());
         }
         return serviceContext;
     }
@@ -160,12 +169,16 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         return serviceContextMap.values().iterator();
     }
 
+    /*
+     * We are interested in replicating the service group context
+     * at this point
+     */
     public void setId(String id) {
         this.id = id;
+        ClusterManager clusterManager = ((ConfigurationContext)this.getParent()).getAxisConfiguration().getClusterManager();
+        clusterManager.addContext(id, null,this);
     }
-
-
-
+    
     /**
      * Adds the specified service context object to the
      * lists of service contexts for this service group
@@ -571,6 +584,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         return true;
     }
 
+
     /**
      * Trace a warning message, if needed, indicating that this 
      * object needs to be activated before accessing certain fields.
@@ -583,4 +597,5 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
             log.warn(myClassName+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
         }
     }
+
 }

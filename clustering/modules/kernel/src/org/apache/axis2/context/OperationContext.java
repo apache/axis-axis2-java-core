@@ -17,6 +17,20 @@
 
 package org.apache.axis2.context;
 
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.cluster.ClusterManager;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.util.ObjectStateUtils;
+import org.apache.axis2.util.MetaDataEntry;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -306,9 +320,9 @@ public class OperationContext extends AbstractContext implements Externalizable 
     }
 
     public void setComplete(boolean complete) {
-        isComplete = complete;
-    }
-
+		isComplete = complete;	
+	}
+    
     public void setKey(String key) {
         this.key = key;
     }

@@ -17,10 +17,21 @@
 
 package org.apache.axis2.context;
 
+import java.io.File;
+import java.net.URL;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.*;
+import org.apache.axis2.cluster.ClusterManager;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.ListenerManager;
@@ -29,10 +40,6 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.util.SessionUtils;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
-
-import java.io.File;
-import java.net.URL;
-import java.util.*;
 
 /**
  * This contains all the configuration information for Axis2.
@@ -65,7 +72,14 @@ public class ConfigurationContext extends AbstractContext {
         super(null);
         this.axisConfiguration = axisConfiguration;
         initConfigContextTimeout(axisConfiguration);
+
+        initCluster();
     }
+
+    private void initCluster() {
+		ClusterManager clusterManager = axisConfiguration.getClusterManager();
+		clusterManager.init(this);
+	}
 
     private void initConfigContextTimeout(AxisConfiguration axisConfiguration) {
         Parameter parameter = axisConfiguration.getParameter(Constants.Configuration.CONFIG_CONTEXT_TIMOUT_INTERVAL);

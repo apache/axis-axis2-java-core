@@ -1,0 +1,9 @@
+<aspectj>
+   <aspects>
+      <aspect name="org.apache.axis2.cluster.interceptor.ServiceContextInterceptor"/>
+   </aspects>
+
+   <weaver options="-verbose">
+   </weaver>
+</aspectj>
+

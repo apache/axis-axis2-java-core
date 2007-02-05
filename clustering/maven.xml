@@ -453,6 +453,10 @@
             <ant:copy toDir="target/temp/war/lib">
                 <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
             </ant:copy>
+             
+            <ant:copy toDir="target/temp/war/lib">
+                <ant:fileset file="modules/cluster/target/axis2-cluster-${pom.currentVersion}.jar"/>
+            </ant:copy>
         </j:if>
 
         <!-- Copy the soapmonitor jar - the servlet classes -->
@@ -770,6 +774,7 @@
                 <ant:include name="**/modules/samples/**"/>
                 <ant:include name="**/modules/soapmonitor/**"/>
                 <ant:include name="**/modules/spring/**"/>
+                <ant:include name="**/modules/cluster/**"/>
                 <ant:include name="**/modules/tool/**"/>
                 <ant:exclude name="**/SameServiceAddingTest.java"/>
                 <!-- TODO: This is failing in the distros. Must Fix it. -->
@@ -925,6 +930,7 @@
                 <!--ant:pathelement location="modules/jaxws/src"/-->
                 <ant:pathelement location="modules/soapmonitor/src"/>
                 <ant:pathelement location="modules/spring/src"/>
+                <ant:pathelement location="modules/cluster/src"/>
                 <ant:pathelement location="modules/xmlbeans/src"/>
             </ant:sourcepath>
             <ant:classpath>

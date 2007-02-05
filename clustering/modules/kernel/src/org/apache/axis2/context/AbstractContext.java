@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.axis2.cluster.ClusterManager;
+
 /**
  * This is the top most level of the Context hierarchy and is a bag of properties.
  */
@@ -132,7 +134,12 @@ public abstract class AbstractContext {
      * @param value
      */
     public void setProperty(String key, Object value) {
-        properties.put(key, value);
+    	if(this instanceof ServiceContext){
+    		System.out.println("========== Service Context ======================");
+    	}else if (this instanceof ServiceGroupContext){
+    		System.out.println("========== Service Group Context ======================");
+    	}
+        properties.put(key, value);        
     }
 
     /**
