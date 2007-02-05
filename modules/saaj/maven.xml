@@ -29,5 +29,9 @@
         <ant:copy toDir="target/test-resources/saaj-repo">
             <ant:fileset file="test-resources/axis2.xml"/>
         </ant:copy>
+        <mkdir dir="target/test-resources/"/>
+        <ant:copy toDir="target">
+            <ant:fileset file="test-resources/" includes="**/*.*"/>
+        </ant:copy>
     </postGoal>
 </project>
