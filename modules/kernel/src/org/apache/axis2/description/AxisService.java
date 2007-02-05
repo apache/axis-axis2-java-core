@@ -321,8 +321,42 @@ public class AxisService extends AxisDescription {
         this.name = name;
     }
 
-    public void addMessageReceiver(String mepURL, MessageReceiver messageReceiver) {
-        messageReceivers.put(mepURL, messageReceiver);
+    public void addMessageReceiver(String mepURI, MessageReceiver messageReceiver) {
+        if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mepURI) ||
+                WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(mepURI)) {
+            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY, messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY, messageReceiver);
+        } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(mepURI) ||
+                WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_ONLY.equals(mepURI)) {
+            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY, messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_ONLY, messageReceiver);
+        } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mepURI) ||
+                WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT.equals(mepURI)) {
+            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT, messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT, messageReceiver);
+        } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI) ||
+                WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
+            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT, messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OPTIONAL_OUT, messageReceiver);
+        } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mepURI) ||
+                WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_IN.equals(mepURI)) {
+            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN, messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_IN, messageReceiver);
+        } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI) ||
+                WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
+            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN, messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_OPTIONAL_IN, messageReceiver);
+        } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) ||
+                WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
+            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY, messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_OUT_ONLY, messageReceiver);
+        } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) ||
+                WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
+            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY, messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY, messageReceiver);
+        } else {
+            messageReceivers.put(mepURI, messageReceiver);
+        }
     }
 
     public MessageReceiver getMessageReceiver(String mepURL) {
