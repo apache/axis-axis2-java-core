@@ -88,7 +88,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * setup for logging
      */
     private static final Log log = LogFactory.getLog(MessageContext.class);
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
+    private transient static final boolean isDebugEnabled = log.isDebugEnabled();
 
     /**
      * @serial An ID which can be used to correlate operations on a single
