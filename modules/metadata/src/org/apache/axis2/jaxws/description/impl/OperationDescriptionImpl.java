@@ -184,9 +184,9 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         	
         	try {
         		if (isOneWay()) {               
-        			axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_ONLY);
+        			axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY);
         		} else {
-        			axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004Constants.MEP_URI_IN_OUT);
+        			axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT);
         		}
         		//TODO: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
         		//                                              ROBUST_IN_ONLY
