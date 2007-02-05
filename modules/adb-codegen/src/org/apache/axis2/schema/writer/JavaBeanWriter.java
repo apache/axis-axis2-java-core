@@ -5,6 +5,7 @@ import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.typemap.JavaTypeMap;
 import org.apache.axis2.schema.util.PrimitiveTypeFinder;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
+import org.apache.axis2.schema.util.PrimitiveTypeWrapper;
 import org.apache.axis2.util.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -517,6 +518,10 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "simple", "yes", rootElt);
         }
 
+        if (metainf.isUnion()) {
+            XSLTUtils.addAttribute(model, "union", "yes", rootElt);
+        }
+
         if (metainf.isOrdered()) {
             XSLTUtils.addAttribute(model, "ordered", "yes", rootElt);
         }
@@ -525,14 +530,44 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "nillable", "yes", rootElt);
         }
 
-        // populate all the information
-        populateInfo(metainf, model, rootElt, propertyNames, typeMap, false);
-
+        //if the type is a smple union then we do not have properties to set
+        //only thing we have to set is to add meber types
+        if (metainf.isSimple() && metainf.isUnion()){
+           populateMemberInfo(metainf,model,rootElt,typeMap);
+        } else {
+            // populate all the information
+            populateInfo(metainf, model, rootElt, propertyNames, typeMap, false);
+        }
         //////////////////////////////////////////////////////////
 //        System.out.println(DOM2Writer.nodeToString(rootElt));
         ////////////////////////////////////////////////////////////
 
         return rootElt;
+    }
+
+    protected void populateMemberInfo(BeanWriterMetaInfoHolder metainf,
+                                      Document model,
+                                      Element rootElement,
+                                      Map typeMap){
+        Map memberTypes = metainf.getMemberTypes();
+        QName memberQName;
+        for (Iterator iter = memberTypes.keySet().iterator();iter.hasNext();){
+            memberQName = (QName) iter.next();
+            String memberClass = (String) memberTypes.get(memberQName);
+            if (PrimitiveTypeFinder.isPrimitive(memberClass)){
+               memberClass = PrimitiveTypeWrapper.getWrapper(memberClass);
+            }
+
+            // add member type element
+            Element memberType = XSLTUtils.addChildElement(model, "memberType", rootElement);
+            XSLTUtils.addAttribute(model, "type", memberClass, memberType);
+            XSLTUtils.addAttribute(model, "nsuri", memberQName.getNamespaceURI(), memberType);
+            XSLTUtils.addAttribute(model, "originalName", memberQName.getLocalPart(), memberType);
+            if (typeMap.containsKey(memberQName)){
+               XSLTUtils.addAttribute(model, "ours", "true", memberType);
+            }
+
+        }
     }
 
     /**

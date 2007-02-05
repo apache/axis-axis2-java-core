@@ -1,0 +1,38 @@
+<s:schema elementFormDefault="qualified"
+          xmlns:s="http://www.w3.org/2001/XMLSchema"
+          xmlns:s0="http://tempuri.org/"
+          targetNamespace="http://tempuri.org/">
+    <s:import namespace="http://www.w3.org/2001/XMLSchema"/>
+
+    <s:simpleType name="FooEnum">
+        <s:restriction base="s:anyURI">
+            <s:enumeration value="http://A"/>
+            <s:enumeration value="http://B"/>
+            <s:enumeration value="http://C"/>
+        </s:restriction>
+    </s:simpleType>
+
+    <s:simpleType name="FooOpenEnum">
+        <s:union memberTypes="s0:FooEnum s:anyURI"/>
+    </s:simpleType>
+
+    <s:simpleType name="DateOrDateTimeType">
+        <s:union memberTypes="s:boolean s:int s:date s:dateTime"/>
+    </s:simpleType>
+
+    <s:element name="Record1">
+        <s:complexType>
+            <s:sequence>
+                <s:element name="elem1" type="s0:FooOpenEnum"/>
+            </s:sequence>
+        </s:complexType>
+    </s:element>
+
+    <s:element name="Record2">
+        <s:complexType>
+            <s:sequence>
+                <s:element name="elem1" type="s0:DateOrDateTimeType"/>
+            </s:sequence>
+        </s:complexType>
+    </s:element>
+</s:schema>

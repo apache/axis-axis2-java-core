@@ -1,13 +1,7 @@
 package org.apache.axis2.schema;
 
 import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.LinkedHashMap;
+import java.util.*;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -62,6 +56,9 @@ public class BeanWriterMetaInfoHolder {
     protected String minExclusiveFacet = null;
     protected String maxInclusiveFacet = null;
     protected String minInclusiveFacet = null;
+
+    protected Map memberTypes = new HashMap();
+    protected boolean isUnion;
 
     protected List nillableQNameList = new ArrayList();
 
@@ -750,5 +747,35 @@ public class BeanWriterMetaInfoHolder {
      */
     public String getPatternFacet() {
         return this.patternFacet;
+    }
+
+    /**
+     *
+     * @return Returns is union
+     */
+
+    public boolean isUnion() {
+        return isUnion;
+    }
+
+    public void setUnion(boolean union) {
+        isUnion = union;
+    }
+
+    /**
+     *
+     * @return Returns memeber type in a union
+     */
+
+    public Map getMemberTypes() {
+        return memberTypes;
+    }
+
+    public void setMemberTypes(Map memberTypes) {
+        this.memberTypes = memberTypes;
+    }
+
+    public void addMemberType(QName qname,String className){
+        this.memberTypes.put(qname,className);
     }
 }
