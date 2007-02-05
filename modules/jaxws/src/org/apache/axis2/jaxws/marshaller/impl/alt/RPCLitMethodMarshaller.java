@@ -19,7 +19,7 @@
 package org.apache.axis2.jaxws.marshaller.impl.alt;
 
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jws.soap.SOAPBinding.Style;
 import javax.xml.namespace.QName;
@@ -85,7 +85,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
             
             // TODO This needs more work.  We need to check inside holders of input params.  We also
             // may want to exclude header params from this check
@@ -161,7 +161,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //   5) We always send an xsi:type, but other vendor's may not.
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
             
             // Indicate that the style is RPC.  This is important so that the message understands
             // that the data blocks are underneath the operation element
@@ -236,7 +236,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
             
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
@@ -330,7 +330,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //   5) We always send an xsi:type, but other vendor's may not.
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
             
             // Indicate that the style is RPC.  This is important so that the message understands
             // that the data blocks are underneath the operation element

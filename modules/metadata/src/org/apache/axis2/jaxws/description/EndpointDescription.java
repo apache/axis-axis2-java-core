@@ -19,7 +19,7 @@
 package org.apache.axis2.jaxws.description;
 
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
@@ -116,7 +116,7 @@ public interface EndpointDescription {
      * JAXBContext.
      * @return Set<Package>
      */
-    public Set<String> getPackages();
+    public TreeSet<String> getPackages();
     
     public QName getPortType();
 }

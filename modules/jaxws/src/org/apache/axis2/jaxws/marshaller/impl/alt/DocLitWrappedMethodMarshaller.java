@@ -19,10 +19,10 @@
 package org.apache.axis2.jaxws.marshaller.impl.alt;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
+import java.util.TreeSet;
 
 import javax.jws.WebParam.Mode;
 import javax.xml.bind.JAXBElement;
@@ -32,7 +32,6 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
-import org.apache.axis2.jaxws.description.OperationDescriptionJava;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
@@ -83,7 +82,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             //   4) The type of the data block is defined by schema; thus in most cases
             //      an xsi:type will not be present
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
             
             // Determine if a returnValue is expected.
             // The return value may be an child element
@@ -193,7 +192,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             //   4) The type of the data block (data:foo) is defined by schema (and probably
             //      is not present in the message
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
                         
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
             // Get this block

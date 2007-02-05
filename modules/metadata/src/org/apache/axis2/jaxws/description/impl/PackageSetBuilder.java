@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
@@ -86,9 +86,9 @@ public class PackageSetBuilder {
      * @param serviceDesc ServiceDescription
      * @return Set of Packages
      */
-    public static Set<String> getPackagesFromSchema(ServiceDescription serviceDesc) {
+    public static TreeSet<String> getPackagesFromSchema(ServiceDescription serviceDesc) {
     	boolean annotationWalking = true;
-    	Set<String> set = new HashSet<String>();
+    	TreeSet<String> set = new TreeSet<String>();
     	//If we are on client side we will get wsdl definition from ServiceDescription. If we are on server side we will have to 
     	//read wsdlLocation from @WebService Annotation.
     	ServiceDescriptionWSDL sdw = (ServiceDescriptionWSDL) serviceDesc;
@@ -133,8 +133,8 @@ public class PackageSetBuilder {
      * @param serviceDescription ServiceDescription
      * @return Set of Packages
      */
-    public static Set<String> getPackagesFromAnnotations(ServiceDescription serviceDesc) {
-        HashSet<String> set = new HashSet<String>();
+    public static TreeSet<String> getPackagesFromAnnotations(ServiceDescription serviceDesc) {
+        TreeSet<String> set = new TreeSet<String>();
         EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
         
         // Build a set of packages from all of the endpoints
@@ -150,11 +150,11 @@ public class PackageSetBuilder {
      * @param endpointDesc EndpointDescription
      * @return Set of Packages
      */
-    public static Set<String> getPackagesFromAnnotations(EndpointDescription endpointDesc) {
+    public static TreeSet<String> getPackagesFromAnnotations(EndpointDescription endpointDesc) {
         EndpointInterfaceDescription endpointInterfaceDesc = 
             endpointDesc.getEndpointInterfaceDescription();
         if (endpointInterfaceDesc == null) {
-            return new HashSet<String>(); 
+            return new TreeSet<String>(); 
         } else {
             return getPackagesFromAnnotations(endpointInterfaceDesc);
         }
@@ -164,8 +164,8 @@ public class PackageSetBuilder {
      * @param endpointInterfaceDescription EndpointInterfaceDescription
      * @return Set of Packages
      */
-    public static Set<String> getPackagesFromAnnotations(EndpointInterfaceDescription endpointInterfaceDesc) {
-        HashSet<String> set = new HashSet<String>();
+    public static TreeSet<String> getPackagesFromAnnotations(EndpointInterfaceDescription endpointInterfaceDesc) {
+        TreeSet<String> set = new TreeSet<String>();
         OperationDescription[] opDescs = endpointInterfaceDesc.getOperations();
         
         // Build a set of packages from all of the opertions
@@ -182,7 +182,7 @@ public class PackageSetBuilder {
      * @param opDesc OperationDescription
      * @param set Set<Package> that is updated
      */
-    private static void getPackagesFromAnnotations(OperationDescription opDesc, Set<String> set) {
+    private static void getPackagesFromAnnotations(OperationDescription opDesc, TreeSet<String> set) {
        
        // Walk the parameter information
        ParameterDescription[] parameterDescs = opDesc.getParameterDescriptions();
@@ -235,7 +235,7 @@ public class PackageSetBuilder {
      * @param paramDesc ParameterDesc
      * @param set Set<Package> that is updated
      */
-    private static void getPackagesFromAnnotations(ParameterDescription paramDesc, Set<String> set) {
+    private static void getPackagesFromAnnotations(ParameterDescription paramDesc, TreeSet<String> set) {
        
        // Get the type that defines the actual data.  (this is never a holder )
        Class paramClass = paramDesc.getParameterActualType();
@@ -251,7 +251,7 @@ public class PackageSetBuilder {
      * @param faultDesc FaultDescription
      * @param set Set<Package> that is updated
      */
-    private static void getPackagesFromAnnotations(FaultDescription faultDesc, Set<String> set) {
+    private static void getPackagesFromAnnotations(FaultDescription faultDesc, TreeSet<String> set) {
       
       Class faultBean = loadClass(faultDesc.getFaultBean());  
       if (faultBean != null) {
@@ -266,7 +266,7 @@ public class PackageSetBuilder {
      * @param localPart of the element
      * @param set with both type and element packages set
      */
-    private static void setTypeAndElementPackages(Class cls, String namespace, String localPart, Set<String> set) {
+    private static void setTypeAndElementPackages(Class cls, String namespace, String localPart, TreeSet<String> set) {
         
         // Get the element and type classes
         Class eClass = getElement(cls);

@@ -25,7 +25,7 @@ import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding.Style;
@@ -164,7 +164,7 @@ public class MethodMarshallerUtils  {
      */
     static List<PDElement> getPDElements(ParameterDescription[] params, 
             Message message, 
-            Set<String> packages, 
+            TreeSet<String> packages, 
             boolean isInput) throws XMLStreamException {
         
         List<PDElement> pdeList = new ArrayList<PDElement>();
@@ -357,7 +357,7 @@ public class MethodMarshallerUtils  {
      * @param isRPC 
      * @throws MessageException
      */
-    static void toMessage(List<PDElement> pdeList, Message message, Set<String> packages, boolean isRPC) throws WebServiceException {
+    static void toMessage(List<PDElement> pdeList, Message message, TreeSet<String> packages, boolean isRPC) throws WebServiceException {
         
         int totalBodyBlocks = 0;
         for (int i=0; i<pdeList.size(); i++) {
@@ -421,7 +421,7 @@ public class MethodMarshallerUtils  {
             Class returnType, 
             String returnNS, 
             String returnLocalPart, 
-            Set<String> packages, 
+            TreeSet<String> packages, 
             Message message, 
             boolean isRPC,
             boolean isHeader)
@@ -464,7 +464,7 @@ public class MethodMarshallerUtils  {
      * @throws WebService
      * @throws XMLStreamException
      */
-    static Object getReturnValue(Set<String> packages, 
+    static Object getReturnValue(TreeSet<String> packages, 
             Message message, 
             Class rpcType,
             boolean isHeader,
@@ -503,7 +503,7 @@ public class MethodMarshallerUtils  {
      */
     static void marshalFaultResponse(Throwable throwable, 
             OperationDescription operationDesc,  
-            Set<String> packages, 
+            TreeSet<String> packages, 
             Message message, 
             boolean isRPC) {
         // Get the root cause of the throwable object
@@ -695,7 +695,7 @@ public class MethodMarshallerUtils  {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    static Throwable demarshalFaultResponse(OperationDescription operationDesc, Set<String> packages,Message message, boolean isRPC) 
+    static Throwable demarshalFaultResponse(OperationDescription operationDesc, TreeSet<String> packages,Message message, boolean isRPC) 
         throws WebServiceException, ClassNotFoundException, IllegalAccessException,
                InstantiationException, XMLStreamException, InvocationTargetException, NoSuchMethodException {
         

@@ -16,8 +16,7 @@
  */
 package org.apache.axis2.jaxws.message.databinding;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -36,7 +35,7 @@ public class JAXBBlockContext {
     
     private static final Log log = LogFactory.getLog(JAXBBlockContext.class);
     
-	private Set<String> contextPackages;  // List of packages needed by the context
+	private TreeSet<String> contextPackages;  // List of packages needed by the context
 	private JAXBContext jaxbContext = null;
     
     // For RPC processing only
@@ -52,7 +51,7 @@ public class JAXBBlockContext {
 	 * Normal Constructor JAXBBlockContext
 	 * @param packages Set of packages needed by the JAXBContext.
 	 */
-	public JAXBBlockContext(Set<String> packages) {
+	public JAXBBlockContext(TreeSet<String> packages) {
         this.contextPackages = packages;
 	}
     
@@ -62,7 +61,7 @@ public class JAXBBlockContext {
      * @deprecated
      */
     public JAXBBlockContext(String contextPackage) {
-        this.contextPackages = new HashSet();
+        this.contextPackages = new TreeSet();
         this.contextPackages.add(contextPackage);
     }
 
@@ -79,7 +78,7 @@ public class JAXBBlockContext {
 	/**
 	 * @return Class representing type of the element
 	 */
-	public Set<String> getContextPackages() {
+	public TreeSet<String> getContextPackages() {
 		return contextPackages;
 	}
     

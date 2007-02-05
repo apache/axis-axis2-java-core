@@ -26,11 +26,10 @@ import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import javax.xml.bind.JAXBContext;
@@ -61,8 +60,8 @@ public class JAXBUtils {
     
 	// Create a synchronized map to get the JAXBObject: keys are ClassLoader and Set<String>.
     // TODO We should change the key from Set<String> to an actual package ContextPath
-    private static Map<ClassLoader, Map<Set<String>, JAXBContext> > jaxbMap =
-			Collections.synchronizedMap(new WeakHashMap<ClassLoader, Map<Set<String>, JAXBContext> >());
+    private static Map<ClassLoader, Map<String, JAXBContext> > jaxbMap =
+			Collections.synchronizedMap(new WeakHashMap<ClassLoader, Map<String, JAXBContext> >());
 	private static JAXBContext genericJAXBContext = null;
 	
 	private static Map<JAXBContext,Unmarshaller> umap = 
@@ -90,7 +89,7 @@ public class JAXBUtils {
 	 * @return JAXBContext
 	 * @throws JAXBException
 	 */
-	public static JAXBContext getJAXBContext(Set<String> contextPackages) throws JAXBException {
+	public static JAXBContext getJAXBContext(TreeSet<String> contextPackages) throws JAXBException {
 		// JAXBContexts for the same class can be reused and are supposed to be thread-safe
         if(log.isDebugEnabled()){
         	log.debug("Following packages are in this batch of getJAXBContext() :");
@@ -102,23 +101,31 @@ public class JAXBUtils {
         ClassLoader cl = getContextClassLoader();
         
         // Get the innerMap 
-        Map<Set<String>, JAXBContext> innerMap = jaxbMap.get(cl);
+        Map<String, JAXBContext> innerMap = jaxbMap.get(cl);
         if (innerMap == null) {
             synchronized(jaxbMap) {
-                innerMap = new WeakHashMap<Set<String>, JAXBContext>();
+                innerMap = new WeakHashMap<String, JAXBContext>();
                 jaxbMap.put(cl, Collections.synchronizedMap(innerMap));
             }
         }
         
         if (contextPackages == null) {
-            contextPackages = new HashSet<String>();
+            contextPackages = new TreeSet<String>();
         }
         
-		JAXBContext context = innerMap.get(contextPackages);
+		JAXBContext context = innerMap.get(contextPackages.toString());
 		if (context == null) {
             synchronized(innerMap) {
+                // A pooled context was not found, so create one and put it in the map.
+                
+                // A copy is made of the original list of packages because createJAXBContext may 
+                // prune the list.
+                TreeSet<String> origContextPackages = new TreeSet<String>(contextPackages);
                 context = createJAXBContext(contextPackages, cl);
-                innerMap.put(contextPackages, context);	
+                
+                // Put the new context in the map keyed by both the original and current list of packages
+                innerMap.put(origContextPackages.toString(), context);
+                innerMap.put(contextPackages.toString(), context);	
                 if (log.isDebugEnabled()) {
                     log.debug("JAXBContext [created] for " + contextPackages.toString());
                 }
@@ -138,7 +145,7 @@ public class JAXBUtils {
      * @return JAXBContext
      * @throws JAXBException
      */
-    private static JAXBContext createJAXBContext(Set<String> contextPackages, ClassLoader cl) throws JAXBException {
+    private static JAXBContext createJAXBContext(TreeSet<String> contextPackages, ClassLoader cl) throws JAXBException {
 
        JAXBContext context = null;
        if(log.isDebugEnabled()){
@@ -148,7 +155,7 @@ public class JAXBUtils {
        	}
        }
         // The contextPackages is a set of package names that are constructed using PackageSetBuilder.
-        // PackageSetBuilder gets the packages names from the following sources.
+        // PackageSetBuilder gets the packages names from various sources.
         //   a) It walks the various annotations on the WebService collecting package names.
         //   b) It walks the wsdl/schemas and builds package names for each target namespace.
         //
@@ -231,6 +238,19 @@ public class JAXBUtils {
             }
         }
         
+        // The code above may have removed some packages from the list. 
+        // Retry our lookup with the updated list
+        Map<String, JAXBContext> innerMap = jaxbMap.get(cl);
+        if (innerMap != null) {
+            context = innerMap.get(contextPackages.toString());
+            if (context != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Successfully found JAXBContext with updated context list:" + context.toString());
+                }
+                return context;
+            }
+        }
+        
         // CONTEXT construction
         if (contextConstruction) {
             context = createJAXBContextUsingContextPath(contextPackages, cl);
@@ -291,7 +311,9 @@ public class JAXBUtils {
         if (log.isDebugEnabled()) {
             log.debug("Unmarshaller placed back into pool");
         }
-		umap.put(context, unmarshaller);
+        if (ENABLE_ADV_POOLING) {
+            umap.put(context, unmarshaller);
+        }
 	}
 	
 	/**
@@ -335,7 +357,9 @@ public class JAXBUtils {
         if (log.isDebugEnabled()) {
             log.debug("Marshaller placed back into pool");
         }
-        mmap.put(context, marshaller);
+        if (ENABLE_ADV_POOLING) {
+            mmap.put(context, marshaller);
+        }
 	}
 	
 	/**
@@ -378,7 +402,9 @@ public class JAXBUtils {
         if (log.isDebugEnabled()) {
             log.debug("JAXBIntrospector placed back into pool");
         }
-        imap.put(context, introspector);
+        if (ENABLE_ADV_POOLING) {
+            imap.put(context, introspector);
+        }
 	}
     
     /**
@@ -409,7 +435,7 @@ public class JAXBUtils {
 	    }
 	    
         try {
-            Class cls = Class.forName(p + ".package-info",false, cl);
+            Class cls = forName(p + ".package-info",false, cl);
             if (cls != null) {
                 return true;
             }
@@ -432,7 +458,7 @@ public class JAXBUtils {
      * @param cl ClassLoader
      * @return JAXBContext or null if unsuccessful
      */
-    private static JAXBContext createJAXBContextUsingContextPath(Set<String> packages, ClassLoader cl) {
+    private static JAXBContext createJAXBContextUsingContextPath(TreeSet<String> packages, ClassLoader cl) {
         JAXBContext context = null;
         String contextpath = "";
         
@@ -490,7 +516,7 @@ public class JAXBUtils {
         	 }          
         }
         try {
-           //If Calsses not found in directory then look for jar that has these classes
+           //If Clases not found in directory then look for jar that has these classes
         	if(classes.size() <=0){
         		//This will load classes from jar file.
         		ClassFinderFactory cff = (ClassFinderFactory)FactoryRegistry.getFactory(ClassFinderFactory.class);
@@ -689,6 +715,13 @@ public class JAXBUtils {
         // NOTE: This method must remain private because it uses AccessController
         JAXBContext jaxbContext = null;
         try {
+            if (log.isDebugEnabled()) {
+                if (context== null || context.length() == 0) {
+                    log.debug("JAXBContext is constructed without a context String.");
+                } else {
+                    log.debug("JAXBContext is constructed with a context of:" + context);
+                }
+            }
             jaxbContext = (JAXBContext) AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws JAXBException {
@@ -716,6 +749,13 @@ public class JAXBUtils {
         // NOTE: This method must remain private because it uses AccessController
         JAXBContext jaxbContext = null;
         try {
+            if (log.isDebugEnabled()) {
+                if (classArray== null || classArray.length == 0) {
+                    log.debug("JAXBContext is constructed with 0 input classes.");
+                } else {
+                    log.debug("JAXBContext is constructed with " + classArray.length + " input classes.");
+                }
+            }
             jaxbContext = (JAXBContext) AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws JAXBException {

@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -130,7 +130,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             //   4) The type of the data block is defined by schema; thus in most cases
             //      an xsi:type will not be present
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
             
             // Determine if a returnValue is expected.
             // The return value may be an child element
@@ -270,7 +270,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             //   4) The type of the data block (data:foo) is defined by schema (and probably
             //      is not present in the message
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
                         
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
             // Get this block
@@ -381,7 +381,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
             
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
@@ -569,7 +569,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             // Put the object into the message
             JAXBBlockFactory factory = 
                 (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
             Block block = factory.createFrom(object, 
                     new JAXBBlockContext(packages), 
                     null);  // The factory will get the qname from the value

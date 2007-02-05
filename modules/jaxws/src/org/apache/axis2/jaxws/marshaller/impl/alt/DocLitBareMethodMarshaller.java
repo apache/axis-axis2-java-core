@@ -19,7 +19,7 @@
 package org.apache.axis2.jaxws.marshaller.impl.alt;
 
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.ws.WebServiceException;
 
@@ -68,7 +68,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             //   4) The type of the data block is defined by schema; thus in most cases
             //      an xsi:type will not be present
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
               
             // Get the return value.
             Class returnType = operationDesc.getResultActualType();
@@ -116,7 +116,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             //   4) The type of the data block (data:foo) is defined by schema (and probably
             //      is not present in the message
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
             
             
             // Unmarshal the ParamValues from the message
@@ -165,7 +165,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
             
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
@@ -221,7 +221,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            Set<String> packages = endpointDesc.getPackages();
+            TreeSet<String> packages = endpointDesc.getPackages();
             
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);

@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jws.WebService;
 import javax.wsdl.Binding;
@@ -110,7 +111,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     DescriptionBuilderComposite composite = null;
  
     // Set of packages that are needed to marshal/unmashal data (used to set JAXBContext)
-    Set<String> packages = null;
+    TreeSet<String> packages = null;
     
     // The JAX-WS Handler port information corresponding to this endpoint
     private PortInfo portInfo;
@@ -1223,7 +1224,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
      * JAXBContext.
      * @return Set<Package>
      */
-    public Set<String> getPackages() {
+    public TreeSet<String> getPackages() {
         // @REVIEW Currently the package set is stored on the
         // EndpointDescription.  We may consider moving this to 
         // ServiceDescription. 
@@ -1240,7 +1241,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
                 // So for now we will do both.
                 boolean doSchemaWalk = true;
                 boolean doAnnotationWalk = true;
-                packages = new HashSet<String>();
+                packages = new TreeSet<String>();
                 if (doSchemaWalk) {
                     packages.addAll(PackageSetBuilder.getPackagesFromSchema(this.getServiceDescription()));
                 }
