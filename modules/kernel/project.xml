@@ -223,10 +223,7 @@
           <includes>
                 <include>**/*Test.class</include>
             </includes>
-            <excludes>
-                <exclude>**/*MessageContextChangeTest*.class</exclude>
-            </excludes>
-	  <resources>
+            	  <resources>
 		<resource>
 		  <targetPath>../test-resources</targetPath>
 	      <directory>test-resources</directory>
