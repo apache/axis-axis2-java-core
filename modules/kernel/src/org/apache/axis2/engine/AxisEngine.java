@@ -51,6 +51,7 @@ public class AxisEngine {
      */
     private static final Log log = LogFactory.getLog(AxisEngine.class);
     private static final boolean isTraceEnabled = log.isTraceEnabled();
+    private static final boolean isDebugEnabled = log.isDebugEnabled();
     private ConfigurationContext engineContext;
 
     private static boolean RESUMING_EXECUTION = true;
@@ -394,9 +395,10 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public InvocationResponse receiveFault(MessageContext msgContext) throws AxisFault {
-
-    	log.debug(msgContext.getLogIDString()+" "+Messages.getMessage("receivederrormessage",
-                msgContext.getMessageID()));
+        if(isDebugEnabled) {
+            log.debug(msgContext.getLogIDString()+" "+Messages.getMessage("receivederrormessage",
+                    msgContext.getMessageID()));
+        }
         ConfigurationContext confContext = msgContext.getConfigurationContext();
         ArrayList preCalculatedPhases =
                 confContext.getAxisConfiguration().getInFaultFlow();
