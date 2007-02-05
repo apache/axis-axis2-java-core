@@ -95,13 +95,13 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * message in the log files, irrespective of thread switches, persistence,
      * etc. 
      */
-    private String logCorrelationID = UUIDGenerator.getUUID();
+   private String logCorrelationID = null;
     
     /**
      * This string will be used to hold a form of the logCorrelationID that
      * is more suitable for output than its generic form.
      */
-    private transient String logCorrelationIDString = "[MessageContext: logID="+logCorrelationID+"]";
+   private transient String logCorrelationIDString = null;
     
     private static final String myClassName = "MessageContext";
 
@@ -533,7 +533,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
     public String toString()
     {
-      return logCorrelationIDString;
+      return getLogIDString();
     }
     
     /**
@@ -547,7 +547,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
      */
     public String getLogCorrelationID()
     {
-      return logCorrelationID;
+        if (logCorrelationID == null) {
+            logCorrelationID = UUIDGenerator.getUUID();
+        }
+        return logCorrelationID;
     }
     
     /**
@@ -559,7 +562,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
      */
     public String getLogIDString()
     {
-      return logCorrelationIDString;
+        if (logCorrelationIDString == null) {
+            logCorrelationIDString = "[MessageContext: logID=" + getLogCorrelationID() + "]";
+        }
+        return logCorrelationIDString;
     }
 
 
@@ -1192,7 +1198,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
     public AxisMessage getAxisMessage() {
         if (reconcileAxisMessage) {
-            log.warn(logCorrelationIDString+":getAxisMessage(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
+            log.warn(this.getLogIDString()+":getAxisMessage(): ****WARNING**** MessageContext.activate(configurationContext) needs to be invoked.");
         }
 
         return axisMessage;
@@ -1800,7 +1806,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 Object key = it2.next();
                 Handler value = (Handler) map.get(key);
                 String name = value.getName();
-                log.trace(logCorrelationIDString+":flattenPhaseListToHandlers():  key ["+(String)key+"]    handler name ["+name+"]");
+                log.trace(getLogIDString()+":flattenPhaseListToHandlers():  key ["+(String)key+"]    handler name ["+name+"]");
             }
         }
 
@@ -1879,7 +1885,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             {
                 out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
 
-                log.trace(logCorrelationIDString+":serializeSelfManagedData(): No data : END");
+                log.trace(getLogIDString()+":serializeSelfManagedData(): No data : END");
 
                 return;
             }
@@ -1894,7 +1900,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             {
                 out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
 
-                log.trace(logCorrelationIDString+":serializeSelfManagedData(): No data : END");
+                log.trace(getLogIDString()+":serializeSelfManagedData(): No data : END");
 
                 return;
             }
@@ -1925,12 +1931,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
     /**
 	 * This is the helper method to do the recursion for serializeSelfManagedData()
      *
-     * @param it                         The Iterator
-     * @param selfManagedDataHolderList  The array list
-	 * 
+     * @param handlers
+	 *
 	 * @return ArrayList
 	 */
-    //private ArrayList serializeSelfManagedDataHelper(ArrayList handlers, ArrayList selfManagedDataHolderList)
     private ArrayList serializeSelfManagedDataHelper(ArrayList handlers)
     {
         ArrayList selfManagedDataHolderList = new ArrayList();
@@ -2054,7 +2058,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
     			if (handler == null)
                 {
-    				log.trace(logCorrelationIDString+":deserializeSelfManagedData():  ["+classname+"]  was not found in the executionChain associated with the message context.");
+    				log.trace(getLogIDString()+":deserializeSelfManagedData():  ["+classname+"]  was not found in the executionChain associated with the message context.");
 
     				throw new IOException("The class ["+classname+"] was not found in the executionChain associated with the message context.");
     			}
@@ -2064,7 +2068,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     			// the handler implementing SelfManagedDataManager is responsible for repopulating
     			// the SelfManagedData in the MessageContext (this)
 
-                log.trace(logCorrelationIDString+":deserializeSelfManagedData(): calling handler ["+classname+"] ["+qNameAsString+"]  deserializeSelfManagedData method");
+                log.trace(getLogIDString()+":deserializeSelfManagedData(): calling handler ["+classname+"] ["+qNameAsString+"]  deserializeSelfManagedData method");
 
     			handler.deserializeSelfManagedData(handlerData, this);
     			handler.restoreTransientData(this);
@@ -2072,7 +2076,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         }
     	catch (IOException ioe)
         {
-        	log.trace(logCorrelationIDString+":deserializeSelfManagedData(): IOException thrown: " + ioe.getMessage(), ioe);
+        	log.trace(getLogIDString()+":deserializeSelfManagedData(): IOException thrown: " + ioe.getMessage(), ioe);
     		throw ioe;
     	}
     	
@@ -2101,6 +2105,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
      */
     public void writeExternal(ObjectOutput out) throws IOException
     {
+        String logCorrelationIDString = getLogIDString();
         log.trace(logCorrelationIDString+":writeExternal(): writing to output stream");
 
         //---------------------------------------------------------
@@ -2135,7 +2140,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         out.writeLong(getLastTouchedTime());
 
-        ObjectStateUtils.writeString(out, logCorrelationID, "logCorrelationID");
+        ObjectStateUtils.writeString(out, this.getLogCorrelationID(), "logCorrelationID");
 
         boolean persistWithOptimizedMTOM = (getProperty(MTOMConstants.ATTACHMENTS) != null);
         out.writeBoolean(persistWithOptimizedMTOM);
@@ -3863,6 +3868,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         }
 
         String tmpID = getMessageID();
+        String logCorrelationIDString = getLogIDString();
 
         log.trace(logCorrelationIDString+":activate():   message ID ["+tmpID+"] for "+logCorrelationIDString);
 
@@ -4027,6 +4033,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             return;
         }
 
+        String logCorrelationIDString = getLogIDString();
         // trace point
         log.trace(logCorrelationIDString+":activateWithOperationContext():  BEGIN");
 
@@ -4342,8 +4349,8 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * Process the list of handlers from the Phase object
      * into the appropriate meta data.
      * 
-     * @param pObj The Phase object containing a list of handlers
-     * @param mdEntry  The meta data object associated with the specified Phase object
+     * @param phase The Phase object containing a list of handlers
+     * @param mdPhase  The meta data object associated with the specified Phase object
      */
     private void setupPhaseList(Phase phase, MetaDataEntry mdPhase)
     {
@@ -4407,7 +4414,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 // so add it to the parent
                 mdPhase.addToList(mdEntry);
 
-                log.trace(logCorrelationIDString+":setupPhaseList(): list entry class ["+objClass+"] qname ["+qnameAsString+"]");
+                log.trace(getLogIDString()+":setupPhaseList(): list entry class ["+objClass+"] qname ["+qnameAsString+"]");
 
             } // end while entries in list
         }
@@ -4431,13 +4438,12 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * modify them, especially since the copy is not part 
      * of the normal *Context and Axis* object graph.
      *
-     * @param mc     The message  context to copy
      * @return A copy of the message context that is not in the object graph
      */
     public MessageContext extractCopyMessageContext()
     {
         MessageContext copy = new MessageContext();
-
+        String logCorrelationIDString = getLogIDString();
         log.trace(logCorrelationIDString+":extractCopyMessageContext():  based on "+logCorrelationIDString+"   into copy "+copy.getLogIDString());
 
 
@@ -4632,7 +4638,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     private void checkActivateWarning(String methodname)
     {
         if (needsToBeReconciled) {
-           log.warn(logCorrelationIDString+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
+           log.warn(getLogIDString()+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
         }
     }
 }
