@@ -401,8 +401,6 @@ public class Phase implements Handler {
 
     public void flowComplete(MessageContext msgContext)
     {
-      boolean isDebugEnabled = log.isDebugEnabled();
-      
       if (isDebugEnabled)
       {
         log.debug(msgContext.getLogIDString()+" Invoking flowComplete() in Phase \"" + phaseName + "\"");

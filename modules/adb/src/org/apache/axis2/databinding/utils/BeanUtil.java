@@ -643,7 +643,6 @@ public class BeanUtil {
         StAXOMBuilder stAXOMBuilder =
                 OMXMLBuilderFactory.createStAXOMBuilder(
                         OMAbstractFactory.getSOAP11Factory(), parser);
-        stAXOMBuilder.setDoDebug(true);
         return stAXOMBuilder.getDocumentElement();
     }
 
