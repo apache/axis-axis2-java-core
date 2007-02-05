@@ -202,7 +202,7 @@ public class IntegrationTest extends TestCase {
         
         
         //Attach a java.awt.Image object to the SOAP request
-        String jpgfilename = "test-resources/axis2.jpg";
+        String jpgfilename = System.getProperty("basedir",".")+"/"+"target/test-resources/axis2.jpg";
         File myfile = new File(jpgfilename);
         FileDataSource fds = new FileDataSource(myfile);
         DataHandler imageDH = new DataHandler(fds);
@@ -231,7 +231,7 @@ public class IntegrationTest extends TestCase {
                 byte[] b = new byte[15000];
                 final int lengthRead = bais.read(b);
                 FileOutputStream fos =
-                        new FileOutputStream(new File("target/test-resources/axis2.jpg"));
+                        new FileOutputStream(new File(System.getProperty("basedir",".")+"/"+"target/target/test-resources/axis2.jpg"));
                 fos.write(b, 0, lengthRead);
                 fos.flush();
                 fos.close();

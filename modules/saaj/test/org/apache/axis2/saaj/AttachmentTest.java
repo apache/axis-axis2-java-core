@@ -164,7 +164,7 @@ public class AttachmentTest extends TestCase {
 
 	public void testClearContent() throws Exception {
 		try {
-			InputStream in1 = new FileInputStream(new File("test-resources" + File.separator + "attach.xml"));
+			InputStream in1 = new FileInputStream(new File(System.getProperty("basedir",".") + "/test-resources" + File.separator + "attach.xml"));
 
 			MessageFactory factory = MessageFactory.newInstance();
 			SOAPMessage message = factory.createMessage();
@@ -259,7 +259,7 @@ public class AttachmentTest extends TestCase {
 			MessageFactory factory = MessageFactory.newInstance();
 			SOAPMessage msg = factory.createMessage();
 			AttachmentPart ap = msg.createAttachmentPart();
-			Image image = javax.imageio.ImageIO.read(new File("test-resources" + File.separator + "attach.gif"));
+			Image image = javax.imageio.ImageIO.read(new File(System.getProperty("basedir",".") + "/test-resources" + File.separator + "attach.gif"));
 			ap = msg.createAttachmentPart(image, "image/gif");
 
 			//Getting Content should return an Image object

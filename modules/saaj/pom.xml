@@ -66,7 +66,7 @@
 			<targetPath>../test-resources</targetPath>
 			<directory>test-resources</directory>
 			<includes>
-			  <include>**/*.xml</include>
+			  <include>**/*.*</include>
 			</includes>
 		  </testResource>
         </testResources>
