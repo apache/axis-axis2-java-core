@@ -48,7 +48,7 @@ public class BuilderSelectorDeploymentTest extends AbstractTestCase {
         assertEquals(className,"org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder");
     }
     
-    public void testBuilderSelectionInvalidEntry() {
+    public void testBuilderSelectionInvalidEntry() throws AxisFault{
         String repositoryName  =System.getProperty("basedir",".")+"/"+"target/test-resources/deployment";
         File repo = new File(repositoryName);
         String xmlFile = System.getProperty("basedir",".")+"/"+"test-resources/deployment/builderSelectorTest/bad-axis2.xml";

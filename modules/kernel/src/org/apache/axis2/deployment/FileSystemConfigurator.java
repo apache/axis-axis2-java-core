@@ -33,7 +33,7 @@ import java.io.InputStream;
 
 public class FileSystemConfigurator extends DeploymentEngine implements AxisConfigurator {
 
-	private static final Log log = LogFactory.getLog(FileSystemConfigurator.class);
+    private static final Log log = LogFactory.getLog(FileSystemConfigurator.class);
     /**
      * To check whether need to create a service side or client side
      */
@@ -46,7 +46,7 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
      * @param repoLocation
      * @param axis2xml
      */
-    public FileSystemConfigurator(String repoLocation, String axis2xml) {
+    public FileSystemConfigurator(String repoLocation, String axis2xml) throws AxisFault {
         if (repoLocation == null) {
             //checking wether user has set the system property
             repoLocation = System.getProperty(Constants.AXIS2_REPO);
@@ -54,20 +54,18 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
 
         // OK, we've got a repository location in mind.  Let's make
         // sure it exists.
-        try {
-            if (repoLocation != null) {
-                File repo = new File(repoLocation);
-                if (repo.exists()) {
-                    // ok, save it if so
-                    this.repoLocation = repo.getAbsolutePath();
-                }
+        if (repoLocation != null) {
+            File repo = new File(repoLocation);
+            if (repo.exists()) {
+                // ok, save it if so
+                this.repoLocation = repo.getAbsolutePath();
+            } else {
+                log.info("Couldn't find repository location '" +
+                        repoLocation + "'");
+                throw new AxisFault("Couldn't find repository location '" +
+                        repoLocation + "'");
             }
-        } catch (Exception e) {
-            log.info("Couldn't find repository location '" +
-                    repoLocation + "'");
-            this.repoLocation = null;
         }
-
         // Deal with the config file.  If a filename was specified as an
         // arg to this constructor, just respect it.
         if (axis2xml == null) {
@@ -76,14 +74,10 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
             // In either case, check that the file exists... if not
             // we'll use the default axis2.xml on the classpath.
             if (axis2xml != null) {
-                try {
-                    File configFile = new File(axis2xml);
-                    if (!configFile.exists()) {
-                        axis2xml = null;
-                    }
-                } catch (Exception e) {
-                    axis2xml = null;
+                File configFile = new File(axis2xml);
+                if (!configFile.exists()) {
                     log.info("Error in file (axis2.xml) creation inside FileSystemConfigurator");
+                    throw new AxisFault("Error in file (axis2.xml) creation inside FileSystemConfigurator");
                 }
             }
         }

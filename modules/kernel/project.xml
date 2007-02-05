@@ -220,6 +220,12 @@
    </resource>
 		</resources>
 	<unitTest>
+          <includes>
+                <include>**/*Test.class</include>
+            </includes>
+            <excludes>
+                <exclude>**/*MessageContextChangeTest*.class</exclude>
+            </excludes>
 	  <resources>
 		<resource>
 		  <targetPath>../test-resources</targetPath>

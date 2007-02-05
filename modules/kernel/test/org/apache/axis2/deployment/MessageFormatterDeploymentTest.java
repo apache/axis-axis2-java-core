@@ -46,7 +46,7 @@ public class MessageFormatterDeploymentTest extends AbstractTestCase {
         assertEquals("org.apache.axis2.transport.http.SOAPMessageFormatter",className);
     }
     
-    public void testBuilderSelectionInvalidEntry() {
+    public void testBuilderSelectionInvalidEntry() throws AxisFault{
         String repositoryName  =System.getProperty("basedir",".")+"/"+"target/test-resources/deployment";
         File repo = new File(repositoryName);
         String xmlFile = System.getProperty("basedir",".")+"/"+"test-resources/deployment/messageFormatterTest/bad-axis2.xml";
