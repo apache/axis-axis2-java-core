@@ -10,7 +10,9 @@ public interface ClusterManager {
 
 	public void init(ConfigurationContext context);
 
-	public void addContext(String name, String id, AbstractContext context);
+	public void addContext(String contextId, String parentContextId, AbstractContext context);
+	
+	public void removeContext(String contextId, String parentContextId, AbstractContext context);
 	
 	public void updateState(ServiceContext ctx);
 	
