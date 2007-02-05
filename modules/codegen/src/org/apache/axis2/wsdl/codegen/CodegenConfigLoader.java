@@ -112,7 +112,7 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
         commandLineOption = loadOption(WSDL2JavaConstants.REPOSITORY_PATH_OPTION, WSDL2JavaConstants.REPOSITORY_PATH_OPTION_LONG, optionMap);
         config.setRepositoryPath(commandLineOption != null ? commandLineOption.getOptionValue() : null);
 
-        config.setServerSideInterface(loadOption(WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION_LONG, optionMap)!=null);
+        config.setServerSideInterface(loadOption(WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION_LONG, optionMap)!=null);
 
         config.setGenerateAll(loadOption(WSDL2JavaConstants.GENERATE_ALL_OPTION, WSDL2JavaConstants.GENERATE_ALL_OPTION_LONG, optionMap)!=null);
 
