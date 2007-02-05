@@ -15,7 +15,6 @@
             <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/service2"/>
             <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/echo"/>
             <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/invalidservice"/>
-            <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/outservice"/>
             <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/module1"/>
             <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="test-resources/deployment/serviceModule"/>
         	<ant:ant antfile="j2secbuild.xml" inheritall="true" inheritrefs="true" dir="test-resources/"/>

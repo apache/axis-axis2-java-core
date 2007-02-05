@@ -37,7 +37,6 @@ public abstract class AbstractContext {
     protected transient Map properties;
 
     protected AbstractContext(AbstractContext parent) {
-        this.properties = new HashMap();
         this.parent = parent;
     }
 
@@ -49,6 +48,9 @@ public abstract class AbstractContext {
     }
 
     public Map getProperties() {
+        if (this.properties == null) {
+            this.properties = new HashMap();
+        }
         return properties;
     }
 
@@ -61,7 +63,7 @@ public abstract class AbstractContext {
     public Object getProperty(String key) {
         Object obj;
 
-        obj = properties.get(key);
+        obj = properties == null ? null : properties.get(key);
 
         if ((obj == null) && (parent != null)) {
             obj = parent.getProperty(key);
@@ -132,6 +134,9 @@ public abstract class AbstractContext {
      * @param value
      */
     public void setProperty(String key, Object value) {
+        if (this.properties == null) {
+            this.properties = new HashMap();
+        }
         properties.put(key, value);
     }
 

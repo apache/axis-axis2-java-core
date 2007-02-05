@@ -248,17 +248,17 @@ public class MessageContext extends AbstractContext implements Externalizable {
     /**
      * @serial The chain of Handlers/Phases for processing this message
      */
-    private ArrayList executionChain = new ArrayList();
+    private ArrayList executionChain;
 
     /**
      * @serial The chain of executed Handlers/Phases from inbound processing
      */
-    private LinkedList inboundExecutedPhases = new LinkedList();
+    private LinkedList inboundExecutedPhases;
 
     /**
      * @serial The chain of executed Handlers/Phases from outbound processing
      */
-    private LinkedList outboundExecutedPhases = new LinkedList();
+    private LinkedList outboundExecutedPhases;
 
     /**
      * @serial Flag to indicate if we are doing REST

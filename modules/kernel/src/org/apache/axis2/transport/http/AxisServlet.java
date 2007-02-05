@@ -86,6 +86,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     private static final String LIST_SERVICES_SUFIX = "/services/listServices";
     private static final String LIST_FAUKT_SERVICES_SUFIX = "/services/ListFaultyServices";
     private boolean closeReader = true;
+    protected TransportInDescription transportIn;
+    protected TransportOutDescription transportOut;
 
     protected MessageContext
             createAndSetInitialParamsToMsgCtxt(HttpServletResponse resp,
@@ -99,10 +101,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         }
 
         msgContext.setConfigurationContext(configContext);
-        msgContext.setTransportIn(axisConfiguration.getTransportIn(new QName(Constants
-                .TRANSPORT_HTTP)));
-        msgContext.setTransportOut(
-                axisConfiguration.getTransportOut(new QName(Constants.TRANSPORT_HTTP)));
+        msgContext.setTransportIn(transportIn);
+        msgContext.setTransportOut(transportOut);
 
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                 new ServletBasedOutTransportInfo(resp));
@@ -524,6 +524,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (parameter != null) {
             closeReader = JavaUtils.isTrueExplicitly(parameter.getValue());
         }
+
+        transportIn = axisConfiguration.getTransportIn(new QName(Constants.TRANSPORT_HTTP));
+        transportOut = axisConfiguration.getTransportOut(new QName(Constants.TRANSPORT_HTTP));
     }
 
     public void init() throws ServletException {

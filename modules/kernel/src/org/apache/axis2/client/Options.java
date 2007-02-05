@@ -110,7 +110,7 @@ public class Options implements Externalizable {
     /**
      * @serial properties
      */
-    private Map properties = new HashMap();
+    private Map properties;
 
     // ==========================================================================
     //                  Parameters that can be set via Options
