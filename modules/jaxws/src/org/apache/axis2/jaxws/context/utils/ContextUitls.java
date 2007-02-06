@@ -116,8 +116,8 @@ public class ContextUitls {
 			}
 			
 			String pathInfo = req.getPathInfo();
-			soapMessageContext.put(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_PATHINFO, pathInfo);
-			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_PATHINFO, Scope.APPLICATION);
+			soapMessageContext.put(javax.xml.ws.handler.MessageContext.PATH_INFO, pathInfo);
+			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.PATH_INFO, Scope.APPLICATION);
 			if(log.isDebugEnabled()){
 				if(pathInfo != null){
 					log.debug("HTTP_REQUEST_PATHINFO Set");
@@ -127,8 +127,8 @@ public class ContextUitls {
 				}
 			}
 			String queryString = req.getQueryString();
-			soapMessageContext.put(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_QUERYSTRING, queryString);
-			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_QUERYSTRING, Scope.APPLICATION);
+			soapMessageContext.put(javax.xml.ws.handler.MessageContext.QUERY_STRING, queryString);
+			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.QUERY_STRING, Scope.APPLICATION);
 			if(log.isDebugEnabled()){
 				if(queryString != null){
 					log.debug("HTTP_REQUEST_QUERYSTRING Set");
@@ -176,11 +176,11 @@ public class ContextUitls {
 		   
 		// Set the message properties
 		
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_INBOUND, axisMsgContext.getAttachmentMap());
-		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_INBOUND, Scope.APPLICATION);
+		soapMessageContext.put(javax.xml.ws.handler.MessageContext.INBOUND_MESSAGE_ATTACHMENTS, axisMsgContext.getAttachmentMap());
+		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.INBOUND_MESSAGE_ATTACHMENTS, Scope.APPLICATION);
 		
-        soapMessageContext.put(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_OUTBOUND, null);
-        soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.MESSAGE_ATTACHMENTS_OUTBOUND, Scope.APPLICATION);
+        soapMessageContext.put(javax.xml.ws.handler.MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS, null);
+        soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.OUTBOUND_MESSAGE_ATTACHMENTS, Scope.APPLICATION);
         
 	}
 	
@@ -205,21 +205,17 @@ public class ContextUitls {
 			if(eid!=null){
 				EndpointDescription ed = eid.getEndpointDescription();
 				QName portType = eid.getPortType();
-				
+				if(portType == null || portType.getLocalPart() == ""){
+					if(log.isDebugEnabled()){
+						log.debug("Did not get port type from EndpointInterfaceDescription, attempting to get PortType from EndpointDescription");
+					}
+				}		
 				if(ed !=null){
 					soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_PORT, ed.getPortQName());
 					soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_PORT, Scope.APPLICATION);
 					if(log.isDebugEnabled()){
 						log.debug("WSDL_PORT :"+ed.getPortQName());
 					}	
-					if(portType == null || portType.getLocalPart() == ""){
-						if(log.isDebugEnabled()){
-							log.debug("Did not get port type from EndpointInterfaceDescription, attempting to get PortType from EndpointDescription");
-						}
-						portType = ed.getPortType();
-					}
-					
-					
 				}
 				soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_INTERFACE, portType);
 				soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_INTERFACE, Scope.APPLICATION);

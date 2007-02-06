@@ -118,5 +118,4 @@ public interface EndpointDescription {
      */
     public TreeSet<String> getPackages();
     
-    public QName getPortType();
 }

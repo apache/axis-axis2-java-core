@@ -739,9 +739,12 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         return webService_Name;
     }
     
+    public String getName(){
+    	return getAnnoWebServiceName();
+    }
     public QName getPortType(){
-    	String name = getAnnoWebServiceName();
-    	String tns = getAnnoWebServiceTargetNamespace();
+    	String name = getName();
+    	String tns = getTargetNamespace();
     	return new QName(tns, name);
     }
 

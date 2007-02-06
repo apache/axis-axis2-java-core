@@ -48,6 +48,24 @@ public class CallbackFuture extends Callback {
     private CallbackFutureTask cft;
     private Executor executor;
     private FutureTask task;
+    /*
+     * There are two Async Callback Future.cancel scenario that we address
+     * 1) Client app creates request and call Async Operation. Now before the request is submitted
+     * 	  by JAXWS to Executor for processing and any response is received client decides to cancel 
+     * 	  the future task.
+     * 2) Client app creates request and call Async Operation. Request is submitted by JAXWS 
+     * 	  to Executor for processing and a response is received and client decides to cancel the future
+     * 	  task.
+     * 
+     * We will address both these scenarios in the code. In scenario 1 we will do the following:
+     * 1) Check the for the future.isCancelled before submitting the task to Executor 
+     * 2) If cancelled then do not submit the task and do not call the Async Handler of client. 
+     * 3)The client program in this case (Since it cancelled the future) will be responsible for cleaning any resources that it engages.
+     * 
+     * In Second Scenario we will call the AsyncHandler as Future.isCancelled will be false. As per java doc
+     * the Future cannot be cancelled once the task has been submitted. Also the response has already arrived so 
+     * we will make the AsyncHandler and let the client code decided how it wants to treat the response.
+     */
    
     @SuppressWarnings("unchecked")
     public CallbackFuture(AsyncResponse response, AsyncHandler handler, Executor exec) {
@@ -96,7 +114,17 @@ public class CallbackFuture extends Callback {
         }
         
         if (executor != null) {
-            executor.execute(task);
+        	if(task!=null && !task.isCancelled()){
+        		executor.execute(task);
+        		if(log.isDebugEnabled()){
+        			log.debug("Task submitted to Executor");
+        		}
+        	}else{
+        		System.out.println("Task is cancelled");
+        		if(log.isDebugEnabled()){
+        			log.info("Executor task was not sumbitted as Async Future task was cancelled by clients");
+        		}
+        	}
         }
         
         if (log.isDebugEnabled()) {

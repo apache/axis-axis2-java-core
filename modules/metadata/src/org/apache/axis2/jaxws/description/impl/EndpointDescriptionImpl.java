@@ -1338,11 +1338,6 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         return wsdlSOAPAddress;
     }
     
-    public QName getPortType(){
-    	String tns = getTargetNamespace();
-    	String portType = getName();
-    	return new QName(tns, portType);
-    }
     /**
      * Determine if the WSDL Extensibility element corresponds to the SOAP Address element.
      * @param exElement
