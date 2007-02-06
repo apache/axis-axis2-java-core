@@ -1027,11 +1027,11 @@ public class Options implements Externalizable {
         //           the class name
         //           the active or empty flag
         //           the data length, if appropriate
-        //           the data   
+        //           the data
 
         //---------------------------------------------------------
-        // in order to handle future changes to the message 
-        // context definition, be sure to maintain the 
+        // in order to handle future changes to the message
+        // context definition, be sure to maintain the
         // object level identifiers
         //---------------------------------------------------------
         // serialization version ID
@@ -1067,7 +1067,7 @@ public class Options implements Externalizable {
         // String messageId
         ObjectStateUtils.writeString(out, messageId, logCorrelationIDString + ".messageId");
 
-        // String object id 
+        // String object id
         ObjectStateUtils.writeString(out, logCorrelationIDString, logCorrelationIDString + ".logCorrelationIDString");
 
         //---------------------------------------------------------
@@ -1083,7 +1083,7 @@ public class Options implements Externalizable {
             ObjectStateUtils.writeObject(out, faultTo, logCorrelationIDString + ".faultTo");
         }
         catch (Exception e1) {
-            // note that the utility class will provide the trace for the 
+            // note that the utility class will provide the trace for the
             // exception so we won't have to
             // so just consume the exception for now
         }
@@ -1093,7 +1093,7 @@ public class Options implements Externalizable {
             ObjectStateUtils.writeObject(out, from, logCorrelationIDString + ".from");
         }
         catch (Exception e2) {
-            // note that the utility class will provide the trace for the 
+            // note that the utility class will provide the trace for the
             // exception so we won't have to
             // so just consume the exception for now
         }
@@ -1103,7 +1103,7 @@ public class Options implements Externalizable {
             ObjectStateUtils.writeObject(out, replyTo, logCorrelationIDString + ".replyTo");
         }
         catch (Exception e3) {
-            // note that the utility class will provide the trace for the 
+            // note that the utility class will provide the trace for the
             // exception so we won't have to
             // so just consume the exception for now
         }
@@ -1113,7 +1113,7 @@ public class Options implements Externalizable {
             ObjectStateUtils.writeObject(out, to, logCorrelationIDString + ".to");
         }
         catch (Exception e4) {
-            // note that the utility class will provide the trace for the 
+            // note that the utility class will provide the trace for the
             // exception so we won't have to
             // so just consume the exception for now
         }
@@ -1146,7 +1146,7 @@ public class Options implements Externalizable {
         // collections and lists
         //---------------------------------------------------------
 
-        // List relationships, which is an array of RelatesTo objects 
+        // List relationships, which is an array of RelatesTo objects
         ArrayList tmp = null;
 
         if (relationships != null) {
@@ -1177,7 +1177,7 @@ public class Options implements Externalizable {
             ObjectStateUtils.writeObject(out, parent, logCorrelationIDString + ".parent");
         }
         catch (Exception e5) {
-            // note that the utility class will provide the trace for the 
+            // note that the utility class will provide the trace for the
             // exception so we won't have to
             // so just consume the exception for now
         }
@@ -1248,7 +1248,7 @@ public class Options implements Externalizable {
         // String messageId
         messageId = ObjectStateUtils.readString(in, "Options.messageId");
 
-        // String object id 
+        // String object id
         logCorrelationIDString = ObjectStateUtils.readString(in, "Options.logCorrelationIDString");
 
         // trace point
@@ -1289,7 +1289,7 @@ public class Options implements Externalizable {
         // collections and lists
         //---------------------------------------------------------
 
-        // List relationships, which is an array of RelatesTo objects 
+        // List relationships, which is an array of RelatesTo objects
         ArrayList tmpAL1 = ObjectStateUtils.readArrayList(in, "Options.relationships");
         if (tmpAL1 != null) {
             relationships = new ArrayList(tmpAL1);
@@ -1347,7 +1347,7 @@ public class Options implements Externalizable {
      */
     public void activate(ConfigurationContext cc) {
         // see if there's any work to do
-        if (needsToBeReconciled == false) {
+        if (!needsToBeReconciled) {
             // return quick
             return;
         }
@@ -1355,7 +1355,7 @@ public class Options implements Externalizable {
         String logCorrelationIDString = getLogCorrelationIDString();
         // use the supplied configuration context
 
-        // get the axis configuration 
+        // get the axis configuration
         AxisConfiguration axisConfig = cc.getAxisConfiguration();
 
         // We previously saved metaTransportIn; restore it
@@ -1412,8 +1412,6 @@ public class Options implements Externalizable {
         if (metaListener != null) {
             // see if we can find an existing object
             String listenerClass = metaListener.getClassName();
-            TransportListener tmpListener = ObjectStateUtils.findTransportListener(axisConfig, listenerClass);
-
             log.trace(logCorrelationIDString + "activate():  TransportListener found for [" + listenerClass + "] ");
         } else {
             listener = null;
@@ -1572,8 +1570,8 @@ public class Options implements Externalizable {
         if ((this.properties != null) && (obj.getProperties() != null)) {
             if (!this.properties.equals(obj.getProperties())) {
                 // This is a strict test.
-                // Returns true if the given object is also a map 
-                // and the two maps represent the same mappings. 
+                // Returns true if the given object is also a map
+                // and the two maps represent the same mappings.
                 return false;
             }
         } else if ((this.properties == null) && (obj.getProperties() == null)) {

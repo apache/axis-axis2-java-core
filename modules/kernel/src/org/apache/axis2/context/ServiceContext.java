@@ -35,9 +35,7 @@ import javax.xml.namespace.QName;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -373,7 +371,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
         HashMap tmpHashMap = null;
 
-        if ((tmpMap != null) && (tmpMap.isEmpty()==false))
+        if ((tmpMap != null) && (!tmpMap.isEmpty()))
         {
             tmpHashMap = new HashMap(tmpMap);
         }
@@ -395,7 +393,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         else
         {
         	out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
-        	metaAxisService = new MetaDataEntry(axisService.getClass().getName(), axisService.getName().toString());
+        	metaAxisService = new MetaDataEntry(axisService.getClass().getName(), axisService.getName());
         	ObjectStateUtils.writeObject(out, metaAxisService, "ServiceContext.metaAxisService");
         }
         
@@ -500,7 +498,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
         // axisService is not usable until the meta data has been reconciled
 
-        String axisServMarker = ObjectStateUtils.readString(in, "ServiceContext.axisService");
+        ObjectStateUtils.readString(in, "ServiceContext.axisService");
         
         boolean metaAxisServiceIsActive = in.readBoolean();
 
@@ -551,7 +549,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
     public void activate(ConfigurationContext cc)
     {
         // see if there's any work to do
-        if (needsToBeReconciled == false)
+        if (!needsToBeReconciled)
         {
             // return quick
             return;
@@ -696,10 +694,10 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      * (data).
      * <P>
      * 
-     * @param srvctx  The object to compare with
      * @return TRUE if this object is equivalent with the specified object
      *              that is, key fields match
      *         FALSE, otherwise
+     * @param ctx
      */
     public boolean isEquivalent(ServiceContext ctx)
     {

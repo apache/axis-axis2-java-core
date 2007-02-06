@@ -279,9 +279,8 @@ public class OperationContext extends AbstractContext implements Externalizable 
             return null;
         }
 
-        MessageContext mc = (MessageContext) messageContexts.get(messageLabel); 
+        return (MessageContext) messageContexts.get(messageLabel);
 
-        return mc;
     }
 
     public HashMap getMessageContexts() {
@@ -365,7 +364,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         HashMap tmpHashMap = null;
 
-        if ((tmpMap != null) && (tmpMap.isEmpty()==false))
+        if ((tmpMap != null) && (!tmpMap.isEmpty()))
         {
             tmpHashMap = new HashMap(tmpMap);
         }
@@ -405,7 +404,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         else
         {
         	out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
-        	metaAxisService = new MetaDataEntry(axisService.getClass().getName(), axisService.getName().toString());
+        	metaAxisService = new MetaDataEntry(axisService.getClass().getName(), axisService.getName());
         	ObjectStateUtils.writeObject(out, metaAxisService, logCorrelationIDString+".metaAxisService");
         }
         
@@ -413,7 +412,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         //---------------------------------------------------------
         // parent 
         //---------------------------------------------------------
-        ServiceContext myParent = (ServiceContext) this.getServiceContext();
+        ServiceContext myParent = this.getServiceContext();
 
         ObjectStateUtils.writeObject(out, myParent, logCorrelationIDString+".parent ServiceContext"); 
 
@@ -434,7 +433,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // first deal with the original messageContexts table
         HashMap tmpMsgCtxMap = null;
 
-        if ((messageContexts != null) && (messageContexts.isEmpty()==false))
+        if ((messageContexts != null) && (!messageContexts.isEmpty()))
         {
             // create a table of the non-isolated message contexts
             workingSet = new HashMap();
@@ -456,7 +455,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
                 // check to see if this message context was isolated
                 if (isolatedMessageContexts != null)
                 {
-                    if (isolatedMessageContexts.isEmpty() == false)
+                    if (!isolatedMessageContexts.isEmpty())
                     {
                         // see if the message context was previously isolated
                         MessageContext valueIsolated = (MessageContext) isolatedMessageContexts.get(keyObj);
@@ -605,7 +604,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // axisOperation is not usable until the meta data has been reconciled
         axisOperation = null;
 
-        String axisOpMarker = ObjectStateUtils.readString(in, "OperationContext.axisOperation");
+        ObjectStateUtils.readString(in, "OperationContext.axisOperation");
 
         boolean metaAxisOperationIsActive = in.readBoolean();
 
@@ -621,7 +620,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         // axisService is not usable until the meta data has been reconciled
 
-        String axisServMarker = ObjectStateUtils.readString(in, "OperationContext.axisService");
+        ObjectStateUtils.readString(in, "OperationContext.axisService");
         
         boolean metaAxisServiceIsActive = in.readBoolean();
 
@@ -678,7 +677,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
     public void activate(ConfigurationContext cc)
     {
         // see if there's any work to do
-        if (needsToBeReconciled == false)
+        if (!needsToBeReconciled)
         {
             // return quick
             return;
@@ -779,7 +778,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // reseed the operation context map
 
         ServiceContext serv = getServiceContext();
-        ConfigurationContext activeCC = null;
+        ConfigurationContext activeCC ;
         if (serv != null)
         {
             activeCC = serv.getConfigurationContext();
@@ -807,7 +806,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // to call this operation context object so we don't
         // need to handle the metaMessagecontextMap table here
 
-        if ((workingSet != null) && (workingSet.isEmpty()==false))
+        if ((workingSet != null) && (!workingSet.isEmpty()))
         {
             Set keySet = workingSet.keySet();
             Iterator itKeys = keySet.iterator();
@@ -958,7 +957,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
     public void restoreMessageContext(MessageContext msg)
     {
         // see if the activation has been done
-        if (needsToBeReconciled == true)
+        if (needsToBeReconciled)
         {
             // nope, need to do the activation first
             log.trace(logCorrelationIDString+":restoreMessageContext(): *** WARNING : need to invoke activate() prior to restoring the MessageContext to the list.");
@@ -984,7 +983,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // the specified message context object matches any
         // of the metadata entries.  
 
-        if ((metaMessageContextMap != null) && (metaMessageContextMap.isEmpty() == false))
+        if ((metaMessageContextMap != null) && (!metaMessageContextMap.isEmpty()))
         {
             Iterator itMeta = metaMessageContextMap.keySet().iterator();
 
@@ -993,7 +992,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
                 String keyM = (String) itMeta.next();
 
                 MetaDataEntry valueM = (MetaDataEntry) metaMessageContextMap.get(keyM);
-                String valueM_ID = null;
+                String valueM_ID ;
 
                 if (valueM != null)
                 {
@@ -1023,7 +1022,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         }
         else 
         // see if we can put the msg directly in the messageContexts table
-        if ((messageContexts != null) && (messageContexts.isEmpty() == false))
+        if ((messageContexts != null) && (!messageContexts.isEmpty()))
         {
             Iterator itList = messageContexts.keySet().iterator();
 
@@ -1032,7 +1031,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
                 String key = (String) itList.next();
 
                 MessageContext value = (MessageContext) messageContexts.get(key);
-                String valueID = null;
+                String valueID ;
 
                 if (value != null)
                 {
@@ -1168,18 +1167,5 @@ public class OperationContext extends AbstractContext implements Externalizable 
     {
         return logCorrelationIDString;
     }
-
-
-    /**
-     * Trace a warning message, if needed, indicating that this 
-     * object needs to be activated before accessing certain fields.
-     * 
-     * @param methodname The method where the warning occurs
-     */
-    private void checkActivateWarning(String methodname)
-    {
-        if (needsToBeReconciled) {
-            log.warn(logCorrelationIDString+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
-        }
-    }
+    
 }

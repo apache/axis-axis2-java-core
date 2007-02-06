@@ -687,7 +687,7 @@ public class AxisService extends AxisDescription {
         return getEPRs(requestIP);
     }
 
-    private String[] getEPRs(String requestIP) throws AxisFault {
+    private String[] getEPRs(String requestIP) {
         AxisConfiguration axisConfig = getAxisConfiguration();
         ArrayList eprList = new ArrayList();
         if (enableAllTransports) {

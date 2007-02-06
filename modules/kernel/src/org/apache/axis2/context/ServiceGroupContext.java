@@ -31,12 +31,9 @@ import org.apache.commons.logging.LogFactory;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ServiceGroupContext extends AbstractContext implements Externalizable {
@@ -216,9 +213,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         }
 
         // a map allows a null key
-        ServiceContext sc = (ServiceContext) serviceContextMap.get(name);
-
-        return sc;
+        return (ServiceContext) serviceContextMap.get(name);
     }
 
 
@@ -228,7 +223,6 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * of service contexts for this service group
      * context.
      * 
-     * @param name The AxisService associated with the ServiceContext
      *
      * @return The ServiceContext associated with the AxisService
      *         or null, if none can be found
@@ -245,9 +239,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
             return null;
         }
 
-        ServiceContext sc = (ServiceContext) serviceContextMap.get(axisSrv.getName());
-
-        return sc;
+        return (ServiceContext) serviceContextMap.get(axisSrv.getName());
     }
 
     /**                         
@@ -323,7 +315,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
         HashMap tmpHashMap = null;
 
-        if ((tmpMap != null) && (tmpMap.isEmpty()==false))
+        if ((tmpMap != null) && (!tmpMap.isEmpty()))
         {
             tmpHashMap = new HashMap(tmpMap);
         }
@@ -436,7 +428,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         // axisServiceGroup is not usable until the meta data has been reconciled
         axisServiceGroup = null;
 
-        String axisServGrpMarker = ObjectStateUtils.readString(in, "ServiceGroupContext.axisServiceGroup");
+        ObjectStateUtils.readString(in, "ServiceGroupContext.axisServiceGroup");
         
         boolean metaAxisServiceGrpIsActive = in.readBoolean();
 
@@ -485,7 +477,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
     public void activate(ConfigurationContext cc)
     {
         // see if there's any work to do
-        if (needsToBeReconciled == false)
+        if (!needsToBeReconciled)
         {
             // return quick
             return;
