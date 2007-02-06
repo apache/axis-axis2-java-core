@@ -32,7 +32,12 @@ public class WrapperToolTest extends TestCase {
 			JAXBWrapperTool wrapper = new JAXBWrapperToolImpl();
 			
 			String jaxbClassName = "org.test.stock2.GetPrice";
-			Class jaxbClass = Class.forName(jaxbClassName, false, ClassLoader.getSystemClassLoader());
+            Class jaxbClass;
+            try {
+                jaxbClass = Class.forName(jaxbClassName, false, ClassLoader.getSystemClassLoader());
+            } catch (Exception e){
+                jaxbClass = Class.forName(jaxbClassName, false, this.getClass().getClassLoader());
+            }
 			ArrayList<String> childNames = new ArrayList<String>();
 			String childName = "symbol";
 			childNames.add(childName);
@@ -71,8 +76,13 @@ public class WrapperToolTest extends TestCase {
 			JAXBWrapperTool wrapper = new JAXBWrapperToolImpl();
 			
 			String jaxbClassName = "org.test.stock1.GetPrice";
-			Class jaxbClass = Class.forName(jaxbClassName, false, ClassLoader.getSystemClassLoader());
-			ArrayList<String> childNames = new ArrayList<String>();
+			Class jaxbClass;
+            try {
+                jaxbClass = Class.forName(jaxbClassName, false, ClassLoader.getSystemClassLoader());
+            } catch (Exception e){
+                jaxbClass = Class.forName(jaxbClassName, false, this.getClass().getClassLoader());
+            }
+            ArrayList<String> childNames = new ArrayList<String>();
 			String fund ="fund";
 			String fundName = new String("PRGFX");
 			String holding = "holdings.";
