@@ -220,10 +220,7 @@
    </resource>
 		</resources>
 	<unitTest>
-          <includes>
-                <include>**/*Test.class</include>
-            </includes>
-            	  <resources>
+      <resources>
 		<resource>
 		  <targetPath>../test-resources</targetPath>
 	      <directory>test-resources</directory>
