@@ -44,6 +44,10 @@ public class AbstractTest  extends TestCase {
         return isEqual;
     }
 
+    public void testMethod(){
+	    // dummy test method
+    }
+
     protected boolean assertArrayEqual(Object[] objectArray1, Object[] objectArray2) {
         boolean isEqual = false;
         if ((objectArray1 == null) || (objectArray2 == null)) {

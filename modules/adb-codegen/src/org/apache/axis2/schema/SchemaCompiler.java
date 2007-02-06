@@ -59,7 +59,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import com.sun.org.apache.xerces.internal.impl.dtd.XMLSimpleType;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
