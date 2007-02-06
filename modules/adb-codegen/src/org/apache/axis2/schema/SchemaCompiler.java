@@ -59,6 +59,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.sun.org.apache.xerces.internal.impl.dtd.XMLSimpleType;
+
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -1209,6 +1211,7 @@ public class SchemaCompiler {
 
             } else if (type instanceof XmlSchemaSimpleType) {
                 //Do the actual parent setting
+                //TODO handle the varios parent types here
                 metaInfHolder.setAsParent(baseMetaInfoHolder);
             }
 
@@ -1288,7 +1291,10 @@ public class SchemaCompiler {
                 }
             }
             //process restriction base type
-            processSimpleRestrictionBaseType(restriction.getBaseTypeName(), restriction.getBaseTypeName(), metaInfHolder);
+            processSimpleRestrictionBaseType(restriction.getBaseTypeName(),
+                    restriction.getBaseTypeName(),
+                    metaInfHolder,
+                    parentSchema);
             metaInfHolder.setSimple(true);
         }
     }
@@ -1323,8 +1329,10 @@ public class SchemaCompiler {
                         className, SchemaConstants.ELEMENT_TYPE);
             }
             metaInfHolder.setSimple(true);
+            // we have already process when it comes to this place
         } else if (processedTypemap.containsKey(extBaseType)) {
             //set the extension base class name
+
             XmlSchemaType type = getType(parentSchema, extBaseType);
             if (type instanceof XmlSchemaSimpleType) {
                 metaInfHolder.setSimple(true);
@@ -1341,8 +1349,8 @@ public class SchemaCompiler {
                     metaInfHolder.setExtensionClassName(className);
                     copyMetaInfoHierarchy(metaInfHolder, extBaseType, parentSchema);
                 }
-            }
 
+            }
         } else {
             metaInfHolder.setSimple(true);
         }
@@ -1360,23 +1368,37 @@ public class SchemaCompiler {
      * @param resBaseType
      * @param metaInfHolder
      */
-    public void processSimpleRestrictionBaseType(QName qName, QName resBaseType, BeanWriterMetaInfoHolder metaInfHolder) throws SchemaCompilationException {
+    public void processSimpleRestrictionBaseType(QName qName,
+                                                 QName resBaseType,
+                                                 BeanWriterMetaInfoHolder metaInfHolder,
+                                                 XmlSchema parentSchema) throws SchemaCompilationException {
 
         //find the class name
         String className = findClassName(resBaseType, false);
 
         //this means the schema type actually returns a different QName
-        if (changedTypeMap.containsKey(resBaseType)) {
+        if (baseSchemaTypeMap.containsKey(resBaseType)){
+           if (changedTypeMap.containsKey(resBaseType)) {
             metaInfHolder.registerMapping(qName,
                     (QName) changedTypeMap.get(resBaseType),
                     className, SchemaConstants.ELEMENT_TYPE);
-        } else {
-            metaInfHolder.registerMapping(qName,
-                    resBaseType,
-                    className, SchemaConstants.ELEMENT_TYPE);
+            } else {
+                metaInfHolder.registerMapping(qName,
+                        resBaseType,
+                        className, SchemaConstants.ELEMENT_TYPE);
+            }
+        } else if (processedTypemap.containsKey(resBaseType)){
+            //this is not a standared type
+            // so the parent class must extend it
+            metaInfHolder.setSimple(true);
+            metaInfHolder.setRestriction(true);
+            metaInfHolder.setRestrictionClassName(className);
+            copyMetaInfoHierarchy(metaInfHolder, resBaseType, parentSchema);
         }
 
         metaInfHolder.setRestrictionBaseType(resBaseType);
+
+
     }
 
     /**
@@ -1491,24 +1513,24 @@ public class SchemaCompiler {
             if (att.getQName() != null) {
                 if (baseSchemaTypeMap.containsKey(schemaTypeName)) {
 
-                        metainf.registerMapping(att.getQName(), schemaTypeName,
-                                baseSchemaTypeMap.get(schemaTypeName).toString(), SchemaConstants.ATTRIBUTE_TYPE);
+                    metainf.registerMapping(att.getQName(), schemaTypeName,
+                            baseSchemaTypeMap.get(schemaTypeName).toString(), SchemaConstants.ATTRIBUTE_TYPE);
 
-                        // add optional attribute status if set
-                        String use = att.getUse().getValue();
-                        if (use.indexOf("optional") != -1) {
-                            metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
-                        }
+                    // add optional attribute status if set
+                    String use = att.getUse().getValue();
+                    if (use.indexOf("optional") != -1) {
+                        metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                    }
                     // after
                 } else {
                     XmlSchemaType type = getType(parentSchema, schemaTypeName);
                     if (type instanceof XmlSchemaSimpleType) {
                         XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType) type;
                         // we only support simple type restriction
-                        if (simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction){
+                        if (simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
                             if (!isAlreadyProcessed(schemaTypeName)) {
-                            //process simple type
-                            processSimpleSchemaType(simpleType, null, parentSchema);
+                                //process simple type
+                                processSimpleSchemaType(simpleType, null, parentSchema);
                             }
                             metainf.registerMapping(att.getQName(),
                                     schemaTypeName,
@@ -1925,38 +1947,47 @@ public class SchemaCompiler {
 
                 QName baseTypeName = restriction.getBaseTypeName();
                 //check whether the base type is one of the base schema types
+                QName qName = simpleType.getQName();
+                if (qName == null) {
+                    qName = (QName) simpleType.getMetaInfoMap().get(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME);
+                }
                 if (baseSchemaTypeMap.containsKey(baseTypeName)) {
                     //process restriction base type
-                    QName qName = simpleType.getQName();
-                    if (qName == null) {
-                        qName = (QName) simpleType.getMetaInfoMap().get(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME);
-                    }
-                    processSimpleRestrictionBaseType(qName, restriction.getBaseTypeName(), metaInfHolder);
 
+                    processSimpleRestrictionBaseType(qName, restriction.getBaseTypeName(), metaInfHolder, parentSchema);
                     //process facets
                     processFacets(restriction, metaInfHolder, parentSchema);
                 } else {
                     //recurse
-                    if (restriction.getBaseType() != null) {
-                        processSimpleSchemaType(restriction.getBaseType(), null, parentSchema);
+                    // this must be a xmlschema bug
+                    // it should return the schematype for restriction.getBaseType():
+                    XmlSchemaType restrictionBaseType = getType(parentSchema, baseTypeName);
+                    if (restrictionBaseType instanceof XmlSchemaSimpleType) {
+                        if ((restrictionBaseType != null) && (!isAlreadyProcessed(baseTypeName))) {
+                            processSimpleSchemaType((XmlSchemaSimpleType) restrictionBaseType, null, parentSchema);
+                        }
+                        // process restriction
+                        processSimpleRestrictionBaseType(qName, restriction.getBaseTypeName(), metaInfHolder, parentSchema);
                     }
+
+
                 }
             } else if (content instanceof XmlSchemaSimpleTypeUnion) {
                 XmlSchemaSimpleTypeUnion simpleTypeUnion = (XmlSchemaSimpleTypeUnion) content;
                 QName[] qnames = simpleTypeUnion.getMemberTypesQNames();
                 QName qname;
-                for (int i = 0; i< qnames.length; i++){
+                for (int i = 0; i < qnames.length; i++) {
                     qname = qnames[i];
-                    if (baseSchemaTypeMap.containsKey(qname)){
+                    if (baseSchemaTypeMap.containsKey(qname)) {
                         metaInfHolder.addMemberType(qname, (String) baseSchemaTypeMap.get(qname));
                     } else {
-                        XmlSchemaType type = getType(parentSchema,qname);
-                        if (type instanceof XmlSchemaSimpleType){
+                        XmlSchemaType type = getType(parentSchema, qname);
+                        if (type instanceof XmlSchemaSimpleType) {
                             XmlSchemaSimpleType memberSimpleType = (XmlSchemaSimpleType) type;
-                            if (!isAlreadyProcessed(qname)){
-                                processSimpleSchemaType(memberSimpleType,null, parentSchema);
+                            if (!isAlreadyProcessed(qname)) {
+                                processSimpleSchemaType(memberSimpleType, null, parentSchema);
                             }
-                            metaInfHolder.addMemberType(qname,(String) processedTypemap.get(qname));
+                            metaInfHolder.addMemberType(qname, (String) processedTypemap.get(qname));
                         } else {
                             throw new SchemaCompilationException("Unions can not have complex types as a member type");
                         }

@@ -679,7 +679,10 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "occuranceChanged", "yes", property);
             }
 
-            if (metainf.isRestriction() && missingQNames.contains(name)) {
+            // what happed if this contain attributes
+            // TODO: check the meaning of this removed property
+
+            if (metainf.isRestriction() && missingQNames.contains(name) && !metainf.isSimple()) {
                 //XSLTUtils.addAttribute(model, "restricted", "yes", property);
                 XSLTUtils.addAttribute(model, "removed", "yes", property);
             }

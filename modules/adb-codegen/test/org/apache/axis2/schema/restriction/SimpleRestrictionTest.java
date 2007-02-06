@@ -16,10 +16,46 @@
 package org.apache.axis2.schema.restriction;
 
 import junit.framework.TestCase;
+import org.tempuri.SimpleRestriction;
+import org.tempuri.BusinessObjectDocumentType;
+import org.tempuri.NormalizedStringType;
+import org.apache.axis2.databinding.types.NormalizedString;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.util.StAXUtils;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
 
 public class SimpleRestrictionTest extends TestCase {
-    public void testSimpleRestriction(){
-        
+
+    public void testSimpleRestriction() {
+        SimpleRestriction simpleRestriction = new SimpleRestriction();
+        BusinessObjectDocumentType businessObjectDocumentType = new BusinessObjectDocumentType();
+        simpleRestriction.setSimpleRestriction(businessObjectDocumentType);
+        NormalizedStringType releaseID = new NormalizedStringType();
+        NormalizedStringType versionID = new NormalizedStringType();
+        businessObjectDocumentType.setReleaseID(releaseID);
+        businessObjectDocumentType.setVersionID(versionID);
+        releaseID.setNewNormalizedStringType(new NormalizedString("releaseID"));
+        versionID.setNewNormalizedStringType(new NormalizedString("versionID"));
+
+        OMElement omElement = simpleRestriction.getOMElement(SimpleRestriction.MY_QNAME,
+                OMAbstractFactory.getOMFactory());
+
+        try {
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM Element ==>" + omElement);
+            XMLStreamReader xmlReader =  StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            SimpleRestriction newSimpleRestriction = SimpleRestriction.Factory.parse(xmlReader);
+            assertEquals(newSimpleRestriction.getSimpleRestriction().getVersionID().toString(),"versionID");
+            assertEquals(newSimpleRestriction.getSimpleRestriction().getReleaseID().toString(),"releaseID");
+        } catch (Exception e) {
+            assertFalse(true);
+        }
+
+
     }
 
 }

@@ -1,0 +1,19 @@
+<xsd:schema elementFormDefault="qualified"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:tns="http://tempuri.org/"
+            targetNamespace="http://tempuri.org/">
+
+    <xsd:simpleType name="NewNormalizedStringType">
+        <xsd:restriction base="xsd:normalizedString"/>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="NormalizedStringType">
+        <xsd:restriction base="tns:NewNormalizedStringType"/>
+    </xsd:simpleType>
+
+    <xsd:complexType name="BusinessObjectDocumentType">
+        <xsd:attribute name="releaseID" type="tns:NormalizedStringType" use="required"></xsd:attribute>
+        <xsd:attribute name="versionID" type="tns:NormalizedStringType" use="optional"></xsd:attribute>
+    </xsd:complexType>
+    <xsd:element name="SimpleRestriction" type="tns:BusinessObjectDocumentType"/>
+</xsd:schema>
