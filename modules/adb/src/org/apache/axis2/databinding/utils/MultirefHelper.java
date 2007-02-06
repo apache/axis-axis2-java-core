@@ -118,7 +118,7 @@ public class MultirefHelper {
                 Object valObj = SimpleTypeMapper.getSimpleTypeObject(javatype, val);
                 objectmap.put(id, valObj);
                 return valObj;
-            } else if (SimpleTypeMapper.isArrayList(javatype)) {
+            } else if (SimpleTypeMapper.isCollection(javatype)) {
                 Object valobj = SimpleTypeMapper.getArrayList(val);
                 objectmap.put(id, valobj);
                 return valobj;

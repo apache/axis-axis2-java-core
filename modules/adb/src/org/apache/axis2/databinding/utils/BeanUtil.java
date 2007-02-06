@@ -60,7 +60,10 @@ public class BeanUtil {
         try {
             JamServiceFactory factory = JamServiceFactory.getInstance();
             JamServiceParams jam_service_parms = factory.createServiceParams();
-            jam_service_parms.addClassLoader(beanObject.getClass().getClassLoader());
+            ClassLoader cl = beanObject.getClass().getClassLoader();
+            if (cl == null)
+                cl = ClassLoader.getSystemClassLoader();
+            jam_service_parms.addClassLoader(cl);
 //            beanObject.getClass().isArray()
 
             jam_service_parms.includeClass(beanObject.getClass().getName());
@@ -148,16 +151,16 @@ public class BeanUtil {
                             }
                         }
                     }
-                } else if (SimpleTypeMapper.isArrayList(ptype)) {
+                } else if (SimpleTypeMapper.isCollection(ptype)) {
                     Object value = propDesc.getReadMethod().invoke(beanObject,
                             null);
-                    ArrayList objList = (ArrayList) value;
+                    Collection objList = (Collection) value;
                     if (objList != null && objList.size() > 0) {
                         //this was given error , when the array.size = 0
                         // and if the array contain simple type , then the ADBPullParser asked
                         // PullParser from That simpel type
-                        for (int j = 0; j < objList.size(); j++) {
-                            Object o = objList.get(j);
+                        for (Iterator j = objList.iterator(); j.hasNext();) {
+                            Object o = j.next();
                             if (SimpleTypeMapper.isSimpleType(o)) {
                                 if (elemntNameSpace != null) {
                                     object.add(new QName(elemntNameSpace.getNamespaceURI(),
@@ -283,7 +286,7 @@ public class BeanUtil {
                         Object partObj;
                         if (SimpleTypeMapper.isSimpleType(parameters)) {
                             partObj = SimpleTypeMapper.getSimpleTypeObject(parameters, parts);
-                        } else if (SimpleTypeMapper.isArrayList(parameters)) {
+                        } else if (SimpleTypeMapper.isCollection(parameters)) {
                             partObj = SimpleTypeMapper.getArrayList((OMElement)
                                     parts.getParent(), prty.getName());
                         } else if (parameters.isArray()) {
@@ -545,7 +548,7 @@ public class BeanUtil {
                     } else {
                         return SimpleTypeMapper.getSimpleTypeObject(classType, omElement);
                     }
-                } else if (SimpleTypeMapper.isArrayList(classType)) {
+                } else if (SimpleTypeMapper.isCollection(classType)) {
                     return SimpleTypeMapper.getArrayList(omElement);
                 } else {
                     return BeanUtil.deserialize(classType, omElement, objectSupplier, null);
@@ -649,8 +652,7 @@ public class BeanUtil {
     /**
      * @deprecated Please use getUniquePrefix
      */
-    public static String getUniquePrifix
-            () {
+    public static String getUniquePrifix() {
         return "ns" + nsCount++;
     }
 
@@ -659,8 +661,7 @@ public class BeanUtil {
      *
      * @return unique prefix
      */
-    public static String getUniquePrefix
-            () {
+    public static String getUniquePrefix() {
         return "ns" + nsCount++;
     }
 
@@ -672,9 +673,7 @@ public class BeanUtil {
      * @param wrongName
      * @return the right name, using english as the locale for case conversion
      */
-    private static String getCorrectName
-            (String
-                    wrongName) {
+    private static String getCorrectName(String  wrongName) {
         if (wrongName.length() > 1) {
             return wrongName.substring(0, 1).toLowerCase(Locale.ENGLISH)
                     + wrongName.substring(1, wrongName.length());
