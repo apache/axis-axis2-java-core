@@ -257,5 +257,20 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
     	else 
     		return false;
     }
-    
+
+    public String toString() {
+        final String newline = "\n";
+        final String sameline = "; ";
+        StringBuffer string = new StringBuffer();
+
+        string.append(super.toString());
+        string.append(newline);
+        string.append("Name: " + getName());
+        string.append(newline);
+        string.append("Fault Bean: " + getFaultBean());
+        string.append(newline);
+        string.append("Exception class: " + getExceptionClassName());
+        
+        return string.toString();
+    }
 }

@@ -147,10 +147,6 @@ class DescriptionUtils {
             int startOfClassIndex = endOfPackageIndex + 1;
             returnName = fqName.substring(startOfClassIndex);
         }
-        else {
-            // TODO: RAS and NLS
-            throw new UnsupportedOperationException("Java class is null");
-        }
         return returnName;
     }
     
@@ -169,10 +165,6 @@ class DescriptionUtils {
             int endOfPackageIndex = fqName.lastIndexOf('.');
             int startOfClassIndex = endOfPackageIndex + 1;
             returnName = fqName.substring(startOfClassIndex);
-        }
-        else {
-            // TODO: RAS and NLS
-            throw new UnsupportedOperationException("Java class is null");
         }
         return returnName;
     }
@@ -193,10 +185,6 @@ class DescriptionUtils {
                 returnPackage = fqName.substring(0, endOfPackageIndex);
             }
         }
-        else {
-            // TODO: RAS and NLS
-            throw new UnsupportedOperationException("Java class is null");
-        }
         return returnPackage;
     }
     
@@ -214,10 +202,6 @@ class DescriptionUtils {
             if (endOfPackageIndex >= 0) {
                 returnPackage = fqName.substring(0, endOfPackageIndex);
             }
-        }
-        else {
-            // TODO: RAS and NLS
-            throw new UnsupportedOperationException("Java class is null");
         }
         return returnPackage;
     }
@@ -339,6 +323,9 @@ class DescriptionUtils {
     static final String JAXWS_SUBPACKAGE = "jaxws";
     static String determineActualAritfactPackage(String wrapperClassName) {
         String returnWrapperClassName = null;
+        if (wrapperClassName == null) {
+            return returnWrapperClassName;
+        }
     
         // Try to load the class that was passed in
         try {

@@ -45,7 +45,6 @@ import org.apache.commons.logging.LogFactory;
 public class JavaBeanDispatcher extends JavaDispatcher {
 
     private static final Log log = LogFactory.getLog(JavaBeanDispatcher.class);
-    private static final boolean debug = log.isDebugEnabled();
     
     private EndpointDescription endpointDesc = null;
     
@@ -58,7 +57,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
      * @see org.apache.axis2.jaxws.server.EndpointDispatcher#invoke(org.apache.axis2.jaxws.core.MessageContext)
      */
     public MessageContext invoke(MessageContext mc) throws Exception {
-        if (debug) {
+        if (log.isDebugEnabled()) {
             log.debug("Preparing to invoke service endpoint implementation " +
                     "class: " + serviceImplClass.getName());
         }
@@ -71,6 +70,11 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         MethodMarshaller methodMarshaller = getMethodMarshaller(mc.getMessage().getProtocol(), mc.getOperationDescription());
         Object[] methodInputParams = methodMarshaller.demarshalRequest(mc.getMessage(), mc.getOperationDescription());
         Method target = getJavaMethod(mc, serviceImplClass);
+        if (log.isDebugEnabled()) {
+            // At this point, the OpDesc includes everything we know, including the actual method
+            // on the service impl we will delegate to; it was set by getJavaMethod(...) above.
+            log.debug("JavaBeanDispatcher about to invoke using OperationDesc: " + operationDesc.toString());
+        }
 
         //At this point, we have the method that is going to be invoked and
         //the parameter data to invoke it with, so we use the instance and 
@@ -84,7 +88,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         } catch (Exception e) {
         	faultThrown = true;
             fault = e;
-            if (debug) {
+            if (log.isDebugEnabled()) {
                 log.debug("Exception invoking a method of " + 
                         serviceImplClass.toString() + " of instance " +
                         serviceInstance.toString());

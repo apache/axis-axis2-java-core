@@ -56,6 +56,8 @@ import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.OneWayAnnot;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @see ../OperationDescription
@@ -80,7 +82,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     private MethodDescriptionComposite methodComposite;
     private ParameterDescription[] parameterDescriptions;
     private FaultDescription[] faultDescriptions;
-    
+    private static final Log log = LogFactory.getLog(OperationDescriptionImpl.class);
     // ===========================================
     // ANNOTATION related information
     // ===========================================
@@ -445,6 +447,9 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     private static String determineOperationName(Method javaMethod) {
         
         String operationName = null;
+        if (javaMethod == null) {
+            return null;
+        }
         
         WebMethod wmAnnotation = javaMethod.getAnnotation(WebMethod.class);
         // Per JSR-181 MR Sec 4.2 "Annotation: javax.jws.WebMethod" pg 17,
@@ -465,6 +470,9 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     private static String determineOperationName(MethodDescriptionComposite mdc) {
         String operationName = null;
         
+        if (mdc == null) {
+            return null;
+        }
         WebMethod wmAnnotation = mdc.getWebMethodAnnot();
         if (wmAnnotation != null && !DescriptionUtils.isEmpty(wmAnnotation.operationName())) {
             operationName = wmAnnotation.operationName();
@@ -482,10 +490,12 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     }
     public String getAnnoWebMethodOperationName() {
         if (webMethodOperationName == null) {
-            if (!isDBC())
+            if (!isDBC() && seiMethod != null) {
                 webMethodOperationName = determineOperationName(seiMethod);
-            else
-                webMethodOperationName = determineOperationName(methodComposite);       
+            }
+            else if (methodComposite != null) {
+                webMethodOperationName = determineOperationName(methodComposite);
+            }
         }
         return webMethodOperationName;
     }
@@ -533,11 +543,15 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     // ==========================================
     public RequestWrapper getAnnoRequestWrapper() {
         if (requestWrapperAnnotation == null) {
-            if (!isDBC()) {
+            if (!isDBC() && seiMethod != null) {
                 requestWrapperAnnotation = seiMethod.getAnnotation(RequestWrapper.class); 
-            } else {
+            } else if (isDBC() && methodComposite != null){
                 requestWrapperAnnotation = methodComposite.getRequestWrapperAnnot(); 
-            }       
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Unable to get RequestWrapper annotation");
+                }
+            }
         }
         return requestWrapperAnnotation;
     }
@@ -618,16 +632,20 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                 // the JAX-WS spec, BUT Conformance(Using javax.xml.ws.RequestWrapper) in Sec 2.3.1.2 on p. 13
                 // says the entire annotation "...MAY be omitted if all its properties would have default vaules."
                 // implying there IS some sort of default.  We'll try this for now:
-                if (isDBC()) {
+                if (isDBC() && methodComposite != null) {
                 	String declaringClazz = this.methodComposite.getDeclaringClass();
                 	String packageName = declaringClazz.substring(0, declaringClazz.lastIndexOf("."));
                     requestWrapperClassName = packageName + "." + DescriptionUtils.javaMethodtoClassName(methodComposite.getMethodName());
                 
-                } else {
+                } else if (!isDBC() && seiMethod != null) {
                     Class clazz = seiMethod.getDeclaringClass();
                     String packageName = clazz.getPackage().getName();
                     String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
                     requestWrapperClassName = packageName + "." + className;
+                } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Unable to get RequestWrapper classname");
+                    }
                 }
                 requestWrapperClassName = DescriptionUtils.determineActualAritfactPackage(requestWrapperClassName);
             }
@@ -640,10 +658,14 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     // ===========================================
     public ResponseWrapper getAnnoResponseWrapper() {
         if (responseWrapperAnnotation == null) {
-            if (!isDBC()) {
+            if (!isDBC() && seiMethod != null) {
                 responseWrapperAnnotation = seiMethod.getAnnotation(ResponseWrapper.class);
-            } else {
+            } else if (isDBC() && methodComposite != null){
                 responseWrapperAnnotation = methodComposite.getResponseWrapperAnnot();              
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Unable to get ResponseWrapper annotation");
+                }
             }
         }
         return responseWrapperAnnotation;
@@ -724,17 +746,22 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                 // the JAX-WS spec, BUT Conformance(Using javax.xml.ws.ResponseWrapper) in Sec 2.3.1.2 on p. 13
                 // says the entire annotation "...MAY be omitted if all its properties would have default vaules."
                 // implying there IS some sort of default.  We'll try this for now:
-                if (!isDBC()) {
+                if (!isDBC() && seiMethod != null) {
                     Class clazz = seiMethod.getDeclaringClass();
                     String packageName = clazz.getPackage().getName();
                     String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
                     responseWrapperClassName = packageName + "." + className + "Response";
-                } else {
+                } else if (methodComposite != null) {
                 	//JAXWS Spec is not clear on what default should be added. We think its the endpoint impls package + OperationName + Response.
                 	//In situation where wsGen uses sei's package to store jaxb bean.
                 	String declaringClazz = methodComposite.getDeclaringClass();
                 	String packageName = declaringClazz.substring(0, declaringClazz.lastIndexOf("."));
                     responseWrapperClassName = packageName + "." + DescriptionUtils.javaMethodtoClassName(methodComposite.getMethodName()) + "Response";
+                }
+                else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Unable to get ResponseWrapper annotation class name");
+                    }
                 }
                 responseWrapperClassName = DescriptionUtils.determineActualAritfactPackage(responseWrapperClassName);
             }
@@ -877,12 +904,15 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     // ===========================================
     public WebResult getAnnoWebResult() {
         if (webResultAnnotation == null) {
-            if (!isDBC()) {
+            if (!isDBC() && seiMethod != null) {
                 webResultAnnotation = seiMethod.getAnnotation(WebResult.class);
-            } else {
+            } else if (methodComposite != null){
                 webResultAnnotation = methodComposite.getWebResultAnnot();
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Unable to get WebResult annotation");
+                }
             }
-            
         }
         return webResultAnnotation;
     }
@@ -894,14 +924,18 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     public boolean isOperationReturningResult() {
         boolean isResult = false;
         if (!isAnnoOneWay()) {
-            if (!isDBC()) {
+            if (!isDBC() && seiMethod != null) {
                 if (seiMethod.getReturnType() != Void.TYPE) {
                     isResult = true;
                 }
-            } else {
+            } else if (methodComposite != null){
                 if (!DescriptionUtils.isEmpty(methodComposite.getReturnType()) &&
                         !methodComposite.getReturnType().equals("void"))
                     isResult = true;
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("No class to determine if result is returned");
+                }
             }
         } 
         return isResult;
@@ -1010,10 +1044,14 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         // TODO: VALIDATION: Only style of DOCUMENT allowed on Method annotation; remember to check the Type's style setting also
         //       JSR-181 Sec 4.7 p. 28
         if (soapBindingAnnotation == null) {
-            if (!isDBC()) {
+            if (!isDBC() && seiMethod != null) {
                 soapBindingAnnotation = seiMethod.getAnnotation(SOAPBinding.class);
-            } else {
+            } else if (isDBC() && methodComposite != null){
                 soapBindingAnnotation = methodComposite.getSoapBindingAnnot();
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Unable to get SOAP Binding annotation");
+                }
             }
         }
         return soapBindingAnnotation;
@@ -1078,12 +1116,17 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         //      it will always be null, should consider relying on 'isOneWay'
         
         if (onewayAnnotation == null) {         
-            if (isDBC()) {
+            if (isDBC() && methodComposite != null) {
                 if (methodComposite.isOneWay()) {
                     onewayAnnotation = OneWayAnnot.createOneWayAnnotImpl();
                 }
-            } else
+            } else if (!isDBC() && seiMethod != null) {
                 onewayAnnotation = seiMethod.getAnnotation(Oneway.class);
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Unable to get OneWay annotation");
+                }
+            }
         }
         return onewayAnnotation;
     }
@@ -1118,14 +1161,20 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
      * @see org.apache.axis2.jaxws.description.OperationDescription#getResultType()
      */
     public Class getResultType() {
-
-        if (!isDBC()) {
+        Class returnClass = null;
+        if (!isDBC() && getSEIMethod() != null) {
             Method seiMethod = this.getSEIMethod();
-            return seiMethod.getReturnType();           
+            returnClass = seiMethod.getReturnType();           
         } 
-        else {
-            return methodComposite.getReturnTypeClass();
+        else if (methodComposite != null) {
+            returnClass = methodComposite.getReturnTypeClass();
         }
+        else {
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to get result type from null class");
+            }
+        }
+        return returnClass;
     }
 
     /* (non-Javadoc)
@@ -1137,6 +1186,9 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         //       But we shouldn't get an async OpDesc on the service since getDispatchableOperation(QN) removes them.
         
        Class returnType = getResultType();
+       if (returnType == null) {
+           return null;
+       }
        if(isJAXWSAsyncClientMethod()){
            //pooling implementation
            if(Response.class == returnType){
@@ -1239,6 +1291,16 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         return answer;
     }
 
+    /**
+     * Return the Service Implementation method for this operation IFF it has been set by
+     * a previous call to getMethodFromServiceImpl(Class serviceImplClass).  Otherwise
+     * a null is returned.
+     * @return
+     */
+    private Method getMethodFromServiceImpl() {
+        return serviceImplMethod;
+        
+    }
     public Method getMethodFromServiceImpl(Class serviceImpl) {
         
         // TODO: This doesn't support overloaded methods in the service impl  This is
@@ -1320,5 +1382,88 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     		type = pd.getParameterActualType().getName();
     	}
     	return type;
+    }
+    
+    public String toString() {
+        final String newline = "\n";
+        final String sameline = "; ";
+        StringBuffer string = new StringBuffer();
+
+        string.append(super.toString());
+        string.append(newline);
+        string.append("Name: " + getName());
+        string.append(sameline);
+        string.append("Operation Name: " + getOperationName());
+        string.append(sameline);
+        string.append("Action: " + getAction());
+        //
+        string.append(newline);
+        string.append("Operation excluded: " + (isExcluded() == true));
+        string.append(sameline);
+        string.append("Is oneway: " + (isOneWay() == true));
+        string.append(sameline);
+        string.append("Is returning result: " + (isOperationReturningResult() == true));
+        string.append(sameline);
+        string.append("Is result header: " + (isResultHeader() == true));
+        string.append(sameline);
+        string.append("Is JAXWS Client Async method: " + (isJAXWSAsyncClientMethod() == true));
+        //
+        string.append(newline);
+        string.append("SOAP Style: " + getSoapBindingStyle());
+        string.append(sameline);
+        string.append("SOAP Use: " + getSoapBindingUse());
+        string.append(sameline);
+        string.append("SOAP Paramater Style: " + getSoapBindingParameterStyle());
+        //
+        string.append(newline);
+        string.append("Result name: " + getResultName());
+        string.append(sameline);
+        string.append("Result part name: " + getResultPartName());
+        string.append(sameline);
+        string.append("Result type: " + getResultType());
+        string.append(sameline);
+        string.append("Result actual type: " + getResultActualType());
+        //
+        string.append(newline);
+        string.append("Request Wrapper class: " + getRequestWrapperClassName());
+        string.append(sameline);
+        string.append("Response Wrapper class: " + getResponseWrapperClassName());
+        //
+        string.append(newline);
+        string.append("Java method name: " + getJavaMethodName());
+        string.append(newline);
+        string.append("Java paramaters: " + getJavaParameters());
+        string.append(newline);
+        string.append("Service Implementation method: " + getMethodFromServiceImpl());
+        string.append(newline);
+        string.append("Axis Operation: " + getAxisOperation());
+
+        string.append(newline);
+        ParameterDescription[] paramDescs = getParameterDescriptions();
+        if (paramDescs != null && paramDescs.length > 0) {
+            string.append("Number of Parameter Descriptions: " + paramDescs.length);
+            for (ParameterDescription paramDesc : paramDescs) {
+                string.append(newline);
+                string.append("Parameter Description: " + paramDesc.toString());
+            }
+        }
+        else {
+            string.append("No Paramater Descriptions");
+        }
+
+        string.append(newline);
+        FaultDescription[] faultDescs = getFaultDescriptions();
+        if (faultDescs != null && faultDescs.length > 0) {
+            string.append("Number of Fault Descriptions: " + faultDescs.length);
+            for (FaultDescription faultDesc : faultDescs) {
+                string.append(newline);
+                string.append("Fault Description: " + faultDesc.toString());
+            }
+        }
+        else {
+            string.append("No Fault Descriptions");
+        }
+
+        return string.toString();
     }
 }

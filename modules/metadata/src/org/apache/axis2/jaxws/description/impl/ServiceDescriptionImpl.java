@@ -490,6 +490,10 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         return wsdlURL;
     }
 
+    /**
+     * TODO: This method should be replaced with specific methods for getWSDLGenerated... similar
+     * to how getWsdlWrapper should be replaced.
+     */
     public WSDLWrapper getGeneratedWsdlWrapper() {
     	return this.generatedWsdlWrapper;
     }
@@ -955,13 +959,32 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 	}
 
     public boolean isWSDLSpecified() {
-        return getWSDLWrapper().getDefinition() != null;
+        boolean wsdlSpecified = false;
+        if (getWSDLWrapper() != null) {
+            wsdlSpecified = (getWSDLWrapper().getDefinition() != null);
+        }
+        return wsdlSpecified;
     }
 
+    /**
+     * Returns the WSDL definiton as specified in the metadata.  Note that this
+     * WSDL may not be complete.
+     */
     public Definition getWSDLDefinition() {
         Definition defn = null;
         if (getWSDLWrapper() != null) {
             defn = getWSDLWrapper().getDefinition();
+        }
+        return defn;
+    }
+    /**
+     * Returns the WSDL definiton as created by calling the WSDL generator.  This will be null
+     * unless the WSDL definition provided by the metadata is incomplete 
+     */
+    public Definition getWSDLGeneratedDefinition() {
+        Definition defn = null;
+        if (getGeneratedWsdlWrapper() != null) {
+            defn = getGeneratedWsdlWrapper().getDefinition();
         }
         return defn;
     }
@@ -1050,4 +1073,66 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         return portsUsingAddress;
     }
     
+    /**
+     * Return a string representing this Description object and all the objects
+     * it contains.
+     */
+    public String toString() {
+        final String newline = "\n";
+        final String sameline = "; ";
+        // This produces a TREMENDOUS amount of output if we have the WSDL Definition objects 
+        // do a toString on themselves.
+        boolean dumpWSDLContents = false;
+        StringBuffer string = new StringBuffer();
+        
+        // Basic information
+        string.append(super.toString());
+        string.append(newline);
+        string.append("ServiceQName: " + getServiceQName());
+        // WSDL information
+        string.append(newline);
+        string.append("isWSDLSpecified: " + isWSDLSpecified());
+        string.append(sameline);
+        string.append("WSDL Location: " + getWSDLLocation());
+        string.append(newline);
+        if (dumpWSDLContents) {
+            string.append("WSDL Definition: " + getWSDLDefinition());
+            string.append(newline);
+            string.append("Generated WSDL Definition: " + getWSDLGeneratedDefinition());
+        }
+        else {
+            string.append("WSDL Definition available: " + (getWSDLDefinition() != null));
+            string.append(sameline);
+            string.append("Generated WSDL Definition available: " + (getWSDLGeneratedDefinition() != null));
+        }
+        // Ports
+        string.append(newline);
+        List<QName> ports = getPorts();
+        string.append("Number of ports: " + ports.size());
+        string.append(newline);
+        string.append("Port QNames: ");
+        for (QName port : ports) {
+            string.append(port + sameline);
+        }
+        // Axis Config information
+        string.append(newline);
+        string.append("ConfigurationContext: " + getAxisConfigContext());
+        // EndpointDescriptions
+        string.append(newline);
+        EndpointDescription[] endpointDescs = getEndpointDescriptions();
+        if (endpointDescs == null) {
+            string.append("EndpointDescription array is null");
+        }
+        else {
+            string.append("Number of EndpointDescrptions: " + endpointDescs.length);
+            string.append(newline);
+            for (EndpointDescription endpointDesc : endpointDescs) {
+                string.append(endpointDesc.toString());
+                string.append(newline);
+            }
+        }
+
+        return string.toString();
+        
+    }
 }

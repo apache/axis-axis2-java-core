@@ -747,5 +747,39 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
     	String tns = getTargetNamespace();
     	return new QName(tns, name);
     }
+    
+    public String toString() {
+        final String newline = "\n";
+        final String sameline = "; ";
+        StringBuffer string = new StringBuffer();
+
+        string.append(super.toString());
+        string.append(newline);
+        string.append("Name: " + getName());
+        string.append(sameline);
+        string.append("PortType: " + getPortType());
+        //
+        string.append(newline);
+        string.append("SOAP Style: " + getSoapBindingStyle());
+        string.append(sameline);
+        string.append("SOAP Use: " + getSoapBindingUse());
+        string.append(sameline);
+        string.append("SOAP Paramater Style: " + getSoapBindingParameterStyle());
+        //
+        string.append(newline);
+        OperationDescription[] operations = getOperations();
+        if (operations != null && operations.length > 0) {
+            string.append("Number of operations: " + operations.length);
+            for (OperationDescription operation : operations) {
+                string.append(newline);
+                string.append("Operation: " + operation.toString());
+            }
+        }
+        else {
+            string.append("OperationDescription array is null");
+        }
+
+        return string.toString();
+    }
 
 }

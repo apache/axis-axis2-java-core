@@ -56,14 +56,25 @@ public class DescriptionFactoryImpl {
 
     public static ServiceDescription createServiceDescription(URL wsdlURL,
             QName serviceQName, Class serviceClass) {
-        return new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
+        ServiceDescription serviceDesc = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("ServiceDescription created with WSDL URL: " + wsdlURL + "; QName: " + serviceQName + "; Class: " + serviceClass);
+            log.debug(serviceDesc.toString());
+        }
+        return serviceDesc;
     }
 
     // TODO: Taking an AxisService is only temporary; the AxisService should be
     // created when creating the ServiceDesc
     public static ServiceDescription createServiceDescriptionFromServiceImpl(
             Class serviceImplClass, AxisService axisService) {
-        return new ServiceDescriptionImpl(serviceImplClass, axisService);
+        ServiceDescription serviceDesc = new ServiceDescriptionImpl(serviceImplClass, axisService);
+        if (log.isDebugEnabled()) {
+            log.debug("ServiceDescription created with Class: " + serviceImplClass + "; AxisService: " + axisService);
+            log.debug(serviceDesc.toString());
+        }
+        return serviceDesc;
     }
 
     // TODO: Determine whether this method is necessary...we may want to always
@@ -84,6 +95,9 @@ public class DescriptionFactoryImpl {
                 ServiceDescriptionValidator validator = new ServiceDescriptionValidator(serviceDescription);
                 if (validator.validate()) {
                     serviceDescriptionList.add(serviceDescription);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Service Description created from DescriptionComposite: " + serviceDescription);
+                    }
                 }
                 else {
                 	
@@ -93,7 +107,7 @@ public class DescriptionFactoryImpl {
                     if (log.isDebugEnabled()) {
                         log.debug("Validation Phase 2 failure: " + msg);
                         log.debug("Failing composite: " + serviceImplComposite.toString());
-
+                        log.debug("Failing Service Description: " + serviceDescription.toString());
                     }
                 	
                     // TODO: Validate all service descriptions before failing
@@ -125,6 +139,9 @@ public class DescriptionFactoryImpl {
             ServiceDescription.UpdateType updateType) {
         EndpointDescription endpointDesc = 
             ((ServiceDescriptionImpl) serviceDescription).updateEndpointDescription(sei, portQName, updateType);
+        if (log.isDebugEnabled()) {
+            log.debug("EndpointDescription updated: " + endpointDesc);
+        }
         return endpointDesc;
     }
 
