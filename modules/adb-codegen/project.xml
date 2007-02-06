@@ -152,9 +152,6 @@
         <sourceDirectory>src</sourceDirectory>
         <unitTestSourceDirectory>test</unitTestSourceDirectory>
         <unitTest>
-            <excludes>
-		<exclude>**/*SimpleRestrictionTest.java</exclude>
-	    </excludes>
             <includes>
                 <include>**/*Test.java</include>
             </includes>

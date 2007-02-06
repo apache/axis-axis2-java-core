@@ -16,25 +16,22 @@
 package org.apache.axis2.schema.restriction;
 
 import junit.framework.TestCase;
-/*
-import org.tempuri.SimpleRestriction;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.types.NormalizedString;
 import org.tempuri.BusinessObjectDocumentType;
 import org.tempuri.NormalizedStringType;
-import org.apache.axis2.databinding.types.NormalizedString;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.util.StAXUtils;
+import org.tempuri.SimpleRestriction;
 
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
-*/
+
 
 public class SimpleRestrictionTest extends TestCase {
 
-    
     public void testSimpleRestriction() {
-        /*   
+
         SimpleRestriction simpleRestriction = new SimpleRestriction();
         BusinessObjectDocumentType businessObjectDocumentType = new BusinessObjectDocumentType();
         simpleRestriction.setSimpleRestriction(businessObjectDocumentType);
@@ -51,13 +48,13 @@ public class SimpleRestrictionTest extends TestCase {
         try {
             String omElementString = omElement.toStringWithConsume();
             System.out.println("OM Element ==>" + omElement);
-            XMLStreamReader xmlReader =  StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
             SimpleRestriction newSimpleRestriction = SimpleRestriction.Factory.parse(xmlReader);
-            assertEquals(newSimpleRestriction.getSimpleRestriction().getVersionID().toString(),"versionID");
-            assertEquals(newSimpleRestriction.getSimpleRestriction().getReleaseID().toString(),"releaseID");
+            assertEquals(newSimpleRestriction.getSimpleRestriction().getVersionID().toString(), "versionID");
+            assertEquals(newSimpleRestriction.getSimpleRestriction().getReleaseID().toString(), "releaseID");
         } catch (Exception e) {
             assertFalse(true);
-        }*/
+        }
 
 
     }

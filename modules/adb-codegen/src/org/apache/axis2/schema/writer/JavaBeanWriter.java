@@ -582,8 +582,9 @@ public class JavaBeanWriter implements BeanWriter {
                               Element rootElt, ArrayList propertyNames, Map typeMap,
                               boolean isInherited) throws SchemaCompilationException {
         // we should add parent class details only if it is
-        // an extension
-        if (!metainf.isRestriction() && metainf.getParent() != null) {
+        // an extension or simple restriction
+        // should not in complex restrictions
+        if (metainf.getParent() != null && (!metainf.isRestriction() || (metainf.isRestriction() && metainf.isSimple()))) {
             populateInfo(metainf.getParent(), model, rootElt, propertyNames,
                     typeMap, true);
         }
@@ -621,7 +622,9 @@ public class JavaBeanWriter implements BeanWriter {
             qNames.add(qName[i]);
         }
         //adding missing QNames to the end, including elements & attributes.
-        if (metainf.isRestriction()) {
+        // for the simple types we have already add the parent elements
+        // it is almost consider as an extension
+        if (metainf.isRestriction() && !metainf.isSimple()) {
             addMissingQNames(metainf, qNames, missingQNames);
         }
         QName name;

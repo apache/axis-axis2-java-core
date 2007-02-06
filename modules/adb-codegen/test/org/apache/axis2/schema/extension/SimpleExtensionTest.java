@@ -35,9 +35,9 @@ public class SimpleExtensionTest extends TestCase {
         fullName.setMiddle("chinthaka");
         fullName.setLast("suriarachchi");
         fullName.setLanguage(new Language("singhala"));
-        fullName.setAttribute1(BaseType.fromString(BaseType._s1,""));
+        fullName.setAttribute1(BaseType.Factory.fromString(BaseType._s1,""));
 
-        fullName.setAttribute2(SimpleType.fromString("ATTRIBUTE",""));
+        fullName.setAttribute2(SimpleType.Factory.fromString("ATTRIBUTE",""));
 
         OMElement omElement = fullName.getOMElement(FullName.MY_QNAME, OMAbstractFactory.getSOAP11Factory());
         try {

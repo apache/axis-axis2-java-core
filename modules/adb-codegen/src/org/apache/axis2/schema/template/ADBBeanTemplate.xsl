@@ -95,8 +95,9 @@
 
 
         <xsl:for-each select="property">
-            <!-- Write only the NOT inherited properties-->
-            <xsl:if test="not(@inherited) or ($simple and $extension)">
+            <!-- Write only the NOT inherited properties
+            but we have to generate two specital methods for simple type restriction and extenesions -->
+            <xsl:if test="not(@inherited) or ($simple and $extension) or ($simple and $restriction)">
 
             <xsl:variable name="propertyType"><xsl:value-of select="@type"></xsl:value-of></xsl:variable>
             <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
@@ -279,44 +280,7 @@
                             </xsl:for-each>
 
                                 public <xsl:value-of select="$propertyType"/> getValue() { return <xsl:value-of select="$varName" />;}
-                                public static <xsl:value-of select="$name"/> fromValue(<xsl:value-of select="$propertyType"/> value)
-                                      throws java.lang.IllegalArgumentException {
-                                    <xsl:value-of select="$name"/> enumeration = (<xsl:value-of select="$name"/>)
-                                <xsl:choose>
-                                           <xsl:when test="@primitive">
-                                             _table_.get(value + "");
-                                           </xsl:when>
-                                           <xsl:otherwise>
-                                               _table_.get(value);
-                                           </xsl:otherwise>
-                                       </xsl:choose>
 
-                                    if (enumeration==null) throw new java.lang.IllegalArgumentException();
-                                    return enumeration;
-                                }
-                                public static <xsl:value-of select="$name"/> fromString(java.lang.String value,java.lang.String namespaceURI)
-                                      throws java.lang.IllegalArgumentException {
-                                    try {
-                                       <xsl:choose>
-                                           <xsl:when test="@primitive">
-                                             return fromValue(org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(value));
-                                           </xsl:when>
-                                           <xsl:otherwise>
-                                               <xsl:choose>
-                                                   <xsl:when test="$propertyType='javax.xml.namespace.QName'">
-                                                       return fromValue(new <xsl:value-of select="$propertyType"/>(namespaceURI,value));
-                                                   </xsl:when>
-                                                   <xsl:otherwise>
-                                                       return fromValue(new <xsl:value-of select="$propertyType"/>(value));
-                                                   </xsl:otherwise>
-                                               </xsl:choose>
-                                           </xsl:otherwise>
-                                       </xsl:choose>
-
-                                    } catch (java.lang.Exception e) {
-                                        throw new java.lang.IllegalArgumentException();
-                                    }
-                                }
                                 public boolean equals(java.lang.Object obj) {return (obj == this);}
                                 public int hashCode() { return toString().hashCode();}
                                 public java.lang.String toString() {
@@ -546,22 +510,6 @@
                          <!-- generate from string and to string methods for
                           simple types to be ued in attribute handling -->
                         <xsl:if test="$simple and not(@attribute) and not(enumFacet)">
-                            public static <xsl:value-of select="$name"/> fromString(String value,
-                                                                java.lang.String namespaceURI){
-                                <xsl:value-of select="$name"/> returnValue = new  <xsl:value-of select="$name"/>();
-                                <xsl:choose>
-                                    <xsl:when test="$propertyType='javax.xml.namespace.QName'">
-                                        returnValue.set<xsl:value-of select="$javaName"/>(
-                                            org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(value,namespaceURI));
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        returnValue.set<xsl:value-of select="$javaName"/>(
-                                            org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(value));
-                                    </xsl:otherwise>
-                                </xsl:choose>
-
-                                return returnValue;
-                            }
 
                             public java.lang.String toString(){
                                 <xsl:choose>
@@ -589,7 +537,6 @@
         <xsl:if test="$union and $simple">
             <!-- generate class for a union type -->
 
-
               public void setObject(java.lang.Object object){
                   <xsl:for-each select="memberType">
                       <xsl:if test="position() > 1">} else </xsl:if>
@@ -600,24 +547,6 @@
                           throw new RuntimeException("Invalid object type");
                       }
               }
-
-              public static <xsl:value-of select="$name"/> fromString(javax.xml.stream.XMLStreamReader xmlStreamReader,
-                                                     java.lang.String namespaceURI,
-                                                     java.lang.String type) {
-
-                    <xsl:value-of select="$name"/> object = null;
-                    try {
-                        if ("http://www.w3.org/2001/XMLSchema".equals(namespaceURI)) {
-                            object = new <xsl:value-of select="$name"/>();
-                            object.setObject(xmlStreamReader, namespaceURI, type);
-                        } else {
-                            object.setObject(<xsl:value-of select="$mapperClass"/>.getTypeObject(namespaceURI, type, xmlStreamReader));
-                        }
-                        return object;
-                    } catch (java.lang.Exception e) {
-                        throw new RuntimeException("Error in parsing value");
-                    }
-                }
 
         </xsl:if>
 
@@ -1857,6 +1786,97 @@
       */
     public static class Factory{
 
+        <!-- generate some utility factory methods here we must add these methods to a factory class
+         since otherwise it gives a compilation exception in jdk 1.4 -->
+        <xsl:if test="$union and $simple">
+            <!-- generate methods for a union type -->
+              public static <xsl:value-of select="$name"/> fromString(javax.xml.stream.XMLStreamReader xmlStreamReader,
+                                                     java.lang.String namespaceURI,
+                                                     java.lang.String type) {
+
+                    <xsl:value-of select="$name"/> object = null;
+                    try {
+                        if ("http://www.w3.org/2001/XMLSchema".equals(namespaceURI)) {
+                            object = new <xsl:value-of select="$name"/>();
+                            object.setObject(xmlStreamReader, namespaceURI, type);
+                        } else {
+                            object.setObject(<xsl:value-of select="$mapperClass"/>.getTypeObject(namespaceURI, type, xmlStreamReader));
+                        }
+                        return object;
+                    } catch (java.lang.Exception e) {
+                        throw new RuntimeException("Error in parsing value");
+                    }
+               }
+        </xsl:if>
+
+        <xsl:for-each select="property">
+            <xsl:variable name="propertyType"><xsl:value-of select="@type"></xsl:value-of></xsl:variable>
+            <xsl:variable name="javaName"><xsl:value-of select="@javaname"></xsl:value-of></xsl:variable>
+            <xsl:variable name="shortTypeNameUncapped"  select="@shorttypename"/>
+            <xsl:variable name="shortTypeName"
+               select="concat(translate( substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
+
+            <xsl:if test="$simple and not(@attribute) and not(enumFacet)">
+                public static <xsl:value-of select="$name"/> fromString(String value,
+                                                    java.lang.String namespaceURI){
+                    <xsl:value-of select="$name"/> returnValue = new  <xsl:value-of select="$name"/>();
+                    <xsl:choose>
+                        <xsl:when test="$propertyType='javax.xml.namespace.QName'">
+                            returnValue.set<xsl:value-of select="$javaName"/>(
+                                org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(value,namespaceURI));
+                        </xsl:when>
+                        <xsl:otherwise>
+                            returnValue.set<xsl:value-of select="$javaName"/>(
+                                org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(value));
+                        </xsl:otherwise>
+                    </xsl:choose>
+
+                    return returnValue;
+                }
+
+            </xsl:if>
+            <xsl:if test="enumFacet">
+                public static <xsl:value-of select="$name"/> fromValue(<xsl:value-of select="$propertyType"/> value)
+                      throws java.lang.IllegalArgumentException {
+                    <xsl:value-of select="$name"/> enumeration = (<xsl:value-of select="$name"/>)
+                <xsl:choose>
+                           <xsl:when test="@primitive">
+                             _table_.get(value + "");
+                           </xsl:when>
+                           <xsl:otherwise>
+                               _table_.get(value);
+                           </xsl:otherwise>
+                       </xsl:choose>
+
+                    if (enumeration==null) throw new java.lang.IllegalArgumentException();
+                    return enumeration;
+                }
+                public static <xsl:value-of select="$name"/> fromString(java.lang.String value,java.lang.String namespaceURI)
+                      throws java.lang.IllegalArgumentException {
+                    try {
+                       <xsl:choose>
+                           <xsl:when test="@primitive">
+                             return fromValue(org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(value));
+                           </xsl:when>
+                           <xsl:otherwise>
+                               <xsl:choose>
+                                   <xsl:when test="$propertyType='javax.xml.namespace.QName'">
+                                       return fromValue(new <xsl:value-of select="$propertyType"/>(namespaceURI,value));
+                                   </xsl:when>
+                                   <xsl:otherwise>
+                                       return fromValue(new <xsl:value-of select="$propertyType"/>(value));
+                                   </xsl:otherwise>
+                               </xsl:choose>
+                           </xsl:otherwise>
+                       </xsl:choose>
+
+                    } catch (java.lang.Exception e) {
+                        throw new java.lang.IllegalArgumentException();
+                    }
+                }
+            </xsl:if>
+
+        </xsl:for-each>
 
         /**
         * static method to create the object
@@ -1913,7 +1933,7 @@
                     <xsl:choose>
                         <xsl:when test="$union">
                             java.lang.String nsUri = reader.getNamespaceContext().getNamespaceURI(nsPrefix);
-                            return <xsl:value-of select="$name"/>.fromString(reader,nsUri,type);
+                            return <xsl:value-of select="$name"/>.Factory.fromString(reader,nsUri,type);
                         </xsl:when>
                         <xsl:otherwise>
                             if (!"<xsl:value-of select="$originalName"/>".equals(type)){
@@ -1985,12 +2005,12 @@
                                                     prefix = <xsl:value-of select="$attribName"/>.substring(0, <xsl:value-of select="$attribName"/>.indexOf(":"));
                                                     namespaceuri = reader.getNamespaceURI(prefix);
                                                     object.set<xsl:value-of select="$javaName"/>(
-                                                        <xsl:value-of select="@type"/>.fromString(<xsl:value-of select="$attribName"/>,namespaceuri));
+                                                        <xsl:value-of select="@type"/>.Factory.fromString(<xsl:value-of select="$attribName"/>,namespaceuri));
                                                 } else {
                                                     // this seems to be not a qname send and empty namespace incase of it is
                                                     // check is done in fromString method
                                                     object.set<xsl:value-of select="$javaName"/>(
-                                                        <xsl:value-of select="@type"/>.fromString(<xsl:value-of select="$attribName"/>,""));
+                                                        <xsl:value-of select="@type"/>.Factory.fromString(<xsl:value-of select="$attribName"/>,""));
                                                 }
                                             </xsl:when>
                                             <xsl:otherwise>
@@ -2618,11 +2638,11 @@
                                             // this seems to be a Qname so find the namespace and send
                                             prefix = content.substring(0, content.indexOf(":"));
                                             namespaceuri = reader.getNamespaceURI(prefix);
-                                            object = <xsl:value-of select="$name"/>.fromString(content,namespaceuri);
+                                            object = <xsl:value-of select="$name"/>.Factory.fromString(content,namespaceuri);
                                         } else {
                                             // this seems to be not a qname send and empty namespace incase of it is
                                             // check is done in fromString method
-                                            object = <xsl:value-of select="$name"/>.fromString(content,"");
+                                            object = <xsl:value-of select="$name"/>.Factory.fromString(content,"");
                                         }
                                         <!-- set the attribute values here since onbject is not initalized yet -->
                                         <xsl:for-each select="../property[@attribute]">
