@@ -35,10 +35,15 @@
     <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/jaxws-api</url>
   </scm>
 	<dependencies>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+      </dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>axis2-kernel</artifactId>
-		</dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-saaj-api</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
 		<dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-saaj-api</artifactId>

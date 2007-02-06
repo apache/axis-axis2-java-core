@@ -15,6 +15,9 @@
 */
 package javax.xml.ws.spi;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,10 +27,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.PrivilegedAction;
 import java.util.Properties;
-
-import org.apache.axis2.java.security.AccessController;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This code is designed to implement the pluggability
@@ -66,7 +65,7 @@ class FactoryFinder {
         // the caller already has a doPriv.  I added the doPriv in case someone changes the 
         // visibility of this method to non-private.
         ClassLoader cl = (ClassLoader)
-            AccessController.doPrivileged( new PrivilegedAction() {
+            doPrivileged( new PrivilegedAction() {
                 public Object run() {
                 
                     Method m = null;
@@ -121,7 +120,7 @@ class FactoryFinder {
         // the caller already has a doPriv.  I added the doPriv in case someone changes the 
         // visibility of this method to non-private.
         Object obj = 
-            AccessController.doPrivileged( new PrivilegedAction() {
+            doPrivileged( new PrivilegedAction() {
                 public Object run() {
                     try {
                         if (iClassLoader != null) {
@@ -164,7 +163,7 @@ class FactoryFinder {
         final String iFallbackClassName = fallbackClassName;
         
         Object obj = 
-            AccessController.doPrivileged( new PrivilegedAction() {
+            doPrivileged( new PrivilegedAction() {
                 public Object run() {
                     debugPrintln("debug is on");
                     
@@ -257,6 +256,15 @@ class FactoryFinder {
                 }
             });
         return obj;
+    }
+
+    private static Object doPrivileged(PrivilegedAction action) {
+        SecurityManager sm = System.getSecurityManager();
+        if (sm == null) {
+            return(action.run());
+        } else {
+            return java.security.AccessController.doPrivileged(action);
+        }
     }
 
     static class ConfigurationError extends Error {
