@@ -375,6 +375,11 @@ public class ServiceBuilder extends DescriptionBuilder {
             while (operatins.hasNext()) {
                 AxisOperation axisOperation = (AxisOperation) operatins
                         .next();
+                
+                if (axisOperation.isControlOperation()) {
+                    continue;
+                }
+                
                 if (axisOperation.getMessageReceiver() == null) {
                     continue;
                 }

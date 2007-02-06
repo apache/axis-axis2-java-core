@@ -683,4 +683,30 @@ public class ServiceClient {
             configContext.terminate();
         }
     }
+    
+    /**
+     * Configure the ServiceClient to interact with the Web service described by
+     * the specified AxisService object.
+     * 
+     * @param axisService the AxisService that represents the new Web service.
+     * @throws AxisFault if an error occurs while configuring the ServiceClient. 
+     */
+    public void setAxisService(AxisService axisService) throws AxisFault{
+        
+        if (axisService == null) {
+            // AxisFault?
+            throw new IllegalArgumentException("AxisService is null");            
+        }
+        
+        axisConfig.removeService(this.axisService.getName());
+        this.axisService = axisService;
+        
+        axisService.setClientSide(true);
+        axisConfig.addService(axisService);
+        
+        AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
+        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configContext, axisServiceGroup);
+        
+        this.serviceContext = serviceGroupContext.getServiceContext(this.axisService);       
+    }
 }

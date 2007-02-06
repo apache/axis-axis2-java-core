@@ -271,6 +271,9 @@ public class AxisConfiguration extends AxisDescription {
                 while (operatins.hasNext()) {
                     AxisOperation axisOperation = (AxisOperation) operatins
                             .next();
+                    
+                    if (axisOperation.isControlOperation()) { continue; }
+                    
                     if (axisOperation.getMessageReceiver() == null) {
                         axisService.setWsdlFound(false);
                         return;
