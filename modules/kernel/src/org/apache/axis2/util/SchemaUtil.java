@@ -48,10 +48,6 @@ import org.apache.commons.fileupload.FileItemFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpUtils;
 import javax.xml.namespace.QName;
-import javax.mail.internet.MimeMessage;
-import javax.mail.Session;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
@@ -59,7 +55,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.net.URLDecoder;
 import java.io.UnsupportedEncodingException;
-import java.io.IOException;
 
 /**
  * 
@@ -207,7 +202,15 @@ public class SchemaUtil {
                                         !"".equals(parameterValuesArray[0]) &&
                                         parameterValuesArray[0] != null) {
                                     value = parameterValuesArray[0];
-
+                                    OMNamespace ns = (qName == null ||
+                                            qName.getNamespaceURI() == null
+                                            || qName.getNamespaceURI().length() == 0) ?
+                                            null : soapFactory.createOMNamespace(
+                                            qName.getNamespaceURI(), null);
+                                    for (int i = 0 ; i < parameterValuesArray.length ; i++) {
+                                        soapFactory.createOMElement(name, ns,
+                                                bodyFirstChild).setText(parameterValuesArray[i]);
+                                    }
                                 }
                             }
 
@@ -234,18 +237,7 @@ public class SchemaUtil {
                                     throw new AxisFault("Required element " + qName +
                                             " defined in the schema can not be found in the request");
                                 }
-                            } else {
-
-                                OMNamespace ns = (qName == null ||
-                                        qName.getNamespaceURI() == null ||
-                                        qName.getNamespaceURI().length() == 0) ?
-                                        null :
-                                        soapFactory
-                                                .createOMNamespace(qName.getNamespaceURI(), null);
-                                soapFactory.createOMElement(name, ns,
-                                                            bodyFirstChild).setText(value);
                             }
-
                             minOccurs--;
                         }
                     }
@@ -354,7 +346,7 @@ public class SchemaUtil {
             int templateEndIndex = 0;
             int indexOfNextConstant = 0;
 
-            StringBuffer requestURIBuffer = null;
+            StringBuffer requestURIBuffer ;
             try {
                 requestURIBuffer = new StringBuffer(URLDecoder.decode(requestURL, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
@@ -417,7 +409,7 @@ public class SchemaUtil {
             throws AxisFault {
 
         String encodedQueryString = request.getQueryString();
-        String queryString = null;
+        String queryString ;
         Map parameterMap = new HashMap();
 
         if (encodedQueryString != null) {
