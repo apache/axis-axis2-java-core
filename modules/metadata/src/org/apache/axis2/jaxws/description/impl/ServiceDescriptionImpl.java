@@ -21,6 +21,7 @@ import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -46,6 +47,7 @@ import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionJava;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
+import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
@@ -82,6 +84,10 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     
     private DescriptionBuilderComposite	composite = null;
     private boolean isServerSide = false;
+    
+//  RUNTIME INFORMATION
+    Map<String, ServiceRuntimeDescription> runtimeDescMap = Collections.synchronizedMap(new HashMap<String, ServiceRuntimeDescription>());
+
     
     /**
      * This is (currently) the client-side-only constructor
@@ -1071,6 +1077,16 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             }
         }
         return portsUsingAddress;
+    }
+    
+    public ServiceRuntimeDescription getServiceRuntimeDesc(String name) {
+        // TODO Add toString support
+        return runtimeDescMap.get(name);
+    }
+
+    public void setServiceRuntimeDesc(ServiceRuntimeDescription srd) {
+        // TODO Add toString support
+        runtimeDescMap.put(srd.getKey(), srd);
     }
     
     /**

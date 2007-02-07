@@ -74,5 +74,8 @@ public interface ServiceDescription {
      * @return
      */
     public List<QName> getPorts();
+    
+    public ServiceRuntimeDescription getServiceRuntimeDesc(String name);
+    public void setServiceRuntimeDesc(ServiceRuntimeDescription ord);
 
 }

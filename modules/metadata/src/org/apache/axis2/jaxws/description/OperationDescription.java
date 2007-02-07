@@ -145,4 +145,7 @@ public interface OperationDescription {
     public javax.jws.soap.SOAPBinding.Style getSoapBindingStyle();
     public javax.jws.soap.SOAPBinding.Use getSoapBindingUse();
 
+    public OperationRuntimeDescription getOperationRuntimeDesc(String name);
+    public void setOperationRuntimeDesc(OperationRuntimeDescription ord);
+    
 }

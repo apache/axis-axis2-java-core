@@ -402,4 +402,16 @@ public class FaultsServiceTests extends TestCase {
         assertTrue(soapFault != null);
         assertTrue(soapFault.getFaultString().equals("This is a WebServiceException"));
     }
+    
+    /**
+     * Tests Resource injection
+     */
+    public void testResourceInjection() throws Exception {
+        FaultsServicePortType proxy = getProxy();
+        
+        float total = proxy.getQuote("INJECTION");
+        
+        // If resource injection occurred properly, then the a value of 1234567 is expected
+        assertTrue("Resource Injection Failed", total == 1234567);
+    }
 }

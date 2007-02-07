@@ -33,12 +33,12 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
  */
 public class PDElement {
     private ParameterDescription param;
-    private Object value;
+    private Object elementValue;
     
-    public PDElement(ParameterDescription param, Object value) {
+    public PDElement(ParameterDescription param, Object elementValue) {
         super();
         this.param = param;
-        this.value = value;
+        this.elementValue = elementValue;
     }
 
     public ParameterDescription getParam() {
@@ -46,7 +46,8 @@ public class PDElement {
     }
 
     public Object getElementValue() {
-        return value;
+       
+        return elementValue;
     }
     
 }

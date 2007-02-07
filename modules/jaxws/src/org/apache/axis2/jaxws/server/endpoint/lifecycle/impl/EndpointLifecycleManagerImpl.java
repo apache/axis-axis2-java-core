@@ -32,8 +32,11 @@ import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
 import org.apache.axis2.jaxws.context.utils.ContextUitls;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.runtime.description.ResourceInjectionServiceRuntimeDescription;
+import org.apache.axis2.jaxws.runtime.description.ResourceInjectionServiceRuntimeDescriptionFactory;
 import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.WebServiceContextInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectionFactory;
@@ -93,7 +96,7 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
             //Add MessageContext for this request.
             wsContext.setSoapMessageContext(soapMessageContext);
             //inject WebServiceContext
-            injectWebServiceContext(wsContext, serviceimpl);
+            injectWebServiceContext(mc, wsContext, serviceimpl);
             //InvokePostConstruct
             invokePostConstruct();
             serviceContext.setProperty(WEBSERVICE_MESSAGE_CONTEXT, wsContext);
@@ -226,9 +229,24 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
 		return soapMessageContext;
 	 }
 	 
-	private void injectWebServiceContext(WebServiceContext wsContext, Object serviceInstance) throws ResourceInjectionException{
-	   ResourceInjector ri =ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
-	   ri.inject(wsContext, serviceInstance);
+	private void injectWebServiceContext(MessageContext mc, WebServiceContext wsContext, Object serviceInstance) throws ResourceInjectionException{
+       
+       // See if we have cached information about resource injection for this service and class
+       boolean tryInjection = true;
+       ServiceDescription serviceDesc = mc.getServiceDescription();
+       if (serviceDesc != null) {
+           ResourceInjectionServiceRuntimeDescription risrDesc = 
+               ResourceInjectionServiceRuntimeDescriptionFactory.get(serviceDesc, serviceInstance.getClass());
+           // If there are no @Resource annotations then don't bother with resource injection
+           if (risrDesc != null && !risrDesc.hasResourceAnnotation()) {
+               tryInjection = false;
+           }
+       }
+           
+       if (tryInjection) {
+           ResourceInjector ri =ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
+           ri.inject(wsContext, serviceInstance);
+       }
 		   
 	}
 	   

@@ -13,6 +13,9 @@
 
 package org.apache.axis2.jaxws.sample.faultsservice;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -22,6 +25,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.Holder;
+import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
 
@@ -44,6 +48,9 @@ import org.test.polymorphicfaults.DerivedFault2;
 
 public class FaultsServiceSoapBindingImpl implements FaultsServicePortType {
 
+    private WebServiceContext ctx = null;
+    private boolean init = false;
+    
     /**
      * Throws wrapper exceptions for fault beans
      */
@@ -70,6 +77,12 @@ System.out.println("\nIn getQuote(): " + tickerSymbol + "\n");
             BaseFault bf = new BaseFault();
             bf.setA(400);
             throw new BaseFault_Exception("Server throws BaseFault_Exception", bf);
+        } else if (tickerSymbol.equals("INJECTION")) {
+           if (ctx != null && init) {
+               // Only return this value if the context is injected and 
+               // the initialization method is invoked
+               return 1234567; 
+           }
         }
         return 100;
     }
@@ -169,5 +182,26 @@ System.out.println("\nIn getQuote(): " + tickerSymbol + "\n");
         SOAPBody body = env.addBody();
         soapFault = body.addFault();
         return soapFault;
+    }
+    
+    @PostConstruct
+    public void initialize(){
+        //Called after resource injection and before a method is called.
+        System.out.println("Calling PostConstruct to Initialize");
+        this.init = true;
+    }
+    
+    @PreDestroy
+    public void distructor(){
+        //Called before the scope of request or session or application ends.
+        
+        System.out.println("Calling PreDestroy ");
+        
+    }
+    @Resource
+    private void setCtx(WebServiceContext ctx) {
+        // The setter is private.  This should not matter because the engine
+        // should still make it accessible.
+        this.ctx = ctx;
     }
 }

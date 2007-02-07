@@ -251,6 +251,34 @@ public class WebServiceContextInjectorImpl implements WebServiceContextInjector 
         return fields;
     }
     
+    /**
+     * Gets all of the fields in this class and the super classes
+     * @param beanClass
+     * @return
+     */
+    static private List<Method> getMethods(final Class beanClass) {
+        // This class must remain private due to Java 2 Security concerns
+        List<Method> methods;
+        methods = (List<Method>) AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        List<Method> methods = new ArrayList<Method>();
+                        Class cls = beanClass;
+                        while(cls != null) {
+                            Method[] methodArray = cls.getDeclaredMethods();
+                            for (Method method:methodArray) {
+                                methods.add(method);
+                            }
+                            cls = cls.getSuperclass();
+                        }
+                        return methods; 
+                    }
+                }
+        );
+        
+        return methods;
+    }
+    
 	/*
 	 * Search for Method with @Resource Annotation
 	 */
@@ -258,7 +286,7 @@ public class WebServiceContextInjectorImpl implements WebServiceContextInjector 
 		if(bean == null){
 			return null;
 		}
-		Method[] methods = bean.getDeclaredMethods();
+		List<Method> methods = getMethods(bean);
 		for(Method method:methods){
 			Annotation[] annotations = method.getAnnotations();
 			for(Annotation an:annotations){

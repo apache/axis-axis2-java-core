@@ -23,8 +23,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.jws.Oneway;
@@ -49,6 +51,7 @@ import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.OperationDescriptionJava;
 import org.apache.axis2.jaxws.description.OperationDescriptionWSDL;
+import org.apache.axis2.jaxws.description.OperationRuntimeDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ParameterDescriptionJava;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
@@ -147,6 +150,9 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     private Boolean             webResultHeader;
     private Method serviceImplMethod;
     private boolean serviceImplMethodFound = false;
+    
+    // RUNTIME INFORMATION
+    Map<String, OperationRuntimeDescription> runtimeDescMap = Collections.synchronizedMap(new HashMap<String, OperationRuntimeDescription>());
 
     OperationDescriptionImpl(Method method, EndpointInterfaceDescription parent) {
         // TODO: Look for WebMethod anno; get name and action off of it
@@ -1382,6 +1388,16 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     		type = pd.getParameterActualType().getName();
     	}
     	return type;
+    }
+
+    public OperationRuntimeDescription getOperationRuntimeDesc(String name) {
+        // TODO Add toString support
+        return runtimeDescMap.get(name);
+    }
+
+    public void setOperationRuntimeDesc(OperationRuntimeDescription ord) {
+        // TODO Add toString support
+        runtimeDescMap.put(ord.getKey(), ord);
     }
     
     public String toString() {
