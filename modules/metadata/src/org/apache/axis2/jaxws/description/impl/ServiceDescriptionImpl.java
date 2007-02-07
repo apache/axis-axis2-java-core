@@ -36,6 +36,7 @@ import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.xml.namespace.QName;
+import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -647,6 +648,11 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
                 // TODO: RAS/NLS
                 throw ExceptionFactory.makeWebServiceException("Validation error: Provider must have a public invoke method.  Implementation class: " + composite.getClassName());
             }
+            
+            //If ServiceMode annotation specifies 'payload', then make sure that it is not typed with
+            // SOAPMessage or DataSource
+            validateProviderInterfaces();
+
 		} else if (composite.getWebServiceAnnot() != null) {
 			
 			if ( composite.getServiceModeAnnot() != null) {
@@ -745,6 +751,77 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         }
         return validInvokeMethod;
     }
+
+    /**
+     * Validate that, if using PAYLOAD mode, then interfaces list cannot contain
+     * SOAPMessage or DataSource
+     * 
+     * @return
+     */
+    private void validateProviderInterfaces() {
+
+        // Default for ServiceMode is 'PAYLOAD'. So, if it is specified  (explicitly or
+        // implicitly) then verify that we are not implementing improper interfaces)
+        if ((composite.getServiceModeAnnot() == null)
+                || composite.getServiceModeAnnot().value() == javax.xml.ws.Service.Mode.PAYLOAD) {
+
+            Iterator<String> iter = composite.getInterfacesList().iterator();
+
+            while (iter.hasNext()) {
+                String interfaceString = iter.next();
+                if (interfaceString.equals(MDQConstants.PROVIDER_SOAP)
+                        || interfaceString.equals(MDQConstants.PROVIDER_DATASOURCE)) {
+
+                    throw ExceptionFactory
+                            .makeWebServiceException("Validation error: SOAPMessage and DataSource objects cannot be used when ServiceMode specifies PAYLOAD. Implementation class: "
+                                    + composite.getClassName());
+                }
+            }
+
+        } else {
+            // We are in MESSAGE mode
+            // Conformance: JAXWS Spec.- Sec. 4.3 (javax.activation.DataSource)
+            String bindingType = composite.getBindingTypeAnnot().value();
+
+            Iterator<String> iter = composite.getInterfacesList().iterator();
+
+            while (iter.hasNext()) {
+                String interfaceString = iter.next();
+
+                if (interfaceString.equals(MDQConstants.PROVIDER_SOAP)) {
+
+                    // Make sure BindingType is SOAP/HTTP with SOAPMessage
+                    // object, Default for Binding Type is SOAP/HTTP
+                    if (!DescriptionUtils.isEmpty(bindingType)
+                            && !bindingType
+                                    .equals(SOAPBinding.SOAP11HTTP_BINDING)
+                            && !bindingType
+                                    .equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING)
+                            && !bindingType
+                                    .equals(SOAPBinding.SOAP12HTTP_BINDING)
+                            && !bindingType
+                                    .equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))
+
+                        throw ExceptionFactory
+                                .makeWebServiceException("Validation error: SOAPMessage objects cannot be used with HTTP binding type. Implementation class: "
+                                        + composite.getClassName());
+
+                } else if (interfaceString
+                        .equals(MDQConstants.PROVIDER_DATASOURCE)) {
+
+                    // Make sure BindingType is XML/HTTP with DataSource object
+                    if (DescriptionUtils.isEmpty(bindingType)
+                            || !bindingType
+                                    .equals(javax.xml.ws.http.HTTPBinding.HTTP_BINDING))
+
+                        throw ExceptionFactory
+                                .makeWebServiceException("Validation error: DataSource objects must be used with HTTP binding type. Implementation class: "
+                                        + composite.getClassName());
+                }
+            }
+        }
+    }
+
 
     /**
      * Validate there is a default no-argument constructor on the composite.
