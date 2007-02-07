@@ -195,6 +195,11 @@ public class SchemaUtil {
 
                             // check whether this has a mapping in httpLocationParameterMap.
                             String value = (String) httpLocationParameterMap.get(name);
+                            OMNamespace ns = (qName == null ||
+                                            qName.getNamespaceURI() == null
+                                            || qName.getNamespaceURI().length() == 0) ?
+                                            null : soapFactory.createOMNamespace(
+                                            qName.getNamespaceURI(), null);
                             if (value == null) {
                                 String[] parameterValuesArray =
                                         (String[]) requestParameterMap.get(name);
@@ -202,16 +207,15 @@ public class SchemaUtil {
                                         !"".equals(parameterValuesArray[0]) &&
                                         parameterValuesArray[0] != null) {
                                     value = parameterValuesArray[0];
-                                    OMNamespace ns = (qName == null ||
-                                            qName.getNamespaceURI() == null
-                                            || qName.getNamespaceURI().length() == 0) ?
-                                            null : soapFactory.createOMNamespace(
-                                            qName.getNamespaceURI(), null);
+
                                     for (int i = 0 ; i < parameterValuesArray.length ; i++) {
                                         soapFactory.createOMElement(name, ns,
                                                 bodyFirstChild).setText(parameterValuesArray[i]);
                                     }
                                 }
+                            } else {
+                                 soapFactory.createOMElement(name, ns,
+                                                bodyFirstChild).setText(value);
                             }
 
                             if (value == null) {
@@ -223,12 +227,6 @@ public class SchemaUtil {
                                             Constants.NS_PREFIX_SCHEMA_XSI);
                                     OMAttribute omAttribute =
                                             soapFactory.createOMAttribute("nil", xsi, "true");
-                                    OMNamespace ns = (qName == null ||
-                                            qName.getNamespaceURI() == null ||
-                                            qName.getNamespaceURI().length() == 0) ?
-                                            null :
-                                            soapFactory.createOMNamespace(qName.getNamespaceURI(),
-                                                                          null);
                                     soapFactory.createOMElement(name, ns,
                                                                 bodyFirstChild)
                                             .addAttribute(omAttribute);
@@ -302,9 +300,10 @@ public class SchemaUtil {
                 String parameterName = buffer.substring(0, buffer.indexOf("="));
                 String schemaElementName =
                         buffer.substring(buffer.indexOf("=") + 2, buffer.length() - 1);
-                String parameterValues = (String) parameterMap.get(parameterName);
-                if (parameterValues != null) {
-                    httpLocationParameterMap.put(schemaElementName, parameterValues);
+                String[] parameterValues = (String[]) parameterMap.get(parameterName);
+                String value;
+                if (parameterValues != null && (value =parameterValues[0]) != null) {
+                    httpLocationParameterMap.put(schemaElementName, value);
                 }
             }
 

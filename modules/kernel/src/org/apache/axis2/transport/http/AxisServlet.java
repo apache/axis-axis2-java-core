@@ -327,7 +327,10 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         }
         if (closeReader) {
             try {
-                ((StAXBuilder) msgContext.getEnvelope().getBuilder()).close();
+                StAXBuilder builder = (StAXBuilder) msgContext.getEnvelope().getBuilder();
+                if (builder != null) {
+                    builder.close();
+                }
             } catch (Exception e) {
                 log.debug(e);
                 throw new ServletException(e);

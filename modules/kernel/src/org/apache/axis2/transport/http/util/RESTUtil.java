@@ -272,7 +272,6 @@ public class RESTUtil {
                             contentType)) {
 
                 String charSetEnc = Builder.getCharSetEncoding(contentType);
-                XMLStreamReader xmlreader;
                 if (charSetEnc == null) {
                     // If charset is not specified
                     charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
@@ -282,8 +281,6 @@ public class RESTUtil {
 
                 // Create documentElement only if the content length is greator than 0
                 if (request.getContentLength() != 0) {
-                    xmlreader = StAXUtils.createXMLStreamReader(inputStream,
-                                                                charSetEnc);
                     OMBuilder builder = Builder.getPOXBuilder(inputStream, charSetEnc, null);
                     OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
                     documentElement.setParent(null);
