@@ -202,6 +202,8 @@ public class AxisService extends AxisDescription {
         this.endpointMap.put(key,axisEndpoint);
     }
 
+    private boolean customWsld = false;
+
     public String getWSAddressingFlag() {
         return wsaddressingFlag;
     }
@@ -1909,5 +1911,13 @@ public class AxisService extends AxisDescription {
 
     public Map getEndpoints() {
         return endpointMap;
+    }
+
+    public boolean isCustomWsld() {
+        return customWsld;
+    }
+
+    public void setCustomWsld(boolean customWsld) {
+        this.customWsld = customWsld;
     }
 }

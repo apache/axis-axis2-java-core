@@ -148,8 +148,8 @@ public class RPCMessageReceiver extends AbstractInOutSyncMessageReceiver {
                         method.getName();
             }
             log.error(msg, e);
-            if(cause instanceof AxisFault) {
-                throw (AxisFault)cause;
+            if (cause instanceof AxisFault) {
+                throw (AxisFault) cause;
             }
             throw new AxisFault(msg);
         } catch (Exception e) {

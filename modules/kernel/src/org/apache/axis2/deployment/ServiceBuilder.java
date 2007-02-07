@@ -33,6 +33,7 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
+import org.apache.ws.java2wsdl.utils.TypeTable;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -314,6 +315,14 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                 }
             }
+            if (service.isCustomWsld()) {
+                OMElement mappingElement = service_element.getFirstChildWithName(
+                        new QName(TAG_PACKAGE2QNAME));
+                if (mappingElement != null) {
+                    processTypeMappings(mappingElement);
+                }
+            }
+
             for (int i = 0; i < excludeops.size(); i++) {
                 String opName = (String) excludeops.get(i);
                 service.removeOperation(new QName(opName));
@@ -351,6 +360,41 @@ public class ServiceBuilder extends DescriptionBuilder {
         } catch (Exception e) {
             throw new AxisFault(e);
         }
+    }
+
+    /**
+     * To process the packe name to Qname mapping
+     * <packageMapping>
+     * <mapping packageName="foo.bar" qname="http://foo/bar/xsd">
+     * ......
+     * ......
+     * </packageMapping>
+     *
+     * @param packageMappingElement
+     */
+    private void processTypeMappings(OMElement packageMappingElement) {
+        Iterator elementItr = packageMappingElement.getChildrenWithName(new QName(TAG_MAPPING));
+        TypeTable typeTable = service.getTypeTable();
+        if (typeTable == null) {
+            typeTable = new TypeTable();
+        }
+        while (elementItr.hasNext()) {
+            OMElement mappingElement = (OMElement) elementItr.next();
+            String packageName = mappingElement.getAttributeValue(new QName(TAG_PACKAGE_NAME));
+            String qName = mappingElement.getAttributeValue(new QName(TAG_QNAME));
+            if (packageName == null || qName == null) {
+                continue;
+            }
+            Iterator keys = service.getNameSpacesMap().keySet().iterator();
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                if (qName.equals(service.getNameSpacesMap().get(key))) {
+                    typeTable.addComplexSchema(packageName,
+                            new QName(qName, packageName, key));
+                }
+            }
+        }
+        service.setTypeTable(typeTable);
     }
 
     private void loadServiceLifeCycleClass(String className) throws DeploymentException {

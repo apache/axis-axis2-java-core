@@ -109,25 +109,44 @@ public class RPCUtil {
         return BeanUtil.deserialize(methodElement, parameters, objectSupplier);
     }
 
-    public static OMElement getResponseElement(QName resname, Object [] objs,
-                                               boolean qualified, TypeTable typeTable) {
+    public static OMElement getResponseElement(QName resname,
+                                               Object [] objs,
+                                               boolean qualified,
+                                               TypeTable typeTable,
+                                               boolean isCustomWsdl) {
         if (qualified) {
             return BeanUtil.getOMElement(resname, objs,
-                    new QName(resname.getNamespaceURI(), RETURN_WRAPPER, resname.getPrefix()), qualified, typeTable);
+                    new QName(resname.getNamespaceURI(),
+                            RETURN_WRAPPER,
+                            resname.getPrefix()),
+                    qualified,
+                    typeTable,
+                    isCustomWsdl);
         } else {
             return BeanUtil.getOMElement(resname, objs,
-                    new QName(RETURN_WRAPPER), qualified, typeTable);
+                    new QName(RETURN_WRAPPER), qualified,
+                    typeTable,
+                    isCustomWsdl);
         }
     }
 
     public static OMElement getResponseElementForArray(QName resname, Object [] objs,
-                                                       boolean qualified, TypeTable typeTable) {
+                                                       boolean qualified,
+                                                       TypeTable typeTable, boolean isCustomWsdl) {
         if (qualified) {
             return BeanUtil.getOMElement(resname, objs,
-                    new QName(resname.getNamespaceURI(), RETURN_WRAPPER, resname.getPrefix()), qualified, typeTable);
+                    new QName(resname.getNamespaceURI(),
+                            RETURN_WRAPPER,
+                            resname.getPrefix()),
+                    qualified,
+                    typeTable,
+                    isCustomWsdl);
         } else {
             return BeanUtil.getOMElement(resname, objs,
-                    new QName(RETURN_WRAPPER), qualified, typeTable);
+                    new QName(RETURN_WRAPPER),
+                    qualified,
+                    typeTable,
+                    isCustomWsdl);
         }
     }
 
@@ -140,6 +159,7 @@ public class RPCUtil {
                                        OMElement bodyContent,
                                        MessageContext outMessage
     ) throws Exception {
+         QName elementQName = outMessage.getAxisMessage().getElementQName();
         if (resObject == null) {
             QName resName;
             if (service.isElementFormDefault()) {
@@ -161,11 +181,14 @@ public class RPCUtil {
             envelope.getBody().addChild(bodyChild);
         } else {
             if (resObject instanceof Object[]) {
-                QName resName = new QName(service.getSchematargetNamespace(),
+                QName resName = new QName(elementQName.getNamespaceURI(),
                         method.getName() + "Response",
-                        service.getSchematargetNamespacePrefix());
+                        elementQName.getPrefix());
                 OMElement bodyChild = RPCUtil.getResponseElement(resName,
-                        (Object[]) resObject, service.isElementFormDefault(), service.getTypeTable());
+                        (Object[]) resObject,
+                        service.isElementFormDefault(),
+                        service.getTypeTable(),
+                        service.isCustomWsld());
                 envelope.getBody().addChild(bodyChild);
             } else {
                 if (resObject.getClass().isArray()) {
@@ -181,11 +204,12 @@ public class RPCUtil {
                         }
                     }
 
-                    QName resName = new QName(service.getSchematargetNamespace(),
+                    QName resName = new QName(elementQName.getNamespaceURI(),
                             method.getName() + "Response",
-                            service.getSchematargetNamespacePrefix());
+                            elementQName.getPrefix());
                     OMElement bodyChild = RPCUtil.getResponseElementForArray(resName,
-                            objArray, service.isElementFormDefault(), service.getTypeTable());
+                            objArray, service.isElementFormDefault(), service.getTypeTable(),
+                            service.isCustomWsld());
                     envelope.getBody().addChild(bodyChild);
                 } else {
                     if (service.isElementFormDefault()) {

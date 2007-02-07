@@ -39,6 +39,10 @@ public interface DeploymentConstants {
     String TAG_PHASE_ORDER = "phaseOrder";
     String TAG_PHASE = "phase";
     String TAG_PARAMETER = "parameter";
+    String TAG_MAPPING = "mapping";
+    String TAG_PACKAGE_NAME = "packageName";
+    String TAG_QNAME= "qName";
+    String TAG_PACKAGE2QNAME= "packageMapping";
     String TAG_MODULE = "module";
     String TAG_MODULE_CONFIG = "moduleConfig";
     String TAG_MESSAGE = "message";

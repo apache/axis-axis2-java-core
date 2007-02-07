@@ -86,6 +86,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                         axisService = new AxisService(serviceName);
                     } else {
                         axisService.setWsdlFound(true);
+                        axisService.setCustomWsld(true);
                     }
 
                     // the service that has to be deployed

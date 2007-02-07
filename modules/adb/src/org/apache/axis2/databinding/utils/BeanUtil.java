@@ -78,6 +78,15 @@ public class BeanUtil {
             QName elemntNameSpace = null;
             if (typeTable != null && qualified) {
                 QName qNamefortheType = typeTable.getQNamefortheType(beanObject.getClass().getName());
+                if (qNamefortheType == null) {
+                    qNamefortheType = typeTable.getQNamefortheType(
+                            beanObject.getClass().getPackage().getName());
+                }
+                if (qNamefortheType == null) {
+                    throw new AxisFault("Mapping qname not fond for the package: " +
+                            beanObject.getClass().getPackage().getName());
+                }
+
                 elemntNameSpace = new QName(qNamefortheType.getNamespaceURI(),
                         "elementName");
             }
@@ -196,7 +205,7 @@ public class BeanUtil {
                     object.add(value);
                 }
             }
-            return new ADBXMLStreamReaderImpl(beanName, object.toArray(), null, typeTable,qualified);
+            return new ADBXMLStreamReaderImpl(beanName, object.toArray(), null, typeTable, qualified);
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
         } catch (java.beans.IntrospectionException e) {
@@ -561,7 +570,8 @@ public class BeanUtil {
                                          Object [] args,
                                          QName partName,
                                          boolean qualifed,
-                                         TypeTable typeTable) {
+                                         TypeTable typeTable,
+                                         boolean isCustomwsdl) {
         ArrayList objects;
         objects = new ArrayList();
         int argCount = 0;

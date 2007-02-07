@@ -73,7 +73,7 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
                     .getFirstElement();
 
             AxisMessage inaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            String messageNameSpace;
+            String messageNameSpace = null;
             QName elementQName;
             String methodName = op.getName().getLocalPart();
             Method[] methods = ImplClass.getMethods();
@@ -114,7 +114,13 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             SOAPFactory fac = getSOAPFactory(inMessage);
 
             // Handling the response
-            OMNamespace ns = fac.createOMNamespace(service.getSchematargetNamespace(),
+
+            AxisMessage outaxisMessage = op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+            if (outaxisMessage != null) {
+                messageNameSpace = outaxisMessage.getElementQName().getNamespaceURI();
+            }
+
+            OMNamespace ns = fac.createOMNamespace(messageNameSpace,
                     service.getSchematargetNamespacePrefix());
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
