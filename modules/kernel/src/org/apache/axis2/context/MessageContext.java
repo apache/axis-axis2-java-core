@@ -1669,8 +1669,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * @return TRUE if the key exists, FALSE otherwise
      */
     public boolean containsSelfManagedDataKey(Class clazz, Object key) {
-        return selfManagedDataMap != null && selfManagedDataMap.containsKey
-                (generateSelfManagedDataKey(clazz, key));
+        if (selfManagedDataMap != null) {
+            return  selfManagedDataMap.containsKey(generateSelfManagedDataKey(clazz, key));
+        }
+        return false;
     }
 
     /**
