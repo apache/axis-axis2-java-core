@@ -25,6 +25,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.util.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -87,6 +88,8 @@ public abstract class InvocationController {
         MessageContext request = ic.getRequestMessageContext();
         MessageContext response = null;
 
+        request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.SYNC);
+        
         // TODO: Place-holder for running the JAX-WS request handler chain
         
         prepareRequest(request);
@@ -125,6 +128,7 @@ public abstract class InvocationController {
         }
         
         MessageContext request = ic.getRequestMessageContext();
+        request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ONEWAY);
         
         // TODO: Place-holder to run the JAX-WS request handler chain
         
@@ -160,6 +164,7 @@ public abstract class InvocationController {
         }
         
         MessageContext request = ic.getRequestMessageContext();
+        request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_POLLING);
 
         // TODO: Place-holder for running the JAX-WS request handler chain
         
@@ -194,7 +199,8 @@ public abstract class InvocationController {
         }
         
         MessageContext request = ic.getRequestMessageContext();
-
+        request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_CALLBACK);
+        
         // TODO: Place-holder for running the JAX-WS request handler chain
         
         prepareRequest(request);

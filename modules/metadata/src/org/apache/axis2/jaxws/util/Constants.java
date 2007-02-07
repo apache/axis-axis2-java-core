@@ -37,4 +37,6 @@ public class Constants {
     public static String USE_ASYNC_MEP = "org.apache.axis2.jaxws.use.async.mep";
     
     public static final String THREAD_CONTEXT_MIGRATOR_LIST_ID = "JAXWS-ThreadContextMigrator-List";
+    
+    public static final String INVOCATION_PATTERN = "org.apache.axis2.jaxws.invocation.pattern";
 }
