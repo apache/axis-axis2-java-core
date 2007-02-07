@@ -64,7 +64,7 @@
         </xsl:if>
 
         public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xsl:value-of select="$name"/> <xsl:if test="$extension"> extends <xsl:value-of select="$extension"/></xsl:if> <xsl:if test="$restriction"> extends <xsl:value-of select="$restriction"/></xsl:if>
-        <xsl:if test="$union"> extends  org.apache.axis2.databinding.types.Union </xsl:if>
+        <xsl:if test="$union and not($restriction) and not($extension)"> extends  org.apache.axis2.databinding.types.Union </xsl:if>
         implements org.apache.axis2.databinding.ADBBean{
         <xsl:choose>
             <xsl:when test="@type">/* This type was generated from the piece of schema that had
@@ -534,7 +534,8 @@
 
         </xsl:for-each>
 
-        <xsl:if test="$union and $simple">
+        <!-- we don't need to generate the setObject method in parent classes -->
+        <xsl:if test="$union and $simple and not($restriction) and not($extension)">
             <!-- generate class for a union type -->
 
               public void setObject(java.lang.Object object){

@@ -59,7 +59,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -1209,8 +1208,20 @@ public class SchemaCompiler {
                 metaInfHolder.setAsParent(baseMetaInfoHolder);
 
             } else if (type instanceof XmlSchemaSimpleType) {
-                //Do the actual parent setting
-                //TODO handle the varios parent types here
+
+                // we have to copy the uion data if the parent simple type restriction
+                // is an union
+                // this union attribute is copied from the child to parent to genrate the parent
+                // code as union
+                if (baseMetaInfoHolder.isUnion()) {
+                    metaInfHolder.setUnion(true);
+                    Map memberTypes = baseMetaInfoHolder.getMemberTypes();
+                    Object qname;
+                    for (Iterator iter = memberTypes.keySet().iterator(); iter.hasNext();) {
+                        qname = iter.next();
+                        metaInfHolder.addMemberType((QName) qname, (String) memberTypes.get(qname));
+                    }
+                }
                 metaInfHolder.setAsParent(baseMetaInfoHolder);
             }
 
@@ -1376,17 +1387,17 @@ public class SchemaCompiler {
         String className = findClassName(resBaseType, false);
 
         //this means the schema type actually returns a different QName
-        if (baseSchemaTypeMap.containsKey(resBaseType)){
-           if (changedTypeMap.containsKey(resBaseType)) {
-            metaInfHolder.registerMapping(qName,
-                    (QName) changedTypeMap.get(resBaseType),
-                    className, SchemaConstants.ELEMENT_TYPE);
+        if (baseSchemaTypeMap.containsKey(resBaseType)) {
+            if (changedTypeMap.containsKey(resBaseType)) {
+                metaInfHolder.registerMapping(qName,
+                        (QName) changedTypeMap.get(resBaseType),
+                        className, SchemaConstants.ELEMENT_TYPE);
             } else {
                 metaInfHolder.registerMapping(qName,
                         resBaseType,
                         className, SchemaConstants.ELEMENT_TYPE);
             }
-        } else if (processedTypemap.containsKey(resBaseType)){
+        } else if (processedTypemap.containsKey(resBaseType)) {
             //this is not a standared type
             // so the parent class must extend it
             metaInfHolder.setSimple(true);
