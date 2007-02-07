@@ -467,7 +467,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
             if (valueElement != null) {
                 if (valueElement.getText().trim().indexOf(SOAP12Constants.FAULT_CODE_SENDER) >
-                        -1) {
+                        -1 && !msgContext.isDoingREST()) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 }
             }
