@@ -794,7 +794,6 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         // assuming the style of the operations of WSDL 2.0 is always document, for the time being :)
         axisOperation.setMessageExchangePattern(operation.getMessageExchangePattern().toString());
-        axisOperation.setStyle("document");
 
 //         The following can be used to capture the wsdlx:safe attribute
 

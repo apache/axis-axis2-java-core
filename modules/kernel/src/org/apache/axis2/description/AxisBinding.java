@@ -85,7 +85,7 @@ public class AxisBinding extends AxisDescription{
     }
 
     public Object getKey() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     public void engageModule(AxisModule axisModule, AxisConfiguration axisConfig) throws AxisFault {

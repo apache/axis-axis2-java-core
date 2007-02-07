@@ -1,5 +1,7 @@
 package org.apache.axis2.description;
 
+import org.apache.axis2.wsdl.WSDLConstants;
+
 import java.util.HashMap;
 import java.util.Map;
 /*
@@ -33,6 +35,7 @@ public class WSDL20DefaultValueHolder {
         defaultValuesMap.put(WHTTP_METHOD_WSDLX_SAFE, org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET);
         defaultValuesMap.put(WHTTP_METHOD_WSDLX_SAFE, org.apache.axis2.Constants.Configuration.HTTP_METHOD_POST);
         defaultValuesMap.put(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR, ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR_DEFAULT);
+        defaultValuesMap.put(WSDLConstants.WSDL_1_1_STYLE,WSDLConstants.STYLE_DOC);
     }
 
     public static String getDefaultValue(String name) {

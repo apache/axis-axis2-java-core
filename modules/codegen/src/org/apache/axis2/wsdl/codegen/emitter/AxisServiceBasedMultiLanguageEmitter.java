@@ -1875,7 +1875,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         addAttribute(doc, "name", JavaUtils.xmlNameToJava(localPart), methodElement);
         addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
-        addAttribute(doc, "style", axisOperation.getStyle(), methodElement);
+        addAttribute(doc, "style", (String) getBindingPropertyFromOperation(
+                WSDLConstants.WSDL_1_1_STYLE, axisOperation.getName()), methodElement);
         addAttribute(doc, "http_location", (String) getBindingPropertyFromOperation(
                 WSDL2Constants.ATTR_WHTTP_LOCATION, axisOperation.getName()), methodElement);
         addAttribute(doc, "dbsupportname",

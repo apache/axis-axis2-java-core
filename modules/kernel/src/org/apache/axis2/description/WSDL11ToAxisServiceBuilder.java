@@ -150,8 +150,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private static final String JAVAX_WSDL_VERBOSE_MODE_KEY = "javax.wsdl.verbose";
 
-    private static final String JAVAX_WSDL_IMPORT_DOCUMENTS_MODE_KEY = "javax.wsdl.importDocuments";
-
     /**
      * constructor taking in the service name and the port name
      *
@@ -407,10 +405,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         AxisMessage axisMessage;
         AxisMessage axisFaultMessage;
 
-        // FIXME
-        axisOperation.setStyle(null);
-
-
         Input wsdl4jInput = wsdl4jOperation.getInput();
 
             if (wsdl4jInput != null) {
@@ -525,12 +519,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             copyExtensibleElements(wsdl4jBindingOperation.getExtensibilityElements(),
                                    wsdl4jDefinition, axisBindingOperation, BINDING_OPERATION);
 
-            // set the style
-            if (axisOperation.getStyle() == null) {
-                axisOperation
-                        .setStyle((String) axisBinding.getProperty(WSDLConstants.WSDL_1_1_STYLE));
-            }
-
             BindingInput wsdl4jBindingInput = wsdl4jBindingOperation.getBindingInput();
 
             if (wsdl4jBindingInput != null &&
@@ -539,7 +527,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 AxisMessage axisInMessage =
                         axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
-                // FIXME refactor this
                 AddQNameReference(axisInMessage, wsdl4jBindingOperation.getOperation(),
                                   wsdl4jBindingInput, wrappableOperations.contains(
                         wsdl4jBindingOperation.getOperation()));
@@ -560,7 +547,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 AxisMessage axisOutMessage =
                         axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
 
-                // FIXME
                 AddQNameReference(axisOutMessage, wsdl4jBindingOperation.getOperation(),
                                   wsdl4jBindingOutput, wrappableOperations.contains(
                         wsdl4jBindingOperation.getOperation()));
@@ -592,7 +578,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingOperation.addFault(axisBindingFaultMessage);
                 axisBinding.addChild(axisBindingOperation.getName(), axisBindingOperation);
 
-                // FIXME
                 AddQNameReference(faultMessage, wsdl4jFault.getMessage());
             }
         }
@@ -815,12 +800,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // this style is either rpc or doc
 
                 String style = getSOAPStyle(wsdl4jBindingOperation);
-                if (style != null) {
-                    operation.setStyle(style);
-                } else if (this.style != null) {
-                    operation.setStyle(this.style);
-                }
-
                 copyExtensibleElements(wsdl4jBindingOperation
                         .getExtensibilityElements(), dif, operation,
                         BINDING_OPERATION);
@@ -2120,8 +2099,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 String style = soapOperation.getStyle();
                 if (style != null) {
-                    // FIXME
-                    axisBindingOperation.getAxisOperation().setStyle(soapOperation.getStyle());
+                    axisBindingOperation.setProperty(WSDLConstants.WSDL_1_1_STYLE, style);
                 }
 
                 String soapActionURI = soapOperation.getSoapActionURI();
@@ -2138,8 +2116,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 String style = soapOperation.getStyle();
                 if (style != null) {
-                    // FIXME
-                    axisBindingOperation.getAxisOperation().setStyle(style);
+                    axisBindingOperation.setProperty(WSDLConstants.WSDL_1_1_STYLE, style);
                 }
 
                 String soapAction = soapOperation.getSoapActionURI();
@@ -2245,7 +2222,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 String style = soapBinding.getStyle();
                 if (style != null) {
-                    // FIXME do something meaningful ..
                     axisBinding.setProperty(WSDLConstants.WSDL_1_1_STYLE, style);
                 }
 
