@@ -298,9 +298,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             throw new AxisFault("HTTP Binding Extention not found");
         }
 
-        axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE,soapEndpointExtensions.getHttpAuthenticationScheme());
-        axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_REALM,soapEndpointExtensions.getHttpAuthenticationRealm());
+        if (soapEndpointExtensions != null) {
 
+            axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE,
+                                     soapEndpointExtensions.getHttpAuthenticationScheme());
+            axisEndpoint.setProperty(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_REALM,
+                                     soapEndpointExtensions.getHttpAuthenticationRealm());
+
+        }
         return axisEndpoint;
 
     }

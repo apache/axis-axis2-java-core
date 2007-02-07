@@ -1944,6 +1944,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String mep = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WSOAP_MEP,
                                                               axisOperation.getName());
 
+        String bindingType = axisBinding.getType();
+
         if (WSDL2Constants.URI_WSOAP_MEP.equalsIgnoreCase(mep)) {
             methodElement.appendChild(generateOptionParamComponent(doc,
                                                                    "org.apache.axis2.Constants.Configuration.ENABLE_REST",
@@ -1959,7 +1961,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                                                    "\"" +
                                                                            "org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM" +
                                                                            "\""));
-        } else if (axisBinding.getType().equals(WSDL2Constants.URI_WSDL2_HTTP)) {
+        } else if (bindingType != null && bindingType.equals(WSDL2Constants.URI_WSDL2_HTTP)) {
 
             methodElement.appendChild(generateOptionParamComponent(doc,
                                                                    "org.apache.axis2.Constants.Configuration.ENABLE_REST",

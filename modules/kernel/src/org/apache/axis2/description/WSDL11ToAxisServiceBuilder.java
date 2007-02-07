@@ -298,7 +298,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             axisService.setName(wsdl4jService.getQName().getLocalPart());
 
-            populateEndpoints(axisService, wsdl4jService);
+            populateEndpoints(binding, wsdl4jService);
 
             return axisService;
         } catch (WSDLException e) {
@@ -314,8 +314,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      *
      *
      */
-    public void populateEndpoints(AxisService axisService, Service wsdl4jService) throws AxisFault {
+    public void populateEndpoints(Binding binding, Service wsdl4jService) throws AxisFault {
         Map wsdl4jPorts = wsdl4jService.getPorts();
+        QName soapBindingName = binding.getQName();
 
         if (wsdl4jPorts.size() < 1) {
             throw new AxisFault(
@@ -332,13 +333,16 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             axisEndpoint.setName(port.getName());
             populateEndpoint(axisEndpoint, port);
-
+            if (axisService.getEndpointName() == null && soapBindingName.equals(axisEndpoint.getBinding().getName())) {
+                axisService.setEndpointName(axisEndpoint.getName());
+                axisService.setBindingName(axisEndpoint.getBinding().getName().getLocalPart());
+            }
             axisService.addEndpoint(port.getName(), axisEndpoint);
         }
 
         if (this.portName != null) {
             axisService.setEndpointName(this.portName);
-            axisEndpoint = (AxisEndpoint) axisService.getEndpoint(portName);
+            axisEndpoint = axisService.getEndpoint(portName);
             if (axisEndpoint != null) {
                 axisService.setBindingName(axisEndpoint.getBinding().getName().getLocalPart());
             } else {
@@ -346,10 +350,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
 
-        } else {
-            // FIXME Needs to find a porper soap port and then set that ..
-            axisService.setEndpointName(axisEndpoint.getName());
-            axisService.setBindingName(axisEndpoint.getBinding().getName().getLocalPart());
         }
     }
 
@@ -476,7 +476,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 axisFaultMessage = new AxisMessage();
                 axisFaultMessage.setName(wsdl4jMessage.getQName().getLocalPart());
-
+                AddQNameReference(axisFaultMessage, wsdl4jMessage);
                 if (axisOperation.getFaultAction() == null) {
                     axisOperation.addFaultAction(fault.getName(),
                             WSDL11ActionHelper.getActionFromFaultElement(
@@ -590,6 +590,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingFaultMessage.setParent(axisBindingOperation);
 
                 axisBindingOperation.addFault(axisBindingFaultMessage);
+                axisBinding.addChild(axisBindingOperation.getName(), axisBindingOperation);
 
                 // FIXME
                 AddQNameReference(faultMessage, wsdl4jFault.getMessage());
@@ -1435,6 +1436,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (null != faultMessage) {
                 axisFaultMessage
                         .setName(faultMessage.getQName().getLocalPart());
+
                 copyExtensibleElements(faultMessage.getExtensibilityElements(),
                         dif, axisFaultMessage, PORT_TYPE_OPERATION_FAULT);
 
@@ -2142,7 +2144,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 String soapAction = soapOperation.getSoapActionURI();
                 if (soapAction != null) {
-                    axisBindingOperation.setProperty(WSDL2Constants.ATTR_WSOAP_ACTION, soapOperation);
+                    axisBindingOperation.setProperty(WSDL2Constants.ATTR_WSOAP_ACTION, soapAction);
                     // FIXME
                     axisBindingOperation.getAxisOperation().setSoapAction(soapAction);
                     axisService.mapActionToOperation(soapAction, axisBindingOperation.getAxisOperation());
