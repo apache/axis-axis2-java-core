@@ -431,6 +431,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     axisConfig.addTransportOut(transportout);
                 } catch (NoClassDefFoundError e) {
                     log.debug(Messages.getMessage("errorinloadingts", clasName), e);
+                    throw new DeploymentException(e);
                 } catch (ClassNotFoundException e) {
                     log.debug(Messages.getMessage("errorinloadingts", clasName), e);
                     throw new DeploymentException(e);
