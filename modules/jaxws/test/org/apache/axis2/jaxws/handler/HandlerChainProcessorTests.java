@@ -25,7 +25,11 @@ import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.soap.SOAPHandler;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.ServiceTests;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /*
  * There are myriad scenarios to test here:
@@ -43,7 +47,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
  * The testHandleFault_* methods test the HandlerChainProcessor.processFault() method
  * 
  */
-public class HandlerChainProcessorTests extends TestCase {
+public class HandlerChainProcessorTests extends AbstractTestCase {
 
 	// String result is how we'll verify the right methods from
 	// the Handler implementations were called
@@ -63,6 +67,10 @@ public class HandlerChainProcessorTests extends TestCase {
 
 	ArrayList<Handler> handlers = new ArrayList<Handler>();
 	
+    public static Test suite() {
+        return getTestSetup(new TestSuite(HandlerChainProcessorTests.class));
+    }
+
 	@Override
 	protected void setUp() throws Exception {
 		// HandlerChainProcessor expects a sorted chain

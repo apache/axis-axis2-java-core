@@ -34,6 +34,8 @@ import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
 import org.test.mtom.SendImageResponse;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * The intended purpose of this testcase is to test the MTOM functions in Axis2. 
@@ -62,6 +64,10 @@ public class JAXBProviderTests extends ProviderTestCase {
     private QName serviceName = new QName("http://ws.apache.org/axis2", "JAXBProviderService");
     DataSource stringDS, imageDS;
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(JAXBProviderTests.class));
+    }
+
     protected void setUp() throws Exception {
         super.setUp();
         

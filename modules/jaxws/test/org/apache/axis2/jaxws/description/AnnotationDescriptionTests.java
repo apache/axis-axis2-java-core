@@ -24,7 +24,10 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * Directly test the Description classes built via annotations without a WSDL file.
@@ -33,9 +36,13 @@ import org.apache.axis2.jaxws.spi.ServiceDelegate;
  * - A generated service (annotations)
  * - An SEI
  */
-public class AnnotationDescriptionTests extends TestCase {
+public class AnnotationDescriptionTests extends AbstractTestCase {
     
-    /* 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(AnnotationDescriptionTests.class));
+    }
+
+    /*
      * ========================================================================
      * ServiceDescription Tests
      * ========================================================================

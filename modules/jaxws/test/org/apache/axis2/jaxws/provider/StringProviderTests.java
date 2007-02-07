@@ -16,6 +16,9 @@
  */
 package org.apache.axis2.jaxws.provider;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
 import javax.xml.ws.BindingProvider;
@@ -42,6 +45,10 @@ public class StringProviderTests extends ProviderTestCase {
         super(name);
     }
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(StringProviderTests.class));
+    }
+
     private Dispatch<String> getDispatch() {
         Service svc = Service.create(serviceName);
         svc.addPort(portName, null, endpointUrl);

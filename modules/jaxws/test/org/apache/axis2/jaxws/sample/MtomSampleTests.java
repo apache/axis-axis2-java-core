@@ -17,19 +17,26 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.provider.DataSourceImpl;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.test.mtom.ImageDepot;
 import org.test.mtom.ObjectFactory;
 import org.test.mtom.SendImage;
 import org.test.mtom.SendImageResponse;
 
-public class MtomSampleTests extends TestCase {
+public class MtomSampleTests extends AbstractTestCase {
 
     private static final QName QNAME_SERVICE = new QName("urn://mtom.test.org", "MtomSampleService");
     private static final QName QNAME_PORT    = new QName("urn://mtom.test.org", "MtomSample");
     private static final String URL_ENDPOINT = "http://localhost:8080/axis2/services/MtomSampleService";
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+"/"+"test-resources"+File.separator+"image";   
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(MtomSampleTests.class));
+    }
+
     /*
      * Enable attachment Optimization through the SOAPBinding method 
      * -- setMTOMEnabled([true|false])

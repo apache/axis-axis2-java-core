@@ -23,17 +23,20 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * MessageTests
  * Tests to create and validate Message processing
  * These are not client/server tests.
  */
-public class FaultTests extends TestCase {
+public class FaultTests extends AbstractTestCase {
 
 	private static final String faultString = "Internal server error from WAS";
 	
@@ -94,6 +97,10 @@ public class FaultTests extends TestCase {
 		super(arg0);
 	}
 	
+    public static Test suite() {
+        return getTestSetup(new TestSuite(FaultTests.class));
+    }
+
 	/**
 	 * This test effectively tests XMLFault construction from
 	 * 

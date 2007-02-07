@@ -19,11 +19,18 @@
 package org.apache.axis2.jaxws.anytype.tests;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessagePortType;
 import org.apache.axis2.jaxws.anytype.sei.AnyTypeMessageService;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-public class AnyTypeTests extends TestCase {
+public class AnyTypeTests extends AbstractTestCase {
 	
+    public static Test suite() {
+        return getTestSetup(new TestSuite(AnyTypeTests.class));
+    }
+
 	public void testAnyTypeElementinWrappedWSDL(){
 		System.out.println("------------------------------");
 		System.out.println("Test : "+getName());

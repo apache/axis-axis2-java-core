@@ -12,17 +12,24 @@ import java.util.Set;
 import javax.wsdl.WSDLException;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapePortType;
 import org.apache.axis2.jaxws.polymorphic.shape.sei.PolymorphicShapeService;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.wsdl.SchemaReaderException;
 import org.apache.axis2.jaxws.wsdl.impl.SchemaReaderImpl;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.test.shape.Shape;
 import org.test.shape.Square;
 import org.test.shape.threed.ThreeDSquare;
 
-public class PolymorphicTests extends TestCase {
+public class PolymorphicTests extends AbstractTestCase {
+
+    public static Test suite() {
+        return getTestSetup(new TestSuite(PolymorphicTests.class));
+    }
 
 	public void testFormalAndActualTypeInDifferentPackages(){
 		System.out.println("------------------------------");

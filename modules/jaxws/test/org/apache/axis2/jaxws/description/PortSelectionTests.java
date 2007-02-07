@@ -29,18 +29,25 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.ws.axis2.tests.EchoPort;
 
 /**
  * 
  */
-public class PortSelectionTests extends TestCase {
+public class PortSelectionTests extends AbstractTestCase {
     private static String VALID_SERVICE_NAMESPACE = "http://org/test/addnumbers";
     private static String VALID_SERVICE_LOCALPART_3 = "AddNumbersService3";
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(ServiceTests.class));
+    }
+
     public void testServiceDescPortSelectionMethods() {
         URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");
 

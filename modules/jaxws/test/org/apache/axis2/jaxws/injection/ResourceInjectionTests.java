@@ -21,13 +21,16 @@ package org.apache.axis2.jaxws.injection;
 import javax.xml.ws.WebServiceContext;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionPortType;
 import org.apache.axis2.jaxws.resourceinjection.sei.ResourceInjectionService;
 import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.factory.ResourceInjectionFactory;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-public class ResourceInjectionTests extends TestCase {
+public class ResourceInjectionTests extends AbstractTestCase {
 
 
 	private Object resource = new WebServiceContextImpl();
@@ -35,6 +38,10 @@ public class ResourceInjectionTests extends TestCase {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
+    public static Test suite() {
+        return getTestSetup(new TestSuite(ResourceInjectionTests.class));
+    }
 
 	public void testInjectionOnField(){
 		Object serviceInstance = new ResourceInjectionTestImpl1();

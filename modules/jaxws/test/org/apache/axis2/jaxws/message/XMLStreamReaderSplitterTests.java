@@ -27,13 +27,16 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.message.util.XMLStreamReaderSplitter;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * Tests XMLStreamReaderSplitter
  */
-public class XMLStreamReaderSplitterTests extends TestCase {
+public class XMLStreamReaderSplitterTests extends AbstractTestCase {
 
 	// String test variables
 	private static final String sampleText =
@@ -64,6 +67,10 @@ public class XMLStreamReaderSplitterTests extends TestCase {
 		super(arg0);
 	}
 	
+    public static Test suite() {
+        return getTestSetup(new TestSuite(XMLStreamReaderSplitterTests.class));
+    }
+
 	/**
 	 * Test XMLStreamReaderSplitter 
 	 * @throws Exception

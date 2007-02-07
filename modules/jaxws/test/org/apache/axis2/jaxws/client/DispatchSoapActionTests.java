@@ -27,7 +27,10 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service.Mode;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.BindingProvider;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.axis2.jaxws.client.soapaction.BookStoreService;
 import org.apache.axis2.jaxws.client.soapaction.GetPriceResponseType;
 import org.apache.axis2.jaxws.client.soapaction.GetPriceType;
@@ -36,11 +39,15 @@ import org.apache.axis2.jaxws.client.soapaction.ObjectFactory;
 /**
  * A suite of SOAPAction related tests for the dispatch client 
  */
-public class DispatchSoapActionTests extends TestCase {
+public class DispatchSoapActionTests extends AbstractTestCase {
     
     private static final String targetNamespace = "http://jaxws.axis2.apache.org/client/soapaction";
     private static final String portName = "BookStorePort";
         
+    public static Test suite() {
+        return getTestSetup(new TestSuite(DispatchSoapActionTests.class));
+    }
+
     /**
      * Invoke an operation this is defined in the WSDL as having a SOAPAction.
      * Since this is a Dispatch client, we'll need to specify that SOAPAction

@@ -29,9 +29,11 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 
-import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-public class SOAPMessageDispatch extends TestCase {
+public class SOAPMessageDispatchTest extends AbstractTestCase {
 	private String url = "http://localhost:8080/axis2/services/ProxyDocLitWrappedService";
 	private QName serviceName = new QName(
 			"http://org.apache.axis2.proxy.doclitwrapped", "ProxyDocLitWrappedService");
@@ -40,6 +42,10 @@ public class SOAPMessageDispatch extends TestCase {
 	
 	String messageResource = "test-resources" + File.separator  + "xml" + File.separator +"soapmessage.xml";
 	
+    public static Test suite() {
+        return getTestSetup(new TestSuite(SOAPMessageDispatchTest.class));
+    }
+
 	public void testSOAPMessageSyncMessageMode() throws Exception {
 		
         String basedir = new File(System.getProperty("basedir",".")).getAbsolutePath();

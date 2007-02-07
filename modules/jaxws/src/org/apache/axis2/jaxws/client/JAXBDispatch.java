@@ -103,7 +103,7 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
     }
     
     /**
-     * Common code to get the value for JAXBDispatch and JAXBDispatchAsyncListener
+     * Common code to get the value for JAXBDispatchTest and JAXBDispatchAsyncListener
      * @param message
      * @param mode
      * @param jaxbContext
@@ -124,7 +124,7 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
                     // REVIEW This seems like the correct behavior.  If the body is empty, return a null
                     // Any changes here should also be made to XMLDispatch.getValue
                     if (log.isDebugEnabled()) {
-                        log.debug("There are no elements in the body to unmarshal.  JAXBDispatch returns a null value");
+                        log.debug("There are no elements in the body to unmarshal.  JAXBDispatchTest returns a null value");
                     }
                     value = null;
                 }

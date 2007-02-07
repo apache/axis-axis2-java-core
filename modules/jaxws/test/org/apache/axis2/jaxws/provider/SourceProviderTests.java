@@ -16,6 +16,9 @@
  */
 package org.apache.axis2.jaxws.provider;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,6 +44,9 @@ public class SourceProviderTests extends ProviderTestCase {
     private QName serviceName = new QName("http://ws.apache.org/axis2", "SourceProviderService");
     private String xmlDir = "xml";
 
+    public static Test suite() {
+        return getTestSetup(new TestSuite(SourceProviderTests.class));
+    }
 
     protected void setUp() throws Exception {
             super.setUp();

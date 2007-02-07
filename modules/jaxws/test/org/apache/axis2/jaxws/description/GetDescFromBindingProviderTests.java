@@ -26,9 +26,12 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.spi.BindingProvider;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.ws.axis2.tests.EchoPort;
 
 /**
@@ -37,10 +40,14 @@ import org.apache.ws.axis2.tests.EchoPort;
  * gotten from the EndpointDesc.  Note that the BindingProvider class is NOT
  * the jaxws API one; it is the internal implementation BindingProvider class.
  */
-public class GetDescFromBindingProviderTests extends TestCase {
+public class GetDescFromBindingProviderTests extends AbstractTestCase {
     
     private static final String wsdlSOAPAddress = "http://localhost:8080/axis2/services/EchoService";
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(GetDescFromBindingProviderTests.class));
+    }
+
     public void testForProxy() {
         String namespaceURI = "http://ws.apache.org/axis2/tests";
         String localPart = "EchoService";

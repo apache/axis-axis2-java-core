@@ -11,13 +11,20 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-public class ClientConfigTests extends TestCase {
+public class ClientConfigTests extends AbstractTestCase {
 
     public ClientConfigTests(String name) {
         super(name);
     }
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(ClientConfigTests.class));
+    }
+
     public void testBadWsdlUrl() throws Exception {
         
         URL url = null;

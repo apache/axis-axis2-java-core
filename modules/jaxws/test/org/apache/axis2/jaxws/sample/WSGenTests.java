@@ -21,13 +21,20 @@ package org.apache.axis2.jaxws.sample;
 import javax.xml.ws.BindingProvider;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.sample.wsgen.client.WSGenService;
 import org.apache.axis2.jaxws.sample.wsgen.client.WSGenInterface;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-public class WSGenTests extends TestCase {
+public class WSGenTests extends AbstractTestCase {
     
     String axisEndpoint = "http://localhost:8080/axis2/services/WSGenService";
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(WSGenTests.class));
+    }
+
     public void testWSGen() {
         try{
             System.out.println("----------------------------------");

@@ -22,15 +22,18 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.proxy.soap12.Echo;
 import org.apache.axis2.jaxws.proxy.soap12.SOAP12EchoService;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * A suite of tests to test dynamic proxy clients sending SOAP 1.2
  * requests.  The endpoint can accept different keys to determine
  * what it should send back.
  */
-public class SOAP12ProxyTests extends TestCase {
+public class SOAP12ProxyTests extends AbstractTestCase {
 
     private static final String SEND_SOAP11_RESPONSE = "RESPONSE-SOAP11";
     private static final String SEND_SOAP12_RESPONSE = "RESPONSE-SOAP12";
@@ -39,6 +42,10 @@ public class SOAP12ProxyTests extends TestCase {
         super(name);
     }
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(SOAP12ProxyTests.class));
+    }
+
     /**
      * Send a SOAP 1.2 request and expect a SOAP 1.2 response.
      */

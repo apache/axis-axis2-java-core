@@ -39,6 +39,8 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
@@ -52,6 +54,7 @@ import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -63,7 +66,7 @@ import test.ObjectFactory;
  * Tests to create and validate blocks.
  * These are not client/server tests.
  */
-public class BlockTests extends TestCase {
+public class BlockTests extends AbstractTestCase {
 
 	// String test variables
 	private static final String sampleText =
@@ -87,6 +90,10 @@ public class BlockTests extends TestCase {
 		super(arg0);
 	}
 	
+    public static Test suite() {
+        return getTestSetup(new TestSuite(BlockTests.class));
+    }
+
 	/**
 	 * Create a Block representing an XMLString and simulate a 
 	 * normal Dispatch<String> flow

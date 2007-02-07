@@ -27,22 +27,28 @@ import javax.xml.ws.Service;
 
 import org.xmlsoap.schemas.soap.envelope.Body;
 import org.xmlsoap.schemas.soap.envelope.Envelope;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import test.EchoString;
 import test.EchoStringResponse;
 import test.ObjectFactory;
 
-public class JAXBDispatch extends TestCase {
+public class JAXBDispatchTest extends AbstractTestCase {
 
     private Dispatch<Object> dispatchPayload;
     private Dispatch<Object> dispatchMessage;
     private JAXBContext jbc;
     
-    public JAXBDispatch(String name) {
+    public JAXBDispatchTest(String name) {
         super(name);
     }
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(JAXBDispatchTest.class));
+    }
+
     public void setUp() throws Exception {
         //Create the Service object
         Service svc = Service.create(DispatchTestConstants.QNAME_SERVICE);

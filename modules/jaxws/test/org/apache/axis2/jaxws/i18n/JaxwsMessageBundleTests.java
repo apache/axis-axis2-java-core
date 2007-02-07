@@ -17,12 +17,15 @@
 package org.apache.axis2.jaxws.i18n;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * Tests basic function of the Message Bundle
  *
  */
-public class JaxwsMessageBundleTests extends TestCase {
+public class JaxwsMessageBundleTests extends AbstractTestCase {
     
     public JaxwsMessageBundleTests() { 
         super();
@@ -32,6 +35,10 @@ public class JaxwsMessageBundleTests extends TestCase {
         super(arg);   
     }
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(JaxwsMessageBundleTests.class));
+    }
+
     /**
      * @testStrategy: Test that the resource bundle
      * is installed by obtaining a message

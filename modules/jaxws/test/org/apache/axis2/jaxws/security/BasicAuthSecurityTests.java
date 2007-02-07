@@ -23,9 +23,12 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.BindingProvider;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-public class BasicAuthSecurityTests extends TestCase {
+public class BasicAuthSecurityTests extends AbstractTestCase {
 
     private String endpointUrl = "http://localhost:8080/axis2/services/BasicAuthSecurityService";
     private String xmlString = "<invoke>test input</invoke>";
@@ -34,6 +37,10 @@ public class BasicAuthSecurityTests extends TestCase {
 
 	private String USER_ID = "testid";
 	private String PASSWORD = "testid";
+
+    public static Test suite() {
+        return getTestSetup(new TestSuite(BasicAuthSecurityTests.class));
+    }
 
     protected void setUp() throws Exception {
             super.setUp();

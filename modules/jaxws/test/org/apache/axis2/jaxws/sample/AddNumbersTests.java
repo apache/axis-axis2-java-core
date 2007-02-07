@@ -21,13 +21,20 @@ package org.apache.axis2.jaxws.sample;
 import javax.xml.ws.BindingProvider;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersService;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-public class AddNumbersTests extends TestCase {
+public class AddNumbersTests extends AbstractTestCase {
 	
     String axisEndpoint = "http://localhost:8080/axis2/services/AddNumbersService";
 	
+    public static Test suite() {
+        return getTestSetup(new TestSuite(AddNumbersTests.class));
+    }
+
     public void testAddNumbers() {
 		try{
 			System.out.println("----------------------------------");

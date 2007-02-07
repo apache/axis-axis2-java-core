@@ -28,16 +28,23 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * A suite to test the validation of the client request/response context properties
  */
-public class PropertyValueTests extends TestCase {
+public class PropertyValueTests extends AbstractTestCase {
     
     public PropertyValueTests(String name) {
         super(name);
     }
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(PropertyValueTests.class));
+    }
+
     public void testSetInvalidClientProperties() throws Exception {
         Service svc = Service.create(new QName("http://test", "TestService"));
         QName portQName = new QName("http://test", "TestPort");

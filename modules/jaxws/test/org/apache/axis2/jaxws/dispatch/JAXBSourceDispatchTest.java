@@ -31,9 +31,11 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
-import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.test.dispatch.jaxbsource.Invoke;
 import org.test.dispatch.jaxbsource.ObjectFactory;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /*
 * This is a test case for Invoking Dispatch with a JAXBSource.
@@ -42,7 +44,7 @@ import org.test.dispatch.jaxbsource.ObjectFactory;
 */
 
 
-public class JAXBSourceDispatch extends TestCase {
+public class JAXBSourceDispatchTest extends AbstractTestCase {
 	/**
      * Invoke a sync Dispatch<JAXBSource> in PAYLOAD mode
      */
@@ -51,6 +53,10 @@ public class JAXBSourceDispatch extends TestCase {
 	private QName serviceName = new QName("http://ws.apache.org/axis2", "SourceProviderService");
 	private QName portName =new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
 	
+    public static Test suite() {
+        return getTestSetup(new TestSuite(JAXBSourceDispatchTest.class));
+    }
+
     public void testJAXBSourceSyncPayloadMode() throws Exception {
         System.out.println("---------------------------------------");
         System.out.println("test: " + getName());

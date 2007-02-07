@@ -21,8 +21,9 @@ import java.io.File;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-public abstract class ProviderTestCase extends TestCase {
+public abstract class ProviderTestCase extends AbstractTestCase {
 
     public QName portName = new QName("http://ws.apache.org/axis2", "SimpleProviderServiceSOAP11port0");
     public String providerResourceDir = "test-resources"+File.separator+"provider";

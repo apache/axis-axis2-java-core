@@ -28,9 +28,15 @@ import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
-import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-public class StringDispatch extends TestCase {
+public class StringDispatchTest extends AbstractTestCase {
+
+    public static Test suite() {
+        return getTestSetup(new TestSuite(StringDispatchTest.class));
+    }
 
     /**
      * Invoke a sync Dispatch<String> in PAYLOAD mode

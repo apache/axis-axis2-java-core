@@ -33,12 +33,15 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * This class uses the JAX-WS Dispatch API to test sending and receiving
  * messages using SOAP 1.2.
  */
-public class SOAP12Dispatch extends TestCase {
+public class SOAP12DispatchTests extends AbstractTestCase {
     
     private static final QName QNAME_SERVICE = new QName(
             "http://org/apache/axis2/jaxws/test/SOAP12", "SOAP12Service");
@@ -60,10 +63,14 @@ public class SOAP12Dispatch extends TestCase {
         sampleRequest + 
         sampleEnvelopeTail;
     
-    public SOAP12Dispatch(String name) {
+    public SOAP12DispatchTests(String name) {
         super(name);
     }
     
+    public static Test suite() {
+        return getTestSetup(new TestSuite(SOAP12DispatchTests.class));
+    }
+
     /**
      * Test sending a SOAP 1.2 request in PAYLOAD mode
      */
