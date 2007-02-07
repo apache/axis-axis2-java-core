@@ -81,12 +81,6 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
         this.paramDescComposite = pdc;
         this.parameterNumber = parameterNumber;
         this.parentOperationDescription = parent;
-        this.parameterType = pdc.getParameterTypeClass();
-        // If this is a JAX-WS Holder<T>, then get the Class for the actual type T also.
-        if (pdc.isHolderType()) {
-            this.parameterHolderActualType = pdc.getHolderActualTypeClass();
-        }
-        
         webParamAnnotation = pdc.getWebParamAnnot();
         
         //TODO: Need to build the schema map. Need to add logic to add this parameter
@@ -121,6 +115,9 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
      * getParameterActualType() to get the class associated with T.
      */
     public Class getParameterType() {
+    	if(parameterType == null && paramDescComposite != null) {
+    		parameterType = paramDescComposite.getParameterTypeClass();
+    	}
         return parameterType;
     }
     
@@ -129,10 +126,18 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
      * @return
      */
     public Class getParameterActualType() {
-        if (parameterHolderActualType != null) {
+        if (parameterHolderActualType == null && paramDescComposite != null && 
+        		paramDescComposite.isHolderType()) {
+            parameterHolderActualType = paramDescComposite.getHolderActualTypeClass();
             return parameterHolderActualType;
         }
+        else if(parameterHolderActualType != null) {
+        	return parameterHolderActualType;
+        }
         else {
+        	if(paramDescComposite != null && parameterType == null) {
+        		parameterType = paramDescComposite.getParameterTypeClass();
+        	}
             return parameterType;
         }
     }
