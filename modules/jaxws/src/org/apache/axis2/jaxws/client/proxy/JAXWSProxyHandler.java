@@ -313,23 +313,44 @@ public class JAXWSProxyHandler extends BindingProvider implements
 		if (log.isDebugEnabled()) {
             log.debug("Converting Message to Response Object");
         }
-		if (responseMsg.isFault()) {
-		    Object object = MethodMarshallerFactory.getMarshaller(operationDesc, false).demarshalFaultResponse(responseMsg, operationDesc);
-		    if (log.isDebugEnabled()) {
-		        log.debug("Message Converted to response Throwable.  Throwing back to client.");
-		    }
-		    
-		    throw (Throwable)object;
-		} else if (responseContext.getLocalException() != null) {
-		    // use the factory, it'll throw the right thing:
-		    throw ExceptionFactory.makeWebServiceException(responseContext.getLocalException());
-		}
+
+        if (hasFaultResponse(responseContext)) {
+            Throwable t = getFaultResponse(responseContext, operationDesc);
+            throw t;
+        }
+        
 		Object object = MethodMarshallerFactory.getMarshaller(operationDesc, false).demarshalResponse(responseMsg, args, operationDesc);
 		if (log.isDebugEnabled()) {
             log.debug("Message Converted to response Object");
         }
 		return object;
 	}
+    
+    protected static Throwable getFaultResponse(MessageContext msgCtx, OperationDescription opDesc) {
+        Message msg = msgCtx.getMessage();
+        if (msg!= null && msg.isFault()) {
+            Object object = MethodMarshallerFactory.getMarshaller(opDesc, false).demarshalFaultResponse(msg, opDesc);
+            if (log.isDebugEnabled()) {
+                log.debug("Message Converted to response Throwable.  Throwing back to client.");
+            }
+            
+            return (Throwable) object;
+        } else if (msgCtx.getLocalException() != null) {
+            // use the factory, it'll throw the right thing:
+            return ExceptionFactory.makeWebServiceException(msgCtx.getLocalException());
+        }
+        
+        return null;
+    }
+    
+    protected static boolean hasFaultResponse(MessageContext mc) {
+        if (mc.getMessage() != null && mc.getMessage().isFault())
+            return true;
+        else if (mc.getLocalException() != null)
+            return true;
+        else 
+            return false;
+    }
 	
 	private boolean isBindingProviderInvoked(Method method){
 		Class methodsClass = method.getDeclaringClass();

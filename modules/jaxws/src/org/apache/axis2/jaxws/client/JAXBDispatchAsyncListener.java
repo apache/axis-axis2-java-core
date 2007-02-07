@@ -53,4 +53,8 @@ public class JAXBDispatchAsyncListener extends AsyncResponse {
     public Object getResponseValueObject(MessageContext mc) {
         return JAXBDispatch.getValue(mc.getMessage(), mode, jaxbContext);
     }
+    
+    public Throwable getFaultResponse(MessageContext mc) {
+        return BaseDispatch.getFaultResponse(mc);
+    }
 }

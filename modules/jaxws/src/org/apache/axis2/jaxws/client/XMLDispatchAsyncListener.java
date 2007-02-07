@@ -45,4 +45,8 @@ public class XMLDispatchAsyncListener extends AsyncResponse {
     public Object getResponseValueObject(MessageContext mc) {
         return XMLDispatch.getValue(mc.getMessage(), mode, blockFactoryType);
     }
+    
+    public Throwable getFaultResponse(MessageContext mc) {
+        return BaseDispatch.getFaultResponse(mc);
+    }
 }

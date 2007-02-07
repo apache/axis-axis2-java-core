@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.client.async;
 
 import javax.xml.ws.WebServiceException;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -45,9 +46,9 @@ public class PollingFuture extends Callback {
         
         MessageContext responseMsgCtx = null;
         try {
-            responseMsgCtx = AsyncUtils.createMessageContext(result);
+            responseMsgCtx = AsyncUtils.createJAXWSMessageContext(result);
         } catch (WebServiceException e) {
-            response.onError(e);
+            response.onError(e, null);
             if (debug) {
                 log.debug("An error occured while processing the async response.  " + e.getMessage());
             }
@@ -62,7 +63,24 @@ public class PollingFuture extends Callback {
 
     @Override
     public void onError(Exception e) {
-        response.onError(e);
+        // If a SOAPFault was returned by the AxisEngine, the AxisFault
+        // that is returned should have a MessageContext with it.  Use
+        // this to unmarshall the fault included there.
+        if (e.getClass().isAssignableFrom(AxisFault.class)) {
+            AxisFault fault = (AxisFault) e;
+            MessageContext faultMessageContext = null;
+            try {
+                faultMessageContext  = AsyncUtils.createJAXWSMessageContext(fault.getFaultMessageContext());                
+            }
+            catch (WebServiceException wse) {
+                response.onError(wse, null);
+            }
+                    
+            response.onError(e, faultMessageContext);
+        }
+        else {
+            response.onError(e, null);
+        }
     }
 
 }

@@ -334,11 +334,19 @@ public class StringDispatch extends TestCase {
         
         if (callback.hasError()) {
             Throwable t = callback.getError();
-            assertTrue(t instanceof ExecutionException);
-            assertTrue(t.getCause() instanceof WebServiceException);
-            assertTrue(t.getCause().getCause() instanceof UnknownHostException);
+            t.printStackTrace();
+            
+            assertTrue(t.getClass().getName() + " does not match expected type ExecutionException", t instanceof ExecutionException);
+            
+            Throwable cause = t.getCause();
+            assertNotNull("There must be a cause under the ExecutionException", cause);
+            assertTrue(cause.getClass().getName() + " does not match expected type WebServiceException" ,cause instanceof WebServiceException);
+            
+            Throwable hostException = t.getCause().getCause();
+            assertNotNull("There must be a cause under the WebServiceException", hostException);
+            assertTrue(hostException.getClass().getName() + " does not match expected type UnknownHostException", hostException instanceof UnknownHostException);
         } else {
-            fail("Should have retrieved an UnknownHostException from callback");
+            fail("No fault thrown.  Should have retrieved an UnknownHostException from callback");
         }
     }
     

@@ -33,7 +33,11 @@ public class AsyncUtils {
     private static final Log log = LogFactory.getLog(AsyncUtils.class);
     private static final boolean debug = log.isDebugEnabled();
     
-    public static MessageContext createMessageContext(AsyncResult result) throws WebServiceException {
+    public static MessageContext createJAXWSMessageContext(AsyncResult result) throws WebServiceException {
+        return AsyncUtils.createJAXWSMessageContext(result.getResponseMessageContext());
+    }
+    
+    public static MessageContext createJAXWSMessageContext(org.apache.axis2.context.MessageContext mc) throws WebServiceException {
         MessageContext response = null;
         
         if (debug) {
@@ -41,17 +45,16 @@ public class AsyncUtils {
         }
         
         // Create the JAX-WS response MessageContext from the Axis2 response
-        org.apache.axis2.context.MessageContext axisResponse = result.getResponseMessageContext();
-        response = new MessageContext(axisResponse);
+        response = new MessageContext(mc);
         
         // REVIEW: Are we on the final thread of execution here or does this get handed off to the executor?
         // TODO: Remove workaround for WS-Addressing running in thin client (non-server) environment
         try {
-            ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, axisResponse);
+            ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, mc);
         }
         catch (Throwable t) {
             if (debug) {
-                log.debug(axisResponse.getLogIDString()+" An error occurred in the ThreadContextMigratorUtil " + t);
+                log.debug(mc.getLogIDString()+" An error occurred in the ThreadContextMigratorUtil " + t);
                 log.debug("...caused by " + t.getCause());
             }
             throw ExceptionFactory.makeWebServiceException(t);

@@ -26,6 +26,7 @@ import java.util.concurrent.FutureTask;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.WebServiceException;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -86,7 +87,7 @@ public class CallbackFuture extends Callback {
         
         MessageContext response = null;
         try {
-            response = AsyncUtils.createMessageContext(result);
+            response = AsyncUtils.createJAXWSMessageContext(result);
         } catch (WebServiceException e) {
             cft.setError(e);
             if (debug) {
@@ -104,8 +105,27 @@ public class CallbackFuture extends Callback {
 
     @Override
     public void onError(Exception e) {
-         cft.setError(e);
-         execute();
+        // If a SOAPFault was returned by the AxisEngine, the AxisFault
+        // that is returned should have a MessageContext with it.  Use
+        // this to unmarshall the fault included there.
+        if (e.getClass().isAssignableFrom(AxisFault.class)) {
+            AxisFault fault = (AxisFault) e;
+            MessageContext faultMessageContext = null;
+            try {
+                faultMessageContext  = AsyncUtils.createJAXWSMessageContext(fault.getFaultMessageContext());                
+            }
+            catch (WebServiceException wse) {
+                cft.setError(wse);
+            }
+            
+            cft.setError(e);
+            cft.setMessageContext(faultMessageContext);
+        }
+        else {
+            cft.setError(e);            
+        }
+        
+        execute();
     }
     
     private void execute() {
@@ -139,7 +159,7 @@ class CallbackFutureTask implements Callable {
     private static final boolean debug = log.isDebugEnabled();
     
     AsyncResponse response;
-    MessageContext responseMsgCtx;
+    MessageContext msgCtx;
     AsyncHandler handler;
     Exception error;
     
@@ -149,7 +169,7 @@ class CallbackFutureTask implements Callable {
     }
     
     void setMessageContext(MessageContext mc) {
-        responseMsgCtx = mc;
+        msgCtx = mc;
     }
     
     void setError(Exception e) {
@@ -158,13 +178,17 @@ class CallbackFutureTask implements Callable {
     
     @SuppressWarnings("unchecked")
     public Object call() throws Exception {
-        if (responseMsgCtx != null) {
-            response.onComplete(responseMsgCtx);    
+        // Set the response or fault content on the AsyncResponse object
+        // so that it can be collected inside the Executor thread and processed.
+        if (error != null) {
+            response.onError(error, msgCtx);
         }
-        else if (error != null) {
-            response.onError(error);
+        else {
+            response.onComplete(msgCtx);    
         }
         
+        // Now that the content is available, call the JAX-WS AsyncHandler class
+        // to deliver the response to the user.
         try {
             if (debug) {
                 log.debug("Calling JAX-WS AsyncHandler with the Response object");

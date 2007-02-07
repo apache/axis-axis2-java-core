@@ -125,19 +125,12 @@ public abstract class BaseDispatch<T> extends BindingProvider
             
             MessageContext responseMsgCtx = invocationContext.getResponseMessageContext();
             
+            if (hasFaultResponse(responseMsgCtx)) {
+                WebServiceException wse = BaseDispatch.getFaultResponse(responseMsgCtx);
+                throw wse;
+            }
+
             Message responseMsg = responseMsgCtx.getMessage();
-            
-            if (responseMsg.isFault()) {
-                XMLFault fault = responseMsg.getXMLFault();
-                // 4.3.2 conformance bullet 1 requires a ProtocolException here
-                ProtocolException pe = MethodMarshallerUtils.createSystemException(responseMsg.getXMLFault(), responseMsg);
-                throw  pe;
-            }
-            else if (responseMsgCtx.getLocalException() != null) {
-                // use the factory, it'll throw the right thing:
-                throw ExceptionFactory.makeWebServiceException(responseMsgCtx.getLocalException());
-            }
-            
             Object returnObj = getValueFromMessage(responseMsg);
             
             //Check to see if we need to maintain session state
@@ -350,6 +343,44 @@ public abstract class BaseDispatch<T> extends BindingProvider
     
     public void setMode(Mode m) {
         mode = m;
+    }
+    
+    /**
+     * Returns the fault that is contained within the MessageContext for an invocation.  
+     * If no fault exists, null will be returned.
+     * 
+     * @param msgCtx
+     * @return
+     */
+    public static WebServiceException getFaultResponse(MessageContext msgCtx) {
+        Message msg = msgCtx.getMessage();        
+        if (msg != null && msg.isFault()) {
+            //XMLFault fault = msg.getXMLFault();
+            // 4.3.2 conformance bullet 1 requires a ProtocolException here
+            ProtocolException pe = MethodMarshallerUtils.createSystemException(msg.getXMLFault(), msg);
+            return  pe;
+        }
+        else if (msgCtx.getLocalException() != null) {
+            // use the factory, it'll throw the right thing:
+            return ExceptionFactory.makeWebServiceException(msgCtx.getLocalException());
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Returns a boolean indicating whether or not the MessageContext contained a fault.
+     * 
+     * @param msgCtx
+     * @return
+     */
+    public boolean hasFaultResponse(MessageContext msgCtx) {
+        if (msgCtx.getMessage() != null && msgCtx.getMessage().isFault())
+            return true;
+        else if (msgCtx.getLocalException() != null)
+            return true;
+        else 
+            return false;
     }
 
     /*

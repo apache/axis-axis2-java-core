@@ -7,9 +7,8 @@ import javax.jws.WebService;
 
 import org.test.faults.FaultyWebServiceFault;
 
-
 @WebService(endpointInterface="org.apache.axis2.jaxws.sample.faults.FaultyWebServicePortType")
-public class FaultyWebServicePortTypeImpl implements FaultyWebServicePortType {
+public class FaultyWebServicePortTypeImpl {
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.sample.faults.FaultyWebServicePortType#faultyWebService(int)
@@ -21,11 +20,6 @@ public class FaultyWebServicePortTypeImpl implements FaultyWebServicePortType {
 		bean.setMessage("bean custom message");
 		
 		throw new FaultyWebServiceFault_Exception("custom exception", bean);
-//		throw new RuntimeException("runtime exception");
-		
-		// TODO Auto-generated method stub
-		//return arg0+3;
-
 	}
 
 

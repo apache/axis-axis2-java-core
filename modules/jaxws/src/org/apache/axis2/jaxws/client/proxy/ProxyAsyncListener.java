@@ -51,9 +51,10 @@ public class ProxyAsyncListener extends AsyncResponse {
 		this.inputArgs = inputArgs;
 	}
 
+    @Override
 	public Object getResponseValueObject(MessageContext mc) {
 	    try{
-	        //I will delegate the request to create respose to proxyHandler 
+	        //Delegate the request to create respose to proxyHandler 
             //since it has all the logic written to create response for Sync 
             //and oneWay.
 	        return handler.createResponse(null,inputArgs, mc, operationDesc);
@@ -62,4 +63,9 @@ public class ProxyAsyncListener extends AsyncResponse {
 	        throw ExceptionFactory.makeWebServiceException(e);
 	    }
 	}
+
+    @Override
+    public Throwable getFaultResponse(MessageContext mc) {
+        return JAXWSProxyHandler.getFaultResponse(mc, operationDesc);
+    }
 }

@@ -13,10 +13,8 @@ public class AsyncCallback<T> implements AsyncHandler<T> {
     public void handleResponse(Response<T> response) {
         try {
             value = response.get();
-        } catch (InterruptedException e) {
-            exception = e;
-        } catch (ExecutionException e) {
-            exception = e;
+        } catch (Throwable t) {
+            exception = t;
         }
     }
     

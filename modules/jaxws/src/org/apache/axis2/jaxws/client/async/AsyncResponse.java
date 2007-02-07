@@ -28,10 +28,8 @@ import java.util.concurrent.TimeoutException;
 
 import javax.xml.ws.Response;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.message.Message;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,15 +41,18 @@ import org.apache.commons.logging.LogFactory;
  * object that is returned as the response along with a <link>java.util.Map</link>
  * with the context information of the response.  
  */
-public class AsyncResponse implements Response {
+public abstract class AsyncResponse implements Response {
 
     private static final Log log = LogFactory.getLog(AsyncResponse.class);
-    private static final boolean debug = log.isDebugEnabled();
     
     private boolean cancelled;
-    private MessageContext response;
-    private Map<String, Object> responseContext;
+    
     private Throwable fault;
+    private MessageContext faultMessageContext;    
+    private MessageContext response;
+    
+    private Map<String, Object> responseContext;
+    
     private CountDownLatch latch;
     private boolean cacheValid = false;
     private Object cachedObject = null;
@@ -60,26 +61,26 @@ public class AsyncResponse implements Response {
         latch = new CountDownLatch(1);
     }
     
-    protected void onError(Throwable t) {
-        if (debug) {
+    protected void onError(Throwable flt, MessageContext faultCtx) {
+        if (log.isDebugEnabled()) {
             log.debug("AsyncResponse received a fault.  Counting down latch.");
-            log.debug("Fault type = " + t.getClass());
         }
-        
-        fault = t;
-        latch.countDown();
+
+        fault = flt;
+        faultMessageContext = faultCtx;
         
         // Probably a good idea to invalidate the cache
         cacheValid = false;
         cachedObject = null;
-        
-        if (debug) {
+
+        latch.countDown();
+        if (log.isDebugEnabled()) {
             log.debug("New latch count = [" + latch.getCount() + "]");
         }
     }
     
     protected void onComplete(MessageContext mc) {
-        if (debug) {
+        if (log.isDebugEnabled()) {
             log.debug("AsyncResponse received a MessageContext. Counting down latch.");
         }
         
@@ -93,7 +94,7 @@ public class AsyncResponse implements Response {
         response = mc;
         latch.countDown();
         
-        if (debug) {
+        if (log.isDebugEnabled()) {
             log.debug("New latch count = [" + latch.getCount() + "]");
         }
     }
@@ -106,7 +107,7 @@ public class AsyncResponse implements Response {
         // The task cannot be cancelled if it has already been cancelled
         // before or if it has already completed.
         if (cancelled || latch.getCount() == 0) {
-            if (debug) {
+            if (log.isDebugEnabled()) {
                 log.debug("Cancellation attempt failed.");
             }
             return false;
@@ -122,12 +123,12 @@ public class AsyncResponse implements Response {
         }
         
         // Wait for the response to come back
-        if (debug) {
+        if (log.isDebugEnabled()) {
             log.debug("Waiting for async response delivery.");
         }
         latch.await();
         
-        Object obj = processAsyncResponse(response);
+        Object obj = processResponse();
         return obj;
     }
 
@@ -137,7 +138,7 @@ public class AsyncResponse implements Response {
         }
         
         // Wait for the response to come back
-        if (debug) {
+        if (log.isDebugEnabled()) {
             log.debug("Waiting for async response delivery with time out.");
             log.debug("timeout = " + timeout);
             log.debug("units   = " + unit);
@@ -150,7 +151,7 @@ public class AsyncResponse implements Response {
             throw new TimeoutException("The client timed out while waiting for an asynchronous response");
         }
         
-        Object obj = processAsyncResponse(response);
+        Object obj = processResponse();
         return obj;
     }
 
@@ -166,22 +167,23 @@ public class AsyncResponse implements Response {
         return responseContext;
     }
     
-    private boolean hasFault() {
-        if (fault != null)
-            return true;
-        else
-            return false;
-    }
-    
     private void initResponseContext() {
         responseContext = new HashMap<String, Object>();
     }
     
-    private Object processAsyncResponse(MessageContext ctx) throws ExecutionException {
-        if (hasFault()) {
-            throw new ExecutionException(ExceptionFactory.makeWebServiceException(fault));
+    private Object processResponse() throws ExecutionException {
+        // If the fault object is not null, then we've received a fault message and 
+        // we need to process it in one of a number of forms.
+        if (fault != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("A fault was found.  Starting to process fault response.");
+            }
+            Throwable t = processFaultResponse();
+            throw new ExecutionException(t);
         }
-        if (ctx == null) {
+
+        // If we don't have a fault, then we have to have a MessageContext for the response.
+        if (response == null) {
             throw new ExecutionException(ExceptionFactory.makeWebServiceException("null response"));
         }
         
@@ -198,22 +200,22 @@ public class AsyncResponse implements Response {
         // the parameterized generic type.
         Object obj = null;
         try {
-            if (debug) {
+            if (log.isDebugEnabled()) {
                 log.debug("Unmarshalling the async response message.");
              }
-             obj = getResponseValueObject(ctx);
+             obj = getResponseValueObject(response);
              // Cache the object in case it is required again
              cacheValid = true;
              cachedObject = obj;      
         }
         catch (Throwable t) {
-            if (debug) {
+            if (log.isDebugEnabled()) {
                 log.debug("An error occurred while processing the response");
             }
             throw new ExecutionException(ExceptionFactory.makeWebServiceException(t));
         }
 
-        if (debug && obj != null) {
+        if (log.isDebugEnabled() && obj != null) {
             log.debug("Unmarshalled response object of type: " + obj.getClass());
         }
         
@@ -222,19 +224,25 @@ public class AsyncResponse implements Response {
         return obj;
     }
     
-    /**
-     * A default implementation of this method that returns the contents
-     * of the message in the form of an XML String.  Subclasses should override
-     * this to convert the response message into whatever format they require.
-     * @param msg
-     */
-    protected Object getResponseValueObject(MessageContext mc) {
-        if (log.isDebugEnabled()) {
-            log.debug("Demarshalling response message as a String");
+    private Throwable processFaultResponse() {
+        // A faultMessageContext means that there could possibly be a SOAPFault
+        // on the MessateContext that we need to unmarshall.
+        if (faultMessageContext != null) {
+            Throwable t = getFaultResponse(faultMessageContext);
+            if (t != null) {
+                return ExceptionFactory.makeWebServiceException(t);    
+            }
+            else {
+                return ExceptionFactory.makeWebServiceException(fault);
+            }
         }
-        Message msg = mc.getMessage();
-        OMElement om = msg.getAsOMElement();
-        return om.toString();
+        else {
+            return ExceptionFactory.makeWebServiceException(fault);
+        }        
     }
+    
+    public abstract Object getResponseValueObject(MessageContext mc);
+    
+    public abstract Throwable getFaultResponse(MessageContext mc);
 
 }
