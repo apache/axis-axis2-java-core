@@ -19,6 +19,8 @@ package org.apache.axis2.transport.http;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.MIMEOutputUtils;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPFaultDetail;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -187,8 +189,13 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
              */
             if (msgContext.isDoingREST()) {
                 if (msgContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) {
-                    dataOut = msgContext.getEnvelope().getBody().getFault().getDetail()
-                            .getFirstElement();
+                    SOAPFault fault = msgContext.getEnvelope().getBody().getFault();
+                    SOAPFaultDetail soapFaultDetail = fault.getDetail();
+                    dataOut = soapFaultDetail.getFirstElement();
+                    if (dataOut == null) {
+                        dataOut = fault.getReason();
+                    }
+
                 } else {
                     dataOut = msgContext.getEnvelope().getBody().getFirstElement();
                 }

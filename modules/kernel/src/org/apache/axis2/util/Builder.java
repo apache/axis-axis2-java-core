@@ -42,12 +42,9 @@ public class Builder {
 
     public static StAXBuilder getPOXBuilder(InputStream inStream, String charSetEnc, String soapNamespaceURI) throws XMLStreamException {
         StAXBuilder builder;
-        SOAPEnvelope envelope;
-        SOAPFactory soapFactory = new SOAP11Factory();
         XMLStreamReader xmlreader =
                 StAXUtils.createXMLStreamReader(inStream, charSetEnc);
         builder = new StAXOMBuilder(xmlreader);
-        builder.setOMBuilderFactory(soapFactory);
         return builder;
     }
 

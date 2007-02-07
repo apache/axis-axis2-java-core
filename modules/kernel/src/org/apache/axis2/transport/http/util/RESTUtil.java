@@ -18,6 +18,7 @@ package org.apache.axis2.transport.http.util;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.OMNodeEx;
 import org.apache.axiom.om.impl.builder.OMBuilder;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -283,7 +284,7 @@ public class RESTUtil {
                 if (request.getContentLength() != 0) {
                     xmlreader = StAXUtils.createXMLStreamReader(inputStream,
                                                                 charSetEnc);
-                    OMBuilder builder = Builder.getBuilder(inputStream, charSetEnc, null);
+                    OMBuilder builder = Builder.getPOXBuilder(inputStream, charSetEnc, null);
                     OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
                     documentElement.setParent(null);
                     body.addChild(documentElement);

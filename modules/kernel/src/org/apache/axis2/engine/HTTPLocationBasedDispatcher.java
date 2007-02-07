@@ -114,7 +114,9 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
             }
              else {
                 int queryIndex = path.indexOf("?");
-                service = path.substring(queryIndex);
+                if (queryIndex != -1) {
+                    service = path.substring(queryIndex);
+                }
             }
              return service;
    }
