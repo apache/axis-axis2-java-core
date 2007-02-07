@@ -33,6 +33,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -481,5 +483,10 @@ public class JMSListener implements TransportListener {
 
     public ConfigurationContext getConfigurationContext() {
         return this.axisConf;
+    }
+
+
+    public SessionContext getSessionContext(MessageContext messageContext) {
+        return null;
     }
 }

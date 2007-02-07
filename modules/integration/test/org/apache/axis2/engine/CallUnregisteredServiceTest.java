@@ -80,7 +80,7 @@ public class CallUnregisteredServiceTest extends UtilServerBasedTestCase {
             fail("The test must fail due to wrong service Name");
 
         } catch (AxisFault e) {
-            assertTrue(e.getMessage().indexOf("service could not be found") >= 0);
+            assertTrue(e.getMessage().indexOf("Service not found for the") >= 0);
             tearDown();
             return;
         }

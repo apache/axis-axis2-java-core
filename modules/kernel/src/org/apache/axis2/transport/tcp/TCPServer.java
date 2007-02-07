@@ -30,6 +30,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
@@ -215,5 +217,9 @@ public class TCPServer implements Runnable, TransportListener {
             log.debug("Unable to generate EPR for the transport tcp");
             return null;
         }
+    }
+
+    public SessionContext getSessionContext(MessageContext messageContext) {
+        return null;
     }
 }

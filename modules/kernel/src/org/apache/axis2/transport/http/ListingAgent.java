@@ -40,6 +40,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisService;
@@ -344,7 +346,7 @@ public class ListingAgent extends AbstractAgent {
         List policyElements = des.getPolicyInclude().getPolicyElements();
         PolicyRegistry registry = des.getPolicyInclude().getPolicyRegistry();
 
-        Object policyComponent = null;
+        Object policyComponent ;
 
         Policy policy = registry.lookup(id);
 
@@ -411,6 +413,23 @@ public class ListingAgent extends AbstractAgent {
         public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
             return getEPRsForService(serviceName, ip)[0];
         }
+        public SessionContext getSessionContext(MessageContext messageContext) {
+            HttpServletRequest req = (HttpServletRequest) messageContext.getProperty(
+                    HTTPConstants.MC_HTTP_SERVLETREQUEST);
+            SessionContext sessionContext =
+                    (SessionContext) req.getSession(true).getAttribute(
+                            Constants.SESSION_CONTEXT_PROPERTY);
+            String sessionId = req.getSession().getId();
+            if (sessionContext == null) {
+                sessionContext = new SessionContext(null);
+                sessionContext.setCookieID(sessionId);
+                req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
+                        sessionContext);
+            }
+            messageContext.setSessionContext(sessionContext);
+            messageContext.setProperty(AxisServlet.SESSION_ID, sessionId);
+            return sessionContext;
+    }
 
 
     }

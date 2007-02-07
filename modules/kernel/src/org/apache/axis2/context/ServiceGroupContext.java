@@ -499,7 +499,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         this.setParent(cc);
 
         // register with the parent
-        cc.registerServiceGroupContext(this);
+        cc.registerServiceGroupContextintoSoapSessionTable(this);
 
 
         //-------------------------------------------------------

@@ -29,6 +29,8 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
@@ -91,22 +93,23 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         tIn.setReceiver(new TransportListener() {
 
             public void init(ConfigurationContext axisConf, TransportInDescription transprtIn) {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public void start() {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public void stop() {
-                //To change body of implemented methods use File | Settings | File Templates.
             }
 
             public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return null;
             }
 
             public EndpointReference[] getEPRsForService(String serviceName, String ip){
+                return null;
+            }
+
+            public SessionContext getSessionContext(MessageContext messageContext) {
                 return null;
             }
         });

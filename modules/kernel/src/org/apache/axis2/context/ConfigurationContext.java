@@ -20,13 +20,13 @@ package org.apache.axis2.context;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.util.SessionUtils;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
@@ -93,14 +93,12 @@ public class ConfigurationContext extends AbstractContext {
      * create a new service context for the service
      * </pre>
      *
-     * @param messageContext
+     * @param messageContext : MessageContext
+     * @throws org.apache.axis2.AxisFault : If something goes wrong
      */
     public void fillServiceContextAndServiceGroupContext(
             MessageContext messageContext)
             throws AxisFault {
-        String serviceGroupContextId = messageContext.getServiceGroupContextId();
-        SessionContext sessionContext = messageContext.getSessionContext();
-
         // by this time service group context id must have a value. Either from transport or from addressing
         ServiceGroupContext serviceGroupContext;
         ServiceContext serviceContext = messageContext.getServiceContext();
@@ -108,93 +106,52 @@ public class ConfigurationContext extends AbstractContext {
         AxisService axisService = messageContext.getAxisService();
 
         if (serviceContext == null) {
-            if (Constants.SCOPE_APPLICATION.equals(axisService.getScope())) {
+            String scope = axisService.getScope();
+            if (Constants.SCOPE_APPLICATION.equals(scope)) {
                 String serviceGroupName = ((AxisServiceGroup) axisService.getParent()).getServiceGroupName();
-                serviceGroupContext = null;
-
-                if (applicationSessionServiceGroupContextTable != null) {
-                    serviceGroupContext = (ServiceGroupContext) applicationSessionServiceGroupContextTable.get(
-                            serviceGroupName);
-                }
-
+                serviceGroupContext = (ServiceGroupContext) applicationSessionServiceGroupContextTable.get(
+                        serviceGroupName);
                 if (serviceGroupContext == null) {
                     AxisServiceGroup axisServiceGroup = messageContext.getAxisServiceGroup();
                     if (axisServiceGroup == null) {
                         axisServiceGroup = (AxisServiceGroup) axisService.getParent();
+                        messageContext.setAxisServiceGroup(axisServiceGroup);
                     }
                     serviceGroupContext = new ServiceGroupContext(messageContext.getConfigurationContext(),
                             axisServiceGroup);
-
-                    if (applicationSessionServiceGroupContextTable == null) {
-                        applicationSessionServiceGroupContextTable = new Hashtable();
-                    }
                     applicationSessionServiceGroupContextTable.put(serviceGroupName, serviceGroupContext);
-
                 }
-                serviceContext = serviceGroupContext.getServiceContext(axisService);
-
-            } else if (!isNull(serviceGroupContextId)
-                    && (getServiceGroupContext(serviceGroupContextId, messageContext) != null)) {
-
-                // SGC is already there
-                serviceGroupContext =
-                        getServiceGroupContext(serviceGroupContextId, messageContext);
-                serviceContext =
-                        serviceGroupContext.getServiceContext(axisService);
-            } else {
-
-                // either the key is null or no SGC is found from the give key
-                if (isNull(serviceGroupContextId)) {
-                    serviceGroupContextId = UUIDGenerator.getUUID();
-                    messageContext.setServiceGroupContextId(serviceGroupContextId);
-                }
-
-                if (messageContext.getAxisService() != null) {
+                messageContext.setServiceGroupContext(serviceGroupContext);
+                messageContext.setServiceContext(serviceGroupContext.getServiceContext(axisService));
+            } else if (Constants.SCOPE_SOAP_SESSION.equals(scope)) {
+                String serviceGroupContextId = messageContext.getServiceGroupContextId();
+                if (serviceGroupContextId != null) {
+                    serviceGroupContext = getServiceGroupContextFromSoapSessionTable(
+                            serviceGroupContextId, messageContext);
+                    if (serviceGroupContext == null) {
+                        throw new AxisFault("Unable to find corresponding context" +
+                                " for the serviceGroupId: " + serviceGroupContextId);
+                    }
+                } else {
                     AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
-
                     serviceGroupContext = new ServiceGroupContext(this, axisServiceGroup);
                     serviceContext = serviceGroupContext.getServiceContext(axisService);
-
                     // set the serviceGroupContextID
+                    serviceGroupContextId = UUIDGenerator.getUUID();
                     serviceGroupContext.setId(serviceGroupContextId);
-                } else {
-                    throw new AxisFault(Messages.getMessage("servicenotfound"));
+                    messageContext.setServiceGroupContextId(serviceGroupContextId);
+                    registerServiceGroupContextintoSoapSessionTable(serviceGroupContext);
                 }
-            }
-
-            // If the current axis service's scope is application. Then, whatever be the scope for
-            // the other services, the maxScope will be application. So no need to calculate the maxscope.
-            if (!Constants.SCOPE_APPLICATION.equals(axisService.getScope())) {
-                /**
-                 * 1. Check the max scope of the service group , if it is grater than TransportSession
-                 *    then need to store in configurationContext
-                 * 2. Else need to store in SessionContext , and need to store both service context and
-                 *    service group context
-                 */
-                String maxScope = SessionUtils.calculateMaxScopeForServiceGroup(serviceGroupContext.getDescription());
-                if (Constants.SCOPE_SOAP_SESSION.equals(maxScope)) {
-                    registerServiceGroupContext(serviceGroupContext);
-                } else if (Constants.SCOPE_TRANSPORT_SESSION.equals(maxScope)) {
-                    if (sessionContext != null) {
-                        String serviceGroupName = serviceGroupContext.getDescription().getServiceGroupName();
-                        sessionContext.addServiceGroupContext(serviceGroupContext, serviceGroupName);
-                        sessionContext.addServiceContext(serviceContext);
-                    }
-                }
-                messageContext.setServiceContext(serviceContext);
-                if (Constants.SCOPE_REQUEST.equals(maxScope)) {
-                    messageContext.setServiceGroupContextId(null);
-                } else {
-                    messageContext.setServiceGroupContext(serviceGroupContext);
-                }
-            } else {
-                messageContext.setServiceContext(serviceContext);
                 messageContext.setServiceGroupContext(serviceGroupContext);
+                messageContext.setServiceContext(serviceGroupContext.getServiceContext(axisService));
+            } else if (Constants.SCOPE_REQUEST.equals(scope)) {
+                AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
+                serviceGroupContext = new ServiceGroupContext(this, axisServiceGroup);
+                messageContext.setServiceGroupContext(serviceGroupContext);
+                serviceContext = serviceGroupContext.getServiceContext(axisService);
+                messageContext.setServiceContext(serviceContext);
+                messageContext.getOperationContext().setParent(serviceContext);
             }
-        }
-        if (sessionContext != null) {
-            // when you come here operation context MUST already been assigned to the message context
-            serviceContext.setProperty(HTTPConstants.COOKIE_STRING, sessionContext.getCookieID());
         }
         messageContext.getOperationContext().setParent(serviceContext);
     }
@@ -208,20 +165,21 @@ public class ConfigurationContext extends AbstractContext {
      * @param mepContext
      */
     public boolean registerOperationContext(String messageID,
-                                         OperationContext mepContext) {
-        boolean alreadyInMap = false;
+                                            OperationContext mepContext) {
+        boolean alreadyInMap;
         mepContext.setKey(messageID);
         synchronized (operationContextMap) {
             alreadyInMap = operationContextMap.containsKey(messageID);
-            if(!alreadyInMap){
+            if (!alreadyInMap) {
                 this.operationContextMap.put(messageID, mepContext);
             }
         }
         return (!alreadyInMap);
     }
-    
+
     /**
      * Unregisters the operation context associated with the given messageID
+     *
      * @param key
      */
     public void unregisterOperationContext(String key) {
@@ -230,18 +188,11 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-    public void registerServiceGroupContext(ServiceGroupContext serviceGroupContext) {
+    public void registerServiceGroupContextintoSoapSessionTable(ServiceGroupContext serviceGroupContext) {
         String id = serviceGroupContext.getId();
-
-        if (serviceGroupContextMap == null) {
-            serviceGroupContextMap = new Hashtable();
-        }
-
-        if ((serviceGroupContextMap.isEmpty()) || (serviceGroupContextMap.get(id) == null)) {
-            serviceGroupContextMap.put(id, serviceGroupContext);
-            serviceGroupContext.touch();
-            serviceGroupContext.setParent(this);
-        }
+        serviceGroupContextMap.put(id, serviceGroupContext);
+        serviceGroupContext.touch();
+        serviceGroupContext.setParent(this);
         // this is the best time to clean up the SGCtxts since are not being used anymore
         cleanupServiceGroupContexts();
     }
@@ -341,41 +292,14 @@ public class ConfigurationContext extends AbstractContext {
         return null;
     }
 
-    public ServiceGroupContext getServiceGroupContext(String serviceGroupContextId,
-                                                      MessageContext msgContext) {
+    public ServiceGroupContext getServiceGroupContextFromSoapSessionTable(String serviceGroupContextId,
+                                                                          MessageContext msgContext) {
+        ServiceGroupContext serviceGroupContext =
+                (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
 
-        ServiceGroupContext serviceGroupContext = null;
-
-        if (serviceGroupContextMap != null) {
-            serviceGroupContext = (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
-
-            if (serviceGroupContext != null) {
-                serviceGroupContext.touch();
-            }
+        if (serviceGroupContext != null) {
+            serviceGroupContext.touch();
         }
-
-        if (serviceGroupContext == null
-                && msgContext != null
-                && msgContext.getSessionContext() != null) {
-            String serviceGroupName = msgContext.getAxisServiceGroup().getServiceGroupName();
-            serviceGroupContext = msgContext.getSessionContext().getServiceGroupContext(
-                    serviceGroupName);
-        }
-
-        if (serviceGroupContext == null && msgContext != null) {
-            AxisService axisService = msgContext.getAxisService();
-            if (axisService != null) {
-                AxisServiceGroup asg = (AxisServiceGroup) axisService.getParent();
-                if (asg != null) {
-
-                    if (applicationSessionServiceGroupContextTable != null) {
-                        serviceGroupContext = (ServiceGroupContext)
-                                applicationSessionServiceGroupContextTable.get(asg.getServiceGroupName());
-                    }
-                }
-            }
-        }
-
         return serviceGroupContext;
     }
 
@@ -426,10 +350,6 @@ public class ConfigurationContext extends AbstractContext {
         }
 
         return threadPool;
-    }
-
-    private boolean isNull(String string) {
-        return "".equals(string) || (string == null);
     }
 
     /**
@@ -592,6 +512,8 @@ public class ConfigurationContext extends AbstractContext {
 
     /**
      * This will be used to fetch the serviceGroupContextTimoutInterval from any place available.
+     *
+     * @return long
      */
     public long getServiceGroupContextTimoutInterval() {
         Integer serviceGroupContextTimoutIntervalParam =

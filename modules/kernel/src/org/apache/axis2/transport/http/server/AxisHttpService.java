@@ -127,14 +127,10 @@ public class AxisHttpService extends HttpService {
                     .getTransportIn(new QName(Constants.TRANSPORT_HTTP));
 
             String sessionKey = (String) context.getAttribute(HTTPConstants.COOKIE_STRING);
-            if (this.configurationContext.getAxisConfiguration().isManageTransportSession()) {
-                SessionContext sessionContext = this.sessionManager.getSessionContext(sessionKey);
-                this.msgContext.setSessionContext(sessionContext);
-            }
             this.msgContext.setTransportIn(transportIn);
             this.msgContext.setTransportOut(transportOut);
-            this.msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
             this.msgContext.setServerSide(true);
+            this.msgContext.setProperty(HTTPConstants.COOKIE_STRING,sessionKey);
             this.msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, reqline.getUri());
 
             // set the transport Headers

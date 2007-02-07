@@ -90,16 +90,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected TransportOutDescription transportOut;
 
     protected MessageContext
-            createAndSetInitialParamsToMsgCtxt(HttpServletResponse resp,
-                                               HttpServletRequest req) throws AxisFault {
+    createAndSetInitialParamsToMsgCtxt(HttpServletResponse resp,
+                                       HttpServletRequest req) throws AxisFault {
         MessageContext msgContext = new MessageContext();
-        if (axisConfiguration.isManageTransportSession()) {
-            // We need to create this only if transport session is enabled.
-            Object sessionContext = getSessionContext(req);
-            msgContext.setSessionContext((SessionContext) sessionContext);
-            msgContext.setProperty(SESSION_ID, req.getSession().getId());
-        }
-
         msgContext.setConfigurationContext(configContext);
         msgContext.setTransportIn(transportIn);
         msgContext.setTransportOut(transportOut);
@@ -129,7 +122,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         }
         try {
             super.destroy();
-        } catch (Exception e){
+        } catch (Exception e) {
             log.info(e.getMessage());
         }
     }
@@ -199,7 +192,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             } catch (Exception e) {
                 throw new ServletException(e);
             }
-        } else if (!disableREST ) {
+        } else if (!disableREST) {
             MessageContext messageContext = null;
             OutputStream out = resp.getOutputStream();
             try {
@@ -250,7 +243,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         OutputStream out = res.getOutputStream();
 
         String contentType = req.getContentType();
-        if (!disableREST && isRESTRequest(contentType, req)) {
+        if (!disableREST && isRESTRequest(contentType)) {
             msgContext = createMessageContext(req, res);
             try {
 
@@ -387,8 +380,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                         org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD,
                         Constants.Configuration.HTTP_METHOD_DELETE);
                 new RESTUtil(configContext).processGetRequest(messageContext,
-                                                              req,
-                                                              resp);
+                        req,
+                        resp);
                 Object contextWritten =
                         messageContext.getOperationContext()
                                 .getProperty(Constants.RESPONSE_WRITTEN);
@@ -426,8 +419,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                         org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD,
                         Constants.Configuration.HTTP_METHOD_PUT);
                 new RESTUtil(configContext).processPostRequest(messageContext,
-                                                               req,
-                                                               resp);
+                        req,
+                        resp);
                 Object contextWritten =
                         messageContext.getOperationContext()
                                 .getProperty(Constants.RESPONSE_WRITTEN);
@@ -540,6 +533,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      *
      * @param config Servlet configuration
      * @throws ServletException
+     * @return ConfigurationContext
      */
     protected ConfigurationContext initConfigContext(ServletConfig config) throws ServletException {
         try {
@@ -565,17 +559,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         }
 
         return map;
-    }
-
-    protected Object getSessionContext(HttpServletRequest httpServletRequest) {
-        Object sessionContext =
-                httpServletRequest.getSession(true).getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
-        if (sessionContext == null) {
-            sessionContext = new SessionContext(null);
-            httpServletRequest.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
-                    sessionContext);
-        }
-        return sessionContext;
     }
 
     protected Map getTransportHeaders(HttpServletRequest req) {
@@ -627,7 +610,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         EndpointReference soapEndpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
                 configContext.getServiceContextPath() + "/" + serviceName);
 
-        if (!disableREST ) {
+        if (!disableREST) {
             EndpointReference restEndpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
                     configContext.getRESTContextPath() + "/" + serviceName);
             return new EndpointReference[]{soapEndpoint, restEndpoint};
@@ -692,13 +675,31 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * - application/x-www-form-urlencoded
      * as REST content types in this servlet.
      *
-     * @param request
      */
-    private boolean isRESTRequest(String contentType, HttpServletRequest request) {
+    private boolean isRESTRequest(String contentType) {
         return ((contentType == null ||
                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1));
+    }
+
+
+    public SessionContext getSessionContext(MessageContext messageContext) {
+        HttpServletRequest req = (HttpServletRequest) messageContext.getProperty(
+                HTTPConstants.MC_HTTP_SERVLETREQUEST);
+        SessionContext sessionContext =
+                (SessionContext) req.getSession(true).getAttribute(
+                        Constants.SESSION_CONTEXT_PROPERTY);
+        String sessionId = req.getSession().getId();
+        if (sessionContext == null) {
+            sessionContext = new SessionContext(null);
+            sessionContext.setCookieID(sessionId);
+            req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
+                    sessionContext);
+        }
+        messageContext.setSessionContext(sessionContext);
+        messageContext.setProperty(SESSION_ID, sessionId);
+        return sessionContext;
     }
 
     class ServletRequestResponseTransport implements RequestResponseTransport {

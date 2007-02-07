@@ -21,14 +21,19 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.http.HTTPConstants;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 
 /**
@@ -44,7 +49,7 @@ public class InstanceDispatcher extends AbstractHandler {
     /**
      * Post Condition : All the Contexts must be populated.
      *
-     * @param msgContext
+     * @param msgContext MessageContext
      * @throws org.apache.axis2.AxisFault
      */
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
@@ -57,29 +62,23 @@ public class InstanceDispatcher extends AbstractHandler {
             msgContext.setServiceGroupContextId(
                     ((ServiceGroupContext) serviceContext.getParent()).getId());
 
-            return InvocationResponse.CONTINUE;        
+            return InvocationResponse.CONTINUE;
         }
-
-        if(!Constants.SCOPE_APPLICATION.equals(scope)) {
-            // try to extract sgcId from the message
-            extractServiceGroupContextId(msgContext);
-
-            //trying to get service context from Session context
+        if(Constants.SCOPE_TRANSPORT_SESSION.equals(scope)){
             fillContextsFromSessionContext(msgContext);
+        } else if(Constants.SCOPE_SOAP_SESSION.equals(scope)){
+             extractServiceGroupContextId(msgContext);
         }
 
         AxisOperation axisOperation = msgContext.getAxisOperation();
-
         // 1. look up opCtxt using mc.addressingHeaders.relatesTo[0]
         if (axisOperation == null) {
-          return InvocationResponse.CONTINUE;        
+            return InvocationResponse.CONTINUE;
         }
-
         OperationContext operationContext =
                 axisOperation.findForExistingOperationContext(msgContext);
 
         if (operationContext != null) {
-
             // register operation context and message context
 //            axisOperation.registerOperationContext(msgContext, operationContext);
             axisOperation.registerMessageContext(msgContext, operationContext);
@@ -105,10 +104,11 @@ public class InstanceDispatcher extends AbstractHandler {
                         msgContext);
             }
         }
+        serviceContext = msgContext.getServiceContext();
         if (serviceContext != null) {
             serviceContext.setMyEPR(msgContext.getTo());
         }
-        return InvocationResponse.CONTINUE;        
+        return InvocationResponse.CONTINUE;
     }
 
     private void fillContextsFromSessionContext(MessageContext msgContext) throws AxisFault {
@@ -117,36 +117,46 @@ public class InstanceDispatcher extends AbstractHandler {
             throw new AxisFault(Messages.getMessage("unabletofindservice"));
         }
         SessionContext sessionContext = msgContext.getSessionContext();
-        String scope = service.getScope();
-        if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
-            if (sessionContext == null) {
-                Object obj = msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
-                if (obj != null) {
-                    sessionContext = (SessionContext) getSessionContext((HttpServletRequest) obj);
-                    msgContext.setSessionContext(sessionContext);
-                }
-            }
-        }
-        String serviceGroupContextId = msgContext.getServiceGroupContextId();
-        if (serviceGroupContextId != null && sessionContext != null) {
-            //setting service group context which is teken from session context
-            ServiceGroupContext serviceGroupContext = sessionContext.getServiceGroupContext(
-                    serviceGroupContextId);
-            if (serviceGroupContext != null) {
-                //setting service group context
-                msgContext.setServiceGroupContext(serviceGroupContext);
-                // setting Service conetxt
-                msgContext.setServiceContext(serviceGroupContext.getServiceContext(service));
+        if (sessionContext == null) {
+            TransportListener listener = msgContext.getTransportIn().getReceiver();
+            sessionContext = listener.getSessionContext(msgContext);
+            if(sessionContext==null){
+                createAndFillContexts(service, msgContext, sessionContext);
                 return;
             }
         }
+        String serviceGroupName = msgContext.getAxisServiceGroup().getServiceGroupName();
+        ServiceGroupContext serviceGroupContext = sessionContext.getServiceGroupContext(
+                serviceGroupName);
+        if (serviceGroupContext != null) {
+            //setting service group context
+            msgContext.setServiceGroupContext(serviceGroupContext);
+            // setting Service conetxt
+            msgContext.setServiceContext(serviceGroupContext.getServiceContext(service));
+        } else {
+            createAndFillContexts(service, msgContext, sessionContext);
+        }
+        ServiceContext serviceContext = sessionContext.getServiceContext(service);
+        //found the serviceContext from session context , so adding that into msgContext
+        if (serviceContext != null) {
+            msgContext.setServiceContext(serviceContext);
+            serviceContext.setProperty(HTTPConstants.COOKIE_STRING, sessionContext.getCookieID());
+        }
+    }
 
-        if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope) && sessionContext != null) {
-            ServiceContext serviceContext = sessionContext.getServiceContext(service);
-            //found the serviceContext from session context , so adding that into msgContext
-            if (serviceContext != null) {
-                msgContext.setServiceContext(serviceContext);
-            }
+    private void createAndFillContexts(AxisService service,
+                                                     MessageContext msgContext,
+                                                     SessionContext sessionContext) throws AxisFault {
+        ServiceGroupContext serviceGroupContext;
+        AxisServiceGroup axisServiceGroup = (AxisServiceGroup) service.getParent();
+        serviceGroupContext = new ServiceGroupContext(
+                msgContext.getConfigurationContext(), axisServiceGroup);
+        msgContext.setServiceGroupContext(serviceGroupContext);
+        ServiceContext serviceContext = serviceGroupContext.getServiceContext(service);
+        msgContext.setServiceContext(serviceContext);
+        if(sessionContext!=null){
+            sessionContext.addServiceContext(serviceContext);
+            sessionContext.addServiceGroupContext(serviceGroupContext);
         }
     }
 
@@ -160,7 +170,7 @@ public class InstanceDispatcher extends AbstractHandler {
             if (serviceGroupId != null) {
                 String groupId = serviceGroupId.getText();
                 ServiceGroupContext serviceGroupContext = msgContext.getConfigurationContext().
-                        getServiceGroupContext(groupId, msgContext);
+                        getServiceGroupContextFromSoapSessionTable(groupId, msgContext);
                 if (serviceGroupContext == null) {
                     throw new AxisFault(Messages.getMessage(
                             "invalidservicegrouoid", groupId));
@@ -168,16 +178,5 @@ public class InstanceDispatcher extends AbstractHandler {
                 msgContext.setServiceGroupContextId(serviceGroupId.getText());
             }
         }
-    }
-
-    private Object getSessionContext(HttpServletRequest httpServletRequest) {
-        Object sessionContext =
-                httpServletRequest.getSession(true).getAttribute(Constants.SESSION_CONTEXT_PROPERTY);
-        if (sessionContext == null) {
-            sessionContext = new SessionContext(null);
-            httpServletRequest.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
-                    sessionContext);
-        }
-        return sessionContext;
     }
 }

@@ -63,8 +63,6 @@ public class ConfigurationContextFactory {
         }
         //To override context path
         setContextPaths(axisConfig, configContext);
-        //To check whether transport level session management is require or not
-        configureTransportSessionManagement(axisConfig);
         init(configContext);
         axisConfigurator.engageGlobalModules();
         axisConfigurator.loadServices();
@@ -98,15 +96,6 @@ public class ConfigurationContextFactory {
             }
         }
     }
-
-    private static void configureTransportSessionManagement(AxisConfiguration axisConfig) {
-        Parameter manageSession = axisConfig.getParameter(Constants.MANAGE_TRANSPORT_SESSION);
-        if (manageSession != null) {
-            String value = ((String) manageSession.getValue()).trim();
-            axisConfig.setManageTransportSession(Boolean.valueOf(value).booleanValue());
-        }
-    }
-
     private static void setContextPaths(AxisConfiguration axisConfig,
                                         ConfigurationContext configContext) {
         // Checking for context path
@@ -191,6 +180,7 @@ public class ConfigurationContextFactory {
 
     /**
      * Initializes modules and creates Transports.
+     * @param configContext ConfigurationContext
      */
 
     private static void init(ConfigurationContext configContext) {

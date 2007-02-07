@@ -20,6 +20,8 @@ package org.apache.axis2.transport;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
 
 /**
@@ -27,8 +29,8 @@ import org.apache.axis2.description.TransportInDescription;
  */
 public interface TransportListener {
 
-    public static final String PARAM_PORT = "port";
-    public static final String HOST_ADDRESS="hostname";
+    String PARAM_PORT = "port";
+    String HOST_ADDRESS="hostname";
 
     void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
             throws AxisFault;
@@ -46,5 +48,13 @@ public interface TransportListener {
      */
     EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault;
 
-    public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault;
+    EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault;
+
+    /**
+     * To get the sessionContext transport dependent manner. So that transport listener
+     * can return its own implementation of session managment
+     * @param messageContext : MessageContext which has all the relavent data
+     * @return SessionContext
+     */
+    SessionContext getSessionContext(MessageContext messageContext);
 }

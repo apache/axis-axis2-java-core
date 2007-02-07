@@ -49,6 +49,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
@@ -449,4 +450,8 @@ public class SimpleMailListener implements Runnable, TransportListener {
                 .getServiceContextPath() + "/" + serviceName)};
     }
 
+
+    public SessionContext getSessionContext(MessageContext messageContext) {
+        return null;  
+    }
 }

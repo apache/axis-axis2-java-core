@@ -1,6 +1,5 @@
 package org.apache.axis2.engine;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -19,8 +18,6 @@ import org.apache.axis2.engine.util.RequestCounterMessageReceiver;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -60,7 +57,6 @@ public class ServiceGroupContextTest extends UtilServerBasedTestCase {
     protected EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:" +
             (UtilServer.TESTING_PORT) +
             "/axis2/services/RequestCounter");
-	private static final Log log = LogFactory.getLog(ServiceGroupContextTest.class);
     protected QName serviceName = new QName("RequestCounter");
     protected QName operationName = new QName("getRequestCount");
     protected QName transportName = new QName("http://localhost/my", "NullTransport");
@@ -76,7 +72,6 @@ public class ServiceGroupContextTest extends UtilServerBasedTestCase {
 //        service.setScope(Constants.SCOPE_TRANSPORT_SESSION);
         service.setScope(Constants.SCOPE_SOAP_SESSION);
         UtilServer.deployService(service);
-        UtilServer.getConfigurationContext().getAxisConfiguration().setManageTransportSession(true);
     }
 
     protected void tearDown() throws Exception {

@@ -135,7 +135,7 @@ public class Utils {
                 (AxisServiceGroup) axisService.getParent());
 
         serviceGroupContext.setId(serviceGroupContextId);
-        configurationContext.registerServiceGroupContext(serviceGroupContext);
+        configurationContext.registerServiceGroupContextintoSoapSessionTable(serviceGroupContext);
 
         return new ServiceContext(axisService, serviceGroupContext);
     }

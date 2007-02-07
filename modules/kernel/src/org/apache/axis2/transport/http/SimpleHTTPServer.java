@@ -29,6 +29,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
@@ -36,6 +38,7 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpFactory;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.server.SimpleHttpServer;
+import org.apache.axis2.transport.http.server.SessionManager;
 import org.apache.axis2.util.OptionsParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,6 +65,7 @@ public class SimpleHTTPServer implements TransportListener {
 
     protected ConfigurationContext configurationContext;
     protected HttpFactory httpFactory;
+    private SessionManager sessionManager;
 
     public SimpleHTTPServer() {
     }
@@ -83,6 +87,7 @@ public class SimpleHTTPServer implements TransportListener {
         TransportInDescription httpDescription = new TransportInDescription(new QName(Constants.TRANSPORT_HTTP));
         httpDescription.setReceiver(this);
         httpFactory.getListenerManager().addListener(httpDescription, true);
+        sessionManager = new SessionManager();
     }
 
     /**
@@ -330,5 +335,11 @@ public class SimpleHTTPServer implements TransportListener {
             server.stop();
             System.out.println("[SimpleHTTPServer] Shutdown complete");
         }
+    }
+
+
+    public SessionContext getSessionContext(MessageContext messageContext) {
+        String sessionKey = (String) messageContext.getProperty(HTTPConstants.COOKIE_STRING);
+        return this.sessionManager.getSessionContext(sessionKey);
     }
 }

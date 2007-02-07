@@ -87,31 +87,19 @@ public class SessionContext extends AbstractContext implements Externalizable {
     }
 
     public ServiceContext getServiceContext(AxisService axisService) {
-        if (serviceContextMap == null) {
-            serviceContextMap = new HashMap();
-        }
         return (ServiceContext) serviceContextMap.get(axisService.getName());
     }
 
     public void addServiceContext(ServiceContext serviceContext) {
-        if (serviceContextMap == null) {
-            serviceContextMap = new HashMap();
-        }
         serviceContextMap.put(serviceContext.getAxisService().getName(), serviceContext);
     }
 
-    public void addServiceGroupContext(ServiceGroupContext serviceGroupContext,
-                                       String serviceGroupID) {
-        if (serviceGroupContextMap == null) {
-            serviceGroupContextMap = new HashMap();
-        }
+    public void addServiceGroupContext(ServiceGroupContext serviceGroupContext) {
+        String  serviceGroupID = serviceGroupContext.getDescription().getServiceGroupName();
         serviceGroupContextMap.put(serviceGroupID, serviceGroupContext);
     }
 
     public ServiceGroupContext getServiceGroupContext(String serviceGroupID) {
-        if (serviceGroupContextMap == null) {
-            serviceGroupContextMap = new HashMap();
-        }
         return (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupID);
     }
 
@@ -227,7 +215,7 @@ public class SessionContext extends AbstractContext implements Externalizable {
 
         HashMap tmpHashMap = null;
 
-        if ((tmpMap != null) && (tmpMap.isEmpty()==false))
+        if ((tmpMap != null) && (!tmpMap.isEmpty()))
         {
             tmpHashMap = new HashMap(tmpMap);
         }

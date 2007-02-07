@@ -126,9 +126,6 @@ public class AxisConfiguration extends AxisDescription {
 
     private ClassLoader systemClassLoader;
 
-    // to keep track of need to manage transport session or not
-    private boolean manageTransportSession;
-
     //to keep tarck of system start or not
     private boolean start;
 
@@ -888,14 +885,6 @@ public class AxisConfiguration extends AxisDescription {
         }
         service.setActive(true);
         notifyObservers(AxisEvent.SERVICE_START, service);
-    }
-
-    public boolean isManageTransportSession() {
-        return manageTransportSession;
-    }
-
-    public void setManageTransportSession(boolean manageTransportSession) {
-        this.manageTransportSession = manageTransportSession;
     }
 
     public List getModulesForPolicyNamesapce(String namesapce) {

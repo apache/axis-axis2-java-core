@@ -386,14 +386,6 @@ public class DeploymentEngine implements DeploymentConstants {
 
         while (services.hasNext()) {
             AxisService axisService = (AxisService) services.next();
-            String scope = axisService.getScope();
-            if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
-                if (!axisConfig.isManageTransportSession()) {
-                    throw new DeploymentException("You can not deploy the service " +
-                            "in transport session , since transport session management" +
-                            " disabled in axis2.xml change manageTransportSession parameter value to true");
-                }
-            }
             axisService.setUseDefaultChains(false);
 
             axisService.setFileName(serviceLocation);
