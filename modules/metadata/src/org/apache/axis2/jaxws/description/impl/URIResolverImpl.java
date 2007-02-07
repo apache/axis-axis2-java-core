@@ -50,16 +50,30 @@ public class URIResolverImpl implements URIResolver {
             try {
                 // if the location is an absolute path, build a URL directly
                 // from it
+            	
                 if (isAbsolute(schemaLocation)) {
                     is = getInputStreamForURI(schemaLocation);
                 }
 
                 // Try baseURI + relavtive schema path combo
                 else {
-                    pathURI = new URI(baseUri);
-                    pathURI = pathURI.resolve(schemaLocation);
-                    String pathURIStr = pathURI.toString();
-
+           			pathURI = new URI(baseUri);
+                    String pathURIStr = schemaLocation;
+                    // If this is absolute we need to resolve the path without the 
+                    // scheme information
+                    if(pathURI.isAbsolute()) {
+                    	URL url = new URL(baseUri);
+                    	if(url != null) {
+                    		URI tempURI = new URI(url.getPath());
+                        	URI resolvedURI = tempURI.resolve(schemaLocation);
+                        	// Add back the scheme to the resolved path
+                        	pathURIStr = pathURI.getScheme() + ":" + resolvedURI.toString();
+                    	}
+                    }
+                    else {
+                    	pathURI = pathURI.resolve(schemaLocation);
+                    	pathURIStr = pathURI.toString();
+                    }
                     // If path is absolute, build URL directly from it
                     if (isAbsolute(pathURIStr)) {
                         is = getInputStreamForURI(pathURIStr);
@@ -71,34 +85,14 @@ public class URIResolverImpl implements URIResolver {
                     // stream
                     // because the URI will still be relative to the module
                     else {
-                        // is = loadStrategy.getInputStream(pathURI.toString());
                         is = classLoader
                                 .getResourceAsStream(pathURI.toString());
                     }
                 }
             } catch (Exception e) {
-                // TODO: RAS
-//                Object[] inserts = { schemaLocation, e };
+					
             }
         }
-
-        // if(is == null){
-        // Object[] inserts = { schemaLocation };
-        // String msg = NLSProvider.getNLS().getFormattedMessage(
-        // "fileNotFound00", inserts,
-        // "File {0} could not be found.");
-        // throw new RuntimeException(msg);
-        // }
-        //		
-        // if(_tc.isDebugEnabled()){
-        // Tr.debug(_tc, "Loaded file: " + schemaLocation + ", base URI: " +
-        // baseUri);
-        // }
-        //		
-        // if (_tc.isEntryEnabled()) {
-        // Tr.exit(_tc, "resolveEntity");
-        // }
-
         return new InputSource(is);
     }
 
@@ -115,6 +109,9 @@ public class URIResolverImpl implements URIResolver {
             absolute = true;
         } else if (location.indexOf(":\\") != -1) {
             absolute = true;
+        }
+        else if(location.indexOf("file:") != -1) {
+        	absolute = true;
         }
         return absolute;
     }
@@ -135,7 +132,7 @@ public class URIResolverImpl implements URIResolver {
             streamURL = new URL(uri);
             is = streamURL.openStream();
         } catch (Throwable t) {
-            //No FFDC required
+			//Exception handling not needed
         }
 
         if (is == null) {
@@ -144,7 +141,7 @@ public class URIResolverImpl implements URIResolver {
                 streamURL = pathURI.toURL();
                 is = streamURL.openStream();
             } catch (Throwable t) {
-                //No FFDC required
+				//Exception handling not needed
             }
         }
 
@@ -154,10 +151,9 @@ public class URIResolverImpl implements URIResolver {
                 streamURL = file.toURL();
                 is = streamURL.openStream();
             } catch (Throwable t) {
-                //No FFDC required
+                //Exception handling not needed
             }
         }
-
         return is;
     }
 }

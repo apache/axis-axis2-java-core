@@ -16,6 +16,7 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -53,6 +54,7 @@ import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
@@ -681,6 +683,16 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
      			//this.class.getClass().getClassLoader();
     			URIResolverImpl uriResolver = 
     					new URIResolverImpl(composite.getClassLoader());
+    			serviceBuilder.setCustomResolver(uriResolver);
+    		}
+    		else {
+    			ClassLoader classLoader = (ClassLoader) AccessController.doPrivileged(new 
+    					PrivilegedAction() {
+    						public Object run() {
+    							return Thread.currentThread().getContextClassLoader();
+    						}
+    				});
+    			URIResolverImpl uriResolver = new URIResolverImpl(classLoader);
     			serviceBuilder.setCustomResolver(uriResolver);
     		}
     		
