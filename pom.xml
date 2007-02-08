@@ -60,6 +60,20 @@
 				<module>modules/jaxws</module>
 			</modules>
 		</profile>
+		<profile>
+			<id>java16</id>
+			<activation>
+				<jdk>1.6</jdk>
+			</activation>
+			<modules>
+				<module>modules/jaxbri</module>
+				<module>modules/metadata</module>
+				<module>modules/saaj-api</module>
+				<module>modules/saaj</module>
+				<module>modules/jaxws-api</module>
+				<module>modules/jaxws</module>
+			</modules>
+		</profile>
 	</profiles>
 	<scm>
 		<connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/</connection>
