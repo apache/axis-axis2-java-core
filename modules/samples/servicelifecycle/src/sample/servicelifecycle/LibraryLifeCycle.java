@@ -82,17 +82,17 @@ public class LibraryLifeCycle implements ServiceLifeCycle {
             Book[] bookList = allBookList.getBookList();
             libElement.addChild(BeanUtil.getOMElement(
                     new QName(LibraryConstants.ALL_BOOK),
-                    bookList, new QName("book"), false, null, false));
+                    bookList, new QName("book"), false, null));
             libElement.addChild(BeanUtil.getOMElement(
                     new QName(LibraryConstants.AVAILABLE_BOOK),
-                    availableBookList.getBookList(), new QName("book"), false, null, false));
+                    availableBookList.getBookList(), new QName("book"), false, null));
             libElement.addChild(BeanUtil.getOMElement(
                     new QName(LibraryConstants.LEND_BOOK),
-                    lendBookList.getBookList(), new QName("book"), false, null, false));
+                    lendBookList.getBookList(), new QName("book"), false, null));
 
             libElement.addChild(BeanUtil.getOMElement(
                     new QName(LibraryConstants.USER_LIST),
-                    userList.getUsers(), new QName("user"), false, null,false));
+                    userList.getUsers(), new QName("user"), false, null));
 
             String tempDir = System.getProperty("java.io.tmpdir");
             File tempFile = new File(tempDir);

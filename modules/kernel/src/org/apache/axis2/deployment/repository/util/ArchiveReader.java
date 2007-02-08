@@ -30,6 +30,8 @@ import org.apache.axis2.deployment.ServiceBuilder;
 import org.apache.axis2.deployment.ServiceGroupBuilder;
 import org.apache.axis2.deployment.resolver.AARBasedWSDLLocator;
 import org.apache.axis2.deployment.resolver.AARFileBasedURIResolver;
+import org.apache.axis2.deployment.resolver.WarBasedWSDLLocator;
+import org.apache.axis2.deployment.resolver.WarFileBasedURIResolver;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -336,6 +338,34 @@ public class ArchiveReader implements DeploymentConstants {
             }
         }
         return servicesMap;
+    }
+
+    public AxisService getAxisServiceFromWsdl(InputStream in ,
+                                               ClassLoader loader, String wsdlUrl) throws Exception{
+//         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+
+        // now the question is which version of WSDL file this archive contains.
+        // lets check the namespace of the root element and decide. But since we are
+        // using axiom (dude, you are becoming handy here :)), we will not build the
+        // whole thing.
+        OMElement element = (OMElement) XMLUtils.toOM(in);
+        OMNamespace documentElementNS = element.getNamespace();
+        if (documentElementNS != null) {
+            WSDL11ToAxisServiceBuilder wsdlToAxisServiceBuilder ;
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            element.serialize(out);
+            if (Constants.NS_URI_WSDL11.
+                    equals(documentElementNS.getNamespaceURI())) {
+                wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(new ByteArrayInputStream(out.toByteArray()), null, null);
+                wsdlToAxisServiceBuilder.setCustomWSLD4JResolver(new WarBasedWSDLLocator(wsdlUrl,loader,new ByteArrayInputStream(out.toByteArray())));
+                wsdlToAxisServiceBuilder.setCustomResolver(
+                        new WarFileBasedURIResolver(loader));
+                return wsdlToAxisServiceBuilder.populateService();
+            } else {
+                new DeploymentException(Messages.getMessage("invalidWSDLFound"));
+            }
+        }
+        return null;
     }
 
     public void processFilesInFolder(File folder, HashMap servicesMap) throws FileNotFoundException, XMLStreamException, DeploymentException {

@@ -19,7 +19,6 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
@@ -224,6 +223,34 @@ public class DeploymentEngine implements DeploymentConstants {
                     new URL[]{servicesURL}, axisConfig.getServiceClassLoader(), antiJARLocking);
             String metainf = "meta-inf";
             serviceGroup.setServiceGroupClassLoader(serviceClassLoader);
+            //processing wsdl.list
+            InputStream wsdlfilesStream =serviceClassLoader.getResourceAsStream("meta-inf/wsdl.list");
+            if(wsdlfilesStream==null){
+                wsdlfilesStream =serviceClassLoader.getResourceAsStream("META-INF/wsdl.list");
+                if(wsdlfilesStream!=null){
+                    metainf = "META-INF";
+                }
+            }
+            HashMap servicesMap = new HashMap();
+            if(wsdlfilesStream!=null){
+                ArchiveReader reader = new ArchiveReader();
+                BufferedReader input = new BufferedReader(new InputStreamReader(wsdlfilesStream));
+                String line;
+                while ((line = input.readLine()) != null) {
+                    line = line.trim();
+                    if (line.length() > 0) {
+                        line = metainf + "/" + line;
+                        try {
+                            AxisService service =  reader.getAxisServiceFromWsdl(
+                                    serviceClassLoader.getResourceAsStream(line),
+                                    serviceClassLoader,line);
+                            servicesMap.put(service.getName(),service);
+                        } catch (Exception e) {
+                            throw new DeploymentException(e);
+                        }
+                    }
+                }
+            }
             InputStream servicexmlStream = serviceClassLoader.getResourceAsStream("META-INF/services.xml");
             if (servicexmlStream == null) {
                 servicexmlStream = serviceClassLoader.getResourceAsStream("meta-inf/services.xml");
@@ -266,7 +293,7 @@ public class DeploymentEngine implements DeploymentConstants {
                 serviceList.add(service);
                 return serviceList;
             } else if (TAG_SERVICE_GROUP.equals(elementName)) {
-                ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(rootElement, new HashMap(),
+                ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(rootElement, servicesMap,
                         configContext);
                 ArrayList servicList = groupBuilder.populateServiceGroup(serviceGroup);
                 Iterator serviceIterator = servicList.iterator();
@@ -474,14 +501,14 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     /**
-     * @param file
+     * @param file ArchiveFileData
      */
     public void addWSToDeploy(ArchiveFileData file) {
         wsToDeploy.add(file);
     }
 
     /**
-     * @param file
+     * @param file WSInfo
      */
     public void addWSToUndeploy(WSInfo file) {
         wsToUnDeploy.add(file);
@@ -573,7 +600,6 @@ public class DeploymentEngine implements DeploymentConstants {
                                     axisConfig.getFaultyServices().put(currentArchiveFile.getFile().getAbsolutePath(),
                                             serviceStatus);
                                 }
-                                currentArchiveFile = null;
                             }
                             break;
                         case TYPE_MODULE :
@@ -633,7 +659,6 @@ public class DeploymentEngine implements DeploymentConstants {
                                     axisConfig.getFaultyModules().put(
                                             getAxisServiceName(currentArchiveFile.getName()), moduleStatus);
                                 }
-                                currentArchiveFile = null;
                             }
                             break;
                     }
@@ -650,6 +675,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     /**
      * Checks if the modules, referred by server.xml, exist or that they are deployed.
+     * @throws org.apache.axis2.AxisFault : If smt goes wrong
      */
     public void engageModules() throws AxisFault {
         for (Iterator iterator = axisConfig.getGlobalModules().iterator(); iterator.hasNext();) {
@@ -674,8 +700,8 @@ public class DeploymentEngine implements DeploymentConstants {
      * if it is valid , if something goes wrong you will be getting
      * DeploymentExeption
      *
-     * @param in
-     * @throws DeploymentException
+     * @param in : InputStream to axis2.xml
+     * @throws DeploymentException : If something goes wrong
      */
     public AxisConfiguration populateAxisConfiguration(InputStream in) throws DeploymentException {
         axisConfig = new AxisConfiguration();
@@ -693,6 +719,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     /**
      * Starts the Deployment engine to perform Hot deployment and so on.
+     * @param listener : RepositoryListener
      */
     protected void startSearch(RepositoryListener listener) {
         Scheduler scheduler = new Scheduler();

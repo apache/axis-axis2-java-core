@@ -142,7 +142,17 @@ public class BeanUtil {
                                 }
                                 object.add(o == null ? null : SimpleTypeMapper.getStringValue(o));
                             }
+                        } else {
+                            if (elemntNameSpace != null) {
+                                object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                                        propDesc.getName(), elemntNameSpace.getPrefix()));
+                            } else {
+                                object.add(new QName(beanName.getNamespaceURI(),
+                                        propDesc.getName(), beanName.getPrefix()));
+                            }
+                            object.add(value);
                         }
+
                     } else {
                         Object value [] = (Object[]) propDesc.getReadMethod().invoke(beanObject,
                                 null);
@@ -158,6 +168,15 @@ public class BeanUtil {
                                 }
                                 object.add(o);
                             }
+                        }else {
+                            if (elemntNameSpace != null) {
+                                object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                                        propDesc.getName(), elemntNameSpace.getPrefix()));
+                            } else {
+                                object.add(new QName(beanName.getNamespaceURI(),
+                                        propDesc.getName(), beanName.getPrefix()));
+                            }
+                            object.add(value);
                         }
                     }
                 } else if (SimpleTypeMapper.isCollection(ptype)) {
@@ -191,7 +210,16 @@ public class BeanUtil {
                             }
                         }
 
-                    }
+                    }else {
+                             if (elemntNameSpace != null) {
+                                    object.add(new QName(elemntNameSpace.getNamespaceURI(),
+                                            propDesc.getName(), elemntNameSpace.getPrefix()));
+                                } else {
+                                    object.add(new QName(beanName.getNamespaceURI(),
+                                            propDesc.getName(), beanName.getPrefix()));
+                                }
+                                object.add(value);
+                        }
                 } else {
                     if (elemntNameSpace != null) {
                         object.add(new QName(elemntNameSpace.getNamespaceURI(),
@@ -570,8 +598,7 @@ public class BeanUtil {
                                          Object [] args,
                                          QName partName,
                                          boolean qualifed,
-                                         TypeTable typeTable,
-                                         boolean isCustomwsdl) {
+                                         TypeTable typeTable) {
         ArrayList objects;
         objects = new ArrayList();
         int argCount = 0;

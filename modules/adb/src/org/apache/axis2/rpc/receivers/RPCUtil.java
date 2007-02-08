@@ -112,41 +112,36 @@ public class RPCUtil {
     public static OMElement getResponseElement(QName resname,
                                                Object [] objs,
                                                boolean qualified,
-                                               TypeTable typeTable,
-                                               boolean isCustomWsdl) {
+                                               TypeTable typeTable) {
         if (qualified) {
             return BeanUtil.getOMElement(resname, objs,
                     new QName(resname.getNamespaceURI(),
                             RETURN_WRAPPER,
                             resname.getPrefix()),
                     qualified,
-                    typeTable,
-                    isCustomWsdl);
+                    typeTable);
         } else {
             return BeanUtil.getOMElement(resname, objs,
                     new QName(RETURN_WRAPPER), qualified,
-                    typeTable,
-                    isCustomWsdl);
+                    typeTable);
         }
     }
 
     public static OMElement getResponseElementForArray(QName resname, Object [] objs,
                                                        boolean qualified,
-                                                       TypeTable typeTable, boolean isCustomWsdl) {
+                                                       TypeTable typeTable) {
         if (qualified) {
             return BeanUtil.getOMElement(resname, objs,
                     new QName(resname.getNamespaceURI(),
                             RETURN_WRAPPER,
                             resname.getPrefix()),
                     qualified,
-                    typeTable,
-                    isCustomWsdl);
+                    typeTable);
         } else {
             return BeanUtil.getOMElement(resname, objs,
                     new QName(RETURN_WRAPPER),
                     qualified,
-                    typeTable,
-                    isCustomWsdl);
+                    typeTable);
         }
     }
 
@@ -187,8 +182,7 @@ public class RPCUtil {
                 OMElement bodyChild = RPCUtil.getResponseElement(resName,
                         (Object[]) resObject,
                         service.isElementFormDefault(),
-                        service.getTypeTable(),
-                        service.isCustomWsld());
+                        service.getTypeTable());
                 envelope.getBody().addChild(bodyChild);
             } else {
                 if (resObject.getClass().isArray()) {
@@ -208,8 +202,7 @@ public class RPCUtil {
                             method.getName() + "Response",
                             elementQName.getPrefix());
                     OMElement bodyChild = RPCUtil.getResponseElementForArray(resName,
-                            objArray, service.isElementFormDefault(), service.getTypeTable(),
-                            service.isCustomWsld());
+                            objArray, service.isElementFormDefault(), service.getTypeTable());
                     envelope.getBody().addChild(bodyChild);
                 } else {
                     if (service.isElementFormDefault()) {

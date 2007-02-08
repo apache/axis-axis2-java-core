@@ -215,6 +215,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             wsdlDefinitionParameter.setName(WSDLConstants.WSDL_4_J_DEFINITION);
             wsdlDefinitionParameter.setValue(wsdl4jDefinition);
             axisService.addParameter(wsdlDefinitionParameter);
+            axisService.setWsdlFound(true);
+            axisService.setCustomWsld(true);
 
             if (wsdl4jDefinition == null) {
                 return null;
