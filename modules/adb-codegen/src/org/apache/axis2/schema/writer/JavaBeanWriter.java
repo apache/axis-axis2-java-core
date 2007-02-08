@@ -92,13 +92,13 @@ public class JavaBeanWriter implements BeanWriter {
 
     public static final String EXTENSION_MAPPER_CLASSNAME = "ExtensionMapper";
 // a list of externally identified QNames to be processed. This becomes
-        // useful when  only a list of external elements need to be processed
+    // useful when  only a list of external elements need to be processed
 
-        public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
-        public static final String DEFAULT_CLASS_ARRAY_NAME = "org.apache.axiom.om.OMElement[]";
+    public static final String DEFAULT_CLASS_NAME = OMElement.class.getName();
+    public static final String DEFAULT_CLASS_ARRAY_NAME = "org.apache.axiom.om.OMElement[]";
 
-        public static final String DEFAULT_ATTRIB_CLASS_NAME = OMAttribute.class.getName();
-       public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "org.apache.axiom.om.OMAttribute[]";
+    public static final String DEFAULT_ATTRIB_CLASS_NAME = OMAttribute.class.getName();
+    public static final String DEFAULT_ATTRIB_ARRAY_CLASS_NAME = "org.apache.axiom.om.OMAttribute[]";
 
 
     /**
@@ -121,27 +121,26 @@ public class JavaBeanWriter implements BeanWriter {
     }
 
     public String getDefaultClassName() {
-            return DEFAULT_CLASS_NAME;
-        }
+        return DEFAULT_CLASS_NAME;
+    }
 
-        public String getDefaultClassArrayName() {
-            return DEFAULT_CLASS_ARRAY_NAME;
-        }
+    public String getDefaultClassArrayName() {
+        return DEFAULT_CLASS_ARRAY_NAME;
+    }
 
-        public String getDefaultAttribClassName() {
-            return DEFAULT_ATTRIB_CLASS_NAME;
-        }
+    public String getDefaultAttribClassName() {
+        return DEFAULT_ATTRIB_CLASS_NAME;
+    }
 
-        public String getDefaultAttribArrayClassName() {
-            return DEFAULT_ATTRIB_ARRAY_CLASS_NAME;
-        }
-
+    public String getDefaultAttribArrayClassName() {
+        return DEFAULT_ATTRIB_ARRAY_CLASS_NAME;
+    }
 
 
     public void init(CompilerOptions options) throws SchemaCompilationException {
         try {
-	    modelMap = new HashMap();
-	    ns2packageNameMap = new HashMap();
+            modelMap = new HashMap();
+            ns2packageNameMap = new HashMap();
 
             initWithFile(options.getOutputLocation());
             packageName = options.getPackageName();
@@ -522,6 +521,10 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "union", "yes", rootElt);
         }
 
+        if (metainf.isList()) {
+            XSLTUtils.addAttribute(model, "list", "yes", rootElt);
+        }
+
         if (metainf.isOrdered()) {
             XSLTUtils.addAttribute(model, "ordered", "yes", rootElt);
         }
@@ -530,13 +533,15 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "nillable", "yes", rootElt);
         }
 
-        //if the type is a smple union then we do not have properties to set
-        //only thing we have to set is to add meber types
-        if (metainf.isSimple() && metainf.isUnion()){
-           populateMemberInfo(metainf,model,rootElt,typeMap);
-        } else {
-            // populate all the information
-            populateInfo(metainf, model, rootElt, propertyNames, typeMap, false);
+        // populate all the information
+        populateInfo(metainf, model, rootElt, propertyNames, typeMap, false);
+
+        if (metainf.isSimple() && metainf.isUnion()) {
+            populateMemberInfo(metainf, model, rootElt, typeMap);
+        }
+
+        if (metainf.isSimple() && metainf.isList()) {
+            populateListInfo(metainf, model, rootElt, typeMap);
         }
         //////////////////////////////////////////////////////////
 //        System.out.println(DOM2Writer.nodeToString(rootElt));
@@ -545,17 +550,38 @@ public class JavaBeanWriter implements BeanWriter {
         return rootElt;
     }
 
+    protected void populateListInfo(BeanWriterMetaInfoHolder metainf,
+                                    Document model,
+                                    Element rootElement,
+                                    Map typeMap) {
+
+        String javaName = makeUniqueJavaClassName(new ArrayList(), metainf.getItemTypeQName().getLocalPart());
+        Element itemType = XSLTUtils.addChildElement(model, "itemtype", rootElement);
+        XSLTUtils.addAttribute(model, "type", metainf.getItemTypeClassName(), itemType);
+        XSLTUtils.addAttribute(model, "nsuri", metainf.getItemTypeQName().getNamespaceURI(), itemType);
+        XSLTUtils.addAttribute(model, "originalName", metainf.getItemTypeQName().getLocalPart(), itemType);
+        XSLTUtils.addAttribute(model, "javaname", javaName, itemType);
+
+        if (typeMap.containsKey(metainf.getItemTypeQName())) {
+                XSLTUtils.addAttribute(model, "ours", "true", itemType);
+            }
+        if (PrimitiveTypeFinder.isPrimitive(metainf.getItemTypeClassName())) {
+            XSLTUtils.addAttribute(model, "primitive", "yes", itemType);
+        }
+
+    }
+
     protected void populateMemberInfo(BeanWriterMetaInfoHolder metainf,
                                       Document model,
                                       Element rootElement,
-                                      Map typeMap){
+                                      Map typeMap) {
         Map memberTypes = metainf.getMemberTypes();
         QName memberQName;
-        for (Iterator iter = memberTypes.keySet().iterator();iter.hasNext();){
+        for (Iterator iter = memberTypes.keySet().iterator(); iter.hasNext();) {
             memberQName = (QName) iter.next();
             String memberClass = (String) memberTypes.get(memberQName);
-            if (PrimitiveTypeFinder.isPrimitive(memberClass)){
-               memberClass = PrimitiveTypeWrapper.getWrapper(memberClass);
+            if (PrimitiveTypeFinder.isPrimitive(memberClass)) {
+                memberClass = PrimitiveTypeWrapper.getWrapper(memberClass);
             }
 
             // add member type element
@@ -563,8 +589,8 @@ public class JavaBeanWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "type", memberClass, memberType);
             XSLTUtils.addAttribute(model, "nsuri", memberQName.getNamespaceURI(), memberType);
             XSLTUtils.addAttribute(model, "originalName", memberQName.getLocalPart(), memberType);
-            if (typeMap.containsKey(memberQName)){
-               XSLTUtils.addAttribute(model, "ours", "true", memberType);
+            if (typeMap.containsKey(memberQName)) {
+                XSLTUtils.addAttribute(model, "ours", "true", memberType);
             }
 
         }
@@ -584,7 +610,8 @@ public class JavaBeanWriter implements BeanWriter {
         // we should add parent class details only if it is
         // an extension or simple restriction
         // should not in complex restrictions
-        if (metainf.getParent() != null && (!metainf.isRestriction() || (metainf.isRestriction() && metainf.isSimple()))) {
+        if (metainf.getParent() != null && (!metainf.isRestriction() || (metainf.isRestriction() && metainf.isSimple())))
+        {
             populateInfo(metainf.getParent(), model, rootElt, propertyNames,
                     typeMap, true);
         }
@@ -642,7 +669,7 @@ public class JavaBeanWriter implements BeanWriter {
             // then we have to generate a new  name for this
             if (parentMetaInf != null && metainf.isRestriction() && !missingQNames.contains(name) &&
                     (parentMetaInf.getArrayStatusForQName(name) && !metainf.getArrayStatusForQName(name))) {
-                  javaName = makeUniqueJavaClassName(propertyNames, xmlName);
+                javaName = makeUniqueJavaClassName(propertyNames, xmlName);
             }
             XSLTUtils.addAttribute(model, "javaname", javaName, property);
 
@@ -676,7 +703,8 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "rewrite", "yes", property);
                 XSLTUtils.addAttribute(model, "occuranceChanged", "yes", property);
             } else if (metainf.isRestriction() && !missingQNames.contains(name) &&
-                    (minOccursChanged(name, missingQNames, metainf) || maxOccursChanged(name, missingQNames, metainf))) {
+                    (minOccursChanged(name, missingQNames, metainf) || maxOccursChanged(name, missingQNames, metainf)))
+            {
 
                 XSLTUtils.addAttribute(model, "restricted", "yes", property);
                 XSLTUtils.addAttribute(model, "occuranceChanged", "yes", property);
@@ -694,24 +722,24 @@ public class JavaBeanWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "inherited", "yes", property);
             }
 
-            if ((parentMetaInf != null) && metainf.isRestriction() && missingQNames.contains(name)){
+            if ((parentMetaInf != null) && metainf.isRestriction() && missingQNames.contains(name)) {
                 // this element details should be there with the parent meta Inf
                 addAttributesToProperty(
-                    parentMetaInf,
-                    name,
-                    model,
-                    property,
-                    typeMap,
-                    javaClassNameForElement);
+                        parentMetaInf,
+                        name,
+                        model,
+                        property,
+                        typeMap,
+                        javaClassNameForElement);
 
             } else {
-                 addAttributesToProperty(
-                    metainf,
-                    name,
-                    model,
-                    property,
-                    typeMap,
-                    javaClassNameForElement);
+                addAttributesToProperty(
+                        metainf,
+                        name,
+                        model,
+                        property,
+                        typeMap,
+                        javaClassNameForElement);
             }
 
         }  // end of foo
@@ -942,11 +970,13 @@ public class JavaBeanWriter implements BeanWriter {
 
                     if (!javaClassForParentElement.equals(javaClassForElement)) {
                         if (javaClassForParentElement.endsWith("[]")) {
-                            if ((javaClassForParentElement.substring(0, javaClassForParentElement.indexOf('['))).equals(javaClassForElement)) {
+                            if ((javaClassForParentElement.substring(0, javaClassForParentElement.indexOf('['))).equals(javaClassForElement))
+                            {
                                 continue;
                             }
                         } else if (javaClassForElement.endsWith("[]")) {
-                            if ((javaClassForElement.substring(0, javaClassForElement.indexOf('['))).equals(javaClassForParentElement)) {
+                            if ((javaClassForElement.substring(0, javaClassForElement.indexOf('['))).equals(javaClassForParentElement))
+                            {
                                 continue;
                             }
                         } else {

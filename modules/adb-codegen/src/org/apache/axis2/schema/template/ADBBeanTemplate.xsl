@@ -40,6 +40,7 @@
         <xsl:variable name="isType" select="@type"/>
         <xsl:variable name="anon" select="@anon"/>
         <xsl:variable name="union" select="@union"/>
+        <xsl:variable name="list" select="@list"/>
 
         <xsl:variable name="nsuri" select="@nsuri"/>
         <xsl:variable name="originalName" select="@originalName"/>
@@ -551,6 +552,41 @@
 
         </xsl:if>
 
+        <xsl:if test="$list" >
+             <xsl:variable name="javaName"><xsl:value-of select="itemtype/@javaname"/></xsl:variable>
+             <xsl:variable name="varName">local<xsl:value-of select="itemtype/@javaname"/></xsl:variable>
+             <xsl:variable name="varType"><xsl:value-of select="itemtype/@type"/></xsl:variable>
+             <xsl:variable name="primitive"><xsl:value-of select="itemtype/@primitive"/></xsl:variable>
+
+             protected <xsl:value-of select="$varType"/>[]  <xsl:value-of select="$varName"/>;
+
+             public <xsl:value-of select="$varType"/>[] get<xsl:value-of select="$javaName"/>(){
+                return <xsl:value-of select="$varName"/>;
+             }
+
+             public void set<xsl:value-of select="$javaName"/>(<xsl:value-of select="$varType"/>[] itemList){
+                this.<xsl:value-of select="$varName"/> = itemList;
+             }
+
+            public java.lang.String toString() {
+                java.lang.StringBuffer outString = new java.lang.StringBuffer();
+                if (<xsl:value-of select="$varName"/> != null){
+                    for(int i = 0; i &lt; <xsl:value-of select="$varName"/>.length;i++){
+                        <xsl:choose>
+                            <xsl:when test="$primitive">
+                                outString.append(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i])).append(" ");
+                            </xsl:when>
+                            <xsl:otherwise>
+                                outString.append(<xsl:value-of select="$varName"/>[i].toString()).append(" ");
+                            </xsl:otherwise>
+                        </xsl:choose>
+
+                    }
+                }
+                return outString.toString().trim();
+            }
+        </xsl:if>
+
      /**
      * isReaderMTOMAware
      * @return true if the reader supports MTOM
@@ -608,6 +644,7 @@
          public void serialize(
                                   javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
             <xsl:choose>
+
             <xsl:when test="$simple and $union">
                 // fist write the start element
                 java.lang.String namespace = parentQName.getNamespaceURI();
@@ -651,6 +688,46 @@
                       }
                 xmlWriter.writeEndElement();
             </xsl:when>
+
+            <xsl:when test="$simple and $list">
+
+                 <xsl:variable name="javaName"><xsl:value-of select="itemtype/@javaname"/></xsl:variable>
+                 <xsl:variable name="varType"><xsl:value-of select="itemtype/@type"/></xsl:variable>
+
+                // first write the start element
+                java.lang.String namespace = parentQName.getNamespaceURI();
+                java.lang.String localName = parentQName.getLocalPart();
+
+                if (! namespace.equals("")) {
+                    java.lang.String prefix = xmlWriter.getPrefix(namespace);
+
+                    if (prefix == null) {
+                        prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+
+                        xmlWriter.writeStartElement(prefix, localName, namespace);
+                        xmlWriter.writeNamespace(prefix, namespace);
+                        xmlWriter.setPrefix(prefix, namespace);
+
+                    } else {
+                        xmlWriter.writeStartElement(namespace, localName);
+                    }
+
+                } else {
+                    xmlWriter.writeStartElement(localName);
+                }
+
+                <xsl:choose>
+                   <xsl:when test="$varType='javax.xml.namespace.QName'">
+                        writeQNames(local<xsl:value-of select="$javaName"/>,xmlWriter);
+                   </xsl:when>
+                   <xsl:otherwise>
+                       xmlWriter.writeCharacters(<xsl:value-of select="$name"/>.this.toString());
+                   </xsl:otherwise>
+                </xsl:choose>
+
+                xmlWriter.writeEndElement();
+            </xsl:when>
+
             <xsl:when test="@type or @anon">
                 <!-- For a type write the passed in QName first-->
 
@@ -1457,6 +1534,39 @@
             }
         }
 
+        private void writeQNames(javax.xml.namespace.QName[] qnames,
+                                 javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+
+            if (qnames != null) {
+                // we have to store this data until last moment since it is not possible to write any
+                // namespace data after writing the charactor data
+                java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+                java.lang.String namespaceURI = null;
+                java.lang.String prefix = null;
+
+                for (int i = 0; i &lt; qnames.length; i++) {
+                    if (i > 0) {
+                        stringToWrite.append(" ");
+                    }
+                    namespaceURI = qnames[i].getNamespaceURI();
+                    if (namespaceURI != null) {
+                        prefix = xmlWriter.getPrefix(namespaceURI);
+                        if ((prefix == null) || (prefix.length() == 0)) {
+                            prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                            xmlWriter.writeNamespace(prefix, namespaceURI);
+                            xmlWriter.setPrefix(prefix,namespaceURI);
+                        }
+                        stringToWrite.append(prefix).append(":").append(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(qnames[i]));
+                    } else {
+                        stringToWrite.append(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(qnames[i]));
+                    }
+                }
+                xmlWriter.writeCharacters(stringToWrite.toString());
+            }
+
+        }
+
+
          /**
          * Register a namespace prefix
          */
@@ -1729,6 +1839,16 @@
                     },
                     null);
             </xsl:when>
+
+            <xsl:when test="$list and $simple">
+                  return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(MY_QNAME,
+                    new java.lang.Object[]{
+                    org.apache.axis2.databinding.utils.reader.ADBXMLStreamReader.ELEMENT_TEXT,
+                    toString()
+                    },
+                    null);
+            </xsl:when>
+
             <!-- Not a type and not anon. So it better be only one inclusion-->
             <xsl:otherwise>
                 <!-- if the element is associated with a type, then its gonna be only one -->
@@ -1808,6 +1928,66 @@
                         throw new RuntimeException("Error in parsing value");
                     }
                }
+        </xsl:if>
+
+        <xsl:if test="$list and $simple">
+
+             <xsl:variable name="javaName"><xsl:value-of select="itemtype/@javaname"/></xsl:variable>
+             <xsl:variable name="varType"><xsl:value-of select="itemtype/@type"/></xsl:variable>
+             <xsl:variable name="ours"><xsl:value-of select="itemtype/@ours"/></xsl:variable>
+             <xsl:variable name="nsuri"><xsl:value-of select="itemtype/@nsuri"/></xsl:variable>
+             <xsl:variable name="originalName"><xsl:value-of select="itemtype/@originalName"/></xsl:variable>
+
+            public static <xsl:value-of select="$name"/> fromString(javax.xml.stream.XMLStreamReader xmlStreamReader, java.lang.String content) {
+
+                <xsl:value-of select="$name"/> object = new <xsl:value-of select="$name"/>();
+                java.lang.String[] values = content.split(" +");
+                <xsl:value-of select="$varType"/>[] objectValues = new <xsl:value-of select="$varType"/>[values.length];
+
+                <xsl:if test="$varType='javax.xml.namespace.QName'">
+                    java.lang.String prefix = null;
+                    java.lang.String namespace = null;
+                </xsl:if>
+
+               <xsl:if test="string-length(normalize-space($ours)) > 0">
+                    java.lang.String valueContent = null;
+                    java.lang.String prefix = null;
+                    java.lang.String namespace = null;
+                </xsl:if>
+
+
+                try {
+                    for (int i = 0; i &lt; values.length; i++) {
+                      <xsl:choose>
+                          <xsl:when test="$varType='javax.xml.namespace.QName'">
+                              prefix = values[i].substring(0,values[i].indexOf(":"));
+                              namespace = xmlStreamReader.getNamespaceURI(prefix);
+                              objectValues[i] = org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(values[i],namespace);
+                          </xsl:when>
+                          <xsl:when test="string-length(normalize-space($ours)) > 0">
+                           valueContent = values[i];
+                           if (valueContent.indexOf(":") > 0){
+                               prefix = valueContent.substring(0,valueContent.indexOf(":"));
+                               namespace = xmlStreamReader.getNamespaceURI(prefix);
+                               objectValues[i] = <xsl:value-of select="$varType"/>.Factory.fromString(valueContent,namespace);
+                           } else {
+                               objectValues[i] = <xsl:value-of select="$varType"/>.Factory.fromString(valueContent,"");
+                           }
+                          </xsl:when>
+                          <xsl:otherwise>
+                           objectValues[i] =
+                              org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$javaName"/>(values[i]);
+                          </xsl:otherwise>
+                      </xsl:choose>
+
+                    }
+                    object.set<xsl:value-of select="$javaName"/>(objectValues);
+                    return object;
+                } catch (java.lang.Exception e) {
+                    throw new RuntimeException();
+                }
+
+            }
         </xsl:if>
 
         <xsl:for-each select="property">
@@ -1934,7 +2114,7 @@
                     <xsl:choose>
                         <xsl:when test="$union">
                             java.lang.String nsUri = reader.getNamespaceContext().getNamespaceURI(nsPrefix);
-                            return <xsl:value-of select="$name"/>.Factory.fromString(reader,nsUri,type);
+                            object = <xsl:value-of select="$name"/>.Factory.fromString(reader,nsUri,type);
                         </xsl:when>
                         <xsl:otherwise>
                             if (!"<xsl:value-of select="$originalName"/>".equals(type)){
@@ -1949,6 +2129,11 @@
                   }
 
                 }
+                </xsl:if>
+
+                <xsl:if test="$list">
+                    java.lang.String content = reader.getElementText();
+                    object = <xsl:value-of select="$name"/>.Factory.fromString(reader,content);
                 </xsl:if>
 
                 <!-- populate attributes here!!!. The attributes are part of an element, not part of a type -->
@@ -2722,6 +2907,7 @@
                             }  // end of while loop
                         </xsl:if>
                         </xsl:if>
+
 
 
             } catch (javax.xml.stream.XMLStreamException e) {

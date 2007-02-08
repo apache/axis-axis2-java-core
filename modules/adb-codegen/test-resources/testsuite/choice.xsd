@@ -1,0 +1,16 @@
+<schema elementFormDefault="qualified"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:tns="org.apache.axis2.test"
+        targetNamespace="org.apache.axis2.test">
+
+    <xs:element name="TestChoise">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="choice1" type="xs:string"/>
+                <xs:element name="choice2" type="xs:int"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+</schema>

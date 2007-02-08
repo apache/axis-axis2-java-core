@@ -2006,9 +2006,21 @@ public class SchemaCompiler {
                 metaInfHolder.setUnion(true);
 
             } else if (content instanceof XmlSchemaSimpleTypeList) {
-                //todo - Handle lists here
-                throw new SchemaCompilationException(
-                        SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror", "Simple Type List in " + simpleType.getQName()));
+                XmlSchemaSimpleTypeList simpleTypeList = (XmlSchemaSimpleTypeList) content;
+                QName itemTypeQName = simpleTypeList.getItemTypeName();
+
+                if (!isAlreadyProcessed(itemTypeQName)){
+                    XmlSchemaType simpleSchemaType = getType(parentSchema,itemTypeQName);
+                    if (simpleSchemaType instanceof XmlSchemaSimpleType){
+                        processSimpleSchemaType((XmlSchemaSimpleType)simpleSchemaType,null,parentSchema);
+                    }
+                }
+
+                String className = findClassName(itemTypeQName,false);
+                metaInfHolder.setList(true);
+                metaInfHolder.setItemTypeQName(itemTypeQName);
+                metaInfHolder.setItemTypeClassName(className);
+
             }
         }
         return metaInfHolder;
