@@ -17,15 +17,23 @@
 package org.apache.axis2.json;
 
 import org.codehaus.jettison.badgerfish.BadgerFishXMLStreamWriter;
+import org.apache.axiom.om.OMDataSource;
 
 import javax.xml.stream.XMLStreamWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-public class JSONBadgerfishMessageFormatter extends JSONMessageFormatter{
+public class JSONBadgerfishMessageFormatter extends JSONMessageFormatter {
 
-    protected XMLStreamWriter getJSONWriter(OutputStream outStream){
+    protected XMLStreamWriter getJSONWriter(OutputStream outStream) {
         return new BadgerFishXMLStreamWriter(new OutputStreamWriter(outStream));
     }
 
+    protected String getStringToWrite(OMDataSource dataSource) {
+        if (dataSource instanceof JSONBadgerfishDataSource) {
+            return ((JSONDataSource) dataSource).getCompleteJOSNString();
+        } else {
+            return null;
+        }
+    }
 }

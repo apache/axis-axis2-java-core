@@ -30,6 +30,7 @@ import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
 import org.codehaus.jettison.mapped.MappedXMLInputFactory;
 import org.json.JSONException;
+import org.apache.axis2.AxisFault;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -52,7 +53,7 @@ public class JSONDataSource implements OMDataSource {
         try {
             writer.flush();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new OMException();
         }
     }
 
@@ -63,7 +64,7 @@ public class JSONDataSource implements OMDataSource {
             JSONObject jsonObject = new JSONObject(jsonTokener);
             jsonObject.write(writer);
         } catch (JSONException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            throw new OMException();
         }
     }
 
@@ -124,23 +125,12 @@ public class JSONDataSource implements OMDataSource {
 
     public javax.xml.stream.XMLStreamReader getReader() throws javax.xml.stream.XMLStreamException {
 
-        //todo-badgerfish
-
-//        BadgerFishXMLInputFactory inputFactory = new BadgerFishXMLInputFactory();
-//        return inputFactory.createXMLStreamReader(new JSONTokener("{" + localName + ":" + this.getJSONString()));
-
-        //todo-end
-
-        //todo-mapped
-
         HashMap nstojns = new HashMap();
         nstojns.put("", "");
 
         MappedXMLInputFactory inputFactory = new MappedXMLInputFactory(nstojns);
-        String jsonString = "{" + localName + ":" + this.getJSONString();          
-        return inputFactory.createXMLStreamReader(new JSONTokener(jsonString));
-
-        //todo-end
+        String jsonString = "{" + localName + ":" + this.getJSONString();
+        return inputFactory.createXMLStreamReader(new JSONTokener(jsonString));         
     }
 
     protected String getJSONString() {
@@ -155,7 +145,7 @@ public class JSONDataSource implements OMDataSource {
                     temp = (char) jsonInputStream.read();
                 }
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                throw new OMException();
             }
             isRead = true;
             return jsonString;

@@ -33,7 +33,7 @@ public class JSONOMBuilder implements OMBuilder {
     public JSONOMBuilder() {
     }
 
-	public void init(InputStream inputStream) {
+	public void init(InputStream inputStream, String chatSetEncoding) {
 		this.jsonInputStream = inputStream;
 		
 	}
@@ -72,9 +72,4 @@ public class JSONOMBuilder implements OMBuilder {
 	public String getCharsetEncoding() {
 		return "UTF-8";
 	}
-
-	public String getMessageType() {
-		return null;
-	}
-
 }
