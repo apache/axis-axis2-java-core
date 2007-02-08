@@ -40,6 +40,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 
@@ -333,7 +334,10 @@ public class BeanUtil {
                             partObj = deserialize(parameters, parts, objectSupplier, null);
                         }
                         Object [] parms = new Object[]{partObj};
-                        prty.getWriteMethod().invoke(beanObj, parms);
+                        Method writeMethod = prty.getWriteMethod();
+                        if (writeMethod!=null) {
+                            writeMethod.invoke(beanObj, parms);
+                        }
                         tuched = true;
                     }
                 }
@@ -400,7 +404,10 @@ public class BeanUtil {
                         }
                     }
                     Object [] parms = new Object[]{partObj};
-                    prty.getWriteMethod().invoke(beanObj, parms);
+                    Method writeMethod = prty.getWriteMethod();
+                    if (writeMethod!=null) {
+                        writeMethod.invoke(beanObj, parms);
+                    }
                 }
             }
         } catch (IllegalAccessException e) {
