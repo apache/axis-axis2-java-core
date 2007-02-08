@@ -534,7 +534,7 @@ public class XMLFaultUtils {
         
         // Set the primary Reason Text
         String reasonText = xmlFault.getReason().getText();
-        String reasonLang = xmlFault.getReason().getText();
+        String reasonLang = xmlFault.getReason().getLang();
         Locale locale = (reasonLang != null && reasonLang.length() > 0) ?
                 new Locale(reasonLang) :
                     Locale.getDefault();
