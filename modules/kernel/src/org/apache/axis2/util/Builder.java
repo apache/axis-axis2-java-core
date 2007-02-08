@@ -329,7 +329,8 @@ public class Builder {
 		if (builderClass != null) {
 			try {
 				OMBuilder builder = (OMBuilder) builderClass.newInstance();
-				builder.init(inputStream);
+                //REVIEW: The second parameter here is most likely incorrect, as the Axiom interface was changed without any comments and without anybody actually using it.  At least the code compiles correctly now.
+				builder.init(inputStream, null);
 				// Setting the received content-type as the messageType to make
 				// sure that we respond using the received message serialisation
 				// format.
