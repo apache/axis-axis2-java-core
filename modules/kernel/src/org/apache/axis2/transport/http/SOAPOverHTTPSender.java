@@ -16,6 +16,7 @@
 
 package org.apache.axis2.transport.http;
 
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -30,6 +31,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -40,9 +42,66 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
 
     public void send(MessageContext msgContext, OMElement dataout, URL url, String soapActionString)
             throws MalformedURLException, AxisFault, IOException {
-
         // execute the HtttpMethodBase - a connection manager can be given for
         // handle multiple
+
+        String httpMethod =
+                (String) msgContext.getProperty(Constants.Configuration.HTTP_METHOD);
+
+        if ((httpMethod != null)
+                && Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
+            this.sendViaGet(msgContext, url, soapActionString);
+
+            return;
+        }
+        this.sendViaPost(msgContext, dataout, url, soapActionString);
+    }
+
+    private void sendViaGet(MessageContext msgContext, URL url, String soapActiionString) throws IOException {
+
+        GetMethod getMethod = new GetMethod();
+        if (isAuthenticationEnabled(msgContext)) {
+            getMethod.setDoAuthentication(true);
+        }
+
+        MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(
+                msgContext);
+
+        url = messageFormatter.getTargetAddress(msgContext, format, url);
+
+        getMethod.setPath((url).getFile());
+
+        getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE, messageFormatter.getContentType(msgContext, format, soapActiionString));
+
+        HttpClient httpClient = getHttpClient(msgContext);
+
+        executeMethod(httpClient, msgContext, url, getMethod);
+
+        if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
+            processResponse(getMethod, msgContext);
+        } else if (getMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
+        } else if (getMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+            Header contenttypeHheader =
+                    getMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+            String value = contenttypeHheader.getValue();
+
+            if (value != null) {
+                if ((value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0)
+                        || (value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0)) {
+                    processResponse(getMethod, msgContext);
+                }
+            }
+        } else {
+            throw new AxisFault(Messages.getMessage("transportError",
+                    String.valueOf(getMethod.getStatusCode()),
+                    getMethod.getResponseBodyAsString()));
+        }
+
+    }
+
+    private void sendViaPost(MessageContext msgContext, OMElement dataout, URL url, String soapActionString) throws IOException {
+
+
         HttpClient httpClient = getHttpClient(msgContext);
 
         String charEncoding =
@@ -151,4 +210,5 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
                                                 String.valueOf(postMethod.getStatusCode()),
                                                 postMethod.getResponseBodyAsString()));
     }
+
 }

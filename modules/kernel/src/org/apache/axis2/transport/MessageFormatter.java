@@ -77,7 +77,7 @@ public interface MessageFormatter {
 	 * @return the target URL
 	 */
 	public URL getTargetAddress(MessageContext messageContext, OMOutputFormat format,
-			URL targetURL);
+			URL targetURL) throws AxisFault;
 
 	/**
 	 * @return this only if you want set a transport header for SOAP Action

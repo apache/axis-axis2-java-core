@@ -126,7 +126,7 @@ public class SOAPMessageFormatter implements MessageFormatter{
 	}
 
 	public URL getTargetAddress(MessageContext msgCtxt, OMOutputFormat format,
-			URL targetURL) {
+			URL targetURL) throws AxisFault{
 		// SOAP do not want to alter the target URL
 		return targetURL;
 	}
