@@ -194,11 +194,15 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 m.setAttachmentMarshaller(am);
             }   
             
+            // Wrap the writer in our JAXBXMLStreamWriterFilter.
+            // This is necessary to correct any JAXB xml marshalling problems
+            JAXBXMLStreamWriterFilter filter = new JAXBXMLStreamWriterFilter(writer);
+            
             // Marshal the object
             if (ctx.getRPCType() == null) {
-                marshalByElement(busObject, m, writer);
+                marshalByElement(busObject, m, filter);
             } else {
-                marshalByType(busObject, m, writer, ctx.getRPCType());
+                marshalByType(busObject, m, filter, ctx.getRPCType());
             }
             
             // Successfully marshalled the data
