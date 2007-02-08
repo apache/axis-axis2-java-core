@@ -34,15 +34,12 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.proxy.rpclit.RPCLitImpl;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.test.proxy.rpclit.ComplexAll;
 import org.test.proxy.rpclit.Enum;
 
-public class RPCProxyTests extends AbstractTestCase {
+public class RPCProxyTests extends TestCase {
 
     private QName serviceName = new QName(
             "http://org.apache.axis2.jaxws.proxy.rpclit", "RPCLitService");
@@ -51,10 +48,6 @@ public class RPCProxyTests extends AbstractTestCase {
             "RPCLit");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test/org/apache/axis2/jaxws/proxy/rpclit/META-INF/RPCLit.wsdl";
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(RPCProxyTests.class));
-    }
-
     /**
      * Utility method to get the proxy
      * @return RPCLit proxy

@@ -31,24 +31,18 @@ import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import junit.framework.TestCase;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * This class tests the JAX-WS Dispatch<Source> functionality with various
  * forms of a StreamSource object. 
  *
  */
-public class StreamSourceDispatchTest extends AbstractTestCase {
+public class StreamSourceDispatch extends TestCase {
 
     private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(StreamSourceDispatchTest.class));
-    }
-
 	/**
      * Invoke a Dispatch<Source> synchronously with the content in PAYLOAD mode.
 	 */

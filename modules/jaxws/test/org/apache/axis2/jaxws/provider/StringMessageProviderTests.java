@@ -16,9 +16,6 @@
  */
 package org.apache.axis2.jaxws.provider;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import javax.xml.namespace.QName;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
@@ -28,10 +25,6 @@ public class StringMessageProviderTests extends ProviderTestCase {
     String endpointUrl = "http://localhost:8080/axis2/services/StringMessageProviderService";
     String xmlString = "<invoke>test input</invoke>";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "StringMessageProviderService");
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(StringMessageProviderTests.class));
-    }
 
     protected void setUp() throws Exception {
             super.setUp();

@@ -29,14 +29,11 @@ import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.DocLitWrappedProxy;
 import org.apache.axis2.jaxws.proxy.doclitwrapped.sei.ProxyDocLitWrappedService;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.test.proxy.doclitwrapped.ReturnType;
 
-public class ProxyTests extends AbstractTestCase {
+public class ProxyTests extends TestCase {
     private QName serviceName = new QName(
             "http://doclitwrapped.proxy.test.org", "ProxyDocLitWrappedService");
     private String axisEndpoint = "http://localhost:8080/axis2/services/ProxyDocLitWrappedService";
@@ -45,10 +42,6 @@ public class ProxyTests extends AbstractTestCase {
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test/org/apache/axis2/jaxws/proxy/doclitwrapped/META-INF/ProxyDocLitWrapped.wsdl";
     private boolean runningOnAxis = true;
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(ProxyTests.class));
-    }
-
     public void testMultipleServiceCalls(){
         try{
             if(!runningOnAxis){

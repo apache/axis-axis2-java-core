@@ -21,16 +21,13 @@ package org.apache.axis2.jaxws.databinding;
 import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * A suite of tests for reading the binding from a WSDL file and
  * making sure we are configuring the Protocol correctly for 
  * messages based on that binding ID.
  */
-public class BindingToProtocolTests extends AbstractTestCase {
+public class BindingToProtocolTests extends TestCase {
     
     private static final String SOAP11_TEST_NS = "http://jaxws.axis2.apache.org/bindingtest/soap11";
     private static final String SOAP12_TEST_NS = "http://jaxws.axis2.apache.org/bindingtest/soap12";
@@ -41,10 +38,6 @@ public class BindingToProtocolTests extends AbstractTestCase {
         super(name);
     }
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(BindingToProtocolTests.class));
-    }
-
     /**
      * Test to see if we can read the SOAP 1.1 binding transport URL
      * in a WSDL, as specified by JAX-WS section 10.4.1.

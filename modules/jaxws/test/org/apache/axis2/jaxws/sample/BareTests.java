@@ -6,19 +6,12 @@ package org.apache.axis2.jaxws.sample;
 import javax.xml.ws.BindingProvider;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.BareDocLitService;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.DocLitBarePortType;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-public class BareTests extends AbstractTestCase {
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(BareTests.class));
-    }
-    
-    public void testTwoWaySync(){
+public class BareTests extends TestCase {
+	
+	public void testTwoWaySync(){
 		System.out.println("------------------------------");
 		System.out.println("Test : "+getName());
 		

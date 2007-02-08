@@ -18,22 +18,24 @@
  */
 package org.apache.axis2.jaxws.proxy;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
-import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Dispatch;
-import javax.xml.ws.Service;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GorillaDLWProxyTests extends AbstractTestCase {
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Marshaller;
+import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Dispatch;
+import javax.xml.ws.Service;
+
+import junit.framework.TestCase;
+import org.apache.axis2.jaxws.proxy.gorilla_dlw.sei.GorillaInterface;
+
+public class GorillaDLWProxyTests extends TestCase {
 
     private QName serviceName = new QName(
             "http://org.apache.axis2.jaxws.proxy.gorilla_dlw", "GorillaService");
@@ -42,10 +44,6 @@ public class GorillaDLWProxyTests extends AbstractTestCase {
             "GorillaPort");
     private String wsdlLocation = System.getProperty("basedir",".")+"/"+"test/org/apache/axis2/jaxws/proxy/gorilla_dlw/META-INF/gorilla_dlw.wsdl";
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(GorillaDLWProxyTests.class));
-    }
-
     /**
      * Utility method to get the proxy
      * @return GorillaInterface proxy

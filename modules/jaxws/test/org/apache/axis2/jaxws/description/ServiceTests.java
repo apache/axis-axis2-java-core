@@ -29,13 +29,10 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-public class ServiceTests extends AbstractTestCase {
+public class ServiceTests extends TestCase {
     private static String VALID_SERVICE_NAMESPACE = "http://org/test/addnumbers";
     private static String VALID_SERVICE_LOCALPART_1 = "AddNumbersService1";
     private static String VALID_SERVICE_LOCALPART_2 = "AddNumbersService2";
@@ -46,10 +43,6 @@ public class ServiceTests extends AbstractTestCase {
     private static String VALID_PORT_S2P2 = "AddNumbersPortS2P2";
     private static String VALID_PORT_S2P3 = "AddNumbersPortS2P3";
     private static String VALID_PORT_S2P4 = "AddNumbersPortS2P4";
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(ServiceTests.class));
-    }
 
     public void testInvalidServiceNamespace() {
         URL wsdlURL = DescriptionTestUtils2.getWSDLURL("WSDLMultiTests.wsdl");

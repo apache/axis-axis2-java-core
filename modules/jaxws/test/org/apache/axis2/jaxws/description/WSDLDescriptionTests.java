@@ -34,16 +34,13 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.ws.axis2.tests.EchoPort;
 
 /**
  * Directly test the Description classes built with a WSDL file.
  */
-public class WSDLDescriptionTests extends AbstractTestCase {
+public class WSDLDescriptionTests extends TestCase {
     
     private Service service;
     private ServiceDelegate serviceDelegate;
@@ -54,10 +51,6 @@ public class WSDLDescriptionTests extends AbstractTestCase {
     private QName validPortQName = new QName(VALID_NAMESPACE, VALID_PORT);
 
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(WSDLTests.class));
-    }
-
     protected void setUp() {
         // Create a new service for each test to test various valid and invalid
         // flows

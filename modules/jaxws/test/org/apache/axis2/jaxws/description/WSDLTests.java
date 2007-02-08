@@ -25,10 +25,7 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * Tests building a ServiceDescription using WSDL and the JAXWS Service API.  
@@ -36,12 +33,8 @@ import org.apache.axis2.jaxws.framework.AbstractTestCase;
  * that should be used, this test will create Service objects and then use introspection
  * to check the underlying ServiceDelegate which contains the ServiceDescription.
  */
-public class WSDLTests extends AbstractTestCase {
+public class WSDLTests extends TestCase {
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(WSDLTests.class));
-    }
-
     public void testValidWSDLService() {
         Service service = null;
         ServiceDelegate serviceDelegate = null;

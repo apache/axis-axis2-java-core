@@ -20,15 +20,12 @@ import javax.xml.ws.ProtocolException;
 import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * Tests the ExceptionFactory
  */
-public class ExceptionFactoryTests extends AbstractTestCase {
+public class ExceptionFactoryTests extends TestCase {
 	private static final String sampleText = "Sample";
 
     /**
@@ -38,10 +35,6 @@ public class ExceptionFactoryTests extends AbstractTestCase {
         super(name);
     }
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(ExceptionFactoryTests.class));
-    }
-
     /**
      * @teststrategy Tests creation of a WebServiceException
      */

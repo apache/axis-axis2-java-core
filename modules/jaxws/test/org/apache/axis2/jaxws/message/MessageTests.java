@@ -26,8 +26,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
@@ -39,7 +37,6 @@ import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import test.EchoStringResponse;
 import test.ObjectFactory;
 
@@ -49,7 +46,7 @@ import test.ObjectFactory;
  * These are not client/server tests.  Instead the tests simulate the processing of a Message during
  * client/server processing.
  */
-public class MessageTests extends AbstractTestCase {
+public class MessageTests extends TestCase {
 
 	// String test variables
 	private static final String soap11env = "http://schemas.xmlsoap.org/soap/envelope/";
@@ -131,12 +128,8 @@ public class MessageTests extends AbstractTestCase {
 	public MessageTests(String arg0) {
 		super(arg0);
 	}
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(MessageTests.class));
-    }
-
-    /**
+	
+	/**
 	 * Create a Block representing an XMLString and simulate a 
 	 * normal Dispatch<String> flow.
      * In addition the test makes sure that the XMLString block is not

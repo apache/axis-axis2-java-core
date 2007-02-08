@@ -173,7 +173,7 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
 				   value = message.getAsSOAPMessage();
 				   
 			   } else {
-                   // NOTE Similar code in JAXBDispatchTest
+                   // NOTE Similar code in JAXBDispatch
                    
 				   // TODO: This doesn't seem right to me. We should not have an intermediate StringBlock.  
 				   // This is not performant. Scheu 

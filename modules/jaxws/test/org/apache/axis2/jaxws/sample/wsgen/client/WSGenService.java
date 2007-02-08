@@ -30,7 +30,7 @@ public class WSGenService
         URL url = null;
         try {
             try{
-                String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
+                String baseDir = new File(".").getCanonicalPath();
                 wsdlLocation = new File(baseDir + wsdlLocation).getAbsolutePath();
             }catch(Exception e){
                 e.printStackTrace();

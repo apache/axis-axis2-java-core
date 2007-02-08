@@ -19,15 +19,12 @@
 package org.apache.axis2.jaxws.lifecycle;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.resourceinjection.ResourceInjectionPortTypeImpl;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
-public class EndpointLifecycleTests extends AbstractTestCase {
+public class EndpointLifecycleTests extends TestCase {
 	Object endpointInstance = new ResourceInjectionPortTypeImpl();
 	Object badObject = new Object();
 	public EndpointLifecycleTests() {
@@ -43,10 +40,6 @@ public class EndpointLifecycleTests extends AbstractTestCase {
 		// TODO Auto-generated constructor stub
 	}
 	
-    public static Test suite() {
-        return getTestSetup(new TestSuite(EndpointLifecycleTests.class));
-    }
-
 	public void testPostConstruct(){
 		System.out.println("------------------------------");
 		System.out.println("Test : "+getName());

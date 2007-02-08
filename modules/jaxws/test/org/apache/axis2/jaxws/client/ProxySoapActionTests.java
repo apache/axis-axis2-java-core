@@ -19,25 +19,18 @@
 package org.apache.axis2.jaxws.client;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.client.soapaction.BookStore;
 import org.apache.axis2.jaxws.client.soapaction.BookStoreService;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * A suite of SOAPAction related tests for the dynamic proxy client 
  */
-public class ProxySoapActionTests extends AbstractTestCase {
+public class ProxySoapActionTests extends TestCase {
     
     public ProxySoapActionTests(String name) {
         super(name);
     }
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(DispatchSoapActionTests.class));
-    }
-
     public void testSendRequestWithSoapAction() {
         System.out.println("----------------------------------");
         System.out.println("test: " + getName());

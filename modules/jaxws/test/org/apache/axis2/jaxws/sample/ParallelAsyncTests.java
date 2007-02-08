@@ -12,7 +12,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncPort;
 import org.apache.axis2.jaxws.sample.parallelasync.server.AsyncService;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.apache.log4j.BasicConfigurator;
 import org.test.parallelasync.CustomAsyncResponse;
 import org.test.parallelasync.SleepResponse;
@@ -23,7 +22,7 @@ import org.test.parallelasync.SleepResponse;
  * 
  * ExecutionException tests are covered in jaxws.dispatch and jaxws.proxy
  */
-public class ParallelAsyncTests extends AbstractTestCase {
+public class ParallelAsyncTests extends TestCase {
 
     private static final String DOCLITWR_ASYNC_ENDPOINT =
         "http://localhost:8080/axis2/services/AsyncService";
@@ -34,7 +33,9 @@ public class ParallelAsyncTests extends AbstractTestCase {
     }
 
     public static Test suite() {
-        return getTestSetup(new TestSuite(ParallelAsyncTests.class));
+        TestSuite suite = new TestSuite(ParallelAsyncTests.class);
+        return suite;
+        
     }
 
     public void setUp() {

@@ -713,8 +713,7 @@
   		<configuration>
   			<skip>false</skip>
   			<includes>
-           	 <include>org/**/*Test.java</include>
-           	 <include>org/**/*Tests.java</include>
+           	 <include>**/*Test.java</include>
             </includes>
                       <systemProperties>
             <property>

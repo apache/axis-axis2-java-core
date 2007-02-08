@@ -28,11 +28,8 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.DocLitnonWrappedProxy;
 import org.apache.axis2.jaxws.proxy.doclitnonwrapped.sei.ProxyDocLitUnwrappedService;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.test.proxy.doclitnonwrapped.Invoke;
 import org.test.proxy.doclitnonwrapped.ObjectFactory;
 import org.test.proxy.doclitnonwrapped.ReturnType;
@@ -41,7 +38,7 @@ import org.test.proxy.doclitnonwrapped.ReturnType;
  * This test cases will use proxy NON wrapped wsdl to invoke methods
  * on a deployed Server Endpoint.
  */
-public class ProxyNonWrappedTests extends AbstractTestCase {
+public class ProxyNonWrappedTests extends TestCase {
 
     QName serviceName = new QName("http://doclitnonwrapped.proxy.test.org", "ProxyDocLitUnwrappedService");
     private String axisEndpoint = "http://localhost:8080/axis2/services/ProxyDocLitUnwrappedService";
@@ -60,10 +57,6 @@ public class ProxyNonWrappedTests extends AbstractTestCase {
         // TODO Auto-generated constructor stub
     }
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(ProxyNonWrappedTests.class));
-    }
-
     public void testInvoke(){
         System.out.println("-----------------------------------");
         System.out.println("test: " + getName());

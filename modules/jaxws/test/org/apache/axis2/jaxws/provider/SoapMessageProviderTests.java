@@ -38,8 +38,6 @@ import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axis2.jaxws.provider.soapmsg.SoapMessageProvider;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Tests Dispatch<SOAPMessage> client and a Provider<SOAPMessage> service.
@@ -83,11 +81,7 @@ public class SoapMessageProviderTests extends ProviderTestCase {
     SoapMessageProvider.XML_WSE_REQUEST +
     "</invoke_str></ns2:invoke>";
                 
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SoapMessageProviderTests.class));
-    }
-
+    
     protected void setUp() throws Exception {
             super.setUp();
     }

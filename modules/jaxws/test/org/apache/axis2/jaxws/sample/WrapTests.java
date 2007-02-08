@@ -6,17 +6,14 @@ package org.apache.axis2.jaxws.sample;
 import javax.xml.ws.Holder;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.test.sample.wrap.Header;
 import org.test.sample.wrap.HeaderPart0;
 import org.test.sample.wrap.HeaderPart1;
 import org.test.sample.wrap.HeaderResponse;
 
-public class WrapTests extends AbstractTestCase {
+public class WrapTests extends TestCase {
 
 	/**
 	 * 
@@ -33,12 +30,8 @@ public class WrapTests extends AbstractTestCase {
 		super(arg0);
 		// TODO Auto-generated constructor stub
 	}
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(WrapTests.class));
-    }
-    
-    public void testTwoWaySync(){
+	
+	public void testTwoWaySync(){
 		System.out.println("------------------------------");
 		System.out.println("Test : "+getName());
 		try{

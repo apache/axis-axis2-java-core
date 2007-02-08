@@ -25,20 +25,17 @@ import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.sample.addressbook.AddEntry;
 import org.apache.axis2.jaxws.sample.addressbook.AddEntryResponse;
 import org.apache.axis2.jaxws.sample.addressbook.AddressBook;
 import org.apache.axis2.jaxws.sample.addressbook.AddressBookEntry;
 import org.apache.axis2.jaxws.sample.addressbook.ObjectFactory;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * This tests the AddressBook same service that exists under
  * org.apache.axis2.jaxws.sample.addressbook.*
  */
-public class AddressBookTests extends AbstractTestCase {
+public class AddressBookTests extends TestCase {
 
     private static final String NAMESPACE = "http://org/apache/axis2/jaxws/sample/addressbook";
     private static final QName QNAME_SERVICE = new QName(
@@ -47,10 +44,6 @@ public class AddressBookTests extends AbstractTestCase {
             NAMESPACE, "AddressBook");
     private static final String URL_ENDPOINT = "http://localhost:8080/axis2/services/AddressBookService";
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(AddressBookTests.class));
-    }
-
     /**
      * Test the endpoint by invoking it with a JAX-WS Dispatch.  
      */

@@ -14,24 +14,16 @@ import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceFault_Exception;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServicePortType;
 import org.apache.axis2.jaxws.sample.faults.FaultyWebServiceService;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrap;
 import org.apache.axis2.jaxws.sample.wrap.sei.DocLitWrapService;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 import org.test.faults.FaultyWebServiceResponse;
 
-public class FaultyWebServiceTests extends AbstractTestCase {
+public class FaultyWebServiceTests extends TestCase {
 	String axisEndpoint = "http://localhost:8080/axis2/services/FaultyWebServiceService";
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(FaultyWebServiceTests.class));
-    }
-
 	public void testFaultyWebService(){
 		FaultyWebServiceFault_Exception exception = null;
 		try{

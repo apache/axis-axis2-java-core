@@ -22,8 +22,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -32,14 +30,13 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * This suite is used to test the creation of messages based on SOAP 1.2
  * with both inbound and outbound simulations. 
  *
  */
-public class SOAP12Tests extends AbstractTestCase {
+public class SOAP12Tests extends TestCase {
 
     private static final String sampleText = 
         "<echo>test string</echo>";
@@ -65,10 +62,6 @@ public class SOAP12Tests extends AbstractTestCase {
         super(name);
     }
     
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SOAP12Tests.class));
-    }
-
     /**
      * Simulate creating a SOAP 1.2 message when the business object
      * provided is just the payload. 

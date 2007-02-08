@@ -29,8 +29,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -39,7 +37,6 @@ import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 
 /**
  * SAAJConverterTests
@@ -49,7 +46,7 @@ import org.apache.axis2.jaxws.framework.AbstractTestCase;
  * the converter.
  *
  */
-public class SAAJConverterTests extends AbstractTestCase {
+public class SAAJConverterTests extends TestCase {
 
 	private static final String sampleText =
 		"<pre:a xmlns:pre=\"urn://sample\">" +
@@ -72,10 +69,6 @@ public class SAAJConverterTests extends AbstractTestCase {
 	public SAAJConverterTests(String arg0) {
 		super(arg0);
 	}
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(SAAJConverterTests.class));
-    }
 
 	/**
 	 * @testStrategy Tests conversions between SAAJ and OM SOAPEnvelopes

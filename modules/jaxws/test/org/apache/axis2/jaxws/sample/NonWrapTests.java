@@ -8,17 +8,14 @@ import java.util.concurrent.Future;
 import javax.xml.ws.Holder;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapService;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.test.sample.nonwrap.ObjectFactory;
 import org.test.sample.nonwrap.ReturnType;
 import org.test.sample.nonwrap.TwoWay;
 import org.test.sample.nonwrap.TwoWayHolder;
 
-public class NonWrapTests extends AbstractTestCase {
+public class NonWrapTests extends TestCase {
 
 	
 	public NonWrapTests() {
@@ -34,10 +31,6 @@ public class NonWrapTests extends AbstractTestCase {
 		// TODO Auto-generated constructor stub
 	}
 	
-    public static Test suite() {
-        return getTestSetup(new TestSuite(NonWrapTests.class));
-    }
-
 	public void testTwoWaySync(){
 		System.out.println("------------------------------");
 		System.out.println("Test : "+getName());

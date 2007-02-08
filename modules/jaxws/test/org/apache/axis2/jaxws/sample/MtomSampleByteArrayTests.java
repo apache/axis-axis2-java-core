@@ -11,28 +11,21 @@ import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.apache.axis2.jaxws.sample.mtom1.ImageDepot;
 import org.apache.axis2.jaxws.sample.mtom1.ObjectFactory;
 import org.apache.axis2.jaxws.sample.mtom1.Invoke;
 import org.apache.axis2.jaxws.sample.mtom1.SendImageResponse;
-import org.apache.axis2.jaxws.framework.AbstractTestCase;
 import org.w3._2005._05.xmlmime.Base64Binary;
 
 import com.sun.xml.bind.v2.runtime.unmarshaller.Base64Data;
 
-public class MtomSampleByteArrayTests extends AbstractTestCase {
+public class MtomSampleByteArrayTests extends TestCase {
 
     private static final QName QNAME_SERVICE = new QName("urn://mtom1.sample.jaxws.axis2.apache.org", "SendImageService");
     private static final QName QNAME_PORT    = new QName("urn://mtom1.sample.jaxws.axis2.apache.org", "sendImageSoap");
     private static final String URL_ENDPOINT = "http://localhost:8080/axis2/services/SendImageService";
     private static final String IMAGE_DIR = System.getProperty("basedir",".")+File.separator+"test-resources"+File.separator+"image";
-
-    public static Test suite() {
-        return getTestSetup(new TestSuite(MtomSampleByteArrayTests.class));
-    }
 
     /*
      * Enable attachment Optimization through the SOAPBinding method 
