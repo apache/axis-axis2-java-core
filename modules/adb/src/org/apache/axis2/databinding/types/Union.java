@@ -16,6 +16,8 @@
 package org.apache.axis2.databinding.types;
 
 
+import org.apache.axis2.databinding.utils.ConverterUtil;
+
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.namespace.QName;
@@ -55,14 +57,14 @@ public abstract class Union {
         String value = xmlStreamReader.getElementText();
         if ("string".equals(type)) {
             setObject(value);
-        } else if ("int".equals(type)) {
+        } else if ("int".equals(type) || "integer".equals(type)) {
             setObject(new Integer(value));
         } else if ("boolean".equals(type)) {
             setObject(new Boolean(value));
         } else if ("anyURI".equals(type)) {
             setObject(new URI(value));
         } else if ("date".equals(type)) {
-            setObject(new Date(value));
+            setObject(ConverterUtil.convertToDate(value));
         } else if ("QName".equals(type)) {
             if (value.indexOf(":") > 0) {
                 // i.e it has a name space
@@ -75,7 +77,15 @@ public abstract class Union {
             }
 
         } else if ("datetime".equals(type)) {
-            //TODO:set correctly
+            setObject(ConverterUtil.convertToDateTime(value));
+        } else if ("time".equals(type)) {
+            setObject(ConverterUtil.convertToTime(value));
+        } else if ("float".equals(type)) {
+            setObject(new Float(value));
+        } else if ("long".equals(type)) {
+            setObject(new Long(value));
+        } else if ("dobule".equals(type)) {
+            setObject(new Double(value));
         } else {
             throw new RuntimeException("Object not found");
         }

@@ -697,7 +697,7 @@ public class BeanUtil {
      * @deprecated Please use getUniquePrefix
      */
     public static String getUniquePrifix() {
-        return "ns" + nsCount++;
+        return "s" + nsCount++;
     }
 
     /**
@@ -706,8 +706,10 @@ public class BeanUtil {
      * @return unique prefix
      */
     public static String getUniquePrefix() {
-        return "ns" + nsCount++;
+        return "s" + nsCount++;
     }
+
+    
 
     /**
      * JAM convert first name of an attribute into UpperCase as an example
