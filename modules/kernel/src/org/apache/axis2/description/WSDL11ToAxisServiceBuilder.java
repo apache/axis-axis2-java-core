@@ -578,10 +578,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingFaultMessage.setParent(axisBindingOperation);
 
                 axisBindingOperation.addFault(axisBindingFaultMessage);
-                axisBinding.addChild(axisBindingOperation.getName(), axisBindingOperation);
-
                 AddQNameReference(faultMessage, wsdl4jFault.getMessage());
             }
+            axisBinding.addChild(axisBindingOperation.getName(), axisBindingOperation);
         }
     }
 
