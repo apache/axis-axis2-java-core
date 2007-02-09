@@ -29,49 +29,19 @@
     <description>The Axis 2 Eclipse Service Plugin for Service archive creation</description>
     <repositories>
         <repository>
-            <id>repo1</id>
-            <name>maven repository</name>
-            <url>http://repo1.maven.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>ibiblio</id>
-            <name>ibiblio repository</name>
-            <url>http://ibiblio.org/maven/</url>
-            <layout>legacy</layout>
-        </repository>
-        <repository>
-            <id>ibiblio</id>
-            <name>ibiblio repository</name>
-            <url>http://ibiblio.org/maven2/</url>
-        </repository>
-        <repository>
-            <id>apache-m1</id>
-            <name>apache m1-ibiblio-rsync repository</name>
-            <url>http://people.apache.org/repo/m1-ibiblio-rsync-repository/</url>
-            <layout>legacy</layout>
-        </repository>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>apache-people-repo</id>
-            <name>apache people maven repository</name>
-            <url>http://people.apache.org/repository/</url>
-            <layout>legacy</layout>
-        </repository>
-        <repository>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
             <id>ws-zones</id>
             <name>ws.zones maven repository</name>
-            <url>http://ws.zones.apache.org/repository2/</url>
-            <layout>legacy</layout>
+            <url>http://ws.zones.apache.org/repository2</url>
         </repository>
         <repository>
             <id>eclipse-repo</id>
             <name>eclipse maven repository</name>
             <url>http://repo1.maven.org/eclipse</url>
+        </repository>
+        <repository>
+            <id>maven2</id>
+            <name>maven2 repository</name>
+            <url>http://repo1.maven.org/maven2</url>
         </repository>
     </repositories>
 
@@ -100,38 +70,38 @@
 
         <dependency>
             <groupId>org.eclipse.core</groupId>
-            <artifactId>runtime</artifactId>
-            <version>3.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>swt</artifactId>
-            <version>3.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>osgi</artifactId>
-            <version>3.2</version>
+            <artifactId>org.eclipse.core.runtime</artifactId>
+            <version>3.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.swt</groupId>
-            <artifactId>gtk_linux_x86</artifactId>
-            <version>3.2</version>
+            <artifactId>org.eclipse.swt</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.osgi</groupId>
+            <artifactId>org.eclipse.osgi</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.swt</groupId>
+            <artifactId>org.eclipse.swt.win32.win32.x86</artifactId>
+            <version>3.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.ui</groupId>
-            <artifactId>ide</artifactId>
-            <version>3.2</version>
+            <artifactId>org.eclipse.ui.ide</artifactId>
+            <version>3.2.0</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.eclipse.ui</groupId>
-            <artifactId>workbench</artifactId>
-            <version>3.2</version>
-        </dependency>
+            <artifactId>org.eclipse.ui.workbench</artifactId>
+            <version>3.2.0</version>
+        </dependency>-->
         <dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>jface</artifactId>
-            <version>3.2</version>
+            <groupId>org.eclipse.jface</groupId>
+            <artifactId>org.eclipse.jface</artifactId>
+            <version>3.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
