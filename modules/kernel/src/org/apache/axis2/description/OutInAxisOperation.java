@@ -322,9 +322,18 @@ class OutInAxisOperationClient extends OperationClient {
         if (responseMessageContext.getEnvelope() == null) {
             // If request is REST we assume the responseMessageContext is REST, so
             // set the variable
-            SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(
-                    responseMessageContext, msgctx.getEnvelope().getNamespace()
-                    .getNamespaceURI());
+            /*
+             * old code here was using the outbound message context to set the inbound SOAP namespace,
+             * as such and passing it to TransportUtils.createSOAPMessage
+             * 
+             * msgctx.getEnvelope().getNamespace().getNamespaceURI()
+             * 
+             * However, the SOAP1.2 spec, appendix A indicates that if a SOAP1.2 message is sent to a SOAP1.1
+             * endpoint, we will get a SOAP1.1 (fault) message response.  We need another way to set
+             * the inbound SOAP version.  Best way to do this is to trust the content type and let
+             * createSOAPMessage take care of figuring out what the SOAP namespace is.
+             */
+            SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(responseMessageContext);
              if (resenvelope != null) {
                 responseMessageContext.setEnvelope(resenvelope);
             } else {

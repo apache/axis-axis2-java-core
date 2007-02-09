@@ -42,11 +42,14 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.SOAPMessageFormatter;
 import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class TransportUtils {
 
-    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext,
-			String soapNamespaceURI) throws AxisFault {
+    private static final Log log = LogFactory.getLog(TransportUtils.class);
+    
+    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext) throws AxisFault {
 		try {
 			InputStream inStream = (InputStream) msgContext
 					.getProperty(MessageContext.TRANSPORT_IN);
@@ -71,6 +74,8 @@ public class TransportUtils {
 					isMIME = true;
 				}
 			}
+            
+            String soapNamespaceURI = getSOAPNamespaceFromContentType(contentType, null);
 
 			String charSetEnc = (String) msgContext
 					.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
@@ -348,6 +353,71 @@ public class TransportUtils {
 		}
 		return messageFormatter;
 	}
+    
+    
+    /**
+     * @param contentType The contentType of the incoming message.  It may be null
+     * @param defaultNamespace Ususally set the version that is expected.  This a fallback if the contentType is unavailable or 
+     * does not match our expectations
+     * @return null or the soap namespace.  A null indicates that the message will be interpretted as a non-SOAP (i.e. REST) message 
+     */
+   private static String getSOAPNamespaceFromContentType(String contentType, String defaultSOAPNamespace) {
+         
+         String returnNS = defaultSOAPNamespace;
+         // Discriminate using the content Type
+         if (contentType != null) {
+             
+             /*
+              * SOAP11 content-type is "text/xml"
+              * SOAP12 content-type is "application/soap+xml"
+              * 
+              * What about other content-types?
+              * 
+              * TODO: I'm not fully convinced this method is complete, given the media types
+              * listed in HTTPConstants.  Should we assume all application/* is SOAP12?
+              * Should we assume all text/* is SOAP11?
+              * 
+              * So, we'll follow this pattern:
+              * 1)  find the content-type main setting
+              * 2)  if (1) not understood, find the "type=" param
+              * 
+              */
+             
+             String contentTypeSetting = contentType.substring(0, contentType.indexOf(';'));
+             if (contentTypeSetting.equalsIgnoreCase(SOAP12Constants.SOAP_12_CONTENT_TYPE)) {
+                returnNS = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+             }
+             else if (contentTypeSetting.equalsIgnoreCase(SOAP11Constants.SOAP_11_CONTENT_TYPE)) {
+                returnNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+             }
+             // search for parameter "type=application/soap+xml"
+             else if (contentType.toLowerCase().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE.toLowerCase()) > -1) {
+                 returnNS = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+             }
+             // search for "type=text/xml"
+             else if (contentType.toLowerCase().indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE.toLowerCase()) > -1) {
+                 returnNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+             }
+
+         }
+         
+         if (returnNS == null) {
+             if (log.isDebugEnabled()) {
+                 log.debug("No content-type or \"type=\" parameter was found in the content-type header and no default was specified, thus defaulting to SOAP 1.1.");
+             }
+             returnNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+         }
+         
+         if (log.isDebugEnabled()) {
+             log.debug("content-type: " + contentType);
+             log.debug("defaultSOAPNamespace: " + defaultSOAPNamespace);
+             log.debug("Returned namespace: " + returnNS);
+         }
+         return returnNS;
+         
+       }
+
+    
     
     private static String getMessageFormatterProperty(MessageContext msgContext) {
 		String messageFormatterProperty = null;

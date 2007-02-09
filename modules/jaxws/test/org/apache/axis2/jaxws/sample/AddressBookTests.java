@@ -57,7 +57,7 @@ public class AddressBookTests extends TestCase {
         
         // Create the JAX-WS client needed to send the request
         Service service = Service.create(QNAME_SERVICE);
-        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, URL_ENDPOINT);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP11HTTP_BINDING, URL_ENDPOINT);
         Dispatch<Object> dispatch = service.createDispatch(
                 QNAME_PORT, jbc, Mode.PAYLOAD);
                 

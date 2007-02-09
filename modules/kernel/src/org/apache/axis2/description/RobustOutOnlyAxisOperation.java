@@ -93,8 +93,7 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
                         getProperty(MessageContext.TRANSPORT_IN);
                 if (inStream != null) {
                     envelope = TransportUtils.createSOAPMessage(
-                            responseMessageContext, msgctx.getEnvelope().getNamespace()
-                            .getNamespaceURI());
+                            responseMessageContext);
                 }
             }
             if (envelope != null) {

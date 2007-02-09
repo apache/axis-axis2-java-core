@@ -16,19 +16,28 @@
  */
 package org.apache.axis2.jaxws.server;
 
-import java.security.PrivilegedActionException;
+import javax.xml.stream.XMLStreamException;
 import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.binding.SOAPBinding;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.XMLFault;
+import org.apache.axis2.jaxws.message.XMLFaultCode;
+import org.apache.axis2.jaxws.message.XMLFaultReason;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
@@ -73,6 +82,33 @@ public class EndpointController {
         ServiceDescription serviceDesc = getServiceDescription(requestMsgCtx, implClass);
         requestMsgCtx.setServiceDescription(serviceDesc);
 
+        if (!soapVersionsMatch(requestMsgCtx, serviceDesc)) {
+            Protocol protocol = requestMsgCtx.getMessage().getProtocol();
+            // only if protocol is soap12 and MISmatches the endpoint do we halt processing
+            if (protocol.equals(Protocol.soap12)) {
+                ic.setResponseMessageContext(createMismatchFaultMsgCtx(requestMsgCtx, "Incoming SOAP message protocol is version 1.2, but endpoint is configured for SOAP 1.1"));
+                return ic;
+            } else if (protocol.equals(Protocol.soap11)) {
+                // SOAP 1.1 message and SOAP 1.2 binding
+
+                // The canSupport flag indicates that we can support this scenario.
+                // Possible Examples of canSupport:  JAXB impl binding, JAXB Provider
+                // Possible Example of !canSupport: Application handler usage, non-JAXB Provider
+                // Initially I vote to hard code this as false.
+                boolean canSupport = false;
+                if (canSupport) {
+                    // TODO: Okay, but we need to scrub the Message create code to make sure that the response message
+                    // is always built from the receiver protocol...not the binding protocol
+                } else {
+                    ic.setResponseMessageContext(createMismatchFaultMsgCtx(requestMsgCtx, "Incoming SOAP message protocol is version 1.1, but endpoint is configured for SOAP 1.2.  This is not supported."));
+                    return ic;
+                }
+            } else {
+                ic.setResponseMessageContext(createMismatchFaultMsgCtx(requestMsgCtx, "Incoming message protocol does not match endpoint protocol."));
+                return ic;
+            }
+        }
+        
 		MessageContext responseMsgContext = null;
 		
 		try {
@@ -191,5 +227,40 @@ public class EndpointController {
 	  EndpointLifecycleManagerFactory elmf =(EndpointLifecycleManagerFactory)FactoryRegistry.getFactory(EndpointLifecycleManagerFactory.class);
 	  return elmf.createEndpointLifecycleManager();
    }
-  
+   
+
+   private boolean soapVersionsMatch(MessageContext requestMsgCtx, ServiceDescription serviceDesc) {
+       // compare soap versions and respond appropriately under SOAP 1.2 Appendix 'A'
+       EndpointDescription[] eds = serviceDesc.getEndpointDescriptions();
+       // dispatch endpoints do not have SEIs, so watch out for null or empty array
+       if ((eds != null) && (eds.length > 0)) {
+           Protocol protocol = requestMsgCtx.getMessage().getProtocol();
+           String endpointBindingType = eds[0].getBindingType();
+           if (protocol.equals(Protocol.soap11)) {
+               return (SOAPBinding.SOAP11HTTP_BINDING.equalsIgnoreCase(endpointBindingType)) ||
+                       (SOAPBinding.SOAP11HTTP_MTOM_BINDING.equalsIgnoreCase(endpointBindingType));
+           }
+           else if (protocol.equals(Protocol.soap12)) {
+               return (SOAPBinding.SOAP12HTTP_BINDING.equalsIgnoreCase(endpointBindingType)) ||
+                       (SOAPBinding.SOAP12HTTP_MTOM_BINDING.equalsIgnoreCase(endpointBindingType));
+           }
+       }
+       // safe to assume?
+       return true;
+    }
+   
+   private MessageContext createMismatchFaultMsgCtx(MessageContext requestMsgCtx, String errorMsg) {
+       try {
+           XMLFault xmlfault = new XMLFault(XMLFaultCode.VERSIONMISMATCH, new XMLFaultReason(errorMsg));
+           Message msg = ((MessageFactory)FactoryRegistry.getFactory(MessageFactory.class)).create(Protocol.soap11);  // always soap11 according to the spec
+           msg.setXMLFault(xmlfault);
+           MessageContext responseMsgCtx = MessageContextUtils.createFaultMessageContext(requestMsgCtx);
+           responseMsgCtx.setMessage(msg);
+           return responseMsgCtx;
+       } catch (XMLStreamException e) {
+           // Need to fix this !   At least provide logging
+           // TODO for now, throw it.  We probably should try to make an XMLFault object and set it on the message
+           throw ExceptionFactory.makeWebServiceException(e);
+       }
+   }
 }

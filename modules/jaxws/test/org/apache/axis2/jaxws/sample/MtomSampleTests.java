@@ -165,8 +165,10 @@ public class MtomSampleTests extends TestCase {
     /*
      * Enable attachment optimization using both the SOAP12 binding
      * property for MTOM
+     * 
+     * Sending SOAP12 message to SOAP11 endpoint will correctly result in exception
+     * 
      */
-    
     public void testSendImageAttachmentProperty12() throws Exception {
         System.out.println("----------------------------------");
         System.out.println("test: " + getName());
@@ -198,16 +200,25 @@ public class MtomSampleTests extends TestCase {
         service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_MTOM_BINDING, URL_ENDPOINT);
         Dispatch<Object> dispatch = service.createDispatch(QNAME_PORT, jbc, Mode.PAYLOAD);
         
-        SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
-        
+        try {
+            SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
+            fail("Was expecting an exception due to sending SOAP12 message to SOAP11 endpoint.");
+        } catch (Exception e) {
+            assertNotNull(e);
+        }
+        /*
         assertNotNull(response);
         assertNotNull(response.getOutput().getImageData());
+        */
     }
     
     
     /*
      * Enable attachment optimization using both the SOAP12 binding API
      * for MTOM
+     * 
+     * Sending SOAP12 message to SOAP11 endpoint will correctly result in exception
+     * 
      */
     public void testSendImageAttachmentAPI12() throws Exception {
         System.out.println("----------------------------------");
@@ -245,10 +256,16 @@ public class MtomSampleTests extends TestCase {
         SOAPBinding binding = (SOAPBinding) dispatch.getBinding();
         binding.setMTOMEnabled(true);
         
-        SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
-        
+        try {
+            SendImageResponse response = (SendImageResponse) dispatch.invoke(request);
+            fail("Was expecting an exception due to sending SOAP12 message to SOAP11 endpoint.");
+        } catch (Exception e) {
+            assertNotNull(e);
+        }
+        /*
         assertNotNull(response);
         assertNotNull(response.getOutput().getImageData());
+        */
     }
     
 }
