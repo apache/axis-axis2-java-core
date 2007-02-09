@@ -168,7 +168,7 @@
                 <xsl:variable name="name"><xsl:value-of select="@name"/></xsl:variable>
                 <xsl:variable name="method-name"><xsl:value-of select="@name"/></xsl:variable>
                 <xsl:variable name="method-ns"><xsl:value-of select="@namespace"/> </xsl:variable>
-                <xsl:variable name="outputCapsType"><xsl:value-of select="@output/param/@caps-type"/> </xsl:variable>
+                <xsl:variable name="outputCapsType"><xsl:value-of select="output/param/@caps-type"/> </xsl:variable>
                 <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"/></xsl:variable>
 
                 if ( AXIS2_STRCMP(op_name, "<xsl:value-of select="@localpart"/>") == 0 )
@@ -177,7 +177,7 @@
                     input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/> = <xsl:choose>
                         <xsl:when test="@ours">
                         axis2_<xsl:value-of select="@type"/>_create( env);
-                        AXIS2_<xsl:value-of select="@caps-type"/>_BUILD_OM(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, content_node );
+                        AXIS2_<xsl:value-of select="@caps-type"/>_DESERIALIZE(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env, content_node );
                         </xsl:when>
                         <xsl:otherwise>content_node;</xsl:otherwise>
                         </xsl:choose>
@@ -192,7 +192,9 @@
                     }
                     ret_node = <xsl:choose>
                                    <xsl:when test="@ours">
-                               AXIS2_<xsl:value-of select="@caps-type"/>_PARSE_OM(ret_val<xsl:value-of select="$position"/>, env, NULL );
+                               AXIS2_<xsl:value-of select="$outputCapsType"/>_SERIALIZE(ret_val<xsl:value-of select="$position"/>, env, NULL, AXIS2_FALSE);
+                               AXIS2_<xsl:value-of select="$outputCapsType"/>_FREE(ret_val<xsl:value-of select="$position"/>, env);
+                               AXIS2_<xsl:value-of select="@caps-type"/>_FREE(input_val<xsl:value-of select="$position"/>_<xsl:value-of select="position()"/>, env);
                                    </xsl:when>
                                    <xsl:otherwise>ret_val<xsl:value-of select="$position"/>;</xsl:otherwise>
                                 </xsl:choose>
@@ -231,7 +233,7 @@
 	 * Following block distinguish the exposed part of the dll.
  	 */
 
-    AXIS2_EXTERN int AXIS2_CALL
+    AXIS2_EXTERN int
     axis2_get_instance(struct axis2_svc_skeleton **inst,
 	                        const axis2_env_t *env)
 	{
@@ -245,7 +247,7 @@
   		return AXIS2_SUCCESS;
 	}
 
-	AXIS2_EXTERN int AXIS2_CALL
+	AXIS2_EXTERN int 
     axis2_remove_instance(axis2_svc_skeleton_t *inst,
                             const axis2_env_t *env)
 	{

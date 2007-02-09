@@ -156,7 +156,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = AXIS2_<xsl:value-of select="@caps-type"/>_PARSE_OM(<xsl:value-of select="@name"/>, env, NULL);
+                            payload = AXIS2_<xsl:value-of select="@caps-type"/>_SERIALIZE(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
@@ -205,7 +205,7 @@
                     }
                     ret_val = axis2_<xsl:value-of select="output/param/@type"/>_create(env);
 
-                    AXIS2_<xsl:value-of select="$caps-outputtype"/>_BUILD_OM(ret_val, env, ret_node );
+                    AXIS2_<xsl:value-of select="$caps-outputtype"/>_DESERIALIZE(ret_val, env, ret_node );
                     return ret_val;
                 </xsl:when>
                 <xsl:otherwise>
@@ -249,7 +249,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = AXIS2_<xsl:value-of select="@caps-type"/>_PARSE_OM(<xsl:value-of select="@name"/>, env, NULL);
+                            payload = AXIS2_<xsl:value-of select="@caps-type"/>_SERIALIZE(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
@@ -328,7 +328,7 @@
                 <xsl:if test="position()=1">
                     <xsl:choose>
                         <xsl:when test="@ours">
-                            payload = AXIS2_<xsl:value-of select="@caps-type"/>_PARSE_OM(<xsl:value-of select="@name"/>, env, NULL);
+                            payload = AXIS2_<xsl:value-of select="@caps-type"/>_SERIALIZE(<xsl:value-of select="@name"/>, env, NULL, AXIS2_FALSE);
                         </xsl:when>
                         <xsl:otherwise>
                             payload = <xsl:value-of select="@name"/>;
