@@ -6,6 +6,7 @@ package org.apache.axis2.jaxws.sample;
 import java.util.concurrent.Future;
 
 import javax.xml.ws.Holder;
+import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.nonwrap.sei.DocLitNonWrapPortType;
@@ -47,6 +48,21 @@ public class NonWrapTests extends TestCase {
 			fail();
 		}
 	}
+    
+    public void testTwoWaySyncNull() throws Exception{
+        System.out.println("------------------------------");
+        System.out.println("Test : "+getName());
+        try{
+            TwoWay twoWay = null;  // This should cause an WebServiceException
+            DocLitNonWrapService service = new DocLitNonWrapService();
+            DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
+            ReturnType returnValue = proxy.twoWay(twoWay);
+            fail("Expected WebServiceException");
+        } catch(WebServiceException e){
+            System.out.println(e.toString());
+        }
+    }
+    
 	public void testTwoWayASyncCallback(){
 		System.out.println("------------------------------");
 		System.out.println("Test : "+getName());
