@@ -103,8 +103,8 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
         options.setTo(targetEPR);
         options.setProperty(Constants.Configuration.MESSAGE_TYPE, messageType);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-        ConfigurationContext clientConfigurationContext = ConfigurationContextFactory.createDefaultConfigurationContext();
-        ServiceClient sender = new ServiceClient(clientConfigurationContext, null);
+//        ConfigurationContext clientConfigurationContext = ConfigurationContextFactory.createDefaultConfigurationContext();
+        ServiceClient sender = new ServiceClient(configurationContext, null);
         options.setAction(null);
         sender.setOptions(options);
         options.setTo(targetEPR);
