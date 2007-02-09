@@ -127,7 +127,6 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         PostMethod postMethod = new PostMethod();
         postMethod.setPath(url.getPath());
         postMethod.setQueryString(url.getQuery());
-        postMethod.setPath(url.getPath());
 
         if (isAuthenticationEnabled(msgContext)) {
             postMethod.setDoAuthentication(true);

@@ -84,6 +84,8 @@ public class AxisConfiguration extends AxisDescription {
     private URL axis2Repository = null;
 
     private HashMap allServices = new HashMap();
+    private HashMap allEndpoints = new HashMap();
+
     /**
      * Stores the module specified in the server.xml at the document parsing time.
      */
@@ -334,19 +336,12 @@ public class AxisConfiguration extends AxisDescription {
 
             Map endpoints = axisService.getEndpoints();
             String serviceName = axisService.getName();
-
-            if (endpoints.isEmpty()) {
-                allServices.put(serviceName, axisService);
-            } else if (endpoints.size() == 1) {
-                // if we have one endpoint, just process it. This is special case as this will be the case
-                // most of the time
-                allServices.put(serviceName, axisService);
-                allServices.put(serviceName + "." + axisService.getEndpointName(), axisService);
-            } else {
+            allServices.put(serviceName, axisService);
+            if (endpoints != null ) {
                 Iterator endpointNameIter = endpoints.keySet().iterator();
                 while (endpointNameIter.hasNext()) {
                     String endpointName = (String) endpointNameIter.next();
-                    allServices.put(serviceName + "." + endpointName, axisService);
+                    allEndpoints.put(serviceName + "." + endpointName, axisService);
                 }
             }
 
@@ -709,8 +704,17 @@ public class AxisConfiguration extends AxisDescription {
                         .getMessage("serviceinactive", name));
             }
         } else {
-            return null;
+            axisService = (AxisService) allEndpoints.get(name);
+            if (axisService != null) {
+                if (axisService.isActive()) {
+                    return axisService;
+                } else {
+                    throw new AxisFault(Messages
+                            .getMessage("serviceinactive", name));
+                }
+            }
         }
+        return null;
     }
 
     /**

@@ -54,7 +54,7 @@ public interface MessageFormatter {
 	 * Preserve flag can be used to preserve the envelope for later use. This is
 	 * usefull when implementing authentication machnisms like NTLM.
 	 * 
-	 * @param out
+	 * @param outputStream
 	 * @param preserve :
 	 *            do not consume the OM when this is set..
 	 */
