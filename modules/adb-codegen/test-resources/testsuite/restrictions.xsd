@@ -1,25 +1,58 @@
 <xsd:schema elementFormDefault="qualified"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:tns="http://tempuri.org/"
+            xmlns:ns1="http://google.com"
             targetNamespace="http://tempuri.org/">
 
-    <xsd:simpleType name="NewNormalizedStringType">
-        <xsd:restriction base="xsd:normalizedString"/>
+    <xsd:simpleType name="ChildSimpleType">
+        <xsd:restriction base="xsd:string"/>
     </xsd:simpleType>
-    <xsd:simpleType name="NormalizedStringType">
-        <xsd:restriction base="tns:NewNormalizedStringType"/>
+    <xsd:simpleType name="ParentSimpleType">
+        <xsd:restriction base="tns:ChildSimpleType"/>
     </xsd:simpleType>
-    <xsd:complexType name="BusinessObjectDocumentType">
-        <xsd:attribute name="releaseID" type="tns:NormalizedStringType" use="required"></xsd:attribute>
-        <xsd:attribute name="versionID" type="tns:NormalizedStringType" use="optional"></xsd:attribute>
+    <xsd:complexType name="TestSimpleAttribute">
+        <xsd:attribute name="attrib1" type="tns:ParentSimpleType" use="required"></xsd:attribute>
+        <xsd:attribute name="attrib2" type="tns:ParentSimpleType" use="optional"></xsd:attribute>
+        <xsd:all>
+            <xsd:element name="testElement1" type="xsd:QName"/>
+            <xsd:element name="testElement2" type="xsd:QName"/>
+            <xsd:element name="testElement3" type="xsd:QName"/>
+        </xsd:all>
     </xsd:complexType>
-    <xsd:element name="SimpleRestriction" type="tns:BusinessObjectDocumentType"/>
+
+    <xsd:element name="TestSimpleAttributeElement" type="tns:TestSimpleAttribute"/>
+
+
+    <xsd:simpleType name="NormalSimpleType">
+        <xsd:restriction base="xsd:QName"/>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="EnumerationSimpleType">
+        <xsd:restriction base="xsd:QName">
+            <xsd:enumeration value="ns1:test1"/>
+            <xsd:enumeration value="ns1:test2"/>
+            <xsd:enumeration value="ns1:test3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ParentNormalSimpleType">
+        <xsd:restriction base = "tns:NormalSimpleType"/>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ParentEnumerationSimpleType">
+        <xsd:restriction base="tns:EnumerationSimpleType"/>
+    </xsd:simpleType>
+
+    <xsd:element name="NormalSimpleTypeElement" type="tns:ParentNormalSimpleType"/>
+    <xsd:element name="EnumerationSimpleTypeElement" type="tns:ParentEnumerationSimpleType"/>
+
     <xsd:complexType name="BaseRestrictionType">
         <xsd:sequence>
             <xsd:element name="baseTypeElement1" minOccurs="0" type="xsd:string"/>
             <xsd:element name="baseTypeElement2" minOccurs="0" type="xsd:int"/>
         </xsd:sequence>
     </xsd:complexType>
+
     <xsd:complexType name="ParentRestrictionType">
         <xsd:complexContent>
             <xsd:restriction base="tns:BaseRestrictionType">
@@ -31,27 +64,6 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:simpleType name="RSuperChildType">
-        <xsd:restriction base="xsd:string"/>
-    </xsd:simpleType>
-    <xsd:simpleType name="ESuperChildType">
-        <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="test1"/>
-            <xsd:enumeration value="test2"/>
-            <xsd:enumeration value="test3"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-
-    <xsd:simpleType name="USuperChildType">
-        <xsd:union memberTypes="xsd:string xsd:int xsd:boolean"/>
-    </xsd:simpleType>
-
-    <xsd:simpleType name="UChildType">
-        <xsd:restriction base = "tns:USuperChildType"/>
-    </xsd:simpleType>
-
-    <xsd:simpleType name="UParentType">
-        <xsd:restriction base="tns:UChildType"/>
-    </xsd:simpleType>
+    <xsd:element name="ComplexRestrictionTypeTestElement" type="tns:ParentRestrictionType"/>
 
 </xsd:schema>

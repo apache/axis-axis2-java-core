@@ -35,5 +35,11 @@
             </s:sequence>
         </s:complexType>
     </s:element>
+
+    <s:simpleType name="UnionQNameTest">
+        <s:union memberTypes="s:QName s:string"/>
+    </s:simpleType>
+
+    <s:element name="UnionQNameTestElement" type="s0:UnionQNameTest"/>
     
 </s:schema>

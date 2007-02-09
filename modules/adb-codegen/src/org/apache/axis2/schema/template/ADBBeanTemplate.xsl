@@ -552,7 +552,7 @@
 
         </xsl:if>
 
-        <xsl:if test="$list" >
+        <xsl:if test="$list and not($restriction) and not($extension)" >
              <xsl:variable name="javaName"><xsl:value-of select="itemtype/@javaname"/></xsl:variable>
              <xsl:variable name="varName">local<xsl:value-of select="itemtype/@javaname"/></xsl:variable>
              <xsl:variable name="varType"><xsl:value-of select="itemtype/@type"/></xsl:variable>
@@ -1447,18 +1447,7 @@
                                          }else{
                                         <xsl:choose>
                                             <xsl:when test="$propertyType='javax.xml.namespace.QName'">
-                                                           java.lang.String prefix ="";
-                                                            java.lang.String namespaceURI =<xsl:value-of select="$varName"/>.getNamespaceURI();
-                                                            if(namespaceURI !=null){
-                                                               prefix = <xsl:value-of select="$varName"/>.getPrefix();
-                                                               if (prefix == null) {
-                                                                prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
-                                                              }
-                                                             xmlWriter.writeNamespace(prefix,namespaceURI );
-                                                             xmlWriter.writeCharacters(prefix + ":"+ org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                                                            } else {
-                                                               xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                                                            }
+                                                writeQName(<xsl:value-of select="$varName"/>,xmlWriter);
                                             </xsl:when>
                                             <xsl:when test="$propertyType='org.apache.axiom.om.OMElement'">
                                                 <xsl:value-of select="$varName"/>.serialize(xmlWriter);
@@ -1523,11 +1512,12 @@
                                 javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
             java.lang.String namespaceURI = qname.getNamespaceURI();
             if (namespaceURI != null) {
-                java.lang.String prefix = qname.getPrefix();
+                java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
                 if (prefix == null) {
                     prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                    xmlWriter.writeNamespace(prefix, namespaceURI);
+                    xmlWriter.setPrefix(prefix,namespaceURI);
                 }
-                xmlWriter.writeNamespace(prefix, namespaceURI);
                 xmlWriter.writeCharacters(prefix + ":" + org.apache.axis2.databinding.utils.ConverterUtil.convertToString(qname));
             } else {
                 xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(qname));
@@ -1935,8 +1925,6 @@
              <xsl:variable name="javaName"><xsl:value-of select="itemtype/@javaname"/></xsl:variable>
              <xsl:variable name="varType"><xsl:value-of select="itemtype/@type"/></xsl:variable>
              <xsl:variable name="ours"><xsl:value-of select="itemtype/@ours"/></xsl:variable>
-             <xsl:variable name="nsuri"><xsl:value-of select="itemtype/@nsuri"/></xsl:variable>
-             <xsl:variable name="originalName"><xsl:value-of select="itemtype/@originalName"/></xsl:variable>
 
             public static <xsl:value-of select="$name"/> fromString(javax.xml.stream.XMLStreamReader xmlStreamReader, java.lang.String content) {
 
@@ -2042,10 +2030,10 @@
                            <xsl:otherwise>
                                <xsl:choose>
                                    <xsl:when test="$propertyType='javax.xml.namespace.QName'">
-                                       return fromValue(new <xsl:value-of select="$propertyType"/>(namespaceURI,value));
+                                       return fromValue(org.apache.axis2.databinding.utils.ConverterUtil.convertToQName(value,namespaceURI));
                                    </xsl:when>
                                    <xsl:otherwise>
-                                       return fromValue(new <xsl:value-of select="$propertyType"/>(value));
+                                       return fromValue(org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(value));
                                    </xsl:otherwise>
                                </xsl:choose>
                            </xsl:otherwise>
@@ -4216,18 +4204,7 @@ public <xsl:if test="not(@unwrapped) or (@skip-write)">static</xsl:if> class <xs
                                          }else{
                                         <xsl:choose>
                                             <xsl:when test="$propertyType='javax.xml.namespace.QName'">
-                                                           java.lang.String prefix ="";
-                                                            java.lang.String namespaceURI =<xsl:value-of select="$varName"/>.getNamespaceURI();
-                                                            if(namespaceURI !=null){
-                                                               prefix = <xsl:value-of select="$varName"/>.getPrefix();
-                                                               if (prefix == null) {
-                                                                prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
-                                                              }
-                                                             xmlWriter.writeNamespace(prefix,namespaceURI );
-                                                             xmlWriter.writeCharacters(prefix + ":"+ org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                                                            } else {
-                                                               xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
-                                                            }
+                                                writeQName(<xsl:value-of select="$varName"/>,xmlWriter);
                                             </xsl:when>
                                             <xsl:when test="$propertyType='org.apache.axiom.om.OMElement'">
                                                 <xsl:value-of select="$varName"/>.serialize(xmlWriter);

@@ -16,9 +16,44 @@
 package org.apache.axis2.schema.extension;
 
 import junit.framework.TestCase;
+import test.axis2.apache.org.TestComplexElement;
+import test.axis2.apache.org.ExtendedComplexType;
+import test.axis2.apache.org.FullName;
+import test.axis2.apache.org.BaseType;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.util.StAXUtils;
+
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
 
 public class ComplexExtenstionTest extends TestCase {
-    public void testComplexExtension(){
-        
+
+    public void testComplexExtension() {
+
+        TestComplexElement testComplexElement = new TestComplexElement();
+        ExtendedComplexType extendedComplexType = new ExtendedComplexType();
+        testComplexElement.setTestComplexElement(extendedComplexType);
+        extendedComplexType.setFirst("Amila");
+        extendedComplexType.setMiddle("Chinthaka");
+        extendedComplexType.setLast("Suriarachchi");
+        extendedComplexType.setParentElement1("test1");
+        extendedComplexType.setParentElement2("test2");
+
+        OMElement omElement = testComplexElement.getOMElement(TestComplexElement.MY_QNAME, OMAbstractFactory.getSOAP11Factory());
+        try {
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM String ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            TestComplexElement result = TestComplexElement.Factory.parse(xmlReader);
+            assertEquals(result.getTestComplexElement().getFirst(),"Amila");
+            assertEquals(result.getTestComplexElement().getMiddle(),"Chinthaka");
+            assertEquals(result.getTestComplexElement().getLast(),"Suriarachchi");
+            assertEquals(result.getTestComplexElement().getParentElement1(),"test1");
+            assertEquals(result.getTestComplexElement().getParentElement2(),"test2");
+        } catch (Exception e) {
+            assertFalse(true);
+        }
+
     }
 }

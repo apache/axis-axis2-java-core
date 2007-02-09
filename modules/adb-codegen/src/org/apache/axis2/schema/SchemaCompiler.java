@@ -1222,6 +1222,13 @@ public class SchemaCompiler {
                         metaInfHolder.addMemberType((QName) qname, (String) memberTypes.get(qname));
                     }
                 }
+
+                // we have to copy the list type data to parent if it is a list
+                if (baseMetaInfoHolder.isList()){
+                    metaInfHolder.setList(true);
+                    metaInfHolder.setItemTypeQName(baseMetaInfoHolder.getItemTypeQName());
+                    metaInfHolder.setItemTypeClassName(baseMetaInfoHolder.getItemTypeClassName());
+                }
                 metaInfHolder.setAsParent(baseMetaInfoHolder);
             }
 

@@ -23,6 +23,7 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.databinding.types.URI;
 
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 
@@ -86,8 +87,21 @@ public class UnionTest extends TestCase {
         return null;
     }
 
-    public void testQName(){
-        QName qname = new QName("http://www.google.com","test","tns");
-        System.out.println(qname);
+    public void testUnionQName(){
+        UnionQNameTestElement unionQNameTestElement = new UnionQNameTestElement();
+        UnionQNameTest unionQNameTest = new UnionQNameTest();
+        unionQNameTestElement.setUnionQNameTestElement(unionQNameTest);
+        unionQNameTest.setObject(new QName("http://www.google.com","test"));
+
+        OMElement omElement = unionQNameTestElement.getOMElement(UnionQNameTestElement.MY_QNAME,OMAbstractFactory.getOMFactory());
+        try {
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM Element ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            UnionQNameTestElement result = UnionQNameTestElement.Factory.parse(xmlReader);
+            assertEquals(unionQNameTest.getObject(),result.getUnionQNameTestElement().getObject());
+        } catch (Exception e) {
+            assertTrue(false);
+        }
     }
 }

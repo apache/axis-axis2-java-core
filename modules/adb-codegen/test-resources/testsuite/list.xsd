@@ -28,4 +28,10 @@
 
     <xs:element name="TestListOursElement" type="tns:TestListOurs"/>
 
+    <xs:simpleType name="SuperTestListString">
+        <xs:restriction base="tns:TestListString"/>
+    </xs:simpleType>
+
+    <xs:element name="SuperTestListStringElement" type="tns:SuperTestListString"/>
+
 </schema>

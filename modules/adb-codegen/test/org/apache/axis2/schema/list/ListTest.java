@@ -69,7 +69,6 @@ public class ListTest extends TestCase {
             assertEquals(result.getTestListQNameElement().getQName()[1],testListQName.getQName()[1]);
             assertEquals(result.getTestListQNameElement().getQName()[2],testListQName.getQName()[2]);
         } catch (Exception e) {
-            e.printStackTrace();
             assertFalse(true);
         }
     }
@@ -97,8 +96,29 @@ public class ListTest extends TestCase {
             assertEquals(result.getTestListOursElement().getTestString()[1].getTestString(),testString2.getTestString());
             assertEquals(result.getTestListOursElement().getTestString()[2].getTestString(),testString3.getTestString());
         } catch (Exception e) {
-            e.printStackTrace();
             assertFalse(true);
         }
     }
+
+    public void testListSuper(){
+
+        SuperTestListStringElement superTestListStringElement = new SuperTestListStringElement();
+        SuperTestListString superTestListString = new SuperTestListString();
+        superTestListStringElement.setSuperTestListStringElement(superTestListString);
+        superTestListString.setString(new String[]{"test1","test2","test3"});
+
+        OMElement omElement = superTestListStringElement.getOMElement(SuperTestListStringElement.MY_QNAME,
+                OMAbstractFactory.getOMFactory());
+        try {
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM Element ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            SuperTestListStringElement result = SuperTestListStringElement.Factory.parse(xmlReader);
+            assertEquals(superTestListString.getString()[0],result.getSuperTestListStringElement().getString()[0]);
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+    }
+
+
 }
