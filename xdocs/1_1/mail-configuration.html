@@ -3,19 +3,21 @@
 <head>
   <meta http-equiv="content-type" content="">
   <title>Mail transport</title>
-  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
+  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
+  media="all">
 </head>
 
 <body lang="en">
 <h1>Mail Transport Configuration</h1>
 
-<p>This document provides the guidelines on how to configure Axis2 in order
-to get the mail transport working.</p>
+<p>This document provides guidelines on how to configure Axis2 in order to
+get the mail transport working.</p>
 
 <p><i>Send your feedback or questions to: <a
 href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>. Prefix
-subject with [Axis2]. To subscribe to mailing list see <a
-href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
+subject with [Axis2]. You can also <a
+href="http://ws.apache.org/axis2/mail-lists.html">subscribe</a> to the
+mailing list.</p>
 
 <h2>Content</h2>
 <ul>
@@ -30,40 +32,40 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 
 <h2>Introduction</h2>
 
-<p>The inner workings of the mail transport has been divided into two parts,
+<p>The inner workings of the mail transport has been divided into two parts:
 the transport sender for SMTP and the transport listener for POP3. The
 transport listener will listen to a particular email address periodically.
-When an email comes in it will be tunneled into an Axis2 engine. On the other
-hand, mail transport sender sends emails to a mail server for a particular
-email address.</p>
+When an email comes in, it will be tunneled into an Axis2 engine. On the
+other hand, the mail transport sender sends emails to a mail server to a
+particular email address.</p>
 
 <p>Mail transport can be used against a generic mail server or it can be used
-like a mailet. The simple mailet provided with Axis2 will direct any message
-that is coming to a particular address into the Axis engine. The engine will
-process the message and will use the Transport sender to send the reply.</p>
+like a mailet. The simple mailet provided with Axis2 directs any message that
+comes in to a particular address into the Axis engine. The engine will
+process the message and use the Transport sender to send the reply.</p>
 
 <p>The mail transports have been written with the use of Sun's JavaMail and
-Activation jars. These should be available in your classpath to get the mail
-transport work.</p>
+Activation jars. They should be available in your classpath to get the mail
+transport to work.</p>
 <a name="sender"></a>
 
 <h2>Transport Sender</h2>
 
 <p>You need to have a mail account to activate the mail functionality. This
-can either be a generic mail server or you can start up a James mail server,
-which will be available <a href="http://james.apache.org/">here</a>.</p>
+can either be a generic mail server or you can start up a <a
+href="http://james.apache.org/">James mail server</a>.</p>
 
 <p>JavaMail sets its properties to a Properties object. In Axis2, this has
 been mapped to a Parameter object. Mapping has been done as follows,</p>
 <ul>
   <li>Every JavaMail property can be set to @name of the &lt;parameter/&gt;.
-    Thus, SSL connection is mapped the way it is done in JavaMail</li>
-  <li>Few properties, such as password etc., are set to @name with the prefix
+    Thus, an SSL connection is mapped the way it is done in JavaMail</li>
+  <li>Few properties, such as password,, are set to @name with the prefix
     "transport"</li>
 </ul>
 
-<p>For a non-SSL connection, as an example,mail transport sender can be
-activated by adding following entry to the axis2.xml file.</p>
+<p>For a non-SSL connection, as an example, the mail transport sender can be
+activated by adding the following entry to the axis2.xml file.</p>
 <source><pre>   &lt;transportSender name="mail" class="org.apache.axis2.transport.mail.MailTransportSender"&gt;
         &lt;parameter name="mail.smtp.host" locked="false"&gt;localhost&lt;/parameter&gt;
         &lt;parameter name="mail.smtp.user" locked="false"&gt;mary&lt;/parameter&gt;
@@ -71,7 +73,8 @@ activated by adding following entry to the axis2.xml file.</p>
    &lt;/transportSender&gt;
   </pre>
 </source>
-<p>In runtime tuning a client to set mail transport is as easy as follows,</p>
+<p>At runtime, tuning a client to set the mail transport is as easy as
+follows,</p>
 <source><pre>...
 
 Options options =  new Options();
@@ -84,10 +87,10 @@ mailProps.setPassword("mary");
 options.setProperty(HTTPConstants.MAIL_SMTP,mailProps);
 
 ...</pre>
-</source>Thus, a user familiar with setting up a SSL connection, should
-easily do it with the MailProperties object. For Eg.: tuning the sender to
-talk to gmail account. This configuration should also be done with
-&lt;parameter/&gt; in axis2.xml. <source>
+</source>Thus, a user who is familiar with setting up an SSL connection,
+should easily do it with the MailProperties object. For example, tuning the
+sender to talk to the gmail account. This configuration should also be done
+with &lt;parameter/&gt; in axis2.xml. <source>
 <pre>...
 HttpTransportProperties.MailProperties props = 
                   new HttpTransportProperties.MailProperties();
@@ -107,8 +110,8 @@ HttpTransportProperties.MailProperties props =
 
 <h2>Transport Receiver</h2>
 
-<p>For a non-SSL connection, as an example, mail Listener can be activated by
-adding the following entry to the axis2.xml file.</p>
+<p>For a non-SSL connection, as an example, the mail Listener can be
+activated by adding the following entry to the axis2.xml file.</p>
 <source><pre>   &lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
         &lt;parameter name="mail.pop3.host" locked="false"&gt;localhost&lt;/parameter&gt;
         &lt;parameter name="mail.pop3.user" locked="false"&gt;bob&lt;/parameter&gt;
@@ -118,10 +121,10 @@ adding the following entry to the axis2.xml file.</p>
   </pre>
 </source>
 <p><i>Note:</i> The @name="transport.mail.replyToAddress" is an important
-parameter. It supply the Endpoint reference to the listener.</p>
+parameter. It supplies the Endpoint reference to the listener.</p>
 
-<p>For an advanced user, this can be set to a SSL connection. As an example,
-lets use this transport listener to pop from a specified gmail account.</p>
+<p>For an advanced user, this can be set to an SSL connection. For example,
+let's use this transport listener to pop from a specified gmail account.</p>
 <source><pre>&lt;transportReceiver name="mail" class="org.apache.axis2.transport.mail.SimpleMailListener"&gt;
         &lt;parameter name="mail.pop3.host" locked="false"&gt;pop.gmail.com&lt;/parameter&gt;
         &lt;parameter name="mail.pop3.user" locked="false"&gt;address@gmail.com&lt;/parameter&gt;
@@ -136,8 +139,8 @@ lets use this transport listener to pop from a specified gmail account.</p>
 
 <h2>Using Mail Transport in the Server Side</h2>
 
-<p>If the Mail Listener is need to be started as a standalone mail listener,
-it can be done with following command with the all the Axis2 jars and the
+<p>If the Mail Listener is to be started as a standalone mail listener, it
+can be done with the following command with the all the Axis2 jars and the
 mail dependency jars in the classpath.</p>
 <source><pre>java org.apache.axis2.transport.mail.SimpleMailListener repository-directory</pre>
 </source><a name="client"></a>
@@ -145,7 +148,7 @@ mail dependency jars in the classpath.</p>
 <h2>Using Mail Transport in the Client Side</h2>
 
 <p>The following code segment shows how to send a one-way (IN-Only MEP) SOAP
-message using the mail transport, this needs the Transport Sender
+message using the mail transport. This needs the Transport Sender to be
 configured.</p>
 <source><pre>        
         OMElement payload = ....
@@ -168,8 +171,8 @@ configured.</p>
 <h2>Configure James as SMTP and POP Server</h2>
 
 <p>Download the <a href="http://james.apache.org/">Apache James</a> and start
-James, connect to the James via Telnet for administrator James with the
-following code:</p>
+James. Connect to the James server via Telnet as administrator James using
+the following code:</p>
 <source><pre>$telnet 127.0.0.1 4555
 Trying 127.0.0.1...
 Connected to localhost.localdomain (127.0.0.1).
@@ -195,15 +198,15 @@ Connection closed by foreign host.</pre>
 <h2>Using the Included Mail Server</h2>
 
 <p>The inbuilt mail server can be started from the command line using the
-following piece of code when all the necessary jars are in the class path.</p>
+following piece of code when all the necessary JARS are in the class path.</p>
 <source><pre>java org.apache.axis2.transport.mail.server.MailServer</pre>
 </source>
 <p>The server itself does not need any configuration or tinkering to work. A
 ConfigurationContext and the ports to operate on are the only details needed.
-The server will store the mails in memory against the recipient till the
-recipient pops it from the server. To facilitate the use in *nix environments
-as a non root user the POP and SMTP ports used by default config/test cases
-are (1024 + 25) and (1024 + 110).</p>
+The server will store the mails in the memory against the recipient till the
+recipient pops it from the server. To facilitate the use in Linux
+environments as a non root user, the POP and SMTP ports used by default
+configuration/test cases are, 1024, 25 and 1024, 110 respectively.</p>
 <hr>
 </body>
 </html>
