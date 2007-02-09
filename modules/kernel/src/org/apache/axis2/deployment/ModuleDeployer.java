@@ -112,7 +112,7 @@ public class ModuleDeployer implements Deployer {
         }
     }
 
-    public void setDirctory(String directory) {}
+    public void setDirectory(String directory) {}
 
     public void setExtension(String extension) {}
 }

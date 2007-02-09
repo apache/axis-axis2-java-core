@@ -205,7 +205,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                         deployerClass = Loader.loadClass(deployerValue);
                         Deployer deployer =
                                 (Deployer) deployerClass.newInstance();
-                        deployer.setDirctory(directory);
+                        deployer.setDirectory(directory);
                         deployer.setExtension(extension);
                         directoryToExtensionMappingMap.put(directory, extension);
                         extensioToDeployerMappingMap.put(extension,deployer);

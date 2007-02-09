@@ -32,6 +32,6 @@ public interface Deployer {
 
     //Will process the file and add that to axisConfig
     void deploy(DeploymentFileData deploymentFileData);
-    void setDirctory(String directory);
+    void setDirectory(String directory);
     void setExtension(String extension);
 }
