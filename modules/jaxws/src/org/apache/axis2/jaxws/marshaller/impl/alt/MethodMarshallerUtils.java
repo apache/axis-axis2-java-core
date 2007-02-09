@@ -44,9 +44,11 @@ import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
@@ -57,6 +59,8 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
+import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescriptionFactory;
 import org.apache.axis2.jaxws.util.ClassUtils;
 import org.apache.axis2.jaxws.util.ConvertUtils;
 import org.apache.axis2.jaxws.util.SAAJFactory;
@@ -964,5 +968,13 @@ public class MethodMarshallerUtils  {
         return e;
     }
     
+    /**
+     * @param ed
+     * @return
+     */
+    static MarshalServiceRuntimeDescription getMarshalDesc(EndpointDescription ed) {
+        ServiceDescription sd = ed.getServiceDescription();
+        return MarshalServiceRuntimeDescriptionFactory.get(sd);
+    }
     
 }

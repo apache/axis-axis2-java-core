@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.runtime.description;
+package org.apache.axis2.jaxws.runtime.description.injection;
 
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.runtime.description.impl.OperationRuntimeDescriptionBuilder;
-import org.apache.axis2.jaxws.runtime.description.impl.ResourceInjectionServiceRuntimeDescriptionBuilder;
+import org.apache.axis2.jaxws.runtime.description.injection.impl.ResourceInjectionServiceRuntimeDescriptionBuilder;
 
 public class ResourceInjectionServiceRuntimeDescriptionFactory {
 
@@ -29,7 +29,7 @@ public class ResourceInjectionServiceRuntimeDescriptionFactory {
     private ResourceInjectionServiceRuntimeDescriptionFactory() {}
 
     /**
-     * Get or create ResourceInjectionServiceRuntimeDescription
+     * Get or create MarshalServiceRuntimeDescription
      * @param serviceDesc
      * @param implClass
      * @return OperationRuntimeDescription

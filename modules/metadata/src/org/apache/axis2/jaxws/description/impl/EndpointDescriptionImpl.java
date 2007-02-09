@@ -18,19 +18,15 @@ package org.apache.axis2.jaxws.description.impl;
 
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import javax.jws.WebService;
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.soap.SOAPAddress;
@@ -1230,40 +1226,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     public String getTargetNamespace() {
         return getAnnoWebServiceTargetNamespace();
     }
-    /**
-     * Returns the packages that are needed to marshal/unmarshal the 
-     * data objects.  Example: this set of packages is used to construct a 
-     * JAXBContext.
-     * @return Set<Package>
-     */
-    public TreeSet<String> getPackages() {
-        // @REVIEW Currently the package set is stored on the
-        // EndpointDescription.  We may consider moving this to 
-        // ServiceDescription. 
-        
-        // The set of packages is calcuated once and saved
-        if (packages == null) {
-            synchronized(this) {
-                // @TODO There are two ways to get the packages.
-                // Schema Walk (prefered) and Annotation Walk.
-                // The Schema walk requires an existing or generated schema.
-                // 
-                // There are some limitations in the current schema walk
-                // And there are problems in the annotation walk.
-                // So for now we will do both.
-                boolean doSchemaWalk = true;
-                boolean doAnnotationWalk = true;
-                packages = new TreeSet<String>();
-                if (doSchemaWalk) {
-                    packages.addAll(PackageSetBuilder.getPackagesFromSchema(this.getServiceDescription()));
-                }
-                if (doAnnotationWalk) {
-                    packages.addAll(PackageSetBuilder.getPackagesFromAnnotations(this));
-                }
-            }
-        }
-        return packages;
-    }
+    
     public PortInfo getPortInfo() {
         if (portInfo == null) {
             portInfo = new PortInfoImpl(getServiceQName(), getPortQName(), getBindingType());
@@ -1520,9 +1483,6 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         //
         string.append(newline);
         string.append("Handler List: " + getHandlerList());
-        //
-        string.append(newline);
-        string.append("Packages: " + getPackages());
         //
         string.append(newline);
         string.append("AxisService: " + getAxisService());

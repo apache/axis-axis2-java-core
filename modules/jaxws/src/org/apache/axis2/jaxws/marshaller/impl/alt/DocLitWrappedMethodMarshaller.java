@@ -42,6 +42,7 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.util.ConvertUtils;
 import org.apache.axis2.jaxws.util.XMLRootElementUtil;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
@@ -82,7 +83,8 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             //   4) The type of the data block is defined by schema; thus in most cases
             //      an xsi:type will not be present
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            TreeSet<String> packages = endpointDesc.getPackages();
+            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            TreeSet<String> packages = marshalDesc.getPackages();
             
             // Determine if a returnValue is expected.
             // The return value may be an child element
@@ -192,8 +194,9 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             //   4) The type of the data block (data:foo) is defined by schema (and probably
             //      is not present in the message
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            TreeSet<String> packages = endpointDesc.getPackages();
-                        
+            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            TreeSet<String> packages = marshalDesc.getPackages();
+            
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
             // Get this block
             JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
@@ -257,6 +260,9 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
+        MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+        TreeSet<String> packages = marshalDesc.getPackages();
+        
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
@@ -344,7 +350,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             
             Block block = factory.createFrom(object, 
-                    new JAXBBlockContext(endpointDesc.getPackages()), 
+                    new JAXBBlockContext(packages), 
                     null);  // The factory will get the qname from the value
             m.setBodyBlock(block);
             
@@ -359,6 +365,8 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
         Protocol protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()); 
+        MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+        TreeSet<String> packages = marshalDesc.getPackages();
        
         
         // Note all exceptions are caught and rethrown with a WebServiceException
@@ -430,7 +438,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             
             Block block = factory.createFrom(object, 
-                    new JAXBBlockContext(endpointDesc.getPackages()), 
+                    new JAXBBlockContext(packages), 
                     null);  // The factory will get the qname from the value
             m.setBodyBlock(block);
             
@@ -444,6 +452,9 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
+        MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+        TreeSet<String> packages = marshalDesc.getPackages();
+        
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
@@ -459,7 +470,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Put the fault onto the message
             MethodMarshallerUtils.marshalFaultResponse(throwable, 
                     operationDesc, 
-                    endpointDesc.getPackages(), 
+                    packages, 
                     m, 
                     false); // don't force xsi:type for doc/lit
             return m;
@@ -472,11 +483,13 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
+        MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+        TreeSet<String> packages = marshalDesc.getPackages();
         
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, 
-                    endpointDesc.getPackages(), 
+                    packages, 
                     message, 
                     false);
             return t;

@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.runtime.description;
+package org.apache.axis2.jaxws.runtime.description.marshal;
+
+import java.util.TreeSet;
 
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 
 
 /**
- * Used to cache @Resource injection information
+ * Used to cache marshal information
  */
-public interface ResourceInjectionServiceRuntimeDescription extends ServiceRuntimeDescription {
-   /**
-    * @return true if @Resource is found on any Field or Method of the 
-    * Implementation class
-    */
-    boolean hasResourceAnnotation();
+public interface MarshalServiceRuntimeDescription extends ServiceRuntimeDescription {
+   public TreeSet<String> getPackages();
 }

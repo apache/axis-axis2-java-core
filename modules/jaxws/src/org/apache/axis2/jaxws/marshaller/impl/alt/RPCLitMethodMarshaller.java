@@ -36,6 +36,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -85,7 +86,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            TreeSet<String> packages = endpointDesc.getPackages();
+            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            TreeSet<String> packages = marshalDesc.getPackages();
             
             // TODO This needs more work.  We need to check inside holders of input params.  We also
             // may want to exclude header params from this check
@@ -161,7 +163,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //   5) We always send an xsi:type, but other vendor's may not.
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            TreeSet<String> packages = endpointDesc.getPackages();
+            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            TreeSet<String> packages = marshalDesc.getPackages();
             
             // Indicate that the style is RPC.  This is important so that the message understands
             // that the data blocks are underneath the operation element
@@ -236,7 +239,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            TreeSet<String> packages = endpointDesc.getPackages();
+            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            TreeSet<String> packages = marshalDesc.getPackages();
             
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
@@ -330,7 +334,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             //   5) We always send an xsi:type, but other vendor's may not.
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            TreeSet<String> packages = endpointDesc.getPackages();
+            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            TreeSet<String> packages = marshalDesc.getPackages();
             
             // Indicate that the style is RPC.  This is important so that the message understands
             // that the data blocks are underneath the operation element
@@ -375,6 +380,9 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
+        MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+        TreeSet<String> packages = marshalDesc.getPackages();
+        
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
@@ -395,7 +403,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // Put the fault onto the message
             MethodMarshallerUtils.marshalFaultResponse(throwable, 
                     operationDesc, 
-                    endpointDesc.getPackages(), 
+                    packages, 
                     m, 
                     true);  // isRPC=true
             return m;
@@ -408,10 +416,12 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
+        MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+        TreeSet<String> packages = marshalDesc.getPackages();
         
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, endpointDesc.getPackages(), message,  true); 
+            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, packages, message,  true); 
             return t;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);

@@ -108,14 +108,5 @@ public interface EndpointDescription {
     public abstract List<String> getHandlerList();
     public abstract QName getPortQName();
     public abstract QName getServiceQName();
-    public abstract Service.Mode getServiceMode();
-
-    /**
-     * Returns the packages that are needed to marshal/unmarshal the 
-     * data objects.  Example: This set of packages is used to construct a 
-     * JAXBContext.
-     * @return Set<Package>
-     */
-    public TreeSet<String> getPackages();
-    
+    public abstract Service.Mode getServiceMode(); 
 }

@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.description.impl;
+package org.apache.axis2.jaxws.runtime.description.marshal.impl;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -28,8 +30,10 @@ import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 import javax.xml.bind.JAXBElement;
 
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
@@ -96,11 +100,13 @@ public class PackageSetBuilder {
     	EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
     	if (endpointDescs != null) {
             for (int i=0; i< endpointDescs.length; i++) {
-            	EndpointDescriptionImpl ed = (EndpointDescriptionImpl)endpointDescs[i];
+            	EndpointDescription ed = (EndpointDescription)endpointDescs[i];
             	if(wsdlDefinition == null){
             		//Let see if we can get wsdl definition from endpoint @WebService annotation.
-	            	String wsdlLocation = ed.getAnnoWebServiceWSDLLocation();
-	            	wsdlDefinition = getWSDLDefinition(wsdlLocation);
+                    if (ed instanceof EndpointDescriptionJava) {
+                        String wsdlLocation = ((EndpointDescriptionJava) ed).getAnnoWebServiceWSDLLocation();
+                        wsdlDefinition = getWSDLDefinition(wsdlLocation);
+                    }
             	}
             	//So at this point either we got wsdl definition from ServiceDescription (which means we are running this code
             	//on client side) or we got it from the @WebService annotation (which means we are running this code on server side)
@@ -376,8 +382,8 @@ public class PackageSetBuilder {
         }
         try {
             
-            return DescriptionUtils.forName(className, true, 
-                    DescriptionUtils.getContextClassLoader());
+            return forName(className, true, 
+                   getContextClassLoader());
 	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
 	        //does not extend Exception, so lets catch everything that extends Throwable
             //rather than just Exception.
@@ -414,5 +420,54 @@ public class PackageSetBuilder {
 	  }
 	  	  
       return wsdlDefinition;
+   }
+   
+   /**
+    * Return the class for this name
+    * @return Class
+    */
+   static Class forName(final String className, final boolean initialize, final ClassLoader classloader) throws ClassNotFoundException {
+       // NOTE: This method must remain protected because it uses AccessController
+       Class cl = null;
+       try {
+           cl = (Class) AccessController.doPrivileged(
+                   new PrivilegedExceptionAction() {
+                       public Object run() throws ClassNotFoundException {
+                           return Class.forName(className, initialize, classloader);    
+                       }
+                   }
+                 );  
+       } catch (PrivilegedActionException e) {
+           if (log.isDebugEnabled()) {
+               log.debug("Exception thrown from AccessController: " + e);
+           }
+           throw (ClassNotFoundException) e.getException();
+       } 
+       
+       return cl;
+   }
+   
+   /**
+    * @return ClassLoader
+    */
+   static ClassLoader getContextClassLoader() {
+       // NOTE: This method must remain private because it uses AccessController
+       ClassLoader cl = null;
+       try {
+           cl = (ClassLoader) AccessController.doPrivileged(
+                   new PrivilegedExceptionAction() {
+                       public Object run() throws ClassNotFoundException {
+                           return Thread.currentThread().getContextClassLoader();      
+                       }
+                   }
+                 );  
+       } catch (PrivilegedActionException e) {
+           if (log.isDebugEnabled()) {
+               log.debug("Exception thrown from AccessController: " + e);
+           }
+           throw (RuntimeException) e.getException();
+       }
+       
+       return cl;
    }
 }

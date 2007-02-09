@@ -33,6 +33,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -68,7 +69,8 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             //   4) The type of the data block is defined by schema; thus in most cases
             //      an xsi:type will not be present
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            TreeSet<String> packages = endpointDesc.getPackages();
+            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            TreeSet<String> packages = marshalDesc.getPackages();
               
             // Get the return value.
             Class returnType = operationDesc.getResultActualType();
@@ -116,7 +118,8 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             //   4) The type of the data block (data:foo) is defined by schema (and probably
             //      is not present in the message
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            TreeSet<String> packages = endpointDesc.getPackages();
+            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            TreeSet<String> packages = marshalDesc.getPackages();
             
             
             // Unmarshal the ParamValues from the message
@@ -165,7 +168,8 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            TreeSet<String> packages = endpointDesc.getPackages();
+            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            TreeSet<String> packages = marshalDesc.getPackages();
             
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
@@ -221,7 +225,8 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
-            TreeSet<String> packages = endpointDesc.getPackages();
+            MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+            TreeSet<String> packages = marshalDesc.getPackages();
             
             // Create the message 
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
@@ -249,6 +254,9 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
+        MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+        TreeSet<String> packages = marshalDesc.getPackages();
+        
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
@@ -264,7 +272,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             // Put the fault onto the message
             MethodMarshallerUtils.marshalFaultResponse(throwable, 
                     operationDesc, 
-                    endpointDesc.getPackages(), 
+                    packages, 
                     m, 
                     false); // don't force xsi:type for doc/lit
             return m;
@@ -277,10 +285,12 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
+        MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
+        TreeSet<String> packages = marshalDesc.getPackages();
         
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, endpointDesc.getPackages(), message, false);
+            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, packages, message, false);
             return t;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);

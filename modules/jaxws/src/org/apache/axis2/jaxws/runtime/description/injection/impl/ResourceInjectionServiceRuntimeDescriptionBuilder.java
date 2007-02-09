@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.runtime.description.impl;
+package org.apache.axis2.jaxws.runtime.description.injection.impl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.runtime.description.ResourceInjectionServiceRuntimeDescription;
+import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescription;
 
 public class ResourceInjectionServiceRuntimeDescriptionBuilder {
 
