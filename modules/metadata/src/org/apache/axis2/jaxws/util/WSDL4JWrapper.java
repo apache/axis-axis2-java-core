@@ -44,9 +44,12 @@ import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class WSDL4JWrapper implements WSDLWrapper {
-    
+	private static final Log log = LogFactory.getLog(WSDL4JWrapper.class);
 	private Definition wsdlDefinition = null;
 	private URL wsdlURL;
 	
@@ -55,15 +58,30 @@ public class WSDL4JWrapper implements WSDLWrapper {
 		super();
 		this.wsdlURL = wsdlURL;
 		
-        WSDLReader reader = getWSDLReader();
+		
 		
 		try {
 			URL url = new URL(wsdlURL.toString());
 			URLConnection urlCon = url.openConnection();
 			InputStream is = urlCon.getInputStream();
 			is.close();
-			String explicitWsdl = urlCon.getURL().toString();
-			wsdlDefinition = reader.readWSDL(explicitWsdl);
+			final String explicitWsdl = urlCon.getURL().toString();
+			try{
+			wsdlDefinition = (Definition)AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws WSDLException {
+                        	WSDLReader reader = getWSDLReader();
+                        	return reader.readWSDL(explicitWsdl);
+                        }
+                    }
+        		);
+			}catch(PrivilegedActionException e){
+	        	if (log.isDebugEnabled()) {
+	                log.debug("Exception thrown from AccessController: " + e);
+	            }
+	            throw ExceptionFactory.makeWebServiceException(e.getException());
+	        }
+		
 		}
 		catch(FileNotFoundException ex) {
 			throw ex;

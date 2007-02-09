@@ -398,14 +398,48 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
  *
  */
 class JAXWSThreadFactory implements ThreadFactory {
+	private static final Log log = LogFactory.getLog(JAXWSThreadFactory.class);
     private static int groupNumber = 0;
     private int threadNumber = 0;
     // We put the threads into a unique thread group only for ease of identifying them
-    private ThreadGroup threadGroup = new ThreadGroup("JAX-WS Default Executor Group " + groupNumber++);
-    public Thread newThread(Runnable r) {
+    private  ThreadGroup threadGroup = null;
+    public Thread newThread(final Runnable r) {
+    	if(threadGroup == null){
+    		try{
+    			threadGroup =(ThreadGroup) AccessController.doPrivileged(
+                        new PrivilegedExceptionAction() {
+                            public Object run() {
+                            	return new ThreadGroup("JAX-WS Default Executor Group " + groupNumber++);  
+                            }
+                        }
+            		);
+            }catch(PrivilegedActionException e){
+            	if (log.isDebugEnabled()) {
+                    log.debug("Exception thrown from AccessController: " + e);
+                }
+                throw ExceptionFactory.makeWebServiceException(e.getException());
+            }
+    	}
+    	
         threadNumber++;
-        Thread returnThread = new Thread(threadGroup, r);
-        returnThread.setDaemon(true);
+        Thread returnThread = null;
+        try{
+        	returnThread =(Thread) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() {
+                        	Thread newThread =  new Thread(threadGroup, r);
+                        	newThread.setDaemon(true);
+                        	return newThread;
+                        }
+                    }
+        		);        	
+        }catch(PrivilegedActionException e){
+        	if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw ExceptionFactory.makeWebServiceException(e.getException());
+        }
+        
         return returnThread;
     }
     
