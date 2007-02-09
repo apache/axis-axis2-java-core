@@ -59,9 +59,6 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
 	@Override
 	protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
 			throws XMLStreamException, WebServiceException {
-		
-		// TODO Temporary solution.  The better way is to get an OM
-		// and convert with the SAAJConverter
 		MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
 		Message message = mf.createFrom(reader);
 		SOAPEnvelope env = message.getAsSOAPEnvelope();

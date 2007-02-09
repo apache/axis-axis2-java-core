@@ -59,6 +59,8 @@ public class Reader2Writer {
 			OMNode omNode = (OMNode) it.next();
 			omNode.serializeAndConsume(writer);
 		}
+		// Close the reader
+        reader.close();
 	}
 	
 	/**

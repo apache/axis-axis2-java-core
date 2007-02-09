@@ -148,6 +148,14 @@ public class XMLStreamReaderSplitter extends XMLStreamReaderFilter {
 			// Return null if the current reader is still be read
 			return null;
 		}
-			
 	}
+
+    @Override
+    public void close() throws XMLStreamException {
+        // Swallow close for intermediate readers
+        if (!super.hasNext()) {
+            super.close();
+        }
+    }
+    
 }

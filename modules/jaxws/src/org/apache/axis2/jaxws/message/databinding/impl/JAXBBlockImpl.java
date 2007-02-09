@@ -121,6 +121,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             // Successfully unmarshalled the object
             // TODO remove attachment unmarshaller ?
             JAXBUtils.releaseJAXBUnmarshaller(ctx.getJAXBContext(), u);
+            reader.close();
             return jaxb;
 		} catch(JAXBException je) {
             if (log.isDebugEnabled()) {

@@ -209,6 +209,7 @@ public class SourceBlockImpl extends BlockImpl implements SourceBlock {
 		// and pass use the default reader->writer.
 		XMLStreamReader reader = _getReaderFromBO(busObject, busContext);
 		_outputFromReader(reader, writer);
+		// REVIEW Should we call close() on the Source ? 
 	}
 
 
