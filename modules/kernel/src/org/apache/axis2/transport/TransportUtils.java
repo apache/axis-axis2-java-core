@@ -208,7 +208,7 @@ public class TransportUtils {
 //				builder = Builder.getBuilder(inStream, charSetEnc,soapNamespaceURI);
 		}else if (contentType!=null)
 		{
-			builder = Builder.getBuilderFromSelector(contentType, inStream, msgContext);
+			builder = Builder.getBuilderFromSelector(contentType, inStream, msgContext,charSetEnc);
 		}
 		if (builder==null)
 		{

@@ -318,7 +318,7 @@ public class Builder {
      * @throws AxisFault
      */
     public static OMBuilder getBuilderFromSelector(String contentType,
-			InputStream inputStream, MessageContext msgContext) throws AxisFault {
+			InputStream inputStream, MessageContext msgContext,String charSetEncoding) throws AxisFault {
     	int index = contentType.indexOf(';');
 		if (index>0)
     	{
@@ -329,8 +329,7 @@ public class Builder {
 		if (builderClass != null) {
 			try {
 				OMBuilder builder = (OMBuilder) builderClass.newInstance();
-                //REVIEW: The second parameter here is most likely incorrect, as the Axiom interface was changed without any comments and without anybody actually using it.  At least the code compiles correctly now.
-				builder.init(inputStream, null);
+				builder.init(inputStream, charSetEncoding);
 				// Setting the received content-type as the messageType to make
 				// sure that we respond using the received message serialisation
 				// format.
