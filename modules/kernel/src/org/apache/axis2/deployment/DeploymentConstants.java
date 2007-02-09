@@ -31,9 +31,9 @@ public interface DeploymentConstants {
     public static String MODULE_PATH = "modules";
     public static String MODULE_DRI_PATH = "ModulesDirectory";
 
-    int TYPE_SERVICE = 0;                // is it a service
-    int TYPE_DEFAULT = -1;                // is it a service
-    int TYPE_MODULE = 1;                // is it a module
+    String TYPE_SERVICE = "service";                // is it a service
+    String TYPE_DEFAULT = "none";                // is it a service
+    String TYPE_MODULE = "module";                // is it a module
 
     String TAG_AXISCONFIG = "axisconfig";
     String TAG_PHASE_ORDER = "phaseOrder";
@@ -92,6 +92,11 @@ public interface DeploymentConstants {
     String TAG_BEFORE = "before";
     String TAG_SUPPORTED_POLICY_NAMESPACES = "supported-policy-namespaces";
     String TAG_NAMESPACES = "namespaces";
+
+    //Deployer related cons
+    String DIRECTORY ="directory";
+    String EXTENSION ="extension";
+    String DEPLOYER = "deployer";
 
     // for parameters
     String ATTRIBUTE_NAME = "name";

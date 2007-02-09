@@ -32,8 +32,8 @@ import org.apache.axis2.phaseresolver.PhaseException;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.axis2.util.TargetResolver;
 import org.apache.axis2.util.Loader;
+import org.apache.axis2.util.TargetResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,10 +50,13 @@ import java.util.List;
 public class AxisConfigBuilder extends DescriptionBuilder {
 
     protected static final Log log = LogFactory.getLog(AxisConfigBuilder.class);
+    private DeploymentEngine deploymentEngine;
 
     public AxisConfigBuilder(InputStream serviceInputStream,
-                             AxisConfiguration axisConfiguration) {
+                             AxisConfiguration axisConfiguration,
+                             DeploymentEngine deploymentEngine) {
         super(serviceInputStream, axisConfiguration);
+        this.deploymentEngine = deploymentEngine;
     }
 
     public void populateConfig() throws DeploymentException {
@@ -135,7 +138,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             if (defaultModuleVerionElement != null) {
                 processDefaultModuleVersions(defaultModuleVerionElement);
             }
-            
+
             // process MessageBuilders
             OMElement messageBuildersElement = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_BUILDERS));
             if (messageBuildersElement != null) {
@@ -146,7 +149,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     axisConfig.addMessageBuilder(key, (Class) builderSelector.get(key));
                 }
             }
-            
+
             // process MessageFormatters
             OMElement messageFormattersElement = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_FORMATTERS));
             if (messageFormattersElement != null) {
@@ -157,7 +160,11 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     axisConfig.addMessageFormatter(key, (MessageFormatter) messageFormatters.get(key));
                 }
             }
-
+            //Processing deployers.
+            Iterator deployerItr = config_element.getChildrenWithName(new QName(DEPLOYER));
+            if(deployerItr!=null){
+                processDeployers(deployerItr);
+            }
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         }
@@ -180,6 +187,41 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     }
                 }
             }
+        }
+    }
+
+    private void processDeployers(Iterator deployerItr) {
+        HashMap directoryToExtensionMappingMap = new HashMap();
+        HashMap extensioToDeployerMappingMap = new HashMap();
+        while (deployerItr.hasNext()) {
+            OMElement element = (OMElement) deployerItr.next();
+            String directory = element.getAttributeValue(new QName(DIRECTORY));
+            if(directory!=null){
+                String extension = element.getAttributeValue(new QName(EXTENSION));
+                if(extension!=null){
+                    try {
+                        String deployerValue = element.getAttributeValue(new QName(TAG_CLASS_NAME));
+                        Class deployerClass;
+                        deployerClass = Loader.loadClass(deployerValue);
+                        Deployer deployer =
+                                (Deployer) deployerClass.newInstance();
+                        deployer.setDirctory(directory);
+                        deployer.setExtension(extension);
+                        directoryToExtensionMappingMap.put(directory, extension);
+                        extensioToDeployerMappingMap.put(extension,deployer);
+                    } catch (ClassNotFoundException e) {
+                        log.error(e);
+                    } catch (InstantiationException e) {
+                        log.error(e);
+                    } catch (IllegalAccessException e) {
+                        log.error(e);
+                    }
+                }
+            }
+        }
+        if(deploymentEngine!=null){
+            deploymentEngine.setDirectoryToExtensionMappingMap(directoryToExtensionMappingMap);
+            deploymentEngine.setExtensioToDeployerMappingMap(extensioToDeployerMappingMap);
         }
     }
 
@@ -238,13 +280,13 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
                 Class observerclass;
                 try {
-                  observerclass = (Class) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedExceptionAction() {
-                    public Object run() throws ClassNotFoundException {
-                      return Loader.loadClass(clasName);      
-                    }
-                  });  
+                    observerclass = (Class) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Loader.loadClass(clasName);
+                        }
+                    });
                 } catch (PrivilegedActionException e) {
-                  throw (ClassNotFoundException)e.getException();
+                    throw (ClassNotFoundException) e.getException();
                 }
                 observer = (AxisObserver) observerclass.newInstance();
                 // processing Parameters
@@ -363,7 +405,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     try {
                         String clasName = trsClas.getAttributeValue();
                         Class receiverClass;
-                        receiverClass = Loader.loadClass(clasName); 
+                        receiverClass = Loader.loadClass(clasName);
 
                         TransportListener receiver =
                                 (TransportListener) receiverClass.newInstance();

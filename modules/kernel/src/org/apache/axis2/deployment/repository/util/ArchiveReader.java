@@ -63,7 +63,7 @@ import java.util.zip.ZipInputStream;
 public class ArchiveReader implements DeploymentConstants {
     private static final Log log = LogFactory.getLog(ArchiveReader.class);
 
-    public ArrayList buildServiceGroup(InputStream zin, ArchiveFileData currentFile,
+    public ArrayList buildServiceGroup(InputStream zin, DeploymentFileData currentFile,
                                        AxisServiceGroup axisServiceGroup, HashMap wsdlServices,
                                        ConfigurationContext configCtx)
             throws XMLStreamException, AxisFault {
@@ -117,7 +117,7 @@ public class ArchiveReader implements DeploymentConstants {
      * @return Returns ArrayList.
      * @throws DeploymentException
      */
-    public ArrayList processServiceGroup(String filename, ArchiveFileData currentFile,
+    public ArrayList processServiceGroup(String filename, DeploymentFileData currentFile,
                                          AxisServiceGroup axisServiceGroup,
                                          boolean extractService,
                                          HashMap wsdls,
@@ -237,7 +237,7 @@ public class ArchiveReader implements DeploymentConstants {
      * @param file <code>ArchiveFileData</code>
      * @throws DeploymentException <code>DeploymentException</code>
      */
-    public HashMap processWSDLs(ArchiveFileData file)
+    public HashMap processWSDLs(DeploymentFileData file)
             throws DeploymentException {
         File serviceFile = file.getFile();
         // to store service come from wsdl files
@@ -419,7 +419,7 @@ public class ArchiveReader implements DeploymentConstants {
         }
     }
 
-    public void readModuleArchive(ArchiveFileData archiveFile,
+    public void readModuleArchive(DeploymentFileData deploymentFile,
                                   AxisModule module, boolean explodedDir,
                                   AxisConfiguration axisConfig)
             throws DeploymentException {
@@ -430,7 +430,7 @@ public class ArchiveReader implements DeploymentConstants {
             ZipInputStream zin;
             FileInputStream fin;
             try {
-                fin = new FileInputStream(archiveFile.getAbsolutePath());
+                fin = new FileInputStream(deploymentFile.getAbsolutePath());
                 zin = new ZipInputStream(fin);
                 ZipEntry entry;
                 while ((entry = zin.getNextEntry()) != null) {
@@ -441,7 +441,7 @@ public class ArchiveReader implements DeploymentConstants {
                         module.setName(
                                 new QName(
                                         DescriptionBuilder.getShortFileName(
-                                                archiveFile.getServiceName())));
+                                                deploymentFile.getServiceName())));
                         builder.populateModule();
                         break;
                     }
@@ -451,15 +451,15 @@ public class ArchiveReader implements DeploymentConstants {
                 if (!moduleXMLFound) {
                     throw new DeploymentException(
                             Messages.getMessage(
-                                    DeploymentErrorMsgs.MODULE_XML_MISSING, archiveFile.getAbsolutePath()));
+                                    DeploymentErrorMsgs.MODULE_XML_MISSING, deploymentFile.getAbsolutePath()));
                 }
             } catch (Exception e) {
                 throw new DeploymentException(e);
             }
         } else {
-            File file = new File(archiveFile.getAbsolutePath(), MODULE_XML);
+            File file = new File(deploymentFile.getAbsolutePath(), MODULE_XML);
 
-            if (file.exists() || (file = new File(archiveFile.getAbsolutePath(), MODULE_XML.toLowerCase())).exists()) {
+            if (file.exists() || (file = new File(deploymentFile.getAbsolutePath(), MODULE_XML.toLowerCase())).exists()) {
                 InputStream in = null;
                 try {
                     in = new FileInputStream(file);
@@ -468,7 +468,7 @@ public class ArchiveReader implements DeploymentConstants {
                     module.setName(
                             new QName(
                                     DescriptionBuilder.getShortFileName(
-                                            archiveFile.getServiceName())));
+                                            deploymentFile.getServiceName())));
                     builder.populateModule();
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(
@@ -485,7 +485,7 @@ public class ArchiveReader implements DeploymentConstants {
             } else {
                 throw new DeploymentException(
                         Messages.getMessage(
-                                DeploymentErrorMsgs.MODULE_XML_MISSING, archiveFile.getAbsolutePath()));
+                                DeploymentErrorMsgs.MODULE_XML_MISSING, deploymentFile.getAbsolutePath()));
             }
         }
     }

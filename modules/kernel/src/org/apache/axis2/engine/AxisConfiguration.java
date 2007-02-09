@@ -84,7 +84,6 @@ public class AxisConfiguration extends AxisDescription {
     private URL axis2Repository = null;
 
     private HashMap allServices = new HashMap();
-
     /**
      * Stores the module specified in the server.xml at the document parsing time.
      */

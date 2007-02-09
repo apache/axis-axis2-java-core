@@ -24,14 +24,14 @@ public class WSInfo {
     /**
      * To check whether the file is a module or a servise
      */
-    private int type;
+    private String type;
 
     public WSInfo(String filename, long lastmodifieddate) {
         this.fileName = filename;
         this.lastModifiedDate = lastmodifieddate;
     }
 
-    public WSInfo(String filename, long lastmodifieddate, int type) {
+    public WSInfo(String filename, long lastmodifieddate, String type) {
         this.fileName = filename;
         this.lastModifiedDate = lastmodifieddate;
         this.type = type;
@@ -45,7 +45,7 @@ public class WSInfo {
         return lastModifiedDate;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 

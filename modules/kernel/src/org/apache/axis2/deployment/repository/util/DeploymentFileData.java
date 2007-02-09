@@ -30,7 +30,7 @@ import java.util.ArrayList;
 /**
  * ArchiveFileData stores information about the module or service item to be deployed.
  */
-public class ArchiveFileData {
+public class DeploymentFileData {
     private File file = null;
     private ArrayList deployableServices = new ArrayList();
     private ClassLoader classLoader;
@@ -38,15 +38,15 @@ public class ArchiveFileData {
     private boolean lock;
 
     private String name;
-    private int type;
+    private String type;
 
-    public ArchiveFileData(File file, int type, boolean lock) {
+    public DeploymentFileData(File file, String type, boolean lock) {
         this.file = file;
         this.type = type;
         this.lock = lock;
     }
 
-    public ArchiveFileData(int type, String name, boolean lock) {
+    public DeploymentFileData(String type, String name, boolean lock) {
         this.type = type;
         this.name = name;
         this.lock = lock;
@@ -84,7 +84,7 @@ public class ArchiveFileData {
         }
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
@@ -102,6 +102,10 @@ public class ArchiveFileData {
         return ((filename.endsWith(".jar")) | (filename.endsWith(".aar")));
     }
 
+    public static  String getFileExtension(String fileName){
+        int index = fileName.lastIndexOf('.');
+        return fileName.substring(index+1);
+    }
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }

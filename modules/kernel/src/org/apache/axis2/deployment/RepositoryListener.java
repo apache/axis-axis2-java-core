@@ -17,7 +17,7 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.deployment.repository.util.ArchiveFileData;
+import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.repository.util.WSInfoList;
 import org.apache.axis2.util.Loader;
 
@@ -25,9 +25,13 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class RepositoryListener implements DeploymentConstants {
+
     protected DeploymentEngine deploymentEngine;
+    private HashMap directoryToExtensionMappingMap;
 
     /**
      * The parent directory of the modules and services directories
@@ -70,7 +74,7 @@ public class RepositoryListener implements DeploymentConstants {
                     continue;
                 }
                 if (!file.isDirectory()) {
-                    if (ArchiveFileData.isModuleArchiveFile(file.getName())) {
+                    if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                         wsInfoList.addWSInfoItem(file, TYPE_MODULE);
                     }
                 } else {
@@ -107,7 +111,7 @@ public class RepositoryListener implements DeploymentConstants {
             for (int i = 0; i < files.length; i++) {
                 File file = files[i];
                 if (!file.isDirectory()) {
-                    if (ArchiveFileData.isModuleArchiveFile(file.getName())) {
+                    if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                         //adding modules in the class path
                         wsInfoList.addWSInfoItem(file, TYPE_MODULE);
                     }
@@ -127,7 +131,7 @@ public class RepositoryListener implements DeploymentConstants {
                     java.io.File file = new java.io.File(URLDecoder.decode(urls[i].getPath()).replace('/',
                             File.separatorChar).replace('|', ':'));
                     if (file.isFile()) {
-                        if (ArchiveFileData.isModuleArchiveFile(file.getName())) {
+                        if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                             //adding modules in the class path
                             wsInfoList.addWSInfoItem(file, TYPE_MODULE);
                         }
@@ -171,6 +175,7 @@ public class RepositoryListener implements DeploymentConstants {
      */
     public void checkServices() {
         findServicesInDirectory();
+        loadOtherDirectories();
         update();
     }
 
@@ -181,7 +186,43 @@ public class RepositoryListener implements DeploymentConstants {
     public void init() {
         wsInfoList.init();
         checkModules();
+        directoryToExtensionMappingMap = deploymentEngine.getDirectoryToExtensionMappingMap();
         deploymentEngine.doDeploy();
+    }
+
+    //This will load the files from the directories
+    // specified by axis2.xml (As <deployer>)
+    private void loadOtherDirectories(){
+       if(directoryToExtensionMappingMap.size()>0){
+          Iterator keys = directoryToExtensionMappingMap.keySet().iterator();
+           while (keys.hasNext()) {
+               String s = (String) keys.next();
+               findFileForGiveDirectory(s,(String)directoryToExtensionMappingMap.get(s));
+           }
+       }
+    }
+
+    private void findFileForGiveDirectory(String dir , String extension){
+        try {
+            File fileTobeSearch = new File(deploymentEngine.getRepositoryDir(),dir);
+            if(fileTobeSearch.exists()){
+                File[] files = fileTobeSearch.listFiles();
+                if (files != null && files.length > 0) {
+                    for (int i = 0; i < files.length; i++) {
+                        File file = files[i];
+                        if (isSourceControlDir(file)) {
+                            continue;
+                        }
+                        if (!file.isDirectory()&&DeploymentFileData.getFileExtension(
+                                file.getName()).equals(extension)) {
+                            wsInfoList.addWSInfoItem(file,extension);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            //need to log the exception
+        }
     }
 
     /**
@@ -199,7 +240,7 @@ public class RepositoryListener implements DeploymentConstants {
                     continue;
                 }
                 if (!file.isDirectory()) {
-                    if (ArchiveFileData.isServiceArchiveFile(file.getName())) {
+                    if (DeploymentFileData.isServiceArchiveFile(file.getName())) {
                         wsInfoList.addWSInfoItem(file, TYPE_SERVICE);
                     }
                 } else {
@@ -217,6 +258,7 @@ public class RepositoryListener implements DeploymentConstants {
      */
     public void startListener() {
         checkServices();
+        loadOtherDirectories();
         update();
     }
 

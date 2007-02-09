@@ -8,7 +8,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.repository.util.ArchiveFileData;
+import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -430,7 +430,8 @@ public class Utils {
                         throw new AxisFault("No service archiev found : " + servicename);
                     }
                     File inputFile = Utils.createTempFile(servicename, fin);
-                    ArchiveFileData filedata = new ArchiveFileData(inputFile, DeploymentConstants.TYPE_SERVICE, false);
+                    DeploymentFileData filedata = new DeploymentFileData(inputFile,
+                            DeploymentConstants.TYPE_SERVICE, false);
 
                     filedata.setClassLoader(false,
                             moduleClassLoader);

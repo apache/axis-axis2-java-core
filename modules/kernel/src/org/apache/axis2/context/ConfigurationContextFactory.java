@@ -261,7 +261,7 @@ public class ConfigurationContextFactory {
         InputStream in = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
 
         AxisConfiguration axisConfig = new AxisConfiguration();
-        AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig);
+        AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig,null);
         builder.populateConfig();
         axisConfig.validateSystemPredefinedPhases();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
