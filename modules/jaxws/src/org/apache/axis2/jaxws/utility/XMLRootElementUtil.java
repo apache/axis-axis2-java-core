@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElement;
@@ -39,46 +40,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * This utility contains code to determine if an Object is 
- * "element enabled" or "type enabled".
- * 
- * Here is an example for illustration:
- *    <element name='e1'>
- *      <complexType>...</complexType>
- *    </element>
- *    
- *    <element name='e2' type='t2' />
- *    <complexType name= 't2'>..
- *
- *    <element name='e3' type='e3' />  <!-- note element and type have same name -->
- *    <complexType name= 'e3'>..
- *
- * JAXB will generate the following objects:  E1, T2, E3
- *   E1 will have an @XMLRootElement annotation.  It is "element" and "type" enabled.
- *   e2 does not have a generated object.  So it will be represented as a JAXBElement
- *     that contains an object T2.  The JAXBElement is "element" enabled. 
- *   T2 represents a complexType.  It is only "type" enabled.
- *   E3 represents the e3 complexType (it does not represent the e3 element).  Thus E3
- *     is "type enabled".  
- *     
- * When JAXB unmarshals an object, it will return an "element" enabled object (either
- * a generatated object with @XMLRootElement or a JAXBElement).
- * Conversely, you must always marshal "element" enabled objects. 
- * @see org.apache.axis2.jaxws.marshaller.impl.alt.PDElement
- * 
- * At the signature level, the values passed as arguments in an SEI operation represent
- * type enabled objects.  Each of the object must be converted to an element enabled object
- * to marshal (or conversely converted to a type enabled object when unmarshalling)
- *
- * -----------------------------------------
- * There are other simular utility methods in this class.  Including utilities to get 
- * a xml name -> bean property map.
- * 
- * -----------------------------------------
- * 
- * @TODO A secondary reason usage of XMLRootElementUtil is to isolate all of the 
- * @XMLRootElement and related annotation queries.  Annotation queries are expensive.
- * A follow-on version of this class will cache the results so that we can improve performance.
  * 
  */
 public class XMLRootElementUtil {
@@ -91,53 +52,12 @@ public class XMLRootElementUtil {
     private XMLRootElementUtil() {
         
     }
-
-    /**
-     * Return true if this class is element enabled
-     * @param clazz
-     * @return true if this class has a corresponding xml root element
-     */
-    public static boolean isElementEnabled(Class clazz){
-        if (clazz.equals(JAXBElement.class)) {
-            return true;
-        }
-        // If the clazz is a primitive, then it does not have a corresponding root element.
-        if (clazz.isPrimitive() || ClassUtils.getWrapperClass(clazz) != null) {
-            return false;
-        }
-        
-        // Presence of an annotation means that it can be rendered as a root element
-        XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
-        return root !=null;
-    }
-    
-    
-    /**
-     * Return an object that can be marshalled/unmarshalled as an element
-     * If the specified object is already element enabled, it is returned.
-     * @param namespace
-     * @param localPart
-     * @param cls either the class or super class of obj
-     * @param type element or type enabled object
-     * @return
-     */
-    public static Object getElementEnabledObject(String namespace, String localPart, Class cls, Object obj) {
-        if (obj != null && isElementEnabled(obj.getClass())) {
-            return obj;
-        }
-        
-        QName qName = new QName(namespace, localPart);
-        JAXBElement element = new JAXBElement(qName, cls, obj);
-        return element;
-    }
-    
-    
     
     /**
      * @param clazz
      * @return namespace of root element qname or null if this is not object does not represent a root element
      */
-    public static QName getXmlRootElementQName(Object obj){
+    public static QName getXmlRootElementQNameFromObject(Object obj){
         
         // A JAXBElement stores its name
         if (obj instanceof JAXBElement) {
@@ -145,11 +65,14 @@ public class XMLRootElementUtil {
         }
         
         Class clazz = (obj instanceof java.lang.Class) ? (Class) obj : obj.getClass();
-                // If the clazz is a primitive, then it does not have a corresponding root element.
-        if (clazz.isPrimitive() ||
-                ClassUtils.getWrapperClass(clazz) != null) {
-            return null;
-        }
+        return getXmlRootElementQName(clazz);
+    }
+    
+    /**
+     * @param clazz
+     * @return namespace of root element qname or null if this is not object does not represent a root element
+     */
+    public static QName getXmlRootElementQName(Class clazz){
         
         // See if the object represents a root element
         XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
@@ -157,8 +80,13 @@ public class XMLRootElementUtil {
             return null;
         }
         
+        String name = root.name();
         String namespace = root.namespace();
-        String localPart = root.name();
+        
+        // The name may need to be defaulted
+        if (name == null || name.length() == 0 || name.equals("##default")) {
+            name = getSimpleName(clazz.getCanonicalName());
+        }
         
         // The namespace may need to be defaulted
         if (namespace == null || namespace.length() == 0 || namespace.equals("##default")) {
@@ -167,12 +95,32 @@ public class XMLRootElementUtil {
             if (schema != null) {
                 namespace = schema.namespace();
             } else {
-                return null;
+                namespace = "";
             }
         }
-        return new QName(namespace, localPart);
+        
+        return new QName(namespace, name);
     }
 
+    /**
+     * utility method to get the last token in a "."-delimited package+classname string
+     * @return
+     */
+    private static String getSimpleName(String in) {
+        if (in == null || in.length() == 0) {
+            return in;
+        }
+        String out = null;
+        StringTokenizer tokenizer = new StringTokenizer(in, ".");
+        if (tokenizer.countTokens() == 0)
+            out = in;
+        else {
+            while (tokenizer.hasMoreTokens()) {
+                out = tokenizer.nextToken();
+            }
+        }
+        return out;
+    }
     
     /**
      * The JAXBClass has a set of bean properties each represented by a PropertyDescriptor

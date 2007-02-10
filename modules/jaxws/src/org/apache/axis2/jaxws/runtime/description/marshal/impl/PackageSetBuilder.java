@@ -319,7 +319,7 @@ public class PackageSetBuilder {
      * @return Class or null
      */
     private static Class getElement(Class cls) {
-        if (!XMLRootElementUtil.isElementEnabled(cls)) {
+        if (XMLRootElementUtil.getXmlRootElementQName(cls) == null) {
             return null;
         } 
         return cls;

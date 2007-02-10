@@ -85,7 +85,7 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
         // (Checking this is expensive, so it is assumed)
         // The input QName must be set otherwise we have to look it up, which kills performance.
         if (qName == null) {
-            qName = XMLRootElementUtil.getXmlRootElementQName(businessObject);
+            qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(businessObject);
         }
         
 		try {

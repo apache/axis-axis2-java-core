@@ -74,7 +74,7 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
                 context = new JAXBBlockContext(clazz.getPackage().getName());
             }
             // Create a block from the value
-            QName qName = XMLRootElementUtil.getXmlRootElementQName(value);
+            QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(value);
             Block block = factory.createFrom(value, context, qName);
             MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
             

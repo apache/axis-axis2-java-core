@@ -539,10 +539,11 @@ public class MethodMarshallerUtils  {
                 if (log.isErrorEnabled()) {
                     log.debug("The faultBean type is" + faultBeanObject.getClass().getName());
                 }
+                
+                QName faultBeanQName = new QName(fd.getTargetNamespace(), fd.getName());
                 // Make sure the faultBeanObject can be marshalled as an element
                 if (!marshalDesc.getAnnotationDesc(faultBeanObject.getClass()).hasXmlRootElement()) {
-                    faultBeanObject = XMLRootElementUtil.getElementEnabledObject(fd.getTargetNamespace(), fd.getName(), 
-                            faultBeanObject.getClass(), faultBeanObject);
+                    faultBeanObject = new JAXBElement(faultBeanQName, faultBeanObject.getClass(), faultBeanObject);
                 }
                 
                 
@@ -553,7 +554,7 @@ public class MethodMarshallerUtils  {
                     context.setRPCType(faultBeanObject.getClass());
                 }
                 
-                QName faultBeanQName = new QName(fd.getTargetNamespace(), fd.getName());
+                
                 // Create a detailblock representing the faultBeanObject
                 Block[] detailBlocks = new Block[1];
                 detailBlocks[0] = factory.createFrom(faultBeanObject,context,faultBeanQName);

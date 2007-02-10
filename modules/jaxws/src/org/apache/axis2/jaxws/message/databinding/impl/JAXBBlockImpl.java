@@ -313,9 +313,9 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             // String instead.  Then we get the correct wire format:
             // <foo>1 2 3</foo>
             if (isXSDList(type)) {
-                QName qName = XMLRootElementUtil.getXmlRootElementQName(b);
+                QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(b);
                 String text = XSDListUtils.toXSDListString(getTypeEnabledObject(b));
-                b = XMLRootElementUtil.getElementEnabledObject(qName.getNamespaceURI(), qName.getLocalPart(), String.class, text);
+                b = new JAXBElement(qName, String.class, text);
             }
             m.marshal(b, writer);
         } catch (Exception e) {
@@ -350,9 +350,9 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 
                 // Second convert the String into a list or array
                 if (getTypeEnabledObject(jaxb) instanceof String) {
-                    QName qName = XMLRootElementUtil.getXmlRootElementQName(jaxb);
+                    QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(jaxb);
                     Object obj = XSDListUtils.fromXSDListString((String) getTypeEnabledObject(jaxb), type);
-                    jaxb = XMLRootElementUtil.getElementEnabledObject(qName.getNamespaceURI(), qName.getLocalPart(), type, obj);
+                    jaxb = new JAXBElement(qName, type, obj);
                 }
             } 
             return jaxb;

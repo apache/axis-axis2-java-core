@@ -20,8 +20,10 @@ import java.util.StringTokenizer;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
+import javax.xml.namespace.QName;
 
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
+import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 
 /**
  *
@@ -51,53 +53,16 @@ class AnnotationDescImpl implements AnnotationDesc {
     static AnnotationDesc create(Class cls) {
         AnnotationDescImpl aDesc = new AnnotationDescImpl();
         
-        XmlRootElement root = (XmlRootElement) cls.getAnnotation(XmlRootElement.class);
-        if (root == null) {
+        QName qName = XMLRootElementUtil.getXmlRootElementQName(cls);
+        if (qName == null) {
             return aDesc;
         }
         aDesc._hasXmlRootElement = true;
-        String name = root.name();
-        String namespace = root.namespace();
-        
-        // The name may need to be defaulted
-        if (name == null || name.length() == 0 || namespace.equals("##default")) {
-            name = getSimpleName(cls.getCanonicalName());
-        }
-        
-        // The namespace may need to be defaulted
-        if (namespace == null || namespace.length() == 0 || namespace.equals("##default")) {
-            Package pkg = cls.getPackage();
-            XmlSchema schema = (XmlSchema) pkg.getAnnotation(XmlSchema.class);
-            if (schema != null) {
-                namespace = schema.namespace();
-            } else {
-                namespace = "";
-            }
-        }
-        
-        aDesc._XmlRootElementName = name;
-        aDesc._XmlRootElementNamespace = namespace;
+        String name = qName.getLocalPart();
+        String namespace = qName.getNamespaceURI();
           
         return aDesc;
     }
     
-    /**
-     * utility method to get the last token in a "."-delimited package+classname string
-     * @return
-     */
-    private static String getSimpleName(String in) {
-        if (in == null || in.length() == 0) {
-            return in;
-        }
-        String out = null;
-        StringTokenizer tokenizer = new StringTokenizer(in, ".");
-        if (tokenizer.countTokens() == 0)
-            out = in;
-        else {
-            while (tokenizer.hasMoreTokens()) {
-                out = tokenizer.nextToken();
-            }
-        }
-        return out;
-    }
+    
 }

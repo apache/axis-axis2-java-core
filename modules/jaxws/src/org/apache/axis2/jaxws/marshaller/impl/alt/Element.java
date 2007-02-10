@@ -32,6 +32,34 @@ import javax.xml.namespace.QName;
  *    * It is the type value associated with the element value.  (Thus it is either
  *      the element value or it is value of the JAXBElement
  *    * The type value is usually the object needed for the method signature (i.e. String)
+ *
+ *  Here is an example for illustration:
+ *    <element name='e1'>
+ *      <complexType>...</complexType>
+ *    </element>
+ *    
+ *    <element name='e2' type='t2' />
+ *    <complexType name= 't2'>..
+ *
+ *    <element name='e3' type='e3' />  <!-- note element and type have same name -->
+ *    <complexType name= 'e3'>..
+ *
+ * JAXB will generate the following objects:  E1, T2, E3
+ *   E1 will have an @XMLRootElement annotation.  It is "element" and "type" enabled.
+ *   e2 does not have a generated object.  So it will be represented as a JAXBElement
+ *     that contains an object T2.  The JAXBElement is "element" enabled. 
+ *   T2 represents a complexType.  It is only "type" enabled.
+ *   E3 represents the e3 complexType (it does not represent the e3 element).  Thus E3
+ *     is "type enabled".  
+ *     
+ * When JAXB unmarshals an object, it will return an "element" enabled object (either
+ * a generatated object with @XMLRootElement or a JAXBElement).
+ * Conversely, you must always marshal "element" enabled objects. 
+ * @see org.apache.axis2.jaxws.marshaller.impl.alt.PDElement
+ * 
+ * At the signature level, the values passed as arguments in an SEI operation represent
+ * type enabled objects.  Each of the object must be converted to an element enabled object
+ * to marshal (or conversely converted to a type enabled object when unmarshalling)
  */
 public class Element {
 

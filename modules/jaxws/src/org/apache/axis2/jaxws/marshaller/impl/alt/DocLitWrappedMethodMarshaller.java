@@ -342,11 +342,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
 
             // Make sure object can be rendered as an element
             if (!marshalDesc.getAnnotationDesc(cls).hasXmlRootElement()) {
-                object = XMLRootElementUtil.getElementEnabledObject(
-                        wrapperQName.getNamespaceURI(),
-                        wrapperQName.getLocalPart(),
-                        cls, 
-                        object);
+                object = new JAXBElement(wrapperQName, cls, object);
             }
             
             
@@ -432,11 +428,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                     
             // Make sure object can be rendered as an element
             if (!marshalDesc.getAnnotationDesc(cls).hasXmlRootElement()) {
-                object = XMLRootElementUtil.getElementEnabledObject(
-                        wrapperQName.getNamespaceURI(), 
-                        wrapperQName.getLocalPart(), 
-                        cls, 
-                        object);
+                object = new JAXBElement(wrapperQName, cls, object);
             }
             
             // Put the object into the message
