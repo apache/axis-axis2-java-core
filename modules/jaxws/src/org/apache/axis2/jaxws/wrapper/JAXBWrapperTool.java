@@ -30,7 +30,7 @@ public interface JAXBWrapperTool {
 	/**
      * unwrap
      * Returns the list of child objects of the jaxb object
-     * @param jaxbObject that is the wrapper element (JAXBElement or object with @XMLRootElement)
+     * @param jaxbObject that represents the type
      * @param childNames list of xml child names as String
      * @return list of Objects in the same order as the element names.  
      */

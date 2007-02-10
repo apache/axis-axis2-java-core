@@ -48,7 +48,7 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
 	/**
      * unwrap
      * Returns the list of child objects of the jaxb object
-     * @param jaxbObject that is the wrapper element (JAXBElement or object with @XMLRootElement)
+     * @param jaxbObject that represents the type
      * @param childNames list of xml child names as String
      * @return list of Objects in the same order as the element names.  
      */
@@ -64,9 +64,7 @@ public class JAXBWrapperToolImpl implements JAXBWrapperTool {
         }
         
         // Get the object that will have the property descriptors (i.e. the object representing the complexType)
-        Object jaxbComplexTypeObj = (jaxbObject instanceof JAXBElement) ?
-                ((JAXBElement)jaxbObject).getValue() : // Type object is the value of the JAXBElement
-                    jaxbObject;                        // Or JAXBObject represents both the element and anon complexType
+        Object jaxbComplexTypeObj = jaxbObject;
                 
         if (log.isDebugEnabled()) {
             log.debug("Invoking unWrap() method with jaxb object:" + jaxbComplexTypeObj.getClass().getName());

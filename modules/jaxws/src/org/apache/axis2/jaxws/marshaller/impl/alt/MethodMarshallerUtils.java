@@ -87,6 +87,7 @@ public class MethodMarshallerUtils  {
     /**
      * Returns the list of PDElements that need to be marshalled onto the wire
      * 
+     * @param marshalDesc
      * @param params ParameterDescription for this operation
      * @param sigArguments arguments 
      * @param isInput indicates if input or output  params(input args on client, output args on server)
@@ -94,8 +95,9 @@ public class MethodMarshallerUtils  {
      * @param isRPC
      * @return PDElements
      */
-    static List<PDElement> getPDElements(ParameterDescription[] params, Object[] sigArguments, boolean isInput, boolean isDocLitWrapped, boolean isRPC) {
-        List<PDElement> pvList = new ArrayList<PDElement>();
+    static List<PDElement> getPDElements(MarshalServiceRuntimeDescription marshalDesc,
+            ParameterDescription[] params, Object[] sigArguments, boolean isInput, boolean isDocLitWrapped, boolean isRPC) {
+        List<PDElement> pdeList = new ArrayList<PDElement>();
         
         int index = 0;
         for (int i=0; i<params.length; i++) {
@@ -122,39 +124,36 @@ public class MethodMarshallerUtils  {
                 // Get the formal type representing the value
                 Class formalType = pd.getParameterActualType();
                 
-                // If this value is element enabled, then we are okay
-                // Otherwise make an element enabled value
-                if (!XMLRootElementUtil.isElementEnabled(formalType)) {
-                    
-                    // The namespace and local name are obtained differently depending on the style/use and header
-                    String localName = "";
-                    String uri = "";
-                    if (pd.isHeader()) {
-                        // Headers (even rpc) are marshalled with the name defined by the element= attribute on the wsd:part
-                        localName = pd.getParameterName();
-                        uri = pd.getTargetNamespace();
-                        
-                    } else if (isDocLitWrapped) {
-                        // For doc/lit wrapped, the localName comes from the PartName
-                        localName = pd.getPartName();
-                        uri = pd.getTargetNamespace();
-                    } else if (isRPC) {
-                        localName = pd.getPartName();
-                        uri = "";  // Per WSI-BP, the namespace uri is unqualified
-                    } else {
-                        localName = pd.getParameterName();
-                        uri = pd.getTargetNamespace();
-                    }
-                    value = XMLRootElementUtil.getElementEnabledObject(uri, localName, formalType, value);
+                // The namespace and local name are obtained differently depending on the style/use and header
+                QName qName = null;
+                if (pd.isHeader()) {
+                    // Headers (even rpc) are marshalled with the name defined by the element= attribute on the wsd:part
+                    qName = new QName(pd.getTargetNamespace(), pd.getParameterName());                    
+                } else if (isDocLitWrapped) {
+                    // For doc/lit wrapped, the localName comes from the PartName
+                    qName = new QName(pd.getTargetNamespace(), pd.getPartName());    
+                } else if (isRPC) {
+                    // Per WSI-BP, the namespace uri is unqualified
+                    qName = new QName(pd.getPartName());    
+                } else {
+                    qName = new QName(pd.getTargetNamespace(), pd.getParameterName());  
+                }
+                
+                // Create an Element rendering
+                Element element = null;
+                if (!marshalDesc.getAnnotationDesc(formalType).hasXmlRootElement()) {
+                    element = new Element(value, qName, formalType);
+                } else {
+                    element = new Element(value, qName);
                 }
                 
                 // The object is now ready for marshalling
-                PDElement pv = new PDElement(pd, value);
-                pvList.add(pv);
+                PDElement pde = new PDElement(pd, element);
+                pdeList.add(pde);
             }
         }
         
-        return pvList;
+        return pdeList;
     }
     
     /**
@@ -231,9 +230,9 @@ public class MethodMarshallerUtils  {
                     index++;
                 }
                 
-                // The object is now ready for marshalling
-                PDElement pv = new PDElement(pd, block.getBusinessObject(true));
-                pdeList.add(pv);
+                Element element = new Element(block.getBusinessObject(true), block.getQName());
+                PDElement pde = new PDElement(pd, element);
+                pdeList.add(pde);
             }
         }
         
@@ -250,16 +249,16 @@ public class MethodMarshallerUtils  {
      * @throws IllegalAccessException
      * @throws ClassNotFoundException
      */
-    static Object[] createRequestSignatureArgs(ParameterDescription[] pds, List<PDElement> pvList) 
+    static Object[] createRequestSignatureArgs(ParameterDescription[] pds, List<PDElement> pdeList) 
         throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         Object[] args = new Object[pds.length];
-        int pvIndex = 0;
+        int pdeIndex = 0;
         for (int i=0; i< args.length; i++) {
             // Get the paramValue
-            PDElement pv = (pvIndex < pvList.size()) ? pvList.get(pvIndex) : null;
+            PDElement pde = (pdeIndex < pdeList.size()) ? pdeList.get(pdeIndex) : null;
             ParameterDescription pd = pds[i];
-            if (pv == null ||
-                pv.getParam() != pd) {
+            if (pde == null ||
+                pde.getParam() != pd) {
                 // We have a ParameterDesc but there is not an equivalent PDElement. 
                 // Provide the default
                 if (pd.isHolderType()) {
@@ -269,12 +268,9 @@ public class MethodMarshallerUtils  {
                 }
             } else {
           
-                // We have a matching paramValue
-                Object value = pv.getElementValue();
-                pvIndex++;
-                
-                // The signature wants the object that is rendered as the type
-                value = XMLRootElementUtil.getTypeEnabledObject(value);
+                // We have a matching paramValue.  Get the type object that represents the type
+                Object value = pde.getElement().getTypeValue();
+                pdeIndex++;
                 
                 // Now that we have the type, there may be a mismatch
                 // between the type (as defined by JAXB) and the formal
@@ -304,31 +300,28 @@ public class MethodMarshallerUtils  {
     /**
      * Update the signature arguments on the client with the unmarshalled element enabled objects (pvList)
      * @param pds ParameterDescriptions
-     * @param pvList Element Enabled objects
+     * @param pdeList Element Enabled objects
      * @param signatureArgs Signature Arguments (the out/inout holders are updated)
      * @throws InstantiationException
      * @throws IllegalAccessException
      * @throws ClassNotFoundException
      */
-    static void updateResponseSignatureArgs(ParameterDescription[] pds, List<PDElement> pvList, Object[] signatureArgs) 
+    static void updateResponseSignatureArgs(ParameterDescription[] pds, List<PDElement> pdeList, Object[] signatureArgs) 
             throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-        int pvIndex = 0;
+        int pdeIndex = 0;
         
         // Each ParameterDescriptor has a correspondinging signatureArg from the 
         // the initial client call.  The pvList contains the response values from the message.
         // Walk the ParameterDescriptor/SignatureArg list and populate the holders with 
         // the match PDElement
         for (int i=0; i< pds.length; i++) {
-            // Get the paramValue
-            PDElement pv = (pvIndex < pvList.size()) ? pvList.get(pvIndex) : null;
+            // Get the param value
+            PDElement pde = (pdeIndex < pdeList.size()) ? pdeList.get(pdeIndex) : null;
             ParameterDescription pd = pds[i];
-            if (pv != null && pv.getParam() == pd) {   
-                // We have a matching paramValue
-                Object value = pv.getElementValue();
-                pvIndex++;
-                
-                // The signature wants the object that is rendered as the type
-                value = XMLRootElementUtil.getTypeEnabledObject(value);
+            if (pde != null && pde.getParam() == pd) {   
+                // We have a matching paramValue.  Get the value that represents the type
+                Object value = pde.getElement().getTypeValue();
+                pdeIndex++;
                 
                 // Now that we have the type, there may be a mismatch
                 // between the type (as defined by JAXB) and the formal
@@ -386,9 +379,9 @@ public class MethodMarshallerUtils  {
             // (Note that the PDElement.getValue always returns an object
             // that has an element rendering...ie. it is either a JAXBElement o
             // has @XmlRootElement defined
-            Block block = factory.createFrom(pde.getElementValue(), 
+            Block block = factory.createFrom(pde.getElement().getElementValue(),
                     context, 
-                    null);  // The factory will get the qname from the value
+                    pde.getElement().getQName());  
             
             if (pde.getParam().isHeader()) {
                 // Header block
@@ -411,21 +404,17 @@ public class MethodMarshallerUtils  {
     
     /**
      * Marshals the return object to the message (used on server to marshal return object)
-     * @param returnValue
+     * @param returnElement element
      * @param returnType
-     * @param returnNS
-     * @param returnLocalPart
-     * @param packages
+     * @param marshalDesc
      * @param message
      * @param isRPC
      * @param isHeader
      * @throws MessageException
      */
-    static void toMessage(Object returnValue, 
+    static void toMessage(Element returnElement, 
             Class returnType, 
-            String returnNS, 
-            String returnLocalPart, 
-            TreeSet<String> packages, 
+            MarshalServiceRuntimeDescription marshalDesc,
             Message message, 
             boolean isRPC,
             boolean isHeader)
@@ -433,24 +422,18 @@ public class MethodMarshallerUtils  {
         
         // Create the JAXBBlockContext
         // RPC uses type marshalling, so recored the rpcType
-        JAXBBlockContext context = new JAXBBlockContext(packages);
+        JAXBBlockContext context = new JAXBBlockContext(marshalDesc.getPackages());
         if (isRPC) {
             context.setRPCType(returnType);
         }
         
-        // If this type is an element rendering, then we are okay
-        // If it is a type rendering then make a JAXBElement 
-        if (!XMLRootElementUtil.isElementEnabled(returnType)) {
-            returnValue = XMLRootElementUtil.getElementEnabledObject(returnNS, returnLocalPart,returnType, returnValue);
-        }
-        
         //  Create a JAXBBlock out of the value.
-        Block block = factory.createFrom(returnValue, 
+        Block block = factory.createFrom(returnElement.getElementValue(), 
                 context, 
-                null);  // The factory will get the qname from the value
+                returnElement.getQName());  
         
         if (isHeader) {
-            message.setHeaderBlock(returnNS, returnLocalPart, block);
+            message.setHeaderBlock(returnElement.getQName().getNamespaceURI(), returnElement.getQName().getLocalPart(), block);
         } else {
             message.setBodyBlock(block);
         }
@@ -464,11 +447,11 @@ public class MethodMarshallerUtils  {
      * @param isHeader
      * @param headerNS (only needed if isHeader)
      * @param headerLocalPart (only needed if isHeader)
-     * @return type enabled object
+     * @return Element
      * @throws WebService
      * @throws XMLStreamException
      */
-    static Object getReturnValue(TreeSet<String> packages, 
+    static Element getReturnElement(TreeSet<String> packages, 
             Message message, 
             Class rpcType,
             boolean isHeader,
@@ -490,10 +473,8 @@ public class MethodMarshallerUtils  {
         }
         
         // Get the business object.  We want to return the object that represents the type.
-        Object returnValue = block.getBusinessObject(true);
-        //  The signature wants the object that is rendered as the type
-        returnValue = XMLRootElementUtil.getTypeEnabledObject(returnValue);
-        return returnValue;
+        Element returnElement = new Element(block.getBusinessObject(true), block.getQName());
+        return returnElement;
     }
     
     /**
@@ -506,8 +487,8 @@ public class MethodMarshallerUtils  {
      * @param isRPC
      */
     static void marshalFaultResponse(Throwable throwable, 
+            MarshalServiceRuntimeDescription marshalDesc,
             OperationDescription operationDesc,  
-            TreeSet<String> packages, 
             Message message, 
             boolean isRPC) {
         // Get the root cause of the throwable object
@@ -559,7 +540,7 @@ public class MethodMarshallerUtils  {
                     log.debug("The faultBean type is" + faultBeanObject.getClass().getName());
                 }
                 // Make sure the faultBeanObject can be marshalled as an element
-                if (!XMLRootElementUtil.isElementEnabled(faultBeanObject.getClass())) {
+                if (!marshalDesc.getAnnotationDesc(faultBeanObject.getClass()).hasXmlRootElement()) {
                     faultBeanObject = XMLRootElementUtil.getElementEnabledObject(fd.getTargetNamespace(), fd.getName(), 
                             faultBeanObject.getClass(), faultBeanObject);
                 }
@@ -567,14 +548,15 @@ public class MethodMarshallerUtils  {
                 
                 // Create the JAXBBlockContext
                 // RPC uses type marshalling, so recored the rpcType
-                JAXBBlockContext context = new JAXBBlockContext(packages);
+                JAXBBlockContext context = new JAXBBlockContext(marshalDesc.getPackages());
                 if (isRPC) {
                     context.setRPCType(faultBeanObject.getClass());
                 }
                 
+                QName faultBeanQName = new QName(fd.getTargetNamespace(), fd.getName());
                 // Create a detailblock representing the faultBeanObject
                 Block[] detailBlocks = new Block[1];
-                detailBlocks[0] = factory.createFrom(faultBeanObject,context,null);
+                detailBlocks[0] = factory.createFrom(faultBeanObject,context,faultBeanQName);
                 
                 if (log.isErrorEnabled()) {
                     log.debug("Create the xmlFault for the Service Exception");

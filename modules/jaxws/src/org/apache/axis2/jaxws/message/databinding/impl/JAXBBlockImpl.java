@@ -20,6 +20,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.List;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
@@ -62,13 +63,13 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 	 * @param busObject..The business object must be a JAXBElement or an object
      * with an @XMLRootElement.  This is assertion is validated in the JAXBFactory.
 	 * @param busContext
-	 * @param qName
+	 * @param qName QName must be non-null
 	 * @param factory
 	 */
 	JAXBBlockImpl(Object busObject, JAXBBlockContext busContext, QName qName, BlockFactory factory) throws JAXBException {
 		super(busObject, 
 				busContext, 
-				(qName==null) ? getQName(busObject, busContext): qName , 
+				qName , 
 				factory);
 	}
 
@@ -76,7 +77,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 	 * Called by JAXBBlockFactory
 	 * @param omelement
 	 * @param busContext
-	 * @param qName
+	 * @param qName must be non-null
 	 * @param factory
 	 */
 	JAXBBlockImpl(OMElement omElement, JAXBBlockContext busContext, QName qName, BlockFactory factory) {
@@ -112,11 +113,14 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 jaxb = unmarshalByType(u, reader, ctx.getRPCType());
             }
             
-            // Set the qname 
+            
+            
+            /* QNAME should already be known at this point
             QName qName = XMLRootElementUtil.getXmlRootElementQName(jaxb);
             if (qName != null) {  // qname should always be non-null
                 setQName(qName); 
             }
+            */
             
             // Successfully unmarshalled the object
             // TODO remove attachment unmarshaller ?
@@ -310,7 +314,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             // <foo>1 2 3</foo>
             if (isXSDList(type)) {
                 QName qName = XMLRootElementUtil.getXmlRootElementQName(b);
-                String text = XSDListUtils.toXSDListString(XMLRootElementUtil.getTypeEnabledObject(b));
+                String text = XSDListUtils.toXSDListString(getTypeEnabledObject(b));
                 b = XMLRootElementUtil.getElementEnabledObject(qName.getNamespaceURI(), qName.getLocalPart(), String.class, text);
             }
             m.marshal(b, writer);
@@ -335,10 +339,7 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             // Unfortunately RPC is type based.  Thus a
             // declared type must be used to unmarshal the xml.
             Object jaxb;
-            
-            
-            
-            
+ 
             if (!isXSDList(type) ) {
                 // Normal case: We are not unmarshalling an xsd:list
                 jaxb = u.unmarshal(reader, type);
@@ -348,9 +349,9 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
                 jaxb = u.unmarshal(reader, String.class);
                 
                 // Second convert the String into a list or array
-                if (XMLRootElementUtil.getTypeEnabledObject(jaxb) instanceof String) {
+                if (getTypeEnabledObject(jaxb) instanceof String) {
                     QName qName = XMLRootElementUtil.getXmlRootElementQName(jaxb);
-                    Object obj = XSDListUtils.fromXSDListString((String) XMLRootElementUtil.getTypeEnabledObject(jaxb), type);
+                    Object obj = XSDListUtils.fromXSDListString((String) getTypeEnabledObject(jaxb), type);
                     jaxb = XMLRootElementUtil.getElementEnabledObject(qName.getNamespaceURI(), qName.getLocalPart(), type, obj);
                 }
             } 
@@ -386,5 +387,20 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
 
     public boolean isElementData() {
         return true;
+    }
+    
+    /**
+     * Return type enabled object
+     * @param obj type or element enabled object
+     * @return type enabled object
+     */
+    static Object getTypeEnabledObject(Object obj) {
+        if (obj == null) {
+            return null;
+        }
+        if (obj instanceof JAXBElement) {
+            return ((JAXBElement) obj).getValue();
+        }
+        return obj;
     }
 }

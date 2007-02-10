@@ -30,6 +30,7 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebParam.Mode;
 import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebServiceException;
@@ -194,14 +195,15 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     // Body elements are obtained from the unwrapped array of objects
                     Object value = objects[bodyIndex];
                     // The object in the PDElement must be an element
-                    if (!XMLRootElementUtil.isElementEnabled(pd.getParameterActualType())) {
-                        value = XMLRootElementUtil.getElementEnabledObject(pd.getTargetNamespace(),
-                                pd.getPartName(), 
-                                pd.getParameterActualType(), 
-                                value); 
-     
+                    QName qName = new QName(pd.getTargetNamespace(),
+                            pd.getPartName());
+                    Element element = null;
+                    if (!marshalDesc.getAnnotationDesc(pd.getParameterActualType()).hasXmlRootElement()) {
+                        element = new Element(value, qName, pd.getParameterActualType());
+                    } else {
+                        element = new Element(value, qName);
                     }
-                    pvList.add(new PDElement(pd, value));
+                    pvList.add(new PDElement(pd,element));
                     bodyIndex++;
                 } else {
                     // Header
@@ -209,7 +211,8 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     String localName = pd.getParameterName();
                     block = message.getHeaderBlock(pd.getTargetNamespace(), localName, blockContext, factory);
                     Object value = block.getBusinessObject(true);
-                    pvList.add(new PDElement(pd, value));
+                    Element element = new Element(value, new QName(pd.getTargetNamespace(), localName));
+                    pvList.add(new PDElement(pd, element));
                 }
             }
             
@@ -226,8 +229,9 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     returnValue = objects[objects.length-1];
                 } else {
                     // Header result: Get the value from the headers
-                    returnValue = MethodMarshallerUtils.getReturnValue(packages, message, null, true,
+                    Element returnElement = MethodMarshallerUtils.getReturnElement(packages, message, null, true,
                             operationDesc.getResultTargetNamespace(), operationDesc.getResultPartName());
+                    returnValue = returnElement.getTypeValue();
                 }
                 // returnValue may be incompatible with JAX-WS signature
                 if (ConvertUtils.isConvertable(returnValue, returnType)) {
@@ -319,15 +323,15 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     // Normal case: Get the parameter value from the list of objects
                     Object value = objects[bodyIndex];
                     
-                    // The object in the PDElement must be an element
-                    if (!XMLRootElementUtil.isElementEnabled(pd.getParameterActualType())) {
-                        value = XMLRootElementUtil.getElementEnabledObject(pd.getTargetNamespace(),
-                                pd.getPartName(), 
-                                pd.getParameterActualType(), 
-                                value);
-     
+                    //  The object in the PDElement must be an element
+                    QName qName = new QName(pd.getTargetNamespace(), pd.getPartName());
+                    Element element = null;
+                    if (!marshalDesc.getAnnotationDesc(pd.getParameterActualType()).hasXmlRootElement()) {
+                        element = new Element(value, qName, pd.getParameterActualType());
+                    } else {
+                        element = new Element(value, qName);
                     }
-                    pvList.add(new PDElement(pd, value));
+                    pvList.add(new PDElement(pd,element));
                     bodyIndex++;
                 } else {
                     // Header
@@ -335,7 +339,8 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     String localName = pd.getParameterName();
                     block = message.getHeaderBlock(pd.getTargetNamespace(), localName, blockContext, factory);
                     Object value = block.getBusinessObject(true);
-                    pvList.add(new PDElement(pd, value));
+                    Element element = new Element(value, new QName(pd.getTargetNamespace(), localName));
+                    pvList.add(new PDElement(pd, element));
                 }
                 
             }
@@ -396,7 +401,8 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             // The first step is to convert the signature arguments into a list
             // of parameter values
             List<PDElement> pdeList = 
-                MethodMarshallerUtils.getPDElements(pds,
+                MethodMarshallerUtils.getPDElements(marshalDesc,
+                        pds,
                         signatureArgs, 
                         false,  // output
                         true, false);   
@@ -415,10 +421,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                 if (!pde.getParam().isHeader()) {
                     // Normal case
                     // The object list contains type rendered objects
-                    Object value = pde.getElementValue();
-                    if (value instanceof JAXBElement) {
-                        value = ((JAXBElement) value).getValue();
-                    }  
+                    Object value = pde.getElement().getTypeValue();
                     nameList.add(name);
                     objectList.put(name, value);
                 } else {
@@ -443,9 +446,16 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                 // Header Result:
                 // Put the return object onto the message
                 if (returnType != void.class) {
-                    MethodMarshallerUtils.toMessage(returnObject, returnType,
-                            operationDesc.getResultTargetNamespace(),
-                            operationDesc.getResultName(), packages, m, 
+                    Element returnElement = null;
+                    QName returnQName = new QName(operationDesc.getResultTargetNamespace(),
+                            operationDesc.getResultName());
+                    if (marshalDesc.getAnnotationDesc(returnType).hasXmlRootElement()) {
+                        returnElement = new Element(returnObject, returnQName);
+                    } else {
+                        returnElement = new Element(returnObject, returnQName, returnType);
+                    }
+                    MethodMarshallerUtils.toMessage(returnElement, returnType,
+                            marshalDesc, m, 
                             false, // don't force xsi:type for doc/lit
                             true); 
                 }
@@ -456,11 +466,14 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
             Object object  = wrapperTool.wrap(cls, nameList, objectList);
             
+            QName wrapperQName = new QName(operationDesc.getResponseWrapperTargetNamespace(),
+                                           operationDesc.getResponseWrapperLocalName());
+
             // Make sure object can be rendered as an element
-            if (!XMLRootElementUtil.isElementEnabled(cls)) {
+            if (!marshalDesc.getAnnotationDesc(cls).hasXmlRootElement()) {
                 object = XMLRootElementUtil.getElementEnabledObject(
-                        operationDesc.getResponseWrapperTargetNamespace(), 
-                        operationDesc.getResponseWrapperLocalName(), 
+                        wrapperQName.getNamespaceURI(),
+                        wrapperQName.getLocalPart(),
                         cls, 
                         object);
             }
@@ -472,7 +485,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             
             Block block = factory.createFrom(object, 
                     new JAXBBlockContext(packages), 
-                    null);  // The factory will get the qname from the value
+                    wrapperQName);  // The factory will get the qname from the value
             m.setBodyBlock(block);
             
             //  Now place the headers in the message
@@ -524,7 +537,8 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             // The signatureArguments represent the child elements of that block
             // The first step is to convert the signature arguments into list
             // of parameter values
-            List<PDElement> pdeList = MethodMarshallerUtils.getPDElements(pds, 
+            List<PDElement> pdeList = MethodMarshallerUtils.getPDElements(marshalDesc,
+                    pds, 
                     signatureArguments, 
                     true,   // input
                     true, false); 
@@ -543,10 +557,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                 if (!pde.getParam().isHeader()) {
                     // Normal case:
                     // The object list contains type rendered objects
-                    Object value = pde.getElementValue();
-                    if (value instanceof JAXBElement) {
-                        value = ((JAXBElement) value).getValue();
-                    }
+                    Object value = pde.getElement().getTypeValue();
                     nameList.add(name);
                     objectList.put(name, value);
                 } else {
@@ -563,11 +574,14 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
             Object object  = wrapperTool.wrap(cls, nameList, objectList);
             
+            QName wrapperQName = new QName(operationDesc.getRequestWrapperTargetNamespace(),
+                                           operationDesc.getRequestWrapperLocalName());
+
             // Make sure object can be rendered as an element
-            if (!XMLRootElementUtil.isElementEnabled(cls)) {
+            if (!marshalDesc.getAnnotationDesc(cls).hasXmlRootElement()) {
                 object = XMLRootElementUtil.getElementEnabledObject(
-                        operationDesc.getRequestWrapperTargetNamespace(), 
-                        operationDesc.getRequestWrapperLocalName(), 
+                        wrapperQName.getNamespaceURI(),
+                        wrapperQName.getLocalPart(),
                         cls, 
                         object);
             }
@@ -577,7 +591,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                 (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             Block block = factory.createFrom(object, 
                     new JAXBBlockContext(packages), 
-                    null);  // The factory will get the qname from the value
+                    wrapperQName);  // The factory will get the qname from the value
             m.setBodyBlock(block);
             
             // Now place the headers in the message
@@ -614,8 +628,8 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             
             // Put the fault onto the message
             MethodMarshallerUtils.marshalFaultResponse(throwable, 
+                    marshalDesc,
                     operationDesc, 
-                    packages, 
                     m, 
                     false); // don't force xsi:type for doc/lit
             return m;

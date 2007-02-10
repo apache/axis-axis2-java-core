@@ -119,15 +119,16 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // The input object represent the signature arguments.
             // Signature arguments are both holders and non-holders
             // Convert the signature into a list of JAXB objects for marshalling
-            List<PDElement> pvList = 
-                MethodMarshallerUtils.getPDElements(pds, 
+            List<PDElement> pdeList = 
+                MethodMarshallerUtils.getPDElements(marshalDesc,
+                        pds,
                         signatureArguments,
                         true,  // input
                         false, true); // use partName since this is rpc/lit
                         
             
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pvList, m, packages, true);
+            MethodMarshallerUtils.toMessage(pdeList, m, packages, true);
             
             return m;
         } catch(Exception e) {
@@ -279,12 +280,16 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                     throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullParamErr1", "Return", operationDesc.getJavaMethodName(), "rpc/lit"));
 
                 }
-                
-                MethodMarshallerUtils.toMessage(returnObject, 
+                Element returnElement = null;
+                QName returnQName = new QName(returnNS, returnLocalPart);
+                if (marshalDesc.getAnnotationDesc(returnType).hasXmlRootElement()) {
+                    returnElement = new Element(returnObject, returnQName);
+                } else {
+                    returnElement = new Element(returnObject, returnQName, returnType);
+                }
+                MethodMarshallerUtils.toMessage(returnElement, 
                         returnType, 
-                        returnNS,
-                        returnLocalPart, 
-                        packages, 
+                        marshalDesc, 
                         m,
                         true, // forceXSI since this is rpc/lit
                         operationDesc.isResultHeader()); 
@@ -292,7 +297,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             
             // Convert the holder objects into a list of JAXB objects for marshalling
             List<PDElement> pvList = 
-                MethodMarshallerUtils.getPDElements(pds, 
+                MethodMarshallerUtils.getPDElements(marshalDesc,
+                        pds, 
                         signatureArgs, 
                         false,  // output
                         false, true);   // use partName since this is rpc/lit
@@ -348,12 +354,14 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             Object returnValue = null;
             if (returnType != void.class) {
                 // If the webresult is in the header, we need the name of the header so that we can find it.
+                Element returnElement = null;
                 if (operationDesc.isResultHeader()) {
-                    returnValue = MethodMarshallerUtils.getReturnValue(packages, message, returnType, true,
+                    returnElement = MethodMarshallerUtils.getReturnElement(packages, message, returnType, true,
                             operationDesc.getResultTargetNamespace(), operationDesc.getResultPartName());
                 } else {
-                    returnValue = MethodMarshallerUtils.getReturnValue(packages, message, returnType, false, null, null);
+                    returnElement = MethodMarshallerUtils.getReturnElement(packages, message, returnType, false, null, null);
                 }
+                returnValue = returnElement.getTypeValue();
                 // TODO should we allow null if the return is a header?
                 //Validate input parameters for operation and make sure no input parameters are null.
                 //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
@@ -404,8 +412,8 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             
             // Put the fault onto the message
             MethodMarshallerUtils.marshalFaultResponse(throwable, 
+                    marshalDesc,
                     operationDesc, 
-                    packages, 
                     m, 
                     true);  // isRPC=true
             return m;

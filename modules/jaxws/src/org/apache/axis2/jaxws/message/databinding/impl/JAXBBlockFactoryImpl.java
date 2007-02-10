@@ -58,6 +58,9 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
 		    // JAXWS spec 4.3.4 conformance requires a WebServiceException whose cause is JAXBException
 			throw ExceptionFactory.makeWebServiceException(new JAXBException(Messages.getMessage("JAXBBlockFactoryErr1", context.getClass().getName())));
 		}
+        if (qName == null) {
+            qName = omElement.getQName();
+        }
 		return new JAXBBlockImpl(omElement, (JAXBBlockContext) context, qName, this);
 	}
 
@@ -78,18 +81,13 @@ public class JAXBBlockFactoryImpl extends BlockFactoryImpl implements JAXBBlockF
 			throw ExceptionFactory.makeWebServiceException(new JAXBException(Messages.getMessage("JAXBBlockFactoryErr1", context.getClass().getName())));
 		}
         
-        // The business object must be either a JAXBElement or a block with an @XmlRootElement qname.  The best way
-        // to verify this is to get the QName from the business object.
-        QName bQName = XMLRootElementUtil.getXmlRootElementQName(businessObject);
-        if (bQName == null) {
-            // JAXWS spec 4.3.4 conformance requires a WebServiceException whose cause is JAXBException
-            throw ExceptionFactory.makeWebServiceException(new JAXBException(Messages.getMessage("JAXBBlockFactoryErr2", businessObject.getClass().getName())));
+        // The business object must be either a JAXBElement or a block with an @XmlRootElement qname.  
+        // (Checking this is expensive, so it is assumed)
+        // The input QName must be set otherwise we have to look it up, which kills performance.
+        if (qName == null) {
+            qName = XMLRootElementUtil.getXmlRootElementQName(businessObject);
         }
         
-        // If the business obect qname does not match the parameter, use the business object qname
-        if (!bQName.equals(qName)) {
-            qName = bQName;
-        }
 		try {
 			return new JAXBBlockImpl(businessObject, (JAXBBlockContext) context, qName, this);
 		} catch (JAXBException e) {

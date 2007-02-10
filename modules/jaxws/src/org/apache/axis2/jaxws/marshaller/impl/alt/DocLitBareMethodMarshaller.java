@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.marshaller.impl.alt;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -79,16 +80,18 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             Object returnValue = null;
             if (returnType != void.class) {
                 // If the webresult is in the header, we need the name of the header so that we can find it.
+                Element returnElement = null;
                 if (operationDesc.isResultHeader()) {
-                    returnValue = MethodMarshallerUtils.getReturnValue(packages, message, null, true,
+                    returnElement = MethodMarshallerUtils.getReturnElement(packages, message, null, true,
                             operationDesc.getResultTargetNamespace(), operationDesc.getResultName());
                 } else {
-                    returnValue = MethodMarshallerUtils.getReturnValue(packages, message, null, false, null, null);
+                    returnElement = MethodMarshallerUtils.getReturnElement(packages, message, null, false, null, null);
                 }
                 //TODO should we allow null if the return is a header?
                 //Validate input parameters for operation and make sure no input parameters are null.
                 //As per JAXWS Specification section 3.6.2.3 if a null value is passes as an argument 
                 //to a method then an implementation MUST throw WebServiceException.
+                returnValue = returnElement.getTypeValue();
                 if (returnValue == null){
                     throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullParamErr1", "Return", operationDesc.getJavaMethodName(), "doc/lit"));
                 }
@@ -208,15 +211,23 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                     throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullParamErr1", "Return", operationDesc.getJavaMethodName(), "doc/lit"));
 
                 }
-                MethodMarshallerUtils.toMessage(returnObject, returnType,
-                        operationDesc.getResultTargetNamespace(),
-                        operationDesc.getResultName(), packages, m, 
+                Element returnElement = null;
+                QName returnQName = new QName(operationDesc.getResultTargetNamespace(),
+                        operationDesc.getResultName());
+                if (marshalDesc.getAnnotationDesc(returnType).hasXmlRootElement()) {
+                    returnElement = new Element(returnObject, returnQName);
+                } else {
+                    returnElement = new Element(returnObject, returnQName, returnType);
+                }
+                MethodMarshallerUtils.toMessage(returnElement, returnType,
+                        marshalDesc, m, 
                         false, // don't force xsi:type for doc/lit
                         operationDesc.isResultHeader()); 
             }
             
             // Convert the holder objects into a list of JAXB objects for marshalling
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(marshalDesc,
+                    pds, 
                     signatureArgs, 
                     false, // output
                     false, false);
@@ -282,7 +293,8 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             // The input object represent the signature arguments.
             // Signature arguments are both holders and non-holders
             // Convert the signature into a list of JAXB objects for marshalling
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(marshalDesc,
+                    pds, 
                     signatureArguments, 
                     true,  // input
                     false, false);
@@ -318,8 +330,8 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             
             // Put the fault onto the message
             MethodMarshallerUtils.marshalFaultResponse(throwable, 
-                    operationDesc, 
-                    packages, 
+                    marshalDesc,
+                    operationDesc,  
                     m, 
                     false); // don't force xsi:type for doc/lit
             return m;

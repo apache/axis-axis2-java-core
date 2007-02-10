@@ -26,7 +26,7 @@ import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.HashMap;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElement;
@@ -101,7 +101,6 @@ public class XMLRootElementUtil {
         if (clazz.equals(JAXBElement.class)) {
             return true;
         }
-        
         // If the clazz is a primitive, then it does not have a corresponding root element.
         if (clazz.isPrimitive() || ClassUtils.getWrapperClass(clazz) != null) {
             return false;
@@ -112,32 +111,6 @@ public class XMLRootElementUtil {
         return root !=null;
     }
     
-    /**
-     * Returns ture if this class is type enabled
-     * @param clazz
-     * @return
-     */
-    public static boolean isTypeEnabled(Class clazz) {
-        // Primitives, Primitive wrappers, BigDecimal, etc. are all type enabled
-        // So are all classes with @XmlRootElement or @XmlType.
-        // For now I am only going to assume that the class is type enabled unless it is JAXBElement
-        return (!clazz.equals(JAXBElement.class));
-    }
-    
-    /**
-     * Return type enabled object
-     * @param obj type or element enabled object
-     * @return type enabled object
-     */
-    public static Object getTypeEnabledObject(Object obj) {
-        if (obj == null) {
-            return null;
-        }
-        if (obj instanceof JAXBElement) {
-            return ((JAXBElement) obj).getValue();
-        }
-        return obj;
-    }
     
     /**
      * Return an object that can be marshalled/unmarshalled as an element
@@ -172,8 +145,7 @@ public class XMLRootElementUtil {
         }
         
         Class clazz = (obj instanceof java.lang.Class) ? (Class) obj : obj.getClass();
-        
-        // If the clazz is a primitive, then it does not have a corresponding root element.
+                // If the clazz is a primitive, then it does not have a corresponding root element.
         if (clazz.isPrimitive() ||
                 ClassUtils.getWrapperClass(clazz) != null) {
             return null;
@@ -218,7 +190,7 @@ public class XMLRootElementUtil {
         // TODO This is a very performance intensive search we should cache the calculated map keyed by the jaxbClass
         PropertyDescriptor[] pds = Introspector.getBeanInfo(jaxbClass).getPropertyDescriptors();
         // Make this a weak map in case we want to cache the results
-        Map<String, PropertyDescriptor> map = new WeakHashMap<String, PropertyDescriptor>();
+        Map<String, PropertyDescriptor> map = new HashMap<String, PropertyDescriptor>();
         
         // Unfortunately the element names are stored on the fields.
         // Get all of the fields in the class and super classes

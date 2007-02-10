@@ -22,32 +22,26 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 
 
 /**
- * A PDElement object holds a ParameterDescription (Param) and 
- * the "Element" value.
- * Characteristics of the "Element" value.
- *    * The Element value is ready for marshalling or is the result of unmarshalling.
- *    * The Element value represents the element rendering.  Thus it is either
- *      a JAXBElement or has the @XmlRootElement annotation.  (i.e. it is never a 
- *      java.lang.String)
- *    * The Element value is not a JAX-WS object. (i.e. it is not a holder or exception)
+ * A PDElement object holds a ParameterDescription and the matching 
+ * Element object
  */
 public class PDElement {
     private ParameterDescription param;
-    private Object elementValue;
+    private Element element;
     
-    public PDElement(ParameterDescription param, Object elementValue) {
+    public PDElement(ParameterDescription param, Element element) {
         super();
         this.param = param;
-        this.elementValue = elementValue;
+        this.element = element;
     }
 
     public ParameterDescription getParam() {
         return param;
     }
 
-    public Object getElementValue() {
+    public Element getElement() {
        
-        return elementValue;
+        return element;
     }
     
 }

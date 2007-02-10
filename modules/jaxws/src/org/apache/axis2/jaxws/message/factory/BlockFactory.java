@@ -44,7 +44,7 @@ public interface BlockFactory {
 	 * createBlock from XMLStreamReader
 	 * @param reader XMLStreamReader
 	 * @param context Associated Context or null
-	 * @param QName if known...if null the Block will determine the QName
+	 * @param QName must be supplied if known
 	 * @throws XMLStreamException
 	 * @throws WebServiceException
 	 */
@@ -54,7 +54,7 @@ public interface BlockFactory {
 	 * createBlock from XMLStreamReader
 	 * @param omElement OMElement
 	 * @param context Associated Context or null
-	 * @param QName if known...if null the Block will determine the QName
+	 * @param QName must be supplied if known
 	 * @throws XMLStreamException
 	 * @throws WebServiceException
 	 */
@@ -77,7 +77,7 @@ public interface BlockFactory {
 	 * Create from business object
 	 * @param businessObject
 	 * @param context Associated Context or null
-	 * @param QName if known...if null the Block will determine the QName
+	 * @param QName must be supplied if known
 	 * @throws XMLStreamException
 	 * @throws WebServiceException
 	 */

@@ -34,6 +34,7 @@ import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -73,7 +74,8 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
                 context = new JAXBBlockContext(clazz.getPackage().getName());
             }
             // Create a block from the value
-            Block block = factory.createFrom(value, context, null);
+            QName qName = XMLRootElementUtil.getXmlRootElementQName(value);
+            Block block = factory.createFrom(value, context, qName);
             MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
             
             if (mode.equals(Mode.PAYLOAD)) {
