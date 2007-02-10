@@ -16,25 +16,9 @@
  */
 package org.apache.axis2.jaxws.runtime.description.marshal;
 
-import java.util.TreeSet;
-
-import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
-
-
 /**
- * Used to cache marshal information
+ * Annotation information cached for a particular class
  */
-public interface MarshalServiceRuntimeDescription extends ServiceRuntimeDescription {
-   
-    /**
-     * @return Set of package names for this service
-     */
-    public TreeSet<String> getPackages();
-    
-    /**
-     * Return AnnotationDesc for this class
-     * @param cls
-     * @return
-     */
-    public AnnotationDesc getAnnotationDesc(Class cls);
+public interface AnnotationDesc {
+
 }

@@ -31,7 +31,7 @@ import javax.xml.bind.JAXBElement;
 
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
-import org.apache.axis2.jaxws.util.XMLRootElementUtil;
+import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.PropertyInfo;
 import org.apache.commons.logging.Log;

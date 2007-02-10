@@ -43,7 +43,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.message.util.SOAPElementReader;
-import org.apache.axis2.jaxws.util.SAAJFactory;
+import org.apache.axis2.jaxws.utility.SAAJFactory;
 
 /**
  * SAAJConverterImpl

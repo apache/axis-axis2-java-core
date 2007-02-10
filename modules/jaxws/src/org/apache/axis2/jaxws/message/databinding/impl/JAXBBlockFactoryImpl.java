@@ -28,7 +28,7 @@ import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
-import org.apache.axis2.jaxws.util.XMLRootElementUtil;
+import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 
 /**
  * JAXBBlockFactoryImpl

@@ -53,7 +53,7 @@ import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.factory.OMBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.jaxws.util.SAAJFactory;
+import org.apache.axis2.jaxws.utility.SAAJFactory;
 
 /**
  * Collection of utilities used by the Message implementation to 

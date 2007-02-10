@@ -3,7 +3,7 @@
  */
 package org.apache.axis2.jaxws.misc;
 
-import org.apache.axis2.jaxws.util.JavaUtils;
+import org.apache.axis2.jaxws.utility.JavaUtils;
 
 import junit.framework.TestCase;
 

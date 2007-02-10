@@ -36,7 +36,7 @@ import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.FaultDescription;
-import org.apache.axis2.jaxws.util.ClassUtils;
+import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
 import org.apache.axis2.jaxws.wrapper.PropertyInfo;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;

@@ -10,7 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
-import org.apache.axis2.jaxws.util.JavaUtils;
+import org.apache.axis2.jaxws.utility.JavaUtils;
 
 import junit.framework.TestCase;
 

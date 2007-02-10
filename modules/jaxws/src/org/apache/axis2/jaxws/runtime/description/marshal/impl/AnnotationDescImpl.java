@@ -14,27 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.runtime.description.marshal;
+package org.apache.axis2.jaxws.runtime.description.marshal.impl;
 
-import java.util.TreeSet;
-
-import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
-
+import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 
 /**
- * Used to cache marshal information
+ *
  */
-public interface MarshalServiceRuntimeDescription extends ServiceRuntimeDescription {
-   
-    /**
-     * @return Set of package names for this service
-     */
-    public TreeSet<String> getPackages();
+class AnnotationDescImpl implements AnnotationDesc {
+
+    private AnnotationDescImpl() {
+        super();
+    }
     
-    /**
-     * Return AnnotationDesc for this class
-     * @param cls
-     * @return
-     */
-    public AnnotationDesc getAnnotationDesc(Class cls);
+    static AnnotationDesc create(Class cls) {
+        AnnotationDescImpl aDesc = new AnnotationDescImpl();
+        
+        return aDesc;
+    }
+
 }

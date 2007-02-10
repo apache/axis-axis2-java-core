@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.jaxws.util;
+package org.apache.axis2.jaxws.utility;
 
 import java.lang.reflect.Method;
 

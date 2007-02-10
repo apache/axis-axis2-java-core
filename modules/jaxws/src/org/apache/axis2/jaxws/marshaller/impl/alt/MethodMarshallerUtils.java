@@ -61,10 +61,10 @@ import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescriptionFactory;
-import org.apache.axis2.jaxws.util.ClassUtils;
-import org.apache.axis2.jaxws.util.ConvertUtils;
-import org.apache.axis2.jaxws.util.SAAJFactory;
-import org.apache.axis2.jaxws.util.XMLRootElementUtil;
+import org.apache.axis2.jaxws.utility.ClassUtils;
+import org.apache.axis2.jaxws.utility.ConvertUtils;
+import org.apache.axis2.jaxws.utility.SAAJFactory;
+import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

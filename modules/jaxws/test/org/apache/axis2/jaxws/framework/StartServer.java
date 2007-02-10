@@ -17,7 +17,8 @@
 package org.apache.axis2.jaxws.framework;
 
 import junit.framework.TestCase;
-import org.apache.axis2.jaxws.util.SimpleServer;
+
+import org.apache.axis2.jaxws.utility.SimpleServer;
 
 public class StartServer extends TestCase {
 

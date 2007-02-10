@@ -18,11 +18,12 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.StringTokenizer;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSchema;
+import javax.xml.namespace.QName;
 import javax.xml.ws.WebFault;
 
 import org.apache.axis2.jaxws.description.FaultDescription;
@@ -31,7 +32,7 @@ import org.apache.axis2.jaxws.description.FaultDescriptionWSDL;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
-import org.apache.axis2.jaxws.util.XMLRootElementUtil;
+
 
 /**
  * @see ../FaultDescription
@@ -179,7 +180,7 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
                 // is what is flowed over the wire.
                 try {
                     Class clazz = DescriptionUtils.loadClass(getFaultBean());
-                    targetNamespace = XMLRootElementUtil.getXmlRootElementQName(clazz).getNamespaceURI();
+                    targetNamespace = getXmlRootElementQName(clazz).getNamespaceURI();
                 } catch (Exception e) {
                     // All else fails use the faultBean to calculate a namespace
                     targetNamespace = makeNamespace(getFaultBean());
@@ -272,5 +273,33 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         string.append("Exception class: " + getExceptionClassName());
         
         return string.toString();
+    }
+    
+    /**
+     * @param clazz
+     * @return namespace of root element qname or null if this is not object does not represent a root element
+     */
+    static QName getXmlRootElementQName(Class clazz){
+            
+        // See if the object represents a root element
+        XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
+        if (root == null) {
+            return null;
+        }
+        
+        String namespace = root.namespace();
+        String localPart = root.name();
+        
+        // The namespace may need to be defaulted
+        if (namespace == null || namespace.length() == 0 || namespace.equals("##default")) {
+            Package pkg = clazz.getPackage();
+            XmlSchema schema = (XmlSchema) pkg.getAnnotation(XmlSchema.class);
+            if (schema != null) {
+                namespace = schema.namespace();
+            } else {
+                return null;
+            }
+        }
+        return new QName(namespace, localPart);
     }
 }

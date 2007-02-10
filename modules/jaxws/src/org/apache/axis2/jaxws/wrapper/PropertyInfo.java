@@ -25,7 +25,7 @@ import java.util.Collection;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.util.ConvertUtils;
+import org.apache.axis2.jaxws.utility.ConvertUtils;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

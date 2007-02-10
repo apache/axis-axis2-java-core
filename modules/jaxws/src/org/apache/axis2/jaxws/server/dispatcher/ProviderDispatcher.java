@@ -48,7 +48,7 @@ import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
-import org.apache.axis2.jaxws.util.ClassUtils;
+import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
