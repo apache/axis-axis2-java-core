@@ -20,17 +20,23 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class MarshalServiceRuntimeDescriptionBuilder {
 
+    private static Log log = LogFactory.getLog(MarshalServiceRuntimeDescriptionBuilder.class);
     /**
      * Intentionally Private
      */
@@ -59,8 +65,20 @@ public class MarshalServiceRuntimeDescriptionBuilder {
      */
     static private void init(MarshalServiceRuntimeDescriptionImpl marshalDesc, 
             ServiceDescription serviceDesc) {
-        TreeSet<String> packages = new TreeSet<String>();
         
+        // Build the annotation map first
+        Map<String, AnnotationDesc> map;
+        try {
+           map = AnnotationBuilder.getAnnotationDescs(serviceDesc);
+        } catch(Throwable t) {
+            // Since we are caching, proceed without exception
+            if (log.isDebugEnabled()) {
+                log.debug("Swallowing Exception:" + t);
+            }
+            map = new HashMap<String, AnnotationDesc>();
+        }
+        marshalDesc.setAnnotationMap(map);
+            
         // @TODO There are two ways to get the packages.
         // Schema Walk (prefered) and Annotation Walk.
         // The Schema walk requires an existing or generated schema.
@@ -68,6 +86,7 @@ public class MarshalServiceRuntimeDescriptionBuilder {
         // There are some limitations in the current schema walk
         // And there are problems in the annotation walk.
         // So for now we will do both.
+        TreeSet<String> packages = new TreeSet<String>();
         boolean doSchemaWalk = true;
         boolean doAnnotationWalk = true;
         packages = new TreeSet<String>();
@@ -75,7 +94,8 @@ public class MarshalServiceRuntimeDescriptionBuilder {
             packages.addAll(PackageSetBuilder.getPackagesFromSchema(serviceDesc));
         }
         if (doAnnotationWalk) {
-            packages.addAll(PackageSetBuilder.getPackagesFromAnnotations(serviceDesc));
+            // Get the package names from the annotations.  Use the annotation map to reduce Annotation introspection
+            packages.addAll(PackageSetBuilder.getPackagesFromAnnotations(serviceDesc, map));
         }
         marshalDesc.setPackages(packages);
     }

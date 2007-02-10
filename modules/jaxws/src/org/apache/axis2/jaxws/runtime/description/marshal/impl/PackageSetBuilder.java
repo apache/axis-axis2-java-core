@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -40,6 +41,7 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
+import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.utility.JavaUtils;
@@ -91,7 +93,7 @@ public class PackageSetBuilder {
      * @return Set of Packages
      */
     public static TreeSet<String> getPackagesFromSchema(ServiceDescription serviceDesc) {
-    	boolean annotationWalking = true;
+
     	TreeSet<String> set = new TreeSet<String>();
     	//If we are on client side we will get wsdl definition from ServiceDescription. If we are on server side we will have to 
     	//read wsdlLocation from @WebService Annotation.
@@ -102,6 +104,8 @@ public class PackageSetBuilder {
             for (int i=0; i< endpointDescs.length; i++) {
             	EndpointDescription ed = (EndpointDescription)endpointDescs[i];
             	if(wsdlDefinition == null){
+                    // TODO I don't think we should be trying to load the wsdlDefinition here.
+                    
             		//Let see if we can get wsdl definition from endpoint @WebService annotation.
                     if (ed instanceof EndpointDescriptionJava) {
                         String wsdlLocation = ((EndpointDescriptionJava) ed).getAnnoWebServiceWSDLLocation();
@@ -118,18 +122,7 @@ public class PackageSetBuilder {
            			}catch(SchemaReaderException e){
            				ExceptionFactory.makeWebServiceException(e);
            			}
-           			//FIXME: For now lets read packages from Annotation too. We will remove this once we are confident that 
-           			//Schema Walk thru works.
-           			if(annotationWalking){
-           				set.addAll(getPackagesFromAnnotations(serviceDesc));
-           			}
-           		}
-           		//if on client side, there is no wsdl provided by client application. if on server side there is no WSDLLocation on @WebService. 
-           		//let read all the required package from SEI Annotation.
-           		else{
-           			set.addAll(getPackagesFromAnnotations(serviceDesc));
-           		}    
-              
+           		}  
             }
     	}
     	return set;
@@ -139,14 +132,14 @@ public class PackageSetBuilder {
      * @param serviceDescription ServiceDescription
      * @return Set of Packages
      */
-    public static TreeSet<String> getPackagesFromAnnotations(ServiceDescription serviceDesc) {
+    public static TreeSet<String> getPackagesFromAnnotations(ServiceDescription serviceDesc, Map<String, AnnotationDesc> annotationMap) {
         TreeSet<String> set = new TreeSet<String>();
         EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
         
         // Build a set of packages from all of the endpoints
         if (endpointDescs != null) {
             for (int i=0; i< endpointDescs.length; i++) {
-                set.addAll(getPackagesFromAnnotations(endpointDescs[i]));
+                set.addAll(getPackagesFromAnnotations(endpointDescs[i], annotationMap));
             }
         }
         return set;
@@ -156,13 +149,14 @@ public class PackageSetBuilder {
      * @param endpointDesc EndpointDescription
      * @return Set of Packages
      */
-    public static TreeSet<String> getPackagesFromAnnotations(EndpointDescription endpointDesc) {
+    private static TreeSet<String> getPackagesFromAnnotations(EndpointDescription endpointDesc, 
+            Map<String, AnnotationDesc> annotationMap) {
         EndpointInterfaceDescription endpointInterfaceDesc = 
             endpointDesc.getEndpointInterfaceDescription();
         if (endpointInterfaceDesc == null) {
             return new TreeSet<String>(); 
         } else {
-            return getPackagesFromAnnotations(endpointInterfaceDesc);
+            return getPackagesFromAnnotations(endpointInterfaceDesc, annotationMap);
         }
     }
     
@@ -170,14 +164,15 @@ public class PackageSetBuilder {
      * @param endpointInterfaceDescription EndpointInterfaceDescription
      * @return Set of Packages
      */
-    public static TreeSet<String> getPackagesFromAnnotations(EndpointInterfaceDescription endpointInterfaceDesc) {
+    private static TreeSet<String> getPackagesFromAnnotations(EndpointInterfaceDescription endpointInterfaceDesc, 
+            Map<String, AnnotationDesc> annotationMap) {
         TreeSet<String> set = new TreeSet<String>();
         OperationDescription[] opDescs = endpointInterfaceDesc.getOperations();
         
         // Build a set of packages from all of the opertions
         if (opDescs != null) {
             for (int i=0; i< opDescs.length; i++) {
-                getPackagesFromAnnotations(opDescs[i], set);
+                getPackagesFromAnnotations(opDescs[i], set, annotationMap);
             }
         }
         return set;
@@ -188,13 +183,14 @@ public class PackageSetBuilder {
      * @param opDesc OperationDescription
      * @param set Set<Package> that is updated
      */
-    private static void getPackagesFromAnnotations(OperationDescription opDesc, TreeSet<String> set) {
+    private static void getPackagesFromAnnotations(OperationDescription opDesc, TreeSet<String> set, 
+            Map<String, AnnotationDesc> annotationMap) {
        
        // Walk the parameter information
        ParameterDescription[] parameterDescs = opDesc.getParameterDescriptions();
        if (parameterDescs != null) {
            for (int i=0; i <parameterDescs.length; i++) {
-               getPackagesFromAnnotations(parameterDescs[i], set);
+               getPackagesFromAnnotations(parameterDescs[i], set, annotationMap);
            }
        }
        
@@ -202,7 +198,7 @@ public class PackageSetBuilder {
        FaultDescription[] faultDescs = opDesc.getFaultDescriptions();
        if (faultDescs != null) {
            for (int i=0; i <faultDescs.length; i++) {
-               getPackagesFromAnnotations(faultDescs[i], set);
+               getPackagesFromAnnotations(faultDescs[i], set, annotationMap);
            }
        }
        
@@ -241,13 +237,14 @@ public class PackageSetBuilder {
      * @param paramDesc ParameterDesc
      * @param set Set<Package> that is updated
      */
-    private static void getPackagesFromAnnotations(ParameterDescription paramDesc, TreeSet<String> set) {
+    private static void getPackagesFromAnnotations(ParameterDescription paramDesc, TreeSet<String> set, 
+            Map<String, AnnotationDesc> annotationMap) {
        
        // Get the type that defines the actual data.  (this is never a holder )
        Class paramClass = paramDesc.getParameterActualType();
        
        if (paramClass != null) {
-           setTypeAndElementPackages(paramClass, paramDesc.getTargetNamespace(), paramDesc.getPartName(), set);
+           setTypeAndElementPackages(paramClass, paramDesc.getTargetNamespace(), paramDesc.getPartName(), set, annotationMap);
        }
        
     }
@@ -257,11 +254,12 @@ public class PackageSetBuilder {
      * @param faultDesc FaultDescription
      * @param set Set<Package> that is updated
      */
-    private static void getPackagesFromAnnotations(FaultDescription faultDesc, TreeSet<String> set) {
+    private static void getPackagesFromAnnotations(FaultDescription faultDesc, TreeSet<String> set, 
+            Map<String, AnnotationDesc> annotationMap) {
       
       Class faultBean = loadClass(faultDesc.getFaultBean());  
       if (faultBean != null) {
-          setTypeAndElementPackages(faultBean, faultDesc.getTargetNamespace(), faultDesc.getName(), set);
+          setTypeAndElementPackages(faultBean, faultDesc.getTargetNamespace(), faultDesc.getName(), set, annotationMap);
       }
     }
     
@@ -272,10 +270,11 @@ public class PackageSetBuilder {
      * @param localPart of the element
      * @param set with both type and element packages set
      */
-    private static void setTypeAndElementPackages(Class cls, String namespace, String localPart, TreeSet<String> set) {
+    private static void setTypeAndElementPackages(Class cls, String namespace, String localPart, TreeSet<String> set, 
+            Map<String, AnnotationDesc> annotationMap) {
         
         // Get the element and type classes
-        Class eClass = getElement(cls);
+        Class eClass = getElement(cls, annotationMap);
         Class tClass = getType(cls);
         
         // Set the package for the type
@@ -318,11 +317,16 @@ public class PackageSetBuilder {
      * @param cls Class
      * @return Class or null
      */
-    private static Class getElement(Class cls) {
-        if (XMLRootElementUtil.getXmlRootElementQName(cls) == null) {
-            return null;
+    private static Class getElement(Class cls, Map<String, AnnotationDesc> annotationMap) {
+        AnnotationDesc annotationDesc = annotationMap.get(cls.getCanonicalName());
+        if (annotationDesc == null) {
+            // This shouldn't happen
+            annotationDesc = AnnotationDescImpl.create(cls);
+        }
+        if (annotationDesc.hasXmlRootElement()) {
+            return cls;
         } 
-        return cls;
+        return null;
     }
     
     private final static Class[] noClass = new Class[] {};

@@ -1,6 +1,7 @@
 package org.apache.axis2.jaxws.runtime.description.marshal.impl;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 
 import org.apache.axis2.jaxws.description.ServiceDescription;
@@ -14,7 +15,7 @@ public class MarshalServiceRuntimeDescriptionImpl implements
     private ServiceDescription serviceDesc;
     private String key; 
     private TreeSet<String> packages;
-    private HashMap<String, AnnotationDesc> annotationMap = new HashMap<String, AnnotationDesc>();
+    private Map<String, AnnotationDesc> annotationMap = null;
     
     protected MarshalServiceRuntimeDescriptionImpl(String key,
                 ServiceDescription serviceDesc) {
@@ -52,5 +53,9 @@ public class MarshalServiceRuntimeDescriptionImpl implements
         return aDesc;
     }
     
+    
+    void setAnnotationMap(Map<String, AnnotationDesc> map) {
+        this.annotationMap = map;
+    }
     
 }
