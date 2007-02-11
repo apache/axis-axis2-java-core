@@ -50,4 +50,16 @@ public class ResourceInjectionServiceRuntimeDescriptionImpl implements
     void setResourceAnnotation(boolean value) {
         _hasResourceAnnotation = value;
     }
+    
+    public String toString() {
+        final String newline = "\n";
+        StringBuffer string = new StringBuffer();
+        
+        string.append(newline);
+        string.append("  ResourceInjectionServiceRuntime:" + getKey());
+        string.append(newline);
+        string.append("    @Resource Annotation = " + hasResourceAnnotation());
+        
+        return string.toString();
+    }
 }

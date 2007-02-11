@@ -130,7 +130,8 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             }
             
             // Get the child objects
-            Object[] objects = wrapperTool.unWrap(wrapperObject, names);
+            Object[] objects = wrapperTool.unWrap(wrapperObject, names, 
+                    marshalDesc.getPropertyDescriptorMap(wrapperObject.getClass()));
             
             // Now create a list of paramValues so that we can populate the signature
             List<PDElement> pvList = new ArrayList<PDElement>();
@@ -230,7 +231,8 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             }
             
             // Get the child objects
-            Object[] objects = wrapperTool.unWrap(wrapperObject, names);
+            Object[] objects = wrapperTool.unWrap(wrapperObject, names,
+                    marshalDesc.getPropertyDescriptorMap(wrapperObject.getClass()));
             
             // Now create a list of paramValues 
             List<PDElement> pvList = new ArrayList<PDElement>();
@@ -335,7 +337,8 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Now create the single JAXB element
             Class cls = MethodMarshallerUtils.loadClass(operationDesc.getResponseWrapperClassName());
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-            Object object  = wrapperTool.wrap(cls, nameList, objectList);
+            Object object  = wrapperTool.wrap(cls, nameList, objectList,
+                    marshalDesc.getPropertyDescriptorMap(cls));
             
             QName wrapperQName = new QName(operationDesc.getResponseWrapperTargetNamespace(),
                                            operationDesc.getResponseWrapperLocalName());
@@ -421,7 +424,8 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Now create the single JAXB element 
             Class cls = MethodMarshallerUtils.loadClass(operationDesc.getRequestWrapperClassName());
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-            Object object  = wrapperTool.wrap(cls, nameList, objectList);
+            Object object  = wrapperTool.wrap(cls, nameList, objectList,
+                    marshalDesc.getPropertyDescriptorMap(cls));
             
             QName wrapperQName = new QName(operationDesc.getRequestWrapperTargetNamespace(),
                     operationDesc.getRequestWrapperLocalName());
@@ -482,12 +486,11 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
         MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
-        TreeSet<String> packages = marshalDesc.getPackages();
         
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, 
-                    packages, 
+                    marshalDesc, 
                     message, 
                     false);
             return t;

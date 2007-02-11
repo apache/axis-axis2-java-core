@@ -427,11 +427,10 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
         MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
-        TreeSet<String> packages = marshalDesc.getPackages();
         
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, packages, message,  true); 
+            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, marshalDesc, message,  true); 
             return t;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);

@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.wrapper;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 
 /**
@@ -32,9 +33,24 @@ public interface JAXBWrapperTool {
      * Returns the list of child objects of the jaxb object
      * @param jaxbObject that represents the type
      * @param childNames list of xml child names as String
+     * @param pdMap PropertyDescriptorMap describing the jaxbObject
      * @return list of Objects in the same order as the element names.  
      */
-   public Object[] unWrap(Object jaxbObject, List<String> childNames) throws JAXBWrapperException;
+   public Object[] unWrap(Object jaxbObject, 
+           List<String> childNames, 
+           Map<String, PropertyDescriptorPlus> pdMap) throws JAXBWrapperException;
+   
+   /**
+    * unwrap 
+    * Returns the list of child objects of the jaxb object
+    * @param jaxbObject that represents the type
+    * @param childNames list of xml child names as String
+    * @return list of Objects in the same order as the element names.  
+    * Note: This method creates a PropertyDescriptor map; thus it is less
+    * performant than the other unWrap method
+    */
+  public Object[] unWrap(Object jaxbObject, 
+          List<String> childNames) throws JAXBWrapperException;
 
 
     /**
@@ -46,8 +62,29 @@ public interface JAXBWrapperTool {
      * @param jaxbClass 
      * @param childNames list of xml child names as String
      * @param childObjects, component type objects
+     * @param pdMap PropertyDescriptorMap describing the jaxbObject
      */ 
-    public Object wrap(Class jaxbClass, List<String> childNames, Map<String, Object> childObjects) throws JAXBWrapperException;
+    public Object wrap(Class jaxbClass, 
+            List<String> childNames, 
+            Map<String, Object> childObjects,
+            Map<String, PropertyDescriptorPlus> pdMap) throws JAXBWrapperException;
+    
+    /**
+     * wrap
+     * Creates a jaxb object that is initialized with the child objects.
+     * 
+     * Note that the jaxbClass must be the class the represents the complexType. (It should never be JAXBElement)
+     * 
+     * @param jaxbClass 
+     * @param childNames list of xml child names as String
+     * @param childObjects, component type objects
+     * @param pdMap PropertyDescriptorMap describing the jaxbObject
+     * Note: This method creates a PropertyDescriptor map; thus it is less
+     * performant than the other unWrap method
+     */ 
+    public Object wrap(Class jaxbClass, 
+            List<String> childNames, 
+            Map<String, Object> childObjects) throws JAXBWrapperException;
     
     
 }

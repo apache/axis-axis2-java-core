@@ -16,9 +16,11 @@
  */
 package org.apache.axis2.jaxws.runtime.description.marshal;
 
+import java.util.Map;
 import java.util.TreeSet;
 
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
+import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
 
 
 /**
@@ -32,9 +34,21 @@ public interface MarshalServiceRuntimeDescription extends ServiceRuntimeDescript
     public TreeSet<String> getPackages();
     
     /**
-     * Return AnnotationDesc for this class
+     * Get the AnnotationDesc for this class.
+     * If one is not cached, a new one is creatd
      * @param cls
-     * @return
+     * @return AnnotationDesc
      */
     public AnnotationDesc getAnnotationDesc(Class cls);
+    
+    
+    /**
+     * Get the PropertyDescriptor map for the class.
+     * The key of the map is a child xml local name.
+     * The value is a PropertyDescriptor, that will be used to 
+     * set/get values from a bean of the indicated class
+     * @param cls
+     * @return get the cached copy or create a new one
+     */
+    public Map<String, PropertyDescriptorPlus> getPropertyDescriptorMap(Class cls);
 }

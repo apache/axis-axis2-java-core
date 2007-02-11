@@ -47,6 +47,7 @@ import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.axis2.jaxws.utility.JavaUtils;
+import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 import org.apache.axis2.jaxws.wsdl.SchemaReader;
 import org.apache.axis2.jaxws.wsdl.SchemaReaderException;
@@ -58,31 +59,31 @@ import org.apache.commons.logging.LogFactory;
  * Walks the ServiceDescription and its child *Description classes
  * to find all of the types.  An AnnotationDesc is built for each of the types
  */
-public class AnnotationBuilder {
+public class PropertyDescriptorMapBuilder {
     
-    private static Log log = LogFactory.getLog(AnnotationBuilder.class);
+    private static Log log = LogFactory.getLog(PropertyDescriptorMapBuilder.class);
     
 
     /**
      * This is a static utility class.  The constructor is intentionally private
      */
-    private AnnotationBuilder() {
+    private PropertyDescriptorMapBuilder() {
     }
     
    
     
     /**
      * @param serviceDescription ServiceDescription
-     * @return AnnotationDesc Map
+     * @return PropertyDescriptor Map
      */
-    public static Map<String, AnnotationDesc> getAnnotationDescs(ServiceDescription serviceDesc) {
-        Map<String, AnnotationDesc> map = new HashMap<String, AnnotationDesc>();
+    public static Map<Class,Map<String, PropertyDescriptorPlus>> getPropertyDescMaps(ServiceDescription serviceDesc) {
+        Map<Class,Map<String, PropertyDescriptorPlus>> map = new HashMap<Class,Map<String, PropertyDescriptorPlus>>();
         EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
         
         // Build a set of packages from all of the endpoints
         if (endpointDescs != null) {
             for (int i=0; i< endpointDescs.length; i++) {
-                getAnnotationDescs(endpointDescs[i], map);
+                getPropertyDescMaps(endpointDescs[i], map);
             }
         }
         return map;
@@ -93,11 +94,11 @@ public class AnnotationBuilder {
      * @param endpointDesc
      * @param map
      */
-    private static void getAnnotationDescs(EndpointDescription endpointDesc, Map<String, AnnotationDesc> map) {
+    private static void getPropertyDescMaps(EndpointDescription endpointDesc, Map<Class,Map<String, PropertyDescriptorPlus>> map) {
         EndpointInterfaceDescription endpointInterfaceDesc = 
             endpointDesc.getEndpointInterfaceDescription();
         if (endpointInterfaceDesc != null) {
-            getAnnotationDescs(endpointInterfaceDesc, map);
+            getPropertyDescMaps(endpointInterfaceDesc, map);
         }
     }
     
@@ -106,13 +107,13 @@ public class AnnotationBuilder {
      * @param endpointInterfaceDesc
      * @param map
      */
-    private static void getAnnotationDescs(EndpointInterfaceDescription endpointInterfaceDesc, Map<String, AnnotationDesc> map) {
+    private static void getPropertyDescMaps(EndpointInterfaceDescription endpointInterfaceDesc, Map<Class,Map<String, PropertyDescriptorPlus>> map) {
         OperationDescription[] opDescs = endpointInterfaceDesc.getOperations();
         
         // Build a set of packages from all of the opertions
         if (opDescs != null) {
             for (int i=0; i< opDescs.length; i++) {
-                getAnnotationDescs(opDescs[i], map);
+                getPropertyDescMaps(opDescs[i], map);
             }
         }
     }
@@ -120,116 +121,74 @@ public class AnnotationBuilder {
     
     
     /**
-     * Get annotations for this operation
      * @param opDesc
      * @param map
      */
-    private static void getAnnotationDescs(OperationDescription opDesc, Map<String, AnnotationDesc> map) {
+    private static void getPropertyDescMaps(OperationDescription opDesc, Map<Class,Map<String, PropertyDescriptorPlus>> map) {
        
-       // Walk the parameter information
-       ParameterDescription[] parameterDescs = opDesc.getParameterDescriptions();
-       if (parameterDescs != null) {
-           for (int i=0; i <parameterDescs.length; i++) {
-               getAnnotationDescs(parameterDescs[i], map);
-           }
-       }
        
        // Walk the fault information
        FaultDescription[] faultDescs = opDesc.getFaultDescriptions();
        if (faultDescs != null) {
            for (int i=0; i <faultDescs.length; i++) {
-               getAnnotationDescs(faultDescs[i], map);
+               getPropertyDescMaps(faultDescs[i], map);
            }
        }
        
        // Also consider the request and response wrappers
-       addAnnotation(opDesc.getRequestWrapperClassName(), map);
-       addAnnotation(opDesc.getResponseWrapperClassName(), map);
+       addPropertyDesc(opDesc.getRequestWrapperClassName(), map);
+       addPropertyDesc(opDesc.getResponseWrapperClassName(), map);
        
-       
-       // Finally consider the result type
-       Class cls = opDesc.getResultActualType();
-       if (cls != null && cls != void.class && cls != Void.class) {
-           addAnnotation(cls, map);
-       }
-    }
-    
-    
-    private static void getAnnotationDescs(ParameterDescription paramDesc, Map<String, AnnotationDesc> map) {
-       
-       // Get the type that defines the actual data.  (this is never a holder )
-       Class paramClass = paramDesc.getParameterActualType();
-       
-       if (paramClass != null) {
-           getTypeAnnotationDescs(paramClass, map);
-       }
-       
-    }
-    
-    /**
-     * Update the package set with the packages referenced by this FaultDescription
-     * @param faultDesc FaultDescription
-     * @param set Set<Package> that is updated
-     */
-    private static void getAnnotationDescs(FaultDescription faultDesc, Map<String, AnnotationDesc> map) {
       
-      Class faultBean = loadClass(faultDesc.getFaultBean());  
-      if (faultBean != null) {
-          getTypeAnnotationDescs(faultBean, map);
-      }
     }
-    
-    private final static Class[] noClass = new Class[] {};
     
     /**
-     * Get the annotations for this type
-     * @param cls
+     * @param opDesc
+     * @param map
      */
-    private static void getTypeAnnotationDescs(Class cls, Map<String, AnnotationDesc> map) {
+    private static void getPropertyDescMaps(FaultDescription faultDesc, Map<Class,Map<String, PropertyDescriptorPlus>> map) {
+        // TODO The property descriptors for legacy exceptions and the corresponding fault beans could be cached at this point.
+        String faultDescExceptionName = faultDesc.getExceptionClassName();
+        Class faultDescException = loadClass(faultDescExceptionName);
+        if (faultDescException != null && isLegacyException(faultDescException)) {
+            
+            // For legacy exceptions, the fault bean is a "wrapper class" that has the same properties
+            // as the exception.  To marshal an exception:
+            //    1) the values are obtained from the legacy exception (using the exception's property desc map)
+            //    2) the values are placed on the fault bean (using the bean's property desc map)
+            //    3) the bean is marshalled.
+            // 
+            // Unmarshalling is outside the spec, but we do provide proprietary support.
+            // The algorithm is basically
+            //    1) unmarshall into the fault bean
+            //    2) the values on the fault bean are obtained (using the bean's property desc map)
+            //    3) use heuristics to find a matching constructor on the exception class.  If found it is instantiated.
+            
+            // To accomplish the above marshalling and unmarshalling we need the property descriptor maps
+            // for the exception and the bean.
+            String faultDescBeanName = faultDesc.getFaultBean();
+            Class faultDescBean = loadClass(faultDescBeanName);
+            if (faultDescBean != null) {
+                addPropertyDesc(faultDescBeanName, map);
+                addPropertyDesc(faultDescExceptionName, map);
+            }
+            
+        }
+    }
+    
+    private static void addPropertyDesc(String clsName, Map<Class,Map<String, PropertyDescriptorPlus>> map) {
         
-        if (JAXBElement.class.isAssignableFrom(cls)) {
+        Class cls = loadClass(clsName);
+        if (cls == null) {
+            return;
+        }
+        
+        if (map.get(cls) == null) {
             try {
-                Method m = cls.getMethod("getValue", noClass);
-                Class cls2 = m.getReturnType();
-                addAnnotation(cls2, map);
-                
-            } catch (Exception e) {
-                // We should never get here
-                if (log.isDebugEnabled()) {
-                    log.debug("Cannot find JAXBElement.getValue method.");
-                }
-            }
-        } else {
-            addAnnotation(cls, map);
-        }
-    }
-    
-    private static void addAnnotation(String className, Map<String, AnnotationDesc> map) {
-        
-        if (map.get(className) == null) {
-            Class clz = loadClass(className);
-            if (clz != null) {
-                addAnnotation(clz, map);
-            }
-        }
-    }
-    
-    private static void addAnnotation(Class cls, Map<String, AnnotationDesc> map) {
-        
-        String className = cls.getCanonicalName();
-        if (map.get(className) == null) {
-            AnnotationDesc desc = AnnotationDescImpl.create(cls);
-            map.put(className, desc);
-            if (cls.isPrimitive()) {
-                Class class2 = ClassUtils.getWrapperClass(cls);
-                AnnotationDesc desc2 = AnnotationDescImpl.create(class2);
-                map.put(class2.getCanonicalName(), desc2);
-            } else {
-                Class class2 = ClassUtils.getPrimitiveClass(cls);
-                if (class2 != null) {
-                    AnnotationDesc desc2 = AnnotationDescImpl.create(class2);
-                    map.put(class2.getCanonicalName(), desc2);
-                }
+                Map<String, PropertyDescriptorPlus> pdMap = XMLRootElementUtil.createPropertyDescriptorMap(cls);
+                map.put(cls, pdMap);
+            } catch (Throwable t) {
+                ExceptionFactory.makeWebServiceException(t);
             }
         }
     }
@@ -307,5 +266,29 @@ public class AnnotationBuilder {
        }
        
        return cl;
+   }
+   
+   /**
+    * A compliant exception has a @WebFault annotation and a getFaultInfo method.
+    * Legacy exceptions do not.
+    * @param cls
+    * @return true if legacy exception
+    * REVIEW perhaps this detection should be in FaultDescription
+    */
+   static boolean isLegacyException(Class cls) {
+       boolean legacyException = false;
+       
+       try {
+           Method getFaultInfo = cls.getMethod("getFaultInfo", null);
+       } catch (Exception e) {
+           // Failure indicates that this is not a legacy exception
+           legacyException = true;
+       }
+       if (legacyException) {
+           if (log.isDebugEnabled()) {
+               log.debug("Detected Legacy Exception = " + cls);
+           }
+       }
+       return legacyException;
    }
 }

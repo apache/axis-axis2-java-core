@@ -58,11 +58,27 @@ class AnnotationDescImpl implements AnnotationDesc {
             return aDesc;
         }
         aDesc._hasXmlRootElement = true;
-        String name = qName.getLocalPart();
-        String namespace = qName.getNamespaceURI();
+        aDesc._XmlRootElementName = qName.getLocalPart();
+        aDesc._XmlRootElementNamespace = qName.getNamespaceURI();
           
         return aDesc;
     }
     
-    
+    public String toString() {
+        final String newline = "\n";
+        StringBuffer string = new StringBuffer();
+        
+        string.append(newline);
+        string.append("      @XMLRootElement exists = " + this.hasXmlRootElement());
+        
+        if (this.hasXmlRootElement()) {
+            string.append(newline);
+            string.append("      @XMLRootElement namespace = " + this.getXmlRootElementNamespace());
+            string.append(newline);
+            string.append("      @XMLRootElement name      = " + this.getXmlRootElementName());
+        }
+        
+        
+        return string.toString();
+    }
 }

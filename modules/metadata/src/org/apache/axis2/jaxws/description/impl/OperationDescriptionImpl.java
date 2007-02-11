@@ -31,8 +31,8 @@ import java.util.concurrent.Future;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
-import javax.jws.WebParam.Mode;
 import javax.jws.WebResult;
+import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding;
 import javax.xml.namespace.QName;
 import javax.xml.ws.AsyncHandler;
@@ -44,7 +44,6 @@ import javax.xml.ws.WebFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
-import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.FaultDescription;
@@ -1480,6 +1479,12 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             string.append("No Fault Descriptions");
         }
 
+        string.append("RuntimeDescriptions:" +this.runtimeDescMap.size());
+        string.append(newline);
+        for (OperationRuntimeDescription runtimeDesc:runtimeDescMap.values()) {
+            string.append(runtimeDesc.toString());
+            string.append(newline);
+        }
         return string.toString();
     }
 }

@@ -18,7 +18,6 @@ package org.apache.axis2.jaxws.runtime.description.injection;
 
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
-import org.apache.axis2.jaxws.runtime.description.impl.OperationRuntimeDescriptionBuilder;
 import org.apache.axis2.jaxws.runtime.description.injection.impl.ResourceInjectionServiceRuntimeDescriptionBuilder;
 
 public class ResourceInjectionServiceRuntimeDescriptionFactory {

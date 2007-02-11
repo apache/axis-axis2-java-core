@@ -314,7 +314,6 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
         MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
-        TreeSet<String> packages = marshalDesc.getPackages();
         
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
@@ -345,11 +344,10 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
         MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
-        TreeSet<String> packages = marshalDesc.getPackages();
         
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, packages, message, false);
+            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, marshalDesc, message, false);
             return t;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);

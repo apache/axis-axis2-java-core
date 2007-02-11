@@ -528,7 +528,7 @@ public class MethodMarshallerUtils  {
                 
                 if (LegacyExceptionUtil.isLegacyException(t.getClass())) {
                     // Legacy Exception case
-                    faultBeanObject = LegacyExceptionUtil.createFaultBean(t, fd);
+                    faultBeanObject = LegacyExceptionUtil.createFaultBean(t, fd, marshalDesc);
                 } else {
                     // Normal case
                     // Get the fault bean object.  
@@ -670,7 +670,7 @@ public class MethodMarshallerUtils  {
      * Unmarshal the service/system exception from a Message.
      * This is used by all of the marshallers
      * @param operationDesc
-     * @param packages
+     * @param marshalDesc
      * @param message
      * @param isRPC
      * @return Throwable
@@ -682,7 +682,10 @@ public class MethodMarshallerUtils  {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    static Throwable demarshalFaultResponse(OperationDescription operationDesc, TreeSet<String> packages,Message message, boolean isRPC) 
+    static Throwable demarshalFaultResponse(OperationDescription operationDesc, 
+            MarshalServiceRuntimeDescription marshalDesc,
+            Message message, 
+            boolean isRPC) 
         throws WebServiceException, ClassNotFoundException, IllegalAccessException,
                InstantiationException, XMLStreamException, InvocationTargetException, NoSuchMethodException {
         
@@ -733,7 +736,7 @@ public class MethodMarshallerUtils  {
                 log.debug("Ready to demarshal service exception.  The detail entry name is " + elementQName);
             }
             // Get the JAXB object from the block
-            JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
+            JAXBBlockContext blockContext = new JAXBBlockContext(marshalDesc.getPackages());        
             
             if (isRPC) {
                 // RPC is problem ! 
@@ -764,7 +767,11 @@ public class MethodMarshallerUtils  {
                 log.debug("Found FaultDescription.  The exception name is " + exceptionClass.getName());
             }
             Class faultBeanFormalClass = loadClass(faultDesc.getFaultBean());  // Note that faultBean may not be a bean, it could be a primitive     
-            exception =createServiceException(xmlfault.getReason().getText(), exceptionClass, faultBeanObject, faultBeanFormalClass);
+            exception =createServiceException(xmlfault.getReason().getText(), 
+                    exceptionClass, 
+                    faultBeanObject, 
+                    faultBeanFormalClass, 
+                    marshalDesc);
         }
         return exception;
     }
@@ -877,13 +884,18 @@ public class MethodMarshallerUtils  {
      * @param exceptionclass
      * @param bean
      * @param beanFormalType
+     * @parma marshalDesc is used to get cached information about the exception class and bean
      * @return
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      * @throws InstantiationException
      * @throws NoSuchMethodException
      */
-    private static Exception createServiceException(String message, Class exceptionclass, Object bean, Class beanFormalType) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
+    private static Exception createServiceException(String message, 
+            Class exceptionclass, 
+            Object bean, 
+            Class beanFormalType, 
+            MarshalServiceRuntimeDescription marshalDesc) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
         
         if (log.isDebugEnabled()) {
             log.debug("Constructing JAX-WS Exception:" + exceptionclass);
@@ -891,7 +903,7 @@ public class MethodMarshallerUtils  {
         Exception exception = null;
         if (LegacyExceptionUtil.isLegacyException(exceptionclass)) {
             // Legacy Exception
-            exception = LegacyExceptionUtil.createFaultException(exceptionclass, bean);
+            exception = LegacyExceptionUtil.createFaultException(exceptionclass, bean, marshalDesc);
         } else {
             // Normal case, use the contstructor to create the exception
             Constructor constructor = exceptionclass.getConstructor(new Class[] { String.class, beanFormalType });

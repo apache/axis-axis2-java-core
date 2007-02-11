@@ -1224,7 +1224,12 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
                 string.append(newline);
             }
         }
-
+        string.append("RuntimeDescriptions:" +this.runtimeDescMap.size());
+        string.append(newline);
+        for (ServiceRuntimeDescription runtimeDesc:runtimeDescMap.values()) {
+            string.append(runtimeDesc.toString());
+            string.append(newline);
+        }
         return string.toString();
         
     }

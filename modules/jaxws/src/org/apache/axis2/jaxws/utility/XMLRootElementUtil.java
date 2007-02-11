@@ -21,12 +21,10 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import javax.xml.bind.JAXBElement;
@@ -129,16 +127,14 @@ public class XMLRootElementUtil {
      * @param jaxbClass
      * @return map
      */
-    public static Map<String, PropertyDescriptor> createPropertyDescriptorMap(Class jaxbClass) throws NoSuchFieldException, IntrospectionException {
+    public static Map<String, PropertyDescriptorPlus> createPropertyDescriptorMap(Class jaxbClass) throws NoSuchFieldException, IntrospectionException {
         
         if (log.isDebugEnabled()) {
             log.debug("Get the PropertyDescriptor[] for " + jaxbClass);
         }
         
-        // TODO This is a very performance intensive search we should cache the calculated map keyed by the jaxbClass
         PropertyDescriptor[] pds = Introspector.getBeanInfo(jaxbClass).getPropertyDescriptors();
-        // Make this a weak map in case we want to cache the results
-        Map<String, PropertyDescriptor> map = new HashMap<String, PropertyDescriptor>();
+        Map<String, PropertyDescriptorPlus> map = new HashMap<String, PropertyDescriptorPlus>();
         
         // Unfortunately the element names are stored on the fields.
         // Get all of the fields in the class and super classes
@@ -173,10 +169,10 @@ public class XMLRootElementUtil {
                     }
                     if (map.get(xmlName) != null) {
                         if (log.isDebugEnabled()) {
-                            log.debug("    ALERT: property " + map.get(xmlName).getName() + " already has this same xmlName..this may cause problems.");
+                            log.debug("    ALERT: property " + map.get(xmlName).getPropertyName() + " already has this same xmlName..this may cause problems.");
                         }
                     }
-                    map.put(xmlName, pd);
+                    map.put(xmlName, new PropertyDescriptorPlus(pd, xmlName));
                     break;
                 }
                 
@@ -193,10 +189,10 @@ public class XMLRootElementUtil {
                         }
                         if (map.get(xmlName) != null) {
                             if (log.isDebugEnabled()) {
-                                log.debug("    ALERT: property " + map.get(xmlName).getName() + " already has this same xmlName..this may cause problems.");
+                                log.debug("    ALERT: property " + map.get(xmlName).getPropertyName() + " already has this same xmlName..this may cause problems.");
                             }
                         }
-                        map.put(xmlName, pd);
+                        map.put(xmlName, new PropertyDescriptorPlus(pd, xmlName));
                         break;
                     }
                 }
@@ -210,10 +206,10 @@ public class XMLRootElementUtil {
                 }
                 if (map.get(xmlName) != null) {
                     if (log.isDebugEnabled()) {
-                        log.debug("    ALERT: property " + map.get(xmlName).getName() + " already has this same xmlName..this may cause problems.");
+                        log.debug("    ALERT: property " + map.get(xmlName).getPropertyName() + " already has this same xmlName..this may cause problems.");
                     }
                 }
-                map.put(xmlName, pd);
+                map.put(xmlName, new PropertyDescriptorPlus(pd, xmlName));
             }
             if (log.isDebugEnabled()) {
                 log.debug("  End: Find xmlname for property:" + pd.getName());
