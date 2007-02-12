@@ -88,6 +88,8 @@
    
    <xsd:element name="headerParam" type="xsd:string" />
    <xsd:element name="headerReturn" type="xsd:string" />
+   
+    <xsd:element name="myFault" type="xsd:int" />
   </schema>
  </wsdl:types>
 
@@ -239,9 +241,13 @@
       <wsdl:part name="headerReturn" element="impl:headerReturn"/>
 
    </wsdl:message>
-
-
-  
+   
+   <wsdl:message name="testFaultRequest" />
+   <wsdl:message name="testFaultResponse" />
+   
+   <wsdl:message name="rpcFault">
+     <wsdl:part name="rpcFault" element="impl:myFault" />
+   </wsdl:message>
 
    <wsdl:portType name="RPCLit">
      
@@ -331,6 +337,14 @@
 
          <wsdl:output message="impl:testComplexAll6Response" name="testComplexAll6Response"/>
 
+      </wsdl:operation>
+      
+      <wsdl:operation name="testFault">
+
+         <wsdl:input message="impl:testFaultRequest" name="testFaultRequest"/>
+
+         <wsdl:output message="impl:testFaultResponse" name="testFaultResponse"/>
+         <wsdl:fault name="rpcFault" message="impl:rpcFault" />
       </wsdl:operation>
       
    </wsdl:portType>
@@ -518,6 +532,26 @@
 
          </wsdl:output>
 
+      </wsdl:operation> 
+      <wsdl:operation name="testFault">
+
+         <wsdlsoap:operation soapAction="testFault"/>
+
+         <wsdl:input name="testFaultRequest">
+
+            <wsdlsoap:body namespace="http://org/apache/axis2/jaxws/proxy/rpclit" use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="testFaultResponse">
+
+            <wsdlsoap:body namespace="http://org/apache/axis2/jaxws/proxy/rpclit" use="literal"/>
+
+         </wsdl:output>
+         <wsdl:fault name="rpcFault">
+            <wsdlsoap:fault name="rpcFault" use="literal" />
+         </wsdl:fault>
+
       </wsdl:operation>      
 
    </wsdl:binding>
@@ -533,3 +567,4 @@
    </wsdl:service>
 
 </wsdl:definitions>
+

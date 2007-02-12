@@ -206,6 +206,10 @@ public interface RPCLit {
         @WebParam(name = "arg_7_0", partName = "arg_7_0")
         String[] arg70);
 
-  
+    /**
+     * Tests Fault
+     */
+    @WebMethod(operationName="testFault", action="testFault")
+    public void testFault() throws RPCFault;
 
 }

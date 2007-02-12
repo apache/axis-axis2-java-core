@@ -738,12 +738,13 @@ public class MethodMarshallerUtils  {
             // Get the JAXB object from the block
             JAXBBlockContext blockContext = new JAXBBlockContext(marshalDesc.getPackages());        
             
+            // Note that faultBean may not be a bean, it could be a primitive 
+            Class faultBeanFormalClass = loadClass(faultDesc.getFaultBean());     
             if (isRPC) {
                 // RPC is problem ! 
                 // Since RPC is type based, JAXB needs the declared type
                 // to unmarshal the object.
-                Class rpcType = faultDesc.getClass();
-                blockContext.setRPCType(rpcType);
+                blockContext.setRPCType(faultBeanFormalClass);
                 
             }
             
@@ -766,7 +767,6 @@ public class MethodMarshallerUtils  {
             if (log.isErrorEnabled()) {
                 log.debug("Found FaultDescription.  The exception name is " + exceptionClass.getName());
             }
-            Class faultBeanFormalClass = loadClass(faultDesc.getFaultBean());  // Note that faultBean may not be a bean, it could be a primitive     
             exception =createServiceException(xmlfault.getReason().getText(), 
                     exceptionClass, 
                     faultBeanObject, 

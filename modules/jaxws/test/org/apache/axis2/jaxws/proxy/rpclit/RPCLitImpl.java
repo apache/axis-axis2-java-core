@@ -25,6 +25,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCFault;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
 import org.test.proxy.rpclit.ComplexAll;
 import org.test.proxy.rpclit.Enum;
@@ -152,5 +153,9 @@ public class RPCLitImpl implements RPCLit {
 
     public String testHeader(String bodyParam, String headerParam) {
         return bodyParam + headerParam;
+    }
+
+    public void testFault() throws RPCFault {
+        throw new RPCFault("Throw RPCFault", 123);
     }
 }

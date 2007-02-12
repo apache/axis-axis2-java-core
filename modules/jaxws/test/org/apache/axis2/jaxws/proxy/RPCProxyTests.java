@@ -35,6 +35,7 @@ import javax.xml.ws.WebServiceException;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.proxy.rpclit.RPCLitImpl;
+import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCFault;
 import org.apache.axis2.jaxws.proxy.rpclit.sei.RPCLit;
 import org.test.proxy.rpclit.ComplexAll;
 import org.test.proxy.rpclit.Enum;
@@ -126,6 +127,24 @@ public class RPCProxyTests extends TestCase {
         assertTrue(response != null);
         assertTrue(response.equals("helloworld"));
         
+    }
+    
+    /**
+     * Simple test that ensures that a service fault is thrown correctly
+     */
+    public void testFault() throws Exception {
+        try{ 
+            RPCLit proxy = getProxy();
+     
+            proxy.testFault();
+            fail("Expected RPCFault");
+        } catch(RPCFault rpcFault){ 
+            assertTrue(rpcFault.getMessage().equals("Throw RPCFault"));
+            assertTrue(rpcFault.getFaultInfo() == 123);
+        } catch(Exception e){ 
+            e.printStackTrace(); 
+            fail("Exception received" + e);
+        }
     }
     
     /**
