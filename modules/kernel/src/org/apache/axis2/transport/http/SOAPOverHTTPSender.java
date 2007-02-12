@@ -148,7 +148,7 @@ public class SOAPOverHTTPSender extends AbstractHTTPSender {
         Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
         if (cookieString != null) {
             StringBuffer buffer = new StringBuffer();
-            buffer.append(Constants.SESSION_COOKIE);
+            buffer.append(Constants.SESSION_COOKIE_JSESSIONID);
             buffer.append("=");
             buffer.append(cookieString);
             postMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE, buffer.toString());

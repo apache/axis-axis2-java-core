@@ -241,7 +241,8 @@ public abstract class AbstractHTTPSender {
             HeaderElement[] elements = cookieHeaders[i].getElements();
             for (int e = 0; e < elements.length; e++) {
                 HeaderElement element = elements[e];
-                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())) {
+                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())||
+                        Constants.SESSION_COOKIE_JSESSIONID.equalsIgnoreCase(element.getName())) {
                     sessionCookie = element.getValue();
                 }
             }
@@ -252,7 +253,8 @@ public abstract class AbstractHTTPSender {
             HeaderElement[] elements = cookieHeaders[i].getElements();
             for (int e = 0; e < elements.length; e++) {
                 HeaderElement element = elements[e];
-                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())) {
+                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())||
+                        Constants.SESSION_COOKIE_JSESSIONID.equalsIgnoreCase(element.getName())) {
                     sessionCookie = element.getValue();
                 }
             }

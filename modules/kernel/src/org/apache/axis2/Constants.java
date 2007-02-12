@@ -220,6 +220,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
      */
     public static final String COOKIE_STRING = "Cookie";
     public static final String SESSION_COOKIE = "axis_session";
+    public static final String SESSION_COOKIE_JSESSIONID = "JSESSIONID";
 
     /**
      * Addressing Constants
