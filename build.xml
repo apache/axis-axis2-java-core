@@ -254,7 +254,6 @@
       <include name="rahas/src/**/*.java"/>
       <include name="saaj/src/**/*.java"/>
       <include name="samples/src/**/*.java"/>
-      <include name="savan/src/**/*.java"/>
       <include name="security/src/**/*.java"/>
       <include name="soapmonitor/src/**/*.java"/>
       <include name="spring/src/**/*.java"/>

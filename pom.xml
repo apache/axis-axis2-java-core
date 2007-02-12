@@ -43,7 +43,6 @@
 		<module>modules/json</module>
 		<module>modules/mtompolicy</module>
 		<module>modules/spring</module>
-		<module>modules/savan</module> 
 	</modules>
 	<profiles>
 		<profile>
