@@ -190,7 +190,9 @@ public class ContextUitls {
         SOAPMessageContext soapMessageContext = null;
         if(serviceContext !=null){
         	WebServiceContext wsc =(WebServiceContext) serviceContext.getProperty(WEBSERVICE_MESSAGE_CONTEXT);
-        	soapMessageContext = (SOAPMessageContext)wsc.getMessageContext();
+            if(wsc != null) {
+                soapMessageContext = (SOAPMessageContext)wsc.getMessageContext();
+            }
         }
 		OperationDescription op = jaxwsMessageContext.getOperationDescription();
 		

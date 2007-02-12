@@ -18,6 +18,7 @@
 package org.apache.axis2.jaxws.server;
 
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.Binding;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.OperationContext;
@@ -29,6 +30,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.InvocationContextImpl;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.core.InvocationContextFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.util.Constants;
@@ -47,7 +49,8 @@ public class JAXWSMessageReceiver implements MessageReceiver {
 private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
     
     private static String PARAM_SERVICE_CLASS = "ServiceClass";
-    
+    public static String PARAM_BINDING = "Binding";
+
     /**
      * We should have already determined which AxisService we're targetting at
      * this point.  So now, just get the service implementation and invoke
@@ -86,8 +89,9 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
         	EndpointController endpointCtlr = new EndpointController();
           	
             MessageContext requestMsgCtx = new MessageContext(axisRequestMsgCtx);
-            
-            InvocationContext ic = new InvocationContextImpl();            
+
+            Binding binding = (Binding) axisRequestMsgCtx.getProperty(PARAM_BINDING);
+            InvocationContext ic = InvocationContextFactory.createInvocationContext(binding);
             ic.setRequestMessageContext(requestMsgCtx);
             
             //TODO:Once we the JAX-WS MessageContext one of the next things that

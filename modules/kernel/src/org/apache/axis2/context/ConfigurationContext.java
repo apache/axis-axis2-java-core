@@ -153,7 +153,9 @@ public class ConfigurationContext extends AbstractContext {
                 messageContext.getOperationContext().setParent(serviceContext);
             }
         }
-        messageContext.getOperationContext().setParent(serviceContext);
+        if(messageContext.getOperationContext() != null) {
+            messageContext.getOperationContext().setParent(serviceContext);
+        }
     }
 
     /**
