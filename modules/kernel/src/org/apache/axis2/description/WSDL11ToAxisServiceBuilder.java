@@ -298,12 +298,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // process the port type for this binding
         // although we support multiports they must be belongs to same port type and should have the
         // same soap style
-        populatePortType(binding.getPortType());
+        populatePortType(wsdl4jDefinition.getPortType(binding.getPortType().getQName()));
+
+        Binding currentBinding;
 
         for (Iterator iterator = wsdl4jPorts.values().iterator(); iterator.hasNext();) {
             port = (Port) iterator.next();
             // we process the port only if it has the same port type as the selected binding
-            if (port.getBinding().getPortType().getQName().equals(binding.getPortType().getQName())){
+            currentBinding = wsdl4jDefinition.getBinding(port.getBinding().getQName());
+            if (currentBinding.getPortType().getQName().equals(binding.getPortType().getQName())){
                 axisEndpoint = new AxisEndpoint();
                 axisEndpoint.setName(port.getName());
 
@@ -341,7 +344,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisEndpoint, BINDING);
 
         AxisBinding axisBinding = new AxisBinding();
-        Binding wsdl4jBinding = wsdl4jPort.getBinding();
+        Binding wsdl4jBinding = wsdl4jDefinition.getBinding(wsdl4jPort.getBinding().getQName());
 
         axisBinding.setName(wsdl4jBinding.getQName());
         axisEndpoint.setBinding(axisBinding);
@@ -483,11 +486,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         AxisBindingOperation axisBindingOperation;
         BindingOperation wsdl4jBindingOperation;
 
+        PortType portType = wsdl4jDefinition.getPortType(wsdl4jBinding.getPortType().getQName());
+
         for (Iterator iterator = wsdl4jBidingOperations.iterator(); iterator.hasNext();) {
 
             axisBindingOperation = new AxisBindingOperation();
             wsdl4jBindingOperation = (BindingOperation) iterator.next();
-            wsdl4jOperation = wsdl4jBindingOperation.getOperation();
+            wsdl4jOperation = findOperation(portType, wsdl4jBindingOperation);
 
             axisBindingOperation.setName(new QName("", wsdl4jBindingOperation.getName()));
 
@@ -631,7 +636,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // setupComplete
     }
 
-    
+
     /**
      * Populate a map of targetNamespace vs DOM schema element This is used to
      * grab the correct schema element when adding a new element
