@@ -25,14 +25,6 @@ import java.util.*;
 
 public class SimpleTypeMapper {
 
-    private static SimpleDateFormat zulu =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    //  0123456789 0 123456789
-
-    static {
-        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
-
     private static final String STRING = "java.lang.String";
     private static final String W_INT = "java.lang.Integer";
     private static final String W_DOUBLE = "java.lang.Double";
@@ -203,8 +195,12 @@ public class SimpleTypeMapper {
                 return obj.toString();
             }
         } else if (obj instanceof Calendar) {
+            SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
             return zulu.format(((Calendar) obj).getTime());
         } else if (obj instanceof Date) {
+            SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
             return zulu.format(obj);
         }
         return obj.toString();
@@ -238,9 +234,9 @@ public class SimpleTypeMapper {
         }
         // convert what we have validated so far
         try {
-            synchronized (zulu) {
+                SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
                 date = zulu.parse(source.substring(0, 19) + ".000Z");
-            }
         } catch (Exception e) {
             throw new NumberFormatException(e.toString());
         }
