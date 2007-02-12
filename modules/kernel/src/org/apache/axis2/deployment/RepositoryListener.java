@@ -197,12 +197,12 @@ public class RepositoryListener implements DeploymentConstants {
           Iterator keys = directoryToExtensionMappingMap.keySet().iterator();
            while (keys.hasNext()) {
                String s = (String) keys.next();
-               findFileForGiveDirectory(s,(String)directoryToExtensionMappingMap.get(s));
+               findFileForGivenDirectory(s,(String)directoryToExtensionMappingMap.get(s));
            }
        }
     }
 
-    private void findFileForGiveDirectory(String dir , String extension){
+    private void findFileForGivenDirectory(String dir , String extension){
         try {
             File fileTobeSearch = new File(deploymentEngine.getRepositoryDir(),dir);
             if(fileTobeSearch.exists()){

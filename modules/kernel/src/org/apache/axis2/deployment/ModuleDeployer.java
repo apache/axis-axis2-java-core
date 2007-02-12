@@ -115,4 +115,6 @@ public class ModuleDeployer implements Deployer {
     public void setDirectory(String directory) {}
 
     public void setExtension(String extension) {}
+
+    public void unDeploy(String fileName) {}
 }

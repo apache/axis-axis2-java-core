@@ -34,4 +34,5 @@ public interface Deployer {
     void deploy(DeploymentFileData deploymentFileData);
     void setDirectory(String directory);
     void setExtension(String extension);
+    void unDeploy(String fileName);
 }

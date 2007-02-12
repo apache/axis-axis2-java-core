@@ -139,4 +139,16 @@ public class ServiceDeployer implements Deployer {
 
     public void setExtension(String extension) {
     }
+
+    public void unDeploy(String fileName) {
+        try {
+            fileName = DeploymentEngine.getAxisServiceName(fileName);
+            axisConfig.removeServiceGroup(fileName);
+            log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
+                    fileName));
+        } catch (AxisFault axisFault) {
+            //May be a faulty service
+            axisConfig.removeFaultyService(fileName);
+        }
+    }
 }
