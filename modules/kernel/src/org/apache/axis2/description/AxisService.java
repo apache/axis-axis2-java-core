@@ -664,7 +664,9 @@ public class AxisService extends AxisDescription {
             if (wsld4jdefinition != null) {
                 try {
                     Definition definition = (Definition) wsld4jdefinition.getValue();
-                    setPortAddress(definition);
+                    if (isModifyUserWSDLPortAddress()) {
+						setPortAddress(definition);
+					}
                     WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
                     writer.writeWSDL(definition, out);
                 } catch (WSDLException e) {
@@ -766,7 +768,9 @@ public class AxisService extends AxisDescription {
             if (wsld4jdefinition != null) {
                 try {
                     Definition definition = (Definition) wsld4jdefinition.getValue();
-                    setPortAddress(definition);
+					if (isModifyUserWSDLPortAddress()){
+						setPortAddress(definition);
+					}
                     WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
                     writer.writeWSDL(definition, out);
                 } catch (WSDLException e) {
@@ -783,6 +787,10 @@ public class AxisService extends AxisDescription {
     }
 
     private void setPortAddress(Definition definition) throws AxisFault {
+		setPortAddress(definition,null);
+    }
+
+    private void setPortAddress(Definition definition,String requestIP) throws AxisFault {
         Iterator serviceItr = definition.getServices().values().iterator();
         while (serviceItr.hasNext()) {
             Service serviceElement = (Service) serviceItr.next();
@@ -793,7 +801,11 @@ public class AxisService extends AxisDescription {
                 for (int i = 0; i < list.size(); i++) {
                     Object extensibilityEle = list.get(i);
                     if (extensibilityEle instanceof SOAPAddress) {
-                        ((SOAPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
+						if (requestIP==null) {
+							((SOAPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
+						} else {
+							((SOAPAddress) extensibilityEle).setLocationURI(getEPRs(requestIP)[0]);
+						}
                     }
                 }
             }
@@ -1850,6 +1862,22 @@ public class AxisService extends AxisDescription {
             }
         }
         return false;
+    }
+
+    /**
+     * By default the port address in user WSDLs is modified, set 
+     * the following parameter to override this behaviour	
+     * <parameter name="modifyUserWSDLPortAddress">false</parameter>
+     */
+    public boolean isModifyUserWSDLPortAddress() {
+        Parameter parameter = getParameter("modifyUserWSDLPortAddress");
+        if (parameter != null) {
+            String value = (String) parameter.getValue();
+            if ("false".equals(value)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public ServiceLifeCycle getServiceLifeCycle() {
