@@ -46,8 +46,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 
-public class ContextUitls {
-    private static final Log log = LogFactory.getLog(ContextUitls.class);
+public class ContextUtils {
+    private static final Log log = LogFactory.getLog(ContextUtils.class);
     private static final String WEBSERVICE_MESSAGE_CONTEXT = "javax.xml.ws.WebServiceContext";
 
     /**

@@ -30,7 +30,7 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
-import org.apache.axis2.jaxws.context.utils.ContextUitls;
+import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
@@ -225,7 +225,7 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
 	
 	 private javax.xml.ws.handler.MessageContext createSOAPMessageContext(MessageContext mc){
 		SoapMessageContext soapMessageContext = (SoapMessageContext)MessageContextFactory.createSoapMessageContext(mc);
-		ContextUitls.addProperties(soapMessageContext, mc);
+		ContextUtils.addProperties(soapMessageContext, mc);
 		return soapMessageContext;
 	 }
 	 
