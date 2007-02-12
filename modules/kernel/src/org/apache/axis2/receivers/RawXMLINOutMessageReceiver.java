@@ -87,9 +87,6 @@ public class RawXMLINOutMessageReceiver extends AbstractInOutSyncMessageReceiver
                 SOAPEnvelope envelope = fac.getDefaultEnvelope();
 
                 if (result != null) {
-                    AxisService service = msgContext.getAxisService();
-                    result.declareNamespace(service.getTargetNamespace(),
-                            service.getTargetNamespacePrefix());
                     envelope.getBody().addChild(result);
                 }
 
