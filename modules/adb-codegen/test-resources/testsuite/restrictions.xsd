@@ -66,4 +66,17 @@
 
     <xsd:element name="ComplexRestrictionTypeTestElement" type="tns:ParentRestrictionType"/>
 
+    <xsd:simpleType name="ErrorCodeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+    <xsd:simpleType name="TestSimpleTypeRestrictionPattern">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="\d{4}((-\d{2}){0,1}-\d{2}){0,1}"></xsd:pattern>
+        </xsd:restriction>
+    </xsd:simpleType>
+
 </xsd:schema>

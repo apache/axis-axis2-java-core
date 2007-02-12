@@ -1435,7 +1435,9 @@ public class SchemaCompiler {
 
             if (obj instanceof XmlSchemaPatternFacet) {
                 XmlSchemaPatternFacet pattern = (XmlSchemaPatternFacet) obj;
-                metaInfHolder.setPatternFacet(pattern.getValue().toString());
+                // some patterns contain \ so we have to replace them
+                String patternString = pattern.getValue().toString();
+                metaInfHolder.setPatternFacet(patternString.replaceAll("\\\\","\\\\\\\\"));
             }
 
             else if (obj instanceof XmlSchemaEnumerationFacet) {
