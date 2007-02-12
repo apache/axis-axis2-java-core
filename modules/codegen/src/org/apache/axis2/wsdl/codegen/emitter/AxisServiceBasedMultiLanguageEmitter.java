@@ -2787,7 +2787,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                 addAttribute(doc, "type", typeMappingStr, param);
                 addAttribute(doc, "location", location, param);
-                addAttribute(doc, "mustUnderstand", header.isMustUnderstand().toString(), param);
+                if (header.isMustUnderstand()){
+                   addAttribute(doc, "mustUnderstand","true", param); 
+                }
                 parameterElementList.add(param);
             }
         }
