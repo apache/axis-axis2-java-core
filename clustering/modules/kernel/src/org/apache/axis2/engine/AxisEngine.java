@@ -27,7 +27,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -201,15 +200,6 @@ public class AxisEngine {
           flowComplete(msgContext, true);
           throw e;
         }
-        
-        // Choosing this as the replication point.
-        ServiceContext ctx = msgContext.getServiceContext();
-        
-		if (ctx != null){
-			ClusterManager clusterManager = confContext.getAxisConfiguration()
-					.getClusterManager();
-			clusterManager.updateState(ctx);
-		}
         
         return InvocationResponse.CONTINUE;
     }

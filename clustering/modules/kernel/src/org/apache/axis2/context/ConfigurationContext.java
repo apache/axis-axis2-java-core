@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.axiom.om.util.UUIDGenerator;
@@ -73,7 +74,8 @@ public class ConfigurationContext extends AbstractContext {
         this.axisConfiguration = axisConfiguration;
         initConfigContextTimeout(axisConfiguration);
 
-        initCluster();
+        if (axisConfiguration.getClusterManager()!=null)
+        	initCluster();
     }
 
     private void initCluster() {
@@ -136,14 +138,20 @@ public class ConfigurationContext extends AbstractContext {
                     if (axisServiceGroup == null) {
                         axisServiceGroup = (AxisServiceGroup) axisService.getParent();
                     }
-                    serviceGroupContext = new ServiceGroupContext(messageContext.getConfigurationContext(),
-                            axisServiceGroup);
+                    
+                    serviceGroupContext = new ServiceGroupContext(this, axisServiceGroup);
 
                     if (applicationSessionServiceGroupContextTable == null) {
                         applicationSessionServiceGroupContextTable = new Hashtable();
                     }
                     applicationSessionServiceGroupContextTable.put(serviceGroupName, serviceGroupContext);
-
+                    
+                    ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
+                    if (clusterManager!=null) {
+                    	serviceGroupContext.setClustered(true);
+                    	clusterManager.addContext(serviceGroupContext);
+                    }
+                    
                 }
                 serviceContext = serviceGroupContext.getServiceContext(axisService);
 
@@ -171,6 +179,13 @@ public class ConfigurationContext extends AbstractContext {
 
                     // set the serviceGroupContextID
                     serviceGroupContext.setId(serviceGroupContextId);
+                    
+                    ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
+                    if (clusterManager!=null) {
+                    	serviceGroupContext.setClustered(true);
+                    	clusterManager.addContext(serviceGroupContext);
+                    }
+                    
                 } else {
                     throw new AxisFault(Messages.getMessage("servicenotfound"));
                 }
@@ -615,4 +630,5 @@ public class ConfigurationContext extends AbstractContext {
         }
         return serviceGroupContextTimoutInterval;
     }
+    
 }

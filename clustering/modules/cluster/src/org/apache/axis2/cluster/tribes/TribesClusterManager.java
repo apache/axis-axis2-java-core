@@ -72,8 +72,11 @@ public class TribesClusterManager implements ClusterManager, ChannelListener {
 		}		
 	}
 
-	public void addContext(String contextId, String parentContextId, AbstractContext context) {
+	public void addContext(AbstractContext context) {
 		TribesCommandMessage comMsg = null;
+		
+		String contextId = getContextID(context);
+		String parentContextId = getContextID(context.getParent());
 		
 		// The ServiceContex does not define a contextId
 		// therefore the service name is used
@@ -143,8 +146,12 @@ public class TribesClusterManager implements ClusterManager, ChannelListener {
 		}
 	}*/
 
-	public void removeContext(String contextId, String parentContextId, AbstractContext context) {
+	public void removeContext(AbstractContext context) {
 		TribesCommandMessage comMsg = null;
+
+		String contextId = getContextID(context);
+		String parentContextId = getContextID(context.getParent());
+
 		if (context instanceof ServiceContext){
 			ctxManager.removeServiceContext(parentContextId, contextId);
 			comMsg = new TribesCommandMessage(CommandConstants.CREATE_SERVICE_GROUP_CONTEXT,
@@ -168,27 +175,29 @@ public class TribesClusterManager implements ClusterManager, ChannelListener {
 		}
 	}*/
 	
-	public void updateState(ServiceContext ctx) {
+	public void updateState(AbstractContext context) {
 		
-		String parentId = ctx.getServiceGroupContext().getId();
-		String contextId = ctx.getAxisService().getName();
-		Map props = ctx.getProperties();
+		String contextId = getContextID(context);
+		String parentContextId = getContextID(context.getParent());
 
-		List<TribesMapEntryMessage> mapEntryMsgs = ctxManager.updateStateOnServiceContext(parentId, contextId, props);
+		Map props = context.getProperties();
 
-		for(TribesMapEntryMessage msg : mapEntryMsgs){
-			send(msg);
+		List<TribesMapEntryMessage> mapEntryMsgs = null;
+		
+		if (context instanceof ServiceContext) {
+			mapEntryMsgs = ctxManager.updateStateOnServiceContext(parentContextId, contextId, props);
+		} else if (context instanceof ServiceGroupContext) {
+			mapEntryMsgs = ctxManager.updateStateOnServiceGroupContext(contextId,props);		
 		}
 		
-		Map serviceGrpProps = ctx.getServiceGroupContext().getProperties();
-		mapEntryMsgs = ctxManager.updateStateOnServiceGroupContext(parentId,serviceGrpProps);		
-
-		for(TribesMapEntryMessage msg : mapEntryMsgs){
-			send(msg);
+		if (mapEntryMsgs!=null) {
+			for(TribesMapEntryMessage msg : mapEntryMsgs){
+				send(msg);
+			}
 		}
 		
 		TribesCommandMessage comMsg = new TribesCommandMessage(
-				CommandConstants.UPDATE_STATE, parentId, contextId, contextId);
+				CommandConstants.UPDATE_STATE, parentContextId, contextId, contextId);
 
 		send(comMsg);
 	}
@@ -303,4 +312,31 @@ public class TribesClusterManager implements ClusterManager, ChannelListener {
 		log.debug("Member Payload" + member.getPayload());
 		log.debug("===============================\n");
 	}
+
+
+	public boolean isContextClusterable(AbstractContext context) {
+		
+		if ((context instanceof ConfigurationContext) ||
+			(context instanceof ServiceContext) ||
+			(context instanceof ServiceGroupContext)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private String getContextID (AbstractContext context) {
+		
+		String id = null;
+		
+		if (context instanceof ServiceContext) {
+			AxisService axisService = ((ServiceContext) context).getAxisService();
+			return axisService.getName();
+		} else if (context instanceof ServiceGroupContext) {
+			return ((ServiceGroupContext) context).getId();
+		}
+		
+		return id;
+	}
+	
 }

@@ -23,7 +23,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.cluster.ClusterManager;
-import org.apache.axis2.cluster.NullClusterManager;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.commons.logging.Log;
@@ -50,6 +49,7 @@ public class ClusterBuilder extends DescriptionBuilder {
      */
     public void buildCluster(OMElement clusterElement)
 			throws DeploymentException {
+    	
 		String className = clusterElement.getAttribute(
 				new QName(TAG_CLASS_NAME)).getAttributeValue();
 		ClusterManager clusterManager;
@@ -59,15 +59,15 @@ public class ClusterBuilder extends DescriptionBuilder {
 			axisConfig.setClusterManager(clusterManager);
 			return;
 		} catch (ClassNotFoundException e) {
-			log.error("Cluster implementation class not found", e);
+			String message = "Cluster implementation class not found";
+			throw new DeploymentException (message, e);
 		} catch (InstantiationException e) {
-			log.error("Cannot load Cluster implementation", e);
-			e.printStackTrace();
+			String message = "Cannot load Cluster implementation";
+			throw new DeploymentException (message, e);
 		} catch (IllegalAccessException e) {
-			log.error("", e);
+			throw new DeploymentException (e);
 		}
 
-		axisConfig.setClusterManager(new NullClusterManager());
 	}
 
 }

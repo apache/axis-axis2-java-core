@@ -18,6 +18,7 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.deployment.*;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisModule;
@@ -82,6 +83,13 @@ public class ConfigurationContextFactory {
             if (Constants.SCOPE_APPLICATION.equals(maxScope)) {
                 ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configCtx, axisServiceGroup);
                 configCtx.addServiceGroupContextintoApplicatoionScopeTable(serviceGroupContext);
+                
+                ClusterManager clusterManager = configCtx.getAxisConfiguration().getClusterManager();
+                if (clusterManager!=null) {
+                	serviceGroupContext.setClustered(true);
+                	clusterManager.addContext(serviceGroupContext);
+                }
+                
                 DependencyManager.initService(serviceGroupContext);
             }
         }

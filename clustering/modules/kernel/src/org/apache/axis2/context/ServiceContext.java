@@ -146,9 +146,6 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         this.serviceGroupContext = serviceGroupContext;
         this.axisService = serviceConfig;
         this.configContext = (ConfigurationContext) parent.getParent();
-        
-        clusterManager = configContext.getAxisConfiguration().getClusterManager();
-        clusterManager.addContext(serviceConfig.getName(), serviceGroupContext.getId(),this);
     }
 
     public OperationContext createOperationContext(QName name) {

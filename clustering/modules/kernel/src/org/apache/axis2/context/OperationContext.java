@@ -1196,4 +1196,5 @@ public class OperationContext extends AbstractContext implements Externalizable 
             log.warn(logCorrelationIDString+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
         }
     }
+    
 }

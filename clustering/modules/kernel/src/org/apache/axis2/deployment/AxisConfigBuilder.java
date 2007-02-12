@@ -20,7 +20,6 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.cluster.NullClusterManager;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
@@ -137,14 +136,12 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 processDefaultModuleVersions(defaultModuleVerionElement);
             }
             
-            OMElement clusterElement = config_element.getFirstChildWithName(new QName(TAG_CLUSTER));
-            if (clusterElement != null) {
-	        ClusterBuilder clusterBuilder = new ClusterBuilder(axisConfig);
-	        clusterBuilder.buildCluster(clusterElement);
-	    }else {
-	        axisConfig.setClusterManager(new NullClusterManager());
-	    }
-
+            OMElement clusterElement = config_element
+					.getFirstChildWithName(new QName(TAG_CLUSTER));
+			if (clusterElement != null) {
+				ClusterBuilder clusterBuilder = new ClusterBuilder(axisConfig);
+				clusterBuilder.buildCluster(clusterElement);
+			}
             
             // process MessageBuilders
             OMElement messageBuildersElement = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_BUILDERS));

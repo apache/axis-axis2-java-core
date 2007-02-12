@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.cluster.ClusterManager;
 
 /**
@@ -37,13 +38,15 @@ public abstract class AbstractContext {
 
     protected transient AbstractContext parent;
     protected transient Map properties;
+    
+    private boolean clustered;
 
     protected AbstractContext(AbstractContext parent) {
         this.properties = new HashMap();
         this.parent = parent;
     }
 
-    /**
+	/**
      * @return Returns AbstractContext.
      */
     public AbstractContext getParent() {
@@ -165,4 +168,55 @@ public abstract class AbstractContext {
     public void setLastTouchedTime(long t) {
         lastTouchedTime = t;
     }
+    
+    public boolean isClustered() {
+		return clustered;
+	}
+
+    public void setClustered(boolean clustered) {
+		this.clustered = clustered;
+	}
+    
+    public void flush () throws AxisFault {
+    	
+    	//if clustering is enabled, ClusterManager will be called to replicate the context state.
+    	if (clustered) {
+    		
+    		ClusterManager clusterManager = null;
+    		
+    		if (this instanceof ConfigurationContext) {
+    			ConfigurationContext configurationContext = (ConfigurationContext) this;
+    			clusterManager = configurationContext.getAxisConfiguration().getClusterManager();
+    			
+    		} else if (this instanceof ServiceGroupContext) {
+    			ConfigurationContext configurationContext = (ConfigurationContext) this.getParent();
+    			if (configurationContext==null) {
+    				String message = "The parent of the ServiceGroupContext has not been set";
+    				throw new AxisFault (message);
+    			}
+    			
+    			clusterManager = configurationContext.getAxisConfiguration().getClusterManager();
+    			
+    		} else if (this instanceof ServiceContext) {
+    			ServiceGroupContext serviceGroupContext = (ServiceGroupContext) this.getParent();
+    			if (serviceGroupContext==null) {
+      				String message = "The parent of the ServiceContext has not been set";
+    				throw new AxisFault (message);
+    			}
+    			
+    			ConfigurationContext configurationContext = (ConfigurationContext) serviceGroupContext.getParent();
+    			if (serviceGroupContext==null) {
+      				String message = "The parent of the ServiceGroupContext has not been set";
+    				throw new AxisFault (message);
+    			}
+    			
+    			clusterManager = configurationContext.getAxisConfiguration().getClusterManager();
+    		}
+    		
+    		if (clusterManager!=null && clusterManager.isContextClusterable (this)) {
+    			clusterManager.updateState(this);
+    		}
+    	}
+    }
+    
 }

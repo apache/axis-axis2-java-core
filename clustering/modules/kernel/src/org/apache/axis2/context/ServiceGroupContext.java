@@ -154,6 +154,12 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
             serviceContext = new ServiceContext(service, this);
             serviceContextMap.put(service.getName(), serviceContext);
             
+            ClusterManager clusterManager = axisService.getAxisConfiguration().getClusterManager();
+            if (clusterManager!=null) {
+            	serviceContext.setClustered(true);
+            	clusterManager.addContext(serviceContext);
+            }
+            
             System.out.println("Added a new Service Ctx " + service.getName());
         }
         return serviceContext;
@@ -175,8 +181,6 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      */
     public void setId(String id) {
         this.id = id;
-        ClusterManager clusterManager = ((ConfigurationContext)this.getParent()).getAxisConfiguration().getClusterManager();
-        clusterManager.addContext(id, null,this);
     }
     
     /**
