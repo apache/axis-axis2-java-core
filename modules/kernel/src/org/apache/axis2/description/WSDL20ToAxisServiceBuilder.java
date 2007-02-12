@@ -918,7 +918,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 SOAPHeaderMessage soapHeaderMessage = new SOAPHeaderMessage();
                 soapHeaderMessage.setElement(name);
                 soapHeaderMessage.setRequired(soapHeaderBlock.isRequired().booleanValue());
-                soapHeaderMessage.setMustUnderstand(soapHeaderBlock.mustUnderstand());
+                soapHeaderMessage.setMustUnderstand(soapHeaderBlock.mustUnderstand().booleanValue());
                 soapHeaderMessages.add(soapHeaderMessage);
             }
         }

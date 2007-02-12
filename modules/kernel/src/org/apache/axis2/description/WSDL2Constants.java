@@ -63,6 +63,7 @@ public interface WSDL2Constants {
     String ATTR_WSOAP_SUBCODES = "wsoap:subcodes";
     String ATTR_WSOAP_HEADER = "wsoap:header";
     String ATTR_WSOAP_ACTION = "wsoap:action";
+    String ATTR_WSOAP_ADDRESS = "wsoap:address";
 
     String ATTR_WHTTP_TRANSFER_CODING = "whttp:transferCoding";
     String ATTR_WHTTP_LOCATION = "whttp:location";
