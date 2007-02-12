@@ -1994,24 +1994,29 @@ public class SchemaCompiler {
             } else if (content instanceof XmlSchemaSimpleTypeUnion) {
                 XmlSchemaSimpleTypeUnion simpleTypeUnion = (XmlSchemaSimpleTypeUnion) content;
                 QName[] qnames = simpleTypeUnion.getMemberTypesQNames();
-                QName qname;
-                for (int i = 0; i < qnames.length; i++) {
-                    qname = qnames[i];
-                    if (baseSchemaTypeMap.containsKey(qname)) {
-                        metaInfHolder.addMemberType(qname, (String) baseSchemaTypeMap.get(qname));
-                    } else {
-                        XmlSchemaType type = getType(parentSchema, qname);
-                        if (type instanceof XmlSchemaSimpleType) {
-                            XmlSchemaSimpleType memberSimpleType = (XmlSchemaSimpleType) type;
-                            if (!isAlreadyProcessed(qname)) {
-                                processSimpleSchemaType(memberSimpleType, null, parentSchema);
-                            }
-                            metaInfHolder.addMemberType(qname, (String) processedTypemap.get(qname));
+                if (qnames != null){
+                    QName qname;
+                    for (int i = 0; i < qnames.length; i++) {
+                        qname = qnames[i];
+                        if (baseSchemaTypeMap.containsKey(qname)) {
+                            metaInfHolder.addMemberType(qname, (String) baseSchemaTypeMap.get(qname));
                         } else {
-                            throw new SchemaCompilationException("Unions can not have complex types as a member type");
+                            XmlSchemaType type = getType(parentSchema, qname);
+                            if (type instanceof XmlSchemaSimpleType) {
+                                XmlSchemaSimpleType memberSimpleType = (XmlSchemaSimpleType) type;
+                                if (!isAlreadyProcessed(qname)) {
+                                    processSimpleSchemaType(memberSimpleType, null, parentSchema);
+                                }
+                                metaInfHolder.addMemberType(qname, (String) processedTypemap.get(qname));
+                            } else {
+                                throw new SchemaCompilationException("Unions can not have complex types as a member type");
+                            }
                         }
                     }
+                } else {
+                    // TODO : handle inline simple types
                 }
+
                 metaInfHolder.setUnion(true);
 
             } else if (content instanceof XmlSchemaSimpleTypeList) {
