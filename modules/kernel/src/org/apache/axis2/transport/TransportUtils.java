@@ -97,87 +97,6 @@ public class TransportUtils {
 		} catch (FactoryConfigurationError e) {
 			throw new AxisFault(e);
 		}
-//    	boolean isMIME=false;
-//		try {
-//			InputStream inStream = (InputStream) msgContext
-//					.getProperty(MessageContext.TRANSPORT_IN);
-//
-//			msgContext.setProperty(MessageContext.TRANSPORT_IN, null);
-//
-//			// this inputstram is set by the TransportSender represents a two
-//			// way transport or by a Transport Recevier
-//			if (inStream == null) {
-//				throw new AxisFault(Messages.getMessage("inputstreamNull"));
-//			}
-//			
-//			Map transportHeaders = (Map)msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
-//			
-//			// This causes the transport headers to be initialized. We've been
-//			// anyway iterating through the headers. So this is not bad
-//			// for the moment.But there is a possibility to improve.
-//			Object contentTypeObject = transportHeaders.get(HTTPConstants.CONTENT_TYPE);
-//			if (contentTypeObject==null)
-//			{
-//				contentTypeObject = transportHeaders.get(HTTPConstants.CONTENT_TYPE.toLowerCase());
-//			}
-//			String contentType;
-//			if(contentTypeObject!=null)
-//			  contentType =(String) contentTypeObject;
-//			else
-//				throw new AxisFault("Content Type Cannot be null");
-//			
-//			if (JavaUtils.indexOfIgnoreCase(contentType,
-//					HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
-//				// It is MIME (MTOM or SwA)
-//				isMIME = true;
-//			}
-//			
-//            // get the type of char encoding &  setting the value in msgCtx
-//            String charSetEnc = Builder.getCharSetEncoding(contentType);
-//            if(charSetEnc == null){
-//                charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
-//            }
-//            msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
-//            
-//            String soapNS = null;
-//            if (contentType != null) {
-//    			if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
-//    				soapNS = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-//    			} else if (contentType
-//    					.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
-//    				soapNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-//    			}
-////    			if (JavaUtils.indexOfIgnoreCase(contentType,
-////    					HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
-////    				// It is MIME (MTOM or SwA)
-////    				isMIME = true;
-////    			}
-////    			else if (soapVersion == VERSION_SOAP11) {
-////    				// Deployment configuration parameter
-////    				Parameter enableREST = msgContext
-////    						.getParameter(Constants.Configuration.ENABLE_REST);
-////    				if ((msgContext.getSoapAction() == null) && (enableREST != null)) {
-////    					if (Constants.VALUE_TRUE.equals(enableREST.getValue())) {
-////    						// If the content Type is text/xml (BTW which is the
-////    						// SOAP 1.1 Content type ) and the SOAP Action is
-////    						// absent it is rest !!
-////    						msgContext.setDoingREST(true);
-////    					}
-////    				}
-////    			}
-//    		}
-//
-//			return createSOAPMessage(msgContext, inStream, soapNS,
-//					isMIME, (String) contentType, charSetEnc);
-//		} catch (AxisFault e) {
-//			throw e;
-//		} catch (OMException e) {
-//			throw new AxisFault(e);
-//		} catch (XMLStreamException e) {
-//			throw new AxisFault(e);
-//		} catch (FactoryConfigurationError e) {
-//			throw new AxisFault(e);
-//		}
 	}
 
     /**
@@ -230,16 +149,17 @@ public class TransportUtils {
 		} else {
 			//If it is not a SOAPEnvelope we wrap that with a fake SOAPEnvelope.
 			SOAPFactory soapFactory = new SOAP11Factory();
-			SOAPEnvelope intermediateEnvelope = soapFactory
+//			SOAPEnvelope intermediateEnvelope
+			envelope= soapFactory
 					.getDefaultEnvelope();
-			intermediateEnvelope.getBody().addChild(
+			envelope.getBody().addChild(
 					builder.getDocumentElement());
 
 			// We now have the message inside an envelope. However, this is
 			// only an OM; We need to build a SOAP model from it.
-			builder = new StAXSOAPModelBuilder(intermediateEnvelope
-					.getXMLStreamReader(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-			envelope = (SOAPEnvelope) builder.getDocumentElement();
+//			builder = new StAXSOAPModelBuilder(intermediateEnvelope
+//					.getXMLStreamReader(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+//			envelope = (SOAPEnvelope) builder.getDocumentElement();
 		}
 
 		String charsetEncoding = builder.getCharsetEncoding();
@@ -357,7 +277,7 @@ public class TransportUtils {
     
     /**
      * @param contentType The contentType of the incoming message.  It may be null
-     * @param defaultNamespace Ususally set the version that is expected.  This a fallback if the contentType is unavailable or 
+     * @param defaultNamespace Usually set the version that is expected.  This a fallback if the contentType is unavailable or 
      * does not match our expectations
      * @return null or the soap namespace.  A null indicates that the message will be interpretted as a non-SOAP (i.e. REST) message 
      */
@@ -380,25 +300,16 @@ public class TransportUtils {
               * So, we'll follow this pattern:
               * 1)  find the content-type main setting
               * 2)  if (1) not understood, find the "type=" param
-              * 
+              * Thilina: I merged (1) & (2)
               */
              
-             String contentTypeSetting = contentType.substring(0, contentType.indexOf(';'));
-             if (contentTypeSetting.equalsIgnoreCase(SOAP12Constants.SOAP_12_CONTENT_TYPE)) {
-                returnNS = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-             }
-             else if (contentTypeSetting.equalsIgnoreCase(SOAP11Constants.SOAP_11_CONTENT_TYPE)) {
-                returnNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-             }
-             // search for parameter "type=application/soap+xml"
-             else if (contentType.toLowerCase().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE.toLowerCase()) > -1) {
+             if (JavaUtils.indexOfIgnoreCase(contentType,SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
                  returnNS = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
              }
              // search for "type=text/xml"
-             else if (contentType.toLowerCase().indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE.toLowerCase()) > -1) {
+             else if (JavaUtils.indexOfIgnoreCase(contentType,SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
                  returnNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
              }
-
          }
          
          if (returnNS == null) {
