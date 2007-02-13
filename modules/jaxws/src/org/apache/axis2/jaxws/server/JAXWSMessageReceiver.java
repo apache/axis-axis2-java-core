@@ -36,6 +36,7 @@ import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
+import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -159,8 +160,8 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
     private boolean isMepInOnly(String mep){
     	boolean inOnly = mep.equals(WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY) || 
             mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY) || 
-            mep.equals(WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY) || 
-            mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY);
+            mep.equals(WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY) || 
+            mep.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY);
         return inOnly;
     }
 
