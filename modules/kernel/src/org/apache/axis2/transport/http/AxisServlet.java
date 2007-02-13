@@ -27,10 +27,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.deployment.WarBasedAxisConfigurator;
 import org.apache.axis2.description.AxisBindingMessage;
 import org.apache.axis2.description.AxisBindingOperation;
@@ -92,8 +89,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected MessageContext
     createAndSetInitialParamsToMsgCtxt(HttpServletResponse resp,
                                        HttpServletRequest req) throws AxisFault {
-        MessageContext msgContext = new MessageContext();
-        msgContext.setConfigurationContext(configContext);
+        MessageContext msgContext = ContextFactory.createMessageContext(configContext);
         msgContext.setTransportIn(transportIn);
         msgContext.setTransportOut(transportOut);
 
@@ -625,7 +621,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
     protected MessageContext createMessageContext(HttpServletRequest req,
                                                   HttpServletResponse resp) throws IOException {
-        MessageContext msgContext = new MessageContext();
+        MessageContext msgContext = ContextFactory.createMessageContext(configContext);
         String trsPrefix = req.getRequestURL().toString();
         int sepindex = trsPrefix.indexOf(':');
         if (sepindex >= 0) {
@@ -634,7 +630,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         } else {
             msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
         }
-        msgContext.setConfigurationContext(configContext);
         msgContext.setTransportIn(configContext.getAxisConfiguration().
                 getTransportIn(new QName(Constants.TRANSPORT_HTTP)));
         TransportOutDescription transportOut =

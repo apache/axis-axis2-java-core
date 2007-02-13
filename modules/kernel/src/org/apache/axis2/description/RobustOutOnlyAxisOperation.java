@@ -23,6 +23,7 @@ import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.Utils;
@@ -61,7 +62,8 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
             AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
 
             // create the responseMessageContext
-            MessageContext responseMessageContext = new MessageContext();
+            MessageContext responseMessageContext = ContextFactory.createMessageContext(
+                    msgctx.getConfigurationContext());
 
             // This is a hack - Needs to change
             responseMessageContext.setOptions(options);

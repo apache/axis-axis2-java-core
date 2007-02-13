@@ -117,12 +117,13 @@ public class ConfigurationContext extends AbstractContext {
                         axisServiceGroup = (AxisServiceGroup) axisService.getParent();
                         messageContext.setAxisServiceGroup(axisServiceGroup);
                     }
-                    serviceGroupContext = new ServiceGroupContext(messageContext.getConfigurationContext(),
-                            axisServiceGroup);
+                    serviceGroupContext =ContextFactory.createServiceGroupContext(
+                            messageContext.getConfigurationContext(),axisServiceGroup);
                     applicationSessionServiceGroupContextTable.put(serviceGroupName, serviceGroupContext);
                 }
                 messageContext.setServiceGroupContext(serviceGroupContext);
-                messageContext.setServiceContext(serviceGroupContext.getServiceContext(axisService));
+                messageContext.setServiceContext(ContextFactory.createServiceContext(
+                        serviceGroupContext,axisService));
             } else if (Constants.SCOPE_SOAP_SESSION.equals(scope)) {
                 String serviceGroupContextId = messageContext.getServiceGroupContextId();
                 if (serviceGroupContextId != null) {
@@ -134,8 +135,8 @@ public class ConfigurationContext extends AbstractContext {
                     }
                 } else {
                     AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
-                    serviceGroupContext = new ServiceGroupContext(this, axisServiceGroup);
-                    serviceContext = serviceGroupContext.getServiceContext(axisService);
+                    serviceGroupContext = ContextFactory.createServiceGroupContext(this,axisServiceGroup);
+                    serviceContext = ContextFactory.createServiceContext(serviceGroupContext,axisService);
                     // set the serviceGroupContextID
                     serviceGroupContextId = UUIDGenerator.getUUID();
                     serviceGroupContext.setId(serviceGroupContextId);
@@ -143,12 +144,13 @@ public class ConfigurationContext extends AbstractContext {
                     registerServiceGroupContextintoSoapSessionTable(serviceGroupContext);
                 }
                 messageContext.setServiceGroupContext(serviceGroupContext);
-                messageContext.setServiceContext(serviceGroupContext.getServiceContext(axisService));
+                messageContext.setServiceContext(
+                        ContextFactory.createServiceContext(serviceGroupContext,axisService));
             } else if (Constants.SCOPE_REQUEST.equals(scope)) {
                 AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
-                serviceGroupContext = new ServiceGroupContext(this, axisServiceGroup);
+                serviceGroupContext =ContextFactory.createServiceGroupContext(this,axisServiceGroup);
                 messageContext.setServiceGroupContext(serviceGroupContext);
-                serviceContext = serviceGroupContext.getServiceContext(axisService);
+                serviceContext = ContextFactory.createServiceContext(serviceGroupContext,axisService);
                 messageContext.setServiceContext(serviceContext);
                 messageContext.getOperationContext().setParent(serviceContext);
             }
@@ -524,5 +526,28 @@ public class ConfigurationContext extends AbstractContext {
             serviceGroupContextTimoutInterval = serviceGroupContextTimoutIntervalParam.intValue();
         }
         return serviceGroupContextTimoutInterval;
+    }
+
+    public void removeServiceGroupContext(AxisServiceGroup serviceGroup){
+        if(serviceGroup!=null){
+            Object obj =applicationSessionServiceGroupContextTable.get(
+                    serviceGroup.getServiceGroupName());
+            if(obj==null){
+                ArrayList toBeRemovedList = new ArrayList();
+                Iterator serviceGroupContexts = serviceGroupContextMap.values().iterator();
+                while (serviceGroupContexts.hasNext()) {
+                    ServiceGroupContext serviceGroupContext =
+                            (ServiceGroupContext) serviceGroupContexts.next();
+                    if(serviceGroupContext.getDescription().equals(serviceGroup)){
+                        toBeRemovedList.add(serviceGroupContext.getId());
+                    }
+                }
+                for (int i = 0; i < toBeRemovedList.size(); i++) {
+                    String s = (String) toBeRemovedList.get(i);
+                    serviceGroupContextMap.remove(s);
+                }
+            }
+
+        }
     }
 }

@@ -607,7 +607,6 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     public void unDeploy() {
-        String fileName;
         try {
             if (wsToUnDeploy.size() > 0) {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {

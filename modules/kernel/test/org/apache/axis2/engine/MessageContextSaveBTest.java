@@ -21,11 +21,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -481,29 +477,30 @@ public class MessageContextSaveBTest extends TestCase
         //-----------------------------------------------------------------
         // setup the context objects
         //-----------------------------------------------------------------
-        srvGrpCtx_ABC = new ServiceGroupContext(configurationContext, axisSrvGrp_ABC);  
+        srvGrpCtx_ABC =ContextFactory.createServiceGroupContext(configurationContext,
+                axisSrvGrp_ABC);
         srvGrpCtx_ABC.setId(serviceGroupName_ABC);
 
-        srvGrpCtx_123 = new ServiceGroupContext(configurationContext, axisSrvGrp_123);  
+        srvGrpCtx_123 =ContextFactory.createServiceGroupContext(configurationContext, axisSrvGrp_123);
         srvGrpCtx_123.setId(serviceGroupName_ABC);
 
-        srvGrpCtx_DAY = new ServiceGroupContext(configurationContext, axisSrvGrp_DAY);  
+        srvGrpCtx_DAY = ContextFactory.createServiceGroupContext(configurationContext, axisSrvGrp_DAY);
         srvGrpCtx_DAY.setId(serviceGroupName_DAY);
 
-        srvCtx_A = srvGrpCtx_ABC.getServiceContext(axisSrv_A);
-        srvCtx_B = srvGrpCtx_ABC.getServiceContext(axisSrv_B); 
-        srvCtx_C = srvGrpCtx_ABC.getServiceContext(axisSrv_C);
+        srvCtx_A = ContextFactory.createServiceContext(srvGrpCtx_ABC,axisSrv_A);
+        srvCtx_B = ContextFactory.createServiceContext(srvGrpCtx_ABC,axisSrv_B);
+        srvCtx_C = ContextFactory.createServiceContext(srvGrpCtx_ABC,axisSrv_C);
 
-        srvCtx_1 = srvGrpCtx_123.getServiceContext(axisSrv_1);
-        srvCtx_2 = srvGrpCtx_123.getServiceContext(axisSrv_2); 
-        srvCtx_3 = srvGrpCtx_123.getServiceContext(axisSrv_3);
-        srvCtx_4 = srvGrpCtx_123.getServiceContext(axisSrv_4);
+        srvCtx_1 = ContextFactory.createServiceContext(srvGrpCtx_123,axisSrv_1);
+        srvCtx_2 =ContextFactory.createServiceContext(srvGrpCtx_123,axisSrv_2);
+        srvCtx_3 =ContextFactory.createServiceContext(srvGrpCtx_123,axisSrv_3);
+        srvCtx_4 =ContextFactory.createServiceContext(srvGrpCtx_123,axisSrv_4) ;
 
-        srvCtx_Mon = srvGrpCtx_DAY.getServiceContext(axisSrv_Mon);
-        srvCtx_Tue = srvGrpCtx_DAY.getServiceContext(axisSrv_Tue); 
-        srvCtx_Wed = srvGrpCtx_DAY.getServiceContext(axisSrv_Wed);
-        srvCtx_Thu = srvGrpCtx_DAY.getServiceContext(axisSrv_Thu);
-        srvCtx_Fri = srvGrpCtx_DAY.getServiceContext(axisSrv_Fri);
+        srvCtx_Mon = ContextFactory.createServiceContext(srvGrpCtx_DAY,axisSrv_Mon);
+        srvCtx_Tue =ContextFactory.createServiceContext(srvGrpCtx_DAY,axisSrv_Tue) ;
+        srvCtx_Wed =ContextFactory.createServiceContext(srvGrpCtx_DAY,axisSrv_Wed);
+        srvCtx_Thu = ContextFactory.createServiceContext(srvGrpCtx_DAY,axisSrv_Thu) ;
+        srvCtx_Fri =ContextFactory.createServiceContext(srvGrpCtx_DAY,axisSrv_Fri);
 
         opCtx_A1 = srvCtx_A.createOperationContext(operation_QName_A1);
         opCtx_A2 = srvCtx_A.createOperationContext(operation_QName_A2);
@@ -535,9 +532,7 @@ public class MessageContextSaveBTest extends TestCase
 
     private MessageContext createMessageContext(OperationContext oc) throws Exception
     {
-        MessageContext mc = new MessageContext();
-
-        mc.setConfigurationContext(configurationContext);
+        MessageContext mc = ContextFactory.createMessageContext(configurationContext);
         mc.setTransportIn(transportIn);
         mc.setTransportOut(transportOut);
 

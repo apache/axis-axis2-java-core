@@ -27,27 +27,6 @@ import org.apache.axis2.i18n.Messages;
  */
 public class OperationContextFactory implements WSDLConstants {
 
-    /**
-     * Creates the operation context. When you call this make sure you set the parent later.
-     *
-     * @param mepURI
-     * @param axisOp
-     * @return Returns OperationContext.
-     * @throws AxisFault
-     */
-    public static OperationContext createOperationContext(int mepURI, AxisOperation axisOp)
-            throws AxisFault {
-        if ((WSDLConstants.MEP_CONSTANT_IN_OUT == mepURI) || (WSDLConstants.MEP_CONSTANT_IN_ONLY == mepURI)
-                || (WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT == mepURI)
-                || (WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == mepURI) || (WSDLConstants.MEP_CONSTANT_OUT_ONLY == mepURI)
-                || (WSDLConstants.MEP_CONSTANT_OUT_IN == mepURI) || (WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI)
-                || (WSDLConstants.MEP_CONSTANT_ROBUST_OUT_ONLY == mepURI)) {
-            return new OperationContext(axisOp);
-        } else {
-            throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));
-        }
-    }
-
     public static OperationContext createOperationContext(int mepURI, AxisOperation axisOp,
                                                           ServiceContext serviceContext)
             throws AxisFault {
@@ -56,7 +35,7 @@ public class OperationContextFactory implements WSDLConstants {
                 || (WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == mepURI) || (WSDLConstants.MEP_CONSTANT_OUT_ONLY == mepURI)
                 || (WSDLConstants.MEP_CONSTANT_OUT_IN == mepURI) || (WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI)
                 || (WSDLConstants.MEP_CONSTANT_ROBUST_OUT_ONLY == mepURI)) {
-            return new OperationContext(axisOp, serviceContext);
+            return ContextFactory.createOperationContext(axisOp,serviceContext);
         } else {
             throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));
         }

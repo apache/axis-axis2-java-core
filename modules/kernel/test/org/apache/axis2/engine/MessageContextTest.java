@@ -23,6 +23,7 @@ import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.description.AxisService;
 
 public class MessageContextTest extends AbstractTestCase {
@@ -39,8 +40,7 @@ public class MessageContextTest extends AbstractTestCase {
 
         ConfigurationContext engineContext = new ConfigurationContext(er);
 
-        MessageContext msgctx = new MessageContext();
-        msgctx.setConfigurationContext(engineContext);
+        MessageContext msgctx = ContextFactory.createMessageContext(engineContext);
 
         SOAPFactory omFac = OMAbstractFactory.getSOAP11Factory();
 

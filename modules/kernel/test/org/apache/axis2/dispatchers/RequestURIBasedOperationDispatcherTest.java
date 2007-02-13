@@ -19,6 +19,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
@@ -29,7 +30,7 @@ import javax.xml.namespace.QName;
 public class RequestURIBasedOperationDispatcherTest extends TestCase {
 
     public void testFindService() throws AxisFault {
-        MessageContext messageContext = new MessageContext();
+        MessageContext messageContext;
         AxisService as1 = new AxisService("Service1");
 
 
@@ -41,7 +42,7 @@ public class RequestURIBasedOperationDispatcherTest extends TestCase {
         ConfigurationContext cc = ConfigurationContextFactory.createEmptyConfigurationContext();
         AxisConfiguration ac = cc.getAxisConfiguration();
         ac.addService(as1);
-        messageContext.setConfigurationContext(cc);
+        messageContext = ContextFactory.createMessageContext(cc);
 
         messageContext.setTo(new EndpointReference("http://127.0.0.1:8080/axis2/services/Service1/operation2"));
         messageContext.setAxisService(as1);

@@ -21,11 +21,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -180,10 +176,11 @@ public class MessageContextSaveATest extends TestCase
 
         //-----------------------------------------------------------------
 
-        serviceGroupContext = new ServiceGroupContext(configurationContext, (AxisServiceGroup) axisService.getParent()); 
+        serviceGroupContext =ContextFactory.createServiceGroupContext(configurationContext,
+                (AxisServiceGroup) axisService.getParent());
         serviceGroupContext.setId("ServiceGroupContextTest");
 
-        serviceContext = serviceGroupContext.getServiceContext(axisService); 
+        serviceContext = ContextFactory.createServiceContext(serviceGroupContext,axisService);
 
         operationContext = serviceContext.createOperationContext(operationName); 
 
@@ -211,8 +208,7 @@ public class MessageContextSaveATest extends TestCase
 
         //-----------------------------------------------------------------
 
-        mc = new MessageContext();
-        mc.setConfigurationContext(configurationContext);
+        mc = ContextFactory.createMessageContext(configurationContext);
         mc.setTransportIn(transportIn);
         mc.setTransportOut(transportOut);
 

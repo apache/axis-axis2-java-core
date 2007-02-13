@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -38,10 +39,8 @@ public class BeforeWithNoFirstHandlerTest extends TestCase {
         Phase p2 = new Phase("PhaseB");
         phases.add(p2);
 
-        MessageContext msg = new MessageContext();
-        msg.setConfigurationContext(
+        MessageContext msg = ContextFactory.createMessageContext(
                 new ConfigurationContext(new AxisConfiguration()));
-
         PhaseHolder ph = new PhaseHolder(phases);
 
 

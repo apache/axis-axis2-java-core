@@ -25,10 +25,7 @@ import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportUtils;
@@ -293,7 +290,9 @@ class OutInAxisOperationClient extends OperationClient {
        AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
 
         // create the responseMessageContext
-        MessageContext responseMessageContext = new MessageContext();
+
+        MessageContext responseMessageContext = ContextFactory.createMessageContext(
+                msgctx.getConfigurationContext());
 
         // This is a hack - Needs to change
         responseMessageContext.setOptions(options);

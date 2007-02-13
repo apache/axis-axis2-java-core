@@ -179,18 +179,6 @@ public class OperationContext extends AbstractContext implements Externalizable 
         this.messageContexts = new HashMap();
     }
 
-
-
-
-    /**
-     *  Constructs a new OperationContext associated with the specified AxisOperation
-     */
-    public OperationContext(AxisOperation axisOperation) {
-        super(null);
-        this.messageContexts = new HashMap();
-        this.axisOperation = axisOperation;
-    }
-
     /**
      * Constructs a new OperationContext.
      *
@@ -204,6 +192,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         super(serviceContext);
         this.messageContexts = new HashMap();
         this.axisOperation = axisOperation;
+        this.setParent(serviceContext);
     }
 
     /**

@@ -28,11 +28,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -131,7 +127,7 @@ public class Utils {
     private static ServiceContext fillServiceContextAndServiceGroupContext(AxisService axisService,
                                                                            ConfigurationContext configurationContext) {
         String serviceGroupContextId = UUIDGenerator.getUUID();
-        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configurationContext,
+        ServiceGroupContext serviceGroupContext = ContextFactory.createServiceGroupContext(configurationContext,
                 (AxisServiceGroup) axisService.getParent());
 
         serviceGroupContext.setId(serviceGroupContextId);

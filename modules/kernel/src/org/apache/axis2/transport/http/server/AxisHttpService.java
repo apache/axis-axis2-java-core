@@ -40,6 +40,7 @@ import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
@@ -100,9 +101,8 @@ public class AxisHttpService extends HttpService {
         this.sessionManager = sessionManager;
         this.worker = worker;
 
-        this.msgContext = new MessageContext();
+        this.msgContext = ContextFactory.createMessageContext(configurationContext);
         this.msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
-        this.msgContext.setConfigurationContext(configurationContext);
     }
 
     protected void doService(

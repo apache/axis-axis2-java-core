@@ -129,9 +129,9 @@ public class ServiceClient {
                     this.axisService.getName()));
         }
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) this.axisService.getParent();
-        ServiceGroupContext sgc = new ServiceGroupContext(this.configContext,
+        ServiceGroupContext sgc = ContextFactory.createServiceGroupContext(this.configContext,
                 axisServiceGroup);
-        this.serviceContext = sgc.getServiceContext(this.axisService);
+        this.serviceContext = ContextFactory.createServiceContext(sgc,this.axisService);
     }
 
 
@@ -705,8 +705,9 @@ public class ServiceClient {
         axisConfig.addService(axisService);
         
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
-        ServiceGroupContext serviceGroupContext = new ServiceGroupContext(configContext, axisServiceGroup);
-        
-        this.serviceContext = serviceGroupContext.getServiceContext(this.axisService);       
+        ServiceGroupContext serviceGroupContext = ContextFactory.createServiceGroupContext(configContext,
+                axisServiceGroup);
+        this.serviceContext = ContextFactory.createServiceContext(
+                serviceGroupContext,this.axisService);
     }
 }

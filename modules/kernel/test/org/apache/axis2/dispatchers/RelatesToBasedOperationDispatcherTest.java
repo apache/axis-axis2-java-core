@@ -22,6 +22,7 @@ import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
@@ -31,7 +32,7 @@ public class RelatesToBasedOperationDispatcherTest extends TestCase {
 
     public void testFindOperation() throws AxisFault{
 
-        MessageContext messageContext = new MessageContext();
+        MessageContext messageContext;
         AxisService as1 = new AxisService("Service1");
         AxisConfiguration ac = new AxisConfiguration();
         ac.addService(as1);
@@ -42,12 +43,11 @@ public class RelatesToBasedOperationDispatcherTest extends TestCase {
         as1.addOperation(operation2);
         
         ConfigurationContext cc = new ConfigurationContext(ac);
-        OperationContext oc1 = new OperationContext(operation1);
-        OperationContext oc2 = new OperationContext(operation2);
+        OperationContext oc1 =ContextFactory.createOperationContext(operation1,null);
+        OperationContext oc2 = ContextFactory.createOperationContext(operation2,null);
         cc.registerOperationContext("urn:org.apache.axis2.dispatchers.messageid:123", oc1);
         cc.registerOperationContext("urn:org.apache.axis2.dispatchers.messageid:456", oc2);
-        
-        messageContext.setConfigurationContext(cc);
+        messageContext = ContextFactory.createMessageContext(cc);
         messageContext.addRelatesTo(new RelatesTo("urn:org.apache.axis2.dispatchers.messageid:456"));
         messageContext.setAxisService(as1);
         

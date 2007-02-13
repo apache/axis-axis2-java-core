@@ -21,11 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.context.SessionContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -91,7 +87,7 @@ public class InstanceDispatcher extends AbstractHandler {
             msgContext.setServiceGroupContext(serviceGroupContext);
             msgContext.setServiceGroupContextId(serviceGroupContext.getId());
         } else {    // 2. if null, create new opCtxt
-            operationContext = new OperationContext(axisOperation);
+            operationContext =ContextFactory.createOperationContext(axisOperation,serviceContext);
 
             axisOperation.registerMessageContext(msgContext, operationContext);
             if (serviceContext != null) {
@@ -132,7 +128,8 @@ public class InstanceDispatcher extends AbstractHandler {
             //setting service group context
             msgContext.setServiceGroupContext(serviceGroupContext);
             // setting Service conetxt
-            msgContext.setServiceContext(serviceGroupContext.getServiceContext(service));
+            msgContext.setServiceContext(
+                    ContextFactory.createServiceContext(serviceGroupContext,service));
         } else {
             createAndFillContexts(service, msgContext, sessionContext);
         }
@@ -149,10 +146,11 @@ public class InstanceDispatcher extends AbstractHandler {
                                                      SessionContext sessionContext) throws AxisFault {
         ServiceGroupContext serviceGroupContext;
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) service.getParent();
-        serviceGroupContext = new ServiceGroupContext(
+        serviceGroupContext = ContextFactory.createServiceGroupContext(
                 msgContext.getConfigurationContext(), axisServiceGroup);
+
         msgContext.setServiceGroupContext(serviceGroupContext);
-        ServiceContext serviceContext = serviceGroupContext.getServiceContext(service);
+        ServiceContext serviceContext =ContextFactory.createServiceContext(serviceGroupContext,service);
         msgContext.setServiceContext(serviceContext);
         if(sessionContext!=null){
             sessionContext.addServiceContext(serviceContext);

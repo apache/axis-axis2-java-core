@@ -19,6 +19,7 @@ package org.apache.axis2.util;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -33,8 +34,8 @@ public class ThreadContextMigratorTest extends TestCase
   
   public void setUp()
   {
-    messageContext = new MessageContext();
-    messageContext.setConfigurationContext(new ConfigurationContext(new AxisConfiguration()));
+    messageContext = ContextFactory.createMessageContext(
+                new ConfigurationContext(new AxisConfiguration()));
   }
   
   public void testEmptyMigratorStructure()

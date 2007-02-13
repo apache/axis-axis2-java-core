@@ -521,24 +521,16 @@ public class AxisEngine {
             //REVIEW: In the case of the TransportNonBlockingInvocationWorker, does this need to wait until that finishes?
             flowComplete(msgContext, false);
           }
-          else if (pi.equals(InvocationResponse.SUSPEND))
-          {
-            return;
-          }
-          else if (pi.equals(InvocationResponse.ABORT))
-          {
+          else if (pi.equals(InvocationResponse.SUSPEND)){
+          }else if (pi.equals(InvocationResponse.ABORT)){
             flowComplete(msgContext, false);
-            return;
-          }
-          else
-          {
+          }else{
             String errorMsg = "Unrecognized InvocationResponse encountered in AxisEngine.send()";
             log.error(msgContext.getLogIDString()+" "+errorMsg);
             throw new AxisFault(errorMsg);
           }
         }
-        catch (AxisFault e)
-        {
+        catch (AxisFault e){
           flowComplete(msgContext, false);          
           throw e;
         }
@@ -612,23 +604,14 @@ public class AxisEngine {
 
           sender.invoke(msgContext);
           flowComplete(msgContext, false);
-        }
-        else if (pi.equals(InvocationResponse.SUSPEND))
-        {
-          return;
-        }
-        else if (pi.equals(InvocationResponse.ABORT))
-        {
+        }else if (pi.equals(InvocationResponse.SUSPEND)){
+        }else if (pi.equals(InvocationResponse.ABORT)){
           flowComplete(msgContext, false);
-          return;
-        }
-        else
-        {
+        }else{
           String errorMsg = "Unrecognized InvocationResponse encountered in AxisEngine.sendFault()";
           log.error(msgContext.getLogIDString()+" "+errorMsg);
           throw new AxisFault(errorMsg);
         }
-        
     }
 
 
@@ -658,23 +641,23 @@ public class AxisEngine {
             try {
                 sender.invoke(msgctx);
             } catch (Exception e) {
-              log.info(msgctx.getLogIDString()+" "+e.getMessage());
-              if (msgctx.getProperty(MessageContext.DISABLE_ASYNC_CALLBACK_ON_TRANSPORT_ERROR) == null)
-              {
-                AxisOperation axisOperation = msgctx.getAxisOperation();
-                if (axisOperation != null)
+                log.info(msgctx.getLogIDString()+" "+e.getMessage());
+                if (msgctx.getProperty(MessageContext.DISABLE_ASYNC_CALLBACK_ON_TRANSPORT_ERROR) == null)
                 {
-                  MessageReceiver msgReceiver = axisOperation.getMessageReceiver();
-                  if ((msgReceiver != null) && (msgReceiver instanceof CallbackReceiver))
-                  {
-                    Callback callback = ((CallbackReceiver)msgReceiver).lookupCallback(msgctx.getMessageID());
-                    if (callback != null)
+                    AxisOperation axisOperation = msgctx.getAxisOperation();
+                    if (axisOperation != null)
                     {
-                      callback.onError(e);
+                        MessageReceiver msgReceiver = axisOperation.getMessageReceiver();
+                        if ((msgReceiver != null) && (msgReceiver instanceof CallbackReceiver))
+                        {
+                            Callback callback = ((CallbackReceiver)msgReceiver).lookupCallback(msgctx.getMessageID());
+                            if (callback != null)
+                            {
+                                callback.onError(e);
+                            }
+                        }
                     }
-                  }
                 }
-              }
             }
         }
     }

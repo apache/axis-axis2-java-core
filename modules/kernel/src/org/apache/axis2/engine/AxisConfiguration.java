@@ -354,7 +354,7 @@ public class AxisConfiguration extends AxisDescription {
         addChild(axisServiceGroup);
     }
 
-    public void removeServiceGroup(String serviceGroupName) throws AxisFault {
+    public AxisServiceGroup removeServiceGroup(String serviceGroupName) throws AxisFault {
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) getChild(serviceGroupName);
         if (axisServiceGroup == null) {
             throw new AxisFault(Messages.getMessage("invalidservicegroupname",
@@ -370,6 +370,7 @@ public class AxisConfiguration extends AxisDescription {
         }
         removeChild(serviceGroupName);
         notifyObservers(AxisEvent.SERVICE_REMOVE, axisServiceGroup);
+        return axisServiceGroup;
     }
 
     /**

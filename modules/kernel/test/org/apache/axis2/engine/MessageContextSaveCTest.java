@@ -21,11 +21,7 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -472,24 +468,25 @@ public class MessageContextSaveCTest extends TestCase
         //-----------------------------------------------------------------
         // setup the context objects
         //-----------------------------------------------------------------
-        srvGrpCtx_ABC_save = new ServiceGroupContext(saveConfigurationContext, axisSrvGrp_ABC_save);  
+        srvGrpCtx_ABC_save = ContextFactory.createServiceGroupContext(saveConfigurationContext, axisSrvGrp_ABC_save);
         srvGrpCtx_ABC_save.setId(serviceGroupName_ABC);
 
-        srvCtx_A_save = srvGrpCtx_ABC_save.getServiceContext(axisSrv_A_save);
-        srvCtx_B_save = srvGrpCtx_ABC_save.getServiceContext(axisSrv_B_save); 
-        srvCtx_C_save = srvGrpCtx_ABC_save.getServiceContext(axisSrv_C_save);
+        srvCtx_A_save =ContextFactory.createServiceContext(srvGrpCtx_ABC_save,axisSrv_A_save);
+        srvCtx_B_save = ContextFactory.createServiceContext(srvGrpCtx_ABC_save,axisSrv_B_save);
+        srvCtx_C_save = ContextFactory.createServiceContext(srvGrpCtx_ABC_save,axisSrv_C_save);
 
         opCtx_A1_save = srvCtx_A_save.createOperationContext(operation_QName_A1);
         opCtx_A2_save = srvCtx_A_save.createOperationContext(operation_QName_A2);
 
         //----------------------------------------
 
-        srvGrpCtx_ABC_equiv = new ServiceGroupContext(equivConfigurationContext, axisSrvGrp_ABC_equiv);  
+        srvGrpCtx_ABC_equiv =ContextFactory.createServiceGroupContext(
+                equivConfigurationContext, axisSrvGrp_ABC_equiv);
         srvGrpCtx_ABC_equiv.setId(serviceGroupName_ABC);
 
-        srvCtx_A_equiv = srvGrpCtx_ABC_equiv.getServiceContext(axisSrv_A_equiv);
-        srvCtx_B_equiv = srvGrpCtx_ABC_equiv.getServiceContext(axisSrv_B_equiv); 
-        srvCtx_C_equiv = srvGrpCtx_ABC_equiv.getServiceContext(axisSrv_C_equiv);
+        srvCtx_A_equiv =ContextFactory.createServiceContext(srvGrpCtx_ABC_equiv,axisSrv_A_equiv);
+        srvCtx_B_equiv = ContextFactory.createServiceContext(srvGrpCtx_ABC_equiv,axisSrv_B_equiv);
+        srvCtx_C_equiv =ContextFactory.createServiceContext(srvGrpCtx_ABC_equiv,axisSrv_C_equiv);
 
         opCtx_A1_equiv = srvCtx_A_equiv.createOperationContext(operation_QName_A1);
         opCtx_A2_equiv = srvCtx_A_equiv.createOperationContext(operation_QName_A2);
@@ -515,10 +512,9 @@ public class MessageContextSaveCTest extends TestCase
 
     private MessageContext createMessageContext(OperationContext oc, ConfigurationContext cc, int flowType) throws Exception
     {
-        MessageContext mc = new MessageContext();
+        MessageContext mc = ContextFactory.createMessageContext(cc);
 
         mc.setFLOW(flowType);
-        mc.setConfigurationContext(cc);
         mc.setTransportIn(transportIn);
         mc.setTransportOut(transportOut);
 

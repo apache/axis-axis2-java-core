@@ -32,6 +32,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -108,7 +109,7 @@ public class JMSMessageReceiver implements MessageListener {
         InputStream in = JMSUtils.getInputStream(message);
 
         try {
-            MessageContext msgContext = new MessageContext();
+            MessageContext msgContext = ContextFactory.createMessageContext(axisConf);
 
             // get destination and create correct EPR
             Destination dest = message.getJMSDestination();
@@ -140,7 +141,6 @@ public class JMSMessageReceiver implements MessageListener {
                     axisConf.getAxisConfiguration().getService(serviceName));
             }
 
-            msgContext.setConfigurationContext(axisConf);
             msgContext.setIncomingTransportName(Constants.TRANSPORT_JMS);
             msgContext.setTransportIn(
                 axisConf.getAxisConfiguration().getTransportIn(JMSConstants.JMS_QNAME));

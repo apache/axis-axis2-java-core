@@ -40,10 +40,7 @@ import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
@@ -67,9 +64,9 @@ public class MessageContextBuilder {
      * Only deals with properties/fields that are the same for both 'normal' and fault responses.
      */
     private static MessageContext createResponseMessageContext(MessageContext inMessageContext) throws AxisFault {
-        MessageContext newmsgCtx = new MessageContext();
+        MessageContext newmsgCtx = ContextFactory.createMessageContext(
+                inMessageContext.getConfigurationContext());
 
-        newmsgCtx.setConfigurationContext(inMessageContext.getConfigurationContext());
         newmsgCtx.setSessionContext(inMessageContext.getSessionContext());
         newmsgCtx.setTransportIn(inMessageContext.getTransportIn());
         newmsgCtx.setTransportOut(inMessageContext.getTransportOut());

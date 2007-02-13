@@ -19,10 +19,7 @@ package org.apache.axis2.integration;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.context.*;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
@@ -185,8 +182,9 @@ public class UtilServer {
 
         configContext.getAxisConfiguration().addService(service);
 
-        return new ServiceGroupContext(configContext, (AxisServiceGroup) service.getParent())
-                .getServiceContext(service);
+
+        ServiceGroupContext serviceGroupContext = ContextFactory.createServiceGroupContext(configContext, (AxisServiceGroup) service.getParent());
+        return  ContextFactory.createServiceContext(serviceGroupContext,service);
     }
 
     static class AddressingFilter implements FilenameFilter {
@@ -237,9 +235,9 @@ public class UtilServer {
 // sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
         configContext.getAxisConfiguration().addService(service);
-
-        return new ServiceGroupContext(configContext, (AxisServiceGroup) service.getParent())
-                .getServiceContext(service);
+        ServiceGroupContext serviceGroupContext = ContextFactory.createServiceGroupContext(configContext,
+                (AxisServiceGroup) service.getParent());
+        return  ContextFactory.createServiceContext(serviceGroupContext,service);
     }
 
 }

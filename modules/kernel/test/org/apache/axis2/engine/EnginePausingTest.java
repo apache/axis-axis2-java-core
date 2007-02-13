@@ -24,6 +24,7 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.description.*;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
@@ -117,8 +118,7 @@ public class EnginePausingTest extends TestCase {
         
         service.mapActionToOperation(operationName.getLocalPart(), axisOp);
 
-        mc = new MessageContext();
-        mc.setConfigurationContext(configConetxt);
+        mc = ContextFactory.createMessageContext(configConetxt);
         mc.setTransportIn(transportIn);
         mc.setTransportOut(transportOut);
 

@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
@@ -31,7 +32,7 @@ import javax.xml.namespace.QName;
 public class SOAPMessageBodyBasedOperationDispatcherTest extends TestCase {
 
     public void testFindOperation() throws AxisFault {
-        MessageContext messageContext = new MessageContext();
+        MessageContext messageContext;
         AxisService as1 = new AxisService("Service1");
 
 
@@ -43,7 +44,7 @@ public class SOAPMessageBodyBasedOperationDispatcherTest extends TestCase {
         ConfigurationContext cc = ConfigurationContextFactory.createEmptyConfigurationContext();
         AxisConfiguration ac = cc.getAxisConfiguration();
         ac.addService(as1);
-        messageContext.setConfigurationContext(cc);
+        messageContext = ContextFactory.createMessageContext(cc);
 
         messageContext.setAxisService(as1);
 

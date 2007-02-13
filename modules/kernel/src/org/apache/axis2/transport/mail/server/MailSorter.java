@@ -33,6 +33,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.transport.mail.Constants;
 import org.apache.axis2.util.Builder;
@@ -75,8 +76,7 @@ public class MailSorter {
 
         // create and initialize a message context
         try {
-            msgContext = new MessageContext();
-            msgContext.setConfigurationContext(confContext);
+            msgContext = ContextFactory.createMessageContext(confContext);
             msgContext.setTransportIn(confContext.getAxisConfiguration().getTransportIn(new QName(org.apache.axis2.Constants.TRANSPORT_MAIL)));
             msgContext.setTransportOut(confContext.getAxisConfiguration().getTransportOut(new QName(org.apache.axis2.Constants.TRANSPORT_MAIL)));
 
