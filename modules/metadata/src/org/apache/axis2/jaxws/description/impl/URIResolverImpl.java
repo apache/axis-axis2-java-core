@@ -20,9 +20,12 @@ package org.apache.axis2.jaxws.description.impl;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.ws.commons.schema.resolver.URIResolver;
 import org.xml.sax.InputSource;
 
@@ -31,6 +34,10 @@ import org.xml.sax.InputSource;
  * 
  */
 public class URIResolverImpl implements URIResolver {
+	
+	private final String HTTP_PROTOCOL = "http";
+	
+	private final String FILE_PROTOCOL = "file";
 
     private ClassLoader classLoader;
 
@@ -67,7 +74,7 @@ public class URIResolverImpl implements URIResolver {
                     		URI tempURI = new URI(url.getPath());
                         	URI resolvedURI = tempURI.resolve(schemaLocation);
                         	// Add back the scheme to the resolved path
-                        	pathURIStr = pathURI.getScheme() + ":" + resolvedURI.toString();
+                        	pathURIStr = constructPath(url, resolvedURI);
                     	}
                     }
                     else {
@@ -156,4 +163,29 @@ public class URIResolverImpl implements URIResolver {
         }
         return is;
     }
+    
+    private String constructPath(URL baseURL, URI resolvedURI) {
+    	String importLocation = null;
+    	URL url = null;
+    	try {
+    		if(baseURL.getProtocol() != null && baseURL.getProtocol().equals(HTTP_PROTOCOL)) {
+        		url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(),
+        				resolvedURI.toString());
+        	}
+    		else if(baseURL.getProtocol()!= null && baseURL.getProtocol().equals(FILE_PROTOCOL)) {
+        		url = new URL(baseURL.getProtocol(), baseURL.getHost(), resolvedURI.toString());
+        	}
+    	}
+    	catch(MalformedURLException e) {
+    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("schemaImportError", 
+    				resolvedURI.toString(), baseURL.toString()), e);
+    	}
+    	if(url == null) {
+    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("schemaImportError", 
+    				resolvedURI.toString(), baseURL.toString()));
+    	}
+    	importLocation = url.toString();
+    	return importLocation;
+    }
+    
 }
