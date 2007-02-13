@@ -404,7 +404,7 @@ public class PackageSetBuilder {
 	   Definition wsdlDefinition = null;
 	   if(wsdlLocation !=null && wsdlLocation.trim().length()>0){
 		   try{
-	  	       	String baseDir = new File(".").getCanonicalPath();
+	  	       	String baseDir = new File(System.getProperty("basedir",".")).getCanonicalPath();
 	  	       	wsdlLocation = new File(baseDir +File.separator+ wsdlLocation).getAbsolutePath();
 	  	       	File file = new File(wsdlLocation);
 	  	       	URL url = file.toURL();
