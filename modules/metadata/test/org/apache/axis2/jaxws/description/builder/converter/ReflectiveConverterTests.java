@@ -3,6 +3,8 @@ package org.apache.axis2.jaxws.description.builder.converter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Comparator;
+import java.util.Collections;
 
 import javax.jws.*;
 import javax.xml.ws.*;
@@ -42,8 +44,9 @@ public class ReflectiveConverterTests extends TestCase {
 	
 	public static void testImplMethods() {
 		assertNotNull(implDBC);
-		List<MethodDescriptionComposite> mdcList = implDBC.getMethodDescriptionsList();
-		assertNotNull(mdcList);
+		List<MethodDescriptionComposite> mdcList = sortList(implDBC.getMethodDescriptionsList());
+        sortList(mdcList);
+        assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 2);
 		MethodDescriptionComposite mdc = mdcList.get(0);
 		assertNotNull(mdc);
@@ -57,7 +60,7 @@ public class ReflectiveConverterTests extends TestCase {
 	
 	public static void testImplParams() {
 		assertNotNull(implDBC);
-		List<MethodDescriptionComposite> mdcList = implDBC.getMethodDescriptionsList();
+		List<MethodDescriptionComposite> mdcList = sortList(implDBC.getMethodDescriptionsList());
 		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 2);
 		MethodDescriptionComposite mdc = mdcList.get(0);
@@ -87,7 +90,7 @@ public class ReflectiveConverterTests extends TestCase {
 	
 	public static void testSEIMethods() {
 		assertNotNull(seiDBC);
-		List<MethodDescriptionComposite> mdcList = seiDBC.getMethodDescriptionsList();
+		List<MethodDescriptionComposite> mdcList = sortList(seiDBC.getMethodDescriptionsList());
 		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 2);
 		MethodDescriptionComposite mdc = mdcList.get(0);
@@ -103,7 +106,7 @@ public class ReflectiveConverterTests extends TestCase {
 	
 	public static void testSEIParams() {
 		assertNotNull(seiDBC);
-		List<MethodDescriptionComposite> mdcList = seiDBC.getMethodDescriptionsList();
+		List<MethodDescriptionComposite> mdcList = sortList(seiDBC.getMethodDescriptionsList());
 		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 2);
 		MethodDescriptionComposite mdc = mdcList.get(0);
@@ -138,7 +141,7 @@ public class ReflectiveConverterTests extends TestCase {
 		DescriptionBuilderComposite dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter." +
 				"ReflectiveConverterTests$ChildClass");
 		assertNotNull(dbc);
-		List<MethodDescriptionComposite> mdcList = dbc.getMethodDescriptionsList();
+		List<MethodDescriptionComposite> mdcList = sortList(dbc.getMethodDescriptionsList());
 		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 2);
 		assertEquals("doAbstract", mdcList.get(0).getMethodName());
@@ -146,35 +149,35 @@ public class ReflectiveConverterTests extends TestCase {
 		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter." +
 		"ReflectiveConverterTests$ParentClass");
 		assertNotNull(dbc);
-		mdcList = dbc.getMethodDescriptionsList();
+		mdcList = sortList(dbc.getMethodDescriptionsList());
 		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 1);
 		assertEquals("doParentAbstract", mdcList.get(0).getMethodName());
 		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter." +
 		"ReflectiveConverterTests$ServiceInterface");
 		assertNotNull(dbc);
-		mdcList = dbc.getMethodDescriptionsList();
+		mdcList = sortList(dbc.getMethodDescriptionsList());
 		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 1);
 		assertEquals("doAbstract", mdcList.get(0).getMethodName());
 		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter." +
 		"ReflectiveConverterTests$CommonService");
 		assertNotNull(dbc);
-		mdcList = dbc.getMethodDescriptionsList();
+		mdcList = sortList(dbc.getMethodDescriptionsList());
 		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 1);
 		assertEquals("extraMethod", mdcList.get(0).getMethodName());
 		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter." +
 		"ReflectiveConverterTests$ParentServiceInterface");
 		assertNotNull(dbc);
-		mdcList = dbc.getMethodDescriptionsList();
+		mdcList = sortList(dbc.getMethodDescriptionsList());
 		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 1);
 		assertEquals("doParentAbstract", mdcList.get(0).getMethodName());
 		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter." +
 		"ReflectiveConverterTests$AbstractService");
 		assertNotNull(dbc);
-		mdcList = dbc.getMethodDescriptionsList();
+		mdcList = sortList(dbc.getMethodDescriptionsList());
 		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 1);
 		assertEquals("someAbstractMethod", mdcList.get(0).getMethodName());
@@ -225,4 +228,14 @@ public class ReflectiveConverterTests extends TestCase {
 	public class AbstractService {
 		public void someAbstractMethod() {};
 	}
+
+    private static List<MethodDescriptionComposite> sortList(List<MethodDescriptionComposite> mdc){
+        Comparator<MethodDescriptionComposite> c = new Comparator<MethodDescriptionComposite>(){
+            public int compare(MethodDescriptionComposite mdc1, MethodDescriptionComposite o2) {
+                return mdc1.getMethodName().compareTo(o2.getMethodName());
+            }
+        };
+        Collections.sort(mdc, c);
+        return mdc;
+    }
 }
