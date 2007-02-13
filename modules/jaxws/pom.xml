@@ -36,33 +36,34 @@
   </scm>
 	<dependencies>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-kernel</artifactId>
+			<version>${version}</version>
 		</dependency>
 		<dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws-api</artifactId>
-            <version>SNAPSHOT</version>
+			<version>${version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-saaj-api</artifactId>
-            <version>SNAPSHOT</version>
+			<version>${version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
-            <version>SNAPSHOT</version>
+			<version>${version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-saaj</artifactId>
-            <version>SNAPSHOT</version>
+			<version>${version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-metadata</artifactId>
-            <version>SNAPSHOT</version>
+			<version>${version}</version>
         </dependency>
 		<dependency>
 			<groupId>javax.xml.bind</groupId>

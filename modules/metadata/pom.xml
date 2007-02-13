@@ -36,13 +36,14 @@
   </scm>
 	<dependencies>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>org.apache.axis2</groupId>
 			<artifactId>axis2-kernel</artifactId>
+			<version>${version}</version>
 		</dependency>
 		<dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-jaxws-api</artifactId>
-            <version>SNAPSHOT</version>
+			<version>${version}</version>
         </dependency>
 		 <dependency>
             <groupId>com.sun.xml.bind</groupId>

@@ -37,16 +37,19 @@
   </scm>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-adb</artifactId>
-    </dependency>
+ 	  <version>${version}</version>
+	</dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-codegen</artifactId>
-    </dependency>
+		<version>${version}</version>
+	</dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-kernel</artifactId>
+		<version>${version}</version>
     </dependency>
     <dependency>
         <groupId>org.apache.ws.commons.schema</groupId>

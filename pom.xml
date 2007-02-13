@@ -34,7 +34,7 @@
 		<module>modules/addressing</module>
 		<module>modules/java2wsdl</module>
 		<module>modules/kernel</module>
-		<module>modules/tool</module>
+		<!--<module>modules/tool</module>-->
 		<module>modules/adb</module>
 		<module>modules/codegen</module>
 		<module>modules/adb-codegen</module>

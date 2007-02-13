@@ -75,7 +75,17 @@
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/modules/parent</developerConnection>
     <url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/modules/parent/</url>
   </scm>
+	<properties>
+		<!--
+        NOTE: Project version, to be used instead of ${pom.version} since that
+              value magically changes when using SNAPSHOT versions.
 
+              This value *must* be kept in sync with the value of the <version>
+              element, and it will need to be changed manually before a release,
+              as the maven-release-plugin will not update this value.
+        -->
+		<version>SNAPSHOT</version>
+	</properties>
   <mailingLists>
     <mailingList>
       <name>Axis Developer List</name>
@@ -382,24 +392,24 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-java2wsdl</artifactId>
-        <version>${project.version}</version>
+        <version>${version}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-kernel</artifactId>
-        <version>${project.version}</version>
+        <version>${version}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-adb</artifactId>
-        <version>${project.version}</version>
+        <version>${version}</version>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>org.apache.axis2</groupId>
         <artifactId>axis2-codegen</artifactId>
-        <version>${project.version}</version>
+        <version>${version}</version>
       </dependency>
 	  <dependency>
         <groupId>org.apache.ws.commons.axiom</groupId>

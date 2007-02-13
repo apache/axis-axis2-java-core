@@ -38,8 +38,9 @@
   </scm>
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-kernel</artifactId>
+		<version>${version}</version>
     </dependency>
   </dependencies>
   <build>
@@ -80,8 +81,8 @@
 	<plugin>
         <groupId>org.apache.axis2.maven2</groupId>
         <artifactId>axis2-mar-maven-plugin</artifactId>
-        <version>SNAPSHOT</version>
-        <extensions>true</extensions>
+		<version>${version}</version>
+		<extensions>true</extensions>
         <configuration>
        	  <includeDependencies>false</includeDependencies>
         </configuration>
