@@ -1208,8 +1208,10 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
             string.append(port + sameline);
         }
         // Axis Config information
-        string.append(newline);
-        string.append("ConfigurationContext: " + getAxisConfigContext());
+        // We don't print out the config context because it will force one to be created
+        // if it doesn't already exist.
+//        string.append(newline);
+//        string.append("ConfigurationContext: " + getAxisConfigContext());
         // EndpointDescriptions
         string.append(newline);
         EndpointDescription[] endpointDescs = getEndpointDescriptions();
