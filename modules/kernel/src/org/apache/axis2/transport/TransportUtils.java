@@ -149,17 +149,16 @@ public class TransportUtils {
 		} else {
 			//If it is not a SOAPEnvelope we wrap that with a fake SOAPEnvelope.
 			SOAPFactory soapFactory = new SOAP11Factory();
-//			SOAPEnvelope intermediateEnvelope
-			envelope= soapFactory
+			SOAPEnvelope intermediateEnvelope= soapFactory
 					.getDefaultEnvelope();
-			envelope.getBody().addChild(
+			intermediateEnvelope.getBody().addChild(
 					builder.getDocumentElement());
 
 			// We now have the message inside an envelope. However, this is
 			// only an OM; We need to build a SOAP model from it.
-//			builder = new StAXSOAPModelBuilder(intermediateEnvelope
-//					.getXMLStreamReader(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-//			envelope = (SOAPEnvelope) builder.getDocumentElement();
+			builder = new StAXSOAPModelBuilder(intermediateEnvelope
+					.getXMLStreamReader(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+			envelope = (SOAPEnvelope) builder.getDocumentElement();
 		}
 
 		String charsetEncoding = builder.getCharsetEncoding();
