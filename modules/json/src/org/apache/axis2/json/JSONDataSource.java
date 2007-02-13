@@ -1,4 +1,4 @@
-package org.apache.axis2.json;
+
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -14,6 +14,8 @@ package org.apache.axis2.json;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.apache.axis2.json;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +36,13 @@ import org.apache.axis2.AxisFault;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+/**
+ * JSONDataSource keeps the JSON String inside and consumes it when needed.
+ * This is to be kept in the OMSourcedElementImpl and can be used either to
+ * expand the tree or get the JSON String directly without expanding.
+ * This uses the "Mapped" JSON convention.
+ */
+
 public class JSONDataSource implements OMDataSource {
 
     private InputStream jsonInputStream;
@@ -46,29 +55,46 @@ public class JSONDataSource implements OMDataSource {
         this.localName = localName;
     }
 
-    //gives json
+    /**
+     * Writes JSON into the output stream. As this should write JSON, it directly
+     * gets the JSON string and writes it without expanding the tree.
+     * @param outputStream the stream to be written into
+     * @param omOutputFormat format of the message, this is ignored.
+     * @throws javax.xml.stream.XMLStreamException if there is an error while writing the message
+     *                                 in to the output stream.
+     */
     public void serialize(OutputStream outputStream, OMOutputFormat omOutputFormat) throws javax.xml.stream.XMLStreamException {
-        OutputStreamWriter writer = new OutputStreamWriter(outputStream);
-        serialize(writer, omOutputFormat);
         try {
-            writer.flush();
+            outputStream.write(getCompleteJOSNString().getBytes());
         } catch (IOException e) {
             throw new OMException();
         }
     }
 
-    //gives json
+    /**
+     * Writes JSON through the writer. As this should write JSON, it directly
+     * gets the JSON string and writes it without expanding the tree.
+     * @param writer Writer to be written into
+     * @param omOutputFormat format of the message, this is ignored.
+     * @throws javax.xml.stream.XMLStreamException if there is an error while writing the message through the
+     *                                            writer.
+     */
     public void serialize(Writer writer, OMOutputFormat omOutputFormat) throws javax.xml.stream.XMLStreamException {
         try {
-            JSONTokener jsonTokener = new JSONTokener("{" + localName + ":" + this.getJSONString());
-            JSONObject jsonObject = new JSONObject(jsonTokener);
-            jsonObject.write(writer);
-        } catch (JSONException e) {
+            writer.write(getCompleteJOSNString());
+        } catch (IOException e) {
             throw new OMException();
         }
     }
 
-    //gives xml
+    /**
+     * Writes XML through the XMLStreamWriter. As the input data source is JSON, this
+     * method needs to get a StAX reader from that JSON String. Therefore this uses the
+     * getReader() method to get the StAX reader writes the events into the XMLStreamWriter.
+     * @param xmlStreamWriter StAX writer to be written into
+     * @throws javax.xml.stream.XMLStreamException if there is an error while writing the message through the
+     *                                           StAX writer.
+     */
     public void serialize(javax.xml.stream.XMLStreamWriter xmlStreamWriter) throws javax.xml.stream.XMLStreamException {
         XMLStreamReader reader = getReader();
         xmlStreamWriter.writeStartDocument();
@@ -123,16 +149,24 @@ public class JSONDataSource implements OMDataSource {
         xmlStreamWriter.writeEndDocument();
     }
 
+    /**
+     * Gives the StAX reader using the "Mapped" formatted input JSON String.
+     * @return The XMLStreamReader according to the JSON String.
+     * @throws javax.xml.stream.XMLStreamException if there is an error while making the StAX reader.
+     */
+
     public javax.xml.stream.XMLStreamReader getReader() throws javax.xml.stream.XMLStreamException {
 
-        HashMap nstojns = new HashMap();
-        nstojns.put("", "");
+        HashMap XMLToJSNNamespaceMap = new HashMap();
+        XMLToJSNNamespaceMap.put("", "");
 
-        MappedXMLInputFactory inputFactory = new MappedXMLInputFactory(nstojns);
+        //input factory for "Mapped" convention
+        MappedXMLInputFactory inputFactory = new MappedXMLInputFactory(XMLToJSNNamespaceMap);
         String jsonString = "{" + localName + ":" + this.getJSONString();
         return inputFactory.createXMLStreamReader(new JSONTokener(jsonString));         
     }
 
+    //returns the json string by consuming the JSON input stream.
     protected String getJSONString() {
         if (isRead) {
             return jsonString;
@@ -153,6 +187,6 @@ public class JSONDataSource implements OMDataSource {
     }
 
     public String getCompleteJOSNString(){
-        return localName + getJSONString();
+        return "{" + localName + ":" + getJSONString();
     }
 }

@@ -20,6 +20,6 @@ package org.apache.axis2.json;
 public class JSONBadgerfishOMBuilder extends JSONOMBuilder{
 
     protected JSONDataSource getDataSource(){
-        return new JSONBadgerfishDataSource(this.jsonInputStream, localName);
+        return new JSONBadgerfishDataSource(this.jsonInputStream, "\"" + prefix + localName + "\"");
     }
 }

@@ -31,35 +31,84 @@ import org.json.JSONException;
 
 public class JSONDataSourceTest extends TestCase {
 
-    public void testSerialize1() throws XMLStreamException {
-        String jsonString = "{\"p\":{\"name\":{\"kamal\":{\"$\":\"yes\"},\"$\":\"innername\"},\"@pp\":\"value\"}}";
-        InputStream jsonInputStream = new ByteArrayInputStream(jsonString.getBytes());
+    public void testMappedSerialize1() throws XMLStreamException {
+        String jsonString = getMappedJSONString();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        JSONBadgerfishDataSource source = new JSONBadgerfishDataSource(readLocalName(jsonInputStream), "p");
+        JSONDataSource source = getMappedDataSource(jsonString);
         source.serialize(outStream, null);
         assertEquals(jsonString, new String(outStream.toByteArray()));
     }
 
-    public void testSerialize2() throws XMLStreamException, IOException {
-        String jsonString = "{\"p\":{\"name\":{\"kamal\":[{\"$\":\"yes\"},{\"$\":\"second\"}],\"$\":\"innername\"},\"@pp\":\"value\"}}";
-        InputStream jsonInputStream = new ByteArrayInputStream(jsonString.getBytes());
+    public void testMappedSerialize2() throws XMLStreamException, IOException {
+        String jsonString = getMappedJSONString();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         OutputStreamWriter writer = new OutputStreamWriter(outStream);
-        JSONBadgerfishDataSource source = new JSONBadgerfishDataSource(readLocalName(jsonInputStream), "p");
+        JSONDataSource source = getMappedDataSource(jsonString);
+        source.serialize(writer, null);
+        writer.flush();
+        assertEquals(jsonString, new String(outStream.toByteArray()));
+
+    }
+
+    public void testMappedSerialize3() throws XMLStreamException {
+//        String jsonString = getMappedJSONString();
+//        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+//        XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(outStream);
+//        JSONDataSource source = getMappedDataSource(jsonString);
+//        source.serialize(writer);
+//        writer.flush();
+//        assertEquals("<?xml version='1.0' encoding='UTF-8'?><mapping><inner><first>test string one</first></inner><inner>test string two</inner><name>foo</name></mapping>", new String(outStream.toByteArray()));
+        //<mapping><inner>test string one</inner><inner>test string two</inner><name>foo</name></mapping>
+    }
+
+    public void testBadgerfishSerialize1() throws XMLStreamException {
+        String jsonString = getBadgerfishJSONString();
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        JSONBadgerfishDataSource source = getBadgerfishDataSource(jsonString);
+        source.serialize(outStream, null);
+        assertEquals(jsonString, new String(outStream.toByteArray()));
+    }
+
+    public void testBadgerfishSerialize2() throws XMLStreamException, IOException {
+        String jsonString = getBadgerfishJSONString();
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        OutputStreamWriter writer = new OutputStreamWriter(outStream);
+        JSONBadgerfishDataSource source = getBadgerfishDataSource(jsonString);
         source.serialize(writer, null);
         writer.flush();
         assertEquals(jsonString, new String(outStream.toByteArray()));
     }
 
-    public void testSerialize3() throws XMLStreamException, JSONException {
-        String jsonString = "{\"p\":{\"@xmlns\":{\"bb\":\"http://other.nsb\",\"aa\":\"http://other.ns\",\"$\":\"http://def.ns\"},\"sam\":{\"$\":\"555\", \"@att\":\"lets\"}}}";
-        InputStream jsonInputStream = new ByteArrayInputStream(jsonString.getBytes());
+    public void testBadgerfishSerialize3() throws XMLStreamException, JSONException {
+        String jsonString = getBadgerfishJSONString();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(outStream);
-        JSONBadgerfishDataSource source = new JSONBadgerfishDataSource(readLocalName(jsonInputStream), "p");
+        JSONBadgerfishDataSource source = getBadgerfishDataSource(jsonString);
         source.serialize(writer);
         writer.flush();
         assertEquals("<?xml version='1.0' encoding='UTF-8'?><p xmlns=\"http://def.ns\" xmlns:bb=\"http://other.nsb\" xmlns:aa=\"http://other.ns\"><sam att=\"lets\">555</sam></p>", new String(outStream.toByteArray()));
+    }
+
+    private JSONBadgerfishDataSource getBadgerfishDataSource(String jsonString) {
+        InputStream jsonInputStream = new ByteArrayInputStream(jsonString.getBytes());
+        return new JSONBadgerfishDataSource(readLocalName(jsonInputStream), "\"p\"");
+    }
+
+    private String getBadgerfishJSONString() {
+        return "{\"p\":{\"@xmlns\":{\"bb\":\"http://other.nsb\",\"aa\":\"http://other.ns\",\"$\":\"http://def.ns\"},\"sam\":{\"$\":\"555\", \"@att\":\"lets\"}}}";
+    }
+
+    private JSONDataSource getMappedDataSource(String jsonString) {
+        InputStream jsonInputStream = new ByteArrayInputStream(jsonString.getBytes());
+        return new JSONDataSource(readLocalName(jsonInputStream), "\"mapping\"");
+    }
+
+    private String getMappedJSONString() {
+//        {"mapping":{"inner":[{"first":"test string one"},"test string two"],"name":"foo"}}
+//          <mapping><inner><first>test string one</first></inner><inner>test string two</inner><name>foo</name></mapping>
+//        return "{\"mapping\":{\"inner\":[{\"first\":\"test string one\"},\"test string two\"],\"name\":\"foo\"}}";
+        return "{\"mapping\":{\"inner\":[\"test string one\",\"test string two\"],\"name\":\"foo\"}}";
+//        return "{\"mapping\":{\"inner\":\"foo\"}}";
     }
 
     private InputStream readLocalName(InputStream in) {
@@ -71,4 +120,5 @@ public class JSONDataSourceTest extends TestCase {
         }
         return in;
     }
+
 }

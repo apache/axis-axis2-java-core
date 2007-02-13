@@ -1,4 +1,3 @@
-package org.apache.axis2.json;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -15,19 +14,19 @@ package org.apache.axis2.json;
  * limitations under the License.
  */
 
-import org.apache.axiom.om.OMDataSource;
-import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.OMException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.json.JSONException;
-import org.codehaus.jettison.badgerfish.BadgerFishXMLInputFactory;
-import org.codehaus.jettison.mapped.MappedXMLInputFactory;
+package org.apache.axis2.json;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamConstants;
+
+import org.json.JSONTokener;
+import org.codehaus.jettison.badgerfish.BadgerFishXMLInputFactory;
 import java.io.*;
-import java.util.HashMap;
+
+/**
+ * JSONDataSource keeps the JSON String inside and consumes it when needed.
+ * This is to be kept in the OMSourcedElementImpl and can be used either to
+ * expand the tree or get the JSON String directly without expanding.
+ * This uses the "Badgerfish" JSON convention.
+ */
 
 public class JSONBadgerfishDataSource extends JSONDataSource{
 
@@ -35,8 +34,14 @@ public class JSONBadgerfishDataSource extends JSONDataSource{
         super(jsonInputStream, localName);
     }
 
+    /**
+     * Gives the StAX reader using the "Badgerfish" formatted input JSON String.
+     * @return The XMLStreamReader according to the JSON String.
+     * @throws javax.xml.stream.XMLStreamException if there is an error while making the StAX reader.
+     */
     public javax.xml.stream.XMLStreamReader getReader() throws javax.xml.stream.XMLStreamException {
 
+        //input factory for "Badgerfish"
         BadgerFishXMLInputFactory inputFactory = new BadgerFishXMLInputFactory();
         return inputFactory.createXMLStreamReader(new JSONTokener("{" + localName + ":" + this.getJSONString()));
 
