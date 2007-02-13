@@ -1820,10 +1820,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element methodElement;
         String serviceName = makeJavaClassName(axisService.getName());
 
-        Iterator operations = axisService.getOperations();
+        Iterator operationNames = axisService.getOperationsNameList().iterator();
         boolean opsFound = false;
-        while (operations.hasNext()) {
-            AxisOperation axisOperation = (AxisOperation) operations.next();
+        QName operationName;
+        while (operationNames.hasNext()) {
+            operationName = (QName) operationNames.next();
+            AxisOperation axisOperation = axisService.getOperation(operationName);
 
             // populate info holder with mep information. This will used in determining which
             // message receiver to use, etc.,

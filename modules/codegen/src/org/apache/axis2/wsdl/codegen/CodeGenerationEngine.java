@@ -19,6 +19,7 @@ package org.apache.axis2.wsdl.codegen;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDL20ToAllAxisServicesBuilder;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
@@ -87,11 +88,12 @@ public class CodeGenerationEngine {
 
             if(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
                     equals(configuration.getWSDLVersion())){
-                configuration.setAxisService(
-                        new WSDL20ToAxisServiceBuilder(wsdlUri,
+                WSDL20ToAxisServiceBuilder builder = new WSDL20ToAxisServiceBuilder(wsdlUri,
                                 configuration.getServiceName(),
-                                configuration.getPortName()).
-                                populateService());
+                                configuration.getPortName());
+                builder.setCodegen(true);
+                configuration.setAxisService(builder.populateService());
+
             }else{
                 //It'll be WSDL 1.1
                 Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);
@@ -100,12 +102,12 @@ public class CodeGenerationEngine {
                     serviceQname = new QName(wsdl4jDef.getTargetNamespace(), configuration.getServiceName());
                 }
 
-                configuration.setAxisService(new WSDL11ToAxisServiceBuilder(
-                        wsdl4jDef,
-                        serviceQname,
-                        configuration.getPortName()).
-                        populateService()
-                );
+                WSDL11ToAxisServiceBuilder builder = new WSDL11ToAxisServiceBuilder(
+                                        wsdl4jDef,
+                                        serviceQname,
+                                        configuration.getPortName());
+                builder.setCodegen(true);
+                configuration.setAxisService(builder.populateService());
             }
             
         } catch (AxisFault axisFault) {
