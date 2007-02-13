@@ -1960,7 +1960,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             methodElement.appendChild(generateOptionParamComponent(doc,
                                                                    "org.apache.axis2.Constants.Configuration.CONTENT_TYPE",
                                                                    "\"" +
-                                                                           "org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM" +
+                                                                           org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
                                                                            "\""));
         } else if (bindingType != null && bindingType.equals(WSDL2Constants.URI_WSDL2_HTTP)) {
 
@@ -2041,7 +2041,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                    Document doc) {
         // Add a optionParam element which holds the value of transferCoding
         String transferCoding =
-                (String) getBindingPropertyFromMessage(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
+                (String) getBindingPropertyFromMessage(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING,
                                                        axisOperation.getName(),
                                                        WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
         if (!"".equals(transferCoding)) {
