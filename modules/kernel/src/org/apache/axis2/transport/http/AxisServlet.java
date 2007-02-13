@@ -268,12 +268,17 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                         contentType, req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
                         req.getRequestURL().toString());
 
-                if (pi.equals(InvocationResponse.SUSPEND)) {
+                Boolean holdResponse = (Boolean) msgContext.getProperty(RequestResponseTransport.HOLD_RESPONSE);
+                
+                if (pi.equals(InvocationResponse.SUSPEND) ||  (holdResponse!=null && Boolean.TRUE.equals(holdResponse))) {
                     ((RequestResponseTransport) msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL)).awaitResponse();
                 }
 
-                Object contextWritten =
-                        msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
+                Object contextWritten = null;
+                OperationContext operationContext =  msgContext.getOperationContext();
+                
+                if (operationContext!=null)
+                	contextWritten = operationContext.getProperty(Constants.RESPONSE_WRITTEN);
 
                 res.setContentType("text/xml; charset="
                         + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));

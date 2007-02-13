@@ -40,6 +40,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayOutputStream;
@@ -160,6 +161,23 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 					.getProperty(Constants.Configuration.MIME_BOUNDARY);
 			if (mimeBoundaryProperty != null) {
 				format.setMimeBoundary((String) mimeBoundaryProperty);
+			}
+			
+			TransportOutDescription transportOut = msgContext.getConfigurationContext().
+										getAxisConfiguration().getTransportOut(new QName (Constants.TRANSPORT_HTTP));
+			
+			//if a parameter hs set been set, we will omit the SOAP action for SOAP 1.2 
+			if (transportOut!=null) {
+				Parameter param = transportOut.getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
+				Object value = null;
+				if (param!=null)
+					value = param.getValue();
+				
+				if (value!=null && JavaUtils.isTrueExplicitly(value)) {
+					if (msgContext.isSOAP11()!=true) {
+						msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION, Boolean.TRUE);
+					}
+				}
 			}
 
 			// Trasnport URL can be different from the WSA-To. So processing
@@ -382,9 +400,11 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 			}
 		}
 
-		if (soapActionString == null) {
+		//Since action is optional for SOAP 1.2 we can return null here.
+		if (soapActionString == null && messageContext.isSOAP11()) {
 			soapActionString = "\"\"";
 		}
+		
 		return soapActionString;
 	}
 }
