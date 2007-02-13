@@ -362,6 +362,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
 
         AxisOperation axisOperation;
+        List operationNames = new ArrayList();
 
         QName opName;
         Operation wsdl4jOperation;
@@ -370,9 +371,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             wsdl4jOperation = (Operation) iterator.next();
 
             opName = new QName("", wsdl4jOperation.getName());
-
-            axisOperation = axisService.getOperation(new QName("", wsdl4jOperation.getName()));
-
+            axisOperation = axisService.getOperation(opName);
+            operationNames.add(opName);
             if (axisOperation == null) {
                 String mep = getMEP(wsdl4jOperation);
                 axisOperation = AxisOperationFactory.getOperationDescription(mep);
@@ -381,6 +381,11 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
             axisOperation.setParent(axisService);
             populateOperation(axisOperation, wsdl4jPortType, wsdl4jOperation);
+        }
+
+        // this is used only in codegen to perserve operation order
+        if (isCodegen){
+            axisService.setOperationsNameList(operationNames);
         }
 
     }
@@ -1462,8 +1467,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // target namespace for this should be the namespace URI for
         // the porttype
         PortType portType = wsdl4jBinding.getPortType();
-        String porttypeNamespaceURI = wsdl4jBinding.getPortType().getQName()
-                .getNamespaceURI();
+        String porttypeNamespaceURI = wsdl4jBinding.getPortType().getQName().getNamespaceURI();
 
         // //////////////////////////////////////////////////////////////////////
         // if there are any bindings present then we have to process them. we
@@ -1502,9 +1506,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // loop through the messages. We'll populate thins map with the relevant
         // messages
         // from the operations
-        Map name_to_msg = new HashMap();
-        Map OpeartionsToInputMessages = new HashMap();
-        Map op_to_output = new HashMap();
+        Map messageQnameToMessageMap = new HashMap();
+        Map operationToInputMessageMap = new HashMap();
+        Map operationToOutputMessageMap = new HashMap();
         Map faultyOperationsMap = new HashMap();
         // this contains the required namespace imports. the key in this
         // map would be the namaspace URI
@@ -1530,15 +1534,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             Message message;
             if (input != null) {
                 message = input.getMessage();
-                name_to_msg.put(message.getQName(), message);
-                OpeartionsToInputMessages.put(op.getName(), message);
+                messageQnameToMessageMap.put(message.getQName(), message);
+                operationToInputMessageMap.put(op, message);
             }
 
             Output output = op.getOutput();
             if (output != null) {
                 message = output.getMessage();
-                name_to_msg.put(message.getQName(), message);
-                op_to_output.put(op.getName(), message);
+                messageQnameToMessageMap.put(message.getQName(), message);
+                operationToOutputMessageMap.put(op, message);
             }
 
             Map faultMap = op.getFaults();
@@ -1549,7 +1553,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     Fault fault = (Fault) faultMap.get(key);
                     if (fault != null) {
                         message = fault.getMessage();
-                        name_to_msg.put(message.getQName(), message);
+                        messageQnameToMessageMap.put(message.getQName(), message);
                         faultyOperationsMap.put(key, message);
                     }
                 }
@@ -1568,8 +1572,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // just take all the messages and wrap them, we've already selected
         // the relevant messages by looking at the SOAP binding
 
-        keys = (QName[]) name_to_msg.keySet().toArray(
-                new QName[name_to_msg.size()]);
+        keys = (QName[]) messageQnameToMessageMap.keySet().toArray(
+                new QName[messageQnameToMessageMap.size()]);
 
         // /////////////////////////////////////////////////////////////////////////////////////////
         // Now we have the message list to process - Process the whole list of
@@ -1577,151 +1581,126 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // since we need to generate one single schema
         // /////////////////////////////////////////////////////////////////////////////////////////
 
-        List resolved_msg_qnames = new ArrayList();
+        List resolvedMessageQnames = new ArrayList();
         // find the xsd prefix
         String xsdPrefix = findSchemaPrefix();
         Message wsdl4jMessage;
         // DOM document that will be the ultimate creator
         Document document = getDOMDocumentBuilder().newDocument();
         for (int i = 0; i < keys.length; i++) {
-            wsdl4jMessage = (Message) name_to_msg.get(keys[i]);
+            wsdl4jMessage = (Message) messageQnameToMessageMap.get(keys[i]);
             // No need to check the wrappable,
 
             // This message is wrappabel. However we need to see whether the
             // message is already
             // resolved!
-            if (!resolved_msg_qnames.contains(wsdl4jMessage.getQName())) {
+            if (!resolvedMessageQnames.contains(wsdl4jMessage.getQName())) {
                 // This message has not been touched before!. So we can go ahead
                 // now
                 Map parts = wsdl4jMessage.getParts();
-                // add the complex type
-                Element newComplexType = document.createElementNS(
-                        XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                        + XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME);
-
-                Element cmplxTypeSequence = document.createElementNS(
-                        XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                        + XML_SCHEMA_SEQUENCE_LOCAL_NAME);
-                Element child;
-                Iterator iterator = parts.keySet().iterator();
-
-                while (iterator.hasNext()) {
-                    Part part = (Part) parts.get(iterator.next());
-                    // the part name
-                    String elementName = part.getName();
-                    boolean isTyped = true;
-                    // the type name
-                    QName schemaTypeName;
-                    if (part.getTypeName() != null) {
-                        schemaTypeName = part.getTypeName();
-                    } else if (part.getElementName() != null) {
-                        schemaTypeName = part.getElementName();
-                        isTyped = false;
-                    } else {
-                        throw new RuntimeException(" Unqualified Message part!");
-                    }
-
-                    child = document.createElementNS(XMLSCHEMA_NAMESPACE_URI,
-                            xsdPrefix + ":" + XML_SCHEMA_ELEMENT_LOCAL_NAME);
-
-                    String prefix;
-                    if (XMLSCHEMA_NAMESPACE_URI.equals(schemaTypeName
-                            .getNamespaceURI())) {
-                        prefix = xsdPrefix;
-                    } else {
-                        // this schema is a third party one. So we need to have
-                        // an import statement in our generated schema
-                        String uri = schemaTypeName.getNamespaceURI();
-                        if (!namespaceImportsMap.containsKey(uri)) {
-                            // create Element for namespace import
-                            Element namespaceImport = document.createElementNS(
-                                    XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                                    + XML_SCHEMA_IMPORT_LOCAL_NAME);
-                            namespaceImport.setAttribute(NAMESPACE_URI, uri);
-                            // add this to the map
-                            namespaceImportsMap.put(uri, namespaceImport);
-                            // we also need to associate this uri with a prefix
-                            // and include that prefix
-                            // in the schema's namspace declarations. So add
-                            // theis particular namespace to the
-                            // prefix map as well
-                            prefix = getTemporaryNamespacePrefix();
-                            namespacePrefixMap.put(uri, prefix);
-                        } else {
-                            // this URI should be already in the namspace prefix
-                            // map
-                            prefix = (String) namespacePrefixMap.get(uri);
-                        }
-
-                    }
-                    // If it's from a type the element we need to add a name and
-                    // the type
-                    // if not it's the element reference
-                    if (isTyped) {
-                        child.setAttribute(XSD_NAME, elementName);
-                        child.setAttribute(XSD_TYPE, prefix + ":"
-                                + schemaTypeName.getLocalPart());
-                    } else {
-                        child.setAttribute(XSD_REF, prefix + ":"
-                                + schemaTypeName.getLocalPart());
-                    }
-                    cmplxTypeSequence.appendChild(child);
-                }
-                newComplexType.appendChild(cmplxTypeSequence);
+                Element newComplexType = getNewComplextType(document,
+                        xsdPrefix,
+                        parts.values().iterator(),
+                        namespaceImportsMap,
+                        namespacePrefixMap);
                 // add this newly created complextype to the list
                 complexTypeElementsMap.put(wsdl4jMessage.getQName(),
                         newComplexType);
-                resolved_msg_qnames.add(wsdl4jMessage.getQName());
+                resolvedMessageQnames.add(wsdl4jMessage.getQName());
             }
 
         }
 
         Element elementDeclaration;
 
-        // loop through the input op map and generate the elements
-        String[] input_op_names = (String[]) OpeartionsToInputMessages.keySet()
-                .toArray(new String[OpeartionsToInputMessages.size()]);
-        for (int j = 0; j < input_op_names.length; j++) {
-            String input_op_name = input_op_names[j];
+        //loop through the input op map and generate the elements
+        Operation operation;
+        for (Iterator operationsIter = operationToInputMessageMap.keySet().iterator();
+             operationsIter.hasNext();){
+            operation = (Operation) operationsIter.next();
             elementDeclaration = document.createElementNS(
                     XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
                     + XML_SCHEMA_ELEMENT_LOCAL_NAME);
-            elementDeclaration.setAttribute(XSD_NAME, input_op_name);
+            elementDeclaration.setAttribute(XSD_NAME, operation.getName());
+            List parameterOrder = operation.getParameterOrdering();
+            Message message = (Message) operationToInputMessageMap.get(operation);
 
-            QName typeQName = ((Message) OpeartionsToInputMessages.get(input_op_name))
-                    .getQName();
-            // add the anonymous
-            elementDeclaration.appendChild(((Element) complexTypeElementsMap
-                    .get(typeQName)).cloneNode(true));
+            Node newComplexType;
+            if ((parameterOrder != null) && (parameterOrder.size() != 0)){
+                // create new complex element according to the parameter order given
+                newComplexType = getNewComplextType(document,
+                        xsdPrefix,
+                        message.getOrderedParts(parameterOrder).iterator(),
+                        namespaceImportsMap,
+                        namespacePrefixMap);
 
+            } else {
+                newComplexType = ((Element) complexTypeElementsMap.get(message.getQName())).cloneNode(true);
+            }
+
+            elementDeclaration.appendChild(newComplexType);
             elementElementsList.add(elementDeclaration);
-            resolvedRpcWrappedElementMap.put(input_op_name, new QName(
-                    namespaceURI, input_op_name, AXIS2WRAPPED));
+            resolvedRpcWrappedElementMap.put(operation.getName(), new QName(
+                    namespaceURI, operation.getName(), AXIS2WRAPPED));
+
         }
 
-        // loop through the output op map and generate the elements
-        String[] outputOperationtNames = (String[]) op_to_output
-                .keySet().toArray(new String[op_to_output.size()]);
-        for (int j = 0; j < outputOperationtNames.length; j++) {
-
-            String baseoutputOpName = outputOperationtNames[j];
+        // loop through the output to map and generate the elements
+        for (Iterator operationsIterator = operationToOutputMessageMap.keySet().iterator();
+                operationsIterator.hasNext();){
+            operation = (Operation) operationsIterator.next();
+            String baseoutputOpName = operation.getName();
             String outputOpName = baseoutputOpName + WRAPPED_OUTPUTNAME_SUFFIX;
             elementDeclaration = document.createElementNS(
                     XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
                     + XML_SCHEMA_ELEMENT_LOCAL_NAME);
             elementDeclaration.setAttribute(XSD_NAME, outputOpName);
+            Message message = (Message) operationToOutputMessageMap.get(operation);
+            List parameterOrder = operation.getParameterOrdering();
 
-            QName typeQName = ((Message) op_to_output
-                    .get(baseoutputOpName)).getQName();
-            // add the anonymous
-            elementDeclaration.appendChild(((Element) complexTypeElementsMap
-                    .get(typeQName)).cloneNode(true));
+            Node newComplexType;
+            if ((parameterOrder != null) && (parameterOrder.size() != 0)){
+                // create new complex element according to the parameter order given
+                newComplexType = getNewComplextType(document,
+                        xsdPrefix,
+                        message.getOrderedParts(parameterOrder).iterator(),
+                        namespaceImportsMap,
+                        namespacePrefixMap);
+
+            } else {
+                newComplexType = ((Element) complexTypeElementsMap.get(message.getQName())).cloneNode(true);
+            }
+
+            elementDeclaration.appendChild(newComplexType);
             elementElementsList.add(elementDeclaration);
-
-            resolvedRpcWrappedElementMap.put(outputOpName, new QName(
-                    namespaceURI, outputOpName, AXIS2WRAPPED));
+            resolvedRpcWrappedElementMap.put(outputOpName, new QName(namespaceURI, outputOpName, AXIS2WRAPPED));
 
         }
+
+
+        // loop through the output op map and generate the elements
+//        String[] outputOperationtNames = (String[]) operationToOutputMessageMap
+//                .keySet().toArray(new String[operationToOutputMessageMap.size()]);
+//        for (int j = 0; j < outputOperationtNames.length; j++) {
+//
+//            String baseoutputOpName = outputOperationtNames[j];
+//            String outputOpName = baseoutputOpName + WRAPPED_OUTPUTNAME_SUFFIX;
+//            elementDeclaration = document.createElementNS(
+//                    XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+//                    + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+//            elementDeclaration.setAttribute(XSD_NAME, outputOpName);
+//
+//            QName typeQName = ((Message) operationToOutputMessageMap
+//                    .get(baseoutputOpName)).getQName();
+//            // add the anonymous
+//            elementDeclaration.appendChild(((Element) complexTypeElementsMap
+//                    .get(typeQName)).cloneNode(true));
+//            elementElementsList.add(elementDeclaration);
+//
+//            resolvedRpcWrappedElementMap.put(outputOpName, new QName(
+//                    namespaceURI, outputOpName, AXIS2WRAPPED));
+//
+//        }
 
         // loop through the faultoutput op map and generate the elements
         String[] faultyOperationtNames = (String[]) faultyOperationsMap
@@ -1839,6 +1818,98 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             return schemaElement;
         }
 
+    }
+
+    /**
+     * creates a new shema complex element according to the elements sequence difined
+     * @param document
+     * @param xsdPrefix
+     * @param partsIterator
+     * @param namespaceImportsMap
+     * @param namespacePrefixMap
+     * @return the new complex type element
+     */
+
+    private Element getNewComplextType(Document document,
+                                       String xsdPrefix,
+                                       Iterator partsIterator,
+                                       Map namespaceImportsMap,
+                                       Map namespacePrefixMap) {
+        // add the complex type
+        Element newComplexType = document.createElementNS(
+                XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+                + XML_SCHEMA_COMPLEX_TYPE_LOCAL_NAME);
+
+        Element cmplxTypeSequence = document.createElementNS(
+                XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+                + XML_SCHEMA_SEQUENCE_LOCAL_NAME);
+        Element child;
+        Part part;
+
+        while (partsIterator.hasNext()) {
+            part = (Part) partsIterator.next();
+            // the part name
+            String elementName = part.getName();
+            boolean isTyped = true;
+            // the type name
+            QName schemaTypeName;
+            if (part.getTypeName() != null) {
+                schemaTypeName = part.getTypeName();
+            } else if (part.getElementName() != null) {
+                schemaTypeName = part.getElementName();
+                isTyped = false;
+            } else {
+                throw new RuntimeException(" Unqualified Message part!");
+            }
+
+            child = document.createElementNS(XMLSCHEMA_NAMESPACE_URI,
+                    xsdPrefix + ":" + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+
+            String prefix;
+            if (XMLSCHEMA_NAMESPACE_URI.equals(schemaTypeName
+                    .getNamespaceURI())) {
+                prefix = xsdPrefix;
+            } else {
+                // this schema is a third party one. So we need to have
+                // an import statement in our generated schema
+                String uri = schemaTypeName.getNamespaceURI();
+                if (!namespaceImportsMap.containsKey(uri)) {
+                    // create Element for namespace import
+                    Element namespaceImport = document.createElementNS(
+                            XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+                            + XML_SCHEMA_IMPORT_LOCAL_NAME);
+                    namespaceImport.setAttribute(NAMESPACE_URI, uri);
+                    // add this to the map
+                    namespaceImportsMap.put(uri, namespaceImport);
+                    // we also need to associate this uri with a prefix
+                    // and include that prefix
+                    // in the schema's namspace declarations. So add
+                    // theis particular namespace to the
+                    // prefix map as well
+                    prefix = getTemporaryNamespacePrefix();
+                    namespacePrefixMap.put(uri, prefix);
+                } else {
+                    // this URI should be already in the namspace prefix
+                    // map
+                    prefix = (String) namespacePrefixMap.get(uri);
+                }
+
+            }
+            // If it's from a type the element we need to add a name and
+            // the type
+            // if not it's the element reference
+            if (isTyped) {
+                child.setAttribute(XSD_NAME, elementName);
+                child.setAttribute(XSD_TYPE, prefix + ":"
+                        + schemaTypeName.getLocalPart());
+            } else {
+                child.setAttribute(XSD_REF, prefix + ":"
+                        + schemaTypeName.getLocalPart());
+            }
+            cmplxTypeSequence.appendChild(child);
+        }
+        newComplexType.appendChild(cmplxTypeSequence);
+        return newComplexType;
     }
 
     /**

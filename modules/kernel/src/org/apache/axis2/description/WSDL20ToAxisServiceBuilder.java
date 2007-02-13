@@ -59,11 +59,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -768,10 +764,18 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // copyExtensionAttributes(wsdl4jPortType.getExtensionAttributes(),
         // axisService, PORT_TYPE);
 
+        List operationNames = new ArrayList();
+
+
         InterfaceOperation[] interfaceOperations = serviceInterface
                 .getInterfaceOperations();
         for (int i = 0; i < interfaceOperations.length; i++) {
             axisService.addOperation(populateOperations(interfaceOperations[i]));
+            operationNames.add(interfaceOperations[i].getName());
+        }
+
+        if (isCodegen){
+            axisService.setOperationsNameList(operationNames);
         }
 
         Interface[] extendedInterfaces = serviceInterface.getExtendedInterfaces();

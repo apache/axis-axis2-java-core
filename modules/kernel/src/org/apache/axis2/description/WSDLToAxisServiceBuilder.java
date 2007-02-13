@@ -80,6 +80,9 @@ public abstract class WSDLToAxisServiceBuilder {
     private URIResolver customResolver;
     private String baseUri = null;
     protected static final String TYPES = "Types";
+
+    // keeping whether builder is used in codegen or not
+    protected boolean isCodegen;
     
     protected WSDLToAxisServiceBuilder(){
         
@@ -185,5 +188,13 @@ public abstract class WSDLToAxisServiceBuilder {
 
     public void setBaseUri(String baseUri) {
         this.baseUri = baseUri;
+    }
+
+    public boolean isCodegen() {
+        return isCodegen;
+    }
+
+    public void setCodegen(boolean codegen) {
+        isCodegen = codegen;
     }
 }

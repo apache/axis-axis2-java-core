@@ -194,6 +194,9 @@ public class AxisService extends AxisDescription {
     // name of the  binding used : use in codegeneration
     private String bindingName;
 
+    // names list keep to preserve the parameter order
+    private List operationsNameList;
+
     public AxisEndpoint getEndpoint(String key) {
         return (AxisEndpoint)endpointMap.get(key);
     }
@@ -1947,5 +1950,13 @@ public class AxisService extends AxisDescription {
 
     public void setCustomWsld(boolean customWsld) {
         this.customWsld = customWsld;
+    }
+
+    public List getOperationsNameList() {
+        return operationsNameList;
+    }
+
+    public void setOperationsNameList(List operationsNameList) {
+        this.operationsNameList = operationsNameList;
     }
 }
