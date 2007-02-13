@@ -168,6 +168,7 @@ public class CodeGenerationUtility {
                     new Axis2Filer(cgconfig),
                     new XmlOptions().setEntityResolver(er));
 
+
             // prune the generated schema type system and add the list of base64 types
             cgconfig.putProperty(Constants.BASE_64_PROPERTY_KEY,
                     findBase64Types(sts));

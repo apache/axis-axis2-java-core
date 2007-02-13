@@ -57,6 +57,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -114,7 +115,13 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     public WSDL20ToAxisServiceBuilder(String wsdlUri,
                                       String name, String interfaceName) throws Exception {
         WSDLReader wsdlReader = WSDLFactory.newInstance().newWSDLReader();
-        Description description = wsdlReader.readWSDL(wsdlUri);
+
+        String fullPath = wsdlUri;
+        if (!wsdlUri.startsWith("http://")){
+           File file = new File(wsdlUri);
+           fullPath = file.getAbsolutePath();
+        }
+        Description description = wsdlReader.readWSDL(fullPath);
         DescriptionElement descriptionElement = description.toElement();
         savedTargetNamespace = descriptionElement.getTargetNamespace()
                 .toString();
