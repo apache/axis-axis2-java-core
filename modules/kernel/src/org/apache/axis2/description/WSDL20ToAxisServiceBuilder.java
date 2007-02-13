@@ -433,7 +433,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     soapMepDefault.toString());
         }
         axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
-                soapBindingExtensions.getHttpTransferCodingDefault());
+                soapBindingExtensions.getHttpContentEncodingDefault());
         axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_MODULE,
                 createSoapModules(soapBindingExtensions.getSoapModules()));
         axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
@@ -462,7 +462,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER,
                     createHttpHeaders(soapBindingFaultExtensions.getHttpHeaders()));
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
-                    soapBindingFaultExtensions.getHttpTransferCoding());
+                    soapBindingFaultExtensions.getHttpContentEncoding());
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WSOAP_CODE,
                     soapBindingFaultExtensions.getSoapFaultCode());
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WSOAP_SUBCODES,
@@ -525,7 +525,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             httpLocationTable.put(httpLocationString, axisOperation);
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
-                    soapBindingOperationExtensions.getHttpTransferCodingDefault());
+                    soapBindingOperationExtensions.getHttpContentEncodingDefault());
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
                     soapBindingOperationExtensions.getHttpQueryParameterSeparator());
 
@@ -559,7 +559,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER,
                         createHttpHeaders(soapBindingMessageReferenceExtensions.getHttpHeaders()));
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
-                        soapBindingMessageReferenceExtensions.getHttpTransferCoding());
+                        soapBindingMessageReferenceExtensions.getHttpContentEncoding());
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WSOAP_HEADER,
                         createSoapHeaders(soapBindingMessageReferenceExtensions.getSoapHeaders()));
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WSOAP_MODULE,
@@ -619,7 +619,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_METHOD, httpBindingExtensions.getHttpMethodDefault());
         axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR, httpBindingExtensions.getHttpQueryParameterSeparatorDefault());
-        axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING, httpBindingExtensions.getHttpTransferCodingDefault());
+        axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING, httpBindingExtensions.getHttpContentEncodingDefault());
 
         // Capture all the fault specific properties
 
@@ -646,7 +646,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER,
                     createHttpHeaders(httpBindingFaultExtensions.getHttpHeaders()));
             axisBindingFault.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
-                    httpBindingFaultExtensions.getHttpTransferCoding());
+                    httpBindingFaultExtensions.getHttpContentEncoding());
 
             axisBinding.addFault(axisBindingFault);
 
@@ -703,7 +703,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
                     httpBindingOperationExtensions.getHttpQueryParameterSeparator());
             axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
-                    httpBindingOperationExtensions.getHttpTransferCodingDefault());
+                    httpBindingOperationExtensions.getHttpContentEncodingDefault());
 
             BindingMessageReference[] bindingMessageReferences =
                     bindingOperation.getBindingMessageReferences();
@@ -734,7 +734,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_HEADER,
                         createHttpHeaders(httpBindingMessageReferenceExtensions.getHttpHeaders()));
                 axisBindingMessage.setProperty(WSDL2Constants.ATTR_WHTTP_TRANSFER_CODING,
-                        httpBindingMessageReferenceExtensions.getHttpTransferCoding());
+                        httpBindingMessageReferenceExtensions.getHttpContentEncoding());
 
                 axisBindingOperation.addChild(axisMessage.getDirection(), axisBindingMessage);
 
