@@ -28,7 +28,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>axis2-idea-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Apache Axis 2.0 - Intellij IDEA Plugin</name>
+  <name>Apache Axis 2.0 - tool - Intellij IDEA Plugin</name>
   <description>
     A Intellij IDEA plugin for Service Archive creation and Code Generation
   </description>
