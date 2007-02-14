@@ -3,19 +3,21 @@
 <head>
   <meta http-equiv="content-type" content="">
   <title>Invoking a service using a mail</title>
-  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css" media="all" />
+  <link href="../css/axis-docs.css" rel="stylesheet" type="text/css"
+  media="all">
 </head>
 
 <body>
 <h1>Invoking a Service Using a Mail Transport</h1>
 
-<p>This document basically explains how to invoke a service through Mail
-transports. Content for this document has been listed as follows,</p>
+<p>This document explains how to invoke a service through Mail transports.
+</p>
 
 <p><i>Send your feedback or questions to: <a
 href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>. Prefix
-subject with [Axis2]. To subscribe to mailing list see <a
-href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
+subject with [Axis2]. You can also <a
+href="http://ws.apache.org/axis2/mail-lists.html">subscribe</a> to the mailig
+list.</p>
 
 <h2>Content</h2>
 <ul>
@@ -29,41 +31,47 @@ href="http://ws.apache.org/axis2/mail-lists.html">here.</a></p>
 
 <h2>Prologue</h2>
 
-<p>Most of Web services that we interact with are synchronous and
+<p>Most of the Web services that we interact with are synchronous and
 request-response in nature. However, we see that the synchronous
 request-response type of interaction is only a part of the messaging
 scenarios we encounter in real life. Asynchronous messaging is very important
-in constructing loosely coupled systems. Take for instance a chain of stores,
-at the end of the day all the stores all over can send a mail to the central
-system telling it what that days business activity was and in the morning
-when the store opens there will be a reply to that mail with new instructions
-and updates. It is a lot like the way the old business worked but with a
-modern touch. Similarly Axis2 mail transport can be used to implement
+in constructing loosely coupled systems. Take for instance a chain of stores.
+At the end of the day, all the stores can send a mail to the central system
+telling it about that day's business activities, and when the store opens in
+the morning, there will be a reply to that mail with new instructions and
+updates. It is a lot like the way old businesses worked, but with a modern
+touch. Similarly, the Axis2 mail transport can be used to implement
 asynchronous messaging through mail.</p>
 <a name="intro"></a>
 
 <h2>Introduction</h2>
 
-<p>To start you will first need to go through the <a
-href="mail-configuration.html" target="_blank">Mail Transport
-Configuration</a> document. It will provide the user with the first hand experience in setting up the mail transports to co-exists with Axis2.</p>
+<p>First, you need to go through the <a href="mail-configuration.html"
+target="_blank">Mail Transport Configuration</a> document. It provides first
+hand experience in setting up the mail transports to co-exist with Axis2.</p>
 
-<p>Broadly speaking there are 3 ways of calling a service through mail.</p>
+<p>Broadly speaking, there are three ways of calling a service through
+mail.</p>
 
 <blockquote>
-  1. Using the simple mail server included in Axis2(not recommended in production).<br>
+  1. Using the simple mail server included in Axis2 (not recommended in
+  production).<br>
   2. Using a generic mail server.<br>
   3. Using mailets.<br>
 </blockquote>
 
-<p>Options 1 and 2 are fairly simple and easy to implement, whereas
-option 3 is somewhat harder.The mailet scenario however does provide a more
-robust and useful solution in a production environment.</p>
+<p>Options 1 and 2 are fairly simple and easy to implement, whereas option 3
+is somewhat harder. The mailet scenario however does provide a more robust
+and useful solution in a production environment.</p>
 
-<p>It is very easy to start learning the workings of mail transports with the aid of Simple Mail Server that provides with Axis2. Once you get the hang of the Axis2 related issues then you can move on to tackle the mail beast. Please do note that the Simple Mail Server that provides with Axis2 is not graded for production use.</p>
+<p>It is very easy to start learning the workings of mail transports with the
+aid of the Simple Mail Server that is provided with Axis2. Once you get the
+hang of Axis2 related issues, then you can move on to tackle the mail beast.
+Please do note that the Simple Mail Server provided with Axis2 is not graded
+for production use.</p>
 <a name="axis2"></a>
 
-<h2>1. Using Simple Mail Server Included in Axis2</h2>
+<h2>1. Using the Simple Mail Server Included in Axis2</h2>
 
 <p>The SMTP/POP server that we have included has the ability to function as a
 standalone SMTP/POP server and also has the ability to work as a mailet. All
@@ -72,9 +80,9 @@ pre-configured email addresses. These pre-configured email addresses can be
 changed by doing a simple edit of the filter class
 org.apache.axis2.transport.mail.server.Sorter.</p>
 
-<p>Now that we have the environment set up, let us start pumping out some
-code to get the mail functionality off the ground. First we'll have a look at
-it from the mail server side. <br>
+<p>Now that we have the environment set up, we can use the code below to get
+the mail functionality started. First we'll have a look at it from the mail
+server side. <br>
 </p>
 <source><pre>        // Start the mail server using the default configurations.
         ConfigurationContext configContext = UtilsMailServer.start();
@@ -95,12 +103,12 @@ it from the mail server side. <br>
                 .getName(), operationName);
         serverConfigContext.getAxisConfiguration().addService(service);</pre>
 </source>
-<p>This code sets up your Axis2 server working through mail, with a single
-service. If you need to have a look under the hood check out the MailServer
-and UtilsMailServer classes.</p>
+<p>This code sets up your Axis2 server which uses a single service to work
+through the mail. If you want to have a look under the hood, check out the
+MailServer and UtilsMailServer classes.</p>
 
-<p>Moving onto the client side have a look at the code listing below. It will
-call the axisService that was setup on the previous code listing.</p>
+<p>Moving onto the client side, have a look at the code listing below. It
+will call the axisService that was setup in the previous code listing.</p>
 <source><pre>        ConfigurationContext configContext = UtilsMailServer
                 .createClientConfigurationContext();
         AxisService service = new AxisService(serviceName.getLocalPart());
@@ -114,7 +122,7 @@ call the axisService that was setup on the previous code listing.</p>
         service.addOperation(axisOperation);
         configContext.getAxisConfiguration().addService(service);
         ServiceContext serviceContext = new ServiceGroupContext(configContext,
-        		(AxisServiceGroup) service.getParent()).getServiceContext(service);
+                        (AxisServiceGroup) service.getParent()).getServiceContext(service);
 
         Options options = new Options();
         options.setTo(targetEPR);
@@ -150,7 +158,7 @@ call the axisService that was setup on the previous code listing.</p>
         while (!finish) {
             Thread.sleep(1000);
             index++;
-            if (index > 10) {
+            if (index &gt; 10) {
                 throw new AxisFault(
                         "Server was shutdown as the async response is taking too long to complete.");
             }
@@ -158,23 +166,22 @@ call the axisService that was setup on the previous code listing.</p>
 
     }</pre>
 </source>
-<p>This will call the service that was setup on the server and will poll the
-mail server till the response is received.Please do note that serviceName and operationName need to be QNames.</p>
-
+<p>This will call the service that was setup on the server, and will poll the
+mail server until the response is received. Please note that the serviceName
+and operationName need to be QNames.</p>
 <a name="generic"></a>
 
 <h2>2. Using a Generic Mail Server</h2>
 
-<p>First you need two email accounts that works with POP/SMTP. One will act
-as a server and the other will act as the client. For the time being we will
+<p>First you need two email accounts that work with POP/SMTP. One will act as
+a server and the other will act as the client. For the time being, we will
 use server@somewhere.org and client@somewhere.org as the server and the
-client email addresses. Now that we have the email addresses you will have to
-set up the client and the server with Mail Transport <a
-href="mail-configuration.html"
-target="_blank">configuration document</a>.</p>
+client email addresses. Now that we have the email addresses, you will have
+to set up the client and the server using the Mail Transport <a
+href="mail-configuration.html" target="_blank">configuration document</a>.</p>
 
-<p>When calling the generic mail server the client side code will remain the
-same and there will be some modification to the server-side code.</p>
+<p>When you call the generic mail server, the client side code will remain
+the same and there will be some modification to the server-side code.</p>
 
 <p></p>
 <source><pre>        // Create a configuration context. This will also load the details about the mail
@@ -204,7 +211,6 @@ same and there will be some modification to the server-side code.</p>
 <!--a name="mailet"></a>
 
 <h3>3. Calling Axis2 Through a Mailet</h3-->
-
 
 <p></p>
 </body>
