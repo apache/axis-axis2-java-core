@@ -352,13 +352,7 @@ class DescriptionUtils {
                 }
             }
         }
-        
-        if (returnWrapperClassName == null){
-            // Couldn't load either class, so stick with the original wrapper class name
-            // REVIEW: Is this correct behavior?  Note that some of the annotation unit tests don't have the actual
-            //         classes available, and so will fail if this is changed.
-            returnWrapperClassName = wrapperClassName;
-        }
+
         return returnWrapperClassName;
     }
 

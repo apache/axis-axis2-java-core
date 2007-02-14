@@ -90,7 +90,7 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
 
     
     public String getFaultBean() {
-        if (faultBean.length() > 0) {
+        if (faultBean != null && faultBean.length() > 0) {
             // Return the faultBean if it was already calculated
             return faultBean;
         } else {
@@ -120,7 +120,7 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
                 
                 // Still not found, this must be a non-compliant exception.
                 // Use the JAX-WS chap 3.7 algorithm
-                if (faultBean.length() <= 0) {
+                if (faultBean != null && faultBean.length() <= 0) {
                     String simpleName = getSimpleName(getExceptionClassName()) + "Bean";
                     String packageName = null;
                     if (!isDBC()) {

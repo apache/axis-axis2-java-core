@@ -373,8 +373,8 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("wrappedParamsResponse", operationDesc.getResponseWrapperLocalName());
         assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getRequestWrapperTargetNamespace());
         assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getResponseWrapperTargetNamespace());
-        assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getRequestWrapperClassName());
-        assertEquals("org.apache.axis2.jaxws.description.WrappedParamsResponse", operationDesc.getResponseWrapperClassName());
+        assertNull(operationDesc.getRequestWrapperClassName());
+        assertNull(operationDesc.getResponseWrapperClassName());
         // Test WebResult annotation defaults
         assertNull(((OperationDescriptionJava) operationDesc).getAnnoWebResult());
         assertFalse(((OperationDescriptionJava) operationDesc).isWebResultAnnotationSpecified());
@@ -409,9 +409,8 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("wrappedParamsResponse", operationDesc.getResponseWrapperLocalName());
         assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getRequestWrapperTargetNamespace());
         assertEquals("http://description.jaxws.axis2.apache.org/", operationDesc.getResponseWrapperTargetNamespace());
-        assertEquals("org.apache.axis2.jaxws.description.WrappedParams", operationDesc.getRequestWrapperClassName());
-        assertEquals("org.apache.axis2.jaxws.description.WrappedParamsResponse", operationDesc.getResponseWrapperClassName());
-
+        assertNull(operationDesc.getRequestWrapperClassName());
+        assertNull(operationDesc.getResponseWrapperClassName());
         operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("bareParams")[0];
         assertNotNull(operationDesc);
         assertNull(operationDesc.getRequestWrapperLocalName());
@@ -430,16 +429,16 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("method1RspWrapper", operationDesc.getResponseWrapperLocalName());
         assertEquals("http://a.b.c.method1ReqTNS", operationDesc.getRequestWrapperTargetNamespace());
         assertEquals("http://a.b.c.method1RspTNS", operationDesc.getResponseWrapperTargetNamespace());
-        assertEquals("org.apache.axis2.jaxws.description.method1ReqWrapper", operationDesc.getRequestWrapperClassName());
-        assertEquals("org.apache.axis2.jaxws.description.method1RspWrapper", operationDesc.getResponseWrapperClassName());
+        assertEquals("org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests.ReqRspWrapperTestImpl.method1ReqWrapper", operationDesc.getRequestWrapperClassName());
+        assertEquals("org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests.ReqRspWrapperTestImpl.method1RspWrapper", operationDesc.getResponseWrapperClassName());
 
         operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method2")[0];
         assertEquals("method2", operationDesc.getRequestWrapperLocalName());
         assertEquals("method2RspWrapper", operationDesc.getResponseWrapperLocalName());
         assertEquals("http://a.b.c.method2ReqTNS", operationDesc.getRequestWrapperTargetNamespace());
         assertEquals("http://a.b.c.method2RspTNS", operationDesc.getResponseWrapperTargetNamespace());
-        assertEquals("org.apache.axis2.jaxws.description.method2ReqWrapper", operationDesc.getRequestWrapperClassName());
-        assertEquals("org.apache.axis2.jaxws.description.Method2Response", operationDesc.getResponseWrapperClassName());
+        assertEquals("org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests.ReqRspWrapperTestImpl.method2ReqWrapper", operationDesc.getRequestWrapperClassName());
+        assertNull(operationDesc.getResponseWrapperClassName());
     }
     
     public void testWebMethod() {
@@ -1191,16 +1190,31 @@ class DefaultReqRspWrapperBareTestImpl {
 @WebService
 //Note the default parameterStyle is WRAPPED, so no type-level annotation is required.
 class ReqRspWrapperTestImpl {
-    @RequestWrapper(localName="method1ReqWrapper", targetNamespace="http://a.b.c.method1ReqTNS", className="org.apache.axis2.jaxws.description.method1ReqWrapper")
-    @ResponseWrapper(localName="method1RspWrapper", targetNamespace="http://a.b.c.method1RspTNS", className="org.apache.axis2.jaxws.description.method1RspWrapper")
+    @RequestWrapper(localName="method1ReqWrapper", targetNamespace="http://a.b.c.method1ReqTNS", 
+    		className="org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests.ReqRspWrapperTestImpl.method1ReqWrapper")
+    @ResponseWrapper(localName="method1RspWrapper", targetNamespace="http://a.b.c.method1RspTNS", 
+    		className="org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests.ReqRspWrapperTestImpl.method1RspWrapper")
     public String method1 (String s) {
         return s;
     }
 
-    @RequestWrapper(targetNamespace="http://a.b.c.method2ReqTNS", className="org.apache.axis2.jaxws.description.method2ReqWrapper")
+    @RequestWrapper(targetNamespace="http://a.b.c.method2ReqTNS", 
+    		className="org.apache.axis2.jaxws.description.AnnotationServiceImplDescriptionTests.ReqRspWrapperTestImpl.method2ReqWrapper")
     @ResponseWrapper(localName="method2RspWrapper", targetNamespace="http://a.b.c.method2RspTNS")
     public String method2 (String s) {
         return s;
+    }
+    
+    public class method1ReqWrapper {
+    	
+    }
+    
+    public class method2ReqWrapper {
+    	
+    }
+    
+    public class method1RspWrapper {
+    	
     }
 }
 
