@@ -207,11 +207,13 @@ public class JAXBUtils {
         // Invalid packages are removed from the list
         it = contextPackages.iterator();
         boolean contextConstruction = true;
+        boolean isJAXBFound = false;
         while(it.hasNext()) {
             String p = it.next();
             // See if this package has an ObjectFactory or package-info
             if (checkPackage(p, cl)) {
                 // Flow to here indicates package can be used for CONTEXT construction
+            	isJAXBFound = true;
                 if (log.isDebugEnabled()) {
                     log.debug("Package " + p + " contains an ObjectFactory or package-info class.");
                 }
@@ -236,6 +238,10 @@ public class JAXBUtils {
                     }
                 }
             }
+        }
+        
+        if(!isJAXBFound){
+        	log.info("Both ObjectFactory & package-info not found in package hierachy");
         }
         
         // The code above may have removed some packages from the list. 
@@ -426,8 +432,7 @@ public class JAXBUtils {
 	        }
 	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
 	        //does not extend Exception. So we will absorb any Throwable exception here.
-	    } catch (Throwable e) {
-	       log.info("ObjectFactory Class Not Found");
+	    } catch (Throwable e) {	      
            if (log.isDebugEnabled()) {
                log.debug("ObjectFactory Class Not Found " + e);
                log.debug("...caused by " + e.getCause() + " "+ JavaUtils.stackToString(e));
@@ -441,8 +446,7 @@ public class JAXBUtils {
             }
             //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
 	        //does not extend Exception. So we will absorb any Throwable exception here.
-        } catch (Throwable e) {
-            log.info("package-info Class Not Found");
+        } catch (Throwable e) {            
             if (log.isDebugEnabled()) {
                 log.debug("package-info Class Not Found " + e);
                 log.debug("...caused by " + e.getCause() + " "+ JavaUtils.stackToString(e));
