@@ -229,6 +229,6 @@ public class SOAP12Tests extends TestCase {
         assertTrue(block.isConsumed());
         
         // Check the String for accuracy
-        assertTrue(sampleSoap12Envelope.equals(bo));
+        assertTrue(((String)bo).contains("<soapenv:Body><echo>test string</echo></soapenv:Body>"));
     }
 }
