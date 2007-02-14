@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.ws.WebServiceException;
 
+import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
@@ -194,7 +195,7 @@ class XMLSpineImpl implements XMLSpine {
             SOAPFaultDetail detail = root.getBody().getFault().getDetail();
             for (int i=0; i<numDetailBlocks; i++) {
                 OMElement om = this._getChildOMElement(detail, i);
-                blocks[i] = this._getBlockFromOMElement(om, null, obf);
+                blocks[i] = this._getBlockFromOMElement(om, null, obf, false);
                 
             }
         }
@@ -269,7 +270,7 @@ class XMLSpineImpl implements XMLSpine {
         if (log.isDebugEnabled()) {
             log.debug("getBodyBlock: Found omElement " + omElement.getQName() );
         }
-        return this._getBlockFromOMElement(omElement, context, blockFactory);
+        return this._getBlockFromOMElement(omElement, context, blockFactory, false);
     }
     
     /* (non-Javadoc)
@@ -298,7 +299,7 @@ class XMLSpineImpl implements XMLSpine {
         if (log.isDebugEnabled()) {
             log.debug("getBodyBlock: Found omElement " + omElement.getQName() );
         }
-        return this._getBlockFromOMElement(omElement, context, blockFactory);
+        return this._getBlockFromOMElement(omElement, context, blockFactory, true);
     }
 
 	public void setBodyBlock(int index, Block block) throws WebServiceException {
@@ -382,7 +383,7 @@ class XMLSpineImpl implements XMLSpine {
         if (om == null) {
             return null;
         }
-        return this._getBlockFromOMElement(om, context, blockFactory);
+        return this._getBlockFromOMElement(om, context, blockFactory, false);
 	}
 
 	public void setHeaderBlock(String namespace, String localPart, Block block) throws WebServiceException {
@@ -443,7 +444,7 @@ class XMLSpineImpl implements XMLSpine {
         }
     }
     
-    private Block _getBlockFromOMElement(OMElement om, Object context, BlockFactory blockFactory) throws WebServiceException {
+    private Block _getBlockFromOMElement(OMElement om, Object context, BlockFactory blockFactory, boolean setComplete) throws WebServiceException {
         try {
             QName qName = om.getQName();
             /* TODO We could gain performance if OMSourcedElement exposed a getDataSource method 
@@ -473,7 +474,24 @@ class XMLSpineImpl implements XMLSpine {
             // Replace the OMElement with the OMSourcedElement that delegates to the block
             OMElement newOM = _createOMElementFromBlock(qName, block, soapFactory);
             om.insertSiblingBefore(newOM);
-            ((OMElementImpl)om).setComplete(true);
+        
+            // We want to set the om element and its parents to complete to 
+            // shutdown the parsing.  
+            // TODO It would also be nice to close the input XMLStreamReader connected
+            // to the builder.
+            if (setComplete) {
+            	OMNode o = om;
+            	while (o != null && o instanceof OMElementImpl) {
+            		((OMElementImpl)o).setComplete(true);
+            		if (o.getParent() instanceof OMElement) {
+            			o = (OMNode) o.getParent();
+            		} else {
+            			o = null;
+            		}
+            	}
+            }
+            
+  
             om.detach();
             return block;
         } catch (XMLStreamException xse) {
