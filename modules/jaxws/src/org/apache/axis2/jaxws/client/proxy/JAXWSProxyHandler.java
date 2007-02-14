@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.client.proxy;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.xml.ws.AsyncHandler;
@@ -171,7 +172,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
         //if (action != null && requestContext.get(BindingProvider.SOAPACTION_URI_PROPERTY) == null) {
         //    getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, action);
         //}
-        
+                 
         // Before we invoke, copy all of the properties from the client request
         // context to the MessageContext
         request.getProperties().putAll(getRequestContext());
@@ -209,10 +210,22 @@ public class JAXWSProxyHandler extends BindingProvider implements
 				}
 			}
 			if(asyncHandler == null){
-				throw ExceptionFactory.makeWebServiceException("AynchHandler null for Async callback, Invalid AsyncHandler callback Object");
+				throw ExceptionFactory.makeWebServiceException("AsynchHandler null for Async callback, Invalid AsyncHandler callback Object");
 			}
 			AsyncResponse listener = createProxyListener(args, operationDesc);
 			requestIC.setAsyncResponseListener(listener);
+
+	        if ((serviceDelegate.getExecutor()!= null) && (serviceDelegate.getExecutor() instanceof ExecutorService))
+	        {
+	            ExecutorService es = (ExecutorService) serviceDelegate.getExecutor();
+	            if (es.isShutdown())
+	            {
+	                // the executor service is shutdown and won't accept new tasks
+	                // so return an error back to the client
+	                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ExecutorShutdown"));
+	            }
+	        }
+
 			requestIC.setExecutor(serviceDelegate.getExecutor());
 				        
 	        Future<?> future = controller.invokeAsync(requestIC, asyncHandler);

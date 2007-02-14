@@ -16,6 +16,7 @@
  */
 package org.apache.axis2.jaxws.core.controller;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.xml.ws.AsyncHandler;
@@ -197,7 +198,17 @@ public abstract class InvocationController {
         if (ic.getRequestMessageContext() == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ICErr2"));
         }
-        
+        if ((ic.getExecutor() != null) && (ic.getExecutor() instanceof ExecutorService))
+        {
+            ExecutorService es = (ExecutorService) ic.getExecutor();
+            if (es.isShutdown())
+            {
+                // the executor service is shutdown and won't accept new tasks
+                // so return an error back to the client
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ExecutorShutdown"));
+            }
+        }
+
         MessageContext request = ic.getRequestMessageContext();
         request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_CALLBACK);
         

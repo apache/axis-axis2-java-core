@@ -132,15 +132,32 @@ public class CallbackFuture extends Callback {
         if (log.isDebugEnabled()) {
             log.debug("Executor task starting to process async response");
         }
-        
+
         if (executor != null) {
         	if(task!=null && !task.isCancelled()){
-        		executor.execute(task);
+                try {
+                    executor.execute(task);
+                }
+                catch (Exception executorExc) {
+                    if(log.isDebugEnabled()){
+                        log.debug("CallbackFuture.execute():  executor exception ["+executorExc.getClass().getName()+"]");
+                    }
+
+                    // attempt to cancel the FutureTask
+                    task.cancel(true);
+
+                    //   note: if it is becomes required to return the actual exception
+                    //         to the client, then we would need to doing something
+                    //         similar to setting the CallbackFutureTask with the error
+                    //         and invoking the CallbackFutureTask.call() interface
+                    //         to process the information
+                    //
+                }
+
         		if(log.isDebugEnabled()){
         			log.debug("Task submitted to Executor");
         		}
         	}else{
-        		System.out.println("Task is cancelled");
         		if(log.isDebugEnabled()){
         			log.info("Executor task was not sumbitted as Async Future task was cancelled by clients");
         		}
