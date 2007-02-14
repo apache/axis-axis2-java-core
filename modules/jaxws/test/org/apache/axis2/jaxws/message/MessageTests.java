@@ -758,13 +758,28 @@ public class MessageTests extends TestCase {
         assertTrue(newText.contains("Body"));
     }
     
+    private final int NO_PERSIST       = 0;
+    private final int PERSIST         = 1;
+    private final int SAVE_AND_PERSIST = 2;
     public void testJAXBInflow_soap11() throws Exception {
-		_testJAXBInflow(sampleJAXBEnvelope11);
+		_testJAXBInflow(sampleJAXBEnvelope11, NO_PERSIST);
 	}
 	public void testJAXBInflow_soap12() throws Exception {
-		_testJAXBInflow(sampleJAXBEnvelope12);
+		_testJAXBInflow(sampleJAXBEnvelope12, NO_PERSIST);
 	}
-	public void _testJAXBInflow(String sampleJAXBEnvelope) throws Exception {
+    public void testJAXBInflow_soap11_withPersist() throws Exception {
+        _testJAXBInflow(sampleJAXBEnvelope11, PERSIST);
+    }
+    public void testJAXBInflow_soap12_withPersist() throws Exception {
+        _testJAXBInflow(sampleJAXBEnvelope12, PERSIST);
+    }
+    public void testJAXBInflow_soap11_withSaveAndPersist() throws Exception {
+        _testJAXBInflow(sampleJAXBEnvelope11, SAVE_AND_PERSIST);
+    }
+    public void testJAXBInflow_soap12_withSaveAndPersist() throws Exception {
+        _testJAXBInflow(sampleJAXBEnvelope12, SAVE_AND_PERSIST);
+    }
+	public void _testJAXBInflow(String sampleJAXBEnvelope, int persist) throws Exception {
         // Create a SOAP OM out of the sample incoming XML.  This
         // simulates what Axis2 will be doing with the inbound message. 
         StringReader sr = new StringReader(sampleJAXBEnvelope);
@@ -783,6 +798,12 @@ public class MessageTests extends TestCase {
         assertTrue(!isFault);
         assertTrue("XMLPart Representation is " + m.getXMLPartContentType(),
                     "OM".equals(m.getXMLPartContentType()));
+        
+        String saveMsgText = "";
+        if (persist == SAVE_AND_PERSIST) {
+            // Simulate saving the message so that it can be fully rebuilt.
+            saveMsgText = m.getAsOMElement().toString();
+        }
         
         // Get the BlockFactory
         JAXBBlockFactory bf = (JAXBBlockFactory)
@@ -805,6 +826,17 @@ public class MessageTests extends TestCase {
         // Get the business object from the block, which should be a 
         // JAX-B object
         Object bo = b.getBusinessObject(true);
+        m.setPostPivot();
+        
+        // Simulate restoring the message
+        if (persist == SAVE_AND_PERSIST) {
+            sr = new StringReader(saveMsgText);
+            XMLStreamReader saveMsgReader = inputFactory.createXMLStreamReader(sr);
+            builder = new StAXSOAPModelBuilder(saveMsgReader, null);
+            omElement = builder.getSOAPEnvelope();
+            m = mf.createFrom(omElement);
+        } 
+        
         
         // Check to make sure the right object was returned
         assertNotNull(bo);
@@ -814,6 +846,22 @@ public class MessageTests extends TestCase {
         EchoStringResponse esr = (EchoStringResponse) bo;
         assertNotNull(esr.getEchoStringReturn());
         assertTrue(esr.getEchoStringReturn().equals("sample return value"));
+        
+        // Simulate outbound
+        if (persist == PERSIST) {
+            String persistMsg = m.getAsOMElement().toString();
+            // We should be able to persist the message, but the persisted message WON'T contain the echoStringResponse contents
+            assertTrue(persistMsg.contains("Body"));
+            assertTrue(persistMsg.contains("echoStringResponse"));
+            assertTrue(!persistMsg.contains("sample return value"));
+            
+        } else if (persist == SAVE_AND_PERSIST) {
+            String persistMsg = m.getAsOMElement().toString();
+            // We should be able to persist the message, and the persisted message WILL contain the echoStringResponse contents
+            assertTrue(persistMsg.contains("Body"));
+            assertTrue(persistMsg.contains("echoStringResponse"));
+            assertTrue(persistMsg.contains("sample return value"));
+        }
     }
     
     

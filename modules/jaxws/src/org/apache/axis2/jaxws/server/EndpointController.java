@@ -17,9 +17,17 @@
 package org.apache.axis2.jaxws.server;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceException;
+
+import java.io.StringReader;
 import java.security.PrivilegedExceptionAction;
 import java.security.PrivilegedActionException;
 
+import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.java.security.AccessController;
@@ -43,6 +51,7 @@ import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
+import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -112,14 +121,33 @@ public class EndpointController {
 		MessageContext responseMsgContext = null;
 		
 		try {
+            // Get the service instance.  This will run the @PostConstruct code.
 			EndpointLifecycleManager elm = createEndpointlifecycleManager();
 			Object serviceInstance = elm.createServiceInstance(requestMsgCtx, implClass);
-			EndpointDispatcher dispatcher = getEndpointDispatcher(implClass, serviceInstance);
+			
+            // The application handlers and dispatcher invoke will 
+            // modify/destroy parts of the message.  Make sure to save
+            // the request message if appropriate.
+            saveRequestMessage(requestMsgCtx);
             
-			responseMsgContext = dispatcher.invoke(requestMsgCtx);
+            // @TODO Invoke inbound application handlers.
+ 
+            // Dispatch to the 
+            EndpointDispatcher dispatcher = getEndpointDispatcher(implClass, serviceInstance); 
+            try {
+                responseMsgContext = dispatcher.invoke(requestMsgCtx);
+            } finally {
+                // Passed pivot point
+                requestMsgCtx.getMessage().setPostPivot();
+            }
+            
+            // @TODO Invoke outbound application handlers
+            
         } catch (Exception e) {
             // TODO for now, throw it.  We probably should try to make an XMLFault object and set it on the message
             throw ExceptionFactory.makeWebServiceException(e);
+        } finally {
+            restoreRequestMessage(requestMsgCtx);
         }
 
 		// The response MessageContext should be set on the InvocationContext
@@ -262,5 +290,56 @@ public class EndpointController {
            // TODO for now, throw it.  We probably should try to make an XMLFault object and set it on the message
            throw ExceptionFactory.makeWebServiceException(e);
        }
+   }
+   
+  /**  
+   * Save the request message if indicated by the SAVE_REQUEST_MSG property
+   * @param requestMsgContext
+   */
+   private void saveRequestMessage(MessageContext requestMsgContext) {
+       
+       // TESTING...FORCE SAVING THE REQUEST MESSAGE
+       // requestMsgContext.getAxisMessageContext().setProperty(Constants.SAVE_REQUEST_MSG, Boolean.TRUE);
+       // END TESTING
+       
+       Boolean value = (Boolean)
+           requestMsgContext.getAxisMessageContext().getProperty(Constants.SAVE_REQUEST_MSG);
+       if (value != null && value == Boolean.TRUE) {
+           // REVIEW: This does not properly account for attachments.
+           Message m = requestMsgContext.getMessage();
+           String savedMsg = m.getAsOMElement().toString();
+           requestMsgContext.getAxisMessageContext().setProperty(Constants.SAVED_REQUEST_MSG_TEXT, savedMsg);
+       }
+   }
+   
+  /**
+   * Restore the request message from the saved message text
+   * @param requestMsgContext
+   */
+   private void restoreRequestMessage(MessageContext requestMsgContext) {
+       
+       Boolean value = (Boolean)
+           requestMsgContext.getAxisMessageContext().getProperty(Constants.SAVE_REQUEST_MSG);
+       if (value != null && value == Boolean.TRUE) {
+           // REVIEW: This does not properly account for attachments.
+           String savedMsg = (String) requestMsgContext.getAxisMessageContext().getProperty(Constants.SAVED_REQUEST_MSG_TEXT);
+           if (savedMsg != null && savedMsg.length() > 0) {               
+               try {
+                   StringReader sr = new StringReader(savedMsg);
+                   XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(sr);
+                   MessageFactory mf = (MessageFactory) 
+                       FactoryRegistry.getFactory(MessageFactory.class);
+                   Message msg = mf.createFrom(xmlreader);
+                   requestMsgContext.setMessage(msg);
+               } catch (Throwable e) {
+                   ExceptionFactory.makeWebServiceException(e);
+               }
+           }
+       }
+       
+       // TESTING....SIMULATE A PERSIST OF THE REQUEST MESSAGE
+       // String text = requestMsgContext.getMessage().getAsOMElement().toString();
+       // System.out.println("Persist Message" + text);
+       // END TESTING
    }
 }

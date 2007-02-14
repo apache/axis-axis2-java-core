@@ -17,6 +17,7 @@
 package org.apache.axis2.jaxws.message.impl;
 
 import java.io.OutputStream;
+import java.io.StringReader;
 import java.io.Writer;
 
 import javax.xml.namespace.QName;
@@ -37,6 +38,7 @@ import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.util.Reader2Writer;
+import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -186,7 +188,12 @@ public abstract class BlockImpl implements Block {
 	public XMLStreamReader getXMLStreamReader(boolean consume) throws XMLStreamException, WebServiceException {
 		XMLStreamReader newReader = null;
 		if (consumed) {
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
+		    // In some scenarios, the message is written out after the service instance is invoked.
+            // In these situations, it is preferable to simply ignore this block.
+            if (this.getParent() != null && getParent().isPostPivot()) {
+                return _postPivot_getXMLStreamReader();
+            }
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
 		}
 		if (omElement != null) {
 			if (consume) {
@@ -294,6 +301,11 @@ public abstract class BlockImpl implements Block {
 
 	public void outputTo(XMLStreamWriter writer, boolean consume) throws XMLStreamException, WebServiceException {
 		if (consumed) {
+            // In some scenarios, the message is written out after the service instance is invoked.
+            // In these situations, it is preferable to simply ignore this block.
+            if (this.getParent() != null && getParent().isPostPivot()) {
+                _postPivot_outputTo(writer);
+            }
 			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("BlockImplErr1", this.getClass().getName()));
 		}
 		if (omElement != null) {
@@ -309,6 +321,40 @@ public abstract class BlockImpl implements Block {
 		setConsumed(consume);
 		return;
 	}
+    
+    /**
+     * Called if we have passed the pivot point but someone wants to output the block.
+     * The actual block implementation may choose to override this setting
+     */
+    protected void _postPivot_outputTo(XMLStreamWriter writer) throws XMLStreamException, WebServiceException {
+        if (log.isDebugEnabled()) {
+            QName theQName = isQNameAvailable() ? getQName() : new QName("unknown");
+            log.debug("The Block for " + theQName + " is already consumed and therefore it is not written.");
+            log.debug("If you need this block preserved, please set the " + Constants.SAVE_REQUEST_MSG + " property on the MessageContext.");
+        }
+        return;
+    }
+    
+    /**
+     * Called if we have passed the pivot point but someone wants to output the block.
+     * The actual block implementation may choose to override this setting.
+     */
+    protected XMLStreamReader _postPivot_getXMLStreamReader() throws XMLStreamException, WebServiceException {
+        if (log.isDebugEnabled()) {
+            QName theQName = isQNameAvailable() ? getQName() : new QName("unknown");
+            log.debug("The Block for " + theQName + " is already consumed and therefore it is only partially read.");
+            log.debug("If you need this block preserved, please set the " + Constants.SAVE_REQUEST_MSG + " property on the MessageContext.");
+        }
+        QName qName = getQName();
+        String text = "";
+        if (qName.getNamespaceURI().length() > 0) {
+            text = "<prefix:" + qName.getLocalPart() + " xmlns:prefix='" + qName.getNamespaceURI() + "'/>";
+        } else {
+            text = "<" + qName.getLocalPart() + "/>";
+        }
+        StringReader sr = new StringReader(text);
+        return StAXUtils.createXMLStreamReader(sr);
+    }
 
 	/**
 	 * @return true if the representation of the block is currently a business object.

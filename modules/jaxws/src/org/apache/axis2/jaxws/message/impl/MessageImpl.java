@@ -69,6 +69,8 @@ public class MessageImpl implements Message {
     boolean mtomEnabled;
     private MimeHeaders mimeHeaders = new MimeHeaders(); 
     
+    private boolean postPivot = false;
+    
 	// Constants
 	private static final String SOAP11_ENV_NS = "http://schemas.xmlsoap.org/soap/envelope/";
 	private static final String SOAP12_ENV_NS = "http://www.w3.org/2003/05/soap-envelope";
@@ -426,6 +428,14 @@ public class MessageImpl implements Message {
 
     public void setBodyBlock(Block block) throws WebServiceException {
         xmlPart.setBodyBlock(block);
+    }
+
+    public void setPostPivot() {
+        this.postPivot = true;
+    }
+    
+    public boolean isPostPivot() {
+        return postPivot;
     }
 
 }

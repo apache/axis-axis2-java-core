@@ -106,4 +106,16 @@ public interface Message extends XMLPart {
      * @param mhs MimeHeaders
      */
     public void setMimeHeaders(MimeHeaders mhs);
+    
+    /**
+     * Indicate that this message is passed the pivot point.
+     * For example, this is set in the JAX-WS Dispatcher
+     * to indicate 
+     */
+    public void setPostPivot();
+    
+    /**
+     * @return true if post pivot
+     */
+    public boolean isPostPivot();
 }
