@@ -69,6 +69,7 @@ public class DefaultConnectionListener implements IOProcessor {
         this.connmanager = connmanager;
         this.connfactory = connfactory;
         this.serversocket = new ServerSocket(port);
+        this.serversocket.setReuseAddress(true);
         this.failureHandler = failureHandler;
     }
 
@@ -79,8 +80,10 @@ public class DefaultConnectionListener implements IOProcessor {
         try {
             while (!Thread.interrupted()) {
                 try {
-                    if (serversocket.isClosed())
+                    if (serversocket.isClosed()){
                         serversocket = new ServerSocket(port);
+                        serversocket.setReuseAddress(true);
+                    }
                     LOG.debug("Waiting for incoming HTTP connection");
                     Socket socket = this.serversocket.accept();
                     if (LOG.isDebugEnabled()) {
