@@ -22,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.xml.namespace.QName;
@@ -255,17 +256,30 @@ public class AxisInvocationController extends InvocationController {
         }
 
         opClient.setCallback(cbf);
-        
+
         org.apache.axis2.context.MessageContext axisRequestMsgCtx = request.getAxisMessageContext();
         try {
             execute(opClient, false, axisRequestMsgCtx);
         } catch(AxisFault af) {
-            // TODO MIKE revisit?
-            // do nothing here.  The exception we get is from the endpoint,
-            // and will be sitting on the message context.  We need to save it
-            // to process it through jaxws
-        	System.out.println("Swallowed Exception =" + af);
-        	af.printStackTrace(System.out);
+            if (log.isDebugEnabled()) {
+                log.debug(axisRequestMsgCtx.getLogIDString()+" AxisFault received from client: " + af.getMessage());
+            }
+            /*
+             * Save the exception on the callback.  The client will learn about the error when they try to
+             * retrieve the async results via the Response.get().  "Errors that occur during the invocation
+             * are reported via an exception when the client attempts to retrieve the results of the operation."
+             * -- JAXWS 4.3.3
+             */
+            
+            /*
+             * TODO:  This is the appropriate thing to do here since the thrown exception may occur before
+             * we switch threads to the async thread.  But... what happens if we've already switched over
+             * to the async thread?  So far, it appears that the exception gets set on the FutureTask
+             * Concurrent object, and we never hit this scope.  This means that later, when the client
+             * calls future.get(), no exception will be thrown despite what the spec says.  The client can,
+             * however, retrieve errors via it's AsyncHandler.
+             */
+            cbf.onError(af);
         }
         
         return cbf.getFutureTask();
@@ -318,12 +332,16 @@ public class AxisInvocationController extends InvocationController {
         try {
             execute(opClient, false, axisRequestMsgCtx);
         } catch(AxisFault af) {
-            // TODO MIKE revisit?
-            // do nothing here.  The exception we get is from the endpoint,
-            // and will be sitting on the message context.  We need to save it
-            // to process it through jaxws
-            System.out.println("Swallowed Exception =" + af);
-            af.printStackTrace(System.out);
+            if (log.isDebugEnabled()) {
+                log.debug(axisRequestMsgCtx.getLogIDString()+" AxisFault received from client: " + af.getMessage());
+            }
+            /*
+             * Save the exception on the callback.  The client will learn about the error when they try to
+             * retrieve the async results via the Response.get().  "Errors that occur during the invocation
+             * are reported via an exception when the client attempts to retrieve the results of the operation."
+             * -- JAXWS 4.3.3
+             */
+            pf.onError(af);
         }
         
         return resp;
@@ -650,6 +668,7 @@ public class AxisInvocationController extends InvocationController {
             boolean block,
             org.apache.axis2.context.MessageContext msgContext) throws AxisFault{
         // This assumes that we are on the ultimate execution thread
+             
         ThreadContextMigratorUtil.performMigrationToContext(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, msgContext);
         
         if (log.isDebugEnabled()) {

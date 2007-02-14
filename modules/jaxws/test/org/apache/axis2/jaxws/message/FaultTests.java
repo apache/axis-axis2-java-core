@@ -84,6 +84,19 @@ public class FaultTests extends TestCase {
         + "</env:Body>"
         + "</env:Envelope>";
     
+    // missing namespace for faultcode value
+    private final static String sampleSOAP12FaultEnvelope2 =
+        //"<?xml version='1.0' encoding='UTF-8'?>"
+        "<env:Envelope xmlns:env=\"http://www.w3.org/2003/05/soap-envelope\">"
+        + "<env:Body>"
+        + "<env:Fault>"
+        + "<env:Code><env:Value>Sender</env:Value></env:Code>"
+        + "<env:Reason><env:Text lang=\""+ Locale.getDefault().getLanguage() +"\">"
+        + faultString + "sampleSOAP12FaultEnvelope2</env:Text></env:Reason>"
+        + "</env:Fault>"
+        + "</env:Body>"
+        + "</env:Envelope>";
+    
 	private static XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 	
 	public FaultTests() {
@@ -229,6 +242,39 @@ public class FaultTests extends TestCase {
 			fail(e.toString());
 		}
 	}
+    
+//    public void testStringInflow4() throws Exception {
+//        
+//        try {
+//        // On inbound, there will already be an OM
+//        // which represents the message.  The following code simulates the input
+//        // OM
+//        StringReader sr = new StringReader(sampleSOAP12FaultEnvelope2);
+//        XMLStreamReader inflow = inputFactory.createXMLStreamReader(sr);
+//        StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(inflow, null);
+//        OMElement omElement = builder.getSOAPEnvelope();
+//        
+//        // The JAX-WS layer creates a Message from the OM
+//        MessageFactory mf = (MessageFactory)
+//            FactoryRegistry.getFactory(MessageFactory.class);
+//        Message m = mf.createFrom(omElement);
+//        
+//        assertTrue(m.isFault());
+//        
+//        if (m.isFault()) {
+//            XMLFault x = m.getXMLFault();
+//            assertEquals(faultString + "sampleSOAP12FaultEnvelope2", x.getReason().getText());
+//            assertEquals("Sender", x.getCode().
+//                    toQName("http://www.w3.org/2003/05/soap-envelope").getLocalPart());
+//        } else {
+//            fail("Message should be marked as a fault.");
+//        }
+//        
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            fail(e.toString());
+//        }
+//    }
 
 }
 

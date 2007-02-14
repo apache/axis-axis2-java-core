@@ -179,6 +179,7 @@ public abstract class AsyncResponse implements Response {
                 log.debug("A fault was found.  Starting to process fault response.");
             }
             Throwable t = processFaultResponse();
+            // JAXWS 4.3.3 conformance bullet says to throw an ExecutionException from here
             throw new ExecutionException(t);
         }
 
