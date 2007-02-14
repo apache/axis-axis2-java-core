@@ -73,6 +73,27 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
             this.uri2PackageNameMap.putAll(uri2PackageNameMap);
         }
     }
+  
+    /** Full path and name of XMLBeans xsdconfig file to use */
+    private String xsdConfigFile = null;
+
+    /**
+     * Returns the xsdconfig file to use for XMLBeans data binding.
+     *
+     * @return Full path and name of XMLBeans xsdconfig file to use
+     */
+    public String getXsdConfigFile() {
+      return xsdConfigFile;
+    }
+
+    /**
+     * Sets the xsdconfig file to use for XMLBeans data binding.
+     *
+     * @param xsdConfigFile Full path and name of XMLBeans xsdconfig file to use
+     */
+    public void setXsdConfigFile(String xsdConfigFile) {
+      this.xsdConfigFile = xsdConfigFile;
+    }
 
     /**
      * Says whether to flatten the files or put them in specific folders

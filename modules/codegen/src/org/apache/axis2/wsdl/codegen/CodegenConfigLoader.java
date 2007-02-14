@@ -213,6 +213,13 @@ class CodegenConfigLoader implements CommandLineOptionConstants {
             config.setSuppressPrefixesMode(true);
         }
 
+        commandLineOption = loadOption(WSDL2JavaConstants.XSDCONFIG_OPTION,
+                       WSDL2JavaConstants.XSDCONFIG_OPTION_LONG,
+                       optionMap);
+         if (commandLineOption != null) {
+           config.setXsdConfigFile(commandLineOption.getOptionValue());
+         }
+
         // loop through the map and find parameters having the extra prefix.
         //put them in the property map
         Iterator keyIterator = optionMap.keySet().iterator();

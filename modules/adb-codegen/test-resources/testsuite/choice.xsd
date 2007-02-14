@@ -6,7 +6,7 @@
         xmlns:test1="org.apache.axis2.test"
         targetNamespace="org.apache.axis2.test">
 
-    <xs:element name="TestChoise">
+    <xs:element name="TestChoise" >
         <xs:complexType>
             <xs:choice>
                 <xs:element name="choice1" type="xs:string"/>
@@ -18,7 +18,7 @@
     <xsd:element name="myRootElem">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="Child1" type="xsd:int">
+                <xsd:element name="Child1" type="xsd:int" >
                 </xsd:element>
                 <xsd:choice>
                     <xsd:element name="SomeChoice1" type="test1:SomeChoice1_Type" nillable="true" maxOccurs="unbounded"/>

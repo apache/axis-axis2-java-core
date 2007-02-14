@@ -1,54 +1,14 @@
 package org.apache.axis2.schema;
 
-import org.apache.axiom.om.OMAttribute;
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.writer.BeanWriter;
-import org.apache.axis2.schema.typemap.JavaTypeMap;
 import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.ws.commons.schema.XmlSchema;
-import org.apache.ws.commons.schema.XmlSchemaAll;
-import org.apache.ws.commons.schema.XmlSchemaAny;
-import org.apache.ws.commons.schema.XmlSchemaAnyAttribute;
-import org.apache.ws.commons.schema.XmlSchemaAttribute;
-import org.apache.ws.commons.schema.XmlSchemaChoice;
-import org.apache.ws.commons.schema.XmlSchemaComplexContent;
-import org.apache.ws.commons.schema.XmlSchemaComplexContentExtension;
-import org.apache.ws.commons.schema.XmlSchemaComplexContentRestriction;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
-import org.apache.ws.commons.schema.XmlSchemaContent;
-import org.apache.ws.commons.schema.XmlSchemaContentModel;
-import org.apache.ws.commons.schema.XmlSchemaElement;
-import org.apache.ws.commons.schema.XmlSchemaEnumerationFacet;
-import org.apache.ws.commons.schema.XmlSchemaImport;
-import org.apache.ws.commons.schema.XmlSchemaInclude;
-import org.apache.ws.commons.schema.XmlSchemaLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxExclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxInclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMaxLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinExclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinInclusiveFacet;
-import org.apache.ws.commons.schema.XmlSchemaMinLengthFacet;
-import org.apache.ws.commons.schema.XmlSchemaObject;
-import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
-import org.apache.ws.commons.schema.XmlSchemaObjectTable;
-import org.apache.ws.commons.schema.XmlSchemaParticle;
-import org.apache.ws.commons.schema.XmlSchemaPatternFacet;
-import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContent;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContentExtension;
-import org.apache.ws.commons.schema.XmlSchemaSimpleContentRestriction;
-import org.apache.ws.commons.schema.XmlSchemaSimpleType;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeContent;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeList;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
-import org.apache.ws.commons.schema.XmlSchemaSimpleTypeUnion;
-import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
@@ -365,7 +325,7 @@ public class SchemaCompiler {
                     //process simple type
                     processSimpleSchemaType((XmlSchemaSimpleType) schemaType,
                             null,
-                            schema);
+                            schema,null);
                 }
             }
         }
@@ -886,7 +846,7 @@ public class SchemaCompiler {
             //process simple type
             processSimpleSchemaType((XmlSchemaSimpleType) schemaType,
                     xsElt,
-                    parentSchema);
+                    parentSchema, null);
         }
     }
 
@@ -1043,7 +1003,7 @@ public class SchemaCompiler {
                     }
                 } else if (type instanceof XmlSchemaSimpleType) {
                     //process simple type
-                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema);
+                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema,null);
                 }
             }
 
@@ -1262,7 +1222,7 @@ public class SchemaCompiler {
                     }
                 } else if (type instanceof XmlSchemaSimpleType) {
                     //process simple type
-                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema);
+                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema,null);
                 }
             }
 
@@ -1304,7 +1264,7 @@ public class SchemaCompiler {
                     }
                 } else if (type instanceof XmlSchemaSimpleType) {
                     //process simple type
-                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema);
+                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema,null);
                 }
             }
             //process restriction base type
@@ -1549,7 +1509,7 @@ public class SchemaCompiler {
                         if (simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
                             if (!isAlreadyProcessed(schemaTypeName)) {
                                 //process simple type
-                                processSimpleSchemaType(simpleType, null, parentSchema);
+                                processSimpleSchemaType(simpleType, null, parentSchema,null);
                             }
                             metainf.registerMapping(att.getQName(),
                                     schemaTypeName,
@@ -1810,33 +1770,38 @@ public class SchemaCompiler {
     }
 
     private XmlSchemaType getType(XmlSchema schema, QName schemaTypeName) throws SchemaCompilationException {
-        schema = resolveParentSchema(schemaTypeName, schema);
+        // first check with the current parent schema
         XmlSchemaType typeByName = schema.getTypeByName(schemaTypeName);
-        if (typeByName == null) {
-            // The referenced element seems to come from an imported
-            // schema.
-            XmlSchemaObjectCollection includes = schema.getIncludes();
-            if (includes != null) {
-                Iterator tempIterator = includes.getIterator();
-                while (tempIterator.hasNext()) {
-                    Object o = tempIterator.next();
-                    XmlSchema inclSchema = null;
-                    if (o instanceof XmlSchemaImport) {
-                        inclSchema = ((XmlSchemaImport) o).getSchema();
-                        if (inclSchema == null) {
-                            inclSchema = (XmlSchema) loadedSchemaMap.get(((XmlSchemaImport) o).getNamespace());
+        if (typeByName == null){
+            // try to resolve schema using the target names space
+            schema = resolveParentSchema(schemaTypeName, schema);
+            typeByName = schema.getTypeByName(schemaTypeName);
+            if (typeByName == null) {
+                // The referenced element seems to come from an imported
+                // schema.
+                XmlSchemaObjectCollection includes = schema.getIncludes();
+                if (includes != null) {
+                    Iterator tempIterator = includes.getIterator();
+                    while (tempIterator.hasNext()) {
+                        Object o = tempIterator.next();
+                        XmlSchema inclSchema = null;
+                        if (o instanceof XmlSchemaImport) {
+                            inclSchema = ((XmlSchemaImport) o).getSchema();
+                            if (inclSchema == null) {
+                                inclSchema = (XmlSchema) loadedSchemaMap.get(((XmlSchemaImport) o).getNamespace());
+                            }
                         }
-                    }
-                    if (o instanceof XmlSchemaInclude) {
-                        inclSchema = ((XmlSchemaInclude) o).getSchema();
-                    }
-                    // get the element from the included schema
-                    if (inclSchema != null) {
-                        typeByName = inclSchema.getTypeByName(schemaTypeName);
-                    }
-                    if (typeByName != null) {
-                        // we found the referenced element an can break the loop
-                        break;
+                        if (o instanceof XmlSchemaInclude) {
+                            inclSchema = ((XmlSchemaInclude) o).getSchema();
+                        }
+                        // get the element from the included schema
+                        if (inclSchema != null) {
+                            typeByName = inclSchema.getTypeByName(schemaTypeName);
+                        }
+                        if (typeByName != null) {
+                            // we found the referenced element an can break the loop
+                            break;
+                        }
                     }
                 }
             }
@@ -1899,13 +1864,17 @@ public class SchemaCompiler {
     }
 
     /**
-     * Handle the simple content
      *
      * @param simpleType
+     * @param xsElt
+     * @param parentSchema
+     * @param qname  - fake Qname to use if the xsElt is null.
+     * @throws SchemaCompilationException
      */
     private void processSimpleSchemaType(XmlSchemaSimpleType simpleType,
                                          XmlSchemaElement xsElt,
-                                         XmlSchema parentSchema) throws SchemaCompilationException {
+                                         XmlSchema parentSchema,
+                                         QName qname) throws SchemaCompilationException {
 
         String fullyQualifiedClassName = null;
         if (simpleType.getQName() != null) {
@@ -1920,16 +1889,23 @@ public class SchemaCompiler {
             // otherwise we have to any way process that element.
             processedTypemap.put(simpleType.getQName(), fullyQualifiedClassName);
         } else {
-            QName fakeQname = new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart());
+
+            QName fakeQname;
+            if (xsElt != null){
+                fakeQname = new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart());
+                // we have to set this otherwise the ours attribute would not set properly if refered to this simple
+                // type from any other element
+                xsElt.setSchemaTypeName(fakeQname);
+            } else {
+                fakeQname = qname;
+            }
             if (processedTypemap.containsKey(fakeQname)
                     || baseSchemaTypeMap.containsKey(fakeQname)) {
                 return;
             }
             fullyQualifiedClassName = writer.makeFullyQualifiedClassName(fakeQname);
             simpleType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME, fakeQname);
-            // we have to set this otherwise the ours attribute would not set properly if refered to this simple
-            // type from any other element
-            xsElt.setSchemaTypeName(fakeQname);
+
             // should put this to the processedTypemap to generate the code correctly
             processedTypemap.put(fakeQname, fullyQualifiedClassName);
         }
@@ -1943,7 +1919,15 @@ public class SchemaCompiler {
 
         if (simpleType.getQName() == null) {
             this.processedAnonymousComplexTypesMap.put(xsElt, metaInfHolder);
-            simpleTypesMap.put(new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart()), fullyQualifiedClassName);
+            QName fakeQname;
+            if (xsElt != null){
+                fakeQname = new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart());
+            } else {
+                fakeQname = qname;
+                simpleType.setName(fakeQname.getLocalPart());
+                simpleType.setSourceURI(fakeQname.getNamespaceURI());
+            }
+            simpleTypesMap.put(fakeQname, fullyQualifiedClassName);
         }
         //add this information to the metainfo holder
         metaInfHolder.setOwnQname(simpleType.getQName());
@@ -1960,20 +1944,21 @@ public class SchemaCompiler {
 
         // handle the restriction
         XmlSchemaSimpleTypeContent content = simpleType.getContent();
+        QName parentSimpleTypeQname = simpleType.getQName();
+        if (parentSimpleTypeQname == null) {
+            parentSimpleTypeQname = (QName) simpleType.getMetaInfoMap().get(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME);
+        }
         if (content != null) {
             if (content instanceof XmlSchemaSimpleTypeRestriction) {
                 XmlSchemaSimpleTypeRestriction restriction = (XmlSchemaSimpleTypeRestriction) content;
 
                 QName baseTypeName = restriction.getBaseTypeName();
                 //check whether the base type is one of the base schema types
-                QName qName = simpleType.getQName();
-                if (qName == null) {
-                    qName = (QName) simpleType.getMetaInfoMap().get(SchemaConstants.SchemaCompilerInfoHolder.FAKE_QNAME);
-                }
+
                 if (baseSchemaTypeMap.containsKey(baseTypeName)) {
                     //process restriction base type
 
-                    processSimpleRestrictionBaseType(qName, restriction.getBaseTypeName(), metaInfHolder, parentSchema);
+                    processSimpleRestrictionBaseType(parentSimpleTypeQname, restriction.getBaseTypeName(), metaInfHolder, parentSchema);
                     //process facets
                     processFacets(restriction, metaInfHolder, parentSchema);
                 } else {
@@ -1983,10 +1968,10 @@ public class SchemaCompiler {
                     XmlSchemaType restrictionBaseType = getType(parentSchema, baseTypeName);
                     if (restrictionBaseType instanceof XmlSchemaSimpleType) {
                         if ((restrictionBaseType != null) && (!isAlreadyProcessed(baseTypeName))) {
-                            processSimpleSchemaType((XmlSchemaSimpleType) restrictionBaseType, null, parentSchema);
+                            processSimpleSchemaType((XmlSchemaSimpleType) restrictionBaseType, null, parentSchema,null);
                         }
                         // process restriction
-                        processSimpleRestrictionBaseType(qName, restriction.getBaseTypeName(), metaInfHolder, parentSchema);
+                        processSimpleRestrictionBaseType(parentSimpleTypeQname, restriction.getBaseTypeName(), metaInfHolder, parentSchema);
                     }
 
 
@@ -2005,7 +1990,7 @@ public class SchemaCompiler {
                             if (type instanceof XmlSchemaSimpleType) {
                                 XmlSchemaSimpleType memberSimpleType = (XmlSchemaSimpleType) type;
                                 if (!isAlreadyProcessed(qname)) {
-                                    processSimpleSchemaType(memberSimpleType, null, parentSchema);
+                                    processSimpleSchemaType(memberSimpleType, null, parentSchema,null);
                                 }
                                 metaInfHolder.addMemberType(qname, (String) processedTypemap.get(qname));
                             } else {
@@ -2014,7 +1999,27 @@ public class SchemaCompiler {
                         }
                     }
                 } else {
-                    // TODO : handle inline simple types
+                    XmlSchemaObjectCollection xmlSchemaObjectCollection = simpleTypeUnion.getBaseTypes();
+                    XmlSchemaObject xmlSchemaObject;
+                    QName childQname;
+                    int i = 1;
+                    for (Iterator iter = xmlSchemaObjectCollection.getIterator();iter.hasNext();){
+                        xmlSchemaObject = (XmlSchemaObject) iter.next();
+                        i++;
+                        if (xmlSchemaObject instanceof XmlSchemaSimpleType){
+                            XmlSchemaSimpleType unionSimpleType = (XmlSchemaSimpleType) xmlSchemaObject;
+                            childQname = unionSimpleType.getQName();
+                            if (childQname == null){
+                                // we create a fake Qname for all these simple types since most propably they don't have one
+                                childQname = new QName(parentSimpleTypeQname.getNamespaceURI(),parentSimpleTypeQname.getLocalPart() + "_type" + i);
+                            }
+                            // this is an inner simple type of the union so it shold not have
+                            // processed
+                            processSimpleSchemaType(unionSimpleType,null,parentSchema,childQname);
+                            metaInfHolder.addMemberType(childQname, (String) processedTypemap.get(childQname));
+                        }
+
+                    }
                 }
 
                 metaInfHolder.setUnion(true);
@@ -2026,7 +2031,7 @@ public class SchemaCompiler {
                 if (!isAlreadyProcessed(itemTypeQName)){
                     XmlSchemaType simpleSchemaType = getType(parentSchema,itemTypeQName);
                     if (simpleSchemaType instanceof XmlSchemaSimpleType){
-                        processSimpleSchemaType((XmlSchemaSimpleType)simpleSchemaType,null,parentSchema);
+                        processSimpleSchemaType((XmlSchemaSimpleType)simpleSchemaType,null,parentSchema,null);
                     }
                 }
 

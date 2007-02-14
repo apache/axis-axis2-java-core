@@ -46,7 +46,7 @@ public interface CommandLineOptionConstants {
         String SUPPRESS_PREFIXES_OPTION = "sp";
         String SOURCE_FOLDER_NAME_OPTION = "S";
         String RESOURCE_FOLDER_OPTION = "R";
-
+        String XSDCONFIG_OPTION = "xc";
 
         //long option constants
         String OUTPUT_LOCATION_OPTION_LONG = "output";
@@ -75,6 +75,7 @@ public interface CommandLineOptionConstants {
         String SUPPRESS_PREFIXES_OPTION_LONG = "suppress-prefixes";
         String SOURCE_FOLDER_NAME_OPTION_LONG = "source-folder";
         String RESOURCE_FOLDER_OPTION_LONG = "resource-folder";
+        String XSDCONFIG_OPTION_LONG = "xsdconfig";
 
         String WSDL_VERSION_2 = "2.0";
         String WSDL_VERSION_2_OPTIONAL = "2";

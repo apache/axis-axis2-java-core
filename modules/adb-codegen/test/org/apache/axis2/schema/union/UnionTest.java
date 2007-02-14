@@ -16,7 +16,7 @@
 package org.apache.axis2.schema.union;
 
 import junit.framework.TestCase;
-import org.tempuri.*;
+import org.tempuri.union.*;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.util.StAXUtils;
@@ -103,5 +103,61 @@ public class UnionTest extends TestCase {
         } catch (Exception e) {
             assertTrue(false);
         }
+    }
+
+    public void testInnerSimpleTypes(){
+        TestInnerUnionType testInnerUnionType = new TestInnerUnionType();
+        PackingType_T packingType_t = new PackingType_T();
+        testInnerUnionType.setTestInnerUnionType(packingType_t);
+        PackingType_T_type2 packingType_t_type2 = new PackingType_T_type2();
+        packingType_t_type2.setPackingType_T_type2("MINOR_a");
+        packingType_t.setObject(packingType_t_type2);
+
+        OMElement omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME,OMAbstractFactory.getOMFactory());
+        try {
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM Element ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            TestInnerUnionType result = TestInnerUnionType.Factory.parse(xmlReader);
+            assertEquals(packingType_t_type2.toString(),result.getTestInnerUnionType().getObject().toString());
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+
+        testInnerUnionType = new TestInnerUnionType();
+        packingType_t = new PackingType_T();
+        testInnerUnionType.setTestInnerUnionType(packingType_t);
+        PackingType_T_type3 packingType_t_type3 = new PackingType_T_type3();
+        packingType_t_type3.setPackingType_T_type3("PROP_a");
+        packingType_t.setObject(packingType_t_type3);
+
+        omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME,OMAbstractFactory.getOMFactory());
+        try {
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM Element ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            TestInnerUnionType result = TestInnerUnionType.Factory.parse(xmlReader);
+            assertEquals(packingType_t_type3.toString(),result.getTestInnerUnionType().getObject().toString());
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+
+        testInnerUnionType = new TestInnerUnionType();
+        packingType_t = new PackingType_T();
+        testInnerUnionType.setTestInnerUnionType(packingType_t);
+        packingType_t.setObject(PackingType_T_type4.TAR);
+
+        omElement = testInnerUnionType.getOMElement(TestInnerUnionType.MY_QNAME,OMAbstractFactory.getOMFactory());
+        try {
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM Element ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            TestInnerUnionType result = TestInnerUnionType.Factory.parse(xmlReader);
+            assertEquals(PackingType_T_type4.TAR,result.getTestInnerUnionType().getObject());
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+
+
     }
 }

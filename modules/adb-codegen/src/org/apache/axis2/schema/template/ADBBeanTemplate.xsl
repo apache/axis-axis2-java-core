@@ -1912,6 +1912,7 @@
                             object = new <xsl:value-of select="$name"/>();
                             object.setObject(xmlStreamReader, namespaceURI, type);
                         } else {
+                            object = new <xsl:value-of select="$name"/>();
                             object.setObject(<xsl:value-of select="$mapperClass"/>.getTypeObject(namespaceURI, type, xmlStreamReader));
                         }
                         return object;

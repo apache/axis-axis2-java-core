@@ -163,11 +163,10 @@ public class CodeGenerationUtility {
                     null,
                     null,
                     convertToSchemaArray(topLevelSchemaList),
-                    new Axis2BindingConfig(cgconfig.getUri2PackageNameMap()),
+                    new Axis2BindingConfig(cgconfig.getUri2PackageNameMap(), cgconfig.getXsdConfigFile()),
                     XmlBeans.getContextTypeLoader(),
                     new Axis2Filer(cgconfig),
                     new XmlOptions().setEntityResolver(er));
-
 
             // prune the generated schema type system and add the list of base64 types
             cgconfig.putProperty(Constants.BASE_64_PROPERTY_KEY,
@@ -414,20 +413,55 @@ public class CodeGenerationUtility {
     private static class Axis2BindingConfig extends BindingConfig {
 
         private Map uri2packageMappings = null;
+        private XSDConfig xsdConfig = null;
 
-        public Axis2BindingConfig(Map uri2packageMappings) {
+        public Axis2BindingConfig(Map uri2packageMappings, String xsdConfigfile) {
             this.uri2packageMappings = uri2packageMappings;
             if (this.uri2packageMappings == null) {
                 //make an empty one to avoid nasty surprises
                 this.uri2packageMappings = new HashMap();
             }
+
+            // Do we have an xsdconfig file?
+            if (xsdConfigfile != null) {
+                xsdConfig = new XSDConfig(xsdConfigfile);
+            }
         }
 
         public String lookupPackageForNamespace(String uri) {
+            /* If the xsdconfig file has mappings, we'll use them instead of the -p option.
+             * If we have an xsdconfig file but no namespace to package mappings, then we'll
+             * defer to the -p option.
+             */
+            if (xsdConfig != null) {
+                if (xsdConfig.hasNamespaceToJavaPackageMappings) {
+                    log.debug("RETURNING " + uri + " = " + xsdConfig.getNamespacesToJavaPackages().get(uri));
+                    return (String) xsdConfig.getNamespacesToJavaPackages().get(uri);
+                }
+            }
+
             if (uri2packageMappings.containsKey(uri)) {
                 return (String) uri2packageMappings.get(uri);
             } else {
                 return URLProcessor.makePackageName(uri);
+            }
+        }
+
+        public String lookupJavanameForQName(QName qname) {
+            /* The mappings are stored in the format:
+            * NAMESPACE:LOCAL_NAME, i.e.
+            * urn:weegietech:minerva:moduleType
+            */
+            if (xsdConfig != null) {
+                String key = qname.getNamespaceURI() + ":" + qname.getLocalPart();
+                if (xsdConfig.getSchemaTypesToJavaNames().containsKey(key)) {
+                    log.debug("RETURNING " + qname.getLocalPart() + " = " + xsdConfig.getSchemaTypesToJavaNames().get(key));
+                    return (String) xsdConfig.getSchemaTypesToJavaNames().get(key);
+                } else {
+                    return null;
+                }
+            } else {
+                return super.lookupJavanameForQName(qname);
             }
 
         }
