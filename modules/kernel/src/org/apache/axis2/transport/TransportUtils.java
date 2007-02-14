@@ -137,7 +137,7 @@ public class TransportUtils {
 		if (builder==null)
 		{
 			//FIXME making soap defualt for the moment..might effect the performance
-			builder = Builder.getBuilder(inStream, charSetEnc,soapNamespaceURI);
+			builder = Builder.getSOAPBuilder(inStream, charSetEnc,soapNamespaceURI);
 //			throw new AxisFault("Cannot find a matching builder for the message. Unsupported Content Type.");
 		}
 		
@@ -149,7 +149,8 @@ public class TransportUtils {
 		} else {
 			//If it is not a SOAPEnvelope we wrap that with a fake SOAPEnvelope.
 			SOAPFactory soapFactory = new SOAP11Factory();
-			SOAPEnvelope intermediateEnvelope= soapFactory
+			SOAPEnvelope intermediateEnvelope
+			= soapFactory
 					.getDefaultEnvelope();
 			intermediateEnvelope.getBody().addChild(
 					builder.getDocumentElement());

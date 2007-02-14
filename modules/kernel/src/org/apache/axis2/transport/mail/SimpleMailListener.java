@@ -356,7 +356,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
                         }
 
                         InputStream inputStream = part.getInputStream();
-                        OMBuilder builder = Builder.getBuilder(inputStream, null, soapNamespaceURI);
+                        OMBuilder builder = Builder.getSOAPBuilder(inputStream, soapNamespaceURI);
                         SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
                         msgContext.setEnvelope(envelope);
                     }

@@ -304,7 +304,7 @@ public class JMSUtils {
         } else {
             String charSetEnc = Builder.getCharSetEncoding(contentType);
             String soapNS = Builder.getEnvelopeNamespace(contentType);
-            builder = Builder.getBuilder(in, charSetEnc, soapNS);
+            builder = Builder.getSOAPBuilder(in, charSetEnc, soapNS);
 
             // Set the encoding scheme in the message context
             msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);

@@ -125,7 +125,7 @@ public class MailSorter {
                 soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
             }
 
-            OMBuilder builder = Builder.getBuilder(bais, null, soapNamespaceURI);
+            OMBuilder builder = Builder.getSOAPBuilder(bais, soapNamespaceURI);
 
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
 

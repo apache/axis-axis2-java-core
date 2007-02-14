@@ -6,16 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.Reader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.attachments.Attachments;
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.OMBuilder;
@@ -25,14 +21,11 @@ import org.apache.axiom.om.impl.builder.XOPAwareStAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -280,26 +273,73 @@ public class Builder {
         return attachments;
     }
 
+    /**
+     * @deprecated If some one really need this method, please shout.
+     * 
+     * @param in
+     * @return
+     * @throws XMLStreamException
+     */
     public static StAXBuilder getBuilder(Reader in) throws XMLStreamException {
         XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in);
         StAXBuilder builder = new StAXSOAPModelBuilder(xmlreader, null);
         return builder;
     }
 
-    public static OMBuilder getBuilder(InputStream inStream, String charSetEnc, String soapNamespaceURI) throws XMLStreamException {
-        OMBuilder builder;
-        XMLStreamReader xmlreader;
-        if(charSetEnc == null) {
-            xmlreader = StAXUtils.createXMLStreamReader(inStream);
-        } else {
-            xmlreader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
-        }
-        if(soapNamespaceURI == null) {
-            builder = new StAXOMBuilder(xmlreader);
-        } else {
-            builder = new StAXSOAPModelBuilder(xmlreader, soapNamespaceURI);
-        }
-        return builder;
+    /**
+     * Creates an OMBuilder for a plain XML message. Default character set encording is used.
+     * 
+     * @param inStream InputStream for a XML message
+     * @return Handler to a OMBuilder implementation instance
+     * @throws XMLStreamException
+     */
+    public static OMBuilder getBuilder(InputStream inStream) throws XMLStreamException {
+    	XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream);
+    	return new StAXOMBuilder(xmlReader);
+    }
+    
+    /**
+     * Creates an OMBuilder for a plain XML message.
+     * 
+     * @param inStream InputStream for a XML message
+     * @param charSetEnc Character set encoding to be used
+     * @return Handler to a OMBuilder implementation instance
+     * @throws XMLStreamException
+     */
+    public static OMBuilder getBuilder(InputStream inStream, String charSetEnc) throws XMLStreamException {
+    	XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
+    	return new StAXOMBuilder(xmlReader);
+    }
+    
+    /**
+     * Creates an OMBuilder for a SOAP message. Default character set encording is used.
+     * 
+     * @param inStream InputStream for a SOAP message
+     * @param soapNamespaceURI Specifies which SOAP version to use, 
+     *              {@link SOAP11Constants#SOAP_11_CONTENT_TYPE} or 
+     *              {@link SOAP12Constants#SOAP_12_CONTENT_TYPE}
+     * @return Handler to a OMBuilder implementation instance
+     * @throws XMLStreamException
+     */
+    public static OMBuilder getSOAPBuilder(InputStream inStream, String soapNamespaceURI) throws XMLStreamException {
+    	XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(inStream);
+        return new StAXSOAPModelBuilder(xmlreader, soapNamespaceURI);
+    }
+    
+    /**
+     * Creates an OMBuilder for a SOAP message.
+     * 
+     * @param inStream InputStream for a SOAP message
+     * @param charSetEnc Character set encoding to be used
+     * @param soapNamespaceURI Specifies which SOAP version to use, 
+     *              {@link SOAP11Constants#SOAP_11_CONTENT_TYPE} or 
+     *              {@link SOAP12Constants#SOAP_12_CONTENT_TYPE}
+     * @return Handler to a OMBuilder implementation instance
+     * @throws XMLStreamException
+     */
+    public static OMBuilder getSOAPBuilder(InputStream inStream, String charSetEnc, String soapNamespaceURI) throws XMLStreamException {
+       	XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
+        return new StAXSOAPModelBuilder(xmlreader, soapNamespaceURI);
     }
 
     public static OMBuilder getBuilder(SOAPFactory soapFactory, InputStream in, String charSetEnc) throws XMLStreamException {
