@@ -609,6 +609,9 @@ public class AxisService extends AxisDescription {
             }
             return;
         }
+        if(log.isDebugEnabled()){
+            log.debug("mapActionToOperation: Mapping Action to Operation: action="+action+" operation="+axisOperation);
+        }
         operationsAliasesMap.put(action, axisOperation);
     }
 

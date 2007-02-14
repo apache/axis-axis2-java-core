@@ -2,7 +2,12 @@ package org.apache.axis2.description;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
@@ -49,9 +54,9 @@ import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
+import org.apache.axis2.wsdl.SoapAddress;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
-import org.apache.axis2.wsdl.SoapAddress;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Constants;
@@ -419,10 +424,20 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     inputActions = new ArrayList();
                     axisOperation.setWsamappingList(inputActions);
                 }
-
-                inputActions.add(WSDL11ActionHelper
-                        .getActionFromInputElement(wsdl4jDefinition,
-                        wsdl4jPortType, wsdl4jOperation, wsdl4jInput));
+                String inputActionFromHelper = WSDL11ActionHelper.getActionFromInputElement(wsdl4jDefinition,
+                        wsdl4jPortType, wsdl4jOperation, wsdl4jInput);
+                if(log.isDebugEnabled()){
+                    log.debug("populateOperation: Adding input action to operation. action="+inputActionFromHelper+" operation="+axisOperation);
+                }
+                inputActions.add(inputActionFromHelper);
+                AxisService as = (AxisService)axisOperation.getParent();
+                if(as!=null){
+                	as.mapActionToOperation(inputActionFromHelper, axisOperation);
+                }else{
+                	if(log.isDebugEnabled()){
+                        log.debug("populateOperation: No AxisService to add action mapping to.");
+                    }
+                }
             }
 
         }
@@ -444,9 +459,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
             if (axisOperation.getOutputAction() == null) {
-                axisOperation.setOutputAction(WSDL11ActionHelper
-                        .getActionFromOutputElement(wsdl4jDefinition,
-                        wsdl4jPortType, wsdl4jOperation, wsdl4jOutput));
+            	String outputActionFromWSDL = WSDL11ActionHelper.getActionFromOutputElement(wsdl4jDefinition,
+                        wsdl4jPortType, wsdl4jOperation, wsdl4jOutput);
+                if(log.isDebugEnabled()){
+                    log.debug("populateOperation: Adding output action to operation. action="+outputActionFromWSDL+" operation="+axisOperation);
+                }
+                axisOperation.setOutputAction(outputActionFromWSDL);
             }
         }
 
