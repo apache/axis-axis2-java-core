@@ -38,6 +38,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -341,6 +342,23 @@ public class JAXWSProxyHandler extends BindingProvider implements
     
     protected static Throwable getFaultResponse(MessageContext msgCtx, OperationDescription opDesc) {
         Message msg = msgCtx.getMessage();
+        //In Async scenario if the client throws a user defined exception the Operation Description
+        //for Async method does not store the fault description as Asyc operation will never
+        //have throws clause in the method signature.
+        //The @WebMethod annotation on Asycn Method will point the wsdl defined operation
+        //and we will fetch the OperationDescription of the sync method and this should give us the
+        //correct fault description so we can throw the right user defined exception.
+        
+        String webMethodAnnoName = opDesc.getOperationName();
+        String javaMethodName = opDesc.getJavaMethodName();
+        if(webMethodAnnoName!=null && webMethodAnnoName.length()>0 && webMethodAnnoName != javaMethodName){
+        	EndpointInterfaceDescription eid = opDesc.getEndpointInterfaceDescription();
+			if(eid!=null){
+				//Switching the opDesc to wsdl operations opDesc.
+				opDesc = eid.getOperation(webMethodAnnoName);
+			}
+        }
+        
         if (msg!= null && msg.isFault()) {
             Object object = MethodMarshallerFactory.getMarshaller(opDesc, false).demarshalFaultResponse(msg, opDesc);
             if (log.isDebugEnabled()) {
