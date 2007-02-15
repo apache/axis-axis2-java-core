@@ -103,8 +103,10 @@ public class DefaultConnectionListener implements IOProcessor {
     }
     
 	public void close() throws IOException {
-        this.serversocket.close();
-	}
+        if(this.serversocket != null){
+            this.serversocket.close();
+        }
+    }
     
     public void destroy() {
         this.destroyed = true;
