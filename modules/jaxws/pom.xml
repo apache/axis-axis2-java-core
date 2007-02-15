@@ -684,6 +684,11 @@
 			   <include name="org/apache/axis2/jaxws/server/**"/>
 			</fileset>
 		</copy>	
+        <copy toDir="target/test-classes/">
+             <fileset dir="test-resources/">
+               <include name="**/*.properties"/>
+             </fileset>
+        </copy>		
 			  </tasks>
             </configuration>
             <goals>
