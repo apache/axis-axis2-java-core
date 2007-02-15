@@ -102,6 +102,7 @@ class DescriptionUtils {
 				MethodDescriptionComposite mdc = iter.next();
 				if (mdc.getWebMethodAnnot() != null) {
 					if (mdc.getWebMethodAnnot().exclude() == false) {
+						mdc.setDeclaringClass(dbc.getClassName());
 						mdcList.add(mdc);
 					}
 				}

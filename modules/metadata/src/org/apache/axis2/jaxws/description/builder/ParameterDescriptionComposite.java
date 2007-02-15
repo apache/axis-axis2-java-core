@@ -185,6 +185,19 @@ public class ParameterDescriptionComposite {
 	public void setMethodDescriptionCompositeRef(MethodDescriptionComposite mdc) {
 		this.parentMDC = mdc;
 	}
+	
+	public boolean compare(Object obj) {
+		if(obj instanceof ParameterDescriptionComposite) {
+			ParameterDescriptionComposite pdc = (ParameterDescriptionComposite) obj;
+			if(!(this.parameterType.equals(pdc.getParameterType()))) {
+				return false;
+			}
+			return true;
+		}
+		else {
+			return super.equals(obj);
+		}
+	}
 
     /**
 	 * Convenience method for unit testing. We will print all of the 

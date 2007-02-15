@@ -216,6 +216,9 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
 	 * @return Returns the fully qualified name of the declaring class.
 	 */
 	public String getDeclaringClass() {
+		if(declaringClass == null && parentDBC != null) {
+			return parentDBC.getClassName();
+		}
 		return declaringClass;
 	}
 	
@@ -370,6 +373,29 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
 	public void setDescriptionBuilderCompositeRef(DescriptionBuilderComposite dbc) {
 		
 		this.parentDBC = dbc;
+	}
+	
+	public boolean compare(Object obj) {
+		if(obj instanceof MethodDescriptionComposite) {
+			MethodDescriptionComposite mdc = (MethodDescriptionComposite) obj;
+			if(!(this.methodName.equals(mdc.getMethodName()))) {
+				return false;
+			}
+			List<ParameterDescriptionComposite> thisParamList = this.parameterDescriptions;
+			List<ParameterDescriptionComposite> paramList = mdc.getParameterDescriptionCompositeList();
+			if(thisParamList.size() != paramList.size()) {
+				return false;
+			}
+			for(int i=0; i < thisParamList.size(); i++) {
+				if(!(thisParamList.get(i).compare(paramList.get(i)))) {
+					return false;
+				}
+			}
+			return true;
+		}
+		else {
+			return super.equals(obj);
+		}
 	}
 	
 	/**

@@ -21,6 +21,7 @@ package org.apache.axis2.jaxws.description.impl;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -585,6 +586,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
                         MethodDescriptionComposite mdc = iterMethod.next();
                         
                         if (!DescriptionUtils.isExcludeTrue(mdc)) {
+                            mdc.setDeclaringClass(superDBC.getClassName());
                             retrieveList.add(mdc);
                         }
                     }                   
@@ -593,10 +595,121 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
             } //Done with implied SEI's superclasses
                 
         }//Done with implied SEI's
+        retrieveList = removeOverriddenMethods(retrieveList, dbc);
         
         return retrieveList.iterator();
     }
 
+    
+    /**
+     * This method will establish a <code>HashMap</code> that represents a class name of a 
+     * composite and an integer value for the entry. The integer represents the classes 
+     * level in the Java hierarchy. 0 represents the most basic class with n representing the
+     * highest level class.
+     * @param dbc - <code>DescriptionBuilderComposite</code>
+     * @return - <code>HashMap</code>
+     */
+    private HashMap<String, Integer> getClassHierarchy(DescriptionBuilderComposite dbc) {
+       HashMap<String, DescriptionBuilderComposite> dbcMap = getEndpointDescriptionImpl().
+           getServiceDescriptionImpl().getDBCMap();
+       HashMap<String, Integer> hierarchyMap = new HashMap<String, Integer>();
+       if(log.isDebugEnabled()) {
+           log.debug("Putting class at base level: " + dbc.getClassName());
+       }
+       hierarchyMap.put(dbc.getClassName(), Integer.valueOf(0));
+       DescriptionBuilderComposite superDBC = dbcMap.get((dbc.getSuperClassName()));
+       int i = 1;
+       while(superDBC != null && !superDBC.getClassName().equals("java.lang.Object")) {
+           hierarchyMap.put(superDBC.getClassName(), Integer.valueOf(i));
+           if(log.isDebugEnabled()) {
+               log.debug("Putting class: " + superDBC.getClassName() + " at hierarchy rank: " + 
+                       i);
+           }
+           i++;
+           superDBC = dbcMap.get(superDBC.getSuperClassName());
+       }
+       return hierarchyMap;
+    }
+    
+    /**
+     * This method will loop through each method that was previously determined as being relevant
+     * to the current composite. It will then drive the call to determine if this represents a
+     * method that has been overridden. If it represents an overriding method declaration it will
+     * remove the inherited methods from the list leaving only the most basic method declaration.
+     * @param methodList - <code>ArrayList</code> list of relevant methods
+     * @param dbc - <code>DescriptionBuilderComposite</code> current composite
+     * @return - <code>ArrayList</code>
+     */
+    private ArrayList<MethodDescriptionComposite> removeOverriddenMethods(ArrayList<MethodDescriptionComposite> 
+       methodList, DescriptionBuilderComposite dbc) {
+       HashMap<String, Integer> hierarchyMap = getClassHierarchy(dbc);
+       ArrayList<MethodDescriptionComposite> returnMethods = new ArrayList<MethodDescriptionComposite>();
+       for(int i=0; i < methodList.size(); i++) {
+           if(notFound(returnMethods, methodList.get(i))) {
+               returnMethods.add(getBaseMethod(methodList.get(i), i, methodList, hierarchyMap));
+           }
+     
+       }
+       return returnMethods;
+    }
+    
+    /**
+     * This method will loop through each method we have already identified as a base method and compare
+     * the current method.
+     * @param mdcList - <code>ArrayList</code> identified base methods
+     * @param mdc - <code>MethodDescriptionComposite</code> current method
+     * @return - boolean
+     */
+    private boolean notFound(ArrayList<MethodDescriptionComposite> mdcList, MethodDescriptionComposite mdc) {
+       for(MethodDescriptionComposite method : mdcList) {
+           if(mdc.compare(method)) {
+               return false;
+           }
+       }
+       return true;
+    }
+    
+    /**
+     * This method is responsible for determining the most basic level of a method declaration in
+     * the <code>DescriptionBuilderComposite</code> hierarchy. 
+     * @param mdc - <code>MethodDescriptionComposite</code> current method
+     * @param index - <code>int</code> current location in method list
+     * @param methodList - <code>List</code> list of methods available on this composite
+     * @param hierarchyMap - <code>HashMap</code> map that represents the hierarchy of the current
+     * <code>DescriptionBuilderComposite</code>
+     * @return - <code>MethodDescriptionComposite</code> most basic method declaration
+     */
+    private static MethodDescriptionComposite getBaseMethod(MethodDescriptionComposite mdc, 
+           int index, ArrayList<MethodDescriptionComposite> methodList, HashMap<String, Integer> 
+           hierarchyMap){
+       int baseLevel = hierarchyMap.get(mdc.getDeclaringClass());
+       if(log.isDebugEnabled()) {
+           log.debug("Base method: " + mdc.getMethodName() + " initial level: " + baseLevel);
+       }
+       for(; index < methodList.size(); index++) {
+           MethodDescriptionComposite compareMDC = methodList.get(index);
+           // If the two methods are the same method that means we have found an inherited
+           // overridden case
+           if(mdc.equals(compareMDC)) {
+               if(log.isDebugEnabled()) {
+                   log.debug("Found equivalent methods: " + mdc.getMethodName());
+               }
+               // get the declaration level of the method we are comparing to
+               int compareLevel = hierarchyMap.get(compareMDC.getDeclaringClass());
+               // if the method was declared by a class in a lower level of the hierarchy it
+               // becomes the method that we will compare other methods to
+               if(compareLevel < baseLevel) {
+                   if(log.isDebugEnabled()) {
+                       log.debug("Found method lower in hierarchy chain: " + compareMDC.getMethodName()
+                               + " of class: " + compareMDC.getMethodName());
+                   }
+                   mdc = compareMDC;
+                   baseLevel = compareLevel;
+               }
+           }
+       }
+       return mdc;
+    }
     /*
      * This is called when we know that this DBC is an implicit SEI
      */
@@ -620,6 +733,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
                     MethodDescriptionComposite mdc = iter.next();
                     
                     if (!DescriptionUtils.isExcludeTrue(mdc)) {
+                        mdc.setDeclaringClass(dbc.getClassName());
                         retrieveList.add(mdc);
                     }
                 }
@@ -641,7 +755,8 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         if (mdcList != null) {
         	iter = dbc.getMethodDescriptionsList().iterator();
             while (iter.hasNext()) {
-                MethodDescriptionComposite mdc = iter.next();           
+                MethodDescriptionComposite mdc = iter.next(); 
+                mdc.setDeclaringClass(dbc.getClassName());
                 retrieveList.add(mdc);
             }
         }
