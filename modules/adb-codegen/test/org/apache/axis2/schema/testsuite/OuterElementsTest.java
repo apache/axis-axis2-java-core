@@ -89,14 +89,25 @@ public class OuterElementsTest extends AbstractTest {
     }
 
     public void testInt() {
-        int returnInt;
-        try {
-            returnInt = testInt(5, NILLABLE_TRUE);
-            assertEquals(returnInt, 5);
-            returnInt = testInt(5, NILLABLE_FALSE);
-            assertEquals(returnInt, 5);
+
+         try {
+            assertEquals(testInt(5, NILLABLE_TRUE), 5);
+            assertEquals(testInt(Integer.MIN_VALUE, NILLABLE_TRUE), Integer.MIN_VALUE);
         } catch (Exception e) {
             fail();
+        }
+
+        try {
+            assertEquals(testInt(5, NILLABLE_FALSE), 5);
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
+            assertEquals(testInt(Integer.MIN_VALUE, NILLABLE_FALSE), Integer.MIN_VALUE);
+            fail();
+        } catch (Exception e) {
+            assertTrue(true);
         }
     }
 

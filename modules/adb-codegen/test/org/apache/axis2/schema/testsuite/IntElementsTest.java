@@ -37,9 +37,13 @@ public class IntElementsTest extends AbstractTest {
         System.out.println("minOccurs = 0 nillable true");
         try {
             returnObject = testIntArray(null, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
-            assertTrue(Arrays.equals(returnObject, new int[]{0}));
+            assertTrue(Arrays.equals(returnObject, new int[]{Integer.MIN_VALUE}));
             returnObject = testIntArray(new int[]{5}, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
             assertTrue(Arrays.equals(returnObject, new int[]{5}));
+            returnObject = testIntArray(new int[]{Integer.MIN_VALUE}, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
+            assertTrue(Arrays.equals(returnObject, new int[]{Integer.MIN_VALUE}));
+            returnObject = testIntArray(new int[]{Integer.MIN_VALUE,5}, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST);
+            assertTrue(Arrays.equals(returnObject, new int[]{Integer.MIN_VALUE,5}));
         } catch (Exception e) {
             fail();
         }
@@ -49,15 +53,19 @@ public class IntElementsTest extends AbstractTest {
             assertTrue(Arrays.equals(returnObject, null));
             returnObject = testIntArray(new int[]{5}, MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST);
             assertTrue(Arrays.equals(returnObject, new int[]{5}));
+            returnObject = testIntArray(new int[]{Integer.MIN_VALUE}, MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST);
+            assertTrue(Arrays.equals(returnObject, null));
         } catch (Exception e) {
             fail();
         }
         System.out.println("minOccurs = 1 nillable true");
         try {
             returnObject = testIntArray(null, MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
-            assertTrue(Arrays.equals(returnObject, new int[]{0}));
+            assertTrue(Arrays.equals(returnObject, new int[]{Integer.MIN_VALUE}));
             returnObject = testIntArray(new int[]{5}, MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
             assertTrue(Arrays.equals(returnObject, new int[]{5}));
+            returnObject = testIntArray(new int[]{Integer.MIN_VALUE}, MIN_EQUALS_ONE_NILLABLE_TRUE_TEST);
+            assertTrue(Arrays.equals(returnObject, new int[]{Integer.MIN_VALUE}));
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -70,6 +78,14 @@ public class IntElementsTest extends AbstractTest {
         } catch (Exception e) {
             assertTrue(true);
         }
+
+        try {
+            returnObject = testIntArray(new int[]{Integer.MIN_VALUE}, MIN_EQUALS_ONE_NILLABLE_FALSE_TEST);
+            fail();
+        } catch (Exception e) {
+            assertTrue(true);
+        }
+
         try {
             returnObject = testIntArray(new int[]{5}, MIN_EQUALS_ONE_NILLABLE_FALSE_TEST);
             assertTrue(Arrays.equals(returnObject, new int[]{5}));
@@ -133,13 +149,41 @@ public class IntElementsTest extends AbstractTest {
 
 
     public void testInt() {
+
+        System.out.println("min =0 and nillable true test");
         try {
             assertEquals(testInt(1, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST), 1);
+            assertEquals(testInt(Integer.MIN_VALUE, MIN_EQUALS_ZERO_NILLABLE_TRUE_TEST), Integer.MIN_VALUE);
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
             assertEquals(testInt(1, MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST), 1);
+            assertEquals(testInt(Integer.MIN_VALUE,MIN_EQUALS_ZERO_NILLABLE_FALSE_TEST),Integer.MIN_VALUE);
+        } catch (Exception e) {
+            fail();
+        }
+
+        try {
             assertEquals(testInt(1, MIN_EQUALS_ONE_NILLABLE_TRUE_TEST), 1);
+            assertEquals(testInt(Integer.MIN_VALUE,MIN_EQUALS_ONE_NILLABLE_TRUE_TEST),Integer.MIN_VALUE);
+        } catch (Exception e) {
+            fail();
+        }
+
+
+        try {
             assertEquals(testInt(1, MIN_EQUALS_ONE_NILLABLE_FALSE_TEST), 1);
         } catch (Exception e) {
             fail();
+        }
+
+        try {
+            assertEquals(testInt(Integer.MIN_VALUE, MIN_EQUALS_ONE_NILLABLE_FALSE_TEST), Integer.MIN_VALUE);
+            fail();
+        } catch (Exception e) {
+            assertTrue(true);
         }
 
     }

@@ -436,7 +436,40 @@
                                 <xsl:choose>
                                    <xsl:when test="@primitive and not(@array)">
                                        // setting primitive attribute tracker to true
-                                       <xsl:value-of select="$settingTracker"/> = true;
+                                       <xsl:choose>
+                                           <xsl:when test="$propertyType='int'">
+                                               if (param==Integer.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='long'">
+                                               if (param==Long.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='byte'">
+                                               if (param==Byte.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='double'">
+                                               if (param==Double.NaN) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='float'">
+                                               if (param==Float.NaN) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='short'">
+                                               if (param==Short.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:otherwise>
+                                               if (false) {
+                                           </xsl:otherwise>
+                                       </xsl:choose>
+                                            <xsl:choose>
+                                              <xsl:when test="@nillable">
+                                                  <xsl:value-of select="$settingTracker"/> = true;
+                                              </xsl:when>
+                                              <xsl:otherwise>
+                                                  <xsl:value-of select="$settingTracker"/> = false;
+                                              </xsl:otherwise>
+                                          </xsl:choose>
+                                       } else {
+                                          <xsl:value-of select="$settingTracker"/> = true;
+                                       }
                                    </xsl:when>
                                    <xsl:otherwise>
                                        if (param != null){
@@ -830,6 +863,7 @@
                     <xsl:variable name="settingTracker">local<xsl:value-of select="@javaname"/>Tracker</xsl:variable>
 
                     <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
+                    <xsl:variable name="propertyBaseType"><xsl:value-of select="@arrayBaseType"/></xsl:variable>
 
                     <xsl:if test="$min=0 or $choice"> if (<xsl:value-of select="$settingTracker"/>){</xsl:if>
                     <xsl:choose>
@@ -1120,27 +1154,33 @@
                                    prefix =  emptyNamespace ? null : xmlWriter.getPrefix(namespace);
                                    for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
                                         <xsl:if test="@primitive">
-                                            if (!emptyNamespace) {
-                                                if (prefix == null) {
-                                                    java.lang.String prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
-
-                                                    xmlWriter.writeStartElement(prefix2,"<xsl:value-of select="$propertyName"/>", namespace);
-                                                    xmlWriter.writeNamespace(prefix2, namespace);
-                                                    xmlWriter.setPrefix(prefix2, namespace);
-
-                                                } else {
-                                                    xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
-                                                }
-
-                                            } else {
-                                                xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                            }
-                                            xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
-                                            xmlWriter.writeEndElement();
-
+                                            <xsl:choose>
+                                               <xsl:when test="$propertyBaseType='int'">
+                                                   if (<xsl:value-of select="$varName"/>[i]!=Integer.MIN_VALUE) {
+                                               </xsl:when>
+                                               <xsl:when test="$propertyBaseType='long'">
+                                                   if (<xsl:value-of select="$varName"/>[i]!=Long.MIN_VALUE) {
+                                               </xsl:when>
+                                               <xsl:when test="$propertyBaseType='byte'">
+                                                   if (<xsl:value-of select="$varName"/>[i]!=Byte.MIN_VALUE) {
+                                               </xsl:when>
+                                               <xsl:when test="$propertyBaseType='double'">
+                                                   if (<xsl:value-of select="$varName"/>[i]!=Double.NaN) {
+                                               </xsl:when>
+                                               <xsl:when test="$propertyBaseType='float'">
+                                                   if (<xsl:value-of select="$varName"/>[i]!=Float.NaN) {
+                                               </xsl:when>
+                                               <xsl:when test="$propertyBaseType='short'">
+                                                   if (<xsl:value-of select="$varName"/>[i]!=Short.MIN_VALUE) {
+                                               </xsl:when>
+                                               <xsl:otherwise>
+                                                   if (true) {
+                                               </xsl:otherwise>
+                                           </xsl:choose>
                                         </xsl:if>
                                         <xsl:if test="not(@primitive)">
                                             if (<xsl:value-of select="$varName"/>[i] != null){
+                                        </xsl:if>
                                                 if (!emptyNamespace) {
                                                     if (prefix == null) {
                                                         java.lang.String prefix2 = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
@@ -1156,51 +1196,58 @@
                                                 } else {
                                                     xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
                                                 }
-                                            <xsl:choose>
-                                                <xsl:when test="$propertyType='java.lang.String[]'">
-                                                    xmlWriter.writeCharacters(<xsl:value-of select="$varName"/>[i]);
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
-                                                </xsl:otherwise>
-                                            </xsl:choose>
+
+                                            <xsl:if test="@primitive">
+                                                xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
                                                 xmlWriter.writeEndElement();
+                                            </xsl:if>
 
-                                            } else {
-                                               <xsl:choose>
-                                                   <xsl:when test="@nillable">
-                                                       // write null attribute
-                                                        namespace = "<xsl:value-of select="$namespace"/>";
-                                                        if (! namespace.equals("")) {
-                                                            prefix = xmlWriter.getPrefix(namespace);
+                                            <xsl:if test="not(@primitive)">
+                                                <xsl:choose>
+                                                    <xsl:when test="$propertyType='java.lang.String[]'">
+                                                        xmlWriter.writeCharacters(<xsl:value-of select="$varName"/>[i]);
+                                                    </xsl:when>
+                                                    <xsl:otherwise>
+                                                        xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>[i]));
+                                                    </xsl:otherwise>
+                                                </xsl:choose>
+                                                xmlWriter.writeEndElement();
+                                              </xsl:if>
+                                                } else {
+                                                   <xsl:choose>
+                                                       <xsl:when test="@nillable">
+                                                           // write null attribute
+                                                            namespace = "<xsl:value-of select="$namespace"/>";
+                                                            if (! namespace.equals("")) {
+                                                                prefix = xmlWriter.getPrefix(namespace);
 
-                                                            if (prefix == null) {
-                                                                prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
+                                                                if (prefix == null) {
+                                                                    prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
-                                                                xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
-                                                                xmlWriter.writeNamespace(prefix, namespace);
-                                                                xmlWriter.setPrefix(prefix, namespace);
+                                                                    xmlWriter.writeStartElement(prefix,"<xsl:value-of select="$propertyName"/>", namespace);
+                                                                    xmlWriter.writeNamespace(prefix, namespace);
+                                                                    xmlWriter.setPrefix(prefix, namespace);
+
+                                                                } else {
+                                                                    xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
+                                                                }
 
                                                             } else {
-                                                                xmlWriter.writeStartElement(namespace,"<xsl:value-of select="$propertyName"/>");
+                                                                xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
                                                             }
+                                                            writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
+                                                            xmlWriter.writeEndElement();
+                                                       </xsl:when>
+                                                       <xsl:when test="$min=0">
+                                                           // we have to do nothing since minOccurs is zero
+                                                       </xsl:when>
+                                                       <xsl:otherwise>
+                                                           throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                       </xsl:otherwise>
 
-                                                        } else {
-                                                            xmlWriter.writeStartElement("<xsl:value-of select="$propertyName"/>");
-                                                        }
-                                                        writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
-                                                        xmlWriter.writeEndElement();
-                                                   </xsl:when>
-                                                   <xsl:when test="$min=0">
-                                                       // we have to do nothing since minOccurs is zero
-                                                   </xsl:when>
-                                                   <xsl:otherwise>
-                                                       throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
-                                                   </xsl:otherwise>
+                                                   </xsl:choose>
+                                                }
 
-                                               </xsl:choose>
-                                            }
-                                        </xsl:if>
                                    }
                              } else {
                                  <xsl:choose>
@@ -1336,7 +1383,41 @@
                                           }
                                     </xsl:if>
                                     <xsl:if test="@primitive">
-                                       xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                       <!-- we have to check for nillability with min value -->
+                                       <xsl:choose>
+                                           <xsl:when test="$propertyType='int'">
+                                               if (<xsl:value-of select="$varName"/>==Integer.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='long'">
+                                               if (<xsl:value-of select="$varName"/>==Long.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='byte'">
+                                               if (<xsl:value-of select="$varName"/>==Byte.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='double'">
+                                               if (<xsl:value-of select="$varName"/>==Double.NaN) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='float'">
+                                               if (<xsl:value-of select="$varName"/>==Float.NaN) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='short'">
+                                               if (<xsl:value-of select="$varName"/>==Short.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:otherwise>
+                                               if (false) {
+                                           </xsl:otherwise>
+                                       </xsl:choose>
+                                                <xsl:choose>
+                                                      <xsl:when test="@nillable">
+                                                         writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
+                                                      </xsl:when>
+                                                      <xsl:otherwise>
+                                                         throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
+                                                      </xsl:otherwise>
+                                                  </xsl:choose>
+                                               } else {
+                                                    xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                               }
                                     </xsl:if>
                                  </xsl:otherwise>
                              </xsl:choose>
@@ -1463,7 +1544,42 @@
                                          }
                                     </xsl:if>
                             <xsl:if test="$primitive">
-                               xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+
+                               <!-- we have to check for nillability with min value -->
+                                       <xsl:choose>
+                                           <xsl:when test="$propertyType='int'">
+                                               if (<xsl:value-of select="$varName"/>==Integer.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='long'">
+                                               if (<xsl:value-of select="$varName"/>==Long.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='byte'">
+                                               if (<xsl:value-of select="$varName"/>==Byte.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='double'">
+                                               if (<xsl:value-of select="$varName"/>==Double.NaN) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='float'">
+                                               if (<xsl:value-of select="$varName"/>==Float.NaN) {
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='short'">
+                                               if (<xsl:value-of select="$varName"/>==Short.MIN_VALUE) {
+                                           </xsl:when>
+                                           <xsl:otherwise>
+                                               if (false) {
+                                           </xsl:otherwise>
+                                       </xsl:choose>
+                                                <xsl:choose>
+                                                      <xsl:when test="@nillable">
+                                                         writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
+                                                      </xsl:when>
+                                                      <xsl:otherwise>
+                                                         throw new RuntimeException("property value cannot be null!!");
+                                                      </xsl:otherwise>
+                                                  </xsl:choose>
+                                               } else {
+                                                    xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>));
+                                               }
                             </xsl:if>
 
                        xmlWriter.writeEndElement();
@@ -2086,6 +2202,29 @@
                                  return null;
                              </xsl:when>
                              <xsl:otherwise>
+                                 <!-- this class can have only one property -->
+                                 <xsl:variable name="propertyType"><xsl:value-of select="property/@type"/></xsl:variable>
+                                 <xsl:variable name="javaName"><xsl:value-of select="property/@javaname"/></xsl:variable>
+                                  <xsl:choose>
+                                       <xsl:when test="$propertyType='int'">
+                                           object.set<xsl:value-of select="$javaName"/>(Integer.MIN_VALUE);
+                                       </xsl:when>
+                                       <xsl:when test="$propertyType='long'">
+                                           object.set<xsl:value-of select="$javaName"/>(Long.MIN_VALUE);
+                                       </xsl:when>
+                                       <xsl:when test="$propertyType='byte'">
+                                           object.set<xsl:value-of select="$javaName"/>(Byte.MIN_VALUE);
+                                       </xsl:when>
+                                       <xsl:when test="$propertyType='double'">
+                                           object.set<xsl:value-of select="$javaName"/>(Double.NaN);
+                                       </xsl:when>
+                                       <xsl:when test="$propertyType='float'">
+                                           object.set<xsl:value-of select="$javaName"/>(Float.NaN);
+                                       </xsl:when>
+                                       <xsl:when test="$propertyType='short'">
+                                           object.set<xsl:value-of select="$javaName"/>(Short.MIN_VALUE);
+                                       </xsl:when>
+                                   </xsl:choose>
                                  return object;
                              </xsl:otherwise>
                          </xsl:choose>
@@ -2627,7 +2766,29 @@
                                              <xsl:if test="@nillable">
                                               nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
                                               if ("true".equals(nillableValue) || "1".equals(nillableValue)){
-                                                  <xsl:value-of select="$listName"/>.add(null);
+                                                  <xsl:choose>
+                                                       <xsl:when test="$basePropertyType='int'">
+                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(Integer.MIN_VALUE));
+                                                       </xsl:when>
+                                                       <xsl:when test="$basePropertyType='long'">
+                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(Long.MIN_VALUE));
+                                                       </xsl:when>
+                                                       <xsl:when test="$basePropertyType='byte'">
+                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(Byte.MIN_VALUE));
+                                                       </xsl:when>
+                                                       <xsl:when test="$basePropertyType='double'">
+                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(Double.NaN));
+                                                       </xsl:when>
+                                                       <xsl:when test="$basePropertyType='float'">
+                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(Float.NaN));
+                                                       </xsl:when>
+                                                       <xsl:when test="$basePropertyType='short'">
+                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(Short.MIN_VALUE));
+                                                       </xsl:when>
+                                                       <xsl:otherwise>
+                                                           <xsl:value-of select="$listName"/>.add(null);
+                                                       </xsl:otherwise>
+                                                  </xsl:choose>
                                                   reader.next();
                                               } else {
                                             </xsl:if>
@@ -2653,7 +2814,29 @@
                                                          <xsl:if test="@nillable">
                                                           nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance","nil");
                                                           if ("true".equals(nillableValue) || "1".equals(nillableValue)){
-                                                              <xsl:value-of select="$listName"/>.add(null);
+                                                              <xsl:choose>
+                                                                   <xsl:when test="$basePropertyType='int'">
+                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(Integer.MIN_VALUE));
+                                                                   </xsl:when>
+                                                                   <xsl:when test="$basePropertyType='long'">
+                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(Long.MIN_VALUE));
+                                                                   </xsl:when>
+                                                                   <xsl:when test="$basePropertyType='byte'">
+                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(Byte.MIN_VALUE));
+                                                                   </xsl:when>
+                                                                   <xsl:when test="$basePropertyType='double'">
+                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(Double.NaN));
+                                                                   </xsl:when>
+                                                                   <xsl:when test="$basePropertyType='float'">
+                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(Float.NaN));
+                                                                   </xsl:when>
+                                                                   <xsl:when test="$basePropertyType='short'">
+                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(Short.MIN_VALUE));
+                                                                   </xsl:when>
+                                                                   <xsl:otherwise>
+                                                                       <xsl:value-of select="$listName"/>.add(null);
+                                                                   </xsl:otherwise>
+                                                              </xsl:choose>
                                                               reader.next();
                                                           } else {
                                                         </xsl:if>
@@ -2805,7 +2988,7 @@
                                             </xsl:when>
                                             <xsl:otherwise>
                                               object.set<xsl:value-of select="$javaName"/>(
-                                        org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
+                                                    org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(content));
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:if>
@@ -2858,6 +3041,27 @@
                                     </xsl:if>
                                     <xsl:if test="@nillable">
                                        } else {
+                                           <!-- set the variable value according to the variable type -->
+                                           <xsl:choose>
+                                               <xsl:when test="$propertyType='int'">
+                                                   object.set<xsl:value-of select="$javaName"/>(Integer.MIN_VALUE);
+                                               </xsl:when>
+                                               <xsl:when test="$propertyType='long'">
+                                                   object.set<xsl:value-of select="$javaName"/>(Long.MIN_VALUE);
+                                               </xsl:when>
+                                               <xsl:when test="$propertyType='byte'">
+                                                   object.set<xsl:value-of select="$javaName"/>(Byte.MIN_VALUE);
+                                               </xsl:when>
+                                               <xsl:when test="$propertyType='double'">
+                                                   object.set<xsl:value-of select="$javaName"/>(Double.NaN);
+                                               </xsl:when>
+                                               <xsl:when test="$propertyType='float'">
+                                                   object.set<xsl:value-of select="$javaName"/>(Float.NaN);
+                                               </xsl:when>
+                                               <xsl:when test="$propertyType='short'">
+                                                   object.set<xsl:value-of select="$javaName"/>(Short.MIN_VALUE);
+                                               </xsl:when>
+                                           </xsl:choose>
                                            reader.getElementText(); // throw away text nodes if any.
                                        }
                                     </xsl:if>
@@ -2868,6 +3072,30 @@
                             </xsl:choose>
                             <xsl:if test="not(enumFacet)">
                               }  // End of if for expected property start element
+                                <xsl:if test="$min=0 and $ordered">
+                                    else {
+                                        <xsl:choose>
+                                           <xsl:when test="$propertyType='int'">
+                                               object.set<xsl:value-of select="$javaName"/>(Integer.MIN_VALUE);
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='long'">
+                                               object.set<xsl:value-of select="$javaName"/>(Long.MIN_VALUE);
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='byte'">
+                                               object.set<xsl:value-of select="$javaName"/>(Byte.MIN_VALUE);
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='double'">
+                                               object.set<xsl:value-of select="$javaName"/>(Double.NaN);
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='float'">
+                                               object.set<xsl:value-of select="$javaName"/>(Float.NaN);
+                                           </xsl:when>
+                                           <xsl:when test="$propertyType='short'">
+                                               object.set<xsl:value-of select="$javaName"/>(Short.MIN_VALUE);
+                                           </xsl:when>
+                                       </xsl:choose>
+                                    }
+                                </xsl:if>
                             </xsl:if>
                             <xsl:if test="$ordered and $min!=0">
                                 else{
