@@ -32,7 +32,6 @@ package org.apache.axis2.transport.http.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,7 +78,6 @@ public class DefaultConnectionListener implements IOProcessor {
                     if (serversocket == null || serversocket.isClosed()){
                         serversocket = new ServerSocket(port);
                         serversocket.setReuseAddress(true);
-                        serversocket.setSoTimeout(1);
                         if (LOG.isInfoEnabled()) {
                             LOG.info("Listening on port " + this.serversocket.getLocalPort());
                         }
@@ -92,9 +90,6 @@ public class DefaultConnectionListener implements IOProcessor {
                     }
                     HttpServerConnection conn = this.connfactory.newConnection(socket);
                     this.connmanager.process(conn);
-                } catch (SocketTimeoutException se) {
-                    if (Thread.interrupted())
-                        break;
                 } catch (Throwable ex) {
                     if (Thread.interrupted())
                         break;
