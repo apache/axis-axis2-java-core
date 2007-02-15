@@ -204,7 +204,8 @@ public class SoapMessageProviderTests extends ProviderTestCase {
                 SOAPFault fault = e.getFault();
                 assertTrue(fault != null);
                 assertTrue(fault.getFaultString().equals("sample fault"));
-                assertTrue(fault.getFaultCodeAsQName().getNamespaceURI().equals(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE));
+                QName expectedFaultCode = new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "Client"); 
+                assertTrue(fault.getFaultCodeAsQName().equals(expectedFaultCode));
                 assertTrue(fault.getDetail() != null);
                 DetailEntry de = (DetailEntry) fault.getDetail().getDetailEntries().next();
                 assertTrue(de != null);

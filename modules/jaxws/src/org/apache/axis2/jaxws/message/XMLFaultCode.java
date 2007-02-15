@@ -98,6 +98,25 @@ public enum XMLFaultCode {
         String namespace = qName.getNamespaceURI();
         String localPart = qName.getLocalPart();
         XMLFaultCode xmlFaultCode= RECEIVER;
+        // Due to problems in the OM, sometimes that qname is not retrieved correctly.
+        // So use the localName to find the XMLFaultCode
+        if (localPart.equalsIgnoreCase("Sender")) {          // SOAP 1.2
+            xmlFaultCode = SENDER;
+        } else if (localPart.equalsIgnoreCase("Receiver")) { // SOAP 1.2
+            xmlFaultCode = RECEIVER;
+        } else if (localPart.equalsIgnoreCase("Client")) {   // SOAP 1.1
+            xmlFaultCode = SENDER;
+        } else if (localPart.equalsIgnoreCase("Server")) {   // SOAP 1.1
+            xmlFaultCode = RECEIVER;
+        } else if (localPart.equalsIgnoreCase("MustUnderstand")) {  // Both
+            xmlFaultCode = MUSTUNDERSTAND;
+        } else if (localPart.equalsIgnoreCase("DataEncodingUnknown")) {  // SOAP 1.2
+            xmlFaultCode = DATAENCODINGUNKNOWN;
+        } else if (localPart.equalsIgnoreCase("VersionMismatch")) { // Both
+            xmlFaultCode = VERSIONMISMATCH;
+        }
+        /*
+         * TODO: Due to problems in the OM, sometimes that qname is not retrieved correctly.
         if (namespace.equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
             // SOAP 1.2
             if (localPart.equals("Sender")) {
@@ -123,6 +142,7 @@ public enum XMLFaultCode {
                 xmlFaultCode = VERSIONMISMATCH;
             }
         }
+        */
         return xmlFaultCode;
     }
 }

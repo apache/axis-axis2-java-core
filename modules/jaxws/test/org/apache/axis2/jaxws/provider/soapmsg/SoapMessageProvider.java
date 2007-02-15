@@ -21,12 +21,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.Detail;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
 import javax.xml.soap.Node;
 import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
@@ -325,6 +327,8 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
             SOAPMessage m = mf.createMessage();
             SOAPBody body = m.getSOAPBody();
             SOAPFault fault = body.addFault();
+            QName faultCode = new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "Client"); 
+            fault.setFaultCode(faultCode);
             fault.setFaultString("sample fault");
             Detail detail = fault.addDetail();
             Name deName = sf.createName("detailEntry");

@@ -68,7 +68,7 @@ public class SimpleServer {
     }
     
     public static void main(String[] args) throws Exception {
-        org.apache.log4j.BasicConfigurator.configure();
+        //org.apache.log4j.BasicConfigurator.configure();
         SimpleServer server = new SimpleServer();
         server.start();
 	}
