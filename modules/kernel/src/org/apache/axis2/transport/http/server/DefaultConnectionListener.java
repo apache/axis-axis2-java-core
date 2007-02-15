@@ -46,7 +46,7 @@ public class DefaultConnectionListener implements IOProcessor {
     private final int port;
     private final HttpConnectionFactory connfactory;
     private final HttpConnectionManager connmanager;
-    private ServerSocket serversocket;
+    private ServerSocket serversocket = null;
     private final ConnectionListenerFailureHandler failureHandler;
     
     /** Default constructor called by HttpFactory.  A custom HttpFactory subclass can call the other constructor to provide a custom ConnectionListenerErrorHandler */
@@ -68,8 +68,6 @@ public class DefaultConnectionListener implements IOProcessor {
         this.port = port;
         this.connmanager = connmanager;
         this.connfactory = connfactory;
-        this.serversocket = new ServerSocket(port);
-        this.serversocket.setReuseAddress(true);
         this.failureHandler = failureHandler;
     }
 
@@ -80,7 +78,7 @@ public class DefaultConnectionListener implements IOProcessor {
         try {
             while (!Thread.interrupted()) {
                 try {
-                    if (serversocket.isClosed()){
+                    if (serversocket == null || serversocket.isClosed()){
                         serversocket = new ServerSocket(port);
                         serversocket.setReuseAddress(true);
                     }
