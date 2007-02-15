@@ -403,6 +403,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         }
         return returnOperations;
     }
+    
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.description.EndpointInterfaceDescription#getDispatchableOperation(QName operationQName)
      */
@@ -424,8 +425,6 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         return returnOperations;
     }
 
-
-    
     /**
      * Return an OperationDescription for the corresponding SEI method.  Note that this ONLY works
      * if the OperationDescriptions were created from introspecting an SEI.  If the were created with a WSDL
@@ -541,22 +540,9 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         ArrayList<MethodDescriptionComposite> retrieveList = new ArrayList<MethodDescriptionComposite>();
 
         if (dbc.isInterface()) {
-        
-            retrieveList = retrieveSEIMethods(dbc);
-
-            //Now gather methods off the chain of superclasses, if any
-            DescriptionBuilderComposite tempDBC = dbc;          
-            while (!DescriptionUtils.isEmpty(tempDBC.getSuperClassName())) {
-            	
-                if (DescriptionUtils.javifyClassName(tempDBC.getSuperClassName()).equals(MDQConstants.OBJECT_CLASS_NAME))
-                    break;
-
-                DescriptionBuilderComposite superDBC = 
-                                    getEndpointDescriptionImpl().getServiceDescriptionImpl().getDBCMap().get(tempDBC.getSuperClassName());
-                retrieveList.addAll(retrieveSEIMethods(superDBC));
-                tempDBC = superDBC;
-            }
-                
+        	
+            retrieveList.addAll(retrieveSEIMethodsChain(dbc));
+            
         } else {
             //this is an implied SEI...rules are more complicated
             
@@ -663,9 +649,37 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         return retrieveList;
     }
 
+    private ArrayList<MethodDescriptionComposite> retrieveSEIMethodsChain(DescriptionBuilderComposite tmpDBC) {
+        
+    	DescriptionBuilderComposite dbc = tmpDBC;
+        ArrayList<MethodDescriptionComposite> retrieveList = new ArrayList<MethodDescriptionComposite>();
+
+    	retrieveList = retrieveSEIMethods(dbc);
+
+        //Since this is an interface, anything that is in the extends clause will actually appear
+        // in the interfaces list instead.
+        Iterator<String> iter = null;
+        List<String> interfacesList = dbc.getInterfacesList();
+        if (interfacesList != null ) {
+        	iter = dbc.getInterfacesList().iterator();
+        
+        	while (iter.hasNext()) {
+        		
+        		String interfaceName = iter.next();
+        		DescriptionBuilderComposite superInterface = 
+                    getEndpointDescriptionImpl().getServiceDescriptionImpl().getDBCMap().get(interfaceName);
+        		   
+                retrieveList.addAll(retrieveSEIMethodsChain(superInterface));
+        	}
+        }
+        	
+       return retrieveList;
+    }
+    
     private Definition getWSDLDefinition() {
         return ((ServiceDescriptionWSDL) getEndpointDescription().getServiceDescription()).getWSDLDefinition();
     }
+    
     public PortType getWSDLPortType() {
         PortType portType = null;
 //        EndpointDescriptionWSDL endpointDescWSDL = (EndpointDescriptionWSDL) getEndpointDescription();
