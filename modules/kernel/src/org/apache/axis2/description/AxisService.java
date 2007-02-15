@@ -84,6 +84,9 @@ public class AxisService extends AxisDescription {
     private HashMap httpLocationDispatcherMap = null;
 
     private HashMap operationsAliasesMap = null;
+    // Collection of aliases that are invalid for this service because they are duplicated across
+    // multiple operations under this service.
+    private List invalidOperationsAliases = null;
 //    private HashMap operations = new HashMap();
 
     // to store module ref at deploy time parsing
@@ -256,6 +259,7 @@ public class AxisService extends AxisDescription {
     public AxisService() {
         super();
         this.operationsAliasesMap = new HashMap();
+        this.invalidOperationsAliases = new ArrayList();
         moduleConfigmap = new HashMap();
         //by default service scope is for the request
         scope = Constants.SCOPE_REQUEST;
@@ -595,9 +599,15 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * Maps an action (aka WSA action) to the given operation. This is used by
-     * addressing based dispatching to figure out which operation it is that a
-     * given message is for.
+     * Maps an action (a SOAPAction or WSA action) to the given operation. This is used by
+     * dispatching (both SOAPAction- and WSAddressing- based dispatching) to figure out which 
+     * operation a given message is for.  Some notes on restrictions of "action"
+     * - A null or empty action will be ignored
+     * - An action that is a duplicate and references an idential operation is allowed
+     * - An acton that is a duplicate and references a different operation is NOT allowed.  In this
+     *   case, the action for the original operation is removed from the alias table, thus removing
+     *   the ability to route based on this action.  This is necessary to prevent mis-directing
+     *   incoming message to the wrong operation based on SOAPAction.
      *
      * @param action        the action key
      * @param axisOperation the operation to map to
@@ -610,9 +620,50 @@ public class AxisService extends AxisDescription {
             return;
         }
         if(log.isDebugEnabled()){
-            log.debug("mapActionToOperation: Mapping Action to Operation: action="+action+" operation="+axisOperation);
+            log.debug("mapActionToOperation: Mapping Action to Operation: action: " + action + "; operation: " + axisOperation);
         }
-        operationsAliasesMap.put(action, axisOperation);
+
+        // First check if this action has already been flagged as invalid because it is a duplicate. 
+        if (invalidOperationsAliases.contains(action)) {
+            // This SOAPAction has already been determined to be invalid; log a message
+            // and do not add it to the operation alias map.
+            if (log.isDebugEnabled()) {
+                log.debug("mapActionToOperation: The action: " + action + " can not be used for operation: " 
+                        + axisOperation + " with operation name: " + axisOperation.getName() 
+                        + " because that SOAPAction is not unique for this service.");
+            }
+            return;
+        }
+        
+        // Check if the action is currently mapping to an operation.
+        AxisOperation currentlyMappedOperation = getOperationByAction(action);
+        if (currentlyMappedOperation != null) {
+            if (currentlyMappedOperation == axisOperation) {
+                // This maps to the same operation, then it is already in the alias table, so
+                // just silently ignore this mapping request.
+                if (log.isDebugEnabled()) {
+                    log.debug("mapActionToOperation: This operation is already mapped to this action: " + action + "; AxisOperation: " 
+                            + currentlyMappedOperation + " named: " + currentlyMappedOperation.getName());
+                }
+            }
+            else {
+                // This action is already mapped, but it is to a different operation.  Remove
+                // the action mapping from the alias table and add it to the list of invalid mappings
+                operationsAliasesMap.remove(action);
+                invalidOperationsAliases.add(action);
+                if (log.isDebugEnabled()) {
+                    log.debug("mapActionToOperation: The action is already mapped to a different operation.  The mapping of the action to any operations will be removed.  Action: " 
+                            + action + "; original operation: " + currentlyMappedOperation 
+                            + " named " + currentlyMappedOperation.getName() 
+                            + "; new operation: " + axisOperation
+                            + " named " + axisOperation.getName());
+                }
+            }
+            return;
+        }
+        else {
+            operationsAliasesMap.put(action, axisOperation);
+        }
     }
 
     /**
