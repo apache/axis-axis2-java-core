@@ -84,7 +84,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
         	<skip>false</skip>
-        	<forkMode>pertest</forkMode>
           <systemProperties>
             <property>
               <name>javax.xml.soap.MessageFactory</name>
