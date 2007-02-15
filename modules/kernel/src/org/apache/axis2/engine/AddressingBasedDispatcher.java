@@ -144,14 +144,12 @@ EndpointReference toEPR = messageContext.getTo();
                                 .getOperationContext(msgctx.getRelatesTo().getValue());
 
                 if (operationContext != null) {
-                    operationContext.addMessageContext(msgctx);
                     msgctx.setAxisOperation(operationContext.getAxisOperation());
                     msgctx.setOperationContext(operationContext);
                     msgctx.setServiceContext((ServiceContext) operationContext.getParent());
                     msgctx.setAxisService(
                             ((ServiceContext) operationContext.getParent()).getAxisService());
-                    //InstanceDispatcher do this again , so let it go
-                    //msgctx.getAxisOperation().registerOperationContext(msgctx, operationContext);
+                    msgctx.getAxisOperation().registerMessageContext(msgctx, operationContext);
                     msgctx.setServiceGroupContextId(
                             ((ServiceGroupContext) msgctx.getServiceContext().getParent()).getId());
                 }
