@@ -49,6 +49,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.Map;
 
 /**
  *
@@ -251,7 +255,15 @@ public class RESTUtil {
             SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
             SOAPBody body = soapEnvelope.getBody();
 
-            ServletInputStream inputStream = request.getInputStream();
+            InputStream inputStream = new BufferedInputStream(request.getInputStream());
+            Map headers = (Map) msgCtxt.getProperty(MessageContext.TRANSPORT_HEADERS);
+            if (headers != null) {
+                if (HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING)) ||
+                    HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING_LOWERCASE)))
+                {
+                    inputStream = new GZIPInputStream(inputStream);
+                }
+                }
             String contentType = request.getContentType();
 
             // irrespective of the schema, if the media type is text/xml, all the information

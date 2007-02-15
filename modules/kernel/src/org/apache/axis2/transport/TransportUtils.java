@@ -40,6 +40,7 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.SOAPMessageFormatter;
+import org.apache.axis2.transport.http.ApplicationXMLFormatter;
 import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
@@ -266,12 +267,18 @@ public class TransportUtils {
 					.getAxisConfiguration().getMessageFormatter(messageFormatString);
 			
 			}
-		if (messageFormatter == null) {
-			// Lets default to SOAP formatter
-			//TODO need to improve this to use the stateless nature
-			messageFormatter = new SOAPMessageFormatter();
-		}
-		return messageFormatter;
+        if (messageFormatter == null) {
+
+            // If we are doing rest better default to Application/xml formatter
+            if (msgContext.isDoingREST()) {
+                messageFormatter = new ApplicationXMLFormatter();
+            } else {
+                // Lets default to SOAP formatter
+                //TODO need to improve this to use the stateless nature
+                messageFormatter = new SOAPMessageFormatter();
+            }
+        }
+        return messageFormatter;
 	}
     
     

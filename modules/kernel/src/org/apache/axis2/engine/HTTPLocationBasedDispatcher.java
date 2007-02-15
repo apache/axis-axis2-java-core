@@ -66,8 +66,8 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
                 String httpLocation = parseRequestURL(uri);
 
                 if (httpLocation != null) {
-                    AxisEndpoint axisEndpoint = axisService.getEndpoint((String) messageContext
-                            .getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME));
+                    AxisEndpoint axisEndpoint = (AxisEndpoint) messageContext
+                            .getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
                     if (axisEndpoint != null) {
                         Map httpLocationTable = (Map) axisEndpoint.getBinding()
                                 .getProperty(WSDL2Constants.HTTP_LOCATION_TABLE);

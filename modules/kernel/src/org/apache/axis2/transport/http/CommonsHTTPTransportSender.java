@@ -200,34 +200,14 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 			// Change this place to change the wsa:toepr
 			// epr = something
 			// ######################################################
-			OMElement dataOut;
-
-			/**
-			 * Figuringout the REST properties/parameters
-             */
-            if (msgContext.isDoingREST()) {
-                if (msgContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) {
-                    SOAPFault fault = msgContext.getEnvelope().getBody().getFault();
-                    SOAPFaultDetail soapFaultDetail = fault.getDetail();
-                    dataOut = soapFaultDetail.getFirstElement();
-                    if (dataOut == null) {
-                        dataOut = fault.getReason();
-                    }
-
-                } else {
-                    dataOut = msgContext.getEnvelope().getBody().getFirstElement();
-                }
-            } else {
-                dataOut = msgContext.getEnvelope();
-            }
 
 			if (epr != null) {
 				if (!epr.hasNoneAddress()) {
-					writeMessageWithCommons(msgContext, epr, dataOut, format);
+					writeMessageWithCommons(msgContext, epr, format);
 				}
 			} else {
 				if (msgContext.getProperty(MessageContext.TRANSPORT_OUT) != null) {
-					sendUsingOutputStream(msgContext, format, dataOut);
+					sendUsingOutputStream(msgContext, format);
 				} else {
 					throw new AxisFault(
 							"Both the TO and MessageContext.TRANSPORT_OUT property are Null, No where to send");
@@ -251,9 +231,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 	}
 
 	private void sendUsingOutputStream(MessageContext msgContext,
-			OMOutputFormat format, OMElement dataOut) throws AxisFault,
-			XMLStreamException {
-		OutputStream out = (OutputStream) msgContext
+			OMOutputFormat format) throws AxisFault, XMLStreamException {
+        
+        OutputStream out = (OutputStream) msgContext
 				.getProperty(MessageContext.TRANSPORT_OUT);
 
 		// I Don't thinik we need this check.. Content type needs to be set in
@@ -262,81 +242,50 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 		OutTransportInfo transportInfo = (OutTransportInfo) msgContext
 				.getProperty(Constants.OUT_TRANSPORT_INFO);
 
-		if (transportInfo != null) {
-			String contentType = null;
-			// FIXME when rest formatter is done
-			Object contentTypeObject = msgContext
-					.getProperty(Constants.Configuration.CONTENT_TYPE);
-			if (contentTypeObject != null) {
-				contentType = (String) contentTypeObject;
-			} else if (msgContext.isDoingREST() && !(format.isOptimized())) {
-				contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_XML;
-			}
-			if (contentType != null) {
-				contentType = contentType + "; charset="
-						+ format.getCharSetEncoding();
-				transportInfo.setContentType(contentType);
-			}
-		} else {
-			throw new AxisFault(Constants.OUT_TRANSPORT_INFO
-					+ " has not been set");
-		}
-		format.setAutoCloseWriter(true);
-		if (!msgContext.isDoingREST()) {
-			MessageFormatter messageFormatter = TransportUtils
-					.getMessageFormatter(msgContext);
-			transportInfo.setContentType(messageFormatter.getContentType(
-					msgContext, format, findSOAPAction(msgContext)));
-			messageFormatter.writeTo(msgContext, format, out, false);
-		} else {
-			// to handle the rest case
-			// FIXME when the RESTFormatter is done
-			if (!(msgContext.isDoingMTOM()) & (msgContext.isDoingSwA())
-					& !(msgContext.isDoingREST())) {
-				StringWriter bufferedSOAPBody = new StringWriter();
-				dataOut.serializeAndConsume(bufferedSOAPBody, format);
-				MIMEOutputUtils.writeSOAPWithAttachmentsMessage(
-						bufferedSOAPBody, out, msgContext.getAttachmentMap(),
-						format);
-			} else {
-                ServletBasedOutTransportInfo servletBasedOutTransportInfo =
-                        (ServletBasedOutTransportInfo) transportInfo;
-                List customHheaders = (List) msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
-                if (customHheaders != null) {
-                    Iterator iter = customHheaders.iterator();
-                    while (iter.hasNext()) {
-                        Header header = (Header) iter.next();
-                        if (header != null) {
-                            servletBasedOutTransportInfo
-                                    .addHeader(header.getName(), header.getValue());
-                        }
+		ServletBasedOutTransportInfo servletBasedOutTransportInfo = null;
+        if (transportInfo != null && transportInfo instanceof ServletBasedOutTransportInfo) {
+            servletBasedOutTransportInfo =
+                    (ServletBasedOutTransportInfo) transportInfo;
+            List customHheaders = (List) msgContext.getProperty(HTTPConstants.HTTP_HEADERS);
+            if (customHheaders != null) {
+                Iterator iter = customHheaders.iterator();
+                while (iter.hasNext()) {
+                    Header header = (Header) iter.next();
+                    if (header != null) {
+                        servletBasedOutTransportInfo
+                                .addHeader(header.getName(), header.getValue());
                     }
                 }
-                Object gzip = msgContext.getOptions().getProperty(HTTPConstants.MC_GZIP_RESPONSE);
-                if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
-                    servletBasedOutTransportInfo.addHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
-                                                           HTTPConstants.COMPRESSION_GZIP);
-                    GZIPOutputStream gzout = null;
-                    ByteArrayOutputStream compressed = new ByteArrayOutputStream();
-                    try {
-                        gzout = new GZIPOutputStream(compressed);
-                        dataOut.serializeAndConsume(gzout, format);
-                        gzout.flush();
-                        gzout.close();
-                        out.write(compressed.toByteArray());
-                    } catch (IOException e) {
-                        throw new AxisFault("Could not compress response");
-                    }
-                } else {
-                    dataOut.serializeAndConsume(out, format);
-                }
-		}
+            }
+       }
 
-	}
+        format.setAutoCloseWriter(true);
+
+        MessageFormatter messageFormatter = TransportUtils
+                .getMessageFormatter(msgContext);
+        transportInfo.setContentType(
+                messageFormatter.getContentType(msgContext, format, findSOAPAction(msgContext)));
+
+        Object gzip = msgContext.getOptions().getProperty(HTTPConstants.MC_GZIP_RESPONSE);
+        if (gzip != null && JavaUtils.isTrueExplicitly(gzip)) {
+            servletBasedOutTransportInfo.addHeader(HTTPConstants.HEADER_CONTENT_ENCODING,
+                                                   HTTPConstants.COMPRESSION_GZIP);
+            try {
+                out = new GZIPOutputStream(out);
+                out.write(messageFormatter.getBytes(msgContext, format));
+                ((GZIPOutputStream) out).finish();
+                out.flush();
+            } catch (IOException e) {
+                throw new AxisFault("Could not compress response");
+            }
+        } else {
+            messageFormatter.writeTo(msgContext, format, out, false);
+        }
+
     }
 
-    public void writeMessageWithCommons(MessageContext messageContext,
-			EndpointReference toEPR, OMElement dataout, OMOutputFormat format)
+    private void writeMessageWithCommons(MessageContext messageContext,
+			EndpointReference toEPR, OMOutputFormat format)
 			throws AxisFault {
 		try {
 			URL url = new URL(toEPR.getAddress());
@@ -344,11 +293,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 			// select the Message Sender depending on the REST status
 			AbstractHTTPSender sender;
 
-			if (!messageContext.isDoingREST()) {
-				sender = new HTTPSender();
-			} else {
-				sender = new RESTSender();
-			}
+            sender = new SOAPOverHTTPSender();
+
 			if (messageContext.getProperty(HTTPConstants.CHUNKED) != null) {
 				chunked = JavaUtils.isTrueExplicitly(messageContext
 						.getProperty(HTTPConstants.CHUNKED));
@@ -364,8 +310,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 			sender.setHttpVersion(httpVersion);
 			sender.setFormat(format);
 
-			sender.send(messageContext, dataout, url,
-					findSOAPAction(messageContext));
+			sender.send(messageContext, url, findSOAPAction(messageContext));
 		} catch (MalformedURLException e) {
 			log.debug(e);
 			throw new AxisFault(e);

@@ -292,9 +292,7 @@ public abstract class AbstractHTTPSender {
         }
     }
 
-    public abstract void send(MessageContext msgContext, OMElement dataout,
-                              URL url,
-                              String soapActionString)
+    public abstract void send(MessageContext msgContext, URL url, String soapActionString)
             throws AxisFault, IOException;
 
     /**
@@ -596,85 +594,5 @@ public abstract class AbstractHTTPSender {
         }
 
         return userAgentString;
-    }
-
-    protected String applyURITemplating(MessageContext messageContext, String query,
-                                        boolean detach) throws AxisFault {
-
-        OMElement firstElement;
-        if (detach) {
-            firstElement = messageContext.getEnvelope().getBody().getFirstElement();
-        } else {
-            firstElement =
-                    messageContext.getEnvelope().getBody().getFirstElement().cloneOMElement();
-        }
-
-
-        HTTPLocation httpLocation = new HTTPLocation(query);
-
-        String[] localNames = httpLocation.getLocalNames();
-        String[] values = new String[localNames.length];
-        int i;
-        for (i = 0; i < localNames.length; i++) {
-            String localName = localNames[i];
-
-            try {
-                values[i] = URLEncoder.encode(getOMElementValue(localName, firstElement), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                log.error("Unable to encode Query String");
-                throw new AxisFault("Unable to encode Query String");
-            }
-        }
-
-
-        httpLocation.substitute(values);
-
-        return httpLocation.toString();
-    }
-
-    protected String appendQueryParameters(MessageContext messageContext, String query) {
-
-
-        OMElement firstElement;
-        String queryParameterSeparator = (String) messageContext
-                .getProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
-        // In case queryParameterSeparator is null we better use the default value 
-        if (queryParameterSeparator == null) {
-            queryParameterSeparator = WSDL20DefaultValueHolder
-                    .getDefaultValue(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
-        }
-        firstElement = messageContext.getEnvelope().getBody().getFirstElement();
-        ArrayList values = new ArrayList();
-        if (firstElement != null) {
-            Iterator iter = firstElement.getChildElements();
-            while (iter.hasNext()) {
-                OMElement element = (OMElement) iter.next();
-                values.add(element.getLocalName() + "=" + element.getText());
-            }
-        }
-        if (values.size() > 0) {
-            if (query == null) {
-
-                query = (String) values.get(0);
-            }
-
-            for (int i = 1; i < values.size(); i++) {
-                query = query + queryParameterSeparator + values.get(i);
-            }
-        }
-        return query;
-    }
-
-    private String getOMElementValue(String elementName, OMElement parentElement) {
-        OMElement httpURLParam = parentElement.getFirstChildWithName(new QName(elementName));
-
-        if (httpURLParam != null) {
-            httpURLParam.detach();
-            if (parentElement.getFirstOMChild() == null) {
-                parentElement.detach();
-            }
-        }
-        return httpURLParam.getText();
-
     }
 }

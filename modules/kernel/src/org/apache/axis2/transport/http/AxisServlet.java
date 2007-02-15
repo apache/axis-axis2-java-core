@@ -242,7 +242,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (!disableREST && isRESTRequest(contentType)) {
             msgContext = createMessageContext(req, res);
             try {
-
+                msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,
+                getTransportHeaders(req));
                 new RESTUtil(configContext).processPostRequest(msgContext,
                         req,
                         res);

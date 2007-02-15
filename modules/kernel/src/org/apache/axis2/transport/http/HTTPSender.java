@@ -30,8 +30,11 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpVersion;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.DeleteMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -40,66 +43,102 @@ import java.net.URL;
 public class HTTPSender extends AbstractHTTPSender {
 
 
-    public void send(MessageContext msgContext, OMElement dataout, URL url, String soapActionString)
+    public void send(MessageContext msgContext,URL url, String soapActionString)
             throws MalformedURLException, AxisFault, IOException {
+
         // execute the HtttpMethodBase - a connection manager can be given for
         // handle multiple
 
         String httpMethod =
                 (String) msgContext.getProperty(Constants.Configuration.HTTP_METHOD);
 
-        if ((httpMethod != null)
-                && Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
-            this.sendViaGet(msgContext, url, soapActionString);
+        if ((httpMethod != null)) {
 
-            return;
+            if (Constants.Configuration.HTTP_METHOD_GET.equalsIgnoreCase(httpMethod)) {
+                this.sendViaGet(msgContext, url, soapActionString);
+
+                return;
+            } else if (Constants.Configuration.HTTP_METHOD_DELETE.equalsIgnoreCase(httpMethod)) {
+                this.sendViaDelete(msgContext, url, soapActionString);
+
+                return;
+            } else if (Constants.Configuration.HTTP_METHOD_PUT.equalsIgnoreCase(httpMethod)) {
+                this.sendViaPut(msgContext, url, soapActionString);
+
+                return;
+            }
         }
-        this.sendViaPost(msgContext, dataout, url, soapActionString);
+
+        this.sendViaPost(msgContext, url, soapActionString);
     }
 
-    private void sendViaGet(MessageContext msgContext, URL url, String soapActiionString) throws IOException {
+    /**
+     * Used to send a request via HTTP Get method
+     *
+     * @param msgContext        - The MessageContext of the message
+     * @param url               - The target URL
+     * @param soapActiionString - The soapAction string of the request
+     * @throws AxisFault - Thrown in case an exception occurs
+     */
+    private void sendViaGet(MessageContext msgContext, URL url, String soapActiionString)
+            throws AxisFault {
 
         GetMethod getMethod = new GetMethod();
-        if (isAuthenticationEnabled(msgContext)) {
-            getMethod.setDoAuthentication(true);
+        HttpClient httpClient = getHttpClient(msgContext);
+        MessageFormatter messageFormatter =
+                populateCommonProperties(msgContext, url, getMethod, httpClient, soapActiionString);
+
+        // Need to have this here because we can have soap action when using the soap response MEP
+        String soapAction =
+                messageFormatter.formatSOAPAction(msgContext, format, soapActiionString);
+
+        if (soapAction != null) {
+            getMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
+        }
+        try {
+            executeMethod(httpClient, msgContext, url, getMethod);
+            handleResponse(msgContext, getMethod);
+        } catch (IOException e) {
+            throw new AxisFault(e);
         }
 
-        MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(
-                msgContext);
 
-        url = messageFormatter.getTargetAddress(msgContext, format, url);
+    }
 
-        getMethod.setPath((url).getFile());
+    /**
+     * Used to send a request via HTTP Delete Method
+     *
+     * @param msgContext        - The MessageContext of the message
+     * @param url               - The target URL
+     * @param soapActiionString - The soapAction string of the request
+     * @throws AxisFault - Thrown in case an exception occurs
+     */
+    private void sendViaDelete(MessageContext msgContext, URL url, String soapActiionString)
+            throws AxisFault {
 
-        getMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE, messageFormatter.getContentType(msgContext, format, soapActiionString));
-
+        DeleteMethod deleteMethod = new DeleteMethod();
         HttpClient httpClient = getHttpClient(msgContext);
+        populateCommonProperties(msgContext, url, deleteMethod, httpClient, soapActiionString);
 
-        executeMethod(httpClient, msgContext, url, getMethod);
-
-        if (getMethod.getStatusCode() == HttpStatus.SC_OK) {
-            processResponse(getMethod, msgContext);
-        } else if (getMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
-        } else if (getMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-            Header contenttypeHheader =
-                    getMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
-            String value = contenttypeHheader.getValue();
-
-            if (value != null) {
-                if ((value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0)
-                        || (value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0)) {
-                    processResponse(getMethod, msgContext);
-                }
-            }
-        } else {
-            throw new AxisFault(Messages.getMessage("transportError",
-                    String.valueOf(getMethod.getStatusCode()),
-                    getMethod.getResponseBodyAsString()));
+        try {
+            executeMethod(httpClient, msgContext, url, deleteMethod);
+            handleResponse(msgContext, deleteMethod);
+        } catch (IOException e) {
+            throw new AxisFault(e);
         }
 
     }
 
-    private void sendViaPost(MessageContext msgContext, OMElement dataout, URL url, String soapActionString) throws IOException {
+    /**
+     * Used to send a request via HTTP Post Method
+     *
+     * @param msgContext       - The MessageContext of the message
+     * @param url              - The target URL
+     * @param soapActionString - The soapAction string of the request
+     * @throws AxisFault - Thrown in case an exception occurs
+     */
+    private void sendViaPost(MessageContext msgContext, URL url,
+                             String soapActionString) throws AxisFault {
 
 
         HttpClient httpClient = getHttpClient(msgContext);
@@ -111,103 +150,175 @@ public class HTTPSender extends AbstractHTTPSender {
             charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
         }
 
-        MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(
-                msgContext);
-        url = messageFormatter.getTargetAddress(msgContext, format, url);
-        // Check whther the url has httpLocation
-        String urlString = url.toString();
-        int separator = urlString.indexOf('{');
-        if (separator > 0) {
-            String path = urlString.substring(0, separator - 1);
-            String query = urlString.substring(separator - 1);
-            String replacedQuery;
-            replacedQuery = applyURITemplating(msgContext, query, false);
-            url = new URL(path + replacedQuery);
-        }
         PostMethod postMethod = new PostMethod();
-        postMethod.setPath(url.getPath());
-        postMethod.setQueryString(url.getQuery());
-
-        if (isAuthenticationEnabled(msgContext)) {
-            postMethod.setDoAuthentication(true);
-        }
+        MessageFormatter messageFormatter =
+                populateCommonProperties(msgContext, url, postMethod, httpClient, soapActionString);
 
         postMethod.setRequestEntity(new AxisRequestEntity(messageFormatter,
                                                           msgContext, format, soapActionString,
                                                           chunked, isAllowedRetry));
+
         if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
             postMethod.setContentChunked(true);
         }
 
         String soapAction = messageFormatter.formatSOAPAction(msgContext, format, soapActionString);
+
         if (soapAction != null) {
             postMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
-        }
-
-        //setting the cookie in the out path
-        Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
-        if (cookieString != null) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append(Constants.SESSION_COOKIE_JSESSIONID);
-            buffer.append("=");
-            buffer.append(cookieString);
-            postMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE, buffer.toString());
-        }
-
-        postMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
-
-        if (httpVersion != null) {
-            if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
-                httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
-            } else {
-                postMethod.setRequestHeader(HTTPConstants.HEADER_EXPECT,
-                                            HTTPConstants.HEADER_EXPECT_100_Continue);
-            }
-        }
-
-        // set timeout in client
-        long timeout = msgContext.getOptions().getTimeOutInMilliSeconds();
-        if (timeout != 0) {
-            httpClient.getParams().setSoTimeout((int) timeout);
         }
 
         /*
          *   main excecution takes place..
          */
-        executeMethod(httpClient, msgContext, url, postMethod);
+        try {
+            executeMethod(httpClient, msgContext, url, postMethod);
+            handleResponse(msgContext, postMethod);
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
+
+    }
+
+    /**
+     * Used to send a request via HTTP Put Method
+     *
+     * @param msgContext       - The MessageContext of the message
+     * @param url              - The target URL
+     * @param soapActionString - The soapAction string of the request
+     * @throws AxisFault - Thrown in case an exception occurs
+     */
+    private void sendViaPut(MessageContext msgContext, URL url,
+                            String soapActionString) throws AxisFault {
+
+
+        HttpClient httpClient = getHttpClient(msgContext);
+
+        String charEncoding =
+                (String) msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+
+        if (charEncoding == null) {
+            charEncoding = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+        }
+
+        PutMethod putMethod = new PutMethod();
+        MessageFormatter messageFormatter =
+                populateCommonProperties(msgContext, url, putMethod, httpClient, soapActionString);
+
+        putMethod.setRequestEntity(new AxisRequestEntity(messageFormatter,
+                                                         msgContext, format, soapActionString,
+                                                         chunked, isAllowedRetry));
+
+        if (!httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10) && chunked) {
+            putMethod.setContentChunked(true);
+        }
+
+        String soapAction = messageFormatter.formatSOAPAction(msgContext, format, soapActionString);
+        if (soapAction != null) {
+            putMethod.setRequestHeader(HTTPConstants.HEADER_SOAP_ACTION, soapAction);
+        }
 
         /*
-         *   Execution is over
+         *   main excecution takes place..
          */
-        if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
-            processResponse(postMethod, msgContext);
-            return;
-        } else if (postMethod.getStatusCode() == HttpStatus.SC_ACCEPTED) {
-            return;
-        } else if (postMethod.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-            Header contentTypeHeader =
-                    postMethod.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+        try {
+            executeMethod(httpClient, msgContext, url, putMethod);
+            handleResponse(msgContext, putMethod);
+        } catch (IOException e) {
+            throw new AxisFault(e);
+        }
+    }
 
-            if (contentTypeHeader != null) {
-                String value = contentTypeHeader.getValue();
+    /**
+     * Method used to copy all the common properties
+     *
+     * @param msgContext       - The messageContext of the request message
+     * @param url              - The target URL
+     * @param httpMethod       - The http method used to send the request
+     * @param httpClient       - The httpclient used to send the request
+     * @param soapActionString - The soap action atring of the request message
+     * @return MessageFormatter - The messageFormatter for the relavent request message
+     * @throws AxisFault - Thrown in case an exception occurs
+     */
+    private MessageFormatter populateCommonProperties(MessageContext msgContext, URL url,
+                                                      HttpMethodBase httpMethod,
+                                                      HttpClient httpClient,
+                                                      String soapActionString)
+            throws AxisFault {
+
+        if (isAuthenticationEnabled(msgContext)) {
+            httpMethod.setDoAuthentication(true);
+        }
+
+        MessageFormatter messageFormatter = TransportUtils.getMessageFormatter(
+                msgContext);
+
+        url = messageFormatter.getTargetAddress(msgContext, format, url);
+
+        httpMethod.setPath(url.getPath());
+
+        httpMethod.setQueryString(url.getQuery());
+
+        httpMethod.setRequestHeader(HTTPConstants.HEADER_CONTENT_TYPE,
+                                    messageFormatter.getContentType(msgContext, format,
+                                                                    soapActionString));
+
+        httpMethod.setRequestHeader(HTTPConstants.HEADER_HOST, url.getHost());
+
+        //setting the cookie in the out path
+        Object cookieString = msgContext.getProperty(HTTPConstants.COOKIE_STRING);
+
+        if (cookieString != null) {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append(Constants.SESSION_COOKIE_JSESSIONID);
+            buffer.append("=");
+            buffer.append(cookieString);
+            httpMethod.setRequestHeader(HTTPConstants.HEADER_COOKIE, buffer.toString());
+        }
+
+        if (httpVersion.equals(HTTPConstants.HEADER_PROTOCOL_10)) {
+            httpClient.getParams().setVersion(HttpVersion.HTTP_1_0);
+        }
+
+        // set timeout in client
+        long timeout = msgContext.getOptions().getTimeOutInMilliSeconds();
+
+        if (timeout != 0) {
+            httpClient.getParams().setSoTimeout((int) timeout);
+        }
+
+        return messageFormatter;
+    }
+
+    /**
+     * Used to handle the HTTP Response
+     *
+     * @param msgContext - The MessageContext of the message
+     * @param method     - The HTTP method used
+     * @throws IOException - Thrown in case an exception occurs
+     */
+    private void handleResponse(MessageContext msgContext,
+                                HttpMethodBase method) throws IOException {
+
+        if (method.getStatusCode() == HttpStatus.SC_OK) {
+            processResponse(method, msgContext);
+        } else if (method.getStatusCode() == HttpStatus.SC_ACCEPTED) {
+        } else if (method.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+            Header contenttypeHheader =
+                    method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+            String value = contenttypeHheader.getValue();
+
+            if (value != null) {
 
                 if ((value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0)
                         || (value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0)) {
-                    processResponse(postMethod, msgContext);
-
-                    return;
+                    processResponse(method, msgContext);
                 }
             }
         } else {
-            throw new AxisFault(Messages.getMessage("httpTransportError",
-                                                    String.valueOf(postMethod.getStatusCode()),
-                                                    postMethod.getStatusText()),
-                                SOAP12Constants.FAULT_CODE_SENDER);
+            throw new AxisFault(Messages.getMessage("transportError",
+                                                    String.valueOf(method.getStatusCode()),
+                                                    method.getStatusText()));
         }
-
-        throw new AxisFault(Messages.getMessage("transportError",
-                                                String.valueOf(postMethod.getStatusCode()),
-                                                postMethod.getResponseBodyAsString()));
     }
-
 }
