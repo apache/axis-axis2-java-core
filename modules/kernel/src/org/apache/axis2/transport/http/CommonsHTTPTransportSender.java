@@ -293,7 +293,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 			// select the Message Sender depending on the REST status
 			AbstractHTTPSender sender;
 
-            sender = new SOAPOverHTTPSender();
+            sender = new HTTPSender();
 
 			if (messageContext.getProperty(HTTPConstants.CHUNKED) != null) {
 				chunked = JavaUtils.isTrueExplicitly(messageContext
