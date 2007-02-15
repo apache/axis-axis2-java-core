@@ -85,7 +85,9 @@ public interface EndpointDescription {
     public abstract String getTargetNamespace();
     /**
      * Returns the binding type FOR A SERVER.  This is based on the BindingType annotation and/or the WSDL.
-     * This will return NULL if called on a client.
+     * This will return the default binding (SOAP11) if no annotation was specified on the server.
+     * This should NOT be called on the client since it will always return the default binding.  
+     * Use getClientBindingID() on clients.  
      * @return
      */
     public abstract String getBindingType();
@@ -96,7 +98,8 @@ public interface EndpointDescription {
      */
     public abstract void setClientBindingID(String clientBindingID);
     /**
-     * Return the binding type FOR A CLIENT.  This will return NULL if called on the server.
+     * Return the binding type FOR A CLIENT.  This will return the default client binding type
+     * if called on the server.  Use getBindingType() on servers.
      * @see setClientBindingID();
      * @return String representing the client binding type
      */

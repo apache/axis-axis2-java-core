@@ -78,10 +78,7 @@ public class BindingProvider implements org.apache.axis2.jaxws.spi.BindingProvid
         
         // The default Binding is the SOAPBinding
         if (binding == null) {
-            String bindingType = endpointDesc.getBindingType();
-            if (bindingType == null) { // we must be on the client
-                bindingType = endpointDesc.getClientBindingID();
-            }
+            String bindingType = endpointDesc.getClientBindingID();
             binding = new SOAPBinding(bindingType);
         }
         return binding;
