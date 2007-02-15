@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class SOAPOverHTTPSender extends AbstractHTTPSender {
+public class HTTPSender extends AbstractHTTPSender {
 
 
     public void send(MessageContext msgContext, OMElement dataout, URL url, String soapActionString)

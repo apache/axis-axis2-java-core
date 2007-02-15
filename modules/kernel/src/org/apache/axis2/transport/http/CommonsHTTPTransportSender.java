@@ -345,7 +345,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 			AbstractHTTPSender sender;
 
 			if (!messageContext.isDoingREST()) {
-				sender = new SOAPOverHTTPSender();
+				sender = new HTTPSender();
 			} else {
 				sender = new RESTSender();
 			}
