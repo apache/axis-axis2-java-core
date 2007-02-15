@@ -102,23 +102,32 @@ public class AxisEngine {
                 }
                 if (role != null) {
                     if (!SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {
+                        // TODO: should we be using a prefix on the faultcode?  What about
+                        // the QName object Constants.FAULT_SOAP12_MUSTUNDERSTAND?
                         throw new AxisFault(Messages.getMessage(
-                                "mustunderstandfailed",
-                                prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND));
+                                        "mustunderstandfailed",
+                                        prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND),
+                                        SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
                     }
                 } else {
+                    // TODO: should we be using a prefix on the faultcode?  What about
+                    // the QName object Constants.FAULT_SOAP12_MUSTUNDERSTAND?
                     throw new AxisFault(Messages.getMessage(
                             "mustunderstandfailed",
-                            prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND));
+                            prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND),
+                            SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
                 }
             } else {
 
                 // if must understand and soap 1.1 the actor should be NEXT , if it is null we considerr
                 // it to be NEXT
                 if ((role != null) && !SOAP11Constants.SOAP_ACTOR_NEXT.equals(role)) {
+                    // TODO: should we be using a prefix on the faultcode?  What about
+                    // the QName object Constants.FAULT_MUSTUNDERSTAND?
                     throw new AxisFault(Messages.getMessage(
                             "mustunderstandfailed",
-                            prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND));
+                            prefix, SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND),
+                            SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
                 }
             }
         }

@@ -31,6 +31,7 @@ import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.Service.Mode;
 import javax.xml.ws.soap.SOAPBinding;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import junit.framework.TestCase;
 
@@ -53,10 +54,23 @@ public class SOAP12Dispatch extends TestCase {
     private static final String sampleEnvelopeHead = 
         "<soapenv:Envelope xmlns:soapenv=\"http://www.w3.org/2003/05/soap-envelope\">" +
         "<soapenv:Header /><soapenv:Body>";
+    private static final String sampleEnvelopeHead_MustUnderstand = 
+        "<soapenv:Envelope xmlns:soapenv=\"http://www.w3.org/2003/05/soap-envelope\">" +
+        "<soapenv:Header>" +
+        "<soapenv:codeHeaderSOAP12 soapenv:mustUnderstand=\"true\">" +
+        "<code>default</code>" +
+        "</soapenv:codeHeaderSOAP12>" +
+        "</soapenv:Header>" +
+        "<soapenv:Body>";
     private static final String sampleEnvelopeTail = 
         "</soapenv:Body></soapenv:Envelope>";
     private static final String sampleEnvelope = 
         sampleEnvelopeHead + 
+        sampleRequest + 
+        sampleEnvelopeTail;
+    
+    private static final String sampleEnvelope_MustUnderstand = 
+        sampleEnvelopeHead_MustUnderstand + 
         sampleRequest + 
         sampleEnvelopeTail;
     
@@ -141,5 +155,35 @@ public class SOAP12Dispatch extends TestCase {
         // purposes of the test.
         assertTrue(responseText.contains("http://www.w3.org/2003/05/soap-envelope"));
         assertTrue(!responseText.contains("http://schemas.xmlsoap.org/soap/envelope"));
+    }
+    
+    /**
+     * Test sending a SOAP 1.2 request in MESSAGE mode
+     */
+    public void testSOAP12DispatchMessageMode_MustUnderstand() throws Exception {
+        // Create the JAX-WS client needed to send the request
+        Service service = Service.create(QNAME_SERVICE);
+        service.addPort(QNAME_PORT, SOAPBinding.SOAP12HTTP_BINDING, URL_ENDPOINT);
+        Dispatch<Source> dispatch = service.createDispatch(
+                QNAME_PORT, Source.class, Mode.MESSAGE);
+        
+        // Create the Source object with the message contents.  Since
+        // we're in MESSAGE mode, we'll need to make sure we create this
+        // with the right protocol.
+        byte[] bytes = sampleEnvelope_MustUnderstand.getBytes();
+        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+        StreamSource request = new StreamSource(bais);
+        
+        SOAPFaultException e = null;
+        try {
+            Source response = dispatch.invoke(request);
+        } catch (SOAPFaultException ex) {
+            e = ex;
+        }
+        
+        assertNotNull("We should have an exception, but none was thrown.", e);
+        assertEquals("FaultCode should be \"MustUnderstand\"", "MustUnderstand", e.getFault().getFaultCodeAsQName().getLocalPart());
+        
+        
     }
 }

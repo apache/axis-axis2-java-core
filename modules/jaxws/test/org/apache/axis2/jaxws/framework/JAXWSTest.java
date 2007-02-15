@@ -92,7 +92,9 @@ public class JAXWSTest extends TestCase {
         TestSuite suite = new TestSuite();
         
         // Add each of the test suites
+        /*
         suite = DispatchTestSuite.addTestSuites(suite);
+        */
         suite.addTestSuite(SOAP12Dispatch.class);
         suite.addTestSuite(DispatchSoapActionTests.class);
         suite.addTestSuite(ProxySoapActionTests.class);
@@ -145,7 +147,6 @@ public class JAXWSTest extends TestCase {
         // TODO: This test intermittently fails on Linux and with trace enabled.
 //        suite.addTestSuite(ParallelAsyncTests.class);
         suite.addTestSuite(FaultyWebServiceTests.class);
-        
         suite.addTestSuite(FaultsServiceTests.class);
 
         suite.addTestSuite(EndpointLifecycleTests.class);
@@ -154,6 +155,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(PolymorphicTests.class);
         suite.addTestSuite(NS2PkgTest.class);
         suite.addTestSuite(JAXBContextTest.class);
+        
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {
             public void setUp() {

@@ -444,6 +444,8 @@ public class AxisFault extends RemoteException {
     }
 
     public void setFaultCode(String soapFaultCode) {
+        // TODO: is it really safe to assume that the passed string is always the localpart?
+        // What if someone passes soapenv:Sender?
         faultCode = new QName(soapFaultCode);
     }
 
