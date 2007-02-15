@@ -44,25 +44,33 @@
 			</xsd:element>		
 
 			<xsd:element name="isAsleep">
-				<xsd:complexType />
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="request" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
 			</xsd:element>	
 
 			<xsd:element name="isAsleepResponse">
 				<xsd:complexType>
 					<xsd:sequence>
-						<xsd:element name="message" type="xsd:string" />
+						<xsd:element name="response" type="xsd:string" />
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>	
 
 			<xsd:element name="wakeUp">
-				<xsd:complexType />
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="request" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
 			</xsd:element>	
 
 			<xsd:element name="wakeUpResponse">
 				<xsd:complexType>
 					<xsd:sequence>
-						<xsd:element name="message" type="xsd:string" />						
+						<xsd:element name="response" type="xsd:string" />						
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>	
@@ -135,7 +143,7 @@
 	</wsdl:message>
 	
 	<wsdl:message name="wakeUpRequest">
-		<wsdl:part name="response" element="tns:wakeUp" />	
+		<wsdl:part name="request" element="tns:wakeUp" />	
 	</wsdl:message>
 
 	<wsdl:message name="wakeUpResponse">
@@ -143,7 +151,7 @@
 	</wsdl:message>	
 	
 	<wsdl:message name="isAsleepRequest">
-	<wsdl:part name="response" element="tns:isAsleep" />
+	<wsdl:part name="request" element="tns:isAsleep" />
 	</wsdl:message>
 
 	<wsdl:message name="isAsleepResponse">
