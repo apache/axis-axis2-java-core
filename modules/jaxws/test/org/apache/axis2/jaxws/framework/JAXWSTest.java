@@ -78,10 +78,11 @@ import org.apache.log4j.BasicConfigurator;
 public class JAXWSTest extends TestCase {
     
     static {
-        // Uncomment the following line to enable debug
         // Note you will probably need to increase the java heap size, for example
         // -Xmx512m.  This can be done by setting maven.junit.jvmargs in project.properties.
-        // BasicConfigurator.configure();
+        // To change the settings, edit the log4j.property file
+        // in the test-resources directory.
+        BasicConfigurator.configure();
     }
     
     /**

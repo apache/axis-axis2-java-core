@@ -21,6 +21,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
+import org.apache.log4j.BasicConfigurator;
 
 
 
@@ -68,7 +69,9 @@ public class SimpleServer {
     }
     
     public static void main(String[] args) throws Exception {
-        //org.apache.log4j.BasicConfigurator.configure();
+        // To change the settings, edit the log4j.property file
+        // in the test-resources directory.
+        BasicConfigurator.configure();
         SimpleServer server = new SimpleServer();
         server.start();
 	}
