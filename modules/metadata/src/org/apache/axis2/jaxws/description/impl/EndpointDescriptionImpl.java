@@ -196,7 +196,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         // At this point, there must be a port QName set, either as passed in, or determined from the WSDL and/or annotations.
         // If not, that is an error.
         if (this.portQName == null) {
-            throw ExceptionFactory.makeWebServiceException("EndpointDescription.EndpointDescription: portQName could not be determined");
+            if (log.isDebugEnabled()) {
+                log.debug("PortQName was null and could not be determined by runtime.  Class: " + theClass + "; ServiceDescription: " + parent);
+            }
+            throw ExceptionFactory.makeWebServiceException("EndpointDescription: portQName could not be determined for class " + theClass);
         }
         
         // TODO: Refactor this with the consideration of no WSDL/Generic Service/Annotated SEI
@@ -211,21 +214,19 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         try {
             getServiceDescriptionImpl().getClientConfigurationFactory().completeAxis2Configuration(axisService);
         } catch (DeploymentException e) {
-            // TODO RAS
-            // TODO NLS
+            // TODO RAS & NLS
             if (log.isDebugEnabled()) {
-                log.debug("Caught exception in ServiceDescription.ServiceDescription: " + e);
-                log.debug("Exception:", e);
+                log.debug("Caught DeploymentException attempting to complete configuration on AxisService: " 
+                        + axisService + " for ServiceDesription: " + parent, e);
             }
-//            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
+            throw ExceptionFactory.makeWebServiceException("Unable to complete configuration due to exception " + e, e);
         } catch (Exception e) {
-            // TODO RAS
-            // TODO NLS
+            // TODO RAS & NLS
             if (log.isDebugEnabled()) {
-                log.debug("Caught exception in ServiceDescription.ServiceDescription: " + e);
-                log.debug("Exception:", e);
+                log.debug("Caught Exception attempting to complete configuration on AxisService: " 
+                        + axisService + " for ServiceDesription: " + parent, e);
             }
-//            throw ExceptionFactory.makeWebServiceException("ServiceDescription caught " + e);
+            throw ExceptionFactory.makeWebServiceException("Unable to complete configuration due to exception " + e, e);
         }
     }
     
