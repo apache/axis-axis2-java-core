@@ -20,6 +20,7 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.dataRetrieval.DRConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
@@ -150,6 +151,14 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 }
             }
 
+            //process dataLocator configuration
+            OMElement dataLocatorElement =
+            config_element.getFirstChildWithName(new QName(DRConstants.DATA_LOCATOR_ELEMENT));
+            
+            if (dataLocatorElement != null) {
+                processDataLocatorConfig(dataLocatorElement);
+            }
+            
             // process MessageFormatters
             OMElement messageFormattersElement = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_FORMATTERS));
             if (messageFormattersElement != null) {
@@ -491,6 +500,34 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         }
     }
 
+    /*
+     * process data locator configuration for data retrieval.
+     */
+    private void processDataLocatorConfig(OMElement dataLocatorElement) {
+		OMAttribute serviceOverallDataLocatorclass = dataLocatorElement
+				.getAttribute(new QName(DRConstants.CLASS_ATTRIBUTE));
+		if (serviceOverallDataLocatorclass != null) {
+			String className = serviceOverallDataLocatorclass
+					.getAttributeValue();
+			axisConfig.addDataLocatorClassNames(DRConstants.GLOBAL_LEVEL,
+					className);
+		}
+		Iterator iterator = dataLocatorElement.getChildrenWithName(new QName(
+				DRConstants.DIALECT_LOCATOR_ELEMENT));
+
+		while (iterator.hasNext()) {
+			OMElement locatorElement = (OMElement) iterator.next();
+			OMAttribute dialect = locatorElement.getAttribute(new QName(
+					DRConstants.DIALECT_ATTRIBUTE));
+			OMAttribute dialectclass = locatorElement.getAttribute(new QName(
+					DRConstants.CLASS_ATTRIBUTE));
+			axisConfig.addDataLocatorClassNames(dialect.getAttributeValue(),
+					dialectclass.getAttributeValue());
+
+		}
+	}
+	
+    
     private Phase getPhase(String className)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         if (className == null) {

@@ -23,6 +23,17 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.dataRetrieval.AxisDataLocator;
+import org.apache.axis2.dataRetrieval.AxisDataLocatorImpl;
+import org.apache.axis2.dataRetrieval.DRConstants;
+import org.apache.axis2.dataRetrieval.DataRetrievalException;
+import org.apache.axis2.dataRetrieval.LocatorType;
+import org.apache.axis2.dataRetrieval.OutputForm;
+
+import org.apache.axis2.dataRetrieval.Data;
+import org.apache.axis2.dataRetrieval.DataRetrievalRequest;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.engine.*;
@@ -194,6 +205,13 @@ public class AxisService extends AxisDescription {
 
     private TypeTable typeTable;
 
+    // Data Locators for  WS-Mex Support
+    private HashMap dataLocators;
+    private HashMap dataLocatorClassNames;
+    private AxisDataLocatorImpl defaultDataLocator;
+    // Define search sequence for datalocator based on Data Locator types. 
+	LocatorType[] availableDataLocatorTypes = new LocatorType[]{LocatorType.SERVICE_DIALECT, LocatorType.SERVICE_LEVEL,LocatorType.GLOBAL_DIALECT, LocatorType.GLOBAL_LEVEL, LocatorType.DEFAULT_AXIS};
+
     // name of the  binding used : use in codegeneration
     private String bindingName;
 
@@ -274,6 +292,9 @@ public class AxisService extends AxisDescription {
           }
         });
         objectSupplier = new DefaultObjectSupplier();
+        dataLocators = new HashMap();
+        dataLocatorClassNames = new HashMap();
+
     }
 
     /**
@@ -750,6 +771,9 @@ public class AxisService extends AxisDescription {
 
     private String[] getEPRs(String requestIP) {
         AxisConfiguration axisConfig = getAxisConfiguration();
+        if (axisConfig == null){
+            return null;
+        }
         ArrayList eprList = new ArrayList();
         if (enableAllTransports) {
             Iterator transports = axisConfig.getTransportsIn().values().iterator();
@@ -869,23 +893,37 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    private void getWSDL(OutputStream out, String[] serviceURL, String servicePath) throws AxisFault {
-        if (this.wsdlFound) {
-            AxisService2OM axisService2WOM = new AxisService2OM(this,
-                    serviceURL, "document", "literal", servicePath);
-            try {
-                OMElement wsdlElement = axisService2WOM.generateOM();
-                wsdlElement.serialize(out);
-                out.flush();
-                out.close();
-            } catch (Exception e) {
-                throw new AxisFault(e);
-            }
-        } else {
-            printWSDLError(out);
-        }
+    private void getWSDL(OutputStream out, String[] serviceURL,
+			String servicePath) throws AxisFault {
+		if (this.wsdlFound) {
+		
+			// Retrieve WSDL using the same data retrieval path for GetMetadata request.
+			DataRetrievalRequest request = new DataRetrievalRequest();
+			request.putDialect(DRConstants.SPEC.DIALECT_TYPE_WSDL);
+			request.putOutputForm(OutputForm.INLINE_FORM);
+			            
+            MessageContext context = new MessageContext();
+			context.setAxisService(this);
+			context.setTo(new EndpointReference(serviceURL[0]));
+			
+            Data[] result = getData(request, context);
+			OMElement wsdlElement;
+			if (result != null && result[0] != null) {
+				wsdlElement = (OMElement) (result[0].getData());
+				try {
+					wsdlElement.serialize(out);
+					out.flush();
+					out.close();
+				} catch (Exception e) {
+					throw new AxisFault(e);
+				}
+			}
 
-    }
+		} else {
+			printWSDLError(out);
+		}
+
+	}
 
     private void printWSDLError(OutputStream out) throws AxisFault {
         try {
@@ -1968,7 +2006,192 @@ public class AxisService extends AxisDescription {
     public void setTypeTable(TypeTable typeTable) {
         this.typeTable = typeTable;
     }
+    
+  
+    /**
+     * Find a data locator from the available data locators (both configured and default ones) to retrieve Metadata or data
+     * specified in the request. 
+     * 
+     * @param request an {@link DataRetrievalRequest} object
+     * @param msgContext message context
+     * @return array of {@link Data} object for the request. 
+     * @throws AxisFault 
+     */
+    
+    public Data[] getData(DataRetrievalRequest request,
+			MessageContext msgContext) throws AxisFault {
+    	
+		Data[] data = null;
+		String dialect = request.getDialect();
+		AxisDataLocator dataLocator = null;
+		int nextDataLocatorIndex = 0;
+		int totalLocators = availableDataLocatorTypes.length;
+		for (int i = 0; i < totalLocators; i++) {
+			dataLocator = getDataLocator(availableDataLocatorTypes[i], dialect);
+			if (dataLocator != null) {
+				nextDataLocatorIndex = i + 1;
+				break;
+			}
+		}
 
+		data = dataLocator.getData(request, msgContext);
+		// Null means Data Locator not understood request. Automatically find
+		// Data Locator in the hierarchy to process the request.
+		if (data == null) {
+			if (nextDataLocatorIndex < totalLocators) {
+				data = bubbleupDataLocators(nextDataLocatorIndex, request,
+						msgContext);
+			}
+
+		}
+		return data;
+	}
+   
+    /*
+     * To search the next Data Locator from the available Data Locators that understood
+     * the data retrieval request.
+     */
+    private Data[] bubbleupDataLocators(int nextIndex,
+			DataRetrievalRequest request, MessageContext msgContext)
+			throws AxisFault {
+		Data[] data = null;
+		if (nextIndex < availableDataLocatorTypes.length) {
+			AxisDataLocator dataLocator = getDataLocator(
+					availableDataLocatorTypes[nextIndex], request.getDialect());
+			nextIndex++;
+			if (dataLocator != null) {
+				data = dataLocator.getData(request, msgContext);
+				if (data==null){
+					data = bubbleupDataLocators(nextIndex, request, msgContext);
+				}
+				else return data;
+
+			}
+			else data = bubbleupDataLocators(nextIndex, request, msgContext);
+			
+
+		}
+		return data;
+	}
+   
+     /**
+     * Save data Locator configured at service level for this Axis Service
+     * 
+     * @param dialect- an absolute URI represents the Dialect i.e. WSDL, Policy, Schema or
+     *                 "ServiceLevel" for non-dialect service level data locator.
+     * @param classname - class name of the Data Locator configured to support data retrieval 
+     *                  for the specified dialect.
+     */
+    public void addDataLocatorClassNames(String dialect, String dataLocatorClassName) {
+        dataLocatorClassNames.put(dialect, dataLocatorClassName);
+    }
+   
+   
+    /*
+     * Get data locator instance based on the LocatorType and dialect.
+     */
+    private AxisDataLocator getDataLocator(LocatorType locatorType, String dialect) throws AxisFault {
+    	AxisDataLocator locator = null;
+        if (locatorType == LocatorType.SERVICE_DIALECT)   
+        	 locator =  getServiceDataLocator( dialect);  
+        else if (locatorType == LocatorType.SERVICE_LEVEL)   
+          	 locator =  getServiceDataLocator( DRConstants.SERVICE_LEVEL); 
+        else if (locatorType == LocatorType.GLOBAL_DIALECT)   
+         	 locator =  getGlobalDataLocator( dialect); 	
+        else if (locatorType == LocatorType.GLOBAL_LEVEL)   
+        	 locator =  getGlobalDataLocator( DRConstants.GLOBAL_LEVEL);
+        else if (locatorType == LocatorType.DEFAULT_AXIS)   
+       	     locator =  getDefaultDataLocator();
+        else
+        	 locator =  getDefaultDataLocator();
+    
+      
+    	return locator;
+    }
+    	  
+    // Return default Axis2 Data Locator
+    private AxisDataLocator getDefaultDataLocator() throws DataRetrievalException {
+
+		if (defaultDataLocator == null)
+			defaultDataLocator = new AxisDataLocatorImpl(this);
+		
+		defaultDataLocator.loadServiceData();
+		
+		return defaultDataLocator;
+	}
+       
+    
+	/*
+	 * Checks if service level data locator configured for specified dialect.
+	 * Returns an instance of the data locator if exists, and null otherwise.
+	 */
+	private AxisDataLocator getServiceDataLocator(String dialect)
+			throws AxisFault {
+		AxisDataLocator locator = null;
+		locator = (AxisDataLocator)dataLocators.get(dialect);
+		if (locator == null) {
+			String className = (String)dataLocatorClassNames.get(dialect);
+			if (className != null) {
+				locator = loadDataLocator(className);
+				dataLocators.put(dialect, locator);
+			}
+
+		}
+
+		return locator;
+
+	}
+      
+	/*
+	 * Checks if global level data locator configured for specified dialect.
+	 * @param dialect- an absolute URI represents the Dialect i.e. WSDL, Policy, Schema or
+     *                 "GlobalLevel" for non-dialect Global level data locator.
+	 * Returns an instance of the data locator if exists, and null otherwise.
+	 */
+	
+	public AxisDataLocator getGlobalDataLocator(String dialect)
+			throws AxisFault {
+		AxisConfiguration axisConfig = getAxisConfiguration();
+		AxisDataLocator locator = null;
+		if (axisConfig != null) {
+			locator = axisConfig.getDataLocator(dialect);
+			if (locator == null) {
+			    String className = axisConfig.getDataLocatorClassName(dialect);
+			    if (className != null) {
+			        locator = loadDataLocator(className);
+			        axisConfig.addDataLocator(dialect, locator);
+			    }
+			} 
+        }
+
+		return locator;
+
+	}
+       
+    
+    protected AxisDataLocator loadDataLocator(String className)
+			throws AxisFault {
+
+		AxisDataLocator locator = null;
+
+		try {
+			Class dataLocator;
+			dataLocator = Class.forName(className, true, serviceClassLoader);
+			locator = (AxisDataLocator) dataLocator.newInstance();
+		} catch (ClassNotFoundException e) {
+			throw new AxisFault(e);
+		} catch (IllegalAccessException e) {
+			throw new AxisFault(e);
+		} catch (InstantiationException e) {
+			throw new AxisFault(e);
+
+		}
+
+		return locator;
+	}
+
+
+   
     /**
      * When we are trying to find out the operation by the QName of the SOAPBody first child, this
      * map will help to retrieve that data very fast.

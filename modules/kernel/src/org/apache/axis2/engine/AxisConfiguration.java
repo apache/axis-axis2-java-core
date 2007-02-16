@@ -18,6 +18,7 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.dataRetrieval.AxisDataLocator;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.AxisDescription;
@@ -54,7 +55,11 @@ import java.util.Map;
 public class AxisConfiguration extends AxisDescription {
 
     private static final Log log = LogFactory.getLog(AxisConfiguration.class);
-
+    /*
+     * To store data locators configured
+     */
+    private HashMap dataLocators = new HashMap();
+    private HashMap dataLocatorClassNames = new HashMap();
     /**
      * Field modules
      */
@@ -982,6 +987,45 @@ public class AxisConfiguration extends AxisDescription {
     public boolean isAssertionLocal(QName name) {
         return this.localPolicyAssertions.contains(name);
     }
+    
+    /**
+     * Allow to define/configure Data Locator for specified dialect at Axis 2 Configuration.
+     * 
+     * @param dialect- an absolute URI represents the format and version of data
+     * @param classname - class name of the Data Locator configured to support retrieval 
+     *                  for the specified dialect.
+     */
+    public void addDataLocatorClassNames(String dialect, String classname) {
+        dataLocatorClassNames.put(dialect, classname);
+    }
+   
+    /**
+     * For internal used only! To store instance of DataLocator when it is first loaded. This allows to 	
+     * re-use DataLocator after it is initially loaded. 
+     * @param dialect- an absolute URI represents the format and version of data
+     * @param dataLocator - specified an DataLocator instance  to support retrieval 
+     *                  of the specified dialect.
+     */
+    public void addDataLocator(String dialect, AxisDataLocator dataLocator) {
+        dataLocators.put(dialect, dataLocator);
+    }
+    
+     /**
+     * Return DataLocator instance for specified dialect.
+     */
+    public AxisDataLocator getDataLocator(String dialect) {
+        return (AxisDataLocator)dataLocators.get(dialect);
+    }
+    
+    
+    /**
+     * Return classname of DataLocator configured for specified dialect.
+     */
+    public String getDataLocatorClassName(String dialect) {
+        return (String) dataLocatorClassNames.get(dialect);
+    }
+
+
 
     /**
      * Checks whether some one has changed the system pre-defined phases

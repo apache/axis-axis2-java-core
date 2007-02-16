@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.dataRetrieval.DRConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
@@ -340,6 +341,14 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
             Iterator moduleConfigs = service_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
             processServiceModuleConfig(moduleConfigs, service, service);
+            
+            // Loading Data Locator(s) configured
+            OMElement dataLocatorElement =
+                service_element.getFirstChildWithName(new QName(DRConstants.DATA_LOCATOR_ELEMENT));
+            if (dataLocatorElement != null) {
+            	processDataLocatorConfig(dataLocatorElement, service);
+             }         
+        
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         } catch (AxisFault axisFault) {
@@ -722,4 +731,26 @@ public class ServiceBuilder extends DescriptionBuilder {
         }
     }
 
+    
+    
+    /*
+     * process data locator configuration for data retrieval.
+     */
+    private void processDataLocatorConfig(OMElement dataLocatorElement, AxisService service) {
+        OMAttribute serviceOverallDataLocatorclass = dataLocatorElement.getAttribute(new QName(DRConstants.CLASS_ATTRIBUTE));
+        if (serviceOverallDataLocatorclass != null){
+            String className = serviceOverallDataLocatorclass.getAttributeValue();
+            service.addDataLocatorClassNames(DRConstants.SERVICE_LEVEL, className);
+        }
+        Iterator iterator = dataLocatorElement.getChildrenWithName(new QName(DRConstants.DIALECT_LOCATOR_ELEMENT));
+        
+        while (iterator.hasNext()) {
+            OMElement locatorElement = (OMElement) iterator.next();
+            OMAttribute dialect = locatorElement.getAttribute(new QName(DRConstants.DIALECT_ATTRIBUTE));
+            OMAttribute dialectclass = locatorElement.getAttribute(new QName(DRConstants.CLASS_ATTRIBUTE));
+            service.addDataLocatorClassNames(dialect.getAttributeValue(), dialectclass.getAttributeValue());
+            
+          }
+
+    }
 }
