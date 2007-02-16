@@ -151,7 +151,7 @@ public class EndpointReference implements Serializable {
                            //transports back channel, as opposed to asynchronously. No other
                            //semantics normally associated with WS-Addressing anonymous values should
                            //be assumed, by it's presence here.
-                           (address != null && address.startsWith("http://docs.oasis-open.org/ws-rx/wsrm/200608/anonymous?id=")));
+                           (address != null && address.startsWith("http://docs.oasis-open.org/ws-rx/wsmc/200702/anonymous?id=")));
         if(log.isTraceEnabled()){
             log.trace("hasAnonymousAddress: "+address+" is Anonymous: "+result);
         }
