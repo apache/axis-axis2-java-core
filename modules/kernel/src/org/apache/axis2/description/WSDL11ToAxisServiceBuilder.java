@@ -375,121 +375,18 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         for (Iterator iterator = wsdl4jOperations.iterator(); iterator.hasNext();) {
             wsdl4jOperation = (Operation) iterator.next();
 
-            opName = new QName("", wsdl4jOperation.getName());
-            axisOperation = axisService.getOperation(opName);
-            operationNames.add(opName);
-            if (axisOperation == null) {
-                String mep = getMEP(wsdl4jOperation);
-                axisOperation = AxisOperationFactory.getOperationDescription(mep);
-                axisOperation.setName(opName);
-                axisService.addChild(axisOperation);
-            }
+            axisOperation = populateOperations(wsdl4jOperation, wsdl4jPortType, wsdl4jDefinition);
             axisOperation.setParent(axisService);
-            populateOperation(axisOperation, wsdl4jPortType, wsdl4jOperation);
+            axisService.addChild(axisOperation);
+            operationNames.add(axisOperation.getName());
         }
 
-        // this is used only in codegen to perserve operation order
+        // this is used only in codegen to preserve operation order
         if (isCodegen){
             axisService.setOperationsNameList(operationNames);
         }
 
     }
-
-    public void populateOperation(AxisOperation axisOperation, PortType wsdl4jPortType,
-                                  Operation wsdl4jOperation) throws AxisFault {
-
-        AxisMessage axisMessage;
-        AxisMessage axisFaultMessage;
-
-        Input wsdl4jInput = wsdl4jOperation.getInput();
-
-        if (wsdl4jInput != null) {
-            axisMessage = (isServerSide) ? axisOperation
-                    .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE)
-                    : axisOperation
-                    .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-
-            Message wsdl4jMessage = wsdl4jInput.getMessage();
-
-            if (wsdl4jMessage != null) {
-                axisMessage.setName(wsdl4jMessage.getQName().getLocalPart());
-            }
-
-            // ???
-            ArrayList inputActions = axisOperation.getWsamappingList();
-
-            if (inputActions == null || inputActions.size() == 0) {
-
-                if (inputActions == null) {
-                    inputActions = new ArrayList();
-                    axisOperation.setWsamappingList(inputActions);
-                }
-                String inputActionFromHelper = WSDL11ActionHelper.getActionFromInputElement(wsdl4jDefinition,
-                        wsdl4jPortType, wsdl4jOperation, wsdl4jInput);
-                if(log.isDebugEnabled()){
-                    log.debug("populateOperation: Adding input action to operation. action="+inputActionFromHelper+" operation="+axisOperation);
-                }
-                inputActions.add(inputActionFromHelper);
-                AxisService as = (AxisService)axisOperation.getParent();
-                if(as!=null){
-                	as.mapActionToOperation(inputActionFromHelper, axisOperation);
-                }else{
-                	if(log.isDebugEnabled()){
-                        log.debug("populateOperation: No AxisService to add action mapping to.");
-                    }
-                }
-            }
-
-        }
-
-        Output wsdl4jOutput = wsdl4jOperation.getOutput();
-
-        if (wsdl4jOutput != null) {
-            axisMessage = (isServerSide) ? axisOperation
-                    .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE)
-                    : axisOperation
-                    .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-
-            Message wsdl4jMessage = wsdl4jOutput.getMessage();
-
-            // ??
-            if (wsdl4jMessage != null) {
-                axisMessage.setName(wsdl4jMessage.getQName()
-                        .getLocalPart());
-            }
-
-            if (axisOperation.getOutputAction() == null) {
-            	String outputActionFromWSDL = WSDL11ActionHelper.getActionFromOutputElement(wsdl4jDefinition,
-                        wsdl4jPortType, wsdl4jOperation, wsdl4jOutput);
-                if(log.isDebugEnabled()){
-                    log.debug("populateOperation: Adding output action to operation. action="+outputActionFromWSDL+" operation="+axisOperation);
-                }
-                axisOperation.setOutputAction(outputActionFromWSDL);
-            }
-        }
-
-        Fault fault;
-        Message wsdl4jMessage;
-
-        for (Iterator faultsIterator = wsdl4jOperation.getFaults().values()
-                .iterator(); faultsIterator.hasNext();) {
-            fault = (Fault) faultsIterator.next();
-            wsdl4jMessage = fault.getMessage();
-
-            axisFaultMessage = new AxisMessage();
-            axisFaultMessage.setName(wsdl4jMessage.getQName().getLocalPart());
-            AddQNameReference(axisFaultMessage, wsdl4jMessage);
-            if (axisOperation.getFaultAction() == null) {
-                axisOperation.addFaultAction(fault.getName(),
-                        WSDL11ActionHelper.getActionFromFaultElement(
-                                wsdl4jDefinition, wsdl4jPortType,
-                                wsdl4jOperation, fault));
-            }
-
-            axisOperation.setFaultMessages(axisFaultMessage);
-        }
-    }
-
 
     public void populateBinding(AxisBinding axisBinding, Binding wsdl4jBinding, boolean isSetMessageQNames)
             throws AxisFault {
@@ -1303,7 +1200,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @throws Exception
      */
     private AxisOperation populateOperations(Operation wsdl4jOperation,
-                                             PortType wsdl4jPortType, Definition dif) throws Exception {
+                                             PortType wsdl4jPortType, Definition dif) throws AxisFault {
         QName opName = new QName(wsdl4jOperation.getName());
         // Copy Name Attribute
         AxisOperation axisOperation = axisService.getOperation(opName);
@@ -1349,6 +1246,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         axisOperation.setWsamappingList(inputActions);
                     }
                     inputActions.add(action);
+                    axisService.mapActionToOperation(action, axisOperation);
                 }
             }
             // Create an output message and add
