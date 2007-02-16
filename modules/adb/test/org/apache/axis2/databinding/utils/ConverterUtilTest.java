@@ -2,11 +2,10 @@ package org.apache.axis2.databinding.utils;
 
 import junit.framework.TestCase;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.math.BigInteger;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -28,7 +27,7 @@ public class ConverterUtilTest extends TestCase {
     /**
      * Test conversion of Big Integer
      */
-    public void testBigInteger(){
+    public void testBigInteger() {
         List l = new ArrayList();
         l.add("23445");
         l.add("23446");
@@ -36,7 +35,7 @@ public class ConverterUtilTest extends TestCase {
         l.add("1113646");
 
         Object convertedObj = ConverterUtil.convertToArray(
-                BigInteger.class,l);
+                BigInteger.class, l);
 
         assertTrue(convertedObj.getClass().isArray());
         assertTrue(convertedObj.getClass().equals(BigInteger[].class));
@@ -46,7 +45,7 @@ public class ConverterUtilTest extends TestCase {
     /**
      * integer arrays
      */
-    public void testInt(){
+    public void testInt() {
         List l = new ArrayList();
         l.add("23445");
         l.add("23446");
@@ -54,17 +53,17 @@ public class ConverterUtilTest extends TestCase {
         l.add("1113646");
 
         Object convertedObj = ConverterUtil.convertToArray(
-                int.class,l);
+                int.class, l);
 
         assertTrue(convertedObj.getClass().isArray());
         assertTrue(convertedObj.getClass().equals(int[].class));
 
     }
 
-     /**
+    /**
      * boolean arrays
      */
-    public void testBool(){
+    public void testBool() {
         List l = new ArrayList();
         l.add("true");
         l.add("false");
@@ -72,11 +71,78 @@ public class ConverterUtilTest extends TestCase {
         l.add("false");
 
         Object convertedObj = ConverterUtil.convertToArray(
-                boolean.class,l);
+                boolean.class, l);
 
         assertTrue(convertedObj.getClass().isArray());
         assertTrue(convertedObj.getClass().equals(boolean[].class));
 
+    }
+
+    public void testConvertToDateTime() {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS Z");
+        Calendar calendar;
+        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29");
+        System.out.println("String   ==> " + "2007-02-15T14:54:29");
+        System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
+
+        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29.399");
+        System.out.println("String   ==> " + "2007-02-15T14:54:29.399");
+        System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
+
+        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29+0530");
+        System.out.println("String   ==> " + "2007-02-15T14:54:29+0530");
+        System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
+
+        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29.399+0530");
+        System.out.println("String   ==> " + "2007-02-15T14:54:29.399+0530");
+        System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
+
+        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29Z");
+        System.out.println("String   ==> " + "2007-02-15T14:54:29Z");
+        System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
+
+        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29.399Z");
+        System.out.println("String   ==> " + "2007-02-15T14:54:29.399Z");
+        System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
+
+        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29.399-0530");
+        System.out.println("String   ==> " + "2007-02-15T14:54:29.399-0530");
+        System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
+
+
+        calendar = ConverterUtil.convertToDateTime("2006-12-11T23:57:16.625Z");
+        System.out.println("String   ==> " + "2006-12-11T23:57:16.625Z");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
+
+    }
+
+    public void testConvertToDateString(){
+        Date date = new Date();
+        String dateString = ConverterUtil.convertToString(date);
+        System.out.println("Date ==> " + dateString);
+    }
+
+    public void testConvertToDate(){
+
+        Date date;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd Z");
+//        date = ConverterUtil.convertToDate("2007-02-15");
+//        System.out.println("String   ==> " + "2007-02-15");
+//        System.out.println("calendar ==> " + simpleDateFormat.format(date));
+//
+//        date = ConverterUtil.convertToDate("2007-02-15Z");
+//        System.out.println("String   ==> " + "2007-02-15Z");
+//        System.out.println("calendar ==> " + simpleDateFormat.format(date));
+//
+//        date = ConverterUtil.convertToDate("2007-02-15+0530");
+//        System.out.println("String   ==> " + "2007-02-15+0530");
+//        System.out.println("calendar ==> " + simpleDateFormat.format(date));
+
+        date = ConverterUtil.convertToDate("2007-02-15-1230");
+        System.out.println("String   ==> " + "2007-02-15-1230");
+        System.out.println("calendar ==> " + simpleDateFormat.format(date));
     }
 
 }

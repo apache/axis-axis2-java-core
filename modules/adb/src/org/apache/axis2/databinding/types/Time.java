@@ -17,6 +17,7 @@ package org.apache.axis2.databinding.types;
 
 
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -25,30 +26,26 @@ import java.util.TimeZone;
  * Class that represents the xsd:time XML Schema type
  */
 public class Time implements java.io.Serializable {
-	
+
     private static final long serialVersionUID = -9022201555535589908L;
 
-	private Calendar _value;
+    private Calendar _value;
+    private boolean isFromString;
+    private String originalString;
 
     /**
      * a shared java.text.SimpleDateFormat instance used for parsing the basic
      * component of the timestamp
      */
     private static SimpleDateFormat zulu =
-       new SimpleDateFormat("HH:mm:ss.SSS'Z'");
-
-    // We should always format dates in the GMT timezone
-    static {
-        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
-
+            new SimpleDateFormat("HH:mm:ss.SSSZ");
 
     /**
      * Initializes with a Calender. Year, month and date are ignored.
      */
     public Time(Calendar value) {
         this._value = value;
-        _value.set(0,0,0);      // ignore year, month, date
+        _value.set(0, 0, 0);      // ignore year, month, date
     }
 
     /**
@@ -56,10 +53,13 @@ public class Time implements java.io.Serializable {
      */
     public Time(String value) throws NumberFormatException {
         _value = makeValue(value);
+        this.isFromString = true;
+        this.originalString = value;
     }
 
     /**
      * Returns the time as a calendar. Ignores the year, month and date fields.
+     *
      * @return Returns calendar value; may be null.
      */
     public Calendar getAsCalendar() {
@@ -68,160 +68,102 @@ public class Time implements java.io.Serializable {
 
     /**
      * Sets the time; ignores year, month, date
+     *
      * @param date
      */
     public void setTime(Calendar date) {
         this._value = date;
-        _value.set(0,0,0);      // ignore year, month, date
+        _value.set(0, 0, 0);      // ignore year, month, date
     }
 
     /**
      * Sets the time from a date instance.
+     *
      * @param date
      */
     public void setTime(Date date) {
         _value.setTime(date);
-        _value.set(0,0,0);      // ignore year, month, date
+        _value.set(0, 0, 0);      // ignore year, month, date
     }
 
     /**
      * Utility function that parses xsd:time strings and returns a Date object
      */
     private Calendar makeValue(String source) throws NumberFormatException {
+
+        // cannonical form of the times is  hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
+
         Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = null;
         Date date;
 
-        validateSource(source);
+        if ((source != null) && (source.length() >= 8)) {
+            if (source.length() == 8) {
+                // i.e this does not have milisecond values or time zone value
+                simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+            } else {
+                String rest = source.substring(8);
+                if (rest.startsWith(".")) {
+                    // i.e this have the ('.'s+) part
+                    if (rest.endsWith("Z")) {
+                        // this is in gmt time zone
+                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS'Z'");
+                        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-        // convert what we have validated so far
-        date = ParseHoursMinutesSeconds(source);
+                    } else if ((rest.indexOf("+") > 0) || (rest.indexOf("-") > 0)) {
+                        // this is given in a general time zione
+                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSSZ");
+                    } else {
+                        // i.e it does not have time zone
+                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+                    }
 
-        int pos = 8;    // The "." in hh:mm:ss.sss
-
-        // parse optional milliseconds
-        if ( source != null ) {
-            if (pos < source.length() && source.charAt(pos)=='.') {
-                int milliseconds = 0;
-                int start = ++pos;
-                while (pos<source.length() &&
-                       Character.isDigit(source.charAt(pos))) {
-                    pos++;
-                }
-
-
-                String decimal=source.substring(start,pos);
-                if (decimal.length()==3) {
-                    milliseconds=Integer.parseInt(decimal);
-                } else if (decimal.length() < 3) {
-                    milliseconds=Integer.parseInt((decimal+"000")
-                                                  .substring(0,3));
                 } else {
-                    milliseconds=Integer.parseInt(decimal.substring(0,3));
-                    if (decimal.charAt(3)>='5') {
-                        ++milliseconds;
+                    if (rest.startsWith("Z")) {
+                        // this is in gmt time zone
+                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss'Z'");
+                        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                    } else if (rest.startsWith("+") || rest.startsWith("-")) {
+                        // this is given in a general time zione
+                        simpleDateFormat = new SimpleDateFormat("HH:mm:ssZ");
+                    } else {
+                        throw new NumberFormatException("in valid time zone attribute");
                     }
                 }
-
-                // add milliseconds to the current date
-                date.setTime(date.getTime()+milliseconds);
             }
-
-            // parse optional timezone
-            if (pos+5 < source.length() &&
-                (source.charAt(pos)=='+' || (source.charAt(pos)=='-'))) {
-                    if (!Character.isDigit(source.charAt(pos+1)) ||
-                        !Character.isDigit(source.charAt(pos+2)) ||
-                        source.charAt(pos+3) != ':'              ||
-                        !Character.isDigit(source.charAt(pos+4)) ||
-                        !Character.isDigit(source.charAt(pos+5)))
-                    {
-                        throw new NumberFormatException();
-                                //Messages.getMessage("badTimezone00"));
-                    }
-
-                    int hours = (source.charAt(pos+1)-'0')*10
-                        +source.charAt(pos+2)-'0';
-                    int mins  = (source.charAt(pos+4)-'0')*10
-                        +source.charAt(pos+5)-'0';
-                    int milliseconds = (hours*60+mins)*60*1000;
-
-                    // subtract milliseconds from current date to obtain GMT
-                    if (source.charAt(pos)=='+') {
-                        milliseconds=-milliseconds;
-                    }
-                    date.setTime(date.getTime()+milliseconds);
-                    pos+=6;
-            }
-
-            if (pos < source.length() && source.charAt(pos)=='Z') {
-                pos++;
-                calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
-            }
-
-            if (pos < source.length()) {
-                throw new NumberFormatException();
-                        //Messages.getMessage("badChars00"));
-            }
+        } else {
+            throw new RuntimeException("invalid message string");
         }
 
-        calendar.setTime(date);
-        calendar.set(0,0,0);    // ignore year, month, date
+        try {
+            date = simpleDateFormat.parse(source);
+            calendar.setTime(date);
+            calendar.set(0, 0, 0);
+        } catch (ParseException e) {
+            throw new RuntimeException("invalid message string");
+        }
 
         return calendar;
     }
 
-    /**
-     * Parses the hours, minutes and seconds of a string, by handing it off to
-     * the java runtime.
-     * The relevant code returns null if a null string is passed in, so this
-     * code may return a null date in response.
-     * @param source
-     * @return Returns Date.
-     * @throws NumberFormatException in the event of trouble
-     */
-    private static Date ParseHoursMinutesSeconds(String source) {
-        Date date;
-        try {
-            synchronized (zulu) {
-                String fulltime = source == null ? null :
-                                                    (source.substring(0,8)+".000Z");
-                date = zulu.parse(fulltime);
-            }
-        } catch (Exception e) {
-            throw new NumberFormatException(e.toString());
-        }
-        return date;
-    }
-
-    /**
-     * Validates the source.
-     * @param source
-     */
-    private void validateSource(String source) {
-        // validate fixed portion of format
-        if ( source != null ) {
-            if (source.charAt(2) != ':' || source.charAt(5) != ':') {
-                throw new NumberFormatException();
-                        //Messages.getMessage("badTime00"));
-            }
-            if (source.length() < 8) {
-                throw new NumberFormatException();
-                        //Messages.getMessage("badTime00"));
-            }
-        }
-    }
 
     /**
      * Returns the time as it would be in GMT. This is accurate to the
      * seconds. Milliseconds probably gets lost.
+     *
      * @return Returns String.
      */
     public String toString() {
-        if(_value==null) {
+        if (_value == null) {
             return "unassigned Time";
         }
-        synchronized (zulu) {
-            return zulu.format(_value.getTime());
+
+        if (isFromString) {
+            return originalString;
+        } else {
+            synchronized (zulu) {
+                return zulu.format(_value.getTime());
+            }
         }
 
     }

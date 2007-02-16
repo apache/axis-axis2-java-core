@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -120,31 +121,17 @@ public class ConverterUtil {
     }
 
     public static String convertToString(Date value) {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd");
-        StringBuffer buf = new StringBuffer();
-        synchronized (calendar) {
-            if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
-                buf.append("-");
-                calendar.setTime(value);
-                calendar.set(Calendar.ERA, GregorianCalendar.AD);
-                value = calendar.getTime();
-            }
-            buf.append(zulu.format(value));
-        }
-        return buf.toString();
+        // lexical form of the date is '-'? yyyy '-' mm '-' dd zzzzzz?
+        // we have to serialize it with the timezone
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
+        return simpleDateFormat.format(value);
     }
 
     public static String convertToString(Calendar value) {
-        SimpleDateFormat zulu =
-                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        Date date = value.getTime();
-
-        // Serialize including convert to GMT
-        synchronized (zulu) {
-            // Sun JDK bug http://developer.java.sun.com/developer/bugParade/bugs/4229798.html
-            return zulu.format(date);
-        }
+        // lexical form of the calendar is '-'? yyyy '-' mm '-' dd 'T' hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
+        SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        // Sun JDK bug http://developer.java.sun.com/developer/bugParade/bugs/4229798.html
+        return zulu.format(value.getTime());
     }
 
     public static String convertToString(Day o) {
@@ -357,48 +344,49 @@ public class ConverterUtil {
      */
     public static Date convertToDate(String source) {
 
+        // the lexical form of the date is '-'? yyyy '-' mm '-' dd zzzzzz?
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd");
-        //  0123456789 0 123456789
-        Date result;
+        SimpleDateFormat simpleDateFormat = null;
         boolean bc = false;
-
-        // validate fixed portion of format
-        if (source != null) {
-            if (source.charAt(0) == '+')
-                source = source.substring(1);
-
-            if (source.charAt(0) == '-') {
-                source = source.substring(1);
-                bc = true;
-            }
-
-            if (source.length() < 10)
-                throw new NumberFormatException("bad date format");
-
-
-            if (source.charAt(4) != '-' || source.charAt(7) != '-')
-                throw new NumberFormatException("bad Date format");
-
+        if (source.startsWith("-")) {
+            source = source.substring(1);
+            bc = true;
         }
 
-        synchronized (calendar) {
-            // convert what we have validated so far
-            try {
-                result = zulu.parse(source == null ? null :
-                        (source.substring(0, 10)));
-            } catch (Exception e) {
-                throw new NumberFormatException(e.toString());
+        if ((source != null) && (source.length() >= 10)) {
+            if (source.length() == 10) {
+                //i.e this stirng has only the compulsory part
+                simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            } else {
+                String restpart = source.substring(10);
+                if (restpart.startsWith("Z")) {
+                    // this is a gmt time zone value
+                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'Z'");
+                    simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                } else if (restpart.startsWith("+") || restpart.startsWith("-")) {
+                    // this is a specific time format string
+                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
+                } else {
+                    throw new RuntimeException("In valid string sufix");
+                }
             }
+        } else {
+            throw new RuntimeException("In valid string to parse");
+        }
 
-            // support dates before the Christian era
+        Date date;
+        try {
+            date = simpleDateFormat.parse(source);
             if (bc) {
-                calendar.setTime(result);
+                calendar.setTime(date);
                 calendar.set(Calendar.ERA, GregorianCalendar.BC);
-                result = calendar.getTime();
+                date = calendar.getTime();
             }
+        } catch (ParseException e) {
+            throw new RuntimeException("In valid string to parse");
         }
-        return result;
+
+        return date;
     }
 
     public static Time convertToTime(String s) {
@@ -524,109 +512,64 @@ public class ConverterUtil {
      * @return Returns Calendar.
      */
     public static Calendar convertToDateTime(String source) {
+
+        // the lexical representation of the date time as follows
+        // '-'? yyyy '-' mm '-' dd 'T' hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
+        SimpleDateFormat simpleDateFormat = null;
+        Date date = null;
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat zulu =
-                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        Date date;
-        boolean bc = false;
 
-        // validate fixed portion of format
-        if (source == null || source.length() == 0) {
-            throw new NumberFormatException();
-//                    Messages.getMessage("badDateTime00"));
-        }
-        if (source.charAt(0) == '+') {
+        if (source.startsWith("-")) {
             source = source.substring(1);
-        }
-        if (source.charAt(0) == '-') {
-            source = source.substring(1);
-            bc = true;
-        }
-        if (source.length() < 19) {
-            throw new NumberFormatException();
-//                    Messages.getMessage("badDateTime00"));
-        }
-        if (source.charAt(4) != '-' || source.charAt(7) != '-' ||
-                source.charAt(10) != 'T') {
-            throw new NumberFormatException();//Messages.getMessage("badDate00"));
-        }
-        if (source.charAt(13) != ':' || source.charAt(16) != ':') {
-            throw new NumberFormatException();//Messages.getMessage("badTime00"));
-        }
-        // convert what we have validated so far
-        try {
-            synchronized (zulu) {
-                date = zulu.parse(source.substring(0, 19) + ".000Z");
-            }
-        } catch (Exception e) {
-            throw new NumberFormatException(e.toString());
-        }
-        int pos = 19;
-
-        // parse optional milliseconds
-        if (pos < source.length() && source.charAt(pos) == '.') {
-            int milliseconds = 0;
-            int start = ++pos;
-            while (pos < source.length() &&
-                    Character.isDigit(source.charAt(pos))) {
-                pos++;
-            }
-            String decimal = source.substring(start, pos);
-            if (decimal.length() == 3) {
-                milliseconds = Integer.parseInt(decimal);
-            } else if (decimal.length() < 3) {
-                milliseconds = Integer.parseInt((decimal + "000")
-                        .substring(0, 3));
-            } else {
-                milliseconds = Integer.parseInt(decimal.substring(0, 3));
-                if (decimal.charAt(3) >= '5') {
-                    ++milliseconds;
-                }
-            }
-
-            // add milliseconds to the current date
-            date.setTime(date.getTime() + milliseconds);
-        }
-
-        // parse optional timezone
-        if (pos + 5 < source.length() &&
-                (source.charAt(pos) == '+' || (source.charAt(pos) == '-'))) {
-            if (!Character.isDigit(source.charAt(pos + 1)) ||
-                    !Character.isDigit(source.charAt(pos + 2)) ||
-                    source.charAt(pos + 3) != ':' ||
-                    !Character.isDigit(source.charAt(pos + 4)) ||
-                    !Character.isDigit(source.charAt(pos + 5))) {
-                throw new NumberFormatException();
-                // Messages.getMessage("badTimezone00"));
-            }
-            int hours = (source.charAt(pos + 1) - '0') * 10
-                    + source.charAt(pos + 2) - '0';
-            int mins = (source.charAt(pos + 4) - '0') * 10
-                    + source.charAt(pos + 5) - '0';
-            int milliseconds = (hours * 60 + mins) * 60 * 1000;
-
-            // subtract milliseconds from current date to obtain GMT
-            if (source.charAt(pos) == '+') {
-                milliseconds = -milliseconds;
-            }
-            date.setTime(date.getTime() + milliseconds);
-            pos += 6;
-        }
-        if (pos < source.length() && source.charAt(pos) == 'Z') {
-            pos++;
-            calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
-        }
-        if (pos < source.length()) {
-            throw new NumberFormatException();//Messages.getMessage("badChars00"));
-        }
-        calendar.setTime(date);
-
-        // support dates before the Christian era
-        if (bc) {
             calendar.set(Calendar.ERA, GregorianCalendar.BC);
         }
-        return calendar;
 
+        try {
+            if ((source != null) && (source.length() >= 19)) {
+                if (source.length() == 19) {
+                    // i.e. this does not have any additional assume this time in current local
+                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+                } else {
+                    String rest = source.substring(19);
+                    if (rest.startsWith(".")) {
+                        // i.e this have the ('.'s+) part
+                        if (rest.endsWith("Z")) {
+                            // this is in gmt time zone
+                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+                        } else if ((rest.indexOf("+") > 0) || (rest.indexOf("-") > 0)) {
+                            // this is given in a general time zione
+                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                        } else {
+                            // i.e it does not have time zone
+                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                        }
+
+                    } else {
+                        if (rest.startsWith("Z")) {
+                            // this is in gmt time zone
+                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+                        } else if (rest.startsWith("+") || rest.startsWith("-")) {
+                            // this is given in a general time zione
+                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+                        } else {
+                            throw new NumberFormatException("in valid time zone attribute");
+                        }
+                    }
+                }
+                date = simpleDateFormat.parse(source);
+                calendar.setTime(date);
+
+            } else {
+                throw new NumberFormatException("date string can not be less than 19 charactors");
+            }
+        } catch (ParseException e) {
+            throw new NumberFormatException(e.getMessage());
+        }
+        return calendar;
     }
 
     /**
@@ -771,7 +714,7 @@ public class ConverterUtil {
     private static void ConvertToArbitraryObjectArray(Object returnArray,
                                                       Class baseArrayClass,
                                                       List objectList) {
-        if(!(ADBBean.class.isAssignableFrom(baseArrayClass))) {
+        if (!(ADBBean.class.isAssignableFrom(baseArrayClass))) {
             try {
                 for (int i = 0; i < objectList.size(); i++) {
                     Object o = objectList.get(i);

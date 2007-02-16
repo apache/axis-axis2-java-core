@@ -20,7 +20,8 @@ import org.apache.axis2.databinding.utils.ConverterUtil;
 
 public class SimpleTypeTimePopulateTest extends AbstractSimplePopulater{
     private String values[]= {
-            "13:20:00",
+            "13:20:00Z",
+            "23:59:59+0530",
             "23:59:59"
     };
     private String xmlString[] = {
@@ -35,8 +36,11 @@ public class SimpleTypeTimePopulateTest extends AbstractSimplePopulater{
 
     // force others to implement this method
     public void testPopulate() throws Exception {
+
+        Time time;
         for (int i = 0; i < 2; i++) {
-            checkValue(xmlString[i],values[i]);
+            time = new Time(values[i]);
+            checkValue(xmlString[i],time.toString());
         }
     }
 
@@ -44,13 +48,5 @@ public class SimpleTypeTimePopulateTest extends AbstractSimplePopulater{
         return ConverterUtil.convertToString((Time)o);
     }
 
-    protected void compare(String val1, String val2) {
-        //todo - Find a propr way to compare these time strings
-        //check for null for now
-        assertNotNull(val1);
-        assertNotNull(val2);
-        //assertTrue(new Time(val1).equals(new Time(val2)));
-
-    }
 
 }

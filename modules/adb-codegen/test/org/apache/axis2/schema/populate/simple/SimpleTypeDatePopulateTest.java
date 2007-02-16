@@ -3,6 +3,7 @@ package org.apache.axis2.schema.populate.simple;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
 import java.util.Date;
+import java.text.SimpleDateFormat;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -21,9 +22,9 @@ import java.util.Date;
 
 public class SimpleTypeDatePopulateTest extends AbstractSimplePopulater{
     private String values[]={
-                "2002-10-10",
-                "2000-12-31",
-                "2002-02-28"
+                "2002-10-10Z",
+                "2000-12-31Z",
+                "2002-02-28Z"
     } ;
     private String xmlString[] = {
             "<dateParam xmlns=\"http://soapinterop.org/xsd\">"+values[0]+"</dateParam>",
@@ -38,8 +39,13 @@ public class SimpleTypeDatePopulateTest extends AbstractSimplePopulater{
 
     // force others to implement this method
     public void testPopulate() throws Exception {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
+        Date date = null;
+
         for (int i = 0; i < values.length; i++) {
-            checkValue(xmlString[i],values[i]);
+            date = ConverterUtil.convertToDate(values[i]);
+            checkValue(xmlString[i],simpleDateFormat.format(date));
         }
     }
 

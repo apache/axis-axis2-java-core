@@ -3,6 +3,7 @@ package org.apache.axis2.schema.populate.simple;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
 import java.util.Calendar;
+import java.text.SimpleDateFormat;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -20,8 +21,8 @@ import java.util.Calendar;
  */
 
 public class SimpleTypeDateTimePopulateTest extends AbstractSimplePopulater{
-    private String values[] ={"2002-10-10T12:00:00+05:00",
-            "2000-12-31T11:59:59-05:00",
+    private String values[] ={"2002-10-10T12:00:00+0500",
+            "2000-12-31T11:59:59-0500",
             "2002-10-10T07:00:00Z"
     };
     private String xmlString[] = {
@@ -31,9 +32,13 @@ public class SimpleTypeDateTimePopulateTest extends AbstractSimplePopulater{
     };
     // force others to implement this method
     public void testPopulate() throws Exception {
-         for (int i = 0; i < values.length; i++) {
-             checkValue(xmlString[i],values[i]);
-        }
+
+        Calendar calendar;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        for (int i = 0; i < values.length; i++) {
+            calendar = ConverterUtil.convertToDateTime(values[i]);
+            checkValue(xmlString[i],simpleDateFormat.format(calendar.getTime()));
+       }
     }
 
     protected void setUp() throws Exception {
@@ -45,8 +50,5 @@ public class SimpleTypeDateTimePopulateTest extends AbstractSimplePopulater{
         return ConverterUtil.convertToString((Calendar) o);
     }
 
-    protected void compare(String val1, String val2) {
-        //do nothing for this comparison. We dont know how to compare these yet
-        //todo Fix this comparison
-    }
+
 }

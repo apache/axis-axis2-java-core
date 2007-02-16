@@ -493,7 +493,7 @@
                                     <xsl:when test="(@restrictionBaseType)">
                                        <xsl:choose>
                                         <xsl:when test="(@patternFacet)">
-                                            if (param.matches("<xsl:value-of select="$patternFacet"/>")) {
+                                            if (java.lang.String.valueOf(param).matches("<xsl:value-of select="$patternFacet"/>")) {
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
@@ -501,7 +501,7 @@
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@lenFacet)">
-                                            if ( param.length() == <xsl:value-of select="@lenFacet"/> ) {
+                                            if ( java.lang.String.valueOf(param).length() == <xsl:value-of select="@lenFacet"/> ) {
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
@@ -509,8 +509,8 @@
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
-                                            if ( <xsl:if test="(@minLenFacet)"> (<xsl:value-of select="$minLenFacet"/> &lt; param.length())</xsl:if>
-                                              <xsl:if test="(@maxLenFacet)"> <xsl:if test="(@minLenFacet)"> &amp;&amp; </xsl:if> (param.length() &gt;= <xsl:value-of select="$maxLenFacet"/>) </xsl:if> ) {
+                                            if ( <xsl:if test="(@minLenFacet)"> (<xsl:value-of select="$minLenFacet"/> &lt; java.lang.String.valueOf(param).length())</xsl:if>
+                                              <xsl:if test="(@maxLenFacet)"> <xsl:if test="(@minLenFacet)"> &amp;&amp; </xsl:if> (java.lang.String.valueOf(param).length() &gt;= <xsl:value-of select="$maxLenFacet"/>) </xsl:if> ) {
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
