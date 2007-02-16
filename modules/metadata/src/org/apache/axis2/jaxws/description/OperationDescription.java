@@ -147,5 +147,5 @@ public interface OperationDescription {
 
     public OperationRuntimeDescription getOperationRuntimeDesc(String name);
     public void setOperationRuntimeDesc(OperationRuntimeDescription ord);
-    
+    public OperationDescription getSyncOperation();
 }

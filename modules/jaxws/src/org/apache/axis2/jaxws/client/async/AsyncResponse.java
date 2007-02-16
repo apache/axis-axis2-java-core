@@ -230,8 +230,8 @@ public abstract class AsyncResponse implements Response {
         // on the MessateContext that we need to unmarshall.
         if (faultMessageContext != null) {
             Throwable t = getFaultResponse(faultMessageContext);
-            if (t != null) {
-                return ExceptionFactory.makeWebServiceException(t);    
+            if (t != null) {  
+                return t;
             }
             else {
                 return ExceptionFactory.makeWebServiceException(fault);

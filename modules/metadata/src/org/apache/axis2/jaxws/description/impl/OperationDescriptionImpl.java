@@ -149,7 +149,7 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
     private Boolean             webResultHeader;
     private Method serviceImplMethod;
     private boolean serviceImplMethodFound = false;
-    
+    private OperationDescription syncOperationDescription;
     // RUNTIME INFORMATION
     Map<String, OperationRuntimeDescription> runtimeDescMap = Collections.synchronizedMap(new HashMap<String, OperationRuntimeDescription>());
 
@@ -502,6 +502,35 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
             }
         }
         return webMethodOperationName;
+    }
+    //Review:
+    //Adding method to get Sync operation's Operation Description
+    public OperationDescription getSyncOperation(){
+        OperationDescription opDesc = this;
+        if(!isJAXWSAsyncClientMethod()){
+            return this;
+        }
+        if(this.syncOperationDescription != null){
+        	return syncOperationDescription;
+        }
+        String webMethodAnnoName = getOperationName();
+        String javaMethodName = getJavaMethodName();
+        if(webMethodAnnoName!=null && webMethodAnnoName.length()>0 && webMethodAnnoName != javaMethodName){     
+           EndpointInterfaceDescription eid = getEndpointInterfaceDescription();
+           if(eid!=null){
+           //searching for opDesc of sync operation.
+               OperationDescription[] ods = null;
+               ods = eid.getOperationForJavaMethod(webMethodAnnoName);
+               for(OperationDescription od:ods){
+                   if(od.getJavaMethodName().equals(webMethodAnnoName)){
+                       opDesc = od;
+                       break;
+                   }
+               }
+           }
+        }
+        syncOperationDescription = opDesc;
+        return opDesc;
     }
     
     public String getAction() {

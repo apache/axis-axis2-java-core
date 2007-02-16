@@ -238,8 +238,8 @@ public class FaultyWebServiceTests extends TestCase {
         assertTrue("The thrown exception should be an ExecutionException.", 
                 e.getClass().equals(ExecutionException.class));
         assertTrue("The expected fault type under the ExecutionException should be a " +
-                "SOAPFaultException.  Found type: " + e.getCause().getClass(), 
-                e.getCause().getClass().isAssignableFrom(SOAPFaultException.class));
+                "FaultyWebServiceFault_Exception.  Found type: " + e.getCause().getClass(), 
+                e.getCause().getClass().isAssignableFrom(FaultyWebServiceFault_Exception.class));
     }
 
 
