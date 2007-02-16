@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.apache.axis2.dataRetrieval;
+package org.apache.axis2.dataretrieval;
 
 /**
  * Factory to constructor Axis2 Data Locators based on the specified
@@ -22,9 +22,9 @@ package org.apache.axis2.dataRetrieval;
  */
 
 public class DataLocatorFactory {
-  private static org.apache.axis2.dataRetrieval.WSDLDataLocator wsdlDataLocator = null;
-  private static org.apache.axis2.dataRetrieval.PolicyDataLocator policyDataLocator = null;
-  private static org.apache.axis2.dataRetrieval.SchemaDataLocator schemaDataLocator = null;
+  private static org.apache.axis2.dataretrieval.WSDLDataLocator wsdlDataLocator = null;
+  private static org.apache.axis2.dataretrieval.PolicyDataLocator policyDataLocator = null;
+  private static org.apache.axis2.dataretrieval.SchemaDataLocator schemaDataLocator = null;
  	
   /*
    * Return instance of default Data Locator for the dialect.
@@ -60,7 +60,7 @@ public class DataLocatorFactory {
   protected static AxisDataLocator getWsdlDataLocator(ServiceData[] serviceDataArray) {
 
 		if (wsdlDataLocator == null)
-			wsdlDataLocator = new org.apache.axis2.dataRetrieval.WSDLDataLocator(serviceDataArray);
+			wsdlDataLocator = new org.apache.axis2.dataretrieval.WSDLDataLocator(serviceDataArray);
 		else {
 			wsdlDataLocator.setServiceData(serviceDataArray);
 		}

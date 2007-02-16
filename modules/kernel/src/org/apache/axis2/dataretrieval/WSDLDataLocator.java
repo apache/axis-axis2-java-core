@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.apache.axis2.dataRetrieval;
+package org.apache.axis2.dataretrieval;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.ConfigurationContext;
@@ -98,7 +98,7 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.apache.axis2.dataRetrieval.BaseAxisDataLocator#outputInlineForm(org.apache.axis2.context.MessageContext, org.apache.axis2.dataRetrieval.ServiceData[])
+	 * @see org.apache.axis2.dataretrieval.BaseAxisDataLocator#outputInlineForm(org.apache.axis2.context.MessageContext, org.apache.axis2.dataretrieval.ServiceData[])
 	 */
 	protected Data[] outputInlineForm(MessageContext msgContext, ServiceData[] dataList)
 			throws DataRetrievalException {

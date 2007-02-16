@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.dataRetrieval;
+package org.apache.axis2.dataretrieval;
 
 import java.io.InputStream;
 import javax.xml.stream.XMLStreamException;

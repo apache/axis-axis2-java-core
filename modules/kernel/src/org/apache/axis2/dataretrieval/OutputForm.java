@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.apache.axis2.dataRetrieval;
+package org.apache.axis2.dataretrieval;
 
 public class OutputForm {
 	String type;

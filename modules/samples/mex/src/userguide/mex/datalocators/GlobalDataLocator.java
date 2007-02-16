@@ -1,12 +1,12 @@
 package userguide.mex.datalocators;
 
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.dataRetrieval.AxisDataLocator;
-import org.apache.axis2.dataRetrieval.DRConstants;
-import org.apache.axis2.dataRetrieval.Data;
-import org.apache.axis2.dataRetrieval.DataRetrievalException;
-import org.apache.axis2.dataRetrieval.DataRetrievalRequest;
-import org.apache.axis2.dataRetrieval.OutputForm;
+import org.apache.axis2.dataretrieval.AxisDataLocator;
+import org.apache.axis2.dataretrieval.DRConstants;
+import org.apache.axis2.dataretrieval.Data;
+import org.apache.axis2.dataretrieval.DataRetrievalException;
+import org.apache.axis2.dataretrieval.DataRetrievalRequest;
+import org.apache.axis2.dataretrieval.OutputForm;
 
 /*
  * Sample user-defined Global Level Locator, GlobalDataLocator

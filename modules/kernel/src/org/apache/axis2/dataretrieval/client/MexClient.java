@@ -1,4 +1,4 @@
-package org.apache.axis2.dataRetrieval.client;
+package org.apache.axis2.dataretrieval.client;
 import java.net.URL;
 
 import javax.wsdl.Definition;
@@ -11,7 +11,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.dataRetrieval.DRConstants;
+import org.apache.axis2.dataretrieval.DRConstants;
 import org.apache.axis2.description.AxisService;
 
 public class MexClient extends ServiceClient {

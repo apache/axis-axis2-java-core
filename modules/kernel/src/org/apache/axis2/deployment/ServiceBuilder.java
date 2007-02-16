@@ -21,7 +21,7 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.dataRetrieval.DRConstants;
+import org.apache.axis2.dataretrieval.DRConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;

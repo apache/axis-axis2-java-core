@@ -18,7 +18,7 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.dataRetrieval.AxisDataLocator;
+import org.apache.axis2.dataretrieval.AxisDataLocator;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.description.AxisDescription;

@@ -17,7 +17,7 @@
 package userguide.mex.datalocators;
 
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.dataRetrieval.*;
+import org.apache.axis2.dataretrieval.*;
 import org.apache.axis2.description.AxisService;
 
 /*

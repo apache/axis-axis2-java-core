@@ -27,7 +27,7 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.mex.MexException;
 import org.apache.axis2.mex.MexConstants;
-import org.apache.axis2.dataRetrieval.OutputForm;
+import org.apache.axis2.dataretrieval.OutputForm;
 
 public class MexUtil {
 	

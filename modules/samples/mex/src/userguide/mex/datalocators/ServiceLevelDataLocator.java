@@ -19,7 +19,7 @@ package userguide.mex.datalocators;
 import java.util.Calendar;
 
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.dataRetrieval.*;
+import org.apache.axis2.dataretrieval.*;
 
 /*
  * Sample Service Level Locator

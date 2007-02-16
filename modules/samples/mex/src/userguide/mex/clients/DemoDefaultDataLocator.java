@@ -26,8 +26,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.dataRetrieval.DRConstants;
-import org.apache.axis2.dataRetrieval.client.MexClient;
+import org.apache.axis2.dataretrieval.DRConstants;
+import org.apache.axis2.dataretrieval.client.MexClient;
 
 /**
  * Sample to demostrate  using Defautl Axis 2 Data Locator to perform data retrieval 
