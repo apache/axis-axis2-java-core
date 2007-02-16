@@ -31,7 +31,6 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
@@ -150,17 +149,9 @@ public class TransportUtils {
 		} else {
 			//If it is not a SOAPEnvelope we wrap that with a fake SOAPEnvelope.
 			SOAPFactory soapFactory = new SOAP11Factory();
-			SOAPEnvelope intermediateEnvelope
-			= soapFactory
-					.getDefaultEnvelope();
-			intermediateEnvelope.getBody().addChild(
+			envelope= soapFactory.getDefaultEnvelope();
+			envelope.getBody().addChild(
 					builder.getDocumentElement());
-
-			// We now have the message inside an envelope. However, this is
-			// only an OM; We need to build a SOAP model from it.
-			builder = new StAXSOAPModelBuilder(intermediateEnvelope
-					.getXMLStreamReader(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
-			envelope = (SOAPEnvelope) builder.getDocumentElement();
 		}
 
 		String charsetEncoding = builder.getCharsetEncoding();
