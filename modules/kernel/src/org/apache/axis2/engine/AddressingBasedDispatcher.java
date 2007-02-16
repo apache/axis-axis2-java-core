@@ -66,7 +66,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
     }
 
     public AxisService findService(MessageContext messageContext) throws AxisFault {
-EndpointReference toEPR = messageContext.getTo();
+    	EndpointReference toEPR = messageContext.getTo();
         AxisService service = null;
 
         if (toEPR != null) {
@@ -129,7 +129,6 @@ EndpointReference toEPR = messageContext.getTo();
      * @throws org.apache.axis2.AxisFault
      */
     public InvocationResponse invoke(MessageContext msgctx) throws AxisFault {
-
         // first check we can dispatch using the relates to
         if (msgctx.getRelatesTo() != null) {
             String relatesTo = msgctx.getRelatesTo().getValue();
@@ -152,12 +151,14 @@ EndpointReference toEPR = messageContext.getTo();
                     msgctx.getAxisOperation().registerMessageContext(msgctx, operationContext);
                     msgctx.setServiceGroupContextId(
                             ((ServiceGroupContext) msgctx.getServiceContext().getParent()).getId());
+                    
+                    if(isDebugEnabled){
+                        log.debug(msgctx.getLogIDString()+" Dispatched successfully on the RelatesTo. operation="+operationContext.getAxisOperation());
+                    }
+                    return InvocationResponse.CONTINUE;
                 }
             }
-
-            return InvocationResponse.CONTINUE;
         }
-
         return super.invoke(msgctx);
     }
 }
