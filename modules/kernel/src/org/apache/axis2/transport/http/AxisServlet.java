@@ -44,6 +44,7 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -452,7 +453,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
 
         AxisEngine engine = new AxisEngine(configContext);
-        MessageContext faultContext = engine.createFaultMessageContext(msgContext, e);
+        MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgContext, e);
 
         // SOAP 1.2 specification mentions that we should send HTTP code 400 in a fault if the
         // fault code Sender
