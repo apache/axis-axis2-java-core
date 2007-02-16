@@ -781,7 +781,14 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         } else {
             // We are in MESSAGE mode
             // Conformance: JAXWS Spec.- Sec. 4.3 (javax.activation.DataSource)
-            String bindingType = composite.getBindingTypeAnnot().value();
+            
+            // REVIEW: Should the provider interface validation be moved to post-construction validation, 
+            // since it seems that the logic to understand the default values for binding type 
+            // (see comment below) should be left to the creation of the Description objects.
+            String bindingType = null;
+            if (composite.getBindingTypeAnnot() != null ) {
+                bindingType = composite.getBindingTypeAnnot().value();
+            }
 
             Iterator<String> iter = composite.getInterfacesList().iterator();
 
