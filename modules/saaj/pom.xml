@@ -54,6 +54,11 @@
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
+		<resources>
+		  <resource>
+			<directory>conf</directory>
+		  </resource>        
+		</resources>
         <testResources>
         	<testResource>
         		<directory>test-resources</directory>
@@ -96,6 +101,10 @@
             <property>
               <name>javax.xml.soap.SOAPConnectionFactory</name>
               <value>org.apache.axis2.saaj.SOAPConnectionFactoryImpl</value>
+            </property>
+            <property>
+              <name>javax.xml.soap.MetaFactory</name>
+              <value>org.apache.axis2.saaj.SAAJMetaFactoryImpl</value>
             </property>
           </systemProperties>
         </configuration>

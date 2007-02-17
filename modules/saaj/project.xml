@@ -71,7 +71,7 @@
             <resource>
                 <directory>conf</directory>
                 <includes>
-                    <include>**/*.properties</include>
+                    <include>**/*</include>
                 </includes>
             </resource>
             <resource>
