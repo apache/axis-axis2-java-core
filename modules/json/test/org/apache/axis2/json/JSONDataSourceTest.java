@@ -23,13 +23,16 @@ import java.io.OutputStreamWriter;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.parsers.ParserConfigurationException;
 
 import junit.framework.TestCase;
 
 import org.apache.axiom.om.util.StAXUtils;
 import org.json.JSONException;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.xml.sax.SAXException;
 
-public class JSONDataSourceTest extends TestCase {
+public class JSONDataSourceTest extends XMLTestCase {
 
     public void testMappedSerialize1() throws XMLStreamException {
         String jsonString = getMappedJSONString();
@@ -79,14 +82,14 @@ public class JSONDataSourceTest extends TestCase {
         assertEquals(jsonString, new String(outStream.toByteArray()));
     }
 
-    public void testBadgerfishSerialize3() throws XMLStreamException, JSONException {
+    public void testBadgerfishSerialize3() throws XMLStreamException, JSONException, IOException, ParserConfigurationException, SAXException {
         String jsonString = getBadgerfishJSONString();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(outStream);
         JSONBadgerfishDataSource source = getBadgerfishDataSource(jsonString);
         source.serialize(writer);
         writer.flush();
-        assertEquals("<?xml version='1.0' encoding='UTF-8'?><p xmlns=\"http://def.ns\" xmlns:bb=\"http://other.nsb\" xmlns:aa=\"http://other.ns\"><sam att=\"lets\">555</sam></p>", new String(outStream.toByteArray()));
+        assertXMLEqual("<?xml version='1.0' encoding='UTF-8'?><p xmlns=\"http://def.ns\" xmlns:bb=\"http://other.nsb\" xmlns:aa=\"http://other.ns\"><sam att=\"lets\">555</sam></p>", new String(outStream.toByteArray()));
     }
 
     private JSONBadgerfishDataSource getBadgerfishDataSource(String jsonString) {

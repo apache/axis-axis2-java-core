@@ -45,6 +45,10 @@
             <artifactId>jettison</artifactId>
             <version>1.0-alpha-2-SNAPSHOT</version>
         </dependency>
+        <dependency>
+     	 <groupId>xmlunit</groupId>
+     	 <artifactId>xmlunit</artifactId>
+   	    </dependency>
 	</dependencies>
 
 	<build>
