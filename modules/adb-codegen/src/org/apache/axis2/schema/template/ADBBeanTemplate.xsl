@@ -438,22 +438,22 @@
                                        // setting primitive attribute tracker to true
                                        <xsl:choose>
                                            <xsl:when test="$propertyType='int'">
-                                               if (param==Integer.MIN_VALUE) {
+                                               if (param==java.lang.Integer.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='long'">
-                                               if (param==Long.MIN_VALUE) {
+                                               if (param==java.lang.Long.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='byte'">
-                                               if (param==Byte.MIN_VALUE) {
+                                               if (param==java.lang.Byte.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='double'">
-                                               if (param==Double.NaN) {
+                                               if (param==java.lang.Double.NaN) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='float'">
-                                               if (param==Float.NaN) {
+                                               if (param==java.lang.Float.NaN) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='short'">
-                                               if (param==Short.MIN_VALUE) {
+                                               if (param==java.lang.Short.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:otherwise>
                                                if (false) {
@@ -517,14 +517,40 @@
                                                 throw new java.lang.RuntimeException();
                                             }
                                         </xsl:when>
-                                        <xsl:when test="(@maxExFacet) or (@minExFacet) or (@maxInFacet) or (@minInFacet)">
-                                            if ( <xsl:if test="(@minExFacet)"> <xsl:value-of select="$minExFacet"/> &lt; </xsl:if> <xsl:if test="(@minInFacet)"> <xsl:value-of select="$minInFacet"/> &lt;= </xsl:if> param <xsl:if test="(@maxExFacet)"> &gt; <xsl:value-of select="$maxExFacet"/> </xsl:if> <xsl:if test="(@maxInFacet)"> &gt;= <xsl:value-of select="$maxInFacet"/> </xsl:if> ) {
+                                        <xsl:when test="@maxExFacet or @minExFacet or @maxInFacet or @minInFacet">
+                                            <xsl:if test="@maxExFacet">
+                                                 if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, "<xsl:value-of select="$maxExFacet"/>") &lt; 0){
+                                                        this.<xsl:value-of select="$varName"/>=param;
+                                                    }
+                                                    else {
+                                                        throw new java.lang.RuntimeException();
+                                                    }
+                                            </xsl:if>
+                                            <xsl:if test="@minExFacet">
+                                                 if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, "<xsl:value-of select="$maxExFacet"/>") &gt; 0){
+                                                    this.<xsl:value-of select="$varName"/>=param;
+                                                }
+                                                else {
+                                                    throw new java.lang.RuntimeException();
+                                                }
+                                            </xsl:if>
+                                            <xsl:if test="@maxInFacet">
+                                                if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, "<xsl:value-of select="$maxExFacet"/>") &lt;= 0){
+                                                    this.<xsl:value-of select="$varName"/>=param;
+                                                }
+                                                else {
+                                                    throw new java.lang.RuntimeException();
+                                                }
+                                            </xsl:if>
+                                            <xsl:if test="@minInFacet">
+                                                if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, "<xsl:value-of select="$maxExFacet"/>") &gt;= 0){
+                                                    this.<xsl:value-of select="$varName"/>=param;
+                                                }
+                                                else {
+                                                    throw new java.lang.RuntimeException();
+                                                }
+                                            </xsl:if>
 
-                                                this.<xsl:value-of select="$varName"/>=param;
-                                            }
-                                            else {
-                                                throw new java.lang.RuntimeException();
-                                            }
                                         </xsl:when>
                                         <xsl:otherwise>
                                              this.<xsl:value-of select="$varName"/>=param;
@@ -1156,22 +1182,22 @@
                                         <xsl:if test="@primitive">
                                             <xsl:choose>
                                                <xsl:when test="$propertyBaseType='int'">
-                                                   if (<xsl:value-of select="$varName"/>[i]!=Integer.MIN_VALUE) {
+                                                   if (<xsl:value-of select="$varName"/>[i]!=java.lang.Integer.MIN_VALUE) {
                                                </xsl:when>
                                                <xsl:when test="$propertyBaseType='long'">
-                                                   if (<xsl:value-of select="$varName"/>[i]!=Long.MIN_VALUE) {
+                                                   if (<xsl:value-of select="$varName"/>[i]!=java.lang.Long.MIN_VALUE) {
                                                </xsl:when>
                                                <xsl:when test="$propertyBaseType='byte'">
-                                                   if (<xsl:value-of select="$varName"/>[i]!=Byte.MIN_VALUE) {
+                                                   if (<xsl:value-of select="$varName"/>[i]!=java.lang.Byte.MIN_VALUE) {
                                                </xsl:when>
                                                <xsl:when test="$propertyBaseType='double'">
-                                                   if (<xsl:value-of select="$varName"/>[i]!=Double.NaN) {
+                                                   if (<xsl:value-of select="$varName"/>[i]!=java.lang.Double.NaN) {
                                                </xsl:when>
                                                <xsl:when test="$propertyBaseType='float'">
-                                                   if (<xsl:value-of select="$varName"/>[i]!=Float.NaN) {
+                                                   if (<xsl:value-of select="$varName"/>[i]!=java.lang.Float.NaN) {
                                                </xsl:when>
                                                <xsl:when test="$propertyBaseType='short'">
-                                                   if (<xsl:value-of select="$varName"/>[i]!=Short.MIN_VALUE) {
+                                                   if (<xsl:value-of select="$varName"/>[i]!=java.lang.Short.MIN_VALUE) {
                                                </xsl:when>
                                                <xsl:otherwise>
                                                    if (true) {
@@ -1386,22 +1412,22 @@
                                        <!-- we have to check for nillability with min value -->
                                        <xsl:choose>
                                            <xsl:when test="$propertyType='int'">
-                                               if (<xsl:value-of select="$varName"/>==Integer.MIN_VALUE) {
+                                               if (<xsl:value-of select="$varName"/>==java.lang.Integer.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='long'">
-                                               if (<xsl:value-of select="$varName"/>==Long.MIN_VALUE) {
+                                               if (<xsl:value-of select="$varName"/>==java.lang.Long.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='byte'">
-                                               if (<xsl:value-of select="$varName"/>==Byte.MIN_VALUE) {
+                                               if (<xsl:value-of select="$varName"/>==java.lang.Byte.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='double'">
-                                               if (<xsl:value-of select="$varName"/>==Double.NaN) {
+                                               if (<xsl:value-of select="$varName"/>==java.lang.Double.NaN) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='float'">
-                                               if (<xsl:value-of select="$varName"/>==Float.NaN) {
+                                               if (<xsl:value-of select="$varName"/>==java.lang.Float.NaN) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='short'">
-                                               if (<xsl:value-of select="$varName"/>==Short.MIN_VALUE) {
+                                               if (<xsl:value-of select="$varName"/>==java.lang.Short.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:otherwise>
                                                if (false) {
@@ -1548,22 +1574,22 @@
                                <!-- we have to check for nillability with min value -->
                                        <xsl:choose>
                                            <xsl:when test="$propertyType='int'">
-                                               if (<xsl:value-of select="$varName"/>==Integer.MIN_VALUE) {
+                                               if (<xsl:value-of select="$varName"/>==java.lang.Integer.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='long'">
-                                               if (<xsl:value-of select="$varName"/>==Long.MIN_VALUE) {
+                                               if (<xsl:value-of select="$varName"/>==java.lang.Long.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='byte'">
-                                               if (<xsl:value-of select="$varName"/>==Byte.MIN_VALUE) {
+                                               if (<xsl:value-of select="$varName"/>==java.lang.Byte.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='double'">
-                                               if (<xsl:value-of select="$varName"/>==Double.NaN) {
+                                               if (<xsl:value-of select="$varName"/>==java.lang.Double.NaN) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='float'">
-                                               if (<xsl:value-of select="$varName"/>==Float.NaN) {
+                                               if (<xsl:value-of select="$varName"/>==java.lang.Float.NaN) {
                                            </xsl:when>
                                            <xsl:when test="$propertyType='short'">
-                                               if (<xsl:value-of select="$varName"/>==Short.MIN_VALUE) {
+                                               if (<xsl:value-of select="$varName"/>==java.lang.Short.MIN_VALUE) {
                                            </xsl:when>
                                            <xsl:otherwise>
                                                if (false) {
@@ -2043,6 +2069,10 @@
              <xsl:variable name="javaName"><xsl:value-of select="itemtype/@javaname"/></xsl:variable>
              <xsl:variable name="varType"><xsl:value-of select="itemtype/@type"/></xsl:variable>
              <xsl:variable name="ours"><xsl:value-of select="itemtype/@ours"/></xsl:variable>
+            <xsl:variable name="shortTypeNameUncapped"  select="itemtype/@shorttypename"/>
+            <xsl:variable name="shortTypeName"
+               select="concat(translate( substring($shortTypeNameUncapped, 1, 1 ),'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' ), substring($shortTypeNameUncapped, 2, string-length($shortTypeNameUncapped)))" />
+
 
             public static <xsl:value-of select="$name"/> fromString(javax.xml.stream.XMLStreamReader xmlStreamReader, java.lang.String content) {
 
@@ -2082,7 +2112,7 @@
                           </xsl:when>
                           <xsl:otherwise>
                            objectValues[i] =
-                              org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$javaName"/>(values[i]);
+                              org.apache.axis2.databinding.utils.ConverterUtil.convertTo<xsl:value-of select="$shortTypeName"/>(values[i]);
                           </xsl:otherwise>
                       </xsl:choose>
 
@@ -2207,22 +2237,22 @@
                                  <xsl:variable name="javaName"><xsl:value-of select="property/@javaname"/></xsl:variable>
                                   <xsl:choose>
                                        <xsl:when test="$propertyType='int'">
-                                           object.set<xsl:value-of select="$javaName"/>(Integer.MIN_VALUE);
+                                           object.set<xsl:value-of select="$javaName"/>(java.lang.Integer.MIN_VALUE);
                                        </xsl:when>
                                        <xsl:when test="$propertyType='long'">
-                                           object.set<xsl:value-of select="$javaName"/>(Long.MIN_VALUE);
+                                           object.set<xsl:value-of select="$javaName"/>(java.lang.Long.MIN_VALUE);
                                        </xsl:when>
                                        <xsl:when test="$propertyType='byte'">
-                                           object.set<xsl:value-of select="$javaName"/>(Byte.MIN_VALUE);
+                                           object.set<xsl:value-of select="$javaName"/>(java.lang.Byte.MIN_VALUE);
                                        </xsl:when>
                                        <xsl:when test="$propertyType='double'">
-                                           object.set<xsl:value-of select="$javaName"/>(Double.NaN);
+                                           object.set<xsl:value-of select="$javaName"/>(java.lang.Double.NaN);
                                        </xsl:when>
                                        <xsl:when test="$propertyType='float'">
-                                           object.set<xsl:value-of select="$javaName"/>(Float.NaN);
+                                           object.set<xsl:value-of select="$javaName"/>(java.lang.Float.NaN);
                                        </xsl:when>
                                        <xsl:when test="$propertyType='short'">
-                                           object.set<xsl:value-of select="$javaName"/>(Short.MIN_VALUE);
+                                           object.set<xsl:value-of select="$javaName"/>(java.lang.Short.MIN_VALUE);
                                        </xsl:when>
                                    </xsl:choose>
                                  return object;
@@ -2768,22 +2798,22 @@
                                               if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                   <xsl:choose>
                                                        <xsl:when test="$basePropertyType='int'">
-                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(Integer.MIN_VALUE));
+                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(java.lang.Integer.MIN_VALUE));
                                                        </xsl:when>
                                                        <xsl:when test="$basePropertyType='long'">
-                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(Long.MIN_VALUE));
+                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(java.lang.Long.MIN_VALUE));
                                                        </xsl:when>
                                                        <xsl:when test="$basePropertyType='byte'">
-                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(Byte.MIN_VALUE));
+                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(java.lang.Byte.MIN_VALUE));
                                                        </xsl:when>
                                                        <xsl:when test="$basePropertyType='double'">
-                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(Double.NaN));
+                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(java.lang.Double.NaN));
                                                        </xsl:when>
                                                        <xsl:when test="$basePropertyType='float'">
-                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(Float.NaN));
+                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(java.lang.Float.NaN));
                                                        </xsl:when>
                                                        <xsl:when test="$basePropertyType='short'">
-                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(Short.MIN_VALUE));
+                                                           <xsl:value-of select="$listName"/>.add(String.valueOf(java.lang.Short.MIN_VALUE));
                                                        </xsl:when>
                                                        <xsl:otherwise>
                                                            <xsl:value-of select="$listName"/>.add(null);
@@ -2816,22 +2846,22 @@
                                                           if ("true".equals(nillableValue) || "1".equals(nillableValue)){
                                                               <xsl:choose>
                                                                    <xsl:when test="$basePropertyType='int'">
-                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(Integer.MIN_VALUE));
+                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(java.lang.Integer.MIN_VALUE));
                                                                    </xsl:when>
                                                                    <xsl:when test="$basePropertyType='long'">
-                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(Long.MIN_VALUE));
+                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(java.lang.Long.MIN_VALUE));
                                                                    </xsl:when>
                                                                    <xsl:when test="$basePropertyType='byte'">
-                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(Byte.MIN_VALUE));
+                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(java.lang.Byte.MIN_VALUE));
                                                                    </xsl:when>
                                                                    <xsl:when test="$basePropertyType='double'">
-                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(Double.NaN));
+                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(java.lang.Double.NaN));
                                                                    </xsl:when>
                                                                    <xsl:when test="$basePropertyType='float'">
-                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(Float.NaN));
+                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(java.lang.Float.NaN));
                                                                    </xsl:when>
                                                                    <xsl:when test="$basePropertyType='short'">
-                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(Short.MIN_VALUE));
+                                                                       <xsl:value-of select="$listName"/>.add(String.valueOf(java.lang.Short.MIN_VALUE));
                                                                    </xsl:when>
                                                                    <xsl:otherwise>
                                                                        <xsl:value-of select="$listName"/>.add(null);
@@ -3044,22 +3074,22 @@
                                            <!-- set the variable value according to the variable type -->
                                            <xsl:choose>
                                                <xsl:when test="$propertyType='int'">
-                                                   object.set<xsl:value-of select="$javaName"/>(Integer.MIN_VALUE);
+                                                   object.set<xsl:value-of select="$javaName"/>(java.lang.Integer.MIN_VALUE);
                                                </xsl:when>
                                                <xsl:when test="$propertyType='long'">
-                                                   object.set<xsl:value-of select="$javaName"/>(Long.MIN_VALUE);
+                                                   object.set<xsl:value-of select="$javaName"/>(java.lang.Long.MIN_VALUE);
                                                </xsl:when>
                                                <xsl:when test="$propertyType='byte'">
-                                                   object.set<xsl:value-of select="$javaName"/>(Byte.MIN_VALUE);
+                                                   object.set<xsl:value-of select="$javaName"/>(java.lang.Byte.MIN_VALUE);
                                                </xsl:when>
                                                <xsl:when test="$propertyType='double'">
-                                                   object.set<xsl:value-of select="$javaName"/>(Double.NaN);
+                                                   object.set<xsl:value-of select="$javaName"/>(java.lang.Double.NaN);
                                                </xsl:when>
                                                <xsl:when test="$propertyType='float'">
-                                                   object.set<xsl:value-of select="$javaName"/>(Float.NaN);
+                                                   object.set<xsl:value-of select="$javaName"/>(java.lang.Float.NaN);
                                                </xsl:when>
                                                <xsl:when test="$propertyType='short'">
-                                                   object.set<xsl:value-of select="$javaName"/>(Short.MIN_VALUE);
+                                                   object.set<xsl:value-of select="$javaName"/>(java.lang.Short.MIN_VALUE);
                                                </xsl:when>
                                            </xsl:choose>
                                            reader.getElementText(); // throw away text nodes if any.
@@ -3076,22 +3106,22 @@
                                     else {
                                         <xsl:choose>
                                            <xsl:when test="$propertyType='int'">
-                                               object.set<xsl:value-of select="$javaName"/>(Integer.MIN_VALUE);
+                                               object.set<xsl:value-of select="$javaName"/>(java.lang.Integer.MIN_VALUE);
                                            </xsl:when>
                                            <xsl:when test="$propertyType='long'">
-                                               object.set<xsl:value-of select="$javaName"/>(Long.MIN_VALUE);
+                                               object.set<xsl:value-of select="$javaName"/>(java.lang.Long.MIN_VALUE);
                                            </xsl:when>
                                            <xsl:when test="$propertyType='byte'">
-                                               object.set<xsl:value-of select="$javaName"/>(Byte.MIN_VALUE);
+                                               object.set<xsl:value-of select="$javaName"/>(java.lang.Byte.MIN_VALUE);
                                            </xsl:when>
                                            <xsl:when test="$propertyType='double'">
-                                               object.set<xsl:value-of select="$javaName"/>(Double.NaN);
+                                               object.set<xsl:value-of select="$javaName"/>(java.lang.Double.NaN);
                                            </xsl:when>
                                            <xsl:when test="$propertyType='float'">
-                                               object.set<xsl:value-of select="$javaName"/>(Float.NaN);
+                                               object.set<xsl:value-of select="$javaName"/>(java.lang.Float.NaN);
                                            </xsl:when>
                                            <xsl:when test="$propertyType='short'">
-                                               object.set<xsl:value-of select="$javaName"/>(Short.MIN_VALUE);
+                                               object.set<xsl:value-of select="$javaName"/>(java.lang.Short.MIN_VALUE);
                                            </xsl:when>
                                        </xsl:choose>
                                     }

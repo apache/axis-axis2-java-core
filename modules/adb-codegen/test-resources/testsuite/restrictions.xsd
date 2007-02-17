@@ -1,5 +1,6 @@
 <xsd:schema elementFormDefault="qualified"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:xs="http://www.w3.org/2001/XMLSchema"
             xmlns:tns="http://tempuri.org/"
             xmlns:ns1="http://google.com"
             targetNamespace="http://tempuri.org/">
@@ -78,5 +79,27 @@
             <xsd:pattern value="\d{4}((-\d{2}){0,1}-\d{2}){0,1}"></xsd:pattern>
         </xsd:restriction>
     </xsd:simpleType>
+
+    <xs:simpleType name="RFCProbabilityCodeType1">
+           <xs:restriction base="xs:double">
+                   <xs:maxInclusive value="1.5"/>
+                   <xs:minInclusive value="0.1"/>
+           </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="RFCProbabilityCodeType2">
+           <xs:restriction base="xs:long">
+                   <xs:maxExclusive value="5"/>
+                   <xs:minExclusive value="1"/>
+           </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="RFCProbabilityCodeType3">
+           <xs:restriction base="xs:integer">
+                   <xs:maxExclusive value="5"/>
+                   <xs:minExclusive value="1"/>
+           </xs:restriction>
+    </xs:simpleType>
+
 
 </xsd:schema>

@@ -32,6 +32,10 @@
         <xs:restriction base="tns:TestListString"/>
     </xs:simpleType>
 
+    <xs:simpleType name="TestListInt">
+        <xs:list itemType="xs:int"></xs:list>
+    </xs:simpleType>
+
     <xs:element name="SuperTestListStringElement" type="tns:SuperTestListString"/>
 
 </schema>

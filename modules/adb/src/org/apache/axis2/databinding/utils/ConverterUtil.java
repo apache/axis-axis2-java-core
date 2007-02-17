@@ -241,6 +241,10 @@ public class ConverterUtil {
         return Integer.parseInt(s);
     }
 
+    public static BigDecimal convertToBigDecimal(String s){
+        return new BigDecimal(s);
+    }
+
     public static double convertToDouble(String s) {
         if (POSITIVE_INFINITY.equals(s)) {
             return Double.POSITIVE_INFINITY;
@@ -765,7 +769,81 @@ public class ConverterUtil {
     }
 
     /**
-     * Converts the given datahandler to a string
+     * @param intValue
+     * @param value
+     * @return 0 if equal , + value if greater than , - value if less than
+     */
+    public static int compare(int intValue, String value) {
+        return intValue - Integer.parseInt(value);
+    }
+
+    /**
+     * @param doubleValue
+     * @param value
+     * @return 0 if equal , + value if greater than , - value if less than
+     */
+    public static double compare(double doubleValue, String value) {
+        return doubleValue - Double.parseDouble(value);
+    }
+
+
+    /**
+     * @param floatValue
+     * @param value
+     * @return 0 if equal , + value if greater than , - value if less than
+     */
+    public static float compare(float floatValue, String value) {
+        return floatValue - Float.parseFloat(value);
+    }
+
+    /**
+     * @param longValue
+     * @param value
+     * @return 0 if equal , + value if greater than , - value if less than
+     */
+    public static long compare(long longValue, String value) {
+        return longValue - Long.parseLong(value);
+    }
+
+    /**
+     * @param shortValue
+     * @param value
+     * @return 0 if equal , + value if greater than , - value if less than
+     */
+    public static int compare(short shortValue, String value) {
+        return shortValue - Short.parseShort(value);
+    }
+
+    /**
+     * @param byteVlaue
+     * @param value
+     * @return 0 if equal , + value if greater than , - value if less than
+     */
+    public static int compare(byte byteVlaue, String value) {
+        return byteVlaue - Byte.parseByte(value);
+    }
+
+
+    /**
+     * @param binBigInteger
+     * @param value
+     * @return 0 if equal , + value if greater than , - value if less than
+     */
+    public static int compare(BigInteger binBigInteger, String value) {
+        return binBigInteger.intValue() - Integer.parseInt(value);
+    }
+
+    /**
+     * @param binBigDecimal
+     * @param value
+     * @return 0 if equal , + value if greater than , - value if less than
+     */
+    public static double compare(BigDecimal binBigDecimal, String value) {
+        return binBigDecimal.doubleValue() - Double.parseDouble(value);
+    }
+
+    /**
+     * Converts the given .datahandler to a string
      *
      * @return string
      */

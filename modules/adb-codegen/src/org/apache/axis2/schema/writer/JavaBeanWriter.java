@@ -562,12 +562,16 @@ public class JavaBeanWriter implements BeanWriter {
         XSLTUtils.addAttribute(model, "originalName", metainf.getItemTypeQName().getLocalPart(), itemType);
         XSLTUtils.addAttribute(model, "javaname", javaName, itemType);
 
+
         if (typeMap.containsKey(metainf.getItemTypeQName())) {
                 XSLTUtils.addAttribute(model, "ours", "true", itemType);
             }
         if (PrimitiveTypeFinder.isPrimitive(metainf.getItemTypeClassName())) {
             XSLTUtils.addAttribute(model, "primitive", "yes", itemType);
         }
+
+        String shortTypeName = getShortTypeName(metainf.getItemTypeClassName());
+        XSLTUtils.addAttribute(model, "shorttypename", shortTypeName, itemType);
 
     }
 
@@ -592,6 +596,8 @@ public class JavaBeanWriter implements BeanWriter {
             if (typeMap.containsKey(memberQName)) {
                 XSLTUtils.addAttribute(model, "ours", "true", memberType);
             }
+            String shortTypeName = getShortTypeName(memberClass);
+            XSLTUtils.addAttribute(model, "shorttypename", shortTypeName, memberType);
 
         }
     }

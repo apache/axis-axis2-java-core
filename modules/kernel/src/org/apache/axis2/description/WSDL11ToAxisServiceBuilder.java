@@ -616,7 +616,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
 
             } else {
-                throw new AxisFault("Service " + serviceName + " was not found in the WSDL");
+                throw new AxisFault("No service was not found in the WSDL");
             }
         }
         return service;
