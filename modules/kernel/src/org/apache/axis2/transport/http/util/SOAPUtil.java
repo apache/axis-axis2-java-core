@@ -33,7 +33,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- *
+ * @deprecated Since we are not using this class and this might lead to mis-use of this class, we will
+ * removing this class in a future release.
  */
 public class SOAPUtil {
     private static final Log log = LogFactory.getLog(SOAPUtil.class);
