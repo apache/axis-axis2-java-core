@@ -44,7 +44,6 @@ import javax.xml.ws.soap.SOAPBinding;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.JAXWSClientContext;
 import org.apache.axis2.jaxws.client.JAXBDispatch;
 import org.apache.axis2.jaxws.client.XMLDispatch;
 import org.apache.axis2.jaxws.client.proxy.JAXWSProxyHandler;
@@ -159,9 +158,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
         
         addBinding(endpointDesc.getClientBindingID());
-        
-        JAXWSClientContext clientCtx = createClientContext(endpointDesc, Object.class, mode);
-        clientCtx.setJAXBContext(context);
         
         JAXBDispatch<Object> dispatch = new JAXBDispatch(this, endpointDesc);
         
@@ -313,16 +309,6 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     //TODO: Need to make the default number of threads configurable
     private Executor getDefaultExecutor(){
         return Executors.newFixedThreadPool(20, new JAXWSThreadFactory());
-    }
-
-    private <T> JAXWSClientContext<T> createClientContext(EndpointDescription epDesc, Class<T> clazz, Mode mode){
-        JAXWSClientContext<T> clientContext = new JAXWSClientContext<T>();
-        clientContext.setServiceDescription(serviceDescription);
-        clientContext.setEndpointDescription(epDesc);
-        clientContext.setClazz(clazz);
-        clientContext.setServiceMode(mode);
-        clientContext.setExecutor(this.getExecutor());  
-        return clientContext;
     }
     
     private boolean isValidServiceName(){
