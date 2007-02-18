@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.runtime.description.injection.impl;
 
+import java.lang.reflect.Method;
+
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescription;
 
@@ -25,6 +27,8 @@ public class ResourceInjectionServiceRuntimeDescriptionImpl implements
     private ServiceDescription serviceDesc;
     private String key; 
     private boolean _hasResourceAnnotation;
+    private Method _postConstructMethod;
+    private Method _preDestroyMethod;
     
     protected ResourceInjectionServiceRuntimeDescriptionImpl(String key,
                 ServiceDescription serviceDesc) {
@@ -34,6 +38,14 @@ public class ResourceInjectionServiceRuntimeDescriptionImpl implements
 
     public boolean hasResourceAnnotation() {
         return _hasResourceAnnotation;
+    }
+    
+    public Method getPostConstructMethod() {
+        return _postConstructMethod;
+    }
+
+    public Method getPreDestroyMethod() {
+        return _preDestroyMethod;
     }
 
     public ServiceDescription getServiceDescription() {
@@ -51,6 +63,14 @@ public class ResourceInjectionServiceRuntimeDescriptionImpl implements
         _hasResourceAnnotation = value;
     }
     
+    void setPostConstructMethod(Method method) {
+        _postConstructMethod = method;
+    }
+    
+    void setPreDestroyMethod(Method method) {
+        _preDestroyMethod = method;
+    }
+    
     public String toString() {
         final String newline = "\n";
         StringBuffer string = new StringBuffer();
@@ -59,7 +79,14 @@ public class ResourceInjectionServiceRuntimeDescriptionImpl implements
         string.append("  ResourceInjectionServiceRuntime:" + getKey());
         string.append(newline);
         string.append("    @Resource Annotation = " + hasResourceAnnotation());
-        
+        string.append(newline);
+        string.append("    PostConstruct Method = " + getPostConstructMethod());
+        string.append(newline);
+        string.append("    PreDestroy Method    = " + getPreDestroyMethod());
+
         return string.toString();
     }
+
+    
+   
 }

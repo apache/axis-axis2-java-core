@@ -51,6 +51,7 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
 	private static final Log log = LogFactory.getLog(EndpointLifecycleManagerImpl.class);
 	private Object endpointInstance = null;
 	private Class endpointClazz = null;
+    
 	public EndpointLifecycleManagerImpl(Object endpointInstance) {
 		super();
 		this.endpointInstance = endpointInstance;
@@ -73,6 +74,9 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
         javax.xml.ws.handler.MessageContext soapMessageContext = createSOAPMessageContext(mc);
         Object serviceimpl = serviceContext.getProperty(ServiceContext.SERVICE_OBJECT);
         if (serviceimpl != null) {
+            this.endpointInstance = serviceimpl;
+            this.endpointClazz = serviceImplClass;
+            
         	if (log.isDebugEnabled()) {
                 log.debug("Service Instance found in the service context, reusing the instance");
             }
@@ -88,6 +92,17 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
             // create a new service impl class for that service
             serviceimpl = createServiceInstance(serviceImplClass);
             this.endpointInstance = serviceimpl;
+            this.endpointClazz = serviceImplClass;
+            
+            // Get the ServiceDescription and injectionDesc which contain
+            // cached information
+            ServiceDescription serviceDesc = mc.getServiceDescription();
+            ResourceInjectionServiceRuntimeDescription injectionDesc = null;
+            if (serviceDesc != null) {
+                injectionDesc = 
+                    ResourceInjectionServiceRuntimeDescriptionFactory.get(serviceDesc, serviceImplClass);
+            }
+
             //Since Serivce Object is instantiated for the first time I will Inject any resource 
             //and call the PostConstruct lifecycle methods here.
             
@@ -95,10 +110,16 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
             WebServiceContextImpl wsContext = new WebServiceContextImpl();
             //Add MessageContext for this request.
             wsContext.setSoapMessageContext(soapMessageContext);
-            //inject WebServiceContext
-            injectWebServiceContext(mc, wsContext, serviceimpl);
-            //InvokePostConstruct
-            invokePostConstruct();
+            
+            //Inject WebServiceContext
+            if (injectionDesc != null && injectionDesc.hasResourceAnnotation()) {
+                injectWebServiceContext(mc, wsContext, serviceimpl);
+            }
+            
+            //Invoke PostConstruct
+            if (injectionDesc != null && injectionDesc.getPostConstructMethod() != null) {
+                invokePostConstruct(injectionDesc.getPostConstructMethod());
+            }
             serviceContext.setProperty(WEBSERVICE_MESSAGE_CONTEXT, wsContext);
             serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceimpl);
             return serviceimpl;
@@ -114,15 +135,19 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
 		}
 		Method method = getPostConstructMethod();
 		if(method != null){
-			if(log.isDebugEnabled()){
-				log.debug("Invoking Method with @PostConstruct annotation");
-			}
-			invokeMethod(method, null);
-			if(log.isDebugEnabled()){
-				log.debug("Completed invoke on Method with @PostConstruct annotation");
-			}
+			invokePostConstruct(method);
 		}
 	}
+    
+    private void invokePostConstruct(Method method) throws EndpointLifecycleException {
+        if(log.isDebugEnabled()){
+            log.debug("Invoking Method with @PostConstruct annotation");
+        }
+        invokeMethod(method, null);
+        if(log.isDebugEnabled()){
+            log.debug("Completed invoke on Method with @PostConstruct annotation");
+        }
+    }
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager#invokePreDestroy()
@@ -133,15 +158,19 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
 		}
 		Method method = getPreDestroyMethod();
 		if(method != null){
-			if(log.isDebugEnabled()){
-				log.debug("Invoking Method with @PostConstruct annotation");
-			}
-			invokeMethod(method, null);
-			if(log.isDebugEnabled()){
-				log.debug("Completed invoke on Method with @PreDestroy annotation");
-			}
+			invokePreDestroy(method);
 		}
 	}
+    
+    private void invokePreDestroy(Method method) throws EndpointLifecycleException {
+        if(log.isDebugEnabled()){
+            log.debug("Invoking Method with @PreDestroy annotation");
+        }
+        invokeMethod(method, null);
+        if(log.isDebugEnabled()){
+            log.debug("Completed invoke on Method with @PreDestroy annotation");
+        }
+    }
 	
 	private void invokeMethod(Method m, Object[] params) throws EndpointLifecycleException{
 		try{
@@ -154,6 +183,9 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
 	}
 	
 	private Method getPostConstructMethod(){
+	    // REVIEW: This method should not be called in performant situations.
+        // Plus the super class methods are not being considered 
+        
 		//return Method with @PostConstruct Annotation.
 		if(endpointInstance != null){
 			Class endpointClazz = endpointInstance.getClass();
@@ -169,6 +201,8 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
 	}
 	
 	private Method getPreDestroyMethod(){
+        // REVIEW: This method should not be called in performant situations.
+        // Plus the super class methods are not being considered 
 		//return Method with @PreDestroy Annotation
 		if(endpointInstance != null){
 			Class endpointClazz = endpointInstance.getClass();
@@ -230,24 +264,8 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
 	 }
 	 
 	private void injectWebServiceContext(MessageContext mc, WebServiceContext wsContext, Object serviceInstance) throws ResourceInjectionException{
-       
-       // See if we have cached information about resource injection for this service and class
-       boolean tryInjection = true;
-       ServiceDescription serviceDesc = mc.getServiceDescription();
-       if (serviceDesc != null) {
-           ResourceInjectionServiceRuntimeDescription risrDesc = 
-               ResourceInjectionServiceRuntimeDescriptionFactory.get(serviceDesc, serviceInstance.getClass());
-           // If there are no @Resource annotations then don't bother with resource injection
-           if (risrDesc != null && !risrDesc.hasResourceAnnotation()) {
-               tryInjection = false;
-           }
-       }
-           
-       if (tryInjection) {
-           ResourceInjector ri =ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
-           ri.inject(wsContext, serviceInstance);
-       }
-		   
+       ResourceInjector ri =ResourceInjectionFactory.createResourceInjector(WebServiceContext.class);
+       ri.inject(wsContext, serviceInstance);   
 	}
 	   
 	private void updateWebServiceContext(WebServiceContext wsContext, javax.xml.ws.handler.MessageContext soapMessageContext) throws ResourceInjectionException{

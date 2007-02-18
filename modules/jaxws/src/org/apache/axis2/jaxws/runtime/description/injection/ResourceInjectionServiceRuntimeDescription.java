@@ -16,6 +16,8 @@
  */
 package org.apache.axis2.jaxws.runtime.description.injection;
 
+import java.lang.reflect.Method;
+
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 
 
@@ -28,4 +30,14 @@ public interface ResourceInjectionServiceRuntimeDescription extends ServiceRunti
     * Implementation class
     */
     boolean hasResourceAnnotation();
+    
+    /**
+     * @return Method with @PostConstruct or null
+     */
+    Method getPostConstructMethod();
+    
+    /**
+     * @return Method with @PreDestroy or null
+     */
+    Method getPreDestroyMethod();
 }

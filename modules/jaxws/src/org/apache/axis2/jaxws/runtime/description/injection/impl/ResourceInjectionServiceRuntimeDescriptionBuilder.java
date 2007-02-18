@@ -22,6 +22,8 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
 import org.apache.axis2.java.security.AccessController;
@@ -45,8 +47,16 @@ public class ResourceInjectionServiceRuntimeDescriptionBuilder {
                 Class implClass) {
         ResourceInjectionServiceRuntimeDescriptionImpl desc = 
             new ResourceInjectionServiceRuntimeDescriptionImpl(getKey(implClass), serviceDesc);
+        
         boolean value = hasResourceAnnotation(implClass);
         desc.setResourceAnnotation(value);
+        
+        Method method = getPostConstructMethod(implClass);
+        desc.setPostConstructMethod(method);
+        
+        method = getPostConstructMethod(implClass);
+        desc.setPreDestroyMethod(method);
+        
         return desc;
     }
     
@@ -74,6 +84,26 @@ public class ResourceInjectionServiceRuntimeDescriptionBuilder {
         }
         return false;
         
+    }
+    
+    static private Method getPostConstructMethod(Class implClass) {
+        List<Method> methods = getMethods(implClass);
+        for (Method method:methods) {
+            if (method.getAnnotation(PostConstruct.class) != null) {
+                return method;
+            }
+        }
+        return null;
+    }
+    
+    static private Method getPreDestoryMethod(Class implClass) {
+        List<Method> methods = getMethods(implClass);
+        for (Method method:methods) {
+            if (method.getAnnotation(PreDestroy.class) != null) {
+                return method;
+            }
+        }
+        return null;
     }
     
     /**
