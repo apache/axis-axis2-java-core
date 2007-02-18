@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.axis2.jaxws.client;
+package org.apache.axis2.jaxws.client.dispatch;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;

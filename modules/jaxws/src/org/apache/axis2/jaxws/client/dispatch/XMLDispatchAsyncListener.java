@@ -1,4 +1,4 @@
-package org.apache.axis2.jaxws.client;
+package org.apache.axis2.jaxws.client.dispatch;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;

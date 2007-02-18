@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.client;
+package org.apache.axis2.jaxws.client.dispatch;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.ws.Service.Mode;
