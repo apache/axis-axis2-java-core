@@ -136,8 +136,6 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         parentEndpointDescription = parent;
         this.dbc = dbc;
         
-//        BasicConfigurator.configure();
-        
         //TODO: yikes! ...too much redirection, consider setting this in higher level
         getEndpointDescription().getAxisService().setTargetNamespace(getEndpointDescriptionImpl().getTargetNamespace());
 		        

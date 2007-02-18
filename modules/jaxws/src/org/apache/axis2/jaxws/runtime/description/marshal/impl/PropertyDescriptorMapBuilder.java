@@ -74,16 +74,19 @@ public class PropertyDescriptorMapBuilder {
     
     /**
      * @param serviceDescription ServiceDescription
+     * @param ap ArtifactProcessor which found the artifact classes
      * @return PropertyDescriptor Map
      */
-    public static Map<Class,Map<String, PropertyDescriptorPlus>> getPropertyDescMaps(ServiceDescription serviceDesc) {
+    public static Map<Class,Map<String, PropertyDescriptorPlus>> getPropertyDescMaps(
+            ServiceDescription serviceDesc,
+            ArtifactProcessor ap) {
         Map<Class,Map<String, PropertyDescriptorPlus>> map = new HashMap<Class,Map<String, PropertyDescriptorPlus>>();
         EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
         
         // Build a set of packages from all of the endpoints
         if (endpointDescs != null) {
             for (int i=0; i< endpointDescs.length; i++) {
-                getPropertyDescMaps(endpointDescs[i], map);
+                getPropertyDescMaps(endpointDescs[i], ap, map);
             }
         }
         return map;
@@ -92,28 +95,34 @@ public class PropertyDescriptorMapBuilder {
     
     /**
      * @param endpointDesc
+     * @param ap ArtifactProcessor which found the artifact classes
      * @param map
      */
-    private static void getPropertyDescMaps(EndpointDescription endpointDesc, Map<Class,Map<String, PropertyDescriptorPlus>> map) {
+    private static void getPropertyDescMaps(EndpointDescription endpointDesc, 
+            ArtifactProcessor ap,
+            Map<Class,Map<String, PropertyDescriptorPlus>> map) {
         EndpointInterfaceDescription endpointInterfaceDesc = 
             endpointDesc.getEndpointInterfaceDescription();
         if (endpointInterfaceDesc != null) {
-            getPropertyDescMaps(endpointInterfaceDesc, map);
+            getPropertyDescMaps(endpointInterfaceDesc, ap, map);
         }
     }
     
    
     /**
      * @param endpointInterfaceDesc
+     * @param ap ArtifactProcessor which found the artifact classes
      * @param map
      */
-    private static void getPropertyDescMaps(EndpointInterfaceDescription endpointInterfaceDesc, Map<Class,Map<String, PropertyDescriptorPlus>> map) {
+    private static void getPropertyDescMaps(EndpointInterfaceDescription endpointInterfaceDesc, 
+            ArtifactProcessor ap, 
+            Map<Class,Map<String, PropertyDescriptorPlus>> map) {
         OperationDescription[] opDescs = endpointInterfaceDesc.getOperations();
         
         // Build a set of packages from all of the opertions
         if (opDescs != null) {
             for (int i=0; i< opDescs.length; i++) {
-                getPropertyDescMaps(opDescs[i], map);
+                getPropertyDescMaps(opDescs[i], ap, map);
             }
         }
     }
@@ -124,7 +133,9 @@ public class PropertyDescriptorMapBuilder {
      * @param opDesc
      * @param map
      */
-    private static void getPropertyDescMaps(OperationDescription opDesc, Map<Class,Map<String, PropertyDescriptorPlus>> map) {
+    private static void getPropertyDescMaps(OperationDescription opDesc, 
+            ArtifactProcessor ap,
+            Map<Class,Map<String, PropertyDescriptorPlus>> map) {
        
        
        // Walk the fault information
@@ -136,10 +147,14 @@ public class PropertyDescriptorMapBuilder {
        }
        
        // Also consider the request and response wrappers
-       addPropertyDesc(opDesc.getRequestWrapperClassName(), map);
-       addPropertyDesc(opDesc.getResponseWrapperClassName(), map);
-       
-      
+       String wrapperName = ap.getRequestWrapperMap().get(opDesc);
+       if (wrapperName != null) {
+           addPropertyDesc(wrapperName, map);
+       }
+       wrapperName = ap.getResponseWrapperMap().get(opDesc);
+       if (wrapperName != null) {
+           addPropertyDesc(wrapperName, map);
+       }
     }
     
     /**

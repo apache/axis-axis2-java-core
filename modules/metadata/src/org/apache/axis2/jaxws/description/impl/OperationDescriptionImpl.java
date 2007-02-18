@@ -300,6 +300,16 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         return returnString;
     }
     
+    public String getJavaDeclaringClassName() {
+        if (!isDBC() && seiMethod != null) {
+            Class clazz = seiMethod.getDeclaringClass();
+            return clazz.getCanonicalName();
+        } else if (methodComposite != null) {
+            return methodComposite.getDeclaringClass();
+        }
+        return null;
+    }
+    
     public String[] getJavaParameters() {
         
         ArrayList<String> returnParameters = new ArrayList<String>();
@@ -661,26 +671,10 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                 requestWrapperClassName = getAnnoRequestWrapper().className();
             }
             else {
-                // Not sure what the default value should be (if any).  None is listed in Sec. 7.3 on p. 80 of
-                // the JAX-WS spec, BUT Conformance(Using javax.xml.ws.RequestWrapper) in Sec 2.3.1.2 on p. 13
-                // says the entire annotation "...MAY be omitted if all its properties would have default vaules."
-                // implying there IS some sort of default.  We'll try this for now:
-                if (isDBC() && methodComposite != null) {
-                	String declaringClazz = this.methodComposite.getDeclaringClass();
-                	String packageName = declaringClazz.substring(0, declaringClazz.lastIndexOf("."));
-                    requestWrapperClassName = packageName + "." + DescriptionUtils.javaMethodtoClassName(methodComposite.getMethodName());
-                
-                } else if (!isDBC() && seiMethod != null) {
-                    Class clazz = seiMethod.getDeclaringClass();
-                    String packageName = clazz.getPackage().getName();
-                    String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
-                    requestWrapperClassName = packageName + "." + className;
-                } else {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Unable to get RequestWrapper classname");
-                    }
-                }
-                requestWrapperClassName = DescriptionUtils.determineActualAritfactPackage(requestWrapperClassName);
+                // There is no default for the RequestWrapper class name.  
+                // In such cases the programming layer (JAXWS) may use a programming spec specific
+                // mechanism to find the class, build the class, or operate without the class.
+                requestWrapperClassName = null;
             }
         }
         return requestWrapperClassName;
@@ -775,28 +769,10 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
                 responseWrapperClassName = getAnnoResponseWrapper().className();
             }
             else {
-                // Not sure what the default value should be (if any).  None is listed in Sec. 7.4 on p. 81 of
-                // the JAX-WS spec, BUT Conformance(Using javax.xml.ws.ResponseWrapper) in Sec 2.3.1.2 on p. 13
-                // says the entire annotation "...MAY be omitted if all its properties would have default vaules."
-                // implying there IS some sort of default.  We'll try this for now:
-                if (!isDBC() && seiMethod != null) {
-                    Class clazz = seiMethod.getDeclaringClass();
-                    String packageName = clazz.getPackage().getName();
-                    String className = DescriptionUtils.javaMethodtoClassName(seiMethod.getName());
-                    responseWrapperClassName = packageName + "." + className + "Response";
-                } else if (methodComposite != null) {
-                	//JAXWS Spec is not clear on what default should be added. We think its the endpoint impls package + OperationName + Response.
-                	//In situation where wsGen uses sei's package to store jaxb bean.
-                	String declaringClazz = methodComposite.getDeclaringClass();
-                	String packageName = declaringClazz.substring(0, declaringClazz.lastIndexOf("."));
-                    responseWrapperClassName = packageName + "." + DescriptionUtils.javaMethodtoClassName(methodComposite.getMethodName()) + "Response";
-                }
-                else {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Unable to get ResponseWrapper annotation class name");
-                    }
-                }
-                responseWrapperClassName = DescriptionUtils.determineActualAritfactPackage(responseWrapperClassName);
+                // There is no default for the ResponseWrapper class name.  
+                // In such cases the programming layer (JAXWS) may use a programming spec specific
+                // mechanism to find the class, build the class, or operate without the class.
+                responseWrapperClassName = null;
             }
         }
         return responseWrapperClassName;

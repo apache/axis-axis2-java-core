@@ -335,7 +335,8 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             }
             
             // Now create the single JAXB element
-            Class cls = MethodMarshallerUtils.loadClass(operationDesc.getResponseWrapperClassName());
+            String wrapperName = marshalDesc.getResponseWrapperClassName(operationDesc);
+            Class cls = MethodMarshallerUtils.loadClass(wrapperName);
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
             Object object  = wrapperTool.wrap(cls, nameList, objectList,
                     marshalDesc.getPropertyDescriptorMap(cls));
@@ -422,7 +423,8 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             }
             
             // Now create the single JAXB element 
-            Class cls = MethodMarshallerUtils.loadClass(operationDesc.getRequestWrapperClassName());
+            String wrapperName = marshalDesc.getRequestWrapperClassName(operationDesc);
+            Class cls = MethodMarshallerUtils.loadClass(wrapperName);
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
             Object object  = wrapperTool.wrap(cls, nameList, objectList,
                     marshalDesc.getPropertyDescriptorMap(cls));

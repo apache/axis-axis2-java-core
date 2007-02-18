@@ -42,6 +42,7 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
+import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.utility.JavaUtils;
@@ -132,14 +133,14 @@ public class PackageSetBuilder {
      * @param serviceDescription ServiceDescription
      * @return Set of Packages
      */
-    public static TreeSet<String> getPackagesFromAnnotations(ServiceDescription serviceDesc, Map<String, AnnotationDesc> annotationMap) {
+    public static TreeSet<String> getPackagesFromAnnotations(ServiceDescription serviceDesc, MarshalServiceRuntimeDescription msrd) {
         TreeSet<String> set = new TreeSet<String>();
         EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
         
         // Build a set of packages from all of the endpoints
         if (endpointDescs != null) {
             for (int i=0; i< endpointDescs.length; i++) {
-                set.addAll(getPackagesFromAnnotations(endpointDescs[i], annotationMap));
+                set.addAll(getPackagesFromAnnotations(endpointDescs[i], msrd));
             }
         }
         return set;
@@ -150,13 +151,13 @@ public class PackageSetBuilder {
      * @return Set of Packages
      */
     private static TreeSet<String> getPackagesFromAnnotations(EndpointDescription endpointDesc, 
-            Map<String, AnnotationDesc> annotationMap) {
+            MarshalServiceRuntimeDescription msrd) {
         EndpointInterfaceDescription endpointInterfaceDesc = 
             endpointDesc.getEndpointInterfaceDescription();
         if (endpointInterfaceDesc == null) {
             return new TreeSet<String>(); 
         } else {
-            return getPackagesFromAnnotations(endpointInterfaceDesc, annotationMap);
+            return getPackagesFromAnnotations(endpointInterfaceDesc, msrd);
         }
     }
     
@@ -165,14 +166,14 @@ public class PackageSetBuilder {
      * @return Set of Packages
      */
     private static TreeSet<String> getPackagesFromAnnotations(EndpointInterfaceDescription endpointInterfaceDesc, 
-            Map<String, AnnotationDesc> annotationMap) {
+            MarshalServiceRuntimeDescription msrd) {
         TreeSet<String> set = new TreeSet<String>();
         OperationDescription[] opDescs = endpointInterfaceDesc.getOperations();
         
         // Build a set of packages from all of the opertions
         if (opDescs != null) {
             for (int i=0; i< opDescs.length; i++) {
-                getPackagesFromAnnotations(opDescs[i], set, annotationMap);
+                getPackagesFromAnnotations(opDescs[i], set, msrd);
             }
         }
         return set;
@@ -184,13 +185,13 @@ public class PackageSetBuilder {
      * @param set Set<Package> that is updated
      */
     private static void getPackagesFromAnnotations(OperationDescription opDesc, TreeSet<String> set, 
-            Map<String, AnnotationDesc> annotationMap) {
+            MarshalServiceRuntimeDescription msrd) {
        
        // Walk the parameter information
        ParameterDescription[] parameterDescs = opDesc.getParameterDescriptions();
        if (parameterDescs != null) {
            for (int i=0; i <parameterDescs.length; i++) {
-               getPackagesFromAnnotations(parameterDescs[i], set, annotationMap);
+               getPackagesFromAnnotations(parameterDescs[i], set, msrd);
            }
        }
        
@@ -198,19 +199,19 @@ public class PackageSetBuilder {
        FaultDescription[] faultDescs = opDesc.getFaultDescriptions();
        if (faultDescs != null) {
            for (int i=0; i <faultDescs.length; i++) {
-               getPackagesFromAnnotations(faultDescs[i], set, annotationMap);
+               getPackagesFromAnnotations(faultDescs[i], set, msrd);
            }
        }
        
        // Also consider the request and response wrappers
-       String pkg = getPackageFromClassName(opDesc.getRequestWrapperClassName());
+       String pkg = getPackageFromClassName(msrd.getRequestWrapperClassName(opDesc));
        if(log.isDebugEnabled()){
     	   log.debug("Package from Request Wrapper annotation = "+ pkg);
        }
        if (pkg != null) {
            set.add(pkg);
        }
-       pkg = getPackageFromClassName(opDesc.getResponseWrapperClassName());
+       pkg = getPackageFromClassName(msrd.getResponseWrapperClassName(opDesc));
        if(log.isDebugEnabled()){
     	   log.debug("Package from Response Wrapper annotation = "+ pkg);
        }
@@ -238,13 +239,13 @@ public class PackageSetBuilder {
      * @param set Set<Package> that is updated
      */
     private static void getPackagesFromAnnotations(ParameterDescription paramDesc, TreeSet<String> set, 
-            Map<String, AnnotationDesc> annotationMap) {
+            MarshalServiceRuntimeDescription msrd) {
        
        // Get the type that defines the actual data.  (this is never a holder )
        Class paramClass = paramDesc.getParameterActualType();
        
        if (paramClass != null) {
-           setTypeAndElementPackages(paramClass, paramDesc.getTargetNamespace(), paramDesc.getPartName(), set, annotationMap);
+           setTypeAndElementPackages(paramClass, paramDesc.getTargetNamespace(), paramDesc.getPartName(), set, msrd);
        }
        
     }
@@ -255,11 +256,11 @@ public class PackageSetBuilder {
      * @param set Set<Package> that is updated
      */
     private static void getPackagesFromAnnotations(FaultDescription faultDesc, TreeSet<String> set, 
-            Map<String, AnnotationDesc> annotationMap) {
+            MarshalServiceRuntimeDescription msrd) {
       
       Class faultBean = loadClass(faultDesc.getFaultBean());  
       if (faultBean != null) {
-          setTypeAndElementPackages(faultBean, faultDesc.getTargetNamespace(), faultDesc.getName(), set, annotationMap);
+          setTypeAndElementPackages(faultBean, faultDesc.getTargetNamespace(), faultDesc.getName(), set, msrd);
       }
     }
     
@@ -271,10 +272,10 @@ public class PackageSetBuilder {
      * @param set with both type and element packages set
      */
     private static void setTypeAndElementPackages(Class cls, String namespace, String localPart, TreeSet<String> set, 
-            Map<String, AnnotationDesc> annotationMap) {
+            MarshalServiceRuntimeDescription msrd) {
         
         // Get the element and type classes
-        Class eClass = getElement(cls, annotationMap);
+        Class eClass = getElement(cls, msrd);
         Class tClass = getType(cls);
         
         // Set the package for the type
@@ -317,8 +318,8 @@ public class PackageSetBuilder {
      * @param cls Class
      * @return Class or null
      */
-    private static Class getElement(Class cls, Map<String, AnnotationDesc> annotationMap) {
-        AnnotationDesc annotationDesc = annotationMap.get(cls.getCanonicalName());
+    private static Class getElement(Class cls, MarshalServiceRuntimeDescription msrd) {
+        AnnotationDesc annotationDesc = msrd.getAnnotationDesc(cls);
         if (annotationDesc == null) {
             // This shouldn't happen
             annotationDesc = AnnotationDescImpl.create(cls);

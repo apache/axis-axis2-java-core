@@ -24,11 +24,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
 import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
@@ -36,6 +38,8 @@ import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
 import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import com.ibm.org.omg.CORBA.OperationDescription;
 
 public class MarshalServiceRuntimeDescriptionBuilder {
 
@@ -69,10 +73,20 @@ public class MarshalServiceRuntimeDescriptionBuilder {
     static private void init(MarshalServiceRuntimeDescriptionImpl marshalDesc, 
             ServiceDescription serviceDesc) {
         
-        // Build the annotation map first
+        // Artifact class discovery/builder
+        ArtifactProcessor artifactProcessor = new ArtifactProcessor(serviceDesc);
+        try {
+            artifactProcessor.build();
+        } catch (Throwable t) {
+            ExceptionFactory.makeWebServiceException(t);
+        }
+        marshalDesc.setRequestWrapperMap(artifactProcessor.getRequestWrapperMap());
+        marshalDesc.setResponseWrapperMap(artifactProcessor.getResponseWrapperMap());
+        
+        // Build the annotation map
         Map<String, AnnotationDesc> map;
         try {
-           map = AnnotationBuilder.getAnnotationDescs(serviceDesc);
+           map = AnnotationBuilder.getAnnotationDescs(serviceDesc, artifactProcessor);
         } catch(Throwable t) {
             // Since we are building a cache, proceed without exception
             if (log.isDebugEnabled()) {
@@ -83,10 +97,9 @@ public class MarshalServiceRuntimeDescriptionBuilder {
         marshalDesc.setAnnotationMap(map);
         
         // Build the property descriptor map
-        // TODO nothing is cached right now
         Map<Class, Map<String, PropertyDescriptorPlus>> cache;
         try {
-            cache = PropertyDescriptorMapBuilder.getPropertyDescMaps(serviceDesc);
+            cache = PropertyDescriptorMapBuilder.getPropertyDescMaps(serviceDesc,artifactProcessor);
         } catch (Throwable t) {
             // Since we are building a cache, proceed without exception
             if (log.isDebugEnabled()) {
@@ -112,7 +125,7 @@ public class MarshalServiceRuntimeDescriptionBuilder {
         }
         if (doAnnotationWalk) {
             // Get the package names from the annotations.  Use the annotation map to reduce Annotation introspection
-            packages.addAll(PackageSetBuilder.getPackagesFromAnnotations(serviceDesc, map));
+            packages.addAll(PackageSetBuilder.getPackagesFromAnnotations(serviceDesc, marshalDesc));
         }
         marshalDesc.setPackages(packages);
     }

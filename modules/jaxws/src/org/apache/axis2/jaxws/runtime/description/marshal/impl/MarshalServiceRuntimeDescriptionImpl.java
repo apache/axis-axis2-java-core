@@ -1,12 +1,11 @@
 package org.apache.axis2.jaxws.runtime.description.marshal.impl;
 
-import java.beans.PropertyDescriptor;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
@@ -22,6 +21,8 @@ public class MarshalServiceRuntimeDescriptionImpl implements
     private TreeSet<String> packages;
     private Map<String, AnnotationDesc> annotationMap = null;
     private Map<Class, Map<String, PropertyDescriptorPlus>> pdMapCache = null;
+    private Map<OperationDescription, String> requestWrapperMap = null;
+    private Map<OperationDescription, String> responseWrapperMap = null;
     
     protected MarshalServiceRuntimeDescriptionImpl(String key,
                 ServiceDescription serviceDesc) {
@@ -87,6 +88,22 @@ public class MarshalServiceRuntimeDescriptionImpl implements
         this.pdMapCache = cache;
     }
     
+    public String getRequestWrapperClassName(OperationDescription operationDesc) {
+        return requestWrapperMap.get(operationDesc);
+    }
+
+    void setRequestWrapperMap(Map<OperationDescription, String> map) {
+        requestWrapperMap = map;
+    }
+
+    public String getResponseWrapperClassName(OperationDescription operationDesc) {
+        return responseWrapperMap.get(operationDesc);
+    }
+    
+    void setResponseWrapperMap(Map<OperationDescription, String> map) {
+        responseWrapperMap = map;
+    }
+    
     public String toString() {
         final String newline = "\n";
         StringBuffer string = new StringBuffer();
@@ -117,4 +134,5 @@ public class MarshalServiceRuntimeDescriptionImpl implements
         
         return string.toString();
     }
+
 }

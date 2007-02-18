@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws.runtime.description.marshal;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
 
@@ -51,4 +52,17 @@ public interface MarshalServiceRuntimeDescription extends ServiceRuntimeDescript
      * @return get the cached copy or create a new one
      */
     public Map<String, PropertyDescriptorPlus> getPropertyDescriptorMap(Class cls);
+    
+    /**
+     * @param operationDesc
+     * @return specified or defaulted wrapper class name.  Always returns null if the wrapper class does not exist.
+     */
+    public String getRequestWrapperClassName(OperationDescription operationDesc);
+    
+    /**
+     * @param operationDesc
+     * @return specified or defaulted wrapper class name.  Always returns null if the wrapper class does not exist.
+     */
+    public String getResponseWrapperClassName(OperationDescription operationDesc);
+     
 }

@@ -36,11 +36,19 @@ public interface OperationDescriptionJava {
     public String getAnnoWebResultTargetNamespace();
     
     public RequestWrapper getAnnoRequestWrapper();
+    /**
+     * @return the specified value of @RequestWrapper className or null
+     * NOTE: There is no default for the classname
+     */
     public String getAnnoRequestWrapperClassName();
     public String getAnnoRequestWrapperLocalName();
     public String getAnnoRequestWrapperTargetNamespace();
     
     public ResponseWrapper getAnnoResponseWrapper();
+    /**
+     * @return the specified value of @ResponseWrapper className or null
+     * NOTE: There is no default for the classname
+     */
     public String getAnnoResponseWrapperClassName();
     public String getAnnoResponseWrapperLocalName();
     public String getAnnoResponseWrapperTargetNamespace();

@@ -67,6 +67,7 @@ public interface OperationDescription {
     public abstract AxisOperation getAxisOperation();
     
     public String getJavaMethodName();
+    public String getJavaDeclaringClassName();
     public String[] getJavaParameters();
     // TODO: Fix up the difference between getSEIMethod and getMethodFromServiceImpl when java reflection is removed.
     /**
@@ -130,10 +131,24 @@ public interface OperationDescription {
      */
     public Class getResultActualType();
     
+    /**
+     * @return the class name of the wrapper class.  
+     * NOTE: This method will return null if the request wrapper class is not known during the description layer processing.
+     * In such cases the implementation may use proprietary code to find the class.
+     * For example, JAXWS may look for a matching class in the sei package, in a special jaxws package or
+     * proceed without the class name
+     */
     public String getRequestWrapperClassName();
     public String getRequestWrapperTargetNamespace();
     public String getRequestWrapperLocalName();
 
+    /**
+     * @return the class name of the wrapper class.  
+     * NOTE: This method will return null if the request wrapper class is not known during the description layer processing.
+     * In such cases the implementation may use proprietary code to find the class.
+     * For example, JAXWS may look for a matching class in the sei package, in a special jaxws package or
+     * proceed without the class name
+     */
     public String getResponseWrapperClassName();
     public String getResponseWrapperTargetNamespace();
     public String getResponseWrapperLocalName();

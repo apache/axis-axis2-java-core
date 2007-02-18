@@ -26,10 +26,7 @@ import javax.xml.ws.WebFault;
 import junit.framework.TestCase;
 
 /**
- * Tests the request and response wrappers based on the different values used by
- * WSGen and WSImport; WSGen generates artifacts in the "jaxws" package below the
- * SEI package (which seems to be correct per JAX-WS 2.0 Spec Section 3.6.2.1) while
- * WSImport generates them in the same package of the SEI.
+ * Tests the request and response wrappers.
  */
 public class WrapperPackageTests extends TestCase {
     
@@ -37,9 +34,18 @@ public class WrapperPackageTests extends TestCase {
         EndpointInterfaceDescription eiDesc = getEndpointInterfaceDesc(SEIPackageWrapper.class);
         OperationDescription opDesc = eiDesc.getOperation("method1");
         String requestWrapperClass = opDesc.getRequestWrapperClassName();
-        assertEquals("org.apache.axis2.jaxws.description.Method1", requestWrapperClass);
+        
+        // The algorithm to find the response wrapper is not defined by the specification.
+        // The marshalling layer (jaxws) can use proprietary mechanisms to find, build or operate
+        // without the wrapper class.
+        
+        //assertEquals("org.apache.axis2.jaxws.description.Method1", requestWrapperClass);
+        assertEquals(null, requestWrapperClass);
+        
         String responseWrapperClass = opDesc.getResponseWrapperClassName();
-        assertEquals("org.apache.axis2.jaxws.description.Method1Response", responseWrapperClass);
+        //assertEquals("org.apache.axis2.jaxws.description.Method1Response", responseWrapperClass);
+        assertEquals(null, responseWrapperClass);
+        
         FaultDescription fDesc = opDesc.getFaultDescriptions()[0];
         String faultExceptionClass = fDesc.getExceptionClassName();
         assertEquals("org.apache.axis2.jaxws.description.Method1Exception", faultExceptionClass);
@@ -51,10 +57,16 @@ public class WrapperPackageTests extends TestCase {
     public void testSEISubPackageWrapper() {
         EndpointInterfaceDescription eiDesc = getEndpointInterfaceDesc(SEISubPackageWrapper.class);
         OperationDescription opDesc = eiDesc.getOperation("subPackageMethod1");
+        // The algorithm to find the response wrapper is not defined by the specification.
+        // The marshalling layer (jaxws) can use proprietary mechanisms to find, build or operate
+        // without the wrapper class.
+
         String requestWrapperClass = opDesc.getRequestWrapperClassName();
-        assertEquals("org.apache.axis2.jaxws.description.jaxws.SubPackageMethod1", requestWrapperClass);
+        //assertEquals("org.apache.axis2.jaxws.description.jaxws.SubPackageMethod1", requestWrapperClass);
+        assertEquals(null, requestWrapperClass);
         String responseWrapperClass = opDesc.getResponseWrapperClassName();
-        assertEquals("org.apache.axis2.jaxws.description.jaxws.SubPackageMethod1Response", responseWrapperClass);
+        //assertEquals("org.apache.axis2.jaxws.description.jaxws.SubPackageMethod1Response", responseWrapperClass);
+        assertEquals(null, responseWrapperClass);
         FaultDescription fDesc = opDesc.getFaultDescriptions()[0];
         String faultExceptionClass = fDesc.getExceptionClassName();
         assertEquals("org.apache.axis2.jaxws.description.SubPackageException", faultExceptionClass);

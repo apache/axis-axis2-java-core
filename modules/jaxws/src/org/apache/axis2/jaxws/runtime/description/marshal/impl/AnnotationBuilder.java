@@ -73,16 +73,18 @@ public class AnnotationBuilder {
     
     /**
      * @param serviceDescription ServiceDescription
+     * @param ap ArtifactProcessor which found/produced artifact classes
      * @return AnnotationDesc Map
      */
-    public static Map<String, AnnotationDesc> getAnnotationDescs(ServiceDescription serviceDesc) {
+    public static Map<String, AnnotationDesc> getAnnotationDescs(ServiceDescription serviceDesc, 
+            ArtifactProcessor ap) {
         Map<String, AnnotationDesc> map = new HashMap<String, AnnotationDesc>();
         EndpointDescription[] endpointDescs = serviceDesc.getEndpointDescriptions();
         
         // Build a set of packages from all of the endpoints
         if (endpointDescs != null) {
             for (int i=0; i< endpointDescs.length; i++) {
-                getAnnotationDescs(endpointDescs[i], map);
+                getAnnotationDescs(endpointDescs[i], ap, map);
             }
         }
         return map;
@@ -91,28 +93,34 @@ public class AnnotationBuilder {
     
     /**
      * @param endpointDesc
+     * @param ap ArtifactProcessor which found/produced artifact classes
      * @param map
      */
-    private static void getAnnotationDescs(EndpointDescription endpointDesc, Map<String, AnnotationDesc> map) {
+    private static void getAnnotationDescs(EndpointDescription endpointDesc, 
+            ArtifactProcessor ap, Map<String, 
+            AnnotationDesc> map) {
         EndpointInterfaceDescription endpointInterfaceDesc = 
             endpointDesc.getEndpointInterfaceDescription();
         if (endpointInterfaceDesc != null) {
-            getAnnotationDescs(endpointInterfaceDesc, map);
+            getAnnotationDescs(endpointInterfaceDesc, ap, map);
         }
     }
     
    
     /**
      * @param endpointInterfaceDesc
+     * @param ap ArtifactProcessor which found/produced artifact classes
      * @param map
      */
-    private static void getAnnotationDescs(EndpointInterfaceDescription endpointInterfaceDesc, Map<String, AnnotationDesc> map) {
+    private static void getAnnotationDescs(EndpointInterfaceDescription endpointInterfaceDesc, 
+            ArtifactProcessor ap,
+            Map<String, AnnotationDesc> map) {
         OperationDescription[] opDescs = endpointInterfaceDesc.getOperations();
         
         // Build a set of packages from all of the opertions
         if (opDescs != null) {
             for (int i=0; i< opDescs.length; i++) {
-                getAnnotationDescs(opDescs[i], map);
+                getAnnotationDescs(opDescs[i], ap, map);
             }
         }
     }
@@ -122,9 +130,12 @@ public class AnnotationBuilder {
     /**
      * Get annotations for this operation
      * @param opDesc
+     * @param ap ArtifactProcessor which found/produced artifact classes
      * @param map
      */
-    private static void getAnnotationDescs(OperationDescription opDesc, Map<String, AnnotationDesc> map) {
+    private static void getAnnotationDescs(OperationDescription opDesc, 
+            ArtifactProcessor ap,
+            Map<String, AnnotationDesc> map) {
        
        // Walk the parameter information
        ParameterDescription[] parameterDescs = opDesc.getParameterDescriptions();
@@ -143,8 +154,14 @@ public class AnnotationBuilder {
        }
        
        // Also consider the request and response wrappers
-       addAnnotation(opDesc.getRequestWrapperClassName(), map);
-       addAnnotation(opDesc.getResponseWrapperClassName(), map);
+       String wrapperName = ap.getRequestWrapperMap().get(opDesc);
+       if (wrapperName != null) {
+           addAnnotation(wrapperName, map);
+       }
+       wrapperName = ap.getResponseWrapperMap().get(opDesc);
+       if (wrapperName != null) {
+           addAnnotation(wrapperName, map);
+       }
        
        
        // Finally consider the result type
@@ -155,7 +172,8 @@ public class AnnotationBuilder {
     }
     
     
-    private static void getAnnotationDescs(ParameterDescription paramDesc, Map<String, AnnotationDesc> map) {
+    private static void getAnnotationDescs(ParameterDescription paramDesc, 
+            Map<String, AnnotationDesc> map) {
        
        // Get the type that defines the actual data.  (this is never a holder )
        Class paramClass = paramDesc.getParameterActualType();
