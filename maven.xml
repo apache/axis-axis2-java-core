@@ -63,14 +63,13 @@
     </tstamp>
 
     <!-- Test for >= JDK 1.5 to determine whether to include modules that require it -->
-
-    <ant:echo>${ant.java.version}</ant:echo>
-
-    <j:if test="${ant.java.version == '1.5'}">
-        <ant:echo>
-            JDK ${ant.java.version} detected, including the following modules:
+    <echo message="Current Java Version is: ${java.specification.version}"/>
+    <j:set var="javaVersion" value="${java.specification.version}"/>
+    <j:if test="${javaVersion == '1.5'}">
+        <echo>
+            JDK ${java.specification.version} detected, including the following modules:
             ${maven.multiproject.includes.requiresJDK15}
-        </ant:echo>
+        </echo>
         <j:set var="maven.multiproject.includes"
                value="${maven.multiproject.includes},${maven.multiproject.includes.requiresJDK15}"/>
     </j:if>
