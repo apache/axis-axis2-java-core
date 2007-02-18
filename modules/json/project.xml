@@ -163,6 +163,15 @@
                 <module>true</module>
             </properties>
         </dependency>
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>${xmlunit.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+            <url>http://www.ibiblio.org/maven/xmlunit/jars/</url>
+        </dependency>
     </dependencies>
 
     <reports/>
