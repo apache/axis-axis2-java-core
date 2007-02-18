@@ -38,7 +38,6 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.controller.AxisInvocationController;
 import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.EndpointDescription;
-import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
@@ -50,8 +49,10 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * ProxyHandler is the java.lang.reflect.InvocationHandler implementation.
- * When jaxws client calls the method on proxy object that it gets using the getPort
- * ServiceDelegate api, the Inovke method on ProxyHandler is Invoked.
+ * When a JAX-WS client calls the method on a proxy object, created by calling
+ * the ServiceDelegate.getPort(...) method, the inovke method on the ProxyHandler 
+ * is called.
+ * 
  * ProxyHandler uses EndpointInterfaceDescriptor and finds out if 
  * 1) The client call is Document Literal or Rpc Literal
  * 2) The WSDL is wrapped or unWrapped. 
@@ -76,86 +77,86 @@ import org.apache.commons.logging.LogFactory;
  * A JAXBBlock is created from the Response and the BO from JAXBBlock is
  * returned.  
  * 
- * RPCLiteral 
- * TBD
  * 
  */
 
-public class JAXWSProxyHandler extends BindingProvider implements
-		InvocationHandler {
-	private static Log log = LogFactory.getLog(JAXWSProxyHandler.class);
+public class JAXWSProxyHandler extends BindingProvider implements 
+    InvocationHandler {
+    private static Log log = LogFactory.getLog(JAXWSProxyHandler.class);
 
-	//Reference to ServiceDelegate instance that was used to create the Proxy
-	protected ServiceDescription serviceDesc = null;
+    //Reference to ServiceDelegate instance that was used to create the Proxy
+    protected ServiceDescription serviceDesc = null;
     private Class seiClazz = null;
-	private Method method = null;
+    private Method method = null;
 	
-	public JAXWSProxyHandler(ServiceDelegate delegate, Class seiClazz, EndpointDescription epDesc) {
-		super(delegate, epDesc);
+    public JAXWSProxyHandler(ServiceDelegate delegate, Class seiClazz, EndpointDescription epDesc) {
+        super(delegate, epDesc);
         
-		this.seiClazz = seiClazz;
-		this.serviceDesc = delegate.getServiceDescription();
-	}
+        this.seiClazz = seiClazz;
+        this.serviceDesc = delegate.getServiceDescription();
+    }
 	
-	/* (non-Javadoc)
-	 * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
-	 * 
+    /* (non-Javadoc)
+     * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object, java.lang.reflect.Method, java.lang.Object[])
+     *  
      * Invokes the method that was called on the java.lang.reflect.Proxy instance.
-	 */
-	public Object invoke(Object proxy, Method method, Object[] args)
-			throws Throwable {
-		boolean debug = log.isDebugEnabled();
+     */
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        boolean debug = log.isDebugEnabled();
         if (debug) {
             log.debug("Attemping to invoke Method: " + method.getName());
         }
         
-		this.method = method;
+        this.method = method;
 		
-		if(!isValidMethodCall(method)){
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr1", method.getName(), seiClazz.getName()));
-		}
+        if(!isValidMethodCall(method)){
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyErr1", method.getName(), seiClazz.getName()));
+        }
 		
-		if(!isPublic(method)){
-			throw ExceptionFactory.makeWebServiceException("Invalid Method Call, Method "+method.getName() + " not a public method"); 
-		}
+        if(!isPublic(method)){
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyPrivateMethod", method.getName())); 
+        }
 		
-		if(isBindingProviderInvoked(method)){
-			if (debug) {
-	            log.debug("Invoking a public method on the javax.xml.ws.BindingProvider interface.");
-	        }
+        if(isBindingProviderInvoked(method)){
+            // Since the JAX-WS proxy instance must also implement the javax.xml.ws.BindingProvider
+            // interface, this object must handle those invocations as well.  In that case, we'll
+            // delegate those calls to the BindingProvider object.
+            if (debug) {
+                log.debug("Invoking a public method on the javax.xml.ws.BindingProvider interface.");
+            }
             try { 
-				return method.invoke(this, args);
-			} 
+                return method.invoke(this, args);
+            } 
             catch(Throwable e) {
                 if (debug) {
-				    log.debug("An error occured while invoking the method: " + e.getMessage());
+                    log.debug("An error occured while invoking the method: " + e.getMessage());
                 }
                 throw ExceptionFactory.makeWebServiceException(e);
-			}			
-		}
-		else {
-			OperationDescription operationDesc = endpointDesc.getEndpointInterfaceDescription().getOperation(method);
-			if(isMethodExcluded(operationDesc)){
-				throw ExceptionFactory.makeWebServiceException("Invalid Method Call, Method "+method.getName() + " has been excluded using @webMethod annotation");
-			}
-			return invokeSEIMethod(method, args);
-		}
-	}
+            }			
+        }
+        else {
+            OperationDescription operationDesc = endpointDesc.getEndpointInterfaceDescription().getOperation(method);
+            if(isMethodExcluded(operationDesc)) {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyExcludedMethod", method.getName()));
+            }
+            return invokeSEIMethod(method, args);
+        }
+    }
 	
-	/*
+    /*
      * Performs the invocation of the method defined on the Service Endpoint
      * Interface.  
-	 */
+     */
     private Object invokeSEIMethod(Method method, Object[] args)throws Throwable{
-		if (log.isDebugEnabled()) {
-            log.debug("Attempting to Invoke SEI Method "+ method.getName());
+        if (log.isDebugEnabled()) {
+            log.debug("Attempting to invoke SEI Method "+ method.getName());
         }
 		
         OperationDescription operationDesc = endpointDesc.getEndpointInterfaceDescription().getOperation(method);
         
         // Create and configure the request MessageContext
-		InvocationContext requestIC = InvocationContextFactory.createInvocationContext(null);
-		MessageContext request = createRequest(method, args);
+        InvocationContext requestIC = InvocationContextFactory.createInvocationContext(null);
+        MessageContext request = createRequest(method, args);
         request.setOperationDescription(operationDesc);
         
         // Enable MTOM on the Message if the property was set on the SOAPBinding.
@@ -166,70 +167,71 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 requestMsg.setMTOMEnabled(true);
             }
         }
-        
-        // Only configure the SOAPAction if it hasn't already been
-        // set by the client.
-        //String action = operationDesc.getAction();
-        //if (action != null && requestContext.get(BindingProvider.SOAPACTION_URI_PROPERTY) == null) {
-        //    getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY, action);
-        //}
                  
         // Before we invoke, copy all of the properties from the client request
         // context to the MessageContext
+        // TODO: Add the plug point for property migration
         request.getProperties().putAll(getRequestContext());
         
-		requestIC.setRequestMessageContext(request);
-		InvocationController controller = new AxisInvocationController();
-		requestIC.setServiceClient(serviceDelegate.getServiceClient(endpointDesc.getPortQName()));
+        requestIC.setRequestMessageContext(request);
+        requestIC.setServiceClient(serviceDelegate.getServiceClient(endpointDesc.getPortQName()));
+        
+        // TODO: Change this to some form of factory so that we can change the IC to
+        // a more simple one for marshaller/unmarshaller testing.
+        InvocationController controller = new AxisInvocationController();
+        
 		
-		//check if the call is OneWay, Async or Sync
-		//if(operationDesc.isOneWay() || method.getReturnType().getName().equals("void")){
-		if(operationDesc.isOneWay()){
-			if(log.isDebugEnabled()){
-				log.debug("OneWay Call");
-			}
-			controller.invokeOneWay(requestIC);
-			
-            //Check to see if we need to maintain session state
+        // Check if the call is OneWay, Async or Sync
+        if(operationDesc.isOneWay()){
+            if(log.isDebugEnabled()){
+                log.debug("OneWay Call");
+            }
+            controller.invokeOneWay(requestIC);
+            
+            // Check to see if we need to maintain session state
             if (request.isMaintainSession()) {
-                //TODO: Need to figure out a cleaner way to make this call. 
+                //TODO: Need to figure out a cleaner way to make this call.  This could probably
+                //make use of the property migrator mentioned above.
                 setupSessionContext(requestIC.getServiceClient().getServiceContext().getProperties());
             }
-		}
+        }
 		
-		//if(method.getReturnType().isAssignableFrom(Future.class))
-		if(method.getReturnType() == Future.class){
-			if(log.isDebugEnabled()){
-				log.debug("Async Callback");
-			}
-			//Get AsyncHandler from Objects and sent that to InvokeAsync
-			AsyncHandler asyncHandler = null;
-			for(Object obj:args){
-				if(obj !=null && AsyncHandler.class.isAssignableFrom(obj.getClass())){
-					asyncHandler = (AsyncHandler)obj;
-					break;
-				}
-			}
-			if(asyncHandler == null){
-				throw ExceptionFactory.makeWebServiceException("AsynchHandler null for Async callback, Invalid AsyncHandler callback Object");
-			}
-			AsyncResponse listener = createProxyListener(args, operationDesc);
-			requestIC.setAsyncResponseListener(listener);
+        if(method.getReturnType() == Future.class){
+            if(log.isDebugEnabled()){
+                log.debug("Async Callback");
+            }
 
-	        if ((serviceDelegate.getExecutor()!= null) && (serviceDelegate.getExecutor() instanceof ExecutorService))
+            //Get AsyncHandler from Objects and sent that to InvokeAsync
+            AsyncHandler asyncHandler = null;
+            for(Object obj:args){
+                if(obj !=null && AsyncHandler.class.isAssignableFrom(obj.getClass())){
+                    asyncHandler = (AsyncHandler)obj;
+                    break;
+                }
+            }
+
+            // Don't allow the invocation to continue if the invocation requires a callback
+            // object, but none was supplied.
+            if (asyncHandler == null){
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("proxyNullCallback"));
+            }
+            AsyncResponse listener = createProxyListener(args, operationDesc);
+            requestIC.setAsyncResponseListener(listener);
+
+            if ((serviceDelegate.getExecutor()!= null) && 
+                (serviceDelegate.getExecutor() instanceof ExecutorService)) {
+                ExecutorService es = (ExecutorService) serviceDelegate.getExecutor();
+                if (es.isShutdown())
 	        {
-	            ExecutorService es = (ExecutorService) serviceDelegate.getExecutor();
-	            if (es.isShutdown())
-	            {
-	                // the executor service is shutdown and won't accept new tasks
-	                // so return an error back to the client
-	                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ExecutorShutdown"));
-	            }
+	            // the executor service is shutdown and won't accept new tasks
+	            // so return an error back to the client
+	            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ExecutorShutdown"));
 	        }
+            }
 
-			requestIC.setExecutor(serviceDelegate.getExecutor());
+            requestIC.setExecutor(serviceDelegate.getExecutor());
 				        
-	        Future<?> future = controller.invokeAsync(requestIC, asyncHandler);
+            Future<?> future = controller.invokeAsync(requestIC, asyncHandler);
 	        
             //Check to see if we need to maintain session state
             if (request.isMaintainSession()) {
@@ -237,19 +239,18 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 setupSessionContext(requestIC.getServiceClient().getServiceContext().getProperties());
             }
 	        
-	        return future;
-		}
+            return future;
+        }
 		
-		//if(method.getReturnType().isAssignableFrom(Response.class))
-		if(method.getReturnType() == Response.class){
-			if(log.isDebugEnabled()){
-				log.debug("Async Polling");
-			}
-			AsyncResponse listener = createProxyListener(args, operationDesc);
-			requestIC.setAsyncResponseListener(listener);
-			requestIC.setExecutor(serviceDelegate.getExecutor());
+        if(method.getReturnType() == Response.class){
+            if(log.isDebugEnabled()){
+                log.debug("Async Polling");
+            }
+            AsyncResponse listener = createProxyListener(args, operationDesc);
+            requestIC.setAsyncResponseListener(listener);
+            requestIC.setExecutor(serviceDelegate.getExecutor());
 	        
-			Response response = controller.invokeAsync(requestIC);
+            Response response = controller.invokeAsync(requestIC);
 			
             //Check to see if we need to maintain session state
             if (request.isMaintainSession()) {
@@ -257,11 +258,11 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 setupSessionContext(requestIC.getServiceClient().getServiceContext().getProperties());
             }
 	        
-	        return response;
-		}
+            return response;
+        }
 		
-		if(!operationDesc.isOneWay()){
-			InvocationContext responseIC = controller.invoke(requestIC);
+        if(!operationDesc.isOneWay()){
+            InvocationContext responseIC = controller.invoke(requestIC);
 		
             //Check to see if we need to maintain session state
             if (request.isMaintainSession()) {
@@ -269,12 +270,13 @@ public class JAXWSProxyHandler extends BindingProvider implements
                 setupSessionContext(requestIC.getServiceClient().getServiceContext().getProperties());
             }
 	        
-			MessageContext responseContext = responseIC.getResponseMessageContext();
-			Object responseObj = createResponse(method, args, responseContext, operationDesc);
-			return responseObj;
-		}
-		return null;
-	}
+            MessageContext responseContext = responseIC.getResponseMessageContext();
+            Object responseObj = createResponse(method, args, responseContext, operationDesc);
+            return responseObj;
+        }
+    
+        return null;
+    }
 	
 	private AsyncResponse createProxyListener(Object[] args, OperationDescription operationDesc){
 		ProxyAsyncListener listener = new ProxyAsyncListener(operationDesc);
