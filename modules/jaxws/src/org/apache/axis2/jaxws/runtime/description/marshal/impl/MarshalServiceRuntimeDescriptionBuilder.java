@@ -39,8 +39,6 @@ import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.ibm.org.omg.CORBA.OperationDescription;
-
 public class MarshalServiceRuntimeDescriptionBuilder {
 
     private static Log log = LogFactory.getLog(MarshalServiceRuntimeDescriptionBuilder.class);
