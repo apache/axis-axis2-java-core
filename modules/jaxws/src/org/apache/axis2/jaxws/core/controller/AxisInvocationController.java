@@ -22,7 +22,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.xml.namespace.QName;
@@ -30,7 +29,6 @@ import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceException;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants.Configuration;
 import org.apache.axis2.addressing.EndpointReference;
@@ -44,6 +42,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.jaxws.BindingProvider;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.client.ClientUtils;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.client.async.CallbackFuture;
 import org.apache.axis2.jaxws.client.async.PollingFuture;
@@ -77,7 +76,6 @@ import org.apache.commons.logging.LogFactory;
 public class AxisInvocationController extends InvocationController {
     
     private static Log log = LogFactory.getLog(AxisInvocationController.class);
-    private static boolean debug = log.isDebugEnabled();
     
     /*
      * (non-Javadoc)
@@ -380,7 +378,7 @@ public class AxisInvocationController extends InvocationController {
             options.setTo(toEPR);
             
             // Get the SOAP Action (if needed)
-            String soapAction = configureSOAPAction(requestMsgCtx);
+            String soapAction = ClientUtils.findSOAPAction(requestMsgCtx);
             options.setAction(soapAction);
             
             // Use the OperationClient to send the request and put the contents
@@ -400,52 +398,6 @@ public class AxisInvocationController extends InvocationController {
                 //TODO: Do something
             }
         }
-    }
-    
-    /**
-     * Returns the SOAP action that should be used for the invocation.  If the
-     * client has already set the property in the JAX-WS request context, then
-     * that value should be used.  Otherwise, we should grab it from the 
-     * operation description that was configured for the operation.
-     * 
-     * @param ctx
-     * @return
-     */
-    private String configureSOAPAction(MessageContext ctx) {
-        OperationDescription op = ctx.getOperationDescription();
-        
-        Boolean useSoapAction = (Boolean) ctx.getProperties().get(BindingProvider.SOAPACTION_USE_PROPERTY);
-        if(useSoapAction != null && useSoapAction.booleanValue()){
-            String action = (String) ctx.getProperties().get(BindingProvider.SOAPACTION_URI_PROPERTY);
-            if (action != null) {
-                if (debug) {
-                    log.debug("Setting soap action from JAX-WS request context.  Action [" + action + "]");
-                }
-                return action;
-            }
-            
-            if (op != null) {
-                action = op.getAction();
-                if (action != null) {
-                    if (debug) {
-                        log.debug("Setting soap action from operation description.  Action [" + action + "]");
-                    }
-                    return action;
-                }                
-            }
-            else {
-                if (debug) {
-                    log.debug("Cannot set the soap action.  No operation description was found.");
-                }
-            }
-        }
-        else {
-            if (debug) {
-                log.debug("Soap action usage was disabled");
-            }
-        }
-        
-        return null;
     }
     
     /**
@@ -566,7 +518,7 @@ public class AxisInvocationController extends InvocationController {
         // AxisOperation the OperationClient should be based on.
         // Note that the OperationDesc is only set through use of the Proxy. Dispatch
         // clients do not use operations, so the operationDesc will be null.  In this
-        // case an anonymous AxisService with anoymouns AxisOperations for the supported
+        // case an anonymous AxisService with anonymous AxisOperations for the supported
         // MEPs will be created; and it is that anonymous operation name which needs to
         // be specified
         QName operationName = null;
