@@ -17,7 +17,7 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 /**
  * The XMLDispatchAsyncListener is an extension of the  
- * {@link org.apache.axis2.jaxws.impl.AsyncListener} class to provide 
+ * {@link org.apache.axis2.jaxws.client.async.AsyncResponse} class to provide 
  * proper deserialization into the target format (XML String or Source).
  */
 public class XMLDispatchAsyncListener extends AsyncResponse {

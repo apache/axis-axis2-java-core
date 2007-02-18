@@ -30,7 +30,7 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
 /**
  * The JAXBDispatchAsyncListener is an extension of the  
- * {@link org.apache.axis2.jaxws.impl.AsyncListener} class to provide JAX-B
+ * {@link org.apache.axis2.jaxws.client.async.AsyncResponse} class to provide JAX-B
  * specific function when processing an async response.
  */
 public class JAXBDispatchAsyncListener extends AsyncResponse {
