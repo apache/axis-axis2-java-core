@@ -286,7 +286,10 @@ public class AxisConfiguration extends AxisDescription {
                     if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver"
                             .equals(messageReceiverClass)
                             || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
-                            .equals(messageReceiverClass) || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                            .equals(messageReceiverClass)
+                            || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                            .equals(messageReceiverClass)
+                            || "org.apache.axis2.jaxws.server.JAXWSMessageReceiver"
                             .equals(messageReceiverClass))) {
                         axisService.setWsdlFound(false);
                         return;

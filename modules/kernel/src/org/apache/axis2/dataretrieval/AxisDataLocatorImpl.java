@@ -103,7 +103,7 @@ public class AxisDataLocatorImpl implements AxisDataLocator {
 			// It is not required to define ServiceData for a Service, just log a warning message
 		
 			String message = "Check loading failure for file, " + file;
-			log.warn(message + ".Message = " + e.getMessage());
+			log.debug(message + ".Message = " + e.getMessage());
 			log.debug(message, e);
 		}
 		if (serviceData != null) {
@@ -148,4 +148,4 @@ public class AxisDataLocatorImpl implements AxisDataLocator {
 		}
 		return dataList;
 	}	
-}
+}

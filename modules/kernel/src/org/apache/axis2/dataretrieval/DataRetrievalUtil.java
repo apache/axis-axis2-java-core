@@ -90,11 +90,13 @@ public class DataRetrievalUtil {
 		if (servicexmlStream == null) {
 			String message = "File does not exist in the Service Repository! File="
 					+ file;
-			log.warn(message);
+            if(log.isDebugEnabled()) {
+                log.debug(message);
+            }
 			throw new XMLStreamException(message);
 		}
 		return servicexmlStream;
 
 	}
 
-}
+}

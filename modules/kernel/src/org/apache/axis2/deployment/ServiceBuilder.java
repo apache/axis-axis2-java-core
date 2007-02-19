@@ -443,6 +443,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                         || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
                         .equals(messageReceiverClass)
                         || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                        .equals(messageReceiverClass)
+                        || "org.apache.axis2.jaxws.server.JAXWSMessageReceiver"
                         .equals(messageReceiverClass))) {
                     return false;
                 }
@@ -473,6 +475,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                         || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
                         .equals(messageReceiverClass)
                         || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
+                        .equals(messageReceiverClass)
+                        || "org.apache.axis2.jaxws.server.JAXWSMessageReceiver"
                         .equals(messageReceiverClass))) {
                     excludeOperations.add(axisOperation.getName().getLocalPart());
                 }
