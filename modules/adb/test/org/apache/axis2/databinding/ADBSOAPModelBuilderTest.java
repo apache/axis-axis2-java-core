@@ -44,7 +44,6 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
     public void testSimpleArrayList() throws Exception {
         String expectedXML = "<?xml version='1.0' encoding='utf-8'?>" +
                 "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-                "<soapenv:Header />" +
                 "<soapenv:Body>" +
                 "<Person xmlns=\"\">" +
                 "<Name xmlns=\"\">FooOne</Name>" +
