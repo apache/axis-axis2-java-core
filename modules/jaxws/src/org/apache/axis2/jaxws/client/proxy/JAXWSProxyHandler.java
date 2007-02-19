@@ -278,69 +278,81 @@ public class JAXWSProxyHandler extends BindingProvider implements
         return null;
     }
 	
-	private AsyncResponse createProxyListener(Object[] args, OperationDescription operationDesc){
-		ProxyAsyncListener listener = new ProxyAsyncListener(operationDesc);
-		listener.setHandler(this);
-		listener.setInputArgs(args);
-		return listener;
-	}
+    private AsyncResponse createProxyListener(Object[] args, OperationDescription operationDesc){
+        ProxyAsyncListener listener = new ProxyAsyncListener(operationDesc);
+        listener.setHandler(this);
+        listener.setInputArgs(args);
+        return listener;
+    }
 	
-	protected boolean isAsync(){
-		String methodName = method.getName();
-		Class returnType = method.getReturnType();
-		return methodName.endsWith("Async") && (returnType.isAssignableFrom(Response.class) || returnType.isAssignableFrom(Future.class));
-	}
-	/**
-	 * Create request context for the method call. This request context will be used by InvocationController to route the method call to axis engine.
-	 * @param method
-	 * @param args
-	 * @return
-	 */
-	protected MessageContext createRequest(Method method, Object[] args) throws Throwable{
-		if (log.isDebugEnabled()) {
-            log.debug("Converting objects to Message");
+    protected boolean isAsync() {
+        String methodName = method.getName();
+        Class returnType = method.getReturnType();
+        return methodName.endsWith("Async") && (returnType.isAssignableFrom(Response.class) || returnType.isAssignableFrom(Future.class));
+    }
+	
+    /**
+     * Creates a request MessageContext for the method call. This request context will be 
+     * used by InvocationController to route the method call to axis engine.
+     * @param method - The method invoked on the proxy object.
+     * @param args   - The parameter list
+     * @return A MessageContext that can be used for the invocation
+     */
+    protected MessageContext createRequest(Method method, Object[] args) throws Throwable{
+        if (log.isDebugEnabled()) {
+            log.debug("Creating a new Message using the request parameters.");
         }
         
         OperationDescription operationDesc = endpointDesc.getEndpointInterfaceDescription().getOperation(method);
         
-		Message message = MethodMarshallerFactory.getMarshaller(operationDesc, true).marshalRequest(args, operationDesc);
-		
-		if (log.isDebugEnabled()) {
-            log.debug("Objects converted to Message");
+        Message message = MethodMarshallerFactory.getMarshaller(operationDesc, true).marshalRequest(args, operationDesc);
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Request Message created successfully.");
         }
-		MessageContext request = new MessageContext();
-		request.setMessage(message);
-		request.getProperties().putAll(getRequestContext());
-		if (log.isDebugEnabled()) {
-            log.debug("Request Created");
+        
+        MessageContext request = new MessageContext();
+        request.setMessage(message);
+        
+        // TODO: What happens here might be affected by the property migration plugpoint.  
+        request.getProperties().putAll(getRequestContext());
+        
+        if (log.isDebugEnabled()) {
+            log.debug("Request MessageContext created successfully.");
         }
-		return request;	
-	}
+        
+        return request;	
+    }
 	
-	/**
-	 * Creates response context for the method call. This response context will be used to create response result to the client call.
-	 * @param method
-	 * @param responseContext
-	 * @return
-	 */
-	protected Object createResponse(Method method, Object[] args, MessageContext responseContext, OperationDescription operationDesc)throws Throwable{
-		Message responseMsg = responseContext.getMessage();
+    /**    
+     * Creates a response MessageContext for the method call. This response context will be 
+     * used to create response result to the client call.
+     * @param method - The method invoked on the proxy object.
+     * @param args   - The parameter list.
+     * @param responseContext - The MessageContext to be used for the response.
+     * @param operationDesc - The OperationDescription that for the invoked method.
+     * @return
+     */
+    protected Object createResponse(Method method, Object[] args, MessageContext responseContext, OperationDescription operationDesc) throws Throwable{
+        Message responseMsg = responseContext.getMessage();     
 
-		if (log.isDebugEnabled()) {
-            log.debug("Converting Message to Response Object");
+        if (log.isDebugEnabled()) {
+            log.debug("Processing the response Message to create the return value(s).");
         }
 
+        // Find out if there was a fault on the response and create the appropriate 
+        // exception type.
         if (hasFaultResponse(responseContext)) {
             Throwable t = getFaultResponse(responseContext, operationDesc);
             throw t;
         }
         
-		Object object = MethodMarshallerFactory.getMarshaller(operationDesc, false).demarshalResponse(responseMsg, args, operationDesc);
-		if (log.isDebugEnabled()) {
-            log.debug("Message Converted to response Object");
+        Object object = MethodMarshallerFactory.getMarshaller(operationDesc, false).demarshalResponse(responseMsg, args, operationDesc);
+        if (log.isDebugEnabled()) {
+            log.debug("The response was processed and the return value created successfully.");
         }
-		return object;
-	}
+        return object;
+    }
     
     protected static Throwable getFaultResponse(MessageContext msgCtx, OperationDescription opDesc) {
         Message msg = msgCtx.getMessage();
@@ -354,8 +366,9 @@ public class JAXWSProxyHandler extends BindingProvider implements
         }
         if (msg!= null && msg.isFault()) {
             Object object = MethodMarshallerFactory.getMarshaller(opDesc, false).demarshalFaultResponse(msg, opDesc);
-            if (log.isDebugEnabled()) {
-                log.debug("Message Converted to response Throwable.  Throwing back to client.");
+            if (log.isDebugEnabled() && object != null) {
+                log.debug("A fault was found and processed.");
+                log.debug("Throwing a fault of type: " + object.getClass().getName() + " back to the clent.");
             }
             
             return (Throwable) object;
@@ -376,33 +389,32 @@ public class JAXWSProxyHandler extends BindingProvider implements
             return false;
     }
 	
-	private boolean isBindingProviderInvoked(Method method){
-		Class methodsClass = method.getDeclaringClass();
-		return (seiClazz == methodsClass)?false:true;
-	}
+    private boolean isBindingProviderInvoked(Method method){
+        Class methodsClass = method.getDeclaringClass();
+        return (seiClazz == methodsClass)?false:true;
+    }
 	
-	private boolean isValidMethodCall(Method method){
-		Class clazz = method.getDeclaringClass();
-		if(clazz.isAssignableFrom(javax.xml.ws.BindingProvider.class) || clazz.isAssignableFrom(seiClazz)){
-			return true;
-		}
-		return false;
-	}
-
+    private boolean isValidMethodCall(Method method){
+        Class clazz = method.getDeclaringClass();
+        if(clazz.isAssignableFrom(javax.xml.ws.BindingProvider.class) || clazz.isAssignableFrom(seiClazz)){
+            return true;
+        }
+        return false;
+    }
     
-	private boolean isPublic(Method method){
-		return Modifier.isPublic(method.getModifiers());
-	}
+    private boolean isPublic(Method method){
+        return Modifier.isPublic(method.getModifiers());
+    }
 	
-	private boolean isMethodExcluded(OperationDescription operationDesc){
-		return operationDesc.isExcluded();
-	}
+    private boolean isMethodExcluded(OperationDescription operationDesc){
+        return operationDesc.isExcluded();
+    }
 
-	public Class getSeiClazz() {
-		return seiClazz;
-	}
+    public Class getSeiClazz() {
+        return seiClazz;
+    }
 
-	public void setSeiClazz(Class seiClazz) {
-		this.seiClazz = seiClazz;
-	}
+    public void setSeiClazz(Class seiClazz) {
+        this.seiClazz = seiClazz;
+    }
 }
