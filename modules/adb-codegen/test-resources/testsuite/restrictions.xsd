@@ -101,5 +101,46 @@
            </xs:restriction>
     </xs:simpleType>
 
+    <xsd:complexType name="Person">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"></xsd:element>
+            <xsd:element name="age" type="xsd:int"></xsd:element>
+            <xsd:element name="hairColor">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:enumeration value="black"></xsd:enumeration>
+                        <xsd:enumeration value="brown"></xsd:enumeration>
+                        <xsd:enumeration value="blonde"></xsd:enumeration>
+                        <xsd:enumeration value="gray"></xsd:enumeration>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="birthDate" type="xsd:date"></xsd:element>
+            <xsd:element name="address" type="tns:Address" maxOccurs="1" minOccurs="0"></xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+
+    <xsd:complexType name="Address">
+        <xsd:sequence>
+            <xsd:element name="line1" type="xsd:string"></xsd:element>
+            <xsd:element name="line2" type="xsd:string" maxOccurs="1"
+                     minOccurs="0">
+            </xsd:element>
+            <xsd:element name="city" type="xsd:string"></xsd:element>
+            <xsd:element name="state" type="xsd:string"></xsd:element>
+            <xsd:element name="zip">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[A-Z]"></xsd:pattern>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="PersonElement" type="tns:Person"/>
+
 
 </xsd:schema>

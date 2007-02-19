@@ -38,7 +38,11 @@ public class Time implements java.io.Serializable {
      * component of the timestamp
      */
     private static SimpleDateFormat zulu =
-            new SimpleDateFormat("HH:mm:ss.SSSZ");
+            new SimpleDateFormat("HH:mm:ss.SSS'Z'");
+
+    static {
+        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
     /**
      * Initializes with a Calender. Year, month and date are ignored.
@@ -112,7 +116,14 @@ public class Time implements java.io.Serializable {
 
                     } else if ((rest.indexOf("+") > 0) || (rest.indexOf("-") > 0)) {
                         // this is given in a general time zione
-                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSSZ");
+                        simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSSz");
+                        if (rest.lastIndexOf("+") > 0) {
+                            source = source.substring(0, source.lastIndexOf("+")) + "GMT" +
+                                    rest.substring(rest.lastIndexOf("+"));
+                        } else if (rest.lastIndexOf("-") > 0) {
+                            source = source.substring(0, source.lastIndexOf("-")) + "GMT" +
+                                    rest.substring(rest.lastIndexOf("-"));
+                        }
                     } else {
                         // i.e it does not have time zone
                         simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
@@ -125,7 +136,8 @@ public class Time implements java.io.Serializable {
                         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                     } else if (rest.startsWith("+") || rest.startsWith("-")) {
                         // this is given in a general time zione
-                        simpleDateFormat = new SimpleDateFormat("HH:mm:ssZ");
+                        simpleDateFormat = new SimpleDateFormat("HH:mm:ssz");
+                        source = source.substring(0, 8) + "GMT" + rest;
                     } else {
                         throw new NumberFormatException("in valid time zone attribute");
                     }

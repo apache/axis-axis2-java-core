@@ -122,14 +122,16 @@ public class ConverterUtil {
 
     public static String convertToString(Date value) {
         // lexical form of the date is '-'? yyyy '-' mm '-' dd zzzzzz?
-        // we have to serialize it with the timezone
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
+        // we have to serialize it with the GMT timezone
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'Z'");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return simpleDateFormat.format(value);
     }
 
     public static String convertToString(Calendar value) {
         // lexical form of the calendar is '-'? yyyy '-' mm '-' dd 'T' hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
-        SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
         // Sun JDK bug http://developer.java.sun.com/developer/bugParade/bugs/4229798.html
         return zulu.format(value.getTime());
     }
@@ -241,7 +243,7 @@ public class ConverterUtil {
         return Integer.parseInt(s);
     }
 
-    public static BigDecimal convertToBigDecimal(String s){
+    public static BigDecimal convertToBigDecimal(String s) {
         return new BigDecimal(s);
     }
 
@@ -369,7 +371,9 @@ public class ConverterUtil {
                     simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                 } else if (restpart.startsWith("+") || restpart.startsWith("-")) {
                     // this is a specific time format string
-                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
+                    simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddz");
+                    // have to add the GMT part to process the message
+                    source = source.substring(0, 10) + "GMT" + restpart;
                 } else {
                     throw new RuntimeException("In valid string sufix");
                 }
@@ -543,9 +547,17 @@ public class ConverterUtil {
                             simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-                        } else if ((rest.indexOf("+") > 0) || (rest.indexOf("-") > 0)) {
+                        } else if ((rest.lastIndexOf("+") > 0) || (rest.lastIndexOf("-") > 0)) {
                             // this is given in a general time zione
-                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                            simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSz");
+                            if (rest.lastIndexOf("+") > 0) {
+                                source = source.substring(0, source.lastIndexOf("+")) + "GMT" +
+                                        rest.substring(rest.lastIndexOf("+"));
+                            } else if (rest.lastIndexOf("-") > 0) {
+                                source = source.substring(0, source.lastIndexOf("-")) + "GMT" +
+                                        rest.substring(rest.lastIndexOf("-"));
+                            }
+
                         } else {
                             // i.e it does not have time zone
                             simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -559,6 +571,7 @@ public class ConverterUtil {
                         } else if (rest.startsWith("+") || rest.startsWith("-")) {
                             // this is given in a general time zione
                             simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+                            source = source.substring(0, 19) + "GMT" + rest;
                         } else {
                             throw new NumberFormatException("in valid time zone attribute");
                         }

@@ -3,6 +3,7 @@ package org.apache.axis2.schema.populate.simple;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
 import java.util.Date;
+import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -40,7 +41,8 @@ public class SimpleTypeDatePopulateTest extends AbstractSimplePopulater{
     // force others to implement this method
     public void testPopulate() throws Exception {
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-ddZ");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'Z'");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         Date date = null;
 
         for (int i = 0; i < values.length; i++) {

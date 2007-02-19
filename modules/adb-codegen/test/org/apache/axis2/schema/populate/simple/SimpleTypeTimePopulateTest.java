@@ -21,7 +21,7 @@ import org.apache.axis2.databinding.utils.ConverterUtil;
 public class SimpleTypeTimePopulateTest extends AbstractSimplePopulater{
     private String values[]= {
             "13:20:00Z",
-            "23:59:59+0530",
+            "23:59:59+05:30",
             "23:59:59"
     };
     private String xmlString[] = {

@@ -1809,12 +1809,14 @@ public class SchemaCompiler {
         return typeByName;
     }
 
-    private XmlSchemaElement getReferencedElement(XmlSchema parentSchema, QName referencedQName) {
-        XmlSchemaElement refElement = parentSchema.getElementByName(referencedQName);
+    private XmlSchemaElement getReferencedElement(XmlSchema parentSchema, QName referencedQName)
+            throws SchemaCompilationException {
+        XmlSchema schema = resolveParentSchema(referencedQName,parentSchema);
+        XmlSchemaElement refElement = schema.getElementByName(referencedQName);
         if (refElement == null) {
             // The referenced element seems to come from an imported
             // schema.
-            XmlSchemaObjectCollection includes = parentSchema.getIncludes();
+            XmlSchemaObjectCollection includes = schema.getIncludes();
             if (includes != null) {
                 Iterator tempIterator = includes.getIterator();
                 while (tempIterator.hasNext()) {

@@ -3,6 +3,7 @@ package org.apache.axis2.schema.populate.simple;
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -21,8 +22,8 @@ import java.text.SimpleDateFormat;
  */
 
 public class SimpleTypeDateTimePopulateTest extends AbstractSimplePopulater{
-    private String values[] ={"2002-10-10T12:00:00+0500",
-            "2000-12-31T11:59:59-0500",
+    private String values[] ={"2002-10-10T12:00:00+05:00",
+            "2000-12-31T11:59:59-05:00",
             "2002-10-10T07:00:00Z"
     };
     private String xmlString[] = {
@@ -34,7 +35,8 @@ public class SimpleTypeDateTimePopulateTest extends AbstractSimplePopulater{
     public void testPopulate() throws Exception {
 
         Calendar calendar;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         for (int i = 0; i < values.length; i++) {
             calendar = ConverterUtil.convertToDateTime(values[i]);
             checkValue(xmlString[i],simpleDateFormat.format(calendar.getTime()));

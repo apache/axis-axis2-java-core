@@ -323,7 +323,7 @@ public class ExtensionUtility {
      *
      * @param eltSchemaType
      */
-    private static void populateClassName(XmlSchemaType eltSchemaType,
+    private static void  populateClassName(XmlSchemaType eltSchemaType,
                                           TypeMapper typeMap,
                                           String opName,
                                           XmlSchemaElement xmlSchemaElement) {

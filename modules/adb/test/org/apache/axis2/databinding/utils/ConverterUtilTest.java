@@ -90,12 +90,12 @@ public class ConverterUtilTest extends TestCase {
         System.out.println("String   ==> " + "2007-02-15T14:54:29.399");
         System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
 
-        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29+0530");
-        System.out.println("String   ==> " + "2007-02-15T14:54:29+0530");
+        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29+05:30");
+        System.out.println("String   ==> " + "2007-02-15T14:54:29+05:30");
         System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
 
-        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29.399+0530");
-        System.out.println("String   ==> " + "2007-02-15T14:54:29.399+0530");
+        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29.399+05:30");
+        System.out.println("String   ==> " + "2007-02-15T14:54:29.399+05:30");
         System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
 
         calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29Z");
@@ -106,8 +106,8 @@ public class ConverterUtilTest extends TestCase {
         System.out.println("String   ==> " + "2007-02-15T14:54:29.399Z");
         System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
 
-        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29.399-0530");
-        System.out.println("String   ==> " + "2007-02-15T14:54:29.399-0530");
+        calendar = ConverterUtil.convertToDateTime("2007-02-15T14:54:29.399-05:30");
+        System.out.println("String   ==> " + "2007-02-15T14:54:29.399-05:30");
         System.out.println("calendar ==> " + simpleDateFormat.format(calendar.getTime()));
 
 
@@ -140,8 +140,8 @@ public class ConverterUtilTest extends TestCase {
 //        System.out.println("String   ==> " + "2007-02-15+0530");
 //        System.out.println("calendar ==> " + simpleDateFormat.format(date));
 
-        date = ConverterUtil.convertToDate("2007-02-15-1230");
-        System.out.println("String   ==> " + "2007-02-15-1230");
+        date = ConverterUtil.convertToDate("2007-02-15-12:30");
+        System.out.println("String   ==> " + "2007-02-15-12:30");
         System.out.println("calendar ==> " + simpleDateFormat.format(date));
     }
 
