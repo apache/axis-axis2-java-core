@@ -452,6 +452,26 @@
             <ant:copy toDir="target/temp/war/lib">
                 <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
             </ant:copy>
+
+            <ant:copy toDir="target/temp/war/lib">
+                <ant:fileset file="modules/metadata/target/axis2-metadata-${pom.currentVersion}.jar"/>
+            </ant:copy>
+
+            <ant:copy toDir="target/temp/war/lib">
+                <ant:fileset file="modules/jaxws/target/axis2-jaxws-${pom.currentVersion}.jar"/>
+            </ant:copy>
+
+            <ant:copy toDir="target/temp/war/lib">
+                <ant:fileset file="modules/jaxws-api/target/axis2-jaxws-api-${pom.currentVersion}.jar"/>
+            </ant:copy>
+
+            <ant:copy toDir="target/temp/war/lib">
+                <ant:fileset file="modules/saaj-api/target/axis2-saaj-api-${pom.currentVersion}.jar"/>
+            </ant:copy>
+
+            <ant:copy toDir="target/temp/war/lib">
+                <ant:fileset file="modules/saaj/target/axis2-saaj-${pom.currentVersion}.jar"/>
+            </ant:copy>
         </j:if>
 
         <!-- Copy the soapmonitor jar - the servlet classes -->
