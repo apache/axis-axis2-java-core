@@ -173,8 +173,6 @@ public class SOAPConnectionImpl extends SOAPConnection {
     private SOAPMessage getSOAPMessage(org.apache.axiom.soap.SOAPEnvelope respOMSoapEnv)
             throws SOAPException {
 
-        System.err.println("####### respOMSoapEnv=" + respOMSoapEnv);
-
         // Create the basic SOAP Message
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage response = mf.createMessage();
@@ -183,38 +181,37 @@ public class SOAPConnectionImpl extends SOAPConnection {
         SOAPBody body = env.getBody();
         SOAPHeader header = env.getHeader();
 
-        //Convert all header blocks
-        for (Iterator hbIter = respOMSoapEnv.getHeader().examineAllHeaderBlocks();
-             hbIter.hasNext();) {
+        // Convert all header blocks
+		org.apache.axiom.soap.SOAPHeader header2 = respOMSoapEnv.getHeader();
+		if (header2 != null) {
+			for (Iterator hbIter = header2.examineAllHeaderBlocks(); hbIter.hasNext();) {
 
-            // Converting a single OM SOAP HeaderBlock to a SAAJ SOAP HeaderBlock
-            org.apache.axiom.soap.SOAPHeaderBlock hb =
-                    (org.apache.axiom.soap.SOAPHeaderBlock) hbIter.next();
-            final QName hbQName = hb.getQName();
-            final SOAPHeaderElement headerEle =
-                    header.addHeaderElement(env.createName(hbQName.getLocalPart(),
-                                                           hbQName.getPrefix(),
-                                                           hbQName.getNamespaceURI()));
-            for (Iterator attribIter = hb.getAllAttributes(); attribIter.hasNext();) {
-                OMAttribute attr = (OMAttribute) attribIter.next();
-                final QName attrQName = attr.getQName();
-                headerEle.addAttribute(env.createName(attrQName.getLocalPart(),
-                                                      attrQName.getPrefix(),
-                                                      attrQName.getNamespaceURI()),
-                                       attr.getAttributeValue());
-            }
-            final String role = hb.getRole();
-            if (role != null) {
-                headerEle.setActor(role);
-            }
-            headerEle.setMustUnderstand(hb.getMustUnderstand());
+				// Converting a single OM SOAP HeaderBlock to a SAAJ SOAP
+				// HeaderBlock
+				org.apache.axiom.soap.SOAPHeaderBlock hb = (org.apache.axiom.soap.SOAPHeaderBlock) hbIter
+						.next();
+				final QName hbQName = hb.getQName();
+				final SOAPHeaderElement headerEle = header.addHeaderElement(env.createName(hbQName
+						.getLocalPart(), hbQName.getPrefix(), hbQName.getNamespaceURI()));
+				for (Iterator attribIter = hb.getAllAttributes(); attribIter.hasNext();) {
+					OMAttribute attr = (OMAttribute) attribIter.next();
+					final QName attrQName = attr.getQName();
+					headerEle.addAttribute(env.createName(attrQName.getLocalPart(), attrQName
+							.getPrefix(), attrQName.getNamespaceURI()), attr.getAttributeValue());
+				}
+				final String role = hb.getRole();
+				if (role != null) {
+					headerEle.setActor(role);
+				}
+				headerEle.setMustUnderstand(hb.getMustUnderstand());
 
-            toSAAJElement(headerEle, hb, response);
-        }
+				toSAAJElement(headerEle, hb, response);
+			}
+		}
 
         // Convert the body
         toSAAJElement(body, respOMSoapEnv.getBody(), response);
-        //if there are unrefferenced attachments, add that to response
+        // if there are unrefferenced attachments, add that to response
         if(!unaccessedAttachments.isEmpty()){
         	Collection attachments = unaccessedAttachments.values();
         	Iterator attachementsIterator = attachments.iterator();
