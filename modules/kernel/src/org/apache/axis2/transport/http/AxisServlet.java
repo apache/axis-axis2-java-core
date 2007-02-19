@@ -649,6 +649,10 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (requestURI.indexOf("rest") != -1) {
             requestURI = requestURI.replaceFirst("rest", configContext.getServiceContextPath());
         }
+        String query =  req.getQueryString();
+        if (query != null) {
+            requestURI = requestURI + "?" + query;
+        }
         msgContext.setTo(new EndpointReference(requestURI));
         msgContext.setFrom(new EndpointReference(req.getRemoteAddr()));
         msgContext.setProperty(MessageContext.REMOTE_ADDR, req.getRemoteAddr());
