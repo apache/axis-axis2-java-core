@@ -36,6 +36,7 @@ import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.FaultDescription;
+import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
@@ -86,29 +87,6 @@ class LegacyExceptionUtil {
      */
     private LegacyExceptionUtil() {}
     
-    /**
-     * A compliant exception has a @WebFault annotation and a getFaultInfo method.
-     * Legacy exceptions do not.
-     * @param cls
-     * @return true if legacy exception
-     * REVIEW perhaps this detection should be in FaultDescription
-     */
-    static boolean isLegacyException(Class cls) {
-        boolean legacyException = false;
-        
-        try {
-            Method getFaultInfo = cls.getMethod("getFaultInfo", null);
-        } catch (Exception e) {
-            // Failure indicates that this is not a legacy exception
-            legacyException = true;
-        }
-        if (legacyException) {
-            if (log.isDebugEnabled()) {
-                log.debug("Detected Legacy Exception = " + cls);
-            }
-        }
-        return legacyException;
-    }
     
     /**
      * Create a FaultBean populated with the data from the Exception t
@@ -127,7 +105,8 @@ class LegacyExceptionUtil {
             // REVIEW The default name should be:
             //      Package = <SEI package> or <SEI package>.jaxws
             //      Name = <exception name> + Bean
-            String faultBeanName = fd.getFaultBean();
+            FaultBeanDesc faultBeanDesc = marshalDesc.getFaultBeanDesc(fd);
+            String faultBeanName = faultBeanDesc.getFaultBeanClassName();
             
             // TODO Add check that faultBeanName is correct
             if (log.isDebugEnabled()) {

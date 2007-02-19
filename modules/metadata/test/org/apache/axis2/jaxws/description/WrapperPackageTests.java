@@ -71,7 +71,9 @@ public class WrapperPackageTests extends TestCase {
         String faultExceptionClass = fDesc.getExceptionClassName();
         assertEquals("org.apache.axis2.jaxws.description.SubPackageException", faultExceptionClass);
         String faultBeanClass = fDesc.getFaultBean();
-        assertEquals("org.apache.axis2.jaxws.description.jaxws.SubPackageExceptionBean", faultBeanClass);
+        // Due to the missing getFaultInfo, the runtime must find or build a fault bean.
+        assertEquals("", faultBeanClass);
+        //assertEquals("org.apache.axis2.jaxws.description.jaxws.SubPackageExceptionBean", faultBeanClass);
 
     }
     

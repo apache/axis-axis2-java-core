@@ -42,9 +42,11 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
+import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
+import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.axis2.jaxws.utility.JavaUtils;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
 import org.apache.axis2.jaxws.wsdl.SchemaReader;
@@ -258,9 +260,11 @@ public class PackageSetBuilder {
     private static void getPackagesFromAnnotations(FaultDescription faultDesc, TreeSet<String> set, 
             MarshalServiceRuntimeDescription msrd) {
       
-      Class faultBean = loadClass(faultDesc.getFaultBean());  
+      FaultBeanDesc faultBeanDesc = msrd.getFaultBeanDesc(faultDesc);
+      String faultBeanName = faultBeanDesc.getFaultBeanClassName();
+      Class faultBean = loadClass(faultBeanName);  
       if (faultBean != null) {
-          setTypeAndElementPackages(faultBean, faultDesc.getTargetNamespace(), faultDesc.getName(), set, msrd);
+          setTypeAndElementPackages(faultBean, faultBeanDesc.getFaultBeanNamespace(), faultBeanDesc.getFaultBeanLocalName(), set, msrd);
       }
     }
     
@@ -386,9 +390,12 @@ public class PackageSetBuilder {
             return null;
         }
         try {
-            
-            return forName(className, true, 
-                   getContextClassLoader());
+            // Class.forName does not support primitives
+            Class cls = ClassUtils.getPrimitiveClass(className); 
+            if (cls == null) {
+                cls = Class.forName(className, true, getContextClassLoader());   
+            } 
+            return cls;
 	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
 	        //does not extend Exception, so lets catch everything that extends Throwable
             //rather than just Exception.
@@ -438,8 +445,13 @@ public class PackageSetBuilder {
            cl = (Class) AccessController.doPrivileged(
                    new PrivilegedExceptionAction() {
                        public Object run() throws ClassNotFoundException {
-                           return Class.forName(className, initialize, classloader);    
-                       }
+                           // Class.forName does not support primitives
+                           Class cls = ClassUtils.getPrimitiveClass(className); 
+                           if (cls == null) {
+                               cls = Class.forName(className, initialize, classloader);   
+                           } 
+                           return cls;
+                           }
                    }
                  );  
        } catch (PrivilegedActionException e) {

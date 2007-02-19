@@ -5,9 +5,11 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
+import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
@@ -23,6 +25,7 @@ public class MarshalServiceRuntimeDescriptionImpl implements
     private Map<Class, Map<String, PropertyDescriptorPlus>> pdMapCache = null;
     private Map<OperationDescription, String> requestWrapperMap = null;
     private Map<OperationDescription, String> responseWrapperMap = null;
+    private Map<FaultDescription, FaultBeanDesc> faultBeanDescMap = null;
     
     protected MarshalServiceRuntimeDescriptionImpl(String key,
                 ServiceDescription serviceDesc) {
@@ -104,14 +107,24 @@ public class MarshalServiceRuntimeDescriptionImpl implements
         responseWrapperMap = map;
     }
     
+    public FaultBeanDesc getFaultBeanDesc(FaultDescription faultDesc) {
+        return faultBeanDescMap.get(faultDesc);
+    }
+    
+    void setFaultBeanDescMap(Map<FaultDescription, FaultBeanDesc> map) {
+        faultBeanDescMap = map;
+    }
+    
     public String toString() {
         final String newline = "\n";
+        final String sameline = " ";
         StringBuffer string = new StringBuffer();
         
         string.append(newline);
         string.append("  MarshalServiceRuntime:" + getKey());
         string.append(newline);
         string.append("    Packages = " + getPackages().toString());
+        
         for(Entry<String, AnnotationDesc> entry: this.annotationMap.entrySet()) {
             string.append(newline);
             string.append("    AnnotationDesc cached for:" + entry.getKey());
@@ -131,6 +144,29 @@ public class MarshalServiceRuntimeDescriptionImpl implements
                 string.append(newline);
             }
         }
+        
+        string.append("    RequestWrappers");
+        for(Entry<OperationDescription, String> entry: this.requestWrapperMap.entrySet()) {
+            string.append(newline);
+            string.append("    Operation:" + entry.getKey().getJavaMethodName() +
+                    " RequestWrapper:" + entry.getValue());
+        }
+        
+        string.append("    ResponseWrappers");
+        for(Entry<OperationDescription, String> entry: this.responseWrapperMap.entrySet()) {
+            string.append(newline);
+            string.append("    Operation:" + entry.getKey().getJavaMethodName() +
+                    " ResponseWrapper:" + entry.getValue());
+        }
+        
+        string.append("    FaultBeanDesc");
+        for(Entry<FaultDescription, FaultBeanDesc> entry: this.faultBeanDescMap.entrySet()) {
+            string.append(newline);
+            string.append("    FaultException:" + entry.getKey().getExceptionClassName());
+            string.append(newline);
+            string.append(entry.getValue().toString());
+        }
+        
         
         return string.toString();
     }

@@ -80,6 +80,7 @@ public class MarshalServiceRuntimeDescriptionBuilder {
         }
         marshalDesc.setRequestWrapperMap(artifactProcessor.getRequestWrapperMap());
         marshalDesc.setResponseWrapperMap(artifactProcessor.getResponseWrapperMap());
+        marshalDesc.setFaultBeanDescMap(artifactProcessor.getFaultBeanDescMap());
         
         // Build the annotation map
         Map<String, AnnotationDesc> map;

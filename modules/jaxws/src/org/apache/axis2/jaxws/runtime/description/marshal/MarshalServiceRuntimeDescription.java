@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws.runtime.description.marshal;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
@@ -64,5 +65,11 @@ public interface MarshalServiceRuntimeDescription extends ServiceRuntimeDescript
      * @return specified or defaulted wrapper class name.  Always returns null if the wrapper class does not exist.
      */
     public String getResponseWrapperClassName(OperationDescription operationDesc);
-     
+  
+    /**
+     * @param faultDesc
+     * @return FaultBeanDescriptor that describes the fault bean
+     */
+    public FaultBeanDesc getFaultBeanDesc(FaultDescription faultDesc);
+
 }

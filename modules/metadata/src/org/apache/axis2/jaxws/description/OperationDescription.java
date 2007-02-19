@@ -59,7 +59,6 @@ public interface OperationDescription {
     public EndpointInterfaceDescription getEndpointInterfaceDescription();
     public FaultDescription[] getFaultDescriptions();
     public FaultDescription resolveFaultByExceptionName(String exceptionClassName);
-    public FaultDescription resolveFaultByFaultBeanName(String faultBeanName);
     public ParameterDescription getParameterDescription(int parameterNumber);
     public ParameterDescription getParameterDescription(String parameterName);
     public ParameterDescription[] getParameterDescriptions();

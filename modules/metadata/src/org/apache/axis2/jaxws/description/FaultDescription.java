@@ -42,17 +42,44 @@ package org.apache.axis2.jaxws.description;
  *         
  *  </pre>       
  */
+/**
+ * @author scheu
+ *
+ */
 public interface FaultDescription {
     public OperationDescription getOperationDescription();
     
     
+    
     /**
-     * @return the name of the JAXB type defined in the schema for this exception.  Note that this is usually
-     * a bean, but it could also be a java primitive
+     * @return the name of the exception class
+     */
+    public String getExceptionClassName();
+    
+    /**
+     * @return the class that is provided via the getFaultInfo method. "" is returned if the exception 
+     * class does not provide a getFaultInfo method (such exceptions are considered non-compliant by JAX-WS).
+     */
+    public String getFaultInfo();
+    
+    /**
+     * @return the name of the JAXB class defined in the schema for this exception.  Note that this is usually
+     * a bean, but it could also be a java primitive.  If not defined, the getFaultInfo type is returned.
+     * 
+     * NOTE For non-compliant exceptions, the getFaultInfo information is not availabled.  In these cases,
+     * a "" is returned.  The runtime (JAXWS) may use other information to locate and/or build the faultbean
      */
     public String getFaultBean();
+    
+    /**
+     * @return the element localname (for the JAXB class) corresponding to this exception. "" if not defined.
+     */
     public String getName();
+    
+    /**
+     * @return the element targetNamespace (for the JAXB class) corresponding to this exception. "" if not defined.
+     */
     public String getTargetNamespace();
-    public String getExceptionClassName();
+   
     
 }

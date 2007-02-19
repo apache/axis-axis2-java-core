@@ -43,6 +43,7 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
+import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.utility.ClassUtils;
@@ -142,7 +143,7 @@ public class PropertyDescriptorMapBuilder {
        FaultDescription[] faultDescs = opDesc.getFaultDescriptions();
        if (faultDescs != null) {
            for (int i=0; i <faultDescs.length; i++) {
-               getPropertyDescMaps(faultDescs[i], map);
+               getPropertyDescMaps(faultDescs[i], ap, map);
            }
        }
        
@@ -161,11 +162,14 @@ public class PropertyDescriptorMapBuilder {
      * @param opDesc
      * @param map
      */
-    private static void getPropertyDescMaps(FaultDescription faultDesc, Map<Class,Map<String, PropertyDescriptorPlus>> map) {
+    private static void getPropertyDescMaps(FaultDescription faultDesc, 
+            ArtifactProcessor ap, 
+            Map<Class,Map<String, PropertyDescriptorPlus>> map) {
         // TODO The property descriptors for legacy exceptions and the corresponding fault beans could be cached at this point.
         String faultDescExceptionName = faultDesc.getExceptionClassName();
         Class faultDescException = loadClass(faultDescExceptionName);
-        if (faultDescException != null && isLegacyException(faultDescException)) {
+        if (faultDescException != null && 
+                (faultDesc.getFaultInfo() == null || faultDesc.getFaultInfo().length() == 0)) {
             
             // For legacy exceptions, the fault bean is a "wrapper class" that has the same properties
             // as the exception.  To marshal an exception:
@@ -181,7 +185,8 @@ public class PropertyDescriptorMapBuilder {
             
             // To accomplish the above marshalling and unmarshalling we need the property descriptor maps
             // for the exception and the bean.
-            String faultDescBeanName = faultDesc.getFaultBean();
+            FaultBeanDesc faultBeanDesc = ap.getFaultBeanDescMap().get(faultDesc);
+            String faultDescBeanName = faultBeanDesc.getFaultBeanClassName();
             Class faultDescBean = loadClass(faultDescBeanName);
             if (faultDescBean != null) {
                 addPropertyDesc(faultDescBeanName, map);
@@ -245,7 +250,12 @@ public class PropertyDescriptorMapBuilder {
            cl = (Class) AccessController.doPrivileged(
                    new PrivilegedExceptionAction() {
                        public Object run() throws ClassNotFoundException {
-                           return Class.forName(className, initialize, classloader);    
+                           // Class.forName does not support primitives
+                           Class cls = ClassUtils.getPrimitiveClass(className); 
+                           if (cls == null) {
+                               cls = Class.forName(className, initialize, classloader);   
+                           } 
+                           return cls;
                        }
                    }
                  );  
@@ -281,29 +291,5 @@ public class PropertyDescriptorMapBuilder {
        }
        
        return cl;
-   }
-   
-   /**
-    * A compliant exception has a @WebFault annotation and a getFaultInfo method.
-    * Legacy exceptions do not.
-    * @param cls
-    * @return true if legacy exception
-    * REVIEW perhaps this detection should be in FaultDescription
-    */
-   static boolean isLegacyException(Class cls) {
-       boolean legacyException = false;
-       
-       try {
-           Method getFaultInfo = cls.getMethod("getFaultInfo", null);
-       } catch (Exception e) {
-           // Failure indicates that this is not a legacy exception
-           legacyException = true;
-       }
-       if (legacyException) {
-           if (log.isDebugEnabled()) {
-               log.debug("Detected Legacy Exception = " + cls);
-           }
-       }
-       return legacyException;
    }
 }

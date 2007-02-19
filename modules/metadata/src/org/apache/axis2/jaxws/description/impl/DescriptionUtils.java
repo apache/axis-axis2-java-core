@@ -49,21 +49,6 @@ class DescriptionUtils {
     static boolean isEmpty(QName qname) {
         return qname == null || isEmpty(qname.getLocalPart());
     }
-
-    /**
-     * Creat a java class name given a java method name (i.e. capitalize the first letter)
-     * @param name
-     * @return
-     */
-    static String javaMethodtoClassName(String methodName) {
-        String className = null;
-        if(methodName != null){
-            StringBuffer buildClassName = new StringBuffer(methodName);
-            buildClassName.replace(0, 1, methodName.substring(0,1).toUpperCase());
-            className = buildClassName.toString();
-        }
-        return className;
-    }
     
 	/**
 	 * @return Returns TRUE if we find just one WebMethod Annotation with exclude flag
@@ -238,61 +223,6 @@ class DescriptionUtils {
         return protocol + "://" + sb.toString() + "/";
     }
     
-    static Class loadClass(String className)throws ClassNotFoundException {
-        // Don't make this public, its a security exposure
-        return forName(className, true, getContextClassLoader());
-    }
-    
-    /**
-     * Return the class for this name
-     * @return Class
-     */
-    static Class forName(final String className, final boolean initialize, final ClassLoader classloader) throws ClassNotFoundException {
-        // NOTE: This method must remain protected because it uses AccessController
-        Class cl = null;
-        try {
-            cl = (Class) AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            return Class.forName(className, initialize, classloader);    
-                        }
-                    }
-                  );  
-        } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-            }
-            throw (ClassNotFoundException) e.getException();
-        } 
-        
-        return cl;
-    }
-    
-    /**
-     * @return ClassLoader
-     */
-    static ClassLoader getContextClassLoader() {
-        // NOTE: This method must remain private because it uses AccessController
-        ClassLoader cl = null;
-        try {
-            cl = (ClassLoader) AccessController.doPrivileged(
-                    new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            return Thread.currentThread().getContextClassLoader();      
-                        }
-                    }
-                  );  
-        } catch (PrivilegedActionException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Exception thrown from AccessController: " + e);
-            }
-            throw (RuntimeException) e.getException();
-        }
-        
-        return cl;
-    }
-    
-    
     /**
      * Determines whether a method should have an OperationDescription created for it
      * based on the name. This is a convenience method to allow us to exlude methods
@@ -307,55 +237,4 @@ class DescriptionUtils {
     	return true;
     }
 
-    /**
-     * Determine the actual packager name for the generated artifacts by trying to load the class from one of two
-     * packages.  This is necessary because the RI implementations of WSGen and WSImport generate the artifacts 
-     * in different packages:
-     * - WSImport generates the artifacts in the same package as the SEI
-     * - WSGen generates the artifacts in a "jaxws" sub package under the SEI package.
-     * Note that from reading the JAX-WS spec, it seems that WSGen is doing that correctly; See
-     * the conformance requirement in JAX-WS 2.0 Spec Section 3.6.2.1 Document Wrapped on page 36:
-     *     Conformance (Default wrapper bean package): In the absence of customizations, the wrapper beans package
-     *     MUST be a generated jaxws subpackage of the SEI package.
-     *                         ^^^^^^^^^^^^^^^^
-     * @param requestWrapperClassName
-     * @return
-     */
-    static final String JAXWS_SUBPACKAGE = "jaxws";
-    static String determineActualAritfactPackage(String wrapperClassName) {
-        String returnWrapperClassName = null;
-        if (wrapperClassName == null) {
-            return returnWrapperClassName;
-        }
-    
-        // Try to load the class that was passed in
-        try {
-            loadClass(wrapperClassName);
-            returnWrapperClassName = wrapperClassName;
-        }
-        catch (ClassNotFoundException e) {
-            // Couldn't load the class; we'll try another one below.
-        }
-    
-        // If the original class couldn't be loaded, try adding ".jaxws." to the package
-        if (returnWrapperClassName == null) {
-            String originalPackage = getJavaPackageName(wrapperClassName);
-            if (originalPackage != null) {
-                String alternatePackage = originalPackage + "." + DescriptionUtils.JAXWS_SUBPACKAGE;
-                String className = getSimpleJavaClassName(wrapperClassName);
-                String alternateWrapperClass = alternatePackage + "." + className;
-                try {
-                    loadClass(alternateWrapperClass);
-                    returnWrapperClassName = alternateWrapperClass;
-                }
-                catch (ClassNotFoundException e) {
-                    // Couldn't load the class
-                }
-            }
-        }
-
-        return returnWrapperClassName;
-    }
-
-    
 }

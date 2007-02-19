@@ -43,6 +43,7 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
+import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.axis2.jaxws.util.WSDLWrapper;
 import org.apache.axis2.jaxws.utility.ClassUtils;
@@ -149,7 +150,7 @@ public class AnnotationBuilder {
        FaultDescription[] faultDescs = opDesc.getFaultDescriptions();
        if (faultDescs != null) {
            for (int i=0; i <faultDescs.length; i++) {
-               getAnnotationDescs(faultDescs[i], map);
+               getAnnotationDescs(faultDescs[i], ap, map);
            }
        }
        
@@ -189,9 +190,11 @@ public class AnnotationBuilder {
      * @param faultDesc FaultDescription
      * @param set Set<Package> that is updated
      */
-    private static void getAnnotationDescs(FaultDescription faultDesc, Map<String, AnnotationDesc> map) {
-      
-      Class faultBean = loadClass(faultDesc.getFaultBean());  
+    private static void getAnnotationDescs(FaultDescription faultDesc, 
+            ArtifactProcessor ap,
+            Map<String, AnnotationDesc> map) {
+      FaultBeanDesc faultBeanDesc = ap.getFaultBeanDescMap().get(faultDesc);
+      Class faultBean = loadClass(faultBeanDesc.getFaultBeanClassName());  
       if (faultBean != null) {
           getTypeAnnotationDescs(faultBean, map);
       }
@@ -289,7 +292,12 @@ public class AnnotationBuilder {
            cl = (Class) AccessController.doPrivileged(
                    new PrivilegedExceptionAction() {
                        public Object run() throws ClassNotFoundException {
-                           return Class.forName(className, initialize, classloader);    
+                           // Class.forName does not support primitives
+                           Class cls = ClassUtils.getPrimitiveClass(className); 
+                           if (cls == null) {
+                               cls = Class.forName(className, initialize, classloader);   
+                           } 
+                           return cls;
                        }
                    }
                  );  

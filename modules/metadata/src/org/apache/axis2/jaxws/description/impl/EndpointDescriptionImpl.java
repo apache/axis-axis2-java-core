@@ -17,6 +17,8 @@
 package org.apache.axis2.jaxws.description.impl;
 
 import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -448,8 +450,8 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     			else { 
     				try {
     					// TODO: Using Class forName() is probably not the best long-term way to get the SEI class from the annotation
-    					seiClass = DescriptionUtils.forName(seiClassName, false, 
-                                DescriptionUtils.getContextClassLoader());
+    					seiClass = forName(seiClassName, false, 
+                                getContextClassLoader());
     			    // Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
     			    // does not extend Exception, so lets catch everything that extends Throwable
                     // rather than just Exception.
@@ -1448,6 +1450,55 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
             }
     	}
     	return wsdlComposite;
+    }
+    
+    /**
+     * Return the class for this name
+     * @return Class
+     */
+    private static Class forName(final String className, final boolean initialize, final ClassLoader classloader) throws ClassNotFoundException {
+        // NOTE: This method must remain protected because it uses AccessController
+        Class cl = null;
+        try {
+            cl = (Class) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Class.forName(className, initialize, classloader);    
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw (ClassNotFoundException) e.getException();
+        } 
+        
+        return cl;
+    }
+    
+    /**
+     * @return ClassLoader
+     */
+    private static ClassLoader getContextClassLoader() {
+        // NOTE: This method must remain private because it uses AccessController
+        ClassLoader cl = null;
+        try {
+            cl = (ClassLoader) AccessController.doPrivileged(
+                    new PrivilegedExceptionAction() {
+                        public Object run() throws ClassNotFoundException {
+                            return Thread.currentThread().getContextClassLoader();      
+                        }
+                    }
+                  );  
+        } catch (PrivilegedActionException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Exception thrown from AccessController: " + e);
+            }
+            throw (RuntimeException) e.getException();
+        }
+        
+        return cl;
     }
     
     public String toString() {

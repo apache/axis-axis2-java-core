@@ -59,6 +59,7 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescriptionFactory;
 import org.apache.axis2.jaxws.utility.ClassUtils;
@@ -526,7 +527,9 @@ public class MethodMarshallerUtils  {
                 // the legacy exception rules (B).
                 Object faultBeanObject = null;
                 
-                if (LegacyExceptionUtil.isLegacyException(t.getClass())) {
+                FaultBeanDesc faultBeanDesc = marshalDesc.getFaultBeanDesc(fd);
+                String faultInfo = fd.getFaultInfo();
+                if (faultInfo == null || faultInfo.length() == 0) {
                     // Legacy Exception case
                     faultBeanObject = LegacyExceptionUtil.createFaultBean(t, fd, marshalDesc);
                 } else {
@@ -540,7 +543,7 @@ public class MethodMarshallerUtils  {
                     log.debug("The faultBean type is" + faultBeanObject.getClass().getName());
                 }
                 
-                QName faultBeanQName = new QName(fd.getTargetNamespace(), fd.getName());
+                QName faultBeanQName = new QName(faultBeanDesc.getFaultBeanNamespace(), faultBeanDesc.getFaultBeanLocalName());
                 // Make sure the faultBeanObject can be marshalled as an element
                 if (!marshalDesc.getAnnotationDesc(faultBeanObject.getClass()).hasXmlRootElement()) {
                     faultBeanObject = new JAXBElement(faultBeanQName, faultBeanObject.getClass(), faultBeanObject);
@@ -705,7 +708,9 @@ public class MethodMarshallerUtils  {
         if (elementQName != null) {
             for(int i=0; i<operationDesc.getFaultDescriptions().length && faultDesc == null; i++) {
                 FaultDescription fd = operationDesc.getFaultDescriptions()[i];
-                QName tryQName = new QName(fd.getTargetNamespace(), fd.getName());
+                FaultBeanDesc faultBeanDesc = marshalDesc.getFaultBeanDesc(fd);
+                QName tryQName = new QName(faultBeanDesc.getFaultBeanNamespace(), 
+                                           faultBeanDesc.getFaultBeanLocalName());
                 if (log.isErrorEnabled()) {
                     log.debug("  FaultDescription qname is (" + tryQName + ") and detail element qname is (" + elementQName + ")");
                 }
@@ -719,7 +724,8 @@ public class MethodMarshallerUtils  {
             // If not found and RPC, retry the search using just the local name
             for(int i=0; i<operationDesc.getFaultDescriptions().length && faultDesc == null; i++) {
                 FaultDescription fd = operationDesc.getFaultDescriptions()[i];
-                String tryName = fd.getName();
+                FaultBeanDesc faultBeanDesc = marshalDesc.getFaultBeanDesc(fd);
+                String tryName = faultBeanDesc.getFaultBeanLocalName();
                 if (elementQName.getLocalPart().equals(tryName)) {
                     faultDesc = fd;
                 }
@@ -735,11 +741,14 @@ public class MethodMarshallerUtils  {
             if (log.isErrorEnabled()) {
                 log.debug("Ready to demarshal service exception.  The detail entry name is " + elementQName);
             }
+            FaultBeanDesc faultBeanDesc = marshalDesc.getFaultBeanDesc(faultDesc);
+            boolean isLegacy = (faultDesc.getFaultInfo() == null || faultDesc.getFaultInfo().length() == 0);
+            
             // Get the JAXB object from the block
             JAXBBlockContext blockContext = new JAXBBlockContext(marshalDesc.getPackages());        
             
             // Note that faultBean may not be a bean, it could be a primitive 
-            Class faultBeanFormalClass = loadClass(faultDesc.getFaultBean());     
+            Class faultBeanFormalClass = loadClass(faultBeanDesc.getFaultBeanClassName());     
             if (isRPC) {
                 // RPC is problem ! 
                 // Since RPC is type based, JAXB needs the declared type
@@ -771,7 +780,8 @@ public class MethodMarshallerUtils  {
                     exceptionClass, 
                     faultBeanObject, 
                     faultBeanFormalClass, 
-                    marshalDesc);
+                    marshalDesc, 
+                    isLegacy);
         }
         return exception;
     }
@@ -840,7 +850,12 @@ public class MethodMarshallerUtils  {
             cl = (Class) AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws ClassNotFoundException {
-                            return Class.forName(className, initialize, classLoader);    
+                            // Class.forName does not support primitives
+                            Class cls = ClassUtils.getPrimitiveClass(className); 
+                            if (cls == null) {
+                                cls = Class.forName(className, initialize, classLoader);   
+                            } 
+                            return cls;                        
                         }
                     }
                   );  
@@ -895,13 +910,14 @@ public class MethodMarshallerUtils  {
             Class exceptionclass, 
             Object bean, 
             Class beanFormalType, 
-            MarshalServiceRuntimeDescription marshalDesc) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
+            MarshalServiceRuntimeDescription marshalDesc,
+            boolean isLegacyException) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
         
         if (log.isDebugEnabled()) {
             log.debug("Constructing JAX-WS Exception:" + exceptionclass);
         }
         Exception exception = null;
-        if (LegacyExceptionUtil.isLegacyException(exceptionclass)) {
+        if (isLegacyException) {
             // Legacy Exception
             exception = LegacyExceptionUtil.createFaultException(exceptionclass, bean, marshalDesc);
         } else {

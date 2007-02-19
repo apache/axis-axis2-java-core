@@ -694,7 +694,12 @@ public class JAXBUtils {
             cl = (Class) AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws ClassNotFoundException {
-                            return Class.forName(className, initialize, classloader);    
+                            // Class.forName does not support primitives
+                            Class cls = ClassUtils.getPrimitiveClass(className); 
+                            if (cls == null) {
+                                cls = Class.forName(className, initialize, classloader);   
+                            } 
+                            return cls;
                         }
                     }
                   );  

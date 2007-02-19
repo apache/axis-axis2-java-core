@@ -801,16 +801,6 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         return faultDescriptions;
     }
     
-    public FaultDescription resolveFaultByFaultBeanName(String faultBeanName) {
-        if (faultDescriptions != null) {
-            for(FaultDescription fd: faultDescriptions) {
-                if (faultBeanName.equals(fd.getFaultBean()))
-                    return fd;
-            }
-        }
-        return null;
-    }
-    
     public FaultDescription resolveFaultByExceptionName(String exceptionClassName) {
         if (faultDescriptions != null) {
             for(FaultDescription fd: faultDescriptions) {
@@ -1448,6 +1438,8 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         string.append(sameline);
         string.append("Response Wrapper class: " + getResponseWrapperClassName());
         //
+        string.append(newline);
+        string.append("Java declaring class name: " + getJavaDeclaringClassName());
         string.append(newline);
         string.append("Java method name: " + getJavaMethodName());
         string.append(newline);

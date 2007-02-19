@@ -51,6 +51,7 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
     private String name = "";  // WebFault.name
     private String faultBean = "";  // WebFault.faultBean
     private String targetNamespace = ""; // WebFault.targetNamespace
+    private String faultInfo = null;
     
     private static final String FAULT = "Fault";
 
@@ -88,6 +89,40 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         return annotation;
     }
 
+    public String getExceptionClassName() {
+        if (!isDBC()) {
+            // no need for defaults here.  The exceptionClass stored in this
+            // FaultDescription object is one that has been declared to be
+            // thrown from the service method
+            return exceptionClass.getCanonicalName();
+        } else {
+            return composite.getClassName();
+        }
+    }
+    
+    public String getFaultInfo() {
+        if (faultInfo != null) {
+            return faultInfo;
+        }
+        if (!isDBC()) {
+            try {
+                Method method = exceptionClass.getMethod("getFaultInfo", null);
+                faultInfo = method.getReturnType().getCanonicalName();
+            } catch (Exception e) {
+                // This must be a legacy exception
+                faultInfo = "";
+            } 
+        } else {
+            MethodDescriptionComposite mdc = 
+                composite.getMethodDescriptionComposite("getFaultInfo", 1);
+            if (mdc != null) {
+                faultInfo = mdc.getReturnType();
+            } else {
+                faultInfo = "";
+            }
+        }
+        return faultInfo;
+    }
     
     public String getFaultBean() {
         if (faultBean != null && faultBean.length() > 0) {
@@ -102,40 +137,12 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
                 annotation.faultBean().length() > 0) {
                 faultBean = annotation.faultBean();
             } else {
-                // We don't have a faultBean. Try looking at the getFaultInfo method.
-                if (!isDBC()) {
-                    try {
-                        Method method = exceptionClass.getMethod("getFaultInfo", null);
-                        faultBean = method.getReturnType().getCanonicalName();
-                    } catch (Exception e) {
-                        // This must be a legacy exception
-                    }
-                }  else {
-                    MethodDescriptionComposite mdc = 
-                        composite.getMethodDescriptionComposite("getFaultInfo", 1);
-                    if (mdc != null) {
-                        faultBean = mdc.getReturnType();
-                    }
-                }
+                // There is no default.  But it seems reasonable to return
+                // the fault info type.
+                faultBean = getFaultInfo();
                 
-                // Still not found, this must be a non-compliant exception.
-                // Use the JAX-WS chap 3.7 algorithm
-                if (faultBean != null && faultBean.length() <= 0) {
-                    String simpleName = getSimpleName(getExceptionClassName()) + "Bean";
-                    String packageName = null;
-                    if (!isDBC()) {
-                        Class clazz = getOperationDescription().getSEIMethod().getDeclaringClass();
-                        packageName = clazz.getPackage().getName();
-                    } else {
-                        // Similar algorithm as the OperationDesc RequestWrapper and ResponseWrapper
-                        String declaringClazz = ((OperationDescriptionImpl )getOperationDescription()).getMethodDescriptionComposite().getDeclaringClass();
-                        packageName = declaringClazz.substring(0, declaringClazz.lastIndexOf("."));
-                    }
-                    faultBean = packageName + "." + simpleName;
-                    
-                    // The following call adjusts the package name if necessary
-                    faultBean = DescriptionUtils.determineActualAritfactPackage(faultBean);
-                }
+                // The faultBean still may be "" at this point.  The JAXWS runtime
+                // is responsible for finding/buildin a representative fault bean.
             }
         }
         return faultBean;
@@ -151,16 +158,8 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
                 annotation.name().length() > 0) {
                 name = annotation.name();
             } else {
-                // The default is the name on the @XmlRootElement of the FaultBean since this
-                // is what is flowed over the wire.
-                try {
-                    Class clazz = DescriptionUtils.loadClass(getFaultBean());
-                    XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
-                    name = root.name();
-                } catch (Exception e) {
-                    // All else fails use the faultBean name
-                    name = getSimpleName(getFaultBean());
-                }
+                // The default is undefined.
+                // The JAX-WS layer may use the fault bean information to determine the name
             }
         }
         return name;
@@ -176,30 +175,14 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
                 annotation.targetNamespace().length() > 0) {
                 targetNamespace = annotation.targetNamespace();
             } else {
-                // The default is the namespace on the @XmlRootElement of the FaultBean since this
-                // is what is flowed over the wire.
-                try {
-                    Class clazz = DescriptionUtils.loadClass(getFaultBean());
-                    targetNamespace = getXmlRootElementQName(clazz).getNamespaceURI();
-                } catch (Exception e) {
-                    // All else fails use the faultBean to calculate a namespace
-                    targetNamespace = makeNamespace(getFaultBean());
-                }
+                // The default is undefined
+                // The JAX-WS layer may use the fault bean information to determine the name
             }
         }
         return targetNamespace;
     }
 
-    public String getExceptionClassName() {
-    	if (!isDBC()) {
-    		// no need for defaults here.  The exceptionClass stored in this
-    		// FaultDescription object is one that has been declared to be
-    		// thrown from the service method
-    		return exceptionClass.getCanonicalName();
-    	} else {
-    		return composite.getClassName();
-    	}
-    }
+    
 
     public OperationDescription getOperationDescription() {
         return parent;
@@ -225,33 +208,6 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         return out;
     }
     
-    private static String makeNamespace(String packageAndClassname) {
-        if (packageAndClassname == null || packageAndClassname.length() == 0) {
-            return null;
-        }
-        StringTokenizer tokenizer = new StringTokenizer(packageAndClassname, ".");
-        String[] tokens;
-        if (tokenizer.countTokens() == 0) {
-            tokens = new String[0];
-        } else {
-            // -1 to skip the classname
-            tokens = new String[tokenizer.countTokens()-1];
-            // -2 to skip the classname
-            for (int i=tokenizer.countTokens()-2; i >= 0; i--) {
-                tokens[i] = tokenizer.nextToken();
-            }
-        }
-        StringBuffer namespace = new StringBuffer("http://");
-        String dot = "";
-        for (int i=0; i<tokens.length; i++) {
-            if (i==1)
-                dot = ".";
-            namespace.append(dot+tokens[i]);
-        }
-        namespace.append('/');
-        return namespace.toString();
-    }
-    
     private boolean isDBC() {
     	if (this.composite != null)
     		return true;
@@ -264,42 +220,20 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         final String sameline = "; ";
         StringBuffer string = new StringBuffer();
 
+        
         string.append(super.toString());
+        string.append(newline);
+        string.append("Exception class: " + getExceptionClassName());
         string.append(newline);
         string.append("Name: " + getName());
         string.append(newline);
-        string.append("Fault Bean: " + getFaultBean());
+        string.append("Namespace: " + getName());
         string.append(newline);
-        string.append("Exception class: " + getExceptionClassName());
+        string.append("FaultBean: " + getFaultBean());
+        string.append(newline);
+        string.append("FaultInfo Type Name  : " + getFaultInfo());
+        
         
         return string.toString();
-    }
-    
-    /**
-     * @param clazz
-     * @return namespace of root element qname or null if this is not object does not represent a root element
-     */
-    static QName getXmlRootElementQName(Class clazz){
-            
-        // See if the object represents a root element
-        XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
-        if (root == null) {
-            return null;
-        }
-        
-        String namespace = root.namespace();
-        String localPart = root.name();
-        
-        // The namespace may need to be defaulted
-        if (namespace == null || namespace.length() == 0 || namespace.equals("##default")) {
-            Package pkg = clazz.getPackage();
-            XmlSchema schema = (XmlSchema) pkg.getAnnotation(XmlSchema.class);
-            if (schema != null) {
-                namespace = schema.namespace();
-            } else {
-                return null;
-            }
-        }
-        return new QName(namespace, localPart);
     }
 }

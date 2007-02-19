@@ -22,9 +22,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.axis2.java.security.AccessController;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
+import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
+import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,7 +48,8 @@ class ArtifactProcessor {
     private ServiceDescription serviceDesc;
     private Map<OperationDescription, String> requestWrapperMap = new HashMap<OperationDescription, String> ();
     private Map<OperationDescription, String> responseWrapperMap = new HashMap<OperationDescription, String> ();
-
+    private Map<FaultDescription, FaultBeanDesc> faultBeanDescMap = new HashMap<FaultDescription, FaultBeanDesc>();
+    
     /**
      * Artifact Processor
      * @param serviceDesc
@@ -58,6 +64,10 @@ class ArtifactProcessor {
 
     Map<OperationDescription, String> getResponseWrapperMap() {
         return responseWrapperMap;
+    }
+    
+    Map<FaultDescription, FaultBeanDesc> getFaultBeanDescMap() {
+        return faultBeanDescMap;
     }
     
     void build() {
@@ -110,10 +120,93 @@ class ArtifactProcessor {
                         responseWrapperMap.put(opDesc, foundResponseWrapperName);
                     }
                     
-                    
+                    for (FaultDescription faultDesc: opDesc.getFaultDescriptions()) {
+                        FaultBeanDesc faultBeanDesc = create(faultDesc, opDesc);
+                        faultBeanDescMap.put(faultDesc, faultBeanDesc);
+                    }
                 }
             }
         }
+    }
+    
+    private FaultBeanDesc create(FaultDescription faultDesc, OperationDescription opDesc) {
+        /* FaultBeanClass algorithm
+         *   1) The class defined on @WebFault of the exception
+         *   2) If not present or invalid, the class defined by getFaultInfo.
+         *   3) If not present, the class is found by looking for the
+         *      a class named <exceptionName>Bean in the interface's package.
+         *   4) If not present, the class is found by looking for the
+         *      a class named <exceptionName>Bean in the interface + jaxws package
+         */
+        String faultBeanClassName = faultDesc.getFaultBean();
+        if (faultBeanClassName == null || faultBeanClassName.length() == 0) {
+            faultBeanClassName = faultDesc.getFaultInfo();
+        }
+        if (faultBeanClassName == null || faultBeanClassName.length() == 0) {
+            String declaringClassName = opDesc.getJavaDeclaringClassName();
+            String packageName = getPackageName(declaringClassName);
+            String simpleName = getSimpleClassName(faultDesc.getExceptionClassName());
+            if (packageName.length() > 0) {
+                faultBeanClassName = packageName + "." + simpleName + "Bean";
+            } else {
+                faultBeanClassName = simpleName + "Bean";
+            }
+        }
+        String foundClassName  = findArtifact(faultBeanClassName);
+        if (foundClassName == null) {
+            faultBeanClassName = missingArtifact(faultBeanClassName);
+        }
+        
+        /* Local NameAlgorithm:
+         *   1) The name defined on the @WebFault of the exception.
+         *   2) If not present, the name defined via the @XmlRootElement of the fault bean class.
+         *   3) If not present, the <exceptionName>Bean
+         */
+        String faultBeanLocalName = faultDesc.getName();
+        if (faultBeanLocalName == null || faultBeanLocalName.length() == 0) {
+            if (faultBeanClassName != null && faultBeanClassName.length() > 0) {
+                try {
+                    Class faultBean = loadClass(faultBeanClassName);
+                    AnnotationDesc aDesc = AnnotationDescImpl.create(faultBean);
+                    if (aDesc.hasXmlRootElement()) {
+                        faultBeanLocalName = aDesc.getXmlRootElementName();
+                    }
+                } catch (Throwable t) {
+                    ExceptionFactory.makeWebServiceException(t);
+                }
+            }
+        }
+        if (faultBeanLocalName == null || faultBeanLocalName.length() == 0) {
+            faultBeanLocalName = getSimpleClassName(faultDesc.getExceptionClassName()) + "Bean";
+        }
+        
+        /* Algorithm for fault bean namespace
+         *   1) The namespace defined on the @WebFault of the exception.
+         *   2) If not present, the namespace defined via the @XmlRootElement of the class name.
+         *   3) If not present, the namespace of the method's declared class + "/jaxws"
+         */
+        String faultBeanNamespace = faultDesc.getTargetNamespace();
+        if (faultBeanNamespace == null || faultBeanNamespace.length() == 0) {
+            if (faultBeanClassName != null && faultBeanClassName.length() > 0) {
+                try {
+                    Class faultBean = loadClass(faultBeanClassName);
+                    AnnotationDesc aDesc = AnnotationDescImpl.create(faultBean);
+                    if (aDesc.hasXmlRootElement()) {
+                        faultBeanNamespace = aDesc.getXmlRootElementNamespace();
+                    }
+                } catch (Throwable t) {
+                    ExceptionFactory.makeWebServiceException(t);
+                }
+            }
+        }
+        if (faultBeanNamespace == null || faultBeanNamespace.length() == 0) {
+            faultBeanNamespace = opDesc.getEndpointInterfaceDescription().getTargetNamespace();
+        }
+        
+        return new FaultBeanDescImpl(
+                faultBeanClassName,
+                faultBeanLocalName,
+                faultBeanNamespace);
     }
     
     /**
@@ -236,7 +329,12 @@ class ArtifactProcessor {
             cl = (Class) AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws ClassNotFoundException {
-                            return Class.forName(className, initialize, classloader);    
+                            // Class.forName does not support primitives
+                            Class cls = ClassUtils.getPrimitiveClass(className); 
+                            if (cls == null) {
+                                cls = Class.forName(className, initialize, classloader);   
+                            } 
+                            return cls;
                         }
                     }
                   );  
