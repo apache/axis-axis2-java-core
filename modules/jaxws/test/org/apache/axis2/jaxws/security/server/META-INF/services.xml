@@ -4,7 +4,10 @@
    <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out" class="org.apache.axis2.jaxws.server.JAXWSMessageReceiver"/>
   </messageReceivers>
   <parameter locked="false" name="ServiceClass">org.apache.axis2.jaxws.security.server.SecurityProvider</parameter>
-  <operation name="invoke" mep="http://www.w3.org/2004/08/wsdl/in-out">
+  <excludeOperations>
+     <operation>invoke</operation>
+  </excludeOperations>
+  <operation name="invokeOp" mep="http://www.w3.org/2004/08/wsdl/in-out">
     <actionMapping/>
   </operation>
  </service>

@@ -60,7 +60,7 @@ public class SoapMessageProvider implements Provider<SOAPMessage> {
     // These constants are referenced by the SoapMessageProviderTest and SoapMessageProvider
     public static String RESPONSE_NAME = "ReturnType";
     public static String RESPONSE_DATA_NAME = "return_str";
-    public static String REQUEST_NAME = "invoke";
+    public static String REQUEST_NAME = "invokeOp";
     public static String REQUEST_DATA_NAME = "invoke_str";
     
     public static String XML_REQUEST              = "xml request";

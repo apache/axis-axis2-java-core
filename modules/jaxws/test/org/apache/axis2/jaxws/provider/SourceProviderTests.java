@@ -63,7 +63,7 @@ public class SourceProviderTests extends ProviderTestCase {
         
         // Force soap action because we are passing junk over the wire
         dispatch.getRequestContext().put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
-        dispatch.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY,"invoke");
+        dispatch.getRequestContext().put(BindingProvider.SOAPACTION_URI_PROPERTY,"test");
         
         return dispatch;
         
@@ -97,7 +97,7 @@ public class SourceProviderTests extends ProviderTestCase {
         
         Dispatch<Source> dispatch = getDispatch();
         
-        String request = "<invoke>hello world</invoke>";
+        String request = "<test>hello world</test>";
         Source requestSource = getSource(request);
         Source responseSource = dispatch.invoke(requestSource);
         String response = getString(responseSource);
@@ -219,7 +219,7 @@ public class SourceProviderTests extends ProviderTestCase {
         
         Dispatch<Source> dispatch = getDispatch();
         
-        String request = "<invoke>throwWebServiceException</invoke>";
+        String request = "<test>throwWebServiceException</test>";
         try {
             Source requestSource = getSource(request);
             Source responseSource = dispatch.invoke(requestSource);

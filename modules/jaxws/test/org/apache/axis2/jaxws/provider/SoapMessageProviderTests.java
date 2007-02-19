@@ -55,31 +55,31 @@ public class SoapMessageProviderTests extends ProviderTestCase {
     
     private String reqMsgEnd = "</soap:Body></soap:Envelope>";
    
-    private String XML_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
+    private String XML_INVOKE = "<ns2:invokeOp xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
         SoapMessageProvider.XML_REQUEST +
-        "</invoke_str></ns2:invoke>";
-    private String EMPTYBODY_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
+        "</invoke_str></ns2:invokeOp>";
+    private String EMPTYBODY_INVOKE = "<ns2:invokeOp xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
         SoapMessageProvider.XML_EMPTYBODY_REQUEST +
-        "</invoke_str></ns2:invoke>";
-    private String ATTACHMENT_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
+        "</invoke_str></ns2:invokeOp>";
+    private String ATTACHMENT_INVOKE = "<ns2:invokeOp xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
         SoapMessageProvider.XML_ATTACHMENT_REQUEST +
-        "</invoke_str></ns2:invoke>";
-    private String MTOM_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
+        "</invoke_str></ns2:invokeOp>";
+    private String MTOM_INVOKE = "<ns2:invokeOp xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
         SoapMessageProvider.XML_MTOM_REQUEST +
         "</invoke_str>" + 
         SoapMessageProvider.MTOM_REF +
-        "</ns2:invoke>";
-    private String SWAREF_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
+        "</ns2:invokeOp>";
+    private String SWAREF_INVOKE = "<ns2:invokeOp xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
         SoapMessageProvider.XML_SWAREF_REQUEST +
         "</invoke_str>" + 
         SoapMessageProvider.SWAREF_REF +
-        "</ns2:invoke>";   
-    private String XML_FAULT_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
+        "</ns2:invokeOp>";   
+    private String XML_FAULT_INVOKE = "<ns2:invokeOp xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
     SoapMessageProvider.XML_FAULT_REQUEST +
-    "</invoke_str></ns2:invoke>";
-    private String XML_WSE_INVOKE = "<ns2:invoke xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
+    "</invoke_str></ns2:invokeOp>";
+    private String XML_WSE_INVOKE = "<ns2:invokeOp xmlns:ns2=\"http://org.test.soapmessage\"><invoke_str>" + 
     SoapMessageProvider.XML_WSE_REQUEST +
-    "</invoke_str></ns2:invoke>";
+    "</invoke_str></ns2:invokeOp>";
                 
     
     protected void setUp() throws Exception {

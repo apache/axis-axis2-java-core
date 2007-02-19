@@ -23,7 +23,7 @@ import javax.xml.ws.Service;
 public class StringMessageProviderTests extends ProviderTestCase {
 
     String endpointUrl = "http://localhost:8080/axis2/services/StringMessageProviderService";
-    String xmlString = "<invoke>test input</invoke>";
+    String xmlString = "<test>test input</test>";
     private QName serviceName = new QName("http://ws.apache.org/axis2", "StringMessageProviderService");
 
     protected void setUp() throws Exception {
