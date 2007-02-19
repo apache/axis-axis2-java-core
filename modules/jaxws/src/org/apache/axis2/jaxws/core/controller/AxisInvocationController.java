@@ -430,13 +430,12 @@ public class AxisInvocationController extends InvocationController {
     }
     
     private void configureAsyncListener(OperationClient client, org.apache.axis2.context.MessageContext mc) {
-    	if (log.isDebugEnabled()) {
-        	log.debug("Enabling asynchronous message exchange.  An asynchronous listener will be establish.");
-		}
+        if (log.isDebugEnabled()) {
+    	    log.debug("Enabling asynchronous message exchange.  An asynchronous listener will be establish.");
+    	}
     
         client.getOptions().setUseSeparateListener(true);
-        client.getOptions().setTransportInProtocol("http");
-
+        
         //FIXME: This has to be here so the ThreadContextMigrator can pick it up.
         //This should go away once AXIS2-978 is fixed.
         mc.getOptions().setUseSeparateListener(true);
