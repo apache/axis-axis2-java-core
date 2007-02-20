@@ -157,6 +157,7 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
     options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
     options.setAction(operationName.getLocalPart());
     options.setUseSeparateListener(true);
+    options.setTimeOutInMilliSeconds(50000);
     
     ConfigurationContext configContext = UtilServer.createClientConfigurationContext();
     
