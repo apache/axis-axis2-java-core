@@ -16,6 +16,13 @@
 
 package org.apache.axis2.handlers.addressing;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -38,18 +45,10 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 public class AddressingOutHandler extends AbstractHandler implements AddressingConstants {
 
@@ -118,7 +117,6 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
         // if there is no soap header in the envelope being processed, add one.
         if (soapHeader == null) {
-//            SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() : OMAbstractFactory.getSOAP12Factory();
             soapHeader = factory.createSOAPHeader(envelope);
         }
 
@@ -374,6 +372,10 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         String anonymous = isFinalAddressingNamespace ?
                 Final.WSA_ANONYMOUS_URL : Submission.WSA_ANONYMOUS_URL;
 
+        if(log.isTraceEnabled()){
+        	log.trace("addToSOAPHeader: epr="+epr+" headerName="+headerName);
+        }
+        
         if (epr == null) {
             if (!includeOptionalHeaders && isFinalAddressingNamespace &&
                 AddressingConstants.WSA_REPLY_TO.equals(headerName)) {
@@ -455,6 +457,9 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             OMElement addressingHeader = envelope.getHeader().getFirstChildWithName(qname);
     
             if (addressingHeader != null && replaceHeaders) {
+            	if(log.isTraceEnabled()){
+            		log.trace("isAddressingHeaderAlreadyAvailable: Removing existing header:"+addressingHeader.getLocalName());
+            	}
                 addressingHeader.detach();
             }
             else {
@@ -478,8 +483,11 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             List headers = envelope.getHeader().getHeaderBlocksWithNSURI(addressingNamespaceObject.getNamespaceURI());
 
             for (int i = 0, size = headers.size(); i < size; i++) {
-                SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headers.get(i);
+            	SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headers.get(i);
                 soapHeaderBlock.setMustUnderstand(true);  
+                if(log.isTraceEnabled()){
+            		log.trace("processMustUnderstandProperty: Setting mustUnderstand=true on: "+soapHeaderBlock.getLocalName());
+            	}
             }
         }
     }
