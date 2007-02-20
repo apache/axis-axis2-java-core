@@ -2080,67 +2080,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @param policy
      */
     private void addPolicy(AxisDescription description,
-                           String originOfExtensibilityElements, Policy policy) {
-
-        if (description instanceof AxisService) {
-            // wsdl:service
-            if (SERVICE.equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyElement(
-                        PolicyInclude.SERVICE_POLICY, policy);
-
-                // wsdl:service -> wsdl:port
-            } else if (PORT.equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyElement(
-                        PolicyInclude.PORT_POLICY, policy);
-
-                // wsdl:binding
-            } else if (BINDING.equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyElement(
-                        PolicyInclude.BINDING_POLICY, policy);
-
-            }
-
-            // TODO wsdl:portType ?
-
-        } else if (description instanceof AxisOperation) {
-
-            // wsdl:portType -> wsdl:operation
-            if (PORT_TYPE_OPERATION.equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyElement(
-                        PolicyInclude.OPERATION_POLICY, policy);
-
-                // wsdl:binding -> wsdl:operation
-            } else {
-                description.getPolicyInclude().addPolicyElement(
-                        PolicyInclude.BINDING_OPERATION_POLICY, policy);
-            }
-
-        } else {
-
-            // wsdl:portType -> wsdl:operation -> wsdl:input
-            if (PORT_TYPE_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyElement(
-                        PolicyInclude.INPUT_POLICY, policy);
-
-                // wsdl:binding -> wsdl:operation -> wsdl:input
-            } else if (BINDING_OPERATION_INPUT
-                    .equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyElement(
-                        PolicyInclude.BINDING_INPUT_POLICY, policy);
-
-                // wsdl:portType -> wsdl:operation -> wsdl:put
-            } else if (PORT_TYPE_OPERATION_OUTPUT
-                    .equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyElement(
-                        PolicyInclude.OUTPUT_POLICY, policy);
-
-                // wsdl:binding -> wsdl:operation -> wsdl:output
-            } else if (BINDING_OPERATION_OUTPUT
-                    .equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyElement(
-                        PolicyInclude.BINDING_OUTPUT_POLICY, policy);
-            }
-        }
+    		String originOfExtensibilityElements, Policy policy) {
+    	int attachmentScope = getPolicyAttachmentPoint(description, originOfExtensibilityElements);
+    	if(attachmentScope > -1){
+    		description.getPolicyInclude().addPolicyElement(
+    				attachmentScope, policy);
+    	}
     }
 
     /**
@@ -2153,67 +2098,59 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private void addPolicyRef(AxisDescription description,
                               String originOfExtensibilityElements,
                               PolicyReference policyRefElement) {
-
-        if (description instanceof AxisService) {
+    	int attachmentScope = getPolicyAttachmentPoint(description, originOfExtensibilityElements);
+    	if(attachmentScope > -1){
+    		description.getPolicyInclude().addPolicyRefElement(
+                    attachmentScope, policyRefElement);
+    	}
+    }
+    
+    private int getPolicyAttachmentPoint(AxisDescription description,
+    		String originOfExtensibilityElements) {
+    	int result = -1; // Attachment Point Not Identified
+    	if (description instanceof AxisService) {
             // wsdl:service
-            if (SERVICE.equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyRefElement(
-                        PolicyInclude.SERVICE_POLICY, policyRefElement);
-
-                // wsdl:service -> wsdl:port
-            } else if (PORT.equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyRefElement(
-                        PolicyInclude.PORT_POLICY, policyRefElement);
-
-                // wsdl:binding
-            } else if (BINDING.equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyRefElement(
-                        PolicyInclude.BINDING_POLICY, policyRefElement);
-            }
-
-            // TODO policy for wsdl:portType ?
-
-        } else if (description instanceof AxisOperation) {
-
+    		if (SERVICE.equals(originOfExtensibilityElements)) {
+    			result = PolicyInclude.SERVICE_POLICY;
+            // wsdl:service -> wsdl:port
+    		} else if (PORT.equals(originOfExtensibilityElements)) {
+    			result =PolicyInclude.PORT_POLICY;
+            // wsdl:binding
+    		} else if (BINDING.equals(originOfExtensibilityElements)) {
+    			result = PolicyInclude.BINDING_POLICY;
+    		}
+    	    // TODO policy for wsdl:portType ?
+    	} else if (description instanceof AxisOperation) {
             // wsdl:portType -> wsdl:operation
-            if (PORT_TYPE_OPERATION.equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyRefElement(
-                        PolicyInclude.OPERATION_POLICY, policyRefElement);
-
-                // wsdl:binding -> wsdl:operation
-            } else {
-                description.getPolicyInclude().addPolicyRefElement(
-                        PolicyInclude.BINDING_POLICY, policyRefElement);
-            }
-
-        } else {
-
+    		if (PORT_TYPE_OPERATION.equals(originOfExtensibilityElements)) {
+    			result = PolicyInclude.OPERATION_POLICY;
+            // wsdl:binding -> wsdl:operation
+    		} else {
+    			result = PolicyInclude.BINDING_POLICY;
+    		} 
+    	} else {
             // wsdl:portType -> wsdl:operation -> wsdl:input
-            if (PORT_TYPE_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyRefElement(
-                        PolicyInclude.INPUT_POLICY, policyRefElement);
-
-                // wsdl:binding -> wsdl:operation -> wsdl:input
-            } else if (BINDING_OPERATION_INPUT
-                    .equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyRefElement(
-                        PolicyInclude.BINDING_INPUT_POLICY, policyRefElement);
-
-                // wsdl:portType -> wsdl:operation -> wsdl:put
-            } else if (PORT_TYPE_OPERATION_OUTPUT
-                    .equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyRefElement(
-                        PolicyInclude.OUTPUT_POLICY, policyRefElement);
-
-                // wsdl:binding -> wsdl:operation -> wsdl:output
-            } else if (BINDING_OPERATION_OUTPUT
-                    .equals(originOfExtensibilityElements)) {
-                description.getPolicyInclude().addPolicyRefElement(
-                        PolicyInclude.BINDING_OUTPUT_POLICY, policyRefElement);
-            }
-
-            // TODO Faults ..
-        }
+    		if (PORT_TYPE_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
+    			result = PolicyInclude.INPUT_POLICY;
+            // wsdl:binding -> wsdl:operation -> wsdl:input
+    		} else if (BINDING_OPERATION_INPUT
+    				.equals(originOfExtensibilityElements)) {
+    			result = PolicyInclude.BINDING_INPUT_POLICY;
+            // wsdl:portType -> wsdl:operation -> wsdl:put
+    		} else if (PORT_TYPE_OPERATION_OUTPUT
+    				.equals(originOfExtensibilityElements)) {
+    			result = PolicyInclude.OUTPUT_POLICY;
+            // wsdl:binding -> wsdl:operation -> wsdl:output
+    		} else if (BINDING_OPERATION_OUTPUT
+    				.equals(originOfExtensibilityElements)) {
+    			result = PolicyInclude.BINDING_OUTPUT_POLICY;
+    		}
+        // TODO Faults ..
+    	}
+    	if(isTraceEnabled){
+    		log.trace("getPolicyAttachmentPoint:: axisDescription="+description+" extensibilityPoint="+originOfExtensibilityElements+" result="+result);
+    	}
+    	return result;
     }
     
     /**
