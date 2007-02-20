@@ -29,12 +29,7 @@ import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.*;
 import org.apache.axis2.deployment.WarBasedAxisConfigurator;
-import org.apache.axis2.description.AxisBindingMessage;
-import org.apache.axis2.description.AxisBindingOperation;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.Handler.InvocationResponse;
@@ -54,14 +49,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.SocketException;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -87,27 +76,338 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected TransportInDescription transportIn;
     protected TransportOutDescription transportOut;
 
-    protected MessageContext
-    createAndSetInitialParamsToMsgCtxt(HttpServletResponse resp,
-                                       HttpServletRequest req) throws AxisFault {
-        MessageContext msgContext = ContextFactory.createMessageContext(configContext);
-        msgContext.setTransportIn(transportIn);
-        msgContext.setTransportOut(transportOut);
+    private static final int BUFFER_SIZE = 1024 * 8;
 
-        msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
-                new ServletBasedOutTransportInfo(resp));
-        msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
-                new ServletRequestResponseTransport(resp));
-        msgContext.setProperty(MessageContext.REMOTE_ADDR, req.getRemoteAddr());
-        msgContext.setFrom(new EndpointReference(req.getRemoteAddr()));
-        msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,
-                getTransportHeaders(req));
-        msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, resp);
-        return msgContext;
+    /**
+     * Implementaion of POST interface
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        //set the initial buffer for a larger value
+        response.setBufferSize(BUFFER_SIZE);
+
+        initContextRoot(request);
+
+        MessageContext msgContext;
+        OutputStream out = response.getOutputStream();
+        String contentType = request.getContentType();
+        if (!isRESTRequest(contentType)) {
+            msgContext = createMessageContext(request, response);
+            try {
+                // adding ServletContext into msgContext;
+                InvocationResponse pi = HTTPTransportUtils.
+                        processHTTPPostRequest(msgContext,
+                                               new BufferedInputStream(request.getInputStream()),
+                                               new BufferedOutputStream(out),
+                                               contentType,
+                                               request.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
+                                               request.getRequestURL().toString());
+
+                Boolean holdResponse =
+                        (Boolean) msgContext.getProperty(RequestResponseTransport.HOLD_RESPONSE);
+
+                if (pi.equals(InvocationResponse.SUSPEND) ||
+                    (holdResponse != null && Boolean.TRUE.equals(holdResponse))) {
+                    ((RequestResponseTransport) msgContext
+                            .getProperty(RequestResponseTransport.TRANSPORT_CONTROL))
+                            .awaitResponse();
+                }
+
+                Object contextWritten = null;
+                OperationContext operationContext = msgContext.getOperationContext();
+
+                if (operationContext != null)
+                    contextWritten = operationContext.getProperty(Constants.RESPONSE_WRITTEN);
+
+                response.setContentType("text/xml; charset="
+                                        + msgContext
+                        .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
+
+                if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
+                    response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                }
+
+            } catch (AxisFault e) {
+                log.debug(e);
+                if (msgContext != null) {
+                    processAxisFault(msgContext, response, out, e);
+                } else {
+                    throw new ServletException(e);
+                }
+            } catch (Throwable t) {
+                log.error(t);
+                if (msgContext != null) {
+                    try {
+                        // If the fault is not going along the back channel we should be 202ing
+                        if (AddressingHelper.isFaultRedirected(msgContext)) {
+                            response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                        } else {
+                            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+                            AxisBindingOperation axisBindingOperation =
+                                    (AxisBindingOperation) msgContext
+                                            .getProperty(Constants.AXIS_BINDING_OPERATION);
+                            if (axisBindingOperation != null) {
+                                Integer code = (Integer) axisBindingOperation.getFault(
+                                        (String) msgContext.getProperty(Constants.FAULT_NAME))
+                                        .getProperty(WSDL2Constants.ATTR_WHTTP_CODE);
+                                if (code != null) {
+                                    response.setStatus(code.intValue());
+                                }
+                            }
+                        }
+                        handleFault(msgContext, out, new AxisFault(t.toString(), t));
+                    } catch (AxisFault e2) {
+                        log.info(e2);
+                        throw new ServletException(e2);
+                    }
+                } else {
+                    throw new ServletException(t);
+                }
+                closeStaxBuilder(msgContext);
+            }
+        } else {
+            if (!disableREST) {
+                new ProcessRESTRequest(Constants.Configuration.HTTP_METHOD_POST, request, response)
+                        .processXMLRequest();
+            } else {
+                disableRESTErrorMessage(response);
+            }
+        }
     }
 
+    /**
+     * Implementation for GET interface
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response) throws ServletException, IOException {
+
+        initContextRoot(request);
+
+        // this method is also used to serve for the listServices request.
+
+        String requestURI = request.getRequestURI();
+        String query = request.getQueryString();
+
+        // There can be three different request coming to this.
+        // 1. wsdl, wsdl2 and xsd requests
+        // 2. list services requests
+        // 3. REST requests.
+        if ((query != null) && (query.indexOf("wsdl2") >= 0 ||
+                                query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0 ||
+                                query.indexOf("policy") >= 0)) {
+            // handling meta data exchange stuff
+            agent.processListService(request, response);
+        } else if (requestURI.endsWith(LIST_SERVICES_SUFIX) ||
+                   requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) {
+            // handling list services request
+            try {
+                agent.handle(request, response);
+            } catch (Exception e) {
+                throw new ServletException(e);
+            }
+        } else if (!disableREST) {
+            new ProcessRESTRequest(Constants.Configuration.HTTP_METHOD_GET, request, response)
+                        .processURLRequest();
+        } else {
+            disableRESTErrorMessage(response);
+        }
+    }
+
+    /**
+     * Implementation of DELETE interface
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+
+    protected void doDelete(HttpServletRequest request,
+                            HttpServletResponse response) throws ServletException, IOException {
+
+        initContextRoot(request);
+        // this method is also used to serve for the listServices request.
+        if (!disableREST) {
+            new ProcessRESTRequest(Constants.Configuration.HTTP_METHOD_DELETE, request, response)
+                        .processURLRequest();
+        } else {
+            disableRESTErrorMessage(response);
+        }
+    }
+
+    /**
+     * Implementation of PUT interface
+     *
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+    protected void doPut(HttpServletRequest request,
+                         HttpServletResponse response) throws ServletException, IOException {
+
+        initContextRoot(request);
+        // this method is also used to serve for the listServices request.
+        if (!disableREST) {
+            new ProcessRESTRequest(Constants.Configuration.HTTP_METHOD_PUT, request, response)
+                        .processXMLRequest();
+        } else {
+            disableRESTErrorMessage(response);
+        }
+    }
+
+    /**
+     * Private method that deals with disabling of REST support.
+     *
+     * @param response
+     * @throws IOException
+     */
+    private void disableRESTErrorMessage(HttpServletResponse response) throws IOException {
+        PrintWriter writer = new PrintWriter(response.getOutputStream());
+        writer.println("<html><body><h2>Please enable REST support in WEB-INF/conf/axis2.xml " +
+                       "and WEB-INF/web.xml</h2></body></html>");
+        writer.flush();
+        response.setStatus(HttpServletResponse.SC_ACCEPTED);
+
+    }
+
+    /**
+     * Close the builders.
+     *
+     * @param messageContext
+     * @throws ServletException
+     */
+    private void closeStaxBuilder(MessageContext messageContext) throws ServletException {
+        if (closeReader && messageContext != null) {
+            try {
+                StAXBuilder builder = (StAXBuilder) messageContext.getEnvelope().getBuilder();
+                if (builder != null) {
+                    builder.close();
+                }
+            } catch (Exception e) {
+                log.debug(e);
+                throw new ServletException(e);
+            }
+        }
+
+    }
+
+    /**
+     * Processing for faults
+     *
+     * @param msgContext
+     * @param res
+     * @param out
+     * @param e
+     */
+    private void processAxisFault(MessageContext msgContext, HttpServletResponse res,
+                                  OutputStream out, AxisFault e) {
+        try {
+            // If the fault is not going along the back channel we should be 202ing
+            if (AddressingHelper.isFaultRedirected(msgContext)) {
+                res.setStatus(HttpServletResponse.SC_ACCEPTED);
+            } else {
+
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+                AxisBindingOperation axisBindingOperation = (AxisBindingOperation) msgContext
+                        .getProperty(Constants.AXIS_BINDING_OPERATION);
+                if (axisBindingOperation != null) {
+                    AxisBindingMessage fault = axisBindingOperation
+                            .getFault((String) msgContext.getProperty(Constants.FAULT_NAME));
+                    if (fault != null) {
+                        Integer code = (Integer) fault.getProperty(WSDL2Constants.ATTR_WHTTP_CODE);
+                        if (code != null) {
+                            res.setStatus(code.intValue());
+                        }
+                    }
+                }
+            }
+            handleFault(msgContext, out, e);
+        } catch (AxisFault e2) {
+            log.info(e2);
+        }
+    }
+
+    protected void handleFault(MessageContext msgContext, OutputStream out, AxisFault e)
+            throws AxisFault {
+        msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+
+        AxisEngine engine = new AxisEngine(configContext);
+        MessageContext faultContext =
+                MessageContextBuilder.createFaultMessageContext(msgContext, e);
+
+        // SOAP 1.2 specification mentions that we should send HTTP code 400 in a fault if the
+        // fault code Sender
+        HttpServletResponse response =
+                (HttpServletResponse) msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE);
+        if (response != null) {
+            SOAPFaultCode code = faultContext.getEnvelope().getBody().getFault().getCode();
+            OMElement valueElement = null;
+            if (code != null) {
+                valueElement = code.getFirstChildWithName(new QName(
+                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                        SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME));
+            }
+
+            if (valueElement != null) {
+                if (valueElement.getText().trim().indexOf(SOAP12Constants.FAULT_CODE_SENDER) >
+                    -1 && !msgContext.isDoingREST()) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                }
+            }
+        }
+
+
+        engine.sendFault(faultContext);
+    }
+
+    /**
+     * Main init method
+     *
+     * @param config
+     * @throws ServletException
+     */
+    public void init(ServletConfig config) throws ServletException {
+        try {
+            this.servletConfig = config;
+            configContext = initConfigContext(config);
+
+            axisConfiguration = configContext.getAxisConfiguration();
+            config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
+
+            ListenerManager listenerManager = new ListenerManager();
+            listenerManager.init(configContext);
+            TransportInDescription transportInDescription = new TransportInDescription(
+                    new QName(Constants.TRANSPORT_HTTP));
+            transportInDescription.setReceiver(this);
+            listenerManager.addListener(transportInDescription, true);
+            listenerManager.start();
+            ListenerManager.defaultConfigurationContext = configContext;
+            agent = new ListingAgent(configContext);
+
+            initParams();
+
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+    }
+
+    /**
+     * distroy the ConfigurationContext
+     */
     public void destroy() {
         //stoping listner manager
         try {
@@ -121,6 +421,57 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             super.destroy();
         } catch (Exception e) {
             log.info(e.getMessage());
+        }
+    }
+
+    /**
+     * Initializes the Axis2 parameters.
+     */
+    protected void initParams() {
+        Parameter parameter;
+        // do we need to completely disable REST support
+        parameter = axisConfiguration.getParameter(Constants.Configuration.DISABLE_REST);
+        if (parameter != null) {
+            disableREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
+        }
+
+        // Should we close the reader(s)
+        parameter = axisConfiguration.getParameter("axis2.close.reader");
+        if (parameter != null) {
+            closeReader = JavaUtils.isTrueExplicitly(parameter.getValue());
+        }
+
+        transportIn = axisConfiguration.getTransportIn(new QName(Constants.TRANSPORT_HTTP));
+        transportOut = axisConfiguration.getTransportOut(new QName(Constants.TRANSPORT_HTTP));
+    }
+
+    /**
+     * Convenient method to re-initialize the ConfigurationContext
+     *
+     * @throws ServletException
+     */
+    public void init() throws ServletException {
+        if (this.servletConfig != null) {
+            init(this.servletConfig);
+        }
+    }
+
+    /**
+     * Initialize the Axis configuration context
+     *
+     * @param config Servlet configuration
+     * @return ConfigurationContext
+     * @throws ServletException
+     */
+    protected ConfigurationContext initConfigContext(ServletConfig config) throws ServletException {
+        try {
+            ConfigurationContext configContext =
+                    ConfigurationContextFactory
+                            .createConfigurationContext(new WarBasedAxisConfigurator(config));
+            configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
+            return configContext;
+        } catch (Exception e) {
+            throw new ServletException(e);
         }
     }
 
@@ -158,438 +509,16 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         }
     }
 
-    /*
-    * (non-Javadoc)
-    * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-    */
-
-
-    protected void doGet(HttpServletRequest req,
-                         HttpServletResponse resp) throws ServletException, IOException {
-
-        initContextRoot(req);
-
-        // this method is also used to serve for the listServices request.
-
-        String requestURI = req.getRequestURI();
-        String query = req.getQueryString();
-
-        // There can be three different request coming to this.
-        // 1. wsdl, wsdl2 and xsd requests
-        // 2. list services requests
-        // 3. REST requests.
-        if ((query != null) && (query.indexOf("wsdl2") >= 0 ||
-                query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0 ||
-                query.indexOf("policy") >= 0)) { // handling meta data exchange stuff
-            agent.processListService(req, resp);
-        } else if (requestURI.endsWith(LIST_SERVICES_SUFIX) ||
-                requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) { // handling list services request
-            try {
-                agent.handle(req, resp);
-            } catch (Exception e) {
-                throw new ServletException(e);
-            }
-        } else if (!disableREST) {
-            MessageContext messageContext = null;
-            OutputStream out = resp.getOutputStream();
-            try {
-                messageContext = createMessageContext(req, resp);
-                messageContext.setProperty(
-                        org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD,
-                        Constants.Configuration.HTTP_METHOD_GET);
-                new RESTUtil(configContext).processGetRequest(messageContext,
-                        req,
-                        resp);
-                Object contextWritten =
-                        messageContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
-                if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
-                    resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-                }
-            } catch (AxisFault e) {
-                log.debug(e);
-                if (messageContext != null) {
-                    processAxisFault(messageContext, resp, out, e);
-                } else {
-                    throw new ServletException(e);
-                }
-            }
-        } else {
-            PrintWriter writer = new PrintWriter(resp.getOutputStream());
-            writer.println("<html><body><h2>Please enable REST support in WEB-INF/conf/axis2.xml and WEB-INF/web.xml</h2></body></html>");
-            writer.flush();
-            resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-        }
-    }
-
     /**
-     * Method doPost
+     * Get all transport headers.
      *
      * @param req
-     * @param res
-     * @throws ServletException
-     * @throws IOException
+     * @return Map
      */
-    protected void doPost(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
-
-        res.setBufferSize(1024 * 8);
-
-        initContextRoot(req);
-
-        MessageContext msgContext;
-        OutputStream out = res.getOutputStream();
-
-        String contentType = req.getContentType();
-        if (!disableREST && isRESTRequest(contentType)) {
-            msgContext = createMessageContext(req, res);
-            try {
-                msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,
-                getTransportHeaders(req));
-                new RESTUtil(configContext).processPostRequest(msgContext,
-                        req,
-                        res);
-                Object contextWritten =
-                        msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
-                if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
-                    res.setStatus(HttpServletResponse.SC_ACCEPTED);
-                }
-            } catch (AxisFault e) {
-                log.debug(e);
-                if (msgContext != null) {
-                    processAxisFault(msgContext, res, out, e);
-                } else {
-                    throw new ServletException(e);
-                }
-            }
-        } else {
-            msgContext = createAndSetInitialParamsToMsgCtxt(res, req);
-
-            try {
-                // adding ServletContext into msgContext;
-                InvocationResponse pi = HTTPTransportUtils.processHTTPPostRequest(msgContext, new BufferedInputStream(req.getInputStream()), new BufferedOutputStream(out),
-                        contentType, req.getHeader(HTTPConstants.HEADER_SOAP_ACTION),
-                        req.getRequestURL().toString());
-
-                Boolean holdResponse = (Boolean) msgContext.getProperty(RequestResponseTransport.HOLD_RESPONSE);
-                
-                if (pi.equals(InvocationResponse.SUSPEND) ||  (holdResponse!=null && Boolean.TRUE.equals(holdResponse))) {
-                    ((RequestResponseTransport) msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL)).awaitResponse();
-                }
-
-                Object contextWritten = null;
-                OperationContext operationContext =  msgContext.getOperationContext();
-                
-                if (operationContext!=null)
-                	contextWritten = operationContext.getProperty(Constants.RESPONSE_WRITTEN);
-
-                res.setContentType("text/xml; charset="
-                        + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
-
-                if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
-                    res.setStatus(HttpServletResponse.SC_ACCEPTED);
-                }
-
-            } catch (AxisFault e) {
-                log.debug(e);
-                if (msgContext != null) {
-                    processAxisFault(msgContext, res, out, e);
-                } else {
-                    throw new ServletException(e);
-                }
-            } catch (Throwable t) {
-                log.error(t);
-                if (msgContext != null) {
-                    try {
-                        // If the fault is not going along the back channel we should be 202ing
-                        if (AddressingHelper.isFaultRedirected(msgContext)) {
-                            res.setStatus(HttpServletResponse.SC_ACCEPTED);
-                        } else {
-                            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-                            AxisBindingOperation axisBindingOperation =
-                                    (AxisBindingOperation) msgContext
-                                            .getProperty(Constants.AXIS_BINDING_OPERATION);
-                            if (axisBindingOperation != null) {
-                                Integer code = (Integer) axisBindingOperation.getFault(
-                                        (String) msgContext.getProperty(Constants.FAULT_NAME))
-                                        .getProperty(WSDL2Constants.ATTR_WHTTP_CODE);
-                                if (code != null) {
-                                    res.setStatus(code.intValue());
-                                }
-                            }
-                        }
-                        handleFault(msgContext, out, new AxisFault(t.toString(), t));
-                    } catch (AxisFault e2) {
-                        log.info(e2);
-                        throw new ServletException(e2);
-                    }
-                } else {
-                    throw new ServletException(t);
-                }
-            }
-        }
-        if (closeReader) {
-            try {
-                StAXBuilder builder = (StAXBuilder) msgContext.getEnvelope().getBuilder();
-                if (builder != null) {
-                    builder.close();
-                }
-            } catch (Exception e) {
-                log.debug(e);
-                throw new ServletException(e);
-            }
-        }
-    }
-
-    private void processAxisFault(MessageContext msgContext, HttpServletResponse res,
-                                  OutputStream out, AxisFault e) {
-        try {
-            // If the fault is not going along the back channel we should be 202ing
-            if (AddressingHelper.isFaultRedirected(msgContext)) {
-                res.setStatus(HttpServletResponse.SC_ACCEPTED);
-            } else {
-
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-                AxisBindingOperation axisBindingOperation = (AxisBindingOperation) msgContext
-                        .getProperty(Constants.AXIS_BINDING_OPERATION);
-                if (axisBindingOperation != null) {
-                    AxisBindingMessage fault = axisBindingOperation
-                            .getFault((String) msgContext.getProperty(Constants.FAULT_NAME));
-                    if (fault != null) {
-                        Integer code = (Integer) fault.getProperty(WSDL2Constants.ATTR_WHTTP_CODE);
-                        if (code != null) {
-                            res.setStatus(code.intValue());
-                        }
-                    }
-                }
-            }
-            handleFault(msgContext, out, e);
-        } catch (AxisFault e2) {
-            log.info(e2);
-        }
-    }
-
-    protected void doDelete(HttpServletRequest req,
-                            HttpServletResponse resp) throws ServletException, IOException {
-
-        initContextRoot(req);
-
-        // this method is also used to serve for the listServices request.
-
-        if (!disableREST) {
-            MessageContext messageContext = null;
-            OutputStream out = resp.getOutputStream();
-            try {
-                messageContext = createMessageContext(req, resp);
-                messageContext.setProperty(
-                        org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD,
-                        Constants.Configuration.HTTP_METHOD_DELETE);
-                new RESTUtil(configContext).processGetRequest(messageContext,
-                        req,
-                        resp);
-                Object contextWritten =
-                        messageContext.getOperationContext()
-                                .getProperty(Constants.RESPONSE_WRITTEN);
-                if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
-                    resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-                }
-            } catch (AxisFault e) {
-                log.debug(e);
-                if (messageContext != null) {
-                    processAxisFault(messageContext, resp, out, e);
-                }
-            }
-        } else {
-            PrintWriter writer = new PrintWriter(resp.getOutputStream());
-            writer.println(
-                    "<html><body><h2>Please enable REST support in WEB-INF/conf/axis2.xml and WEB-INF/web.xml</h2></body></html>");
-            writer.flush();
-            resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-        }
-    }
-
-    protected void doPut(HttpServletRequest req,
-                         HttpServletResponse resp) throws ServletException, IOException {
-
-        initContextRoot(req);
-
-        // this method is also used to serve for the listServices request.
-
-        if (!disableREST) {
-            MessageContext messageContext = null;
-            OutputStream out = resp.getOutputStream();
-            try {
-                messageContext = createMessageContext(req, resp);
-                messageContext.setProperty(
-                        org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD,
-                        Constants.Configuration.HTTP_METHOD_PUT);
-                new RESTUtil(configContext).processPostRequest(messageContext,
-                        req,
-                        resp);
-                Object contextWritten =
-                        messageContext.getOperationContext()
-                                .getProperty(Constants.RESPONSE_WRITTEN);
-                if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
-                    resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-                }
-            } catch (AxisFault e) {
-                log.debug(e);
-                if (messageContext != null) {
-                    processAxisFault(messageContext, resp, out, e);
-                }
-            }
-        } else {
-            PrintWriter writer = new PrintWriter(resp.getOutputStream());
-            writer.println(
-                    "<html><body><h2>Please enable REST support in WEB-INF/conf/axis2.xml and WEB-INF/web.xml</h2></body></html>");
-            writer.flush();
-            resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-        }
-    }
-
-    protected void handleFault(MessageContext msgContext, OutputStream out, AxisFault e)
-            throws AxisFault {
-        msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-
-        AxisEngine engine = new AxisEngine(configContext);
-        MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgContext, e);
-
-        // SOAP 1.2 specification mentions that we should send HTTP code 400 in a fault if the
-        // fault code Sender
-        HttpServletResponse response =
-                (HttpServletResponse) msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE);
-        if (response != null) {
-            SOAPFaultCode code = faultContext.getEnvelope().getBody().getFault().getCode();
-            OMElement valueElement = null;
-            if (code != null) {
-                valueElement = code.getFirstChildWithName(new QName(
-                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                        SOAP12Constants.SOAP_FAULT_VALUE_LOCAL_NAME));
-            }
-
-            if (valueElement != null) {
-                if (valueElement.getText().trim().indexOf(SOAP12Constants.FAULT_CODE_SENDER) >
-                        -1 && !msgContext.isDoingREST()) {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                }
-            }
-        }
-
-
-        engine.sendFault(faultContext);
-    }
-
-    /**
-     * Method init
-     *
-     * @param config
-     * @throws ServletException
-     */
-    public void init(ServletConfig config) throws ServletException {
-        try {
-            this.servletConfig = config;
-            configContext = initConfigContext(config);
-
-            axisConfiguration = configContext.getAxisConfiguration();
-            config.getServletContext().setAttribute(CONFIGURATION_CONTEXT, configContext);
-
-            ListenerManager listenerManager = new ListenerManager();
-            listenerManager.init(configContext);
-            TransportInDescription transportInDescription = new TransportInDescription(
-                    new QName(Constants.TRANSPORT_HTTP));
-            transportInDescription.setReceiver(this);
-            listenerManager.addListener(transportInDescription, true);
-            listenerManager.start();
-            ListenerManager.defaultConfigurationContext = configContext;
-            agent = new ListingAgent(configContext);
-
-            initParams();
-
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-    }
-
-    protected void initParams() {
-        Parameter parameter;
-        // do we need to completely disable REST support
-        parameter = axisConfiguration.getParameter(Constants.Configuration.DISABLE_REST);
-        if (parameter != null) {
-            disableREST = !JavaUtils.isFalseExplicitly(parameter.getValue());
-        }
-        // Should we close the reader(s)
-        parameter = axisConfiguration.getParameter("axis2.close.reader");
-        if (parameter != null) {
-            closeReader = JavaUtils.isTrueExplicitly(parameter.getValue());
-        }
-
-        transportIn = axisConfiguration.getTransportIn(new QName(Constants.TRANSPORT_HTTP));
-        transportOut = axisConfiguration.getTransportOut(new QName(Constants.TRANSPORT_HTTP));
-    }
-
-    public void init() throws ServletException {
-        if (this.servletConfig != null) {
-            init(this.servletConfig);
-        }
-    }
-
-    /**
-     * Initialize the Axis configuration context
-     *
-     * @param config Servlet configuration
-     * @throws ServletException
-     * @return ConfigurationContext
-     */
-    protected ConfigurationContext initConfigContext(ServletConfig config) throws ServletException {
-        try {
-            ConfigurationContext configContext =
-                    ConfigurationContextFactory
-                            .createConfigurationContext(new WarBasedAxisConfigurator(config));
-            configContext.setProperty(Constants.CONTAINER_MANAGED, Constants.VALUE_TRUE);
-            return configContext;
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-    }
-
-    protected HashMap getHTTPParameters(HttpServletRequest httpServletRequest) {
-        HashMap map = new HashMap();
-        Enumeration enu = httpServletRequest.getParameterNames();
-
-        while (enu.hasMoreElements()) {
-            String name = (String) enu.nextElement();
-            String value = httpServletRequest.getParameter(name);
-
-            map.put(name, value);
-        }
-
-        return map;
-    }
-
     protected Map getTransportHeaders(HttpServletRequest req) {
         return new TransportHeaders(req);
     }
 
-    /**
-     * To initilze as TransportListener , not as Servlet
-     *
-     * @param axisConf
-     * @param transprtIn
-     * @throws AxisFault
-     */
-    public void init(ConfigurationContext axisConf,
-                     TransportInDescription transprtIn) throws AxisFault {
-        // no need to do anything :)
-    }
-
-    public void start() throws AxisFault {
-        // no need to do anything :) , it is already started
-    }
-
-    public void stop() throws AxisFault {
-        // no one call thie method
-    }
 
     public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
         return getEPRsForService(serviceName, ip)[0];
@@ -614,11 +543,15 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
 
         EndpointReference soapEndpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
-                configContext.getServiceContextPath() + "/" + serviceName);
+                                                               configContext
+                                                                       .getServiceContextPath() +
+                                                                                                "/" +
+                                                                                                serviceName);
 
         if (!disableREST) {
-            EndpointReference restEndpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
-                    configContext.getRESTContextPath() + "/" + serviceName);
+            EndpointReference restEndpoint =
+                    new EndpointReference("http://" + ip + ":" + port + '/' +
+                                          configContext.getRESTContextPath() + "/" + serviceName);
             return new EndpointReference[]{soapEndpoint, restEndpoint};
         } else {
             return new EndpointReference[]{soapEndpoint};
@@ -626,73 +559,107 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
     }
 
-    protected MessageContext createMessageContext(HttpServletRequest req,
-                                                  HttpServletResponse resp) throws IOException {
-        MessageContext msgContext = ContextFactory.createMessageContext(configContext);
-        String trsPrefix = req.getRequestURL().toString();
-        int sepindex = trsPrefix.indexOf(':');
-        if (sepindex >= 0) {
-            trsPrefix = trsPrefix.substring(0, sepindex);
-            msgContext.setIncomingTransportName(trsPrefix);
-        } else {
-            msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
-        }
-        msgContext.setTransportIn(configContext.getAxisConfiguration().
-                getTransportIn(new QName(Constants.TRANSPORT_HTTP)));
-        TransportOutDescription transportOut =
-                configContext.getAxisConfiguration().getTransportOut(
-                        new QName(Constants.TRANSPORT_HTTP));
-        msgContext.setTransportOut(transportOut);
-        msgContext.setServerSide(true);
-
-        String requestURI = req.getRequestURI();
-        if (requestURI.indexOf("rest") != -1) {
-            requestURI = requestURI.replaceFirst("rest", configContext.getServiceContextPath());
-        }
-        String query =  req.getQueryString();
-        if (query != null) {
-            requestURI = requestURI + "?" + query;
-        }
-        msgContext.setTo(new EndpointReference(requestURI));
-        msgContext.setFrom(new EndpointReference(req.getRemoteAddr()));
-        msgContext.setProperty(MessageContext.REMOTE_ADDR, req.getRemoteAddr());
-        msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
-                new ServletBasedOutTransportInfo(resp));
-//        msgContext.setProperty(MessageContext.TRANSPORT_OUT, resp.getOutputStream());
-
-        // set the transport Headers
-        msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getHeaders(req));
-        msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, resp);
-        return msgContext;
+    /**
+     * init(); start() and stop() wouldn't do anything.
+     *
+     * @param axisConf
+     * @param transprtIn
+     * @throws AxisFault
+     */
+    public void init(ConfigurationContext axisConf,
+                     TransportInDescription transprtIn) throws AxisFault {
     }
 
-    protected Map getHeaders(HttpServletRequest request) {
-        HashMap headerMap = new HashMap();
-        Enumeration e = request.getAttributeNames();
-        while (e.hasMoreElements()) {
-            String field = (String) e.nextElement();
-            headerMap.put(field, request.getAttribute(field));
-        }
-        return headerMap;
+    public void start() throws AxisFault {
+    }
+
+    public void stop() throws AxisFault {
     }
 
     /**
-     * Lets only handle
-     * - text/xml
-     * - application/x-www-form-urlencoded
-     * as REST content types in this servlet.
+     * @param request
+     * @param response
+     * @param invocationType : If invocationType=true; then this will be used in SOAP message
+     *                       invocation. If invocationType=false; then this will be used in REST message invocation.
+     * @return MessageContext
+     * @throws IOException
+     */
+    protected MessageContext createMessageContext(HttpServletRequest request,
+                                                  HttpServletResponse response,
+                                                  boolean invocationType) throws IOException {
+        MessageContext msgContext = ContextFactory.createMessageContext(configContext);
+        String requestURI = request.getRequestURI();
+        msgContext.setTransportIn(transportIn);
+        msgContext.setTransportOut(transportOut);
+        msgContext.setServerSide(true);
+
+        if (!invocationType) {
+            String restPath = configContext.getRESTPath();
+            if (restPath != null && requestURI.indexOf(restPath) != -1) {
+                requestURI =
+                        requestURI.replaceFirst(restPath, configContext.getServiceContextPath());
+            }
+            String query = request.getQueryString();
+            if (query != null) {
+                requestURI = requestURI + "?" + query;
+            }
+        }
+
+        msgContext.setTo(new EndpointReference(requestURI));
+        msgContext.setFrom(new EndpointReference(request.getRemoteAddr()));
+        msgContext.setProperty(MessageContext.REMOTE_ADDR, request.getRemoteAddr());
+        msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
+                               new ServletBasedOutTransportInfo(response));
+        // set the transport Headers
+        msgContext.setIncomingTransportName(
+                Constants.TRANSPORT_HTTP); // Fixme This should be getting from the connector
+        msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(request));
+        msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, request);
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, response);
+
+        return msgContext;
+    }
+
+    /**
+     * This method assumes, that the created MessageContext will be used in only SOAP invocation.
      *
+     * @param req
+     * @param resp
+     * @return MessageContext
+     * @throws IOException
+     */
+
+    protected MessageContext createMessageContext(HttpServletRequest req,
+                                                  HttpServletResponse resp) throws IOException {
+        return createMessageContext(req, resp, true);
+    }
+
+    /**
+     * This will match for content types that will be regarded as REST in WSDL2.0.
+     * This contains,
+     * 1. application/xml
+     * 2. application/x-www-form-urlencoded
+     * 3. multipart/form-data
+     * <p/>
+     * If the request doesnot contain a content type; this will return true.
+     *
+     * @param contentType
+     * @return Boolean
      */
     private boolean isRESTRequest(String contentType) {
         return ((contentType == null ||
-                contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
-                contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
-                contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1));
+                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
+                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
+                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1));
     }
 
-
+    /**
+     * Transport session management.
+     *
+     * @param messageContext
+     * @return SessionContext
+     */
     public SessionContext getSessionContext(MessageContext messageContext) {
         HttpServletRequest req = (HttpServletRequest) messageContext.getProperty(
                 HTTPConstants.MC_HTTP_SERVLETREQUEST);
@@ -704,7 +671,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             sessionContext = new SessionContext(null);
             sessionContext.setCookieID(sessionId);
             req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
-                    sessionContext);
+                                          sessionContext);
         }
         messageContext.setSessionContext(sessionContext);
         messageContext.setProperty(SESSION_ID, sessionId);
@@ -723,7 +690,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         public void acknowledgeMessage(MessageContext msgContext) throws AxisFault {
             log.debug("Acking one-way request");
             response.setContentType("text/xml; charset="
-                    + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
+                                    + msgContext
+                    .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
             try {
@@ -751,6 +719,71 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         public RequestResponseTransportStatus getStatus() {
             return status;
+        }
+
+    }
+
+    /**
+     * Ues in processing REST related Requests.
+     * This is the helper Class use in processing of doGet, doPut , doDelete and doPost.
+     */
+    private class ProcessRESTRequest {
+        MessageContext messageContext;
+        HttpServletRequest request;
+        HttpServletResponse response;
+
+        ProcessRESTRequest(String httpMethodString, HttpServletRequest request,
+                           HttpServletResponse response)
+                throws IOException {
+            this.request = request;
+            this.response = response;
+            messageContext = createMessageContext(this.request, this.response, false);
+            messageContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD,
+                                       httpMethodString);
+
+
+        }
+
+        void processXMLRequest() throws IOException, ServletException {
+            try {
+                new RESTUtil(configContext).processPostRequest(messageContext, request, response);
+                this.checkResponseWritten();
+            } catch (AxisFault axisFault) {
+                processFault(axisFault);
+            }
+            closeStaxBuilder(messageContext);
+
+
+        }
+
+        void processURLRequest() throws IOException, ServletException {
+            try {
+                new RESTUtil(configContext).processGetRequest(messageContext, request, response);
+                this.checkResponseWritten();
+            } catch (AxisFault axisFault) {
+                processFault(axisFault);
+            }
+            closeStaxBuilder(messageContext);
+
+        }
+
+        void checkResponseWritten() {
+            Object contextWritten =
+                    messageContext.getOperationContext()
+                            .getProperty(Constants.RESPONSE_WRITTEN);
+            if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
+                response.setStatus(HttpServletResponse.SC_ACCEPTED);
+            }
+        }
+
+        void processFault(AxisFault e) throws ServletException, IOException {
+            log.debug(e);
+            if (messageContext != null) {
+                processAxisFault(messageContext, response, response.getOutputStream(), e);
+            } else {
+                throw new ServletException(e);
+            }
+
         }
 
     }
