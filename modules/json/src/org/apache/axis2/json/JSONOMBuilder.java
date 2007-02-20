@@ -37,7 +37,7 @@ public class JSONOMBuilder implements OMBuilder {
     public JSONOMBuilder() {
     }
 
-	public void init(InputStream inputStream, String chatSetEncoding) {
+	public void init(InputStream inputStream, String chatSetEncoding, String url, String contentType) {
 		this.jsonInputStream = inputStream;
 
     }
