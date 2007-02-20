@@ -18,6 +18,7 @@ package org.apache.axis2.jaxws.server;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.WebServiceException;
 
 import java.io.StringReader;
@@ -28,17 +29,21 @@ import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
+import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
+import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.handler.SoapMessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -51,6 +56,7 @@ import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
+import org.apache.axis2.jaxws.server.endpoint.lifecycle.impl.EndpointLifecycleManagerImpl;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -130,7 +136,8 @@ public class EndpointController {
             // the request message if appropriate.
             saveRequestMessage(requestMsgCtx);
             
-            // @TODO Invoke inbound application handlers.
+            // Invoke inbound application handlers.
+            invokeInboundHandlers(requestMsgCtx);
  
             // Dispatch to the 
             EndpointDispatcher dispatcher = getEndpointDispatcher(implClass, serviceInstance); 
@@ -141,7 +148,8 @@ public class EndpointController {
                 requestMsgCtx.getMessage().setPostPivot();
             }
             
-            // @TODO Invoke outbound application handlers
+            // Invoke outbound application handlers
+            invokeOutboundHandlers(requestMsgCtx);
             
         } catch (Exception e) {
             // TODO for now, throw it.  We probably should try to make an XMLFault object and set it on the message
@@ -156,6 +164,68 @@ public class EndpointController {
         return ic;
     }
     
+    /**
+     * Invoke Inbound Handlers
+     * @param requestMsgCtx
+     */
+    private void invokeInboundHandlers(MessageContext requestMsgCtx) {
+        // Stubbed out code
+        int numHandlers = 0;
+        
+        javax.xml.ws.handler.MessageContext handlerMessageContext = null;
+        if (numHandlers > 0) {
+            handlerMessageContext =findOrCreateMessageContext(requestMsgCtx);
+        }
+        
+        // TODO Invoke Handlers
+    }
+    
+    
+    
+    /**
+     * Invoke OutboundHandlers
+     * @param responseMsgCtx
+     */
+    private void invokeOutboundHandlers(MessageContext responseMsgCtx) {
+        // Stubbed out code
+        int numHandlers = 0;
+        
+        javax.xml.ws.handler.MessageContext handlerMessageContext = null;
+        if (numHandlers > 0) {
+            handlerMessageContext =findOrCreateMessageContext(responseMsgCtx);
+        }
+        
+        // TODO Invoke Handlers
+    }
+    
+    /**
+     * Find or Create Handler Message Context
+     * @param mc
+     * @return javax.xml.ws.handler.MessageContext
+     */
+    private javax.xml.ws.handler.MessageContext findOrCreateMessageContext(MessageContext mc) {
+        // See if a soap message context is already present on the WebServiceContext
+        javax.xml.ws.handler.MessageContext handlerMessageContext = null;
+        ServiceContext serviceContext = mc.getAxisMessageContext().getServiceContext();
+        WebServiceContext ws = (WebServiceContext)serviceContext.getProperty(EndpointLifecycleManagerImpl.WEBSERVICE_MESSAGE_CONTEXT);
+        if (ws != null) {
+            handlerMessageContext = ws.getMessageContext();
+        }
+        if (handlerMessageContext == null) {
+            handlerMessageContext = createSOAPMessageContext(mc);
+        }
+        return handlerMessageContext; 
+    }
+    
+    /**
+     * @param mc
+     * @return new SOAPMessageContext
+     */
+    private javax.xml.ws.handler.MessageContext createSOAPMessageContext(MessageContext mc){
+        SoapMessageContext soapMessageContext = (SoapMessageContext)MessageContextFactory.createSoapMessageContext(mc);
+        ContextUtils.addProperties(soapMessageContext, mc);
+        return soapMessageContext;
+     }
     /*
 	 * Get the appropriate EndpointDispatcher for a given service endpoint.
 	 */
