@@ -145,6 +145,7 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase i
         options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+TestConstants.operationName.getLocalPart());
         options.setUseSeparateListener(true);
+        options.setTimeOutInMilliSeconds(50000);
 
         ConfigurationContext configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
 
