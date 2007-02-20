@@ -201,18 +201,15 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 			// epr = something
 			// ######################################################
 
-			if (epr != null) {
-				if (!epr.hasNoneAddress()) {
-					writeMessageWithCommons(msgContext, epr, format);
-				}
+			if ((epr != null) && (!epr.hasNoneAddress())) {
+				writeMessageWithCommons(msgContext, epr, format);
+			} else if (msgContext.getProperty(MessageContext.TRANSPORT_OUT) != null) {
+				sendUsingOutputStream(msgContext, format);
 			} else {
-				if (msgContext.getProperty(MessageContext.TRANSPORT_OUT) != null) {
-					sendUsingOutputStream(msgContext, format);
-				} else {
-					throw new AxisFault(
-							"Both the TO and MessageContext.TRANSPORT_OUT property are Null, No where to send");
-				}
+				throw new AxisFault(
+						"Both the TO and MessageContext.TRANSPORT_OUT property are Null, No where to send");
 			}
+
 			if (msgContext.getOperationContext() != null) {
 				msgContext.getOperationContext().setProperty(
 						Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);
