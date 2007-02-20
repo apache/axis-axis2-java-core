@@ -677,135 +677,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         return null;
     }
 
-    /**
-     * Process the binding
-     *
-     * @param binding
-     * @param dif
-     * @throws Exception
-     */
-    private void processBinding(Binding binding, Definition dif)
-            throws Exception {
-        if (binding != null) {
-            copyExtensibleElements(binding.getExtensibilityElements(), dif,
-                    axisService, BINDING);
-
-            PortType portType = dif.getPortType(binding.getPortType()
-                    .getQName());
-            processPortType(portType, dif);
-
-            axisService.setBindingName(binding.getQName().getLocalPart());
-
-            // String portTypeNs = portType.getQName().getNamespaceURI();
-            List list = binding.getBindingOperations();
-            for (int i = 0; i < list.size(); i++) {
-                BindingOperation wsdl4jBindingOperation = (BindingOperation) list
-                        .get(i);
-
-                AxisOperation operation = axisService.getOperation(new QName(
-                        wsdl4jBindingOperation.getName()));
-
-                // this should first check the style of the binding
-                // and then set the style in the axis operation
-                // if that is not present, then only the global style applies
-                // this style is either rpc or doc
-
-                String style = getSOAPStyle(wsdl4jBindingOperation);
-                copyExtensibleElements(wsdl4jBindingOperation
-                        .getExtensibilityElements(), dif, operation,
-                        BINDING_OPERATION);
-
-                BindingInput bindingInput = wsdl4jBindingOperation
-                        .getBindingInput();
-                BindingOutput bindingOutput = wsdl4jBindingOperation
-                        .getBindingOutput();
-                Map bindingFaultsMap = wsdl4jBindingOperation
-                        .getBindingFaults();
-
-                Operation wsdl4jOperation = findOperation(portType,
-                        wsdl4jBindingOperation);
-
-                String MEP = operation.getMessageExchangePattern();
-
-                /* Process the binding inputs */
-
-                if (bindingInput != null) {
-                    if (WSDLUtil.isInputPresentForMEP(MEP)) {
-
-                        AxisMessage inAxisMessage = operation
-                                .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                        // Add the Qname reference - this has to be done by
-                        // looking at the
-                        // binding
-                        addQNameReference(inAxisMessage, wsdl4jOperation,
-                                bindingInput, wrappableOperations
-                                .contains(wsdl4jBindingOperation
-                                .getOperation()));
-                        copyExtensibleElements(bindingInput
-                                .getExtensibilityElements(), dif,
-                                inAxisMessage, BINDING_OPERATION_INPUT);
-                    }
-                }
-
-                /*
-                 * Process the binding outputs
-                 */
-
-                if (bindingOutput != null) {
-                    if (WSDLUtil.isOutputPresentForMEP(MEP)) {
-                        AxisMessage outAxisMessage = operation
-                                .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-
-                        // Add the Qname reference - this has to be done by
-                        // looking at the
-                        // binding
-                        addQNameReference(outAxisMessage, wsdl4jOperation,
-                                bindingOutput, wrappableOperations
-                                .contains(wsdl4jBindingOperation
-                                .getOperation()));
-
-                        copyExtensibleElements(bindingOutput
-                                .getExtensibilityElements(), dif,
-                                outAxisMessage, BINDING_OPERATION_OUTPUT);
-                    }
-                }
-
-                /* process the binding faults */
-                for (Iterator faultKeys = bindingFaultsMap.keySet().iterator(); faultKeys
-                        .hasNext();) {
-                    Object faultMapKey = faultKeys.next();
-                    BindingFault bindingFault = (BindingFault) bindingFaultsMap
-                            .get(faultMapKey);
-                    Fault wsdl4jFault = wsdl4jOperation.getFault(bindingFault
-                            .getName());
-                    if (wsdl4jFault == null
-                            || wsdl4jFault.getMessage().getParts().size() == 0) {
-                        throw new AxisFault("fault \"" + bindingFault.getName()
-                                + "\" not found in the Operation "
-                                + wsdl4jOperation.getName());
-                    }
-                    AxisMessage faultMessage = findFaultMessage(wsdl4jFault
-                            .getMessage().getQName().getLocalPart(), operation
-                            .getFaultMessages());
-
-                    addQNameReference(faultMessage, wsdl4jFault.getMessage());
-
-                }
-                Iterator iterator = operation.getFaultMessages().iterator();
-                while (iterator.hasNext()) {
-                    AxisMessage faultMessage = (AxisMessage) iterator.next();
-                    if (faultMessage.getElementQName() == null) {
-                        log.warn("Unable to find a wsdl:binding/wsdl:operation/wsdl:fault for fault named "
-                                + faultMessage.getName()
-                                + " defined in wsdl:portType/wsdl:operation/@name="
-                                + operation.getName().getLocalPart());
-                    }
-                }
-            }
-
-        }
-    }
-
     private Operation findOperation(PortType portType,
                                     BindingOperation wsdl4jBindingOperation) {
         Operation op = wsdl4jBindingOperation.getOperation();
@@ -1577,7 +1448,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             return schemaElement;
         }
-
     }
 
     /**
@@ -1770,24 +1640,35 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 // <wsp:Policy>
                 if (WSDLConstants.WSDL11Constants.POLICY.equals(type)) {
-                    Policy policy = (Policy) PolicyUtil
-                            .getPolicyComponent(unknown.getElement());
-                    addPolicy(description, originOfExtensibilityElements,
-                            policy);
-
+                	if (isTraceEnabled) {
+                        log.trace("copyExtensibleElements:: PolicyElement found " + unknown);
+                    }
+                    Policy policy = (Policy) PolicyUtil.getPolicyComponent(unknown.getElement());
+                    int attachmentScope = getPolicyAttachmentPoint(description, originOfExtensibilityElements);
+					if(attachmentScope > -1){
+						description.getPolicyInclude().addPolicyElement(
+								attachmentScope, policy);
+					}
                     // <wsp:PolicyReference>
                 } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE
                         .equals(type)) {
+                	if (isTraceEnabled) {
+                        log.trace("copyExtensibleElements:: PolicyReference found " + unknown);
+                    }
                     PolicyReference policyReference = (PolicyReference) PolicyUtil
                             .getPolicyComponent(unknown.getElement());
-                    addPolicyRef(description, originOfExtensibilityElements,
-                            policyReference);
-
+                    int attachmentScope = getPolicyAttachmentPoint(description, originOfExtensibilityElements);
+					if(attachmentScope > -1){
+						description.getPolicyInclude().addPolicyRefElement(
+					            attachmentScope, policyReference);
+					}
                 } else if (AddressingConstants.Final.WSAW_USING_ADDRESSING
                         .equals(type)
                         || AddressingConstants.Submission.WSAW_USING_ADDRESSING
                         .equals(unknown.getElementType())) {
-
+                	if (isTraceEnabled) {
+                        log.trace("copyExtensibleElements:: wsaw:UsingAddressing found " + unknown);
+                    }
                     // FIXME We need to set this the appropriate Axis Description AxisEndpoint or
                     // AxisBinding .
                     if (originOfExtensibilityElements.equals(PORT)
@@ -1817,7 +1698,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 } else {
                     // Ignore this element - it is a totally unknown element
-                    // and we don't care! :-)
+                    if (isTraceEnabled) {
+                        log.trace("copyExtensibleElements:: Unknown Extensibility Element found " + unknown);
+                    }
                 }
 
             } else if (wsdl4jExtensibilityElement instanceof SOAP12Address) {
@@ -2001,108 +1884,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             }
         }
-    }
-
-    private void processUnknownExtensibilityElement(UnknownExtensibilityElement unknown,
-                                                    AxisDescription description,
-                                                    String originOfExtensibilityElements) throws AxisFault {
-        if (WSDLConstants.WSDL11Constants.POLICY.equals(unknown
-                .getElementType())) {
-            if (isTraceEnabled) {
-                log.trace("processUnknownExtensibilityElement:: PolicyElement found " + unknown);
-            }
-            Policy policy = (Policy) PolicyUtil
-                    .getPolicyComponent(unknown.getElement());
-            addPolicy(description, originOfExtensibilityElements,
-                    policy);
-
-        } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE
-                .equals(unknown.getElementType())) {
-            if (isTraceEnabled) {
-                log.trace("processUnknownExtensibilityElement:: PolicyReference found " + unknown);
-            }
-            PolicyReference policyReference = (PolicyReference) PolicyUtil
-                    .getPolicyComponent(unknown.getElement());
-            addPolicyRef(description, originOfExtensibilityElements,
-                    policyReference);
-
-        } else if (AddressingConstants.Final.WSAW_USING_ADDRESSING
-                .equals(unknown.getElementType())
-                || AddressingConstants.Submission.WSAW_USING_ADDRESSING
-                .equals(unknown.getElementType())) {
-            if (isTraceEnabled) {
-                log.trace("processUnknownExtensibilityElement:: wsaw:UsingAddressing found " + unknown);
-            }
-            // Read the wsaw:UsingAddressing flag from the WSDL. It is
-            // only valid on the Port or Binding
-            // so only recognise it as en extensibility elemtn of one of
-            // those.
-            if (originOfExtensibilityElements.equals(PORT)
-                    || originOfExtensibilityElements.equals(BINDING)) {
-                if (Boolean.TRUE.equals(unknown.getRequired())) {
-                    axisService
-                            .setWSAddressingFlag(AddressingConstants.ADDRESSING_REQUIRED);
-                } else {
-                    axisService
-                            .setWSAddressingFlag(AddressingConstants.ADDRESSING_OPTIONAL);
-                }
-            }
-        } else if (AddressingConstants.Final.WSAW_ANONYMOUS
-                .equals(unknown.getElementType())) {
-            if (isTraceEnabled) {
-                log.trace("processUnknownExtensibilityElement:: wsaw:Anonymous found " + unknown);
-            }
-            if (originOfExtensibilityElements.equals(BINDING_OPERATION)) {
-                AxisOperation axisOperation = (AxisOperation) description;
-                if (unknown.getElement().getFirstChild() != null
-                        && unknown.getElement().getFirstChild()
-                        .getNodeType() == Node.TEXT_NODE) {
-                    String anonymousValue = unknown.getElement()
-                            .getFirstChild().getNodeValue();
-                    AddressingHelper.setAnonymousParameterValue(
-                            axisOperation, anonymousValue);
-                }
-            }
-        } else {
-            // Ignore this element - it is a totally unknown element
-            // and we don't care!
-            if (isTraceEnabled) {
-                log.trace("processUnknownExtensibilityElement:: Unknown Extensibility Element found " + unknown);
-            }
-        }
-    }
-
-    /**
-     * Add a policy
-     *
-     * @param description
-     * @param originOfExtensibilityElements
-     * @param policy
-     */
-    private void addPolicy(AxisDescription description,
-    		String originOfExtensibilityElements, Policy policy) {
-    	int attachmentScope = getPolicyAttachmentPoint(description, originOfExtensibilityElements);
-    	if(attachmentScope > -1){
-    		description.getPolicyInclude().addPolicyElement(
-    				attachmentScope, policy);
-    	}
-    }
-
-    /**
-     * Add a policy reference
-     *
-     * @param description
-     * @param originOfExtensibilityElements
-     * @param policyRefElement
-     */
-    private void addPolicyRef(AxisDescription description,
-                              String originOfExtensibilityElements,
-                              PolicyReference policyRefElement) {
-    	int attachmentScope = getPolicyAttachmentPoint(description, originOfExtensibilityElements);
-    	if(attachmentScope > -1){
-    		description.getPolicyInclude().addPolicyRefElement(
-                    attachmentScope, policyRefElement);
-    	}
     }
     
     private int getPolicyAttachmentPoint(AxisDescription description,
