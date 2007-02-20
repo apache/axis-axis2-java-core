@@ -19,11 +19,15 @@ package org.apache.axis2.deployment;
 
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
+
+
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
@@ -38,6 +42,7 @@ import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.modules.Module;
 
 /**
@@ -59,7 +64,19 @@ public class ModuleBuilder extends DescriptionBuilder {
         try {
             if ((moduleClassName != null) && !"".equals(moduleClassName)) {
                 moduleClass = Loader.loadClass(module.getModuleClassLoader(), moduleClassName);
-                module.setModule((Module) moduleClass.newInstance());
+                final Class fmoduleClass = moduleClass;
+                final AxisModule fmodule = module;
+                try {
+                	AccessController.doPrivileged( new PrivilegedExceptionAction() {
+                		public Object run() throws IllegalAccessException, InstantiationException {
+                			Module new_module = (Module) fmoduleClass.newInstance();
+                        	fmodule.setModule(new_module);
+                        	return null;
+                        }
+                    });  	
+                } catch (PrivilegedActionException e) {
+                	throw e.getException();
+                }   
             }
         } catch (Exception e) {
             throw new DeploymentException(e.getMessage(), e);
