@@ -21,8 +21,11 @@ import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 import edu.emory.mathcs.backport.java.util.concurrent.SynchronousQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.java.security.AccessController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -98,11 +101,31 @@ public class ThreadPool implements ThreadFactory {
         ThreadPoolExecutor rc = new ThreadPoolExecutor(corePoolSize , maxPoolSize , 10,
                 TimeUnit.SECONDS, new SynchronousQueue(),
                 new edu.emory.mathcs.backport.java.util.concurrent.ThreadFactory() {
-            public Thread newThread(Runnable runnable) {
-                Thread thread = new Thread(runnable, name);
-                thread.setDaemon(daemon);
-                thread.setPriority(priority);
-                return thread;
+            public Thread newThread(final Runnable runnable) {
+                // do the following section as privileged 
+                // so that it will work even when java2 security
+                // has been enabled
+                Thread returnThread = null;
+                try {
+                    returnThread = (Thread) AccessController.doPrivileged(
+                            new PrivilegedExceptionAction() {
+                                public Object run() {
+                                    Thread newThread =  new Thread(runnable, name);
+                                    newThread.setDaemon(daemon);
+                                    newThread.setPriority(priority);
+                                    return newThread;
+                                }
+                            }
+                        );        	
+                } 
+                catch(PrivilegedActionException e) {
+                    // note: inner class can't have its own static log variable
+                    if (log.isDebugEnabled()) {
+                        log.debug("ThreadPoolExecutor.newThread():   Exception from AccessController ["+e.getClass().getName()+"]  for ["+e.getMessage()+"]", e);
+                    }
+                }
+                return returnThread;
+
             }
         });
         rc.allowCoreThreadTimeOut(true);
