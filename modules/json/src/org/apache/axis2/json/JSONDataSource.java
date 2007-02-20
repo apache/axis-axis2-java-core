@@ -102,7 +102,7 @@ public class JSONDataSource implements OMDataSource {
             int x = reader.next();
             switch (x) {
                 case XMLStreamConstants.START_ELEMENT:
-                    xmlStreamWriter.writeStartElement(reader.getPrefix(), reader.getLocalName(), reader.getNamespaceURI(reader.getPrefix()));
+                    xmlStreamWriter.writeStartElement(reader.getPrefix(), reader.getLocalName(), reader.getNamespaceURI());
                     int namespaceCount = reader.getNamespaceCount();
                     for (int i = namespaceCount - 1; i >= 0; i--) {
                         xmlStreamWriter.writeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));

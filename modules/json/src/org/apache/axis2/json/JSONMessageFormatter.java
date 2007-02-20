@@ -29,7 +29,9 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMDataSource;
+import org.apache.axiom.om.impl.llom.OMElementImpl;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
+import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
@@ -54,15 +56,11 @@ import org.codehaus.jettison.mapped.MappedXMLStreamWriter;
 public class JSONMessageFormatter implements MessageFormatter {
 
     public String getContentType(MessageContext msgCtxt, OMOutputFormat format, String soapActionString) {
-        String contentType;
+        String contentType = (String) msgCtxt.getProperty(Constants.Configuration.CONTENT_TYPE);
         String encoding = format.getCharSetEncoding();
-        if (msgCtxt.getProperty(Constants.Configuration.CONTENT_TYPE) != null) {
-            contentType = (String) msgCtxt.getProperty(Constants.Configuration.CONTENT_TYPE);
-            //if the content type is not set useing the MESSAGE_TYPE as the content type
-        } else {
+        if (contentType == null) {
             contentType = (String) msgCtxt.getProperty(Constants.Configuration.MESSAGE_TYPE);
         }
-
         if (encoding != null) {
             contentType += "; charset=" + encoding;
         }
@@ -74,22 +72,24 @@ public class JSONMessageFormatter implements MessageFormatter {
      * and it contains a JSONDataSource with a correctly formatted JSON String, gets it directly from the
      * DataSource and returns as a byte array. If not, the OM tree is expanded and it is serialized
      * into the output stream and byte array is returned.
+     *
      * @param msgCtxt Message context which contains the soap envelope to be written
-     * @param format format of the message, this is ignored
+     * @param format  format of the message, this is ignored
      * @return the payload as a byte array
      * @throws AxisFault if there is an error in writing the message using StAX writer or IF THE USER
-     *                      TRIES TO SEND A JSON MESSAGE WITH NAMESPACES USING THE "MAPPED" CONVENTION.
+     *                   TRIES TO SEND A JSON MESSAGE WITH NAMESPACES USING THE "MAPPED" CONVENTION.
      */
 
     public byte[] getBytes(MessageContext msgCtxt, OMOutputFormat format) throws AxisFault {
         OMElement element = msgCtxt.getEnvelope().getBody().getFirstElement();
         //if the element is an OMSourcedElementImpl and it contains a JSONDataSource with correct convention,
         //directly get the JSON string.
+
         if (element instanceof OMSourcedElementImpl && getStringToWrite(((OMSourcedElementImpl) element).getDataSource()) != null)
         {
             String jsonToWrite = getStringToWrite(((OMSourcedElementImpl) element).getDataSource());
             return jsonToWrite.getBytes();
-        //otherwise serialize the OM by expanding the tree
+            //otherwise serialize the OM by expanding the tree
         } else {
             try {
                 ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
@@ -123,6 +123,7 @@ public class JSONMessageFormatter implements MessageFormatter {
     /**
      * If the data source is a "Mapped" formatted data source, gives the JSON string by
      * directly taking from the data source.
+     *
      * @param dataSource data source to be checked
      * @return the JSON string to write
      */
@@ -138,19 +139,29 @@ public class JSONMessageFormatter implements MessageFormatter {
      * Writes the JSON message to the output stream with the correct convention. If the payload is an
      * OMSourcedElementImpl and it contains a JSONDataSource with a correctly formatted JSON String,
      * gets it directly from the DataSource and writes to the output stream. If not, the OM tree is expanded
-     * and it is serialized into the output stream.
-     * @param msgCtxt Message context which contains the soap envelope to be written
-     * @param format format of the message, this is ignored
-     * @param out output stream to be written in to
+     * and it is serialized into the output stream.              *
+     *
+     * @param msgCtxt  Message context which contains the soap envelope to be written
+     * @param format   format of the message, this is ignored
+     * @param out      output stream to be written in to
      * @param preserve ignored
      * @throws AxisFault if there is an error in writing the message using StAX writer or IF THE USER
-     *                      TRIES TO SEND A JSON MESSAGE WITH NAMESPACES USING THE "MAPPED" CONVENTION.
+     *                   TRIES TO SEND A JSON MESSAGE WITH NAMESPACES USING THE "MAPPED" CONVENTION.
      */
 
     public void writeTo(MessageContext msgCtxt, OMOutputFormat format,
                         OutputStream out, boolean preserve) throws AxisFault {
         OMElement element = msgCtxt.getEnvelope().getBody().getFirstElement();
         try {
+        	
+        	//Mapped format cannot handle element with namespaces.. So cannot handle Faults
+        	if (element instanceof SOAPFault && this instanceof JSONMessageFormatter)
+        	{
+        		SOAPFault fault = (SOAPFault)element;
+        		OMElement element2 = new OMElementImpl("Fault",null,element.getOMFactory());
+        		element2.setText(fault.toString());
+        		element = element2;
+        	}
             if (element instanceof OMSourcedElementImpl && getStringToWrite(((OMSourcedElementImpl) element).getDataSource()) != null)
             {
                 String jsonToWrite = getStringToWrite(((OMSourcedElementImpl) element).getDataSource());

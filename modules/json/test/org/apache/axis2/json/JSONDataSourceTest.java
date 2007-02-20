@@ -54,14 +54,13 @@ public class JSONDataSourceTest extends XMLTestCase {
     }
 
     public void testMappedSerialize3() throws XMLStreamException {
-//        String jsonString = getMappedJSONString();
-//        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-//        XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(outStream);
-//        JSONDataSource source = getMappedDataSource(jsonString);
-//        source.serialize(writer);
-//        writer.flush();
-//        assertEquals("<?xml version='1.0' encoding='UTF-8'?><mapping><inner><first>test string one</first></inner><inner>test string two</inner><name>foo</name></mapping>", new String(outStream.toByteArray()));
-        //<mapping><inner>test string one</inner><inner>test string two</inner><name>foo</name></mapping>
+        String jsonString = getMappedJSONString();
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(outStream);
+        JSONDataSource source = getMappedDataSource(jsonString);
+        source.serialize(writer);
+        writer.flush();
+        assertEquals("<?xml version='1.0' encoding='UTF-8'?><mapping><inner><first>test string one</first></inner><inner>test string two</inner><name>foo</name></mapping>", new String(outStream.toByteArray()));
     }
 
     public void testBadgerfishSerialize1() throws XMLStreamException {
@@ -107,11 +106,7 @@ public class JSONDataSourceTest extends XMLTestCase {
     }
 
     private String getMappedJSONString() {
-//        {"mapping":{"inner":[{"first":"test string one"},"test string two"],"name":"foo"}}
-//          <mapping><inner><first>test string one</first></inner><inner>test string two</inner><name>foo</name></mapping>
-//        return "{\"mapping\":{\"inner\":[{\"first\":\"test string one\"},\"test string two\"],\"name\":\"foo\"}}";
-        return "{\"mapping\":{\"inner\":[\"test string one\",\"test string two\"],\"name\":\"foo\"}}";
-//        return "{\"mapping\":{\"inner\":\"foo\"}}";
+        return "{\"mapping\":{\"inner\":[{\"first\":\"test string one\"},\"test string two\"],\"name\":\"foo\"}}";
     }
 
     private InputStream readLocalName(InputStream in) {
