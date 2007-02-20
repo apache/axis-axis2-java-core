@@ -151,7 +151,7 @@ public class Builder {
 		StAXBuilder builder = null;
 		XMLStreamReader streamReader;
 
-        Attachments attachments = createAttachment(msgContext, inStream, contentTypeString);
+        Attachments attachments = createAttachmentsMap(msgContext, inStream, contentTypeString);
 		String charSetEncoding = getCharSetEncoding(attachments.getSOAPPartContentType());
 
 		if ((charSetEncoding == null)
@@ -216,7 +216,7 @@ public class Builder {
 		return builder;
 	}
 
-    private static Attachments createAttachment(MessageContext msgContext, InputStream inStream, String contentTypeString) {
+    private static Attachments createAttachmentsMap(MessageContext msgContext, InputStream inStream, String contentTypeString) {
         Object cacheAttachmentProperty = msgContext
                 .getProperty(Constants.Configuration.CACHE_ATTACHMENTS);
         String cacheAttachmentString = null;
@@ -359,21 +359,24 @@ public class Builder {
      */
     public static OMBuilder getBuilderFromSelector(String contentType,
 			InputStream inputStream, MessageContext msgContext,String charSetEncoding) throws AxisFault {
+    	String type;
     	int index = contentType.indexOf(';');
 		if (index>0)
     	{
-    		contentType = contentType.substring(0,index);
+    		type = contentType.substring(0,index);
+    	}else{
+    		type = contentType;
     	}
 		Class builderClass = msgContext.getConfigurationContext()
-				.getAxisConfiguration().getMessageBuilder(contentType);
+				.getAxisConfiguration().getMessageBuilder(type);
 		if (builderClass != null) {
 			try {
 				OMBuilder builder = (OMBuilder) builderClass.newInstance();
-				builder.init(inputStream, charSetEncoding);
+				builder.init(inputStream, charSetEncoding,msgContext.getTo().getAddress(), contentType);
 				// Setting the received content-type as the messageType to make
 				// sure that we respond using the received message serialisation
 				// format.
-				msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, contentType);
+				msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, type);
 				return builder;
 			} catch (InstantiationException e) {
 				throw new AxisFault("Cannot instantiate the specified Builder Class  : "
