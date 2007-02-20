@@ -1,0 +1,10 @@
+<schema targetNamespace="http://apache.org/axis2/jaxws/sample/dlwmin/types" 
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+     <complexType name="TestBean">
+       <sequence>
+         <element name="data1" type="xsd:string"/>
+         <element name="data2" type="xsd:int"/>
+       </sequence>
+     </complexType>
+</schema>

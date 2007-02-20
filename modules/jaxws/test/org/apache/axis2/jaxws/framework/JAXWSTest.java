@@ -64,6 +64,7 @@ import org.apache.axis2.jaxws.proxy.SOAP12ProxyTests;
 import org.apache.axis2.jaxws.sample.AddNumbersTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
 import org.apache.axis2.jaxws.sample.BareTests;
+import org.apache.axis2.jaxws.sample.DLWMinTests;
 import org.apache.axis2.jaxws.sample.FaultsServiceTests;
 import org.apache.axis2.jaxws.sample.FaultyWebServiceTests;
 import org.apache.axis2.jaxws.sample.MtomSampleTests;
@@ -143,6 +144,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(NonWrapTests.class);
         suite.addTestSuite(WSGenTests.class);
         suite.addTestSuite(WrapTests.class);
+        suite.addTestSuite(DLWMinTests.class);
         suite.addTestSuite(NonAnonymousComplexTypeTests.class);
         suite.addTestSuite(AddNumbersTests.class);
         // TODO: This test intermittently fails on Linux and with trace enabled.

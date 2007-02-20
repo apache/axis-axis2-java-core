@@ -21,10 +21,14 @@ import javax.jws.soap.SOAPBinding;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitBareMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitWrappedMethodMarshaller;
+import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitWrappedMinimalMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitWrappedPlusMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.RPCLitMethodMarshaller;
+import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
+import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescriptionFactory;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ParameterDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 
 /**
  * The MethodMarshallerFactory creates a Doc/Lit Wrapped, Doc/Lit Bare or RPC Marshaller using SOAPBinding information
@@ -32,6 +36,7 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 public class MethodMarshallerFactory {
 
     
+    private enum SUBTYPE {NORMAL, DLW_WSGEN_PLUS, DLW_MINIMAL };
     
 	/**
 	 * Intentionally private
@@ -49,15 +54,18 @@ public class MethodMarshallerFactory {
      */
     private static MethodMarshaller createMethodMarshaller(SOAPBinding.Style style, 
             SOAPBinding.ParameterStyle paramStyle,
-            boolean isPlus, 
+            SUBTYPE subType, 
             boolean isClient){  // This flag is for testing only !
 		if (style == SOAPBinding.Style.RPC) {
             return new RPCLitMethodMarshaller();  
         } else if (paramStyle == SOAPBinding.ParameterStyle.WRAPPED){
-            if (isPlus) {
+            if (subType == SUBTYPE.DLW_WSGEN_PLUS) {
                 // Abnormal case
                 return new DocLitWrappedPlusMethodMarshaller();
-            } else {
+            } else if (subType == SUBTYPE.DLW_MINIMAL) {
+                // Abnormal case
+                return new DocLitWrappedMinimalMethodMarshaller();
+            }else {
                 return new DocLitWrappedMethodMarshaller();  
             }
 		} else if (paramStyle == SOAPBinding.ParameterStyle.BARE){
@@ -87,20 +95,22 @@ public class MethodMarshallerFactory {
 
     private static MethodMarshaller createDocLitMethodMarshaller(OperationDescription op, boolean isClient){
         SOAPBinding.ParameterStyle parameterStyle = null;
-        boolean isPlus = false;
+        SUBTYPE subType = SUBTYPE.NORMAL;
         if(isDocLitBare(op)){
             parameterStyle = SOAPBinding.ParameterStyle.BARE;
-        } else if (isDocLitWrappedPlus(op)) {
-            parameterStyle = SOAPBinding.ParameterStyle.WRAPPED;
-            isPlus = true;
-        } else if(isDocLitWrapped(op)){
+        } else { 
+            if (isDocLitWrappedPlus(op)) {
+                subType = SUBTYPE.DLW_WSGEN_PLUS;
+            } else if (isDocLitWrappedMinimal(op)) {
+                subType = SUBTYPE.DLW_MINIMAL;
+            }
             parameterStyle = SOAPBinding.ParameterStyle.WRAPPED;
         }
-        return createMethodMarshaller(SOAPBinding.Style.DOCUMENT, parameterStyle, isPlus, isClient);
+        return createMethodMarshaller(SOAPBinding.Style.DOCUMENT, parameterStyle, subType, isClient);
     }
 
     private static MethodMarshaller createRPCLitMethodMarshaller(boolean isClient){
-        return createMethodMarshaller(SOAPBinding.Style.RPC, SOAPBinding.ParameterStyle.WRAPPED, false, isClient);
+        return createMethodMarshaller(SOAPBinding.Style.RPC, SOAPBinding.ParameterStyle.WRAPPED, SUBTYPE.NORMAL, isClient);
     }
 
     protected static boolean isDocLitBare(OperationDescription op){
@@ -147,5 +157,39 @@ public class MethodMarshallerFactory {
             }
         }
         return false;
+    }
+    
+    /**
+     * If an web service is created without wsgen, it is possible that the
+     * wrapper elements are missing.  In such cases, use the doc/lit wrapped minimal marshaller
+     * @param op
+     * @return
+     */
+    protected static boolean isDocLitWrappedMinimal(OperationDescription op){
+        if (isDocLitWrapped(op)) {
+           ServiceDescription serviceDesc = op.getEndpointInterfaceDescription().getEndpointDescription().getServiceDescription();
+           MarshalServiceRuntimeDescription marshalDesc = 
+               MarshalServiceRuntimeDescriptionFactory.get(serviceDesc);
+           String requestWrapper = marshalDesc.getRequestWrapperClassName(op);
+           if (!exists(requestWrapper)) {
+               // TODO DEBUG
+               return true;
+           }
+           
+           String responseWrapper = marshalDesc.getRequestWrapperClassName(op);
+           if (!exists(responseWrapper)) {
+               // TODO DEBUG
+               return true;
+           }
+           // TODO Do the same for the fault beans
+        }
+        return false;
+    }
+    private static boolean exists(String className) {
+        if (className == null || className.length() == 0) {
+            return false;
+        }
+        // TODO try and load the class
+        return true;
     }
 }

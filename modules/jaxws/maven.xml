@@ -188,6 +188,14 @@
             <classpath location="${compiled.classes.dir}"/>
             <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitbare.wsdl"/>
         </java>
+        
+        <ant:echo>Generating java from greeterTypes.xsd</ant:echo>
+        <java classname="com.sun.tools.xjc.Driver" fork="true"> 
+            <jvmarg line="${maven.junit.jvmargs2}"/>
+            <classpath refid="maven.dependency.classpath"/>
+            <classpath location="${compiled.classes.dir}"/>
+            <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/greeterTypes.xsd"/>
+        </java>
 
     	<ant:echo>Generating java from EchoMessage.wsdl for javabean endpoint support</ant:echo>
    	    <java classname="com.sun.tools.xjc.Driver" fork="true"> 
@@ -500,6 +508,19 @@
 			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
 			</ant:fileset>
 		</ant:copy>
+		
+		<ant:copy toDir="target/test-classes/services/GreeterService/">
+			<ant:fileset dir="target/test-classes">
+			   <ant:include name="org/apache/axis2/jaxws/sample/dlwmin/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/sample/dlwmin">
+			   <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
+		
 		<ant:copy toDir="target/test-classes/services/AsyncService/">
 			<ant:fileset dir="target/test-classes">
 			   <ant:include name="org/apache/axis2/jaxws/sample/parallelasync/**"/>
