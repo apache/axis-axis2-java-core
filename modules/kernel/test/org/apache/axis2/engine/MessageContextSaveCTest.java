@@ -54,6 +54,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Provides tests that focus on the message context object graph
+ */
 public class MessageContextSaveCTest extends TestCase 
 {
     private String testArg = null;
