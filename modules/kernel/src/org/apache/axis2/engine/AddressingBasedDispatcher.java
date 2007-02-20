@@ -14,27 +14,28 @@
 * limitations under the License.
 */
 
-
 package org.apache.axis2.engine;
 
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.description.AxisEndpoint;
-import org.apache.axis2.description.AxisBindingOperation;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
-import java.util.Map;
 
 /**
  * Dispatcher based on the WS-Addressing properties.
@@ -134,7 +135,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             String relatesTo = msgctx.getRelatesTo().getValue();
 
             if(isDebugEnabled){
-            log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("checkingrelatesto",
+            	log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("checkingrelatesto",
                     relatesTo));
             }
             if ((relatesTo != null) || "".equals(relatesTo)) {
@@ -143,6 +144,11 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                                 .getOperationContext(msgctx.getRelatesTo().getValue());
 
                 if (operationContext != null) {
+                	if(operationContext.isComplete()){
+                		// If the dispatch happens because of the RelatesTo and the mep is complete
+                		// we should throw a more descriptive fault.
+                		throw new AxisFault(Messages.getMessage("duplicaterelatesto",relatesTo));
+                	}
                     msgctx.setAxisOperation(operationContext.getAxisOperation());
                     msgctx.setOperationContext(operationContext);
                     msgctx.setServiceContext((ServiceContext) operationContext.getParent());
