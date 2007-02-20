@@ -293,7 +293,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @param wsdl4jService must have atlease one port
      * @throws AxisFault
      */
-    public void populateEndpoints(Binding binding, Service wsdl4jService) throws AxisFault {
+    private void populateEndpoints(Binding binding, Service wsdl4jService) throws AxisFault {
 
         Map wsdl4jPorts = wsdl4jService.getPorts();
         QName bindingName = binding.getQName();
@@ -342,8 +342,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @param isSetMessageQNames
      * @throws AxisFault
      */
-
-    public void populateEndpoint(AxisEndpoint axisEndpoint, Port wsdl4jPort, boolean isSetMessageQNames)
+    private void populateEndpoint(AxisEndpoint axisEndpoint, Port wsdl4jPort, boolean isSetMessageQNames)
             throws AxisFault {
 
         copyExtensibleElements(wsdl4jPort.getExtensibilityElements(), wsdl4jDefinition,
@@ -360,7 +359,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     }
 
-    public void populatePortType(PortType wsdl4jPortType) throws AxisFault {
+    private void populatePortType(PortType wsdl4jPortType) throws AxisFault {
         List wsdl4jOperations = wsdl4jPortType.getOperations();
 
         if (wsdl4jOperations.size() < 1) {
@@ -389,7 +388,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     }
 
-    public void populateBinding(AxisBinding axisBinding, Binding wsdl4jBinding, boolean isSetMessageQNames)
+    private void populateBinding(AxisBinding axisBinding, Binding wsdl4jBinding, boolean isSetMessageQNames)
             throws AxisFault {
 
         copyExtensibleElements(wsdl4jBinding.getExtensibilityElements(), wsdl4jDefinition,
@@ -498,27 +497,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
             axisBinding.addChild(axisBindingOperation.getName(), axisBindingOperation);
         }
-    }
-
-    public SOAPBinding getSOAPBinding(Binding wsdlj4Binding) {
-        Object extElement;
-
-        for (Iterator iterator = wsdlj4Binding.getExtensibilityElements().iterator();
-             iterator.hasNext();) {
-            extElement = iterator.next();
-
-            if (extElement instanceof SOAPBinding) {
-                return (SOAPBinding) extElement;
-            }
-        }
-        return null;
-    }
-
-
-    public void populateBindingOperation(
-            AxisBindingOperation axisBindingOperation,
-            BindingOperation wsdl4BindingOperation) throws AxisFault {
-
     }
 
     /**
@@ -2237,7 +2215,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // TODO Faults ..
         }
     }
-
+    
     /**
      * Look for the wrappable operations depending on the style
      *
