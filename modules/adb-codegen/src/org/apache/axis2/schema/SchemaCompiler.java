@@ -2030,11 +2030,22 @@ public class SchemaCompiler {
                 XmlSchemaSimpleTypeList simpleTypeList = (XmlSchemaSimpleTypeList) content;
                 QName itemTypeQName = simpleTypeList.getItemTypeName();
 
-                if (!isAlreadyProcessed(itemTypeQName)){
-                    XmlSchemaType simpleSchemaType = getType(parentSchema,itemTypeQName);
-                    if (simpleSchemaType instanceof XmlSchemaSimpleType){
-                        processSimpleSchemaType((XmlSchemaSimpleType)simpleSchemaType,null,parentSchema,null);
+                if (itemTypeQName != null){
+                   if (!isAlreadyProcessed(itemTypeQName)){
+                        XmlSchemaType simpleSchemaType = getType(parentSchema,itemTypeQName);
+                        if (simpleSchemaType instanceof XmlSchemaSimpleType){
+                            processSimpleSchemaType((XmlSchemaSimpleType)simpleSchemaType,null,parentSchema,null);
+                        }
                     }
+                } else {
+                    XmlSchemaSimpleType listSimpleType = simpleTypeList.getItemType();
+                    itemTypeQName = listSimpleType.getQName();
+                    if (itemTypeQName == null){
+                        // we create a fake Qname for all these simple types since most propably they don't have one
+                        itemTypeQName = new QName(parentSimpleTypeQname.getNamespaceURI(),parentSimpleTypeQname.getLocalPart() + "_type0");
+                    }
+                    processSimpleSchemaType(listSimpleType,null,parentSchema,itemTypeQName);
+
                 }
 
                 String className = findClassName(itemTypeQName,false);

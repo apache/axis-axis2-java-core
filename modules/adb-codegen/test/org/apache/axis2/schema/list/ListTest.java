@@ -120,5 +120,30 @@ public class ListTest extends TestCase {
         }
     }
 
+    public void testInnerSimpleTypes(){
+        TestInnerListSimpleType testInnerListSimpleType = new TestInnerListSimpleType();
+        InnerListSimpleType innerListSimpleType = new InnerListSimpleType();
+        testInnerListSimpleType.setTestInnerListSimpleType(innerListSimpleType);
+        InnerListSimpleType_type0[] list = new InnerListSimpleType_type0[2];
+        list[0] = InnerListSimpleType_type0.Access;
+        list[1] = InnerListSimpleType_type0.Exist;
+
+        innerListSimpleType.setInnerListSimpleType_type0(list);
+
+        OMElement omElement = testInnerListSimpleType.getOMElement(TestInnerListSimpleType.MY_QNAME,
+                OMAbstractFactory.getOMFactory());
+        try {
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OM Element ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            TestInnerListSimpleType result = TestInnerListSimpleType.Factory.parse(xmlReader);
+            assertEquals(result.getTestInnerListSimpleType().getInnerListSimpleType_type0()[0],InnerListSimpleType_type0.Access);
+            assertEquals(result.getTestInnerListSimpleType().getInnerListSimpleType_type0()[1],InnerListSimpleType_type0.Exist);
+        } catch (Exception e) {
+            assertTrue(false);
+        }
+
+    }
+
 
 }

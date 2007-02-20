@@ -38,4 +38,17 @@
 
     <xs:element name="SuperTestListStringElement" type="tns:SuperTestListString"/>
 
+    <xs:simpleType name="InnerListSimpleType">
+        <xs:list>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Exist"/>
+                    <xs:enumeration value="Access"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:list>
+    </xs:simpleType>
+
+    <xs:element name="TestInnerListSimpleType" type="tns:InnerListSimpleType"/>
+
 </schema>
