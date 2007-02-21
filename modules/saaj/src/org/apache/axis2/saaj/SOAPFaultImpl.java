@@ -774,7 +774,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         
         SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
         // don't just use the default prefix, use the passed one or the parent's
-        String prefix = ((qname.getPrefix() != null) && !qname.getPrefix().equals("")) ? qname.getPrefix() : this.fault.getQName().getPrefix();
+        String prefix = ((qname.getPrefix() != null) && !qname.getPrefix().equals("")) ? qname.getPrefix() : this.fault.getNamespace().getPrefix();
         soapFaultValue.setText(prefix+":"+qname.getLocalPart());
         OMNamespace omNamespace = new OMNamespaceImpl(qname.getNamespaceURI(),qname.getPrefix());
         soapFaultValue.setNamespace(omNamespace);
