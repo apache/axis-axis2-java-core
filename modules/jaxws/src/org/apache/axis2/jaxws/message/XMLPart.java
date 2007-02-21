@@ -84,12 +84,31 @@ public interface XMLPart {
     
     /**
      * Set the Style. 
-     * If the style is DOCUMENT, the body blocks are loaced underneath the body element.
+     * If the style is DOCUMENT, the body blocks are located underneath the body element.
      * If the style is set to RPC, then the body blocks are located underneath the
      * rpc operation.
      * @param style Style
+     * @see set indirection
      */
     public void setStyle(Style style) throws WebServiceException;
+    
+    /**
+     * Set indirection.  Used to force the code to look for blocks at a particular location.
+     * For DOCUMENT the default is 0
+     * For RPC the default is 1
+     * This method is used to override these settings for special cases. 
+     * @param indirection (0 or 1)
+     */
+    public void setIndirection(int indirection);
+    
+    /**
+     * Get indirection.  Used to force the code to look for blocks at a particular location.
+     * For DOCUMENT the default is 0
+     * For RPC the default is 1
+     * This method is used to override these settings for special cases. 
+     * @return indirection (0 or 1)
+     */
+    public int getIndirection();
 
     /**
      * @return the QName of the operation element if Style.rpc.  Otherwise null

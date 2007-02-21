@@ -26,10 +26,10 @@ import javax.jws.WebService;
 @WebService(targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin", name = "Greeter")
 
 public interface Greeter {
-    @WebResult(targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin/params", name = "responseType")
+    @WebResult(targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin", name = "responseType")
     @WebMethod(operationName = "greetMe", action="greetMe")
     public java.lang.String greetMe(
-        @WebParam(targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin/params", name = "requestType")
+        @WebParam(targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin", name = "requestType")
         java.lang.String requestType
     );
 }

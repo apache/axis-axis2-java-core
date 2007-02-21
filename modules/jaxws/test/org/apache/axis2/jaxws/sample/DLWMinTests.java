@@ -18,8 +18,10 @@ package org.apache.axis2.jaxws.sample;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 
+import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter;
 
 import junit.framework.TestCase;
@@ -51,5 +53,32 @@ public class DLWMinTests extends TestCase {
         String me = "Scheu";
         String response = proxy.greetMe(me);
         assertTrue("Hello Scheu".equals(response));
+    }
+    
+    public void testGreetMe_Dispatch() {
+        // Get a dispatch
+        Service svc = Service.create(QNAME_SERVICE);
+        svc.addPort(QNAME_PORT, null, URL_ENDPOINT);
+        Dispatch<String> dispatch = svc.createDispatch(QNAME_PORT, 
+                String.class, Service.Mode.PAYLOAD);
+        BindingProvider p = (BindingProvider) dispatch;
+        p.getRequestContext().put(
+                BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
+        p.getRequestContext().put(
+                BindingProvider.SOAPACTION_URI_PROPERTY, "greetMe");
+        
+        String request =
+            "<pre:greetMe xmlns:pre='http://apache.org/axis2/jaxws/sample/dlwmin'>" +
+            "<pre:requestType>Scheu</pre:requestType>" +
+            "</pre:greetMe>";
+        System.out.println("Doc/Lit Wrapped Minimal Request =" + request);
+        String response = dispatch.invoke(request);
+        System.out.println("Doc/Lit Wrapped Minimal Response =" + response);
+        
+        assertTrue(response.contains("Hello Scheu"));
+        assertTrue(response.contains("dlwmin:greetMeResponse"));
+        assertTrue(response.contains(":responseType") ||
+                   response.contains("responseType xmlns="));  // assert that response type is a qualified element
+        assertTrue(!response.contains("type")); // xsi:type should not be used
     }
 }

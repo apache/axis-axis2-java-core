@@ -44,9 +44,6 @@ import org.apache.commons.logging.LogFactory;
  * The Doc/Lit Wrapped Minimal Marshaller is used when
  *   1) The web service is Doc/Lit Wrapped, and
  *   2) The wrapper and fault bean objects are missing (hence the term 'Minimal')
- *   
- * TODO
- * This class was copied from RPC/LIT and is currently "UNDER DEVELOPMENT"
  *
  */
 public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
@@ -61,37 +58,26 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
-        Protocol protocol = null;
-        try {
-            protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()); 
-        } catch (WebServiceException e) {
-            // TODO better handling than this?
-            e.printStackTrace();
-        }
+        Protocol protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()); 
         
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
             
-            // Sample RPC message
+            // Sample Document message
             // ..
             // <soapenv:body>
-            //    <m:op xmlns:m="urn://api">
-            //       <param xsi:type="data:foo" >...</param>
-            //    </m:op>
+            //    <m:operation>
+            //      <param>hello</param>
+            //    </m:operation>
             // </soapenv:body>
             //
             // Important points.
-            //   1) RPC has an operation element under the body.  This is the name of the
-            //      wsdl operation.
-            //   2) The data blocks are located underneath the operation element.  (In doc/lit
-            //      the data elements are underneath the body.
-            //   3) The name of the data blocks (param) are defined by the wsdl:part not the
-            //      schema.  Note that the param is unqualified...per WS-I BP.
-            //   4) The type of the data block (data:foo) is defined by schema (thus there is 
-            //      JAXB type rendering.  Since we are using JAXB to marshal the data, 
-            //      we always generate an xsi:type attribute.  This is an implemenation detail
-            //      and is not defined by any spec.
-            
+            //   1) There is no operation element under the body.
+            //   2) The data blocks are located underneath the body.  
+            //   3) The name of the data block (m:operation) is defined by the schema and match the name of the operation.
+            //      This is called the wrapper element.  The wrapper element has a corresponding JAXB element pojo.
+            //   4) The parameters (m:param) are child elements of the wrapper element.
+            //   5) NOTE: For doc/literal wrapped "minimal", the wrapper JAXB element pojo is missing.
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
@@ -105,12 +91,12 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             //to a method then an implementation MUST throw WebServiceException.
             if(pds.length > 0){
             	if(signatureArguments == null){
-            		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullParamErr1", "Input", operationDesc.getJavaMethodName(), "rpc/lit"));
+            		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullParamErr1", "Input", operationDesc.getJavaMethodName(), "doc/lit"));
             	}
             	if(signatureArguments !=null){
             		for(Object argument:signatureArguments){
             			if(argument == null){
-                            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullParamErr1", "Input", operationDesc.getJavaMethodName(), "rpc/lit"));
+                            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("NullParamErr1", "Input", operationDesc.getJavaMethodName(), "doc/lit"));
             			}
             		}
             	}
@@ -120,10 +106,11 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
             Message m = mf.create(protocol);
             
-            // Indicate the style and operation element name.  This triggers the message to
-            // put the data blocks underneath the operation element
-            m.setStyle(Style.RPC);
-            m.setOperationElement(getRPCOperationQName(operationDesc));
+            // Indicate the style and wrapper element name.  This triggers the message to
+            // put the data blocks underneath the wrapper element
+            m.setStyle(Style.DOCUMENT);
+            m.setIndirection(1);
+            m.setOperationElement(getRequestWrapperQName(operationDesc));
             
             // The input object represent the signature arguments.
             // Signature arguments are both holders and non-holders
@@ -133,7 +120,8 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                         pds,
                         signatureArguments,
                         true,  // input
-                        false, true); // use partName since this is rpc/lit
+                        true,  // doc/lit wrapped
+                        true); // false
                         
             
             // Put values onto the message
@@ -176,12 +164,17 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
             
-            // Indicate that the style is RPC.  This is important so that the message understands
-            // that the data blocks are underneath the operation element
-            message.setStyle(Style.RPC);
+            // Indicate that the style is Document, but the blocks are underneath
+            // the wrapper element
+            message.setStyle(Style.DOCUMENT);
+            message.setIndirection(1);
             
             // Unmarshal the ParamValues from the Message
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, true);
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
+                    message, 
+                    packages, 
+                    true, // input
+                    true);  // sigh...unmarshal by type because there is no wrapper
             
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
@@ -218,12 +211,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
-            try {
-                protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
-            } catch (WebServiceException e) {
-                // TODO better handling than this?
-                e.printStackTrace();
-            }
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
         }
         
         // Note all exceptions are caught and rethrown with a WebServiceException
@@ -257,14 +245,11 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
             Message m = mf.create(protocol);
             
-            // Indicate the style and operation element name.  This triggers the message to
+            // Indicate the style and wrapper element name.  This triggers the message to
             // put the data blocks underneath the operation element
-            m.setStyle(Style.RPC);
-            
-            // TODO Is there an annotation for the operation element response ?
-            QName rpcOpQName = getRPCOperationQName(operationDesc);
-            String localPart = rpcOpQName.getLocalPart() + "Response";
-            QName responseOp = new QName(rpcOpQName.getNamespaceURI(), localPart, rpcOpQName.getPrefix());
+            m.setStyle(Style.DOCUMENT);
+            m.setIndirection(1);
+            QName responseOp = getResponseWrapperQName(operationDesc);
             m.setOperationElement(responseOp);
             
             // Put the return object onto the message
@@ -275,7 +260,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                 returnNS = operationDesc.getResultTargetNamespace();
                 returnLocalPart = operationDesc.getResultName();
             } else {
-                returnNS = "";  // According to WSI BP the body part is unqualified
+                returnNS = operationDesc.getResultTargetNamespace();
                 returnLocalPart = operationDesc.getResultPartName();
             }
             
@@ -300,7 +285,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                         returnType, 
                         marshalDesc, 
                         m,
-                        true, // forceXSI since this is rpc/lit
+                        true, // force marshal by type
                         operationDesc.isResultHeader()); 
             }
             
@@ -310,7 +295,8 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                         pds, 
                         signatureArgs, 
                         false,  // output
-                        false, true);   // use partName since this is rpc/lit
+                        true,   // doc/lit wrapped
+                        false); // not rpc
 
             // TODO Should we check for null output body values?  Should we check for null output header values ?
             // Put values onto the message
@@ -354,9 +340,9 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
             
-            // Indicate that the style is RPC.  This is important so that the message understands
-            // that the data blocks are underneath the operation element
-            message.setStyle(Style.RPC);
+            // Indicate that the style is Document. 
+            message.setStyle(Style.DOCUMENT);
+            message.setIndirection(1);
             
             // Get the return value.
             Class returnType = operationDesc.getResultActualType();
@@ -365,10 +351,19 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                 // If the webresult is in the header, we need the name of the header so that we can find it.
                 Element returnElement = null;
                 if (operationDesc.isResultHeader()) {
-                    returnElement = MethodMarshallerUtils.getReturnElement(packages, message, returnType, true,
-                            operationDesc.getResultTargetNamespace(), operationDesc.getResultPartName());
+                    returnElement = MethodMarshallerUtils.getReturnElement(packages, 
+                            message, 
+                            null,  // For headers, unmarshal normally 
+                            true,  // is a header
+                            operationDesc.getResultTargetNamespace(), // header ns
+                            operationDesc.getResultPartName());       // header local part
                 } else {
-                    returnElement = MethodMarshallerUtils.getReturnElement(packages, message, returnType, false, null, null);
+                    returnElement = MethodMarshallerUtils.getReturnElement(packages, 
+                            message, 
+                            returnType, // Unmarshal by type
+                            false,      // not a header
+                            null, 
+                            null);
                 }
                 returnValue = returnElement.getTypeValue();
                 // TODO should we allow null if the return is a header?
@@ -381,7 +376,11 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             }
             
             // Unmarshall the ParamValues from the Message
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, false);
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
+                    message, 
+                    packages, 
+                    false, // output
+                    true); // unmarshal by type since there is no response wrapper
             
             // TODO Should we check for null output body values?  Should we check for null output header values ?
             
@@ -405,12 +404,7 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
-            try {
-                protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
-            } catch (WebServiceException e) {
-                // TODO better handling than this?
-                e.printStackTrace();
-            }
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
         }
         
         // Note all exceptions are caught and rethrown with a WebServiceException
@@ -448,17 +442,32 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
     
     /**
      * @param opDesc
-     * @return qualified qname to use in the rpc message to represent the operation
-     * (per WSI BP)
+     * @return request wrapper qname
      */
-    private static QName getRPCOperationQName(OperationDescription opDesc) {
+    private static QName getRequestWrapperQName(OperationDescription opDesc) {
+        
         QName qName = opDesc.getName();
         
-        String localPart = qName.getLocalPart();
-        String uri = (qName.getNamespaceURI().length() == 0) ? 
-                      opDesc.getEndpointInterfaceDescription().getTargetNamespace() :
-                      qName.getNamespaceURI();
-        String prefix = "rpcOp";  // Prefer using an actual prefix
+        String localPart = opDesc.getRequestWrapperLocalName();
+        String uri = opDesc.getRequestWrapperTargetNamespace();
+        String prefix = "dlwmin";  // Prefer using an actual prefix
+                
+        
+        qName = new QName(uri, localPart, prefix);
+        return qName;
+    }
+    
+    /**
+     * @param opDesc
+     * @return request wrapper qname
+     */
+    private static QName getResponseWrapperQName(OperationDescription opDesc) {
+        
+        QName qName = opDesc.getName();
+        
+        String localPart = opDesc.getResponseWrapperLocalName();
+        String uri = opDesc.getResponseWrapperTargetNamespace();
+        String prefix = "dlwmin";  // Prefer using an actual prefix
                 
         
         qName = new QName(uri, localPart, prefix);

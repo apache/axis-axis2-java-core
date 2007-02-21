@@ -20,12 +20,11 @@
 <wsdl:definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
     xmlns:tns="http://apache.org/axis2/jaxws/sample/dlwmin"
-    xmlns:x1="http://apache.org/axis2/jaxws/sample/dlwmin/params"
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     targetNamespace="http://apache.org/axis2/jaxws/sample/dlwmin" name="HelloWorld">
     <wsdl:types>
-        <schema targetNamespace="http://apache.org/axis2/jaxws/sample/dlwmin/params" 
+        <schema targetNamespace="http://apache.org/axis2/jaxws/sample/dlwmin" 
             xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
             <import namespace="http://apache.org/axis2/jaxws/sample/dlwmin/types"
                     schemaLocation="greeterTypes.xsd" />
@@ -51,10 +50,10 @@
 
    
     <wsdl:message name="greetMeRequest">
-        <wsdl:part element="x1:greetMe" name="in"/>
+        <wsdl:part element="tns:greetMe" name="in"/>
     </wsdl:message>
     <wsdl:message name="greetMeResponse">
-        <wsdl:part element="x1:greetMeResponse" name="out"/>
+        <wsdl:part element="tns:greetMeResponse" name="out"/>
     </wsdl:message>
 
         

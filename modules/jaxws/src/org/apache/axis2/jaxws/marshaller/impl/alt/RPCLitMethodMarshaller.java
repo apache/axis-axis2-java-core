@@ -52,13 +52,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         
         EndpointInterfaceDescription ed = operationDesc.getEndpointInterfaceDescription();
         EndpointDescription endpointDesc = ed.getEndpointDescription();
-        Protocol protocol = null;
-        try {
-            protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()); 
-        } catch (WebServiceException e) {
-            // TODO better handling than this?
-            e.printStackTrace();
-        }
+        Protocol protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()); 
         
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
@@ -172,7 +166,11 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             message.setStyle(Style.RPC);
             
             // Unmarshal the ParamValues from the Message
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, true);
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
+                    message, 
+                    packages, 
+                    true, // input
+                    true); // unmarshal by type
             
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
@@ -209,12 +207,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
-            try {
-                protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
-            } catch (WebServiceException e) {
-                // TODO better handling than this?
-                e.printStackTrace();
-            }
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
         }
         
         // Note all exceptions are caught and rethrown with a WebServiceException
@@ -372,7 +365,11 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             }
             
             // Unmarshall the ParamValues from the Message
-            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, message, packages, false);
+            List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
+                    message, 
+                    packages, 
+                    false, // output
+                    true); // unmarshal by type
             
             // TODO Should we check for null output body values?  Should we check for null output header values ?
             
@@ -396,12 +393,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
         if (protocol == null) {
-            try {
-                protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
-            } catch (WebServiceException e) {
-                // TODO better handling than this?
-                e.printStackTrace();
-            }
+            protocol = Protocol.getProtocolForBinding(endpointDesc.getBindingType());
         }
         
         // Note all exceptions are caught and rethrown with a WebServiceException

@@ -71,6 +71,7 @@ class XMLSpineImpl implements XMLSpine {
 	
 	private Protocol protocol = Protocol.unknown;
     private Style style = Style.DOCUMENT;
+    private int indirection = 0;
 	private SOAPEnvelope root = null;
 	private SOAPFactory soapFactory = null;
 	
@@ -82,12 +83,14 @@ class XMLSpineImpl implements XMLSpine {
 	 * (i.e. the Envelope, Header and Body)
      * @param protocol Protocol
      * @param style Style
+     * @param indirection (0 or 1) indicates location of body blocks
      * @param opQName QName if the Style is RPC
 	 */
-	public XMLSpineImpl(Protocol protocol, Style style) {
+	public XMLSpineImpl(Protocol protocol, Style style, int indirection) {
 		super();
 		this.protocol = protocol;
         this.style = style;
+        this.indirection = indirection;
 		soapFactory = _getFactory(protocol);
 		root = _createEmptyEnvelope(protocol, style, soapFactory);
 	}
@@ -96,11 +99,13 @@ class XMLSpineImpl implements XMLSpine {
 	 * Create spine from an existing OM tree
 	 * @param envelope
      * @param style Style
+     * @param indirection (0 or 1) indicates location of body blocks
 	 * @throws WebServiceException
 	 */
-	public XMLSpineImpl(SOAPEnvelope envelope, Style style) throws WebServiceException {
+	public XMLSpineImpl(SOAPEnvelope envelope, Style style, int indirection) throws WebServiceException {
 		super();
         this.style = style;
+        this.indirection = indirection;
 		init(envelope);
 		if (root.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
 			protocol = Protocol.soap11;
@@ -509,7 +514,7 @@ class XMLSpineImpl implements XMLSpine {
      */
     private OMElement _getBodyBlockParent() {
         SOAPBody body = root.getBody();
-        if (!body.hasFault() && style == Style.RPC) {
+        if (!body.hasFault() && indirection == 1) {
             //  For RPC the blocks are within the operation element
             OMElement op = body.getFirstElement();
             if (op == null) {

@@ -71,18 +71,18 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Sample Document message
             // ..
             // <soapenv:body>
-            //    <m:return ... >...</m:param>
+            //    <m:operationResponse ... >
+            //       <param>hello</param>
+            //    </m:operationResponse>
             // </soapenv:body>
             //
             // Important points.
             //   1) There is no operation element in the message
-            //   2) The data blocks are located underneath the operation element. 
-            //   3) The name of the data blocks (m:param) are defined by the schema.
-            //      (SOAP indicates that the name of the element is not important, but
-            //      for document processing, we will assume that the name corresponds to 
-            //      a schema root element)
-            //   4) The type of the data block is defined by schema; thus in most cases
-            //      an xsi:type will not be present
+            //   2) The data blocks are located underneath the body element. 
+            //   3) The name of the data block (m:operationResponse) is defined by the schema.
+            //      It matches the operation name + "Response", and it has a corresponding JAXB element.
+            //      This element is called the wrapper element
+            //   4) The parameters are (param) are child elements of the wrapper element.
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
             MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
@@ -188,15 +188,17 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Sample Document message
             // ..
             // <soapenv:body>
-            //    <m:param .. >...</m:param>
+            //    <m:operation>
+            //      <param>hello</param>
+            //    </m:operation>
             // </soapenv:body>
             //
             // Important points.
             //   1) There is no operation element under the body.
             //   2) The data blocks are located underneath the body.  
-            //   3) The name of the data blocks (m:param) are defined by the schema
-            //   4) The type of the data block (data:foo) is defined by schema (and probably
-            //      is not present in the message
+            //   3) The name of the data block (m:operation) is defined by the schema and match the name of the operation.
+            //      This is called the wrapper element.  The wrapper element has a corresponding JAXB element pojo.
+            //   4) The parameters (m:param) are child elements of the wrapper element.
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
             MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
@@ -280,18 +282,18 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Sample Document message
             // ..
             // <soapenv:body>
-            //    <m:return ... >...</m:param>
+            //    <m:operationResponse ... >
+            //       <param>hello</param>
+            //    </m:operationResponse>
             // </soapenv:body>
             //
             // Important points.
             //   1) There is no operation element in the message
-            //   2) The data blocks are located underneath the operation element. 
-            //   3) The name of the data blocks (m:param) are defined by the schema.
-            //      (SOAP indicates that the name of the element is not important, but
-            //      for document processing, we will assume that the name corresponds to 
-            //      a schema root element)
-            //   4) The type of the data block is defined by schema; thus in most cases
-            //      an xsi:type will not be present
+            //   2) The data blocks are located underneath the body element. 
+            //   3) The name of the data block (m:operationResponse) is defined by the schema.
+            //      It matches the operation name + "Response", and it has a corresponding JAXB element.
+            //      This element is called the wrapper element
+            //   4) The parameters are (param) are child elements of the wrapper element.
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
@@ -379,16 +381,17 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             // Sample Document message
             // ..
             // <soapenv:body>
-            //    <m:param .. >...</m:param>
+            //    <m:operation>
+            //      <param>hello</param>
+            //    </m:operation>
             // </soapenv:body>
             //
             // Important points.
             //   1) There is no operation element under the body.
             //   2) The data blocks are located underneath the body.  
-            //   3) The name of the data blocks (m:param) are defined by the schema
-            //   4) The type of the data block (data:foo) is defined by schema (and probably
-            //      is not present in the message
-            
+            //   3) The name of the data block (m:operation) is defined by the schema and match the name of the operation.
+            //      This is called the wrapper element.  The wrapper element has a corresponding JAXB element pojo.
+            //   4) The parameters (m:param) are child elements of the wrapper element.
             
             // Get the operation information
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();

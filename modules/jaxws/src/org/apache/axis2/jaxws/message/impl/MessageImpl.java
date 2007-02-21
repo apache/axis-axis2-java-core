@@ -438,4 +438,12 @@ public class MessageImpl implements Message {
         return postPivot;
     }
 
+    public int getIndirection() {
+        return xmlPart.getIndirection();
+    }
+
+    public void setIndirection(int indirection) {
+        xmlPart.setIndirection(indirection);
+    }
+
 }

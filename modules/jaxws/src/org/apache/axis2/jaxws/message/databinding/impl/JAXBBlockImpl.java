@@ -107,10 +107,10 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             Object jaxb = null;
             
             // Unmarshal into the business object.
-            if (ctx.getRPCType() == null) {
+            if (ctx.getProcessType() == null) {
                 jaxb = unmarshalByElement(u, reader); // preferred and always used for style=document
             } else {
-                jaxb = unmarshalByType(u, reader, ctx.getRPCType());
+                jaxb = unmarshalByType(u, reader, ctx.getProcessType());
             }
             
             
@@ -204,10 +204,10 @@ public class JAXBBlockImpl extends BlockImpl implements JAXBBlock {
             JAXBXMLStreamWriterFilter filter = new JAXBXMLStreamWriterFilter(writer);
             
             // Marshal the object
-            if (ctx.getRPCType() == null) {
+            if (ctx.getProcessType() == null) {
                 marshalByElement(busObject, m, filter);
             } else {
-                marshalByType(busObject, m, filter, ctx.getRPCType());
+                marshalByType(busObject, m, filter, ctx.getProcessType());
             }
             
             // Successfully marshalled the data

@@ -91,7 +91,7 @@ public class XMLPartImpl extends  XMLPartBase {
 
 	@Override
 	protected XMLSpine _convertOM2Spine(OMElement om) throws WebServiceException {
-		return new XMLSpineImpl((org.apache.axiom.soap.SOAPEnvelope) om, getStyle());
+		return new XMLSpineImpl((org.apache.axiom.soap.SOAPEnvelope) om, getStyle(), getIndirection());
 	}
 
 	@Override

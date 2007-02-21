@@ -97,7 +97,11 @@ public class MethodMarshallerUtils  {
      * @return PDElements
      */
     static List<PDElement> getPDElements(MarshalServiceRuntimeDescription marshalDesc,
-            ParameterDescription[] params, Object[] sigArguments, boolean isInput, boolean isDocLitWrapped, boolean isRPC) {
+            ParameterDescription[] params, 
+            Object[] sigArguments, 
+            boolean isInput, 
+            boolean isDocLitWrapped, 
+            boolean isRPC) {
         List<PDElement> pdeList = new ArrayList<PDElement>();
         
         int index = 0;
@@ -164,12 +168,14 @@ public class MethodMarshallerUtils  {
      * @param message Message
      * @param packages set of packages needed to unmarshal objects for this operation
      * @param isInput indicates if input or output  params (input on server, output on client)
+     * @param isUnmarshalByType (discouraged...but must be used for rpc)
      * @return ParamValues
      */
     static List<PDElement> getPDElements(ParameterDescription[] params, 
             Message message, 
             TreeSet<String> packages, 
-            boolean isInput) throws XMLStreamException {
+            boolean isInput, 
+            boolean isUnmarshalByType) throws XMLStreamException {
         
         List<PDElement> pdeList = new ArrayList<PDElement>();
         
@@ -207,8 +213,8 @@ public class MethodMarshallerUtils  {
                 
                 // RPC is type based, so unfortuately the type of 
                 // object must be provided
-                if (message.getStyle() == Style.RPC) {
-                    context.setRPCType(pd.getParameterActualType());
+                if (isUnmarshalByType && !pd.isHeader()) {
+                    context.setProcessType(pd.getParameterActualType());
                 }
                 
                 // Unmarshal the object into a JAXB object or JAXBElement
@@ -352,10 +358,13 @@ public class MethodMarshallerUtils  {
      * @param pdeList element enabled objects
      * @param message Message
      * @param packages Packages needed to do a JAXB Marshal
-     * @param isRPC 
+     * @param isMarshalByType (discouraged...but must be used for rpc)
      * @throws MessageException
      */
-    static void toMessage(List<PDElement> pdeList, Message message, TreeSet<String> packages, boolean isRPC) throws WebServiceException {
+    static void toMessage(List<PDElement> pdeList, 
+            Message message, 
+            TreeSet<String> packages, 
+            boolean isMarshalByType) throws WebServiceException {
         
         int totalBodyBlocks = 0;
         for (int i=0; i<pdeList.size(); i++) {
@@ -372,8 +381,8 @@ public class MethodMarshallerUtils  {
             // Create the JAXBBlockContext
             // RPC uses type marshalling, so use the rpcType
             JAXBBlockContext context = new JAXBBlockContext(packages);
-            if (isRPC) {
-                context.setRPCType(pde.getParam().getParameterActualType());
+            if (isMarshalByType && !pde.getParam().isHeader()) {
+                context.setProcessType(pde.getParam().getParameterActualType());
             }
                 
             // Create a JAXBBlock out of the value.
@@ -409,7 +418,7 @@ public class MethodMarshallerUtils  {
      * @param returnType
      * @param marshalDesc
      * @param message
-     * @param isRPC
+     * @param isMarshalByType..we must do this for RPC...discouraged otherwise
      * @param isHeader
      * @throws MessageException
      */
@@ -417,15 +426,15 @@ public class MethodMarshallerUtils  {
             Class returnType, 
             MarshalServiceRuntimeDescription marshalDesc,
             Message message, 
-            boolean isRPC,
+            boolean isMarshalByType,
             boolean isHeader)
             throws WebServiceException {
         
         // Create the JAXBBlockContext
         // RPC uses type marshalling, so recored the rpcType
         JAXBBlockContext context = new JAXBBlockContext(marshalDesc.getPackages());
-        if (isRPC) {
-            context.setRPCType(returnType);
+        if (isMarshalByType && !isHeader) {
+            context.setProcessType(returnType);
         }
         
         //  Create a JAXBBlock out of the value.
@@ -444,7 +453,7 @@ public class MethodMarshallerUtils  {
      * Unmarshal the return object from the message
      * @param packages
      * @param message
-     * @param rpcType RPC Declared Type class (only used for RPC processing)
+     * @param unmarshalType Used only to indicate unmarshaling by type...only necessary for rpc
      * @param isHeader
      * @param headerNS (only needed if isHeader)
      * @param headerLocalPart (only needed if isHeader)
@@ -454,7 +463,7 @@ public class MethodMarshallerUtils  {
      */
     static Element getReturnElement(TreeSet<String> packages, 
             Message message, 
-            Class rpcType,
+            Class unmarshalType,  // set to null unless style=rpce
             boolean isHeader,
             String headerNS, 
             String headerLocalPart)
@@ -463,8 +472,8 @@ public class MethodMarshallerUtils  {
         
         // The return object is the first block in the body
         JAXBBlockContext context = new JAXBBlockContext(packages);
-        if (rpcType != null) {
-            context.setRPCType(rpcType);  // RPC is type-based, so the unmarshalled type must be provided
+        if (unmarshalType != null && !isHeader) {
+            context.setProcessType(unmarshalType);  
         }
         Block block = null;
         if (isHeader) {
@@ -554,7 +563,7 @@ public class MethodMarshallerUtils  {
                 // RPC uses type marshalling, so recored the rpcType
                 JAXBBlockContext context = new JAXBBlockContext(marshalDesc.getPackages());
                 if (isRPC) {
-                    context.setRPCType(faultBeanObject.getClass());
+                    context.setProcessType(faultBeanObject.getClass());
                 }
                 
                 
@@ -753,7 +762,7 @@ public class MethodMarshallerUtils  {
                 // RPC is problem ! 
                 // Since RPC is type based, JAXB needs the declared type
                 // to unmarshal the object.
-                blockContext.setRPCType(faultBeanFormalClass);
+                blockContext.setProcessType(faultBeanFormalClass);
                 
             }
             

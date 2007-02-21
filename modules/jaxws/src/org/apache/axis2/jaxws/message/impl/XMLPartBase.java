@@ -89,7 +89,7 @@ public abstract class XMLPartBase implements XMLPart {
 	
 	Protocol protocol = Protocol.unknown;  // Protocol defaults to unknown
     Style style = Style.DOCUMENT;          // Style defaults to document
-    
+    int indirection = 0;                   // Default indirection for Document
 	
 	// The actual xml representation is always one of the following
 	//   OM if the content is an OM tree
@@ -275,6 +275,14 @@ public abstract class XMLPartBase implements XMLPart {
 	public Style getStyle() {
         return style;
     }
+    
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.XMLPart#getIndirection()
+     */
+    public int getIndirection() {
+        return indirection;
+    }
+    
 
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.message.XMLPart#setStyle(javax.jws.soap.SOAPBinding.Style)
@@ -287,6 +295,21 @@ public abstract class XMLPartBase implements XMLPart {
             }
         }
         this.style = style;
+        if (style == Style.RPC) {
+            setIndirection(1);
+        } else {
+            setIndirection(0);
+        }
+    }
+    
+    public void setIndirection(int indirection) {
+        if (this.indirection != indirection) {
+            if (contentType == SPINE) {
+                // Must switch to something other than XMLSpine
+                getContentAsOMElement();
+            }
+        }
+        this.indirection = indirection;
     }
 
     public QName getOperationElement() throws WebServiceException {
@@ -317,7 +340,7 @@ public abstract class XMLPartBase implements XMLPart {
     }
 
     public void setOperationElement(QName operationQName) throws WebServiceException {
-        if (this.style == Style.RPC) {
+        if (indirection == 1) {
             this.getContentAsXMLSpine().setOperationElement(operationQName);
         }
     }
@@ -625,7 +648,7 @@ public abstract class XMLPartBase implements XMLPart {
 	protected XMLSpine _createSpine(Protocol protocol) throws WebServiceException {
 		// Default implementation is to simply construct the spine. 
 		// Derived classes may wish to construct a different kind of XMLSpine
-		return new XMLSpineImpl(protocol, getStyle());
+		return new XMLSpineImpl(protocol, getStyle(), getIndirection());
 	}
 	
 	private void setConsumed(boolean consume) { 
