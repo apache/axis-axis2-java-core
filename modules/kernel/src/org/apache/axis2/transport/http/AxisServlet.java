@@ -73,8 +73,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     private static final String LIST_SERVICES_SUFIX = "/services/listServices";
     private static final String LIST_FAUKT_SERVICES_SUFIX = "/services/ListFaultyServices";
     private boolean closeReader = true;
-    protected TransportInDescription transportIn;
-    protected TransportOutDescription transportOut;
 
     private static final int BUFFER_SIZE = 1024 * 8;
 
@@ -219,7 +217,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             }
         } else if (!disableREST) {
             new ProcessRESTRequest(Constants.Configuration.HTTP_METHOD_GET, request, response)
-                        .processURLRequest();
+                    .processURLRequest();
         } else {
             disableRESTErrorMessage(response);
         }
@@ -241,7 +239,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         // this method is also used to serve for the listServices request.
         if (!disableREST) {
             new ProcessRESTRequest(Constants.Configuration.HTTP_METHOD_DELETE, request, response)
-                        .processURLRequest();
+                    .processURLRequest();
         } else {
             disableRESTErrorMessage(response);
         }
@@ -262,7 +260,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         // this method is also used to serve for the listServices request.
         if (!disableREST) {
             new ProcessRESTRequest(Constants.Configuration.HTTP_METHOD_PUT, request, response)
-                        .processXMLRequest();
+                    .processXMLRequest();
         } else {
             disableRESTErrorMessage(response);
         }
@@ -441,8 +439,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             closeReader = JavaUtils.isTrueExplicitly(parameter.getValue());
         }
 
-        transportIn = axisConfiguration.getTransportIn(new QName(Constants.TRANSPORT_HTTP));
-        transportOut = axisConfiguration.getTransportOut(new QName(Constants.TRANSPORT_HTTP));
     }
 
     /**
@@ -589,6 +585,21 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                                                   boolean invocationType) throws IOException {
         MessageContext msgContext = ContextFactory.createMessageContext(configContext);
         String requestURI = request.getRequestURI();
+
+        String trsPrefix = request.getRequestURL().toString();
+        int sepindex = trsPrefix.indexOf(':');
+        if (sepindex > -1) {
+            trsPrefix = trsPrefix.substring(0, sepindex);
+            msgContext.setIncomingTransportName(trsPrefix);
+        } else {
+            msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
+        }
+        TransportInDescription transportIn =
+                axisConfiguration.getTransportIn(new QName(msgContext.getIncomingTransportName()));
+        //set the default output description. This will be http
+        TransportOutDescription transportOut = configContext.getAxisConfiguration()
+                .getTransportOut(new QName(Constants.TRANSPORT_HTTP));
+
         msgContext.setTransportIn(transportIn);
         msgContext.setTransportOut(transportOut);
         msgContext.setServerSide(true);
@@ -611,8 +622,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
                                new ServletBasedOutTransportInfo(response));
         // set the transport Headers
-        msgContext.setIncomingTransportName(
-                Constants.TRANSPORT_HTTP); // Fixme This should be getting from the connector
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, getTransportHeaders(request));
         msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, request);
