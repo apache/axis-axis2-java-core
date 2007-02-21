@@ -346,7 +346,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         AxisEngine engine = new AxisEngine(configContext);
         MessageContext faultContext =
                 MessageContextBuilder.createFaultMessageContext(msgContext, e);
-
+        msgContext.setEnvelope(faultContext.getEnvelope());
         // SOAP 1.2 specification mentions that we should send HTTP code 400 in a fault if the
         // fault code Sender
         HttpServletResponse response =
