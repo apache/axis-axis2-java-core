@@ -36,6 +36,7 @@ import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.FaultDescription;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.utility.ClassUtils;
@@ -110,32 +111,47 @@ class LegacyExceptionUtil {
             
             // TODO Add check that faultBeanName is correct
             if (log.isDebugEnabled()) {
-                log.debug("Legacy Exception Bean name is = " + faultBeanName);
+                log.debug("Legacy Exception FaultBean name is = " + faultBeanName);
             }
             
             // Load the FaultBean Class
-            Class faultBeanClass = MethodMarshallerUtils.loadClass(faultBeanName);
-            
-            // Get the properties names from the exception class
-            Map<String, PropertyDescriptorPlus> pdMap = marshalDesc.getPropertyDescriptorMap(t.getClass());
-            
-            // We need to assign the legacy exception data to the java bean class.
-            // We will use the JAXBWrapperTool.wrap utility to do this.
-            
-            // Get the map of child objects
-            Map<String, Object> childObjects = getChildObjectsMap(t, pdMap);
-            
-            List<String> childNames = new ArrayList<String>(childObjects.keySet());
-            
-            if (log.isErrorEnabled()) {
-                log.debug("List of properties on the Legacy Exception is " + childNames);
+            Class faultBeanClass = null;
+            if (faultBeanName != null && faultBeanName.length() > 0) {
+                try {
+                    faultBeanClass = MethodMarshallerUtils.loadClass(faultBeanName);
+                } catch (Throwable throwable) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Cannot load fault bean class = " + faultBeanName + ".  Fallback to using the exception object");
+                    } 
+                }
             }
-            // Use the wrapper tool to get the child objects.
-            JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-            Map<String, PropertyDescriptorPlus> pdMapForBean = marshalDesc.getPropertyDescriptorMap(faultBeanClass);
-            faultBean = wrapperTool.wrap(faultBeanClass, childNames, childObjects, pdMapForBean);
-            if (log.isErrorEnabled()) {
-                log.debug("Completed creation of the fault bean.");
+            
+            if (faultBeanClass != null) {
+                
+                // Get the properties names from the exception class
+                Map<String, PropertyDescriptorPlus> pdMap = marshalDesc.getPropertyDescriptorMap(t.getClass());
+                
+                // We need to assign the legacy exception data to the java bean class.
+                // We will use the JAXBWrapperTool.wrap utility to do this.
+                
+                // Get the map of child objects
+                Map<String, Object> childObjects = getChildObjectsMap(t, pdMap);
+                
+                List<String> childNames = new ArrayList<String>(childObjects.keySet());
+                
+                if (log.isErrorEnabled()) {
+                    log.debug("List of properties on the Legacy Exception is " + childNames);
+                }
+                // Use the wrapper tool to get the child objects.
+                JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
+                Map<String, PropertyDescriptorPlus> pdMapForBean = marshalDesc.getPropertyDescriptorMap(faultBeanClass);
+                faultBean = wrapperTool.wrap(faultBeanClass, childNames, childObjects, pdMapForBean);
+                if (log.isErrorEnabled()) {
+                    log.debug("Completed creation of the fault bean.");
+                }
+            } else {
+                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("faultProcessingNotSupported", 
+                        "the @WebFault faultbean is missing for " + t.getClass()));
             }
             
         } catch (Exception e) {

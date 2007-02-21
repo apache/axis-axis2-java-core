@@ -20,9 +20,12 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter;
+import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException;
+import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
 
 import junit.framework.TestCase;
 
@@ -35,27 +38,20 @@ public class DLWMinTests extends TestCase {
             NAMESPACE, "GreeterPort");
     private static final String URL_ENDPOINT = "http://localhost:8080/axis2/services/GreeterService";
 
-    /**
-     * Test that we can call the simple greetMe method 
-     * with style doc/lit wrapped without the presence of wrapper classes.
-     */
-    public void testGreetMe() {
+    private Greeter getProxy(String action) {
         Service service = Service.create(QNAME_SERVICE);
         Greeter proxy = service.getPort(QNAME_PORT, Greeter.class);
         BindingProvider p = (BindingProvider) proxy;
         p.getRequestContext().put(
                 BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
         p.getRequestContext().put(
-                BindingProvider.SOAPACTION_URI_PROPERTY, "greetMe");
+                BindingProvider.SOAPACTION_URI_PROPERTY, action);
         p.getRequestContext().put(
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY, URL_ENDPOINT);
-
-        String me = "Scheu";
-        String response = proxy.greetMe(me);
-        assertTrue("Hello Scheu".equals(response));
+        return proxy;
     }
     
-    public void testGreetMe_Dispatch() {
+    private Dispatch<String> getDispatch(String action) {
         // Get a dispatch
         Service svc = Service.create(QNAME_SERVICE);
         svc.addPort(QNAME_PORT, null, URL_ENDPOINT);
@@ -65,7 +61,30 @@ public class DLWMinTests extends TestCase {
         p.getRequestContext().put(
                 BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.TRUE);
         p.getRequestContext().put(
-                BindingProvider.SOAPACTION_URI_PROPERTY, "greetMe");
+                BindingProvider.SOAPACTION_URI_PROPERTY, action);
+        return dispatch;
+    }
+    
+    /**
+     * Test simple greetMe method 
+     * with style doc/lit wrapped without the presence of wrapper classes.
+     */
+    public void testGreetMe() {
+        
+        Greeter proxy = getProxy("greetMe");
+        
+        String me = "Scheu";
+        String response = proxy.greetMe(me);
+        assertTrue("Hello Scheu".equals(response));
+    }
+    
+    /**
+     * Test simple greetMe method with dispatch 
+     * with style doc/lit wrapped without the presence of wrapper classes.
+     */
+    public void testGreetMe_Dispatch() {
+       
+        Dispatch<String> dispatch = getDispatch("greetMe");
         
         String request =
             "<pre:greetMe xmlns:pre='http://apache.org/axis2/jaxws/sample/dlwmin'>" +
@@ -79,6 +98,122 @@ public class DLWMinTests extends TestCase {
         assertTrue(response.contains("dlwmin:greetMeResponse"));
         assertTrue(response.contains(":responseType") ||
                    response.contains("responseType xmlns="));  // assert that response type is a qualified element
-        assertTrue(!response.contains("type")); // xsi:type should not be used
+        assertTrue(!response.contains("xsi:type")); // xsi:type should not be used
     }
+    
+    /**
+     * Test simple greetMe method 
+     * with style doc/lit wrapped without the presence of wrapper classes.
+     */
+    public void testUnqualified() {
+        
+        Greeter proxy = getProxy("testUnqualified");
+        
+        String request = "hello world";
+        String response = proxy.testUnqualified(request);
+        assertTrue("hello world".equals(response));
+    }
+    
+    /**
+     * Test simple greetMe method with dispatch 
+     * with style doc/lit wrapped without the presence of wrapper classes.
+     */
+    public void testUnqualified_Dispatch() {
+       
+        Dispatch<String> dispatch = getDispatch("testUnqualified");
+        
+        String request =
+            "<pre:unqualifiedTestResponse xmlns:pre='http://apache.org/axis2/jaxws/sample/dlwmin'>" +
+            "<unqualifiedRequest>hello world</unqualifiedRequest>" +
+            "</pre:unqualifiedTestResponse>";
+        System.out.println("Doc/Lit Wrapped Minimal Request =" + request);
+        String response = dispatch.invoke(request);
+        System.out.println("Doc/Lit Wrapped Minimal Response =" + response);
+        
+        assertTrue(response.contains("hello world"));
+        assertTrue(response.contains("dlwmin:testUnqualifiedResponse"));
+        assertTrue(response.contains("<unqualifiedResponse"));  // assert that the child element is an uqualified element
+        assertTrue(!response.contains("xsi:type")); // xsi:type should not be used
+    }
+    
+    /**
+     * Test echo with complexType 
+     */
+    public void testProcess_Echo()  throws Exception {
+        
+        Greeter proxy = getProxy("process");
+        
+        TestBean request = new TestBean();
+        request.setData1("hello world");
+        request.setData2(10);
+        TestBean response = proxy.process(0, request);
+        assertTrue(response != null);
+        assertTrue(response.getData1().equals("hello world"));
+        assertTrue(response.getData2() == 10);
+    }
+    
+    /**
+     * Test throwing checked exception
+     */
+    public void testProcess_CheckException()  throws Exception {
+        
+        Greeter proxy = getProxy("process");
+        
+        TestBean request = new TestBean();
+        request.setData1("hello world");
+        request.setData2(10);
+        try {
+            TestBean response = proxy.process(1, request);
+            fail("Expected TestException thrown");
+        } catch (WebServiceException wse) {
+            // Currently there is no support if the fault bean is missing
+            assertTrue(wse.getMessage().contains("User fault processing is not supported"));
+        } catch (TestException te) {
+            assertTrue(te.getMessage().equals("TestException thrown"));
+            assertTrue(te.getFlag() == 123);
+        } catch (Exception e) {
+            fail("Expected TestException thrown but found " + e.getClass());
+        }
+    }
+    
+    /**
+     * Test throwing WebServiceException
+     */
+    public void testProcess_WebServiceException()  throws Exception {
+        
+        Greeter proxy = getProxy("process");
+        
+        TestBean request = new TestBean();
+        request.setData1("hello world");
+        request.setData2(10);
+        try {
+            TestBean response = proxy.process(2, request);
+            fail("Expected WebServiceException thrown");
+        } catch (WebServiceException wse) {
+            assertTrue(wse.getMessage().equals("WebServiceException thrown"));
+        } catch (Exception e) {
+            fail("Expected WebServiceException thrown but found " + e.getClass());
+        }
+    }
+    
+    /**
+     * Test throwing NPE
+     */
+    public void testProcess_NPE()  throws Exception {
+        
+        Greeter proxy = getProxy("process");
+        
+        TestBean request = new TestBean();
+        request.setData1("hello world");
+        request.setData2(10);
+        try {
+            TestBean response = proxy.process(3, request);
+            fail("Expected NullPointerException thrown");
+        } catch (WebServiceException wse) {
+            assertTrue(wse.getMessage().equals("NPE thrown"));
+        } catch (Exception e) {
+            fail("Expected NullPointerException thrown but found " + e.getClass());
+        }
+    }
+    
 }

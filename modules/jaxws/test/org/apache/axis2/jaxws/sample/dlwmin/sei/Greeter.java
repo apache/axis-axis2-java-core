@@ -23,6 +23,8 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 
+import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
+
 @WebService(targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin", name = "Greeter")
 
 public interface Greeter {
@@ -32,4 +34,20 @@ public interface Greeter {
         @WebParam(targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin", name = "requestType")
         java.lang.String requestType
     );
+    
+    @WebResult(targetNamespace = "", partName = "unqualifiedResponse")
+    @WebMethod(operationName = "testUnqualified", action="testUnqualified")
+    public java.lang.String testUnqualified(
+        @WebParam(targetNamespace = "", partName = "unqualifiedRequest")
+        java.lang.String requestType
+    );
+ 
+    @WebResult(targetNamespace = "", partName = "out")
+    @WebMethod(operationName = "process", action="process")
+    public TestBean process(
+        @WebParam(targetNamespace = "", partName = "inAction")
+        int inAction,
+        @WebParam(targetNamespace = "", partName = "in")
+        TestBean in
+    ) throws TestException;
 }

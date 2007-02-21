@@ -862,6 +862,11 @@ public class MessageTests extends TestCase {
             assertTrue(persistMsg.contains("echoStringResponse"));
             assertTrue(persistMsg.contains("sample return value"));
         }
+        
+        // After persistance: Sandesha may inspect the body.  Make sure this does not cause an error
+        org.apache.axiom.soap.SOAPEnvelope env = (org.apache.axiom.soap.SOAPEnvelope) m.getAsOMElement();
+        QName qName = new QName("uri://fake", "fake");
+        env.getBody().getFirstChildWithName(qName);
     }
     
     

@@ -7,5 +7,11 @@
   <operation name="greetMe" mep="http://www.w3.org/2004/08/wsdl/in-out">
     <actionMapping/>
   </operation>
+  <operation name="testUnqualified" mep="http://www.w3.org/2004/08/wsdl/in-out">
+    <actionMapping/>
+  </operation>
+  <operation name="process" mep="http://www.w3.org/2004/08/wsdl/in-out">
+    <actionMapping/>
+  </operation>
  </service>
 </serviceGroup>

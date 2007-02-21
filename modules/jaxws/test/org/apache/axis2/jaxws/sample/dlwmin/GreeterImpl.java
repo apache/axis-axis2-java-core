@@ -19,7 +19,11 @@
 package org.apache.axis2.jaxws.sample.dlwmin;
 
 import org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter;
+import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException;
+import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
+
 import javax.jws.WebService;
+import javax.xml.ws.WebServiceException;
 
 @WebService(endpointInterface = "org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter",
         targetNamespace = "http://apache.org/axis2/jaxws/sample/dlwmin")
@@ -27,6 +31,25 @@ public class GreeterImpl implements Greeter {
 
     public String greetMe(String me) {
         return "Hello " + me;
+    }
+
+    public String testUnqualified(String in) {
+        return in;
+    }
+
+    public TestBean process(int inAction, TestBean in) throws TestException {
+        if (inAction == 0) {
+            // echo
+            return in;
+        } else if (inAction == 1) {
+            // throw checked exception
+            throw new TestException(123, "TestException thrown");
+        } else if (inAction == 2) {
+            throw new WebServiceException("WebServiceException thrown");
+        } else if (inAction == 3) {
+            throw new NullPointerException("NPE thrown");
+        }
+        return null;
     }
 
 }
