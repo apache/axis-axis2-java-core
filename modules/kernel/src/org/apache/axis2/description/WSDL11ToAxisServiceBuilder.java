@@ -1309,30 +1309,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
 
 
-        // loop through the output op map and generate the elements
-//        String[] outputOperationtNames = (String[]) operationToOutputMessageMap
-//                .keySet().toArray(new String[operationToOutputMessageMap.size()]);
-//        for (int j = 0; j < outputOperationtNames.length; j++) {
-//
-//            String baseoutputOpName = outputOperationtNames[j];
-//            String outputOpName = baseoutputOpName + WRAPPED_OUTPUTNAME_SUFFIX;
-//            elementDeclaration = document.createElementNS(
-//                    XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-//                    + XML_SCHEMA_ELEMENT_LOCAL_NAME);
-//            elementDeclaration.setAttribute(XSD_NAME, outputOpName);
-//
-//            QName typeQName = ((Message) operationToOutputMessageMap
-//                    .get(baseoutputOpName)).getQName();
-//            // add the anonymous
-//            elementDeclaration.appendChild(((Element) complexTypeElementsMap
-//                    .get(typeQName)).cloneNode(true));
-//            elementElementsList.add(elementDeclaration);
-//
-//            resolvedRpcWrappedElementMap.put(outputOpName, new QName(
-//                    namespaceURI, outputOpName, AXIS2WRAPPED));
-//
-//        }
-
         // loop through the faultoutput op map and generate the elements
         String[] faultyOperationtNames = (String[]) faultyOperationsMap
                 .keySet().toArray(new String[faultyOperationsMap.size()]);

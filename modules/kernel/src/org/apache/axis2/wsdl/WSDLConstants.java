@@ -95,6 +95,7 @@ public interface WSDLConstants {
     int WSDL_1_1 = 1;
     int WSDL_2_0 = 2;
     String INPUT_PART_QNAME_SUFFIX = "_input";
+    String OUTPUT_PART_QNAME_SUFFIX = "_output";
 
 
     public static interface WSDL11Constants {
