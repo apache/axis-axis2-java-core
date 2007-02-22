@@ -520,7 +520,12 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             
             prefix = text.substring(0, text.indexOf(":"));
             localPart = text.substring(text.indexOf(":")+1);
-    		uri = soapFaultCode.getValue().getNamespace().getNamespaceURI();
+            OMNamespace namespace = soapFaultCode.getValue().getNamespace();
+            if (namespace != null) {
+                uri = soapFaultCode.getValue().getNamespace().getNamespaceURI();
+            } else {
+                uri = this.fault.getNamespace().getNamespaceURI();
+            }
     		
     		QName qname = new QName(uri,localPart,prefix);
     		return qname;
@@ -774,7 +779,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         
         SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
         // don't just use the default prefix, use the passed one or the parent's
-        String prefix = ((qname.getPrefix() != null) && !qname.getPrefix().equals("")) ? qname.getPrefix() : this.fault.getNamespace().getPrefix();
+        String prefix = ((qname.getPrefix() != null) && !qname.getPrefix().equals("")) ? qname.getPrefix() : this.fault.getQName().getPrefix();
         soapFaultValue.setText(prefix+":"+qname.getLocalPart());
         OMNamespace omNamespace = new OMNamespaceImpl(qname.getNamespaceURI(),qname.getPrefix());
         soapFaultValue.setNamespace(omNamespace);

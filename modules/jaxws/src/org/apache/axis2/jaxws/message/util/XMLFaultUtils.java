@@ -530,7 +530,14 @@ public class XMLFaultUtils {
         
         // Set the primary Code Value
         QName soapValueQName = xmlFault.getCode().toQName(protocolNS);
-        soapFault.setFaultCode(soapValueQName);
+        String prefix = soapFault.getPrefix();
+        String soapValue = null;
+        if (prefix == null || prefix.length() == 0) {
+            soapValue = soapValueQName.getLocalPart();
+        } else {
+            soapValue = prefix + ":" + soapValueQName.getLocalPart();
+        }
+        soapFault.setFaultCode(soapValue);
         
         // Set the primary Reason Text
         String reasonText = xmlFault.getReason().getText();
