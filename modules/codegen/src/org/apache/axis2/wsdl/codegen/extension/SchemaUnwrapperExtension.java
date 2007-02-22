@@ -84,8 +84,13 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                     AxisOperation op = (AxisOperation) operations.next();
 
                     if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
-                        walkSchema(op.getMessage(
-                                WSDLConstants.MESSAGE_LABEL_IN_VALUE));
+                        walkSchema(op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE),
+                                WSDLConstants.INPUT_PART_QNAME_SUFFIX);
+                    }
+                    // get the out put parameter details as well to unwrap the responses
+                    if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())){
+                        walkSchema(op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE),
+                                WSDLConstants.OUTPUT_PART_QNAME_SUFFIX);
                     }
 
                 }
@@ -106,7 +111,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
      * &lt; /element &gt;
      */
 
-    public void walkSchema(AxisMessage message)
+    public void walkSchema(AxisMessage message, String qnameSuffix)
             throws CodeGenerationException {
         //nothing to unwrap
         if (message.getSchemaElement() == null) {
@@ -119,7 +124,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         XmlSchemaElement schemaElement = message.getSchemaElement();
         XmlSchemaType schemaType = schemaElement.getSchemaType();
 
-        handleAllCasesOfComplexTypes(schemaType, message, partNameList);
+        handleAllCasesOfComplexTypes(schemaType, message, partNameList, qnameSuffix);
 
         try {
             //set in the axis message that the unwrapping was success
@@ -144,7 +149,10 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
     }
 
-    private void handleAllCasesOfComplexTypes(XmlSchemaType schemaType, AxisMessage message, List partNameList) throws CodeGenerationException {
+    private void handleAllCasesOfComplexTypes(XmlSchemaType schemaType,
+                                              AxisMessage message,
+                                              List partNameList,
+                                              String qnameSuffix) throws CodeGenerationException {
 
         // if a complex type name exits for a element then
         // we keep that complex type to support unwrapping
@@ -153,11 +161,11 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
             XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
             if (cmplxType.getContentModel() == null) {
                 if (cmplxType.getParticle() != null){
-                    processXMLSchemaSequence(cmplxType.getParticle(), message, partNameList);
+                    processXMLSchemaSequence(cmplxType.getParticle(), message, partNameList, qnameSuffix);
                 }
             } else {
                 // now lets handle case with extensions
-                processComplexContentModel(cmplxType, message, partNameList);
+                processComplexContentModel(cmplxType, message, partNameList, qnameSuffix);
             }
 
 
@@ -168,7 +176,10 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         }
     }
 
-    private void processComplexContentModel(XmlSchemaComplexType cmplxType, AxisMessage message, List partNameList) throws CodeGenerationException {
+    private void processComplexContentModel(XmlSchemaComplexType cmplxType,
+                                            AxisMessage message,
+                                            List partNameList,
+                                            String qnameSuffix) throws CodeGenerationException {
         XmlSchemaContentModel contentModel = cmplxType.getContentModel();
         if (contentModel instanceof XmlSchemaComplexContent) {
             XmlSchemaComplexContent xmlSchemaComplexContent = (XmlSchemaComplexContent) contentModel;
@@ -178,7 +189,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
                 // process particles inside this extension, if any
                 if (schemaExtension.getParticle() != null){
-                    processXMLSchemaSequence(schemaExtension.getParticle(), message, partNameList);
+                    processXMLSchemaSequence(schemaExtension.getParticle(), message, partNameList, qnameSuffix);
                 }
 
                 // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
@@ -199,12 +210,15 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
                 XmlSchemaType extensionSchemaType = parentSchema.getTypeByName(schemaExtension.getBaseTypeName());
 
-                handleAllCasesOfComplexTypes(extensionSchemaType, message, partNameList);
+                handleAllCasesOfComplexTypes(extensionSchemaType, message, partNameList, qnameSuffix);
             }
         }
     }
 
-    private void processXMLSchemaSequence(XmlSchemaParticle schemaParticle, AxisMessage message, List partNameList) throws CodeGenerationException {
+    private void processXMLSchemaSequence(XmlSchemaParticle schemaParticle,
+                                          AxisMessage message,
+                                          List partNameList,
+                                          String qnameSuffix) throws CodeGenerationException {
         if (schemaParticle instanceof XmlSchemaSequence) {
             // get the name of the operation name and namespace,
             // part name and hang them somewhere ? The ideal place
@@ -240,7 +254,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
                     partNameList.add(
                             WSDLUtil.getPartQName(opName.getLocalPart(),
-                                    WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                    qnameSuffix,
                                     partName));
 
                     // if the particle contains anything other than
@@ -256,7 +270,7 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
                         partNameList.add(
                                 WSDLUtil.getPartQName(opName.getLocalPart(),
-                                        WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                        qnameSuffix,
                                         Constants.ANY_ELEMENT_FIELD_NAME));
                 } else {
                     throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
@@ -291,7 +305,6 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         Parameter myParameter = new Parameter();
         myParameter.setName(key);
         myParameter.setValue(value);
-
         return myParameter;
     }
 

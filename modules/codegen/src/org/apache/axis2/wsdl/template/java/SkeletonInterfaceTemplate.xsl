@@ -17,6 +17,7 @@
          <xsl:variable name="count"><xsl:value-of select="count(output/param)"/></xsl:variable>
          <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"/></xsl:variable>
          <xsl:variable name="outputcomplextype"><xsl:value-of select="output/param/@complextype"/></xsl:variable>
+         <xsl:variable name="outputparamcount"><xsl:value-of select="count(output/param[@location='body']/param)"/></xsl:variable>
          <!-- regardless of the sync or async status, the generated method signature would be just a usual
                java method -->
         /**
@@ -49,7 +50,12 @@
                  )
             </xsl:when>
             <xsl:otherwise>
-                public  <xsl:if test="$count=0 or $outputtype=''">void</xsl:if><xsl:if test="$outputtype!=''"><xsl:value-of select="$outputtype"/></xsl:if><xsl:text> </xsl:text><xsl:value-of select="@name"/>
+                public <xsl:choose>
+                    <xsl:when test="$count=0 or $outputtype=''">void</xsl:when>
+                    <xsl:when test="$outputparamcount=1"><xsl:value-of select="output/param[@location='body']/param/@type"/></xsl:when>
+                    <xsl:when test="string-length(normalize-space($outputcomplextype)) > 0"><xsl:value-of select="$outputcomplextype"/></xsl:when>
+                    <xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise></xsl:choose>
+                <xsl:text> </xsl:text><xsl:value-of select="@name"/>
                 (
                   <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
                     <xsl:choose>

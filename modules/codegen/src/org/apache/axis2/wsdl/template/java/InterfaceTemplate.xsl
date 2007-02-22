@@ -33,8 +33,9 @@
           <xsl:for-each select="method">
             <!-- Code for in-out mep -->
          <xsl:if test="@mep='12'">
-         <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"></xsl:value-of></xsl:variable>
-         <xsl:variable name="outputcomplextype"><xsl:value-of select="output/param/@complextype"></xsl:value-of></xsl:variable>
+         <xsl:variable name="outputtype"><xsl:value-of select="output/param[@location='body']/@type"></xsl:value-of></xsl:variable>
+         <xsl:variable name="outputcomplextype"><xsl:value-of select="output/param[@location='body']/@complextype"></xsl:value-of></xsl:variable>
+         <xsl:variable name="outputparamcount"><xsl:value-of select="count(output/param[@location='body']/param)"></xsl:value-of></xsl:variable>
 
         <!-- start of the sync block -->                                          
          <xsl:if test="$isSync='1'">
@@ -76,8 +77,13 @@
                         throws java.rmi.RemoteException
              </xsl:when>
              <xsl:otherwise>
-                     public <xsl:choose><xsl:when test="$outputtype=''">void</xsl:when><xsl:otherwise>
-                     <xsl:value-of select="$outputtype"/></xsl:otherwise></xsl:choose>
+                     public <xsl:choose>
+                    <xsl:when test="$outputtype=''">void</xsl:when>
+                    <xsl:when test="$outputparamcount=1"><xsl:value-of select="output/param[@location='body']/param/@type"/></xsl:when>
+                    <xsl:when test="string-length(normalize-space($outputcomplextype)) > 0"><xsl:value-of
+                            select="$outputcomplextype"/></xsl:when>
+                    <xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise>
+                    </xsl:choose>
                         <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
 
                         <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>

@@ -174,13 +174,16 @@
           <xsl:variable name="usedbimpl"><xsl:value-of select="@usdbimpl"/></xsl:variable>
           <xsl:if test="$usedbimpl!='true'">
           
-            <xsl:variable name="outputtype"><xsl:value-of select="output/param/@type"/></xsl:variable>
-            <xsl:variable name="outputcomplextype"><xsl:value-of select="output/param/@complextype"/></xsl:variable>
-            <xsl:variable name="outputopname"><xsl:value-of select="output/param/@opname"/></xsl:variable>
+            <xsl:variable name="outputtype"><xsl:value-of select="output/param[@location='body']/@type"/></xsl:variable>
+            <xsl:variable name="outputcomplextype"><xsl:value-of select="output/param[@location='body']/@complextype"/></xsl:variable>
+            <xsl:variable name="outputopname"><xsl:value-of select="output/param[@location='body']/@opname"/></xsl:variable>
             <xsl:variable name="style"><xsl:value-of select="@style"></xsl:value-of></xsl:variable>
             <xsl:variable name="soapAction"><xsl:value-of select="@soapaction"></xsl:value-of></xsl:variable>
             <xsl:variable name="mep"><xsl:value-of select="@mep"/></xsl:variable>
-        
+            <xsl:variable name="outputparamcount"><xsl:value-of select="count(output/param[@location='body']/param)"/></xsl:variable>
+            <xsl:variable name="outputparamshorttype"><xsl:value-of select="output/param[@location='body']/@shorttype"/></xsl:variable>
+            <xsl:variable name="outputparampartname"><xsl:value-of select="output/param[@location='body']/param/@partname"/></xsl:variable>
+
         <!-- MTOM -->
         <xsl:variable name="method-name"><xsl:value-of select="@name"/></xsl:variable>
         <xsl:variable name="method-ns"><xsl:value-of select="@namespace"/> </xsl:variable>
@@ -227,7 +230,12 @@
                             </xsl:for-each>)
                         </xsl:when>
                         <xsl:otherwise>
-                            public <xsl:choose><xsl:when test="$outputtype=''">void</xsl:when><xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise></xsl:choose>
+                            public  <xsl:choose>
+                            <xsl:when test="$outputtype=''">void</xsl:when>
+                            <xsl:when test="$outputparamcount=1"><xsl:value-of select="output/param[@location='body']/param/@type"/></xsl:when>
+                            <xsl:when test="string-length(normalize-space($outputcomplextype)) > 0"><xsl:value-of select="$outputcomplextype"/></xsl:when>
+                            <xsl:otherwise><xsl:value-of select="$outputtype"/></xsl:otherwise>
+                            </xsl:choose>
                             <xsl:text> </xsl:text><xsl:value-of select="@name"/>(
 
                             <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
@@ -297,7 +305,6 @@
                             <xsl:choose>
                                 <!-- style being doclit or rpc does not matter -->
                                 <xsl:when test="$style='rpc' or $style='document'">
-                                    //Style is Doc.
                                     <xsl:variable name="inputcount" select="count(input/param[@location='body' and @type!=''])"/>
                                     <xsl:choose>
                                         <xsl:when test="$inputcount=1">
@@ -426,7 +433,12 @@
                                          getEnvelopeNamespaces(_returnEnv));
                            _messageContext.getTransportOut().getSender().cleanup(_messageContext);
                           <xsl:choose>
-                              <xsl:when test="($isbackcompatible='true') and (string-length(normalize-space($outputcomplextype)) > 0)">
+                              <xsl:when test="$outputparamcount=1">
+                                   return get<xsl:value-of select="$outputparamshorttype"/><xsl:value-of
+                                      select="$outputparampartname"/>((<xsl:value-of select="$outputtype"/>)object);
+                              </xsl:when>
+                              <!-- this covers both back compatibility and normal unwrapping -->
+                              <xsl:when test="(string-length(normalize-space($outputcomplextype)) > 0)">
                                    return get<xsl:value-of select="$outputopname"/>((<xsl:value-of select="$outputtype"/>)object);
                               </xsl:when>
                               <xsl:otherwise>
@@ -670,7 +682,22 @@
                                <xsl:value-of select="$outputtype"/>.class,
                                getEnvelopeNamespaces(result.getResponseEnvelope())
                             );
-                        callback.receiveResult<xsl:value-of select="@name"/>((<xsl:value-of select="$outputtype"/>) object);
+                        callback.receiveResult<xsl:value-of select="@name"/>(
+                            <xsl:choose>
+                                <xsl:when test="$outputtype=''">
+                                    );
+                                </xsl:when>
+                                <xsl:when test="$outputparamcount=1">
+                                    (<xsl:value-of select="output/param[@location='body']/param/@type"/>)object);
+                                </xsl:when>
+                                <xsl:when test="string-length(normalize-space($outputcomplextype)) > 0">
+                                    (<xsl:value-of select="$outputcomplextype"/>)object);
+                                </xsl:when>
+                                <xsl:otherwise>
+                                   (<xsl:value-of select="$outputtype"/>)object);
+                                </xsl:otherwise>
+                            </xsl:choose>
+
                     }
 
                     public void onError(java.lang.Exception e) {
