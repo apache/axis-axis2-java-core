@@ -147,7 +147,7 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
             XmlSchema xmlSchema = loadSchema(schemaLocation);
             axisService.addSchema(xmlSchema);
             SchemaUnwrapperExtension extension = new SchemaUnwrapperExtension();
-            extension.walkSchema(axisMessage);
+            extension.walkSchema(axisMessage, WSDLConstants.INPUT_PART_QNAME_SUFFIX);
         } catch (FileNotFoundException e) {
             fail(schemaLocation + " file can not be found");
         } catch (CodeGenerationException e) {
