@@ -23,11 +23,18 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -552,5 +559,57 @@ public class EndpointReference implements Serializable {
         // TODO: check the Map referenceParameters for equivalency
 
         return true;
+    }
+    
+
+    //REVIEW: The following code is rather heavyweight, because we have to build the OM tree -- it would probably be better to have two serialization/deserialization paths and therefore, for trivial EPRs, store a smaller amount of info
+    
+    /**
+     * Write the EPR to the specified OutputStream.  Because of potential
+     * OMElements/Attributes, we need to actually serialize the OM structures
+     * (at least in some cases.)
+     */
+    private void writeObject(java.io.ObjectOutputStream out)
+    throws IOException
+    {
+      OMElement om = EndpointReferenceHelper.toOM(OMAbstractFactory.getOMFactory(), this, new QName("urn:axis2","omepr","ser"), AddressingConstants.Final.WSA_NAMESPACE);
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      
+      try
+      {
+        om.serialize(baos);
+      }
+      catch (javax.xml.stream.XMLStreamException e)
+      {
+        throw (IOException)(new IOException("Unable to serialize the EPR")).initCause(e);
+      }
+      out.writeInt(baos.size());
+      out.write(baos.toByteArray());
+    }
+      
+    /**
+     * Read the EPR to the specified InputStream.
+     */
+    private void readObject(java.io.ObjectInputStream in)
+    throws IOException, ClassNotFoundException
+    {
+      int numBytes = in.readInt();
+      
+      byte[] serBytes = new byte[numBytes];
+      
+      in.read(serBytes, 0, numBytes);
+      ByteArrayInputStream bais = new ByteArrayInputStream(serBytes);
+      try
+      {
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(bais);
+        StAXOMBuilder builder = new StAXOMBuilder(xmlReader);
+        OMElement om = builder.getDocumentElement();
+        
+        EndpointReferenceHelper.fromOM(this, om, AddressingConstants.Final.WSA_NAMESPACE);
+      }
+      catch (javax.xml.stream.XMLStreamException e)
+      {
+        throw (IOException)(new IOException("Unable to deserialize the EPR")).initCause(e);
+      }
     }
 }
