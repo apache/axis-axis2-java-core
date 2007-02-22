@@ -43,6 +43,16 @@
         </java>
         <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl/documentunwrapping"/>
 
+        <ant:echo>Compiling RPCUnwrappingTest.wsdl </ant:echo>
+        <mkdir dir="${wsdl.output.base.dir}/rpcunwrapping"/>
+        <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+            <jvmarg line="${maven.junit.jvmargs}"/>
+            <classpath refid="maven.dependency.classpath"/>
+            <classpath location="${compiled.classes.dir}"/>
+            <arg line="-o target/wsdl/rpcunwrapping -ss -sd -ssi -u -t -g -uw -uri test-resources/wsdl/RPCUnwrappingTest.wsdl"/>
+        </java>
+        <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/wsdl/rpcunwrapping"/>
+
         <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
 			<arg line="-d xmlbeans -p samples.wsdl.perf -o target/perf -s -t -ss -sd -g -uri test/samples/wsdl/perf/perf.wsdl"/>

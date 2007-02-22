@@ -63,14 +63,52 @@
                 </xsd:sequence>
             </xsd:complexType>
 
+            <xsd:element name="Request5" >
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="tns:AbstractComplexType">
+                            <xsd:sequence>
+                              <xsd:element name="parm3" type="xsd:string"/>
+                              <xsd:any></xsd:any>
+                          </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="Response5" >
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="tns:AbstractComplexType">
+                            <xsd:sequence>
+                              <xsd:element name="parm3" type="xsd:string"/>
+                              <xsd:any></xsd:any>
+                          </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="Request6" type="tns:ChildComplexType"/>
+            <xsd:element name="Response6" type="tns:ChildComplexType"/>
+
             <xsd:complexType name="AbstractComplexType">
                 <xsd:sequence>
-                    <xsd:element name="param1" type="xsd:string"/>
+                    <xsd:element name="param1" type="xsd:anyType"/>
                     <xsd:element name="param2" type="xsd:int"/>
                 </xsd:sequence>
             </xsd:complexType>
 
-            
+            <xsd:complexType name="ChildComplexType">
+                  <xsd:complexContent>
+                      <xsd:extension base="tns:AbstractComplexType">
+                          <xsd:sequence>
+                              <xsd:element name="parm3" type="xsd:string"/>
+                              <xsd:any></xsd:any>
+                          </xsd:sequence>
+                      </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
         </xsd:schema>
     </wsdl:types>
     <wsdl:message name="OperationRequestMessage1">
@@ -101,6 +139,24 @@
         <wsdl:part element="tns:Response4" name="parameters"/>
     </wsdl:message>
 
+    <wsdl:message name="OperationRequestMessage5">
+        <wsdl:part element="tns:Request5" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="OperationResponseMessage5">
+        <wsdl:part element="tns:Response5" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="OperationRequestMessage6">
+        <wsdl:part element="tns:Request6" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="OperationResponseMessage6">
+        <wsdl:part element="tns:Response6" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="FaultMessage">
+        <wsdl:part element="tns:Request1" name="parameters"/>
+    </wsdl:message>
+
     <wsdl:portType name="DocumentUnwrappingPortType">
         <wsdl:operation name="Operation1">
             <wsdl:input message="tns:OperationRequestMessage1"/>
@@ -117,6 +173,23 @@
         <wsdl:operation name="Operation4">
             <wsdl:input message="tns:OperationRequestMessage4"/>
             <wsdl:output message="tns:OperationResponseMessage4"/>
+        </wsdl:operation>
+        <wsdl:operation name="Operation5">
+            <wsdl:input message="tns:OperationRequestMessage5"/>
+            <wsdl:output message="tns:OperationResponseMessage5"/>
+        </wsdl:operation>
+        <wsdl:operation name="Operation6">
+            <wsdl:input message="tns:OperationRequestMessage6"/>
+            <wsdl:output message="tns:OperationResponseMessage6"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="Operation7">
+            <wsdl:input message="tns:OperationRequestMessage1"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="Operation8">
+            <wsdl:input message="tns:OperationRequestMessage1"/>
+            <wsdl:fault message="tns:FaultMessage" name="TestFault"/>
         </wsdl:operation>
     </wsdl:portType>
     <wsdl:binding name="DocumentUnwrappingTestBinding" type="tns:DocumentUnwrappingPortType">
@@ -156,6 +229,39 @@
             <wsdl:output>
                 <soap:body use="literal"/>
             </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Operation5">
+            <soap:operation soapAction="http://www.example.org/wsdltest/Operation5"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Operation6">
+            <soap:operation soapAction="http://www.example.org/wsdltest/Operation6"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Operation7">
+            <soap:operation soapAction="http://www.example.org/wsdltest/Operation6"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+        <wsdl:operation name="Operation8">
+            <soap:operation soapAction="http://www.example.org/wsdltest/Operation6"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:fault name="TestFault">
+                <soap:body use="literal" name="TestFault"/>
+            </wsdl:fault>
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="DocumentUnwrappingTestService">
