@@ -15,4 +15,11 @@
                     </sequence>
         </complexType>
      </element>
+     <element name="processFault3">
+        <complexType>
+                    <sequence>
+                        <element name="flag"    form="unqualified" type="xsd:int"/>
+                    </sequence>
+        </complexType>
+     </element>
 </schema>

@@ -26,6 +26,7 @@ import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException2;
+import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException3;
 import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
 
 import junit.framework.TestCase;
@@ -195,6 +196,27 @@ public class DLWMinTests extends TestCase {
             assertTrue(te.getFlag() == 456);
         } catch (Exception e) {
             fail("Expected TestException2 thrown but found " + e.getClass());
+        }
+    }
+    
+    /**
+     * Test throwing checked exception that is a compliant JAXWS exception
+     */
+    public void testProcess_CheckException3()  throws Exception {
+        
+        Greeter proxy = getProxy("process");
+        
+        TestBean request = new TestBean();
+        request.setData1("hello world");
+        request.setData2(10);
+        try {
+            TestBean response = proxy.process(5, request);
+            fail("Expected TestException3 thrown");
+        } catch (TestException3 te) {
+            assertTrue(te.getMessage().equals("TestException3 thrown"));
+            assertTrue(te.getFaultInfo().getFlag() == 789);
+        } catch (Exception e) {
+            fail("Expected TestException3 thrown but found " + e.getClass());
         }
     }
     

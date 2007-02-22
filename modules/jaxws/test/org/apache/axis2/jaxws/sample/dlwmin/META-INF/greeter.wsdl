@@ -115,7 +115,10 @@
         <wsdl:part element="tns:processFault" name="fault"/>
     </wsdl:message>
     <wsdl:message name="testProcessFault2">
-        <wsdl:part element="types:processFault" name="fault2"/>
+        <wsdl:part element="types:processFault2" name="fault2"/>
+    </wsdl:message>
+    <wsdl:message name="testProcessFault3">
+        <wsdl:part element="types:processFault3" name="fault3"/>
     </wsdl:message>
     
 
@@ -137,6 +140,7 @@
             <wsdl:output message="tns:processResponse" name="processResponse"/>
             <wsdl:fault message="tns:processFault" name="processFault"/>
             <wsdl:fault message="tns:processFault2" name="processFault2"/>
+            <wsdl:fault message="tns:processFault3" name="processFault3"/>
         </wsdl:operation>
      
     </wsdl:portType>
@@ -179,6 +183,9 @@
 			</fault>
 			<fault name="processFault2">
 				<soap:fault name="processFault2" use="literal" />
+			</fault>
+			<fault name="processFault3">
+				<soap:fault name="processFault3" use="literal" />
 			</fault>
         </wsdl:operation>
         

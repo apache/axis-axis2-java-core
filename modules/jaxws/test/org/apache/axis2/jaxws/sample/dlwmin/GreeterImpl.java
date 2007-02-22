@@ -21,6 +21,8 @@ package org.apache.axis2.jaxws.sample.dlwmin;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException2;
+import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException3;
+import org.apache.axis2.jaxws.sample.dlwmin.types.ProcessFault3;
 import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
 
 import javax.jws.WebService;
@@ -38,7 +40,7 @@ public class GreeterImpl implements Greeter {
         return in;
     }
 
-    public TestBean process(int inAction, TestBean in) throws TestException, TestException2 {
+    public TestBean process(int inAction, TestBean in) throws TestException, TestException2, TestException3 {
         if (inAction == 0) {
             // echo
             return in;
@@ -52,6 +54,11 @@ public class GreeterImpl implements Greeter {
         } else if (inAction == 4) {
            // throw checked exception that does have a fault bean
             throw new TestException2("TestException2 thrown", 456);
+        } else if (inAction == 5) {
+           // throw checked exception that does have a fault bean
+            ProcessFault3 faultInfo = new ProcessFault3();
+            faultInfo.setFlag(789);
+            throw new TestException3("TestException3 thrown", faultInfo);
         }
         return null;
     }

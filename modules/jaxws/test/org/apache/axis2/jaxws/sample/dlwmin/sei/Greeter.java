@@ -49,5 +49,5 @@ public interface Greeter {
         int inAction,
         @WebParam(targetNamespace = "", partName = "in")
         TestBean in
-    ) throws TestException, TestException2;
+    ) throws TestException, TestException2, TestException3;
 }
