@@ -494,13 +494,11 @@ public class MethodMarshallerUtils  {
      * @param operationDesc OperationDescription
      * @param packages Packages needed to marshal the object
      * @param message Message
-     * @param isRPC
      */
     static void marshalFaultResponse(Throwable throwable, 
             MarshalServiceRuntimeDescription marshalDesc,
             OperationDescription operationDesc,  
-            Message message, 
-            boolean isRPC) {
+            Message message) {
         // Get the root cause of the throwable object
         Throwable t = ClassUtils.getRootCause(throwable);
         if (log.isDebugEnabled()) {
@@ -529,6 +527,9 @@ public class MethodMarshallerUtils  {
                 if (log.isErrorEnabled()) {
                     log.debug("Marshal as a Service Exception");
                 }
+                // Create the JAXB Context
+                JAXBBlockContext context = new JAXBBlockContext(marshalDesc.getPackages());
+                
                 // The exception is a Service Exception.  It may be (A) JAX-WS compliant exception or (B) JAX-WS legacy exception
                 
                 // The faultBeanObject is a JAXB object that represents the data of the exception.  It is marshalled in the detail
@@ -541,6 +542,11 @@ public class MethodMarshallerUtils  {
                 if (faultInfo == null || faultInfo.length() == 0) {
                     // Legacy Exception case
                     faultBeanObject = LegacyExceptionUtil.createFaultBean(t, fd, marshalDesc);
+                    
+                    // If using the exception as the fault bean, then force marshalling by type
+                    if (faultBeanObject == t) {
+                        context.setProcessType(t.getClass());
+                    }
                 } else {
                     // Normal case
                     // Get the fault bean object.  
@@ -559,13 +565,7 @@ public class MethodMarshallerUtils  {
                 }
                 
                 
-                // Create the JAXBBlockContext
-                // RPC uses type marshalling, so recored the rpcType
-                JAXBBlockContext context = new JAXBBlockContext(marshalDesc.getPackages());
-                if (isRPC) {
-                    context.setProcessType(faultBeanObject.getClass());
-                }
-                
+               
                 
                 // Create a detailblock representing the faultBeanObject
                 Block[] detailBlocks = new Block[1];
@@ -684,7 +684,6 @@ public class MethodMarshallerUtils  {
      * @param operationDesc
      * @param marshalDesc
      * @param message
-     * @param isRPC
      * @return Throwable
      * @throws WebServiceException
      * @throws ClassNotFoundException
@@ -696,8 +695,7 @@ public class MethodMarshallerUtils  {
      */
     static Throwable demarshalFaultResponse(OperationDescription operationDesc, 
             MarshalServiceRuntimeDescription marshalDesc,
-            Message message, 
-            boolean isRPC) 
+            Message message) 
         throws WebServiceException, ClassNotFoundException, IllegalAccessException,
                InstantiationException, XMLStreamException, InvocationTargetException, NoSuchMethodException {
         
@@ -729,8 +727,8 @@ public class MethodMarshallerUtils  {
             }
         }
         
-        if (faultDesc == null && isRPC && elementQName != null) {
-            // If not found and RPC, retry the search using just the local name
+        if (faultDesc == null && elementQName != null) {
+            // If not found, retry the search using just the local name
             for(int i=0; i<operationDesc.getFaultDescriptions().length && faultDesc == null; i++) {
                 FaultDescription fd = operationDesc.getFaultDescriptions()[i];
                 FaultBeanDesc faultBeanDesc = marshalDesc.getFaultBeanDesc(fd);
@@ -758,13 +756,6 @@ public class MethodMarshallerUtils  {
             
             // Note that faultBean may not be a bean, it could be a primitive 
             Class faultBeanFormalClass = loadClass(faultBeanDesc.getFaultBeanClassName());     
-            if (isRPC) {
-                // RPC is problem ! 
-                // Since RPC is type based, JAXB needs the declared type
-                // to unmarshal the object.
-                blockContext.setProcessType(faultBeanFormalClass);
-                
-            }
             
             // Get the jaxb block and business object
             Block jaxbBlock = factory.createFrom(detailBlocks[0], blockContext);

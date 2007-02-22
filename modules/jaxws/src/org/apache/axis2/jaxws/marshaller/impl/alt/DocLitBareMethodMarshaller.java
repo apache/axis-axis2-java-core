@@ -339,8 +339,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
             MethodMarshallerUtils.marshalFaultResponse(throwable, 
                     marshalDesc,
                     operationDesc,  
-                    m, 
-                    false); // don't force xsi:type for doc/lit
+                    m); 
             return m;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
@@ -355,7 +354,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
         
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, marshalDesc, message, false);
+            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, marshalDesc, message);
             return t;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);

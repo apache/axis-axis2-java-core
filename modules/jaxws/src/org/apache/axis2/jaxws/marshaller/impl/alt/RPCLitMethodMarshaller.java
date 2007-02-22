@@ -406,8 +406,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             MethodMarshallerUtils.marshalFaultResponse(throwable, 
                     marshalDesc,
                     operationDesc, 
-                    m, 
-                    true);  // isRPC=true
+                    m);
             return m;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
@@ -422,7 +421,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
         
         // Note all exceptions are caught and rethrown with a WebServiceException
         try {
-            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, marshalDesc, message,  true); 
+            Throwable t = MethodMarshallerUtils.demarshalFaultResponse(operationDesc, marshalDesc, message); 
             return t;
         } catch(Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);

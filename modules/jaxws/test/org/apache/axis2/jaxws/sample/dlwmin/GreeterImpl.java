@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.sample.dlwmin;
 
 import org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException;
+import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException2;
 import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
 
 import javax.jws.WebService;
@@ -37,17 +38,20 @@ public class GreeterImpl implements Greeter {
         return in;
     }
 
-    public TestBean process(int inAction, TestBean in) throws TestException {
+    public TestBean process(int inAction, TestBean in) throws TestException, TestException2 {
         if (inAction == 0) {
             // echo
             return in;
         } else if (inAction == 1) {
-            // throw checked exception
-            throw new TestException(123, "TestException thrown");
+            // throw checked exception that does not have a fault bean
+            throw new TestException("TestException thrown", 123);
         } else if (inAction == 2) {
             throw new WebServiceException("WebServiceException thrown");
         } else if (inAction == 3) {
             throw new NullPointerException("NPE thrown");
+        } else if (inAction == 4) {
+           // throw checked exception that does have a fault bean
+            throw new TestException2("TestException2 thrown", 456);
         }
         return null;
     }

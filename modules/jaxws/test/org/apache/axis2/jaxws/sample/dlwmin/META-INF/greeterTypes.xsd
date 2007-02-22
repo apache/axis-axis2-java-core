@@ -7,4 +7,12 @@
          <element name="data2" type="xsd:int"/>
        </sequence>
      </complexType>
+     <element name="processFault2">
+        <complexType>
+                    <sequence>
+                        <element name="flag"    form="unqualified" type="xsd:int"/>
+                        <element name="message" form="unqualified" type="xsd:string"/>
+                    </sequence>
+        </complexType>
+     </element>
 </schema>

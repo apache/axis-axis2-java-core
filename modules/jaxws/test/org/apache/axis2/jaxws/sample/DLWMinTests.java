@@ -25,6 +25,7 @@ import javax.xml.ws.WebServiceException;
 import org.apache.axis2.jaxws.dispatch.DispatchTestConstants;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.Greeter;
 import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException;
+import org.apache.axis2.jaxws.sample.dlwmin.sei.TestException2;
 import org.apache.axis2.jaxws.sample.dlwmin.types.TestBean;
 
 import junit.framework.TestCase;
@@ -153,7 +154,7 @@ public class DLWMinTests extends TestCase {
     }
     
     /**
-     * Test throwing checked exception
+     * Test throwing checked exception w/o a JAXB Bean
      */
     public void testProcess_CheckException()  throws Exception {
         
@@ -173,6 +174,27 @@ public class DLWMinTests extends TestCase {
             assertTrue(te.getFlag() == 123);
         } catch (Exception e) {
             fail("Expected TestException thrown but found " + e.getClass());
+        }
+    }
+    
+    /**
+     * Test throwing checked exception that has a JAXB Bean
+     */
+    public void testProcess_CheckException2()  throws Exception {
+        
+        Greeter proxy = getProxy("process");
+        
+        TestBean request = new TestBean();
+        request.setData1("hello world");
+        request.setData2(10);
+        try {
+            TestBean response = proxy.process(4, request);
+            fail("Expected TestException2 thrown");
+        } catch (TestException2 te) {
+            assertTrue(te.getMessage().equals("TestException2 thrown"));
+            assertTrue(te.getFlag() == 456);
+        } catch (Exception e) {
+            fail("Expected TestException2 thrown but found " + e.getClass());
         }
     }
     

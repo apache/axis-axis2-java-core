@@ -21,15 +21,17 @@ package org.apache.axis2.jaxws.sample.dlwmin.sei;
 import javax.xml.ws.WebFault;
 
 /**
- * Example Checked Exception with no corresponding JAXB bean
+ * Checked Exception with a WebFault that locates an existing JAXB Bean
+ *
  */
-@WebFault(name="processFault", targetNamespace="http://apache.org/axis2/jaxws/sample/dlwmin")
-public class TestException extends Exception {
+@WebFault(name="processFault2", targetNamespace="http://apache.org/axis2/jaxws/sample/dlwmin/types",
+        faultBean="org.apache.axis2.jaxws.sample.dlwmin.types.ProcessFault2")
+public class TestException2 extends Exception {
 
     public int flag;
     
 
-    public TestException(String message, int flag) {
+    public TestException2(String message, int flag) {
         super(message);
         this.flag = flag;
     }

@@ -21,6 +21,7 @@
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
     xmlns:tns="http://apache.org/axis2/jaxws/sample/dlwmin"
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:types="http://apache.org/axis2/jaxws/sample/dlwmin/types"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     targetNamespace="http://apache.org/axis2/jaxws/sample/dlwmin" name="HelloWorld">
     <wsdl:types>
@@ -113,6 +114,9 @@
     <wsdl:message name="testProcessFault">
         <wsdl:part element="tns:processFault" name="fault"/>
     </wsdl:message>
+    <wsdl:message name="testProcessFault2">
+        <wsdl:part element="types:processFault" name="fault2"/>
+    </wsdl:message>
     
 
         
@@ -132,6 +136,7 @@
             <wsdl:input message="tns:processRequest" name="processRequest"/>
             <wsdl:output message="tns:processResponse" name="processResponse"/>
             <wsdl:fault message="tns:processFault" name="processFault"/>
+            <wsdl:fault message="tns:processFault2" name="processFault2"/>
         </wsdl:operation>
      
     </wsdl:portType>
@@ -171,6 +176,9 @@
             </wsdl:output>
             <fault name="processFault">
 				<soap:fault name="processFault" use="literal" />
+			</fault>
+			<fault name="processFault2">
+				<soap:fault name="processFault2" use="literal" />
 			</fault>
         </wsdl:operation>
         
