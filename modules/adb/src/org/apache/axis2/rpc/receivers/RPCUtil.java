@@ -14,9 +14,14 @@ import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.utils.reader.NullXMLStreamReader;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.StreamWrapper;
 import org.apache.ws.java2wsdl.utils.TypeTable;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -220,4 +225,30 @@ public class RPCUtil {
         outMessage.setEnvelope(envelope);
     }
 
+    /**
+     * This can be used to get the part name of the response
+     * @param outMessage : AxisMessage
+     * @return String
+     */
+    private static  String getReturnName(AxisMessage outMessage){
+        if(outMessage!=null){
+            Object element=  outMessage.getSchemaElement();
+            if(element instanceof XmlSchemaComplexType){
+                XmlSchemaComplexType xmlSchemaComplexType = (XmlSchemaComplexType) element;
+                Object particle = xmlSchemaComplexType.getParticle();
+                if(particle instanceof XmlSchemaSequence ){
+                    XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) particle;
+                    Object items = xmlSchemaSequence.getItems();
+                    if(items instanceof XmlSchemaObjectCollection){
+                        XmlSchemaObjectCollection xmlSchemaObjectCollection = (XmlSchemaObjectCollection) items;
+                        Object schemaElement=  xmlSchemaObjectCollection.getItem(0);
+                        if(schemaElement instanceof XmlSchemaElement){
+                            return ((XmlSchemaElement)schemaElement).getName();
+                        }
+                    }
+                }
+            }
+        }
+        return RETURN_WRAPPER;
+    }
 }

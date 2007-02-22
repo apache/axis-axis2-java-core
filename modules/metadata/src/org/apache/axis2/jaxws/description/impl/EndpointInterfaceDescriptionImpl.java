@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.description.impl;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -212,8 +213,14 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         // of whether they include an @WebMethod annotation.  That annotation may
         // be present to customize the mapping, but is not required (p14)
         Method[] seiMethods = sei.getMethods();
+        ArrayList methodList = new ArrayList();
         if (sei != null) {
             for (Method method:seiMethods) {
+
+                if(method.getDeclaringClass().getName().equals("java.lang.Object")){
+                    continue;
+                }
+                methodList.add(method);
                 if (!Modifier.isPublic(method.getModifiers())) {
                     // JSR-181 says methods must be public (p14)
                     // TODO NLS
@@ -221,9 +228,10 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
                 }
                 // TODO: other validation per JSR-181
             }
-            
+
         }
-        return seiMethods;
+        return (Method[])methodList.toArray(new Method[methodList.size()]);
+//        return seiMethods;
     }
     
     /**

@@ -23,7 +23,6 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
 import org.apache.axis2.dataretrieval.AxisDataLocatorImpl;
@@ -55,8 +54,10 @@ import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
+import org.apache.ws.java2wsdl.AnnotationConstants;
 import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.codehaus.jam.JMethod;
+import org.codehaus.jam.JAnnotation;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -1496,13 +1497,13 @@ public class AxisService extends AxisDescription {
      * @param schemaNamespace
      * @throws AxisFault
      */
-
-    public static AxisService createService(String implClass,
+     public static AxisService createService(String implClass,
                                             AxisConfiguration axisConfiguration,
                                             Map messageReceiverClassMap,
                                             String targetNamespace,
-                                            String schemaNamespace) throws AxisFault {
-        Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
+                                            String schemaNamespace,
+                                            ClassLoader loader) throws AxisFault {
+         Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
         OMElement paraElement = Utils.getParameter(Constants.SERVICE_CLASS, implClass, false);
         parameter.setParameterElement(paraElement);
         AxisService axisService = new AxisService();
@@ -1522,7 +1523,7 @@ public class AxisService extends AxisDescription {
         }
 
         axisService.setName(serviceName);
-        axisService.setClassLoader(axisConfiguration.getServiceClassLoader());
+        axisService.setClassLoader(loader);
 
         ClassLoader serviceClassLoader = axisService.getClassLoader();
         SchemaGenerator schemaGenerator;
@@ -1568,6 +1569,12 @@ public class AxisService extends AxisDescription {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
+            JAnnotation methodAnnon= jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
+            if(methodAnnon!=null){
+                if(methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()){
+                    continue;
+                }
+            }
             if (!jmethod.isPublic()) {
                 // no need to expose , private and protected methods
                 continue;
@@ -1603,6 +1610,22 @@ public class AxisService extends AxisDescription {
             axisService.addOperation(operation);
         }
         return axisService;
+
+    }
+
+
+    public static AxisService createService(String implClass,
+                                            AxisConfiguration axisConfiguration,
+                                            Map messageReceiverClassMap,
+                                            String targetNamespace,
+                                            String schemaNamespace) throws AxisFault {
+        return createService(implClass,
+                axisConfiguration,
+                messageReceiverClassMap,
+                targetNamespace,
+                schemaNamespace,
+                axisConfiguration.getServiceClassLoader());
+
 
     }
 
@@ -1689,6 +1712,12 @@ public class AxisService extends AxisDescription {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
+            JAnnotation methodAnnon= jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
+            if(methodAnnon!=null){
+                if(methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()){
+                    continue;
+                }
+            }
             if (!jmethod.isPublic()) {
                 // no need to expose , private and protected methods
                 continue;

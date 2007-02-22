@@ -21,8 +21,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
+import org.apache.ws.java2wsdl.AnnotationConstants;
 import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.codehaus.jam.JMethod;
+import org.codehaus.jam.JAnnotation;
 
 import javax.xml.namespace.QName;
 import java.io.*;
@@ -294,6 +296,12 @@ public class Utils {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
+            JAnnotation methodAnnon= jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
+            if(methodAnnon!=null){
+                if(methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()){
+                    continue;
+                }
+            }
             if (!jmethod.isPublic()) {
                 // no need to expose , private and protected methods
                 continue;
@@ -374,6 +382,13 @@ public class Utils {
         if (inMessage != null) {
             inMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName()));
             inMessage.setName(opName + Java2WSDLConstants.MESSAGE_SUFFIX);
+        }
+        JAnnotation methodAnnon= jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
+        if(methodAnnon!=null){
+            String action=  methodAnnon.getValue(AnnotationConstants.ACTION).asString();
+            if(action!=null&&!"".equals(action)){
+                operation.setSoapAction(action);
+            }
         }
         return operation;
     }

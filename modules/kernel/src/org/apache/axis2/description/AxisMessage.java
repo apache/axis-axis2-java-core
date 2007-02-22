@@ -119,22 +119,18 @@ public class AxisMessage extends AxisDescription {
         return null;
     }
 
-    public String getName
-            () {
+    public String getName() {
         return name;
     }
 
-    public void setName
-            (String
-                    name) {
+    public void setName(String name) {
         this.name = name;
     }
 
     /**
      * This will return a list of WSDLExtensibilityAttribute
      */
-    public List getExtensibilityAttributes
-            () {
+    public List getExtensibilityAttributes() {
         // TODO : Deepal implement this properly.
 
         // the list should contain list of WSDLExtensibilityAttribute
@@ -158,4 +154,5 @@ public class AxisMessage extends AxisDescription {
         throw new UnsupportedOperationException("axisMessage.isEngaged(qName) is not supported");
         
     }
+
 }
