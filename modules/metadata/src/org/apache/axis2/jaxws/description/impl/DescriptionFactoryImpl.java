@@ -32,6 +32,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
@@ -136,7 +137,7 @@ public class DescriptionFactoryImpl {
      */
     public static EndpointDescription updateEndpoint(
             ServiceDescription serviceDescription, Class sei, QName portQName,
-            ServiceDescription.UpdateType updateType) {
+            DescriptionFactory.UpdateType updateType) {
         EndpointDescription endpointDesc = 
             ((ServiceDescriptionImpl) serviceDescription).updateEndpointDescription(sei, portQName, updateType);
         if (log.isDebugEnabled()) {

@@ -43,6 +43,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
@@ -208,7 +209,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
      *            port or a pre-existing dynamic port.
      */
 
-    EndpointDescription updateEndpointDescription(Class sei, QName portQName, UpdateType updateType) {
+    EndpointDescription updateEndpointDescription(Class sei, QName portQName, DescriptionFactory.UpdateType updateType) {
         
         EndpointDescriptionImpl endpointDescription = getEndpointDescriptionImpl(portQName);
         boolean isPortDeclared = isPortDeclared(portQName);

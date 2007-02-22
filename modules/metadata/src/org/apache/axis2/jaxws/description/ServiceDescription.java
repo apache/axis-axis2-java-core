@@ -21,7 +21,7 @@ import org.apache.axis2.context.ConfigurationContext;
  *         EndpointInterfaceDescription
  *             OperationDescription[]
  *                 ParameterDescription[]
- *                 FaultDescription[]       (Note: Not implemented yet)
+ *                 FaultDescription[]
  *
  * <b>ServiceDescription details</b>
  * 
@@ -46,8 +46,6 @@ import org.apache.axis2.context.ConfigurationContext;
  */
 
 public interface ServiceDescription {
-    public enum UpdateType {GET_PORT, ADD_PORT, CREATE_DISPATCH}
-    
     public abstract EndpointDescription[] getEndpointDescriptions();
 
     public abstract EndpointDescription getEndpointDescription(QName portQName);

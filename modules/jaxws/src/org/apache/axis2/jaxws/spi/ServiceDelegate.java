@@ -100,7 +100,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         throws WebServiceException {
         
         EndpointDescription endpointDesc = 
-            DescriptionFactory.updateEndpoint(serviceDescription, null, portName, ServiceDescription.UpdateType.ADD_PORT);
+            DescriptionFactory.updateEndpoint(serviceDescription, null, portName, DescriptionFactory.UpdateType.ADD_PORT);
         // TODO: Need to set endpointAddress and set or check bindingId on the EndpointDesc
         endpointDesc.setEndpointAddress(endpointAddress);
         endpointDesc.setClientBindingID(bindingId);
@@ -118,7 +118,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	}
     	
         EndpointDescription endpointDesc = 
-            DescriptionFactory.updateEndpoint(serviceDescription, null, qname, ServiceDescription.UpdateType.CREATE_DISPATCH);
+            DescriptionFactory.updateEndpoint(serviceDescription, null, qname, DescriptionFactory.UpdateType.CREATE_DISPATCH);
         if (endpointDesc == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail2", qname.toString()));
         }
@@ -152,7 +152,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         }
         
         EndpointDescription endpointDesc = 
-            DescriptionFactory.updateEndpoint(serviceDescription, null, qname, ServiceDescription.UpdateType.CREATE_DISPATCH);
+            DescriptionFactory.updateEndpoint(serviceDescription, null, qname, DescriptionFactory.UpdateType.CREATE_DISPATCH);
         if (endpointDesc == null) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("createDispatchFail2", qname.toString()));
         }
@@ -206,7 +206,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     	}
 
         EndpointDescription endpointDesc = 
-            DescriptionFactory.updateEndpoint(serviceDescription, sei, portName, ServiceDescription.UpdateType.GET_PORT);
+            DescriptionFactory.updateEndpoint(serviceDescription, sei, portName, DescriptionFactory.UpdateType.GET_PORT);
         if (endpointDesc == null) {
             // TODO: NLS
             throw ExceptionFactory.makeWebServiceException("Unable to getPort for port QName " + portName.toString());
