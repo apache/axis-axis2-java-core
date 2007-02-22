@@ -29,6 +29,7 @@ import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.impl.OMContainerEx;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.OMElementImpl;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
@@ -485,11 +486,12 @@ class XMLSpineImpl implements XMLSpine {
             // TODO It would also be nice to close the input XMLStreamReader connected
             // to the builder.
             if (setComplete) {
-            	OMNode o = om;
-            	while (o != null && o instanceof OMElementImpl) {
-            		((OMElementImpl)o).setComplete(true);
-            		if (o.getParent() instanceof OMElement) {
-            			o = (OMNode) o.getParent();
+            	OMContainer o = om;
+            	while (o != null && o instanceof OMContainerEx) {
+            		((OMContainerEx)o).setComplete(true);
+            		if ((o instanceof OMNode) &&
+                        (((OMNode) o).getParent()) instanceof OMContainer) { 
+            			o = ((OMNode) o).getParent();
             		} else {
             			o = null;
             		}
