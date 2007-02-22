@@ -138,10 +138,10 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             	log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("checkingrelatesto",
                     relatesTo));
             }
-            if ((relatesTo != null) || "".equals(relatesTo)) {
+            if ((relatesTo != null) && !"".equals(relatesTo)) {
                 OperationContext operationContext =
                         msgctx.getConfigurationContext()
-                                .getOperationContext(msgctx.getRelatesTo().getValue());
+                                .getOperationContext(relatesTo);
 
                 if (operationContext != null) {
                 	if(operationContext.isComplete()){
