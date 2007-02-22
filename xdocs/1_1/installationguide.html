@@ -14,18 +14,17 @@ prerequisites and setting up environment variables and tools followed by
 detailed instructions on installation methods.</p>
 
 <p><i>Send your feedback to: <a
-href="mailto:axis-dev@ws.apache.org">axis-dev@ws.apache.org</a></i>
-href="http://ws.apache.org/axis2/mail-lists.html". Prefix subject with
-[Axis2]. You can also <a href="http://ws.apache.org/axis2/mail-lists.html">
-href="http://ws.apache.org/axis2/mail-lists.html"subscribe</a>
-href="http://ws.apache.org/axis2/mail-lists.html" to the mailing list. </p>
+href="mailto:axis-dev@ws.apache.org?subject=[Axis2]">axis-dev@ws.apache.org</a></i>
+mailing list. Subscription details are available on <a
+href="http://ws.apache.org/axis2/mail-lists.html">Axis2 site</a>. Kindly
+prefix every email subject with [Axis2].</p>
 
 <h2>Contents</h2>
 <ul>
-  <li><a href="#Download_Axis2">Download Axis2</a></li>
+  <li><a href="#Download_Axis2">Axis2 Distributions</a></li>
   <li><a href="#requirements">System Requirements</a></li>
-  <li><a href="#standalone">Installation Using Standard Binary
-    Distribution</a>
+  <li><a href="#standalone">Install Axis2 as a Standalone Server using
+    Standard Binary Distribution</a>
     <ul>
       <li><a href="#standalone1">Install the Apache Axis2 Binary
         Distribution</a></li>
@@ -36,8 +35,7 @@ href="http://ws.apache.org/axis2/mail-lists.html" to the mailing list. </p>
         Scripts</a></li>
     </ul>
   </li>
-  <li><a href="#build_war"></a></li>
-  <li><a href="#servlet_container">Installing Axis2 in a Servlet
+  <li><a href="#servlet_container">Install Axis2 in a Servlet
   Container</a></li>
   <li><a href="#upload">Uploading Services</a></li>
   <li><a href="#advanced">Advanced</a>
@@ -55,7 +53,7 @@ href="http://ws.apache.org/axis2/mail-lists.html" to the mailing list. </p>
 </ul>
 <a name="Download_Axis2"></a>
 
-<h2>Download Axis2</h2>
+<h2>Axis2 Distributions</h2>
 
 <p>Axis2 is distributed in several convenient distribution packages and can
 be installed either as a standalone server or as part of a J2EE compliant
@@ -165,10 +163,25 @@ Source Distribution</p>
     </tr>
   </tbody>
 </table>
+
+<p>Make sure that the above prerequisites are available for the Axis2
+installation.</p>
 <a name="standalone"></a>
 
-<h2>Installation Using Standard Binary Distribution</h2>
+<h2>Install Axis2 as a Standalone Server using Standard Binary
+Distribution</h2>
 <a name="standalone1"></a>
+
+<p>This section provides you with the following information</p>
+<ol>
+  <li>Install Axis2 as a standalone server using the Standard Binary
+    Distribution</li>
+  <li>Start up the Axis2 standalone server</li>
+  <li>Building the axis2.war file (using the Standard Binary Distribution)
+    which is required to run Axis2 as part of a J2EE compliant servlet
+    container</li>
+  <li>Running Axis2 convenient scripts</li>
+</ol>
 
 <h3>1. Download and Install the Apache Axis2 Binary Distribution</h3>
 
@@ -194,7 +207,7 @@ $AXIS2_HOME/bin/axis2server.sh  (Unix)</p>
 
 <p>After startup, the default web services included with Axis2 will be
 available by visiting http://localhost:8080/axis2/services/</p>
-<a name="standalone3"></a>
+<a name="standalone3" id="standalone3"></a>
 
 <h3>3. Building the Axis2 Web Application (axis2.war) Using Standard Binary
 Distribution</h3>
@@ -212,7 +225,7 @@ will be packed into the created axis2.war together with the Axis2
 configuration found at $AXIS2_HOME/conf/axis2.xml.</p>
 
 <p>Read <a href="#servlet_container">Installing Axis2 in a Servlet
-Container</a> to find out how to deploy the Axis2 web application in a
+Container</a> to find out how to deploy the Axis2 Web application in a
 servlet container.</p>
 <a name="standalone4"></a>
 
@@ -293,13 +306,14 @@ able to run the following scripts from any where.</p>
 </table>
 <a name="servlet_container"></a>
 
-<h2>Installing Axis2 in a Servlet Container</h2>
+<h2>Install Axis2 in a Servlet Container</h2>
 
 <p>Which ever the distribution, installing Axis2 in a J2EE compliant servlet
 container is as follows:</p>
 <ol>
-  <li>Build the Axis2 WAR file using the Axis2 Standard Binary Distribution.
-    (Alternatively you can <a
+  <li>Build the Axis2 WAR file using the Axis2 <a
+    href="#standalone3">Standard Binary Distribution</a>. (Alternatively you
+    can <a
     href="http://ws.apache.org/axis2/download/1_1_1/download.cgi">download</a>
     the axis2.war file or you can build axis2.war using the <a
     href="#war">Source Distribution</a>.</li>
@@ -334,7 +348,7 @@ Specific Configuration Guide</a>.</p>
 <ol>
   <p>The Axis2 Web application also provides an interface to upload services.
   Once a service is created according to the service specification as
-  described in the <a name="adv-userguide.html" target="_blank">Advance
+  described in the <a name="adv-userguide.html" target="_blank">Advanced
   User's Guide</a>, that .jar file can be uploaded using the upload page.</p>
 
   <p align="center"><strong><img src="images/clip_image010.jpg"
