@@ -272,7 +272,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @param response
      * @throws IOException
      */
-    private void disableRESTErrorMessage(HttpServletResponse response) throws IOException {
+    protected void disableRESTErrorMessage(HttpServletResponse response) throws IOException {
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         writer.println("<html><body><h2>Please enable REST support in WEB-INF/conf/axis2.xml " +
                        "and WEB-INF/web.xml</h2></body></html>");
@@ -687,7 +687,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         return sessionContext;
     }
 
-    class ServletRequestResponseTransport implements RequestResponseTransport {
+    protected class ServletRequestResponseTransport implements RequestResponseTransport {
         private HttpServletResponse response;
         private CountDownLatch responseReadySignal = new CountDownLatch(1);
         RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
@@ -736,12 +736,12 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * Ues in processing REST related Requests.
      * This is the helper Class use in processing of doGet, doPut , doDelete and doPost.
      */
-    private class ProcessRESTRequest {
+    public class ProcessRESTRequest {
         MessageContext messageContext;
         HttpServletRequest request;
         HttpServletResponse response;
 
-        ProcessRESTRequest(String httpMethodString, HttpServletRequest request,
+        public ProcessRESTRequest(String httpMethodString, HttpServletRequest request,
                            HttpServletResponse response)
                 throws IOException {
             this.request = request;
@@ -753,7 +753,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         }
 
-        void processXMLRequest() throws IOException, ServletException {
+        public void processXMLRequest() throws IOException, ServletException {
             try {
                 new RESTUtil(configContext).processPostRequest(messageContext, request, response);
                 this.checkResponseWritten();
@@ -765,7 +765,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         }
 
-        void processURLRequest() throws IOException, ServletException {
+        public void processURLRequest() throws IOException, ServletException {
             try {
                 new RESTUtil(configContext).processGetRequest(messageContext, request, response);
                 this.checkResponseWritten();
@@ -776,7 +776,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         }
 
-        void checkResponseWritten() {
+        private void checkResponseWritten() {
             Object contextWritten =
                     messageContext.getOperationContext()
                             .getProperty(Constants.RESPONSE_WRITTEN);
@@ -785,7 +785,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             }
         }
 
-        void processFault(AxisFault e) throws ServletException, IOException {
+        private void processFault(AxisFault e) throws ServletException, IOException {
             log.debug(e);
             if (messageContext != null) {
                 processAxisFault(messageContext, response, response.getOutputStream(), e);
