@@ -3,6 +3,7 @@
     <xsl:key name="paramsIn" match="//databinders/param[@direction='in']" use="@type"/>
     <xsl:key name="paramsOut" match="//databinders/param[@direction='out']" use="@type"/>
     <xsl:key name="innerParams" match="//databinders/param[@direction='in']/param" use="@partname"/>
+    <xsl:key name="innerOutParams" match="//databinders/param[@direction='out']/param" use="@partname"/>
     <!--<xsl:key name="paramsType" match="//databinders/param[@direction='in']" use="@type"/>-->
 
     <!-- #################################################################################  -->
@@ -126,6 +127,7 @@
                                 <xsl:value-of select="$inputElementType"/> wrappedType){
                                     return wrappedType.get<xsl:value-of select="$inputElementShortType"/>();
                                 }
+
                                 private <xsl:value-of select="$inputElementType"/> wrap<xsl:value-of select="$opname"/>(
                                 <xsl:value-of select="$inputElementComplexType"/> innerType){
                                     <xsl:value-of select="$inputElementType"/> wrappedElement = new <xsl:value-of select="$inputElementType"/>();
@@ -148,18 +150,45 @@
                         <xsl:variable name="outputElementShortType" select="../../param[@type!='' and @direction='out' and @opname=$opname]/@shorttype"></xsl:variable>
                         <xsl:variable name="outputElementComplexType" select="../../param[@type!='' and @direction='out' and @opname=$opname]/@complextype"></xsl:variable>
 
+                        <xsl:for-each select="../../param[@type!='' and @direction='out' and @opname=$opname]/param">
+
+                            <xsl:variable name="paramElement" select="."></xsl:variable>
+                            <xsl:variable name="partName" select="@partname"></xsl:variable>
+
+                            <xsl:if test="(generate-id($paramElement) = generate-id(key('innerOutParams', $partName)[1])) or
+                                (generate-id($outputElement) = generate-id(key('paramsOut', $outputElementType)[1]))">
+
+                                <!-- we put the out element type to the method signature to make it unique -->
+                                private <xsl:value-of select="@type"/> get<xsl:value-of select="$outputElementShortType"/><xsl:value-of select="@partname"/>(
+                                <xsl:value-of select="$outputElementType"/> wrappedType){
+                                <xsl:choose>
+                                    <xsl:when test="string-length(normalize-space($outputElementComplexType)) > 0">
+                                        return wrappedType.get<xsl:value-of select="$outputElementShortType"/>().get<xsl:value-of select="@partname"/>();
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        return wrappedType.get<xsl:value-of select="@partname"/>();
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                                }
+                             </xsl:if>
+                        </xsl:for-each>
+
                         <xsl:if test="generate-id($outputElement) = generate-id(key('paramsOut', $outputElementType)[1])">
                             <xsl:if test="string-length(normalize-space($outputElementComplexType)) > 0">
+
                                 private <xsl:value-of select="$outputElementComplexType"/> get<xsl:value-of select="$opname"/>(
                                 <xsl:value-of select="$outputElementType"/> wrappedType){
                                     return wrappedType.get<xsl:value-of select="$outputElementShortType"/>();
                                 }
+
+                                <!-- in client side we donot have to wrap the out put messages -->
+                                <!--
                                 private <xsl:value-of select="$outputElementType"/> wrap<xsl:value-of select="$opname"/>(
                                 <xsl:value-of select="$outputElementComplexType"/> innerType){
                                     <xsl:value-of select="$outputElementType"/> wrappedElement = new <xsl:value-of select="$outputElementType"/>();
                                     wrappedElement.set<xsl:value-of select="$outputElementShortType"/>(innerType);
                                     return wrappedElement;
-                                }
+                                } -->
                             </xsl:if>
                         </xsl:if>
                   </xsl:if>
@@ -227,12 +256,14 @@
                         <xsl:value-of select="$inputElementType"/> wrappedType){
                             return wrappedType.get<xsl:value-of select="$inputElementShortType"/>();
                         }
+                        <!-- in server side we do not want to wrap input elements -->
+                        <!--
                         private <xsl:value-of select="$inputElementType"/> wrap<xsl:value-of select="$opname"/>(
                         <xsl:value-of select="$inputElementComplexType"/> innerType){
                             <xsl:value-of select="$inputElementType"/> wrappedElement = new <xsl:value-of select="$inputElementType"/>();
                             wrappedElement.set<xsl:value-of select="$inputElementShortType"/>(innerType);
                             return wrappedElement;
-                        }
+                        } -->
                     </xsl:if>
                 </xsl:if>
             </xsl:if>
@@ -244,12 +275,42 @@
             <xsl:variable name="outputElementShortType" select="../../param[@type!='' and @direction='out' and @opname=$opname]/@shorttype"></xsl:variable>
             <xsl:variable name="outputElementComplexType" select="../../param[@type!='' and @direction='out' and @opname=$opname]/@complextype"></xsl:variable>
 
+            <xsl:for-each select="../../param[@type!='' and @direction='out' and @opname=$opname]/param">
+
+                    <xsl:variable name="paramElement" select="."></xsl:variable>
+                    <xsl:variable name="partName" select="@partname"></xsl:variable>
+
+                    <xsl:if test="(generate-id($paramElement) = generate-id(key('innerOutParams', $partName)[1])) or
+                        (generate-id($outputElement) = generate-id(key('paramsOut', $outputElementType)[1]))">
+
+                        <!-- we put the out element type to the method signature to make it unique -->
+                        private <xsl:value-of select="$outputElementType"/> wrap<xsl:value-of select="$outputElementShortType"/><xsl:value-of select="@partname"/>(
+                        <xsl:value-of select="@type"/> param){
+                        <xsl:value-of select="$outputElementType"/> wrappedElement = new <xsl:value-of select="$outputElementType"/>();
+                        <xsl:choose>
+                            <xsl:when test="string-length(normalize-space($outputElementComplexType)) > 0">
+                                <xsl:value-of select="$outputElementComplexType"/> innerType = new <xsl:value-of
+                                    select="$outputElementComplexType"/>();
+                                innerType.set<xsl:value-of select="@partname"/>(param);
+                                wrappedElement.set<xsl:value-of select="$outputElementShortType"/>(innerType);
+                            </xsl:when>
+                            <xsl:otherwise>
+                                wrappedElement.set<xsl:value-of select="@partname"/>(param);
+                            </xsl:otherwise>
+                        </xsl:choose>
+                            return wrappedElement;
+                        }
+                     </xsl:if>
+                </xsl:for-each>
+
             <xsl:if test="generate-id($outputElement) = generate-id(key('paramsOut', $outputElementType)[1])">
                 <xsl:if test="string-length(normalize-space($outputElementComplexType)) > 0">
+                    <!-- in server side we do not want to unwrap the output type -->
+                    <!--
                     private <xsl:value-of select="$outputElementComplexType"/> get<xsl:value-of select="$opname"/>(
                     <xsl:value-of select="$outputElementType"/> wrappedType){
                         return wrappedType.get<xsl:value-of select="$outputElementShortType"/>();
-                    }
+                    } -->
                     private <xsl:value-of select="$outputElementType"/> wrap<xsl:value-of select="$opname"/>(
                     <xsl:value-of select="$outputElementComplexType"/> innerType){
                         <xsl:value-of select="$outputElementType"/> wrappedElement = new <xsl:value-of select="$outputElementType"/>();

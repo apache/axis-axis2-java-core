@@ -137,7 +137,17 @@ public class ExtensionUtility {
                             WSDLConstants.MESSAGE_LABEL_IN_VALUE),
                             mapper,
                             schemaMap,
-                            op.getName().getLocalPart());
+                            op.getName().getLocalPart(),
+                            WSDLConstants.INPUT_PART_QNAME_SUFFIX);
+                }
+
+                if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
+                    walkSchema(op.getMessage(
+                            WSDLConstants.MESSAGE_LABEL_OUT_VALUE),
+                            mapper,
+                            schemaMap,
+                            op.getName().getLocalPart(),
+                            WSDLConstants.OUTPUT_PART_QNAME_SUFFIX);
                 }
 
 
@@ -211,27 +221,36 @@ public class ExtensionUtility {
     private static void walkSchema(AxisMessage message,
                                    TypeMapper mapper,
                                    Map schemaMap,
-                                   String opName) {
+                                   String opName,
+                                   String qnameSuffix) {
 
         if (message.getParameter(Constants.UNWRAPPED_KEY) != null) {
             XmlSchemaType schemaType = message.getSchemaElement().getSchemaType();
             //create a type mapper
-            processXMLSchemaComplexType(schemaType, mapper, opName, schemaMap);
+            processXMLSchemaComplexType(schemaType, mapper, opName, schemaMap, qnameSuffix);
         }
     }
 
-    private static void processXMLSchemaComplexType(XmlSchemaType schemaType, TypeMapper mapper, String opName, Map schemaMap) {
+    private static void processXMLSchemaComplexType(XmlSchemaType schemaType,
+                                                    TypeMapper mapper,
+                                                    String opName,
+                                                    Map schemaMap,
+                                                    String qnameSuffix) {
         if (schemaType instanceof XmlSchemaComplexType) {
             XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
             if (cmplxType.getContentModel() == null) {
-                processSchemaSequence(cmplxType.getParticle(), mapper, opName, schemaMap);
+                processSchemaSequence(cmplxType.getParticle(), mapper, opName, schemaMap, qnameSuffix);
             } else {
-                processComplexContentModel(cmplxType, mapper, opName, schemaMap);
+                processComplexContentModel(cmplxType, mapper, opName, schemaMap, qnameSuffix);
             }
         }
     }
 
-    private static void processComplexContentModel(XmlSchemaComplexType cmplxType, TypeMapper mapper, String opName, Map schemaMap) {
+    private static void processComplexContentModel(XmlSchemaComplexType cmplxType,
+                                                   TypeMapper mapper,
+                                                   String opName,
+                                                   Map schemaMap,
+                                                   String qnameSuffix) {
         XmlSchemaContentModel contentModel = cmplxType.getContentModel();
         if (contentModel instanceof XmlSchemaComplexContent) {
             XmlSchemaComplexContent xmlSchemaComplexContent = (XmlSchemaComplexContent) contentModel;
@@ -240,7 +259,7 @@ public class ExtensionUtility {
                 XmlSchemaComplexContentExtension schemaExtension = (XmlSchemaComplexContentExtension) content;
 
                 // process particles inside this extension, if any
-                processSchemaSequence(schemaExtension.getParticle(), mapper, opName, schemaMap);
+                processSchemaSequence(schemaExtension.getParticle(), mapper, opName, schemaMap, qnameSuffix);
 
                 // now we need to get the schema of the extension type from the parent schema. For that let's first retrieve
                 // the parent schema
@@ -250,12 +269,16 @@ public class ExtensionUtility {
 
                 XmlSchemaType extensionSchemaType = parentSchema.getTypeByName(schemaExtension.getBaseTypeName());
 
-                processXMLSchemaComplexType(extensionSchemaType, mapper, opName, schemaMap);
+                processXMLSchemaComplexType(extensionSchemaType, mapper, opName, schemaMap, qnameSuffix);
             }
         }
     }
 
-    private static void processSchemaSequence(XmlSchemaParticle particle, TypeMapper mapper, String opName, Map schemaMap) {
+    private static void processSchemaSequence(XmlSchemaParticle particle,
+                                              TypeMapper mapper,
+                                              String opName,
+                                              Map schemaMap,
+                                              String qnameSuffix) {
         if (particle instanceof XmlSchemaSequence) {
             XmlSchemaObjectCollection items =
                     ((XmlSchemaSequence) particle).getItems();
@@ -270,7 +293,7 @@ public class ExtensionUtility {
                     XmlSchemaType eltSchemaType = xmlSchemaElement.getSchemaType();
                     if (eltSchemaType != null) {
                         //there is a schema type object.We can utilize that
-                        populateClassName(eltSchemaType, mapper, opName, xmlSchemaElement);
+                        populateClassName(eltSchemaType, mapper, opName, xmlSchemaElement, qnameSuffix);
                     } else if (xmlSchemaElement.getSchemaTypeName() != null) {
                         //there is no schema type object but there is a
                         //schema type QName.  Use that Qname to look up the
@@ -278,10 +301,10 @@ public class ExtensionUtility {
                         eltSchemaType = findSchemaType(schemaMap,
                                 xmlSchemaElement.getSchemaTypeName());
                         if (eltSchemaType != null) {
-                            populateClassName(eltSchemaType, mapper, opName, xmlSchemaElement);
+                            populateClassName(eltSchemaType, mapper, opName, xmlSchemaElement, qnameSuffix);
                         } else if (xmlSchemaElement.getSchemaTypeName().equals(SchemaConstants.XSD_ANYTYPE)) {
                             QName partQName = WSDLUtil.getPartQName(opName,
-                                    WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                    qnameSuffix,
                                     xmlSchemaElement.getName());
 
                             if (xmlSchemaElement.getMaxOccurs() > 1) {
@@ -300,7 +323,7 @@ public class ExtensionUtility {
                     XmlSchemaAny xmlSchemaAny = (XmlSchemaAny) item;
 
                     QName partQName = WSDLUtil.getPartQName(opName,
-                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                            qnameSuffix,
                             Constants.ANY_ELEMENT_FIELD_NAME);
 
                     if (((XmlSchemaAny) item).getMaxOccurs() > 1) {
@@ -326,7 +349,8 @@ public class ExtensionUtility {
     private static void  populateClassName(XmlSchemaType eltSchemaType,
                                           TypeMapper typeMap,
                                           String opName,
-                                          XmlSchemaElement xmlSchemaElement) {
+                                          XmlSchemaElement xmlSchemaElement,
+                                          String qnameSuffix) {
 
         boolean isArray = xmlSchemaElement.getMaxOccurs() > 1;
 
@@ -348,7 +372,7 @@ public class ExtensionUtility {
 
 
             QName partQName = WSDLUtil.getPartQName(opName,
-                    WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                    qnameSuffix,
                     xmlSchemaElement.getName());
             typeMap.addTypeMappingName(partQName, className);
             if (Boolean.TRUE.equals(
