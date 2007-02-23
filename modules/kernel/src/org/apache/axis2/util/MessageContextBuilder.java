@@ -70,7 +70,6 @@ public class MessageContextBuilder {
         newmsgCtx.setSessionContext(inMessageContext.getSessionContext());
         newmsgCtx.setTransportIn(inMessageContext.getTransportIn());
         newmsgCtx.setTransportOut(inMessageContext.getTransportOut());
-        newmsgCtx.setMessageID(UUIDGenerator.getUUID());
         newmsgCtx.setServerSide(inMessageContext.isServerSide());
         newmsgCtx.addRelatesTo(new RelatesTo(inMessageContext.getOptions().getMessageId()));
 
@@ -136,6 +135,8 @@ public class MessageContextBuilder {
             else
                 newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
             
+            newmsgCtx.setMessageID(UUIDGenerator.getUUID());
+
             // add the service group id as a reference parameter
             String serviceGroupContextId = inMessageContext.getServiceGroupContextId();
             if (serviceGroupContextId != null && !"".equals(serviceGroupContextId)) {
@@ -144,7 +145,12 @@ public class MessageContextBuilder {
                         Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX), serviceGroupContextId);
             }
         } else {
-            newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
+            // Only set a ReplyTo and a MessageId on async response messages. 
+            EndpointReference outboundToEPR = newmsgCtx.getTo();
+            if (outboundToEPR != null && !outboundToEPR.hasAnonymousAddress()) {
+                newmsgCtx.setMessageID(UUIDGenerator.getUUID());
+                newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
+            }
         }
 
         // Set wsa:Action for response message
@@ -201,7 +207,7 @@ public class MessageContextBuilder {
             return faultMessageContext;
           }
         }
-        
+
         // Create a basic response MessageContext with basic fields copied
         MessageContext faultContext = createResponseMessageContext(processingContext);
 
@@ -217,9 +223,6 @@ public class MessageContextBuilder {
         }
 
         faultContext.setProcessingFault(true);
-
-        // Not worth setting up the session information on a fault flow
-        faultContext.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
 
         // Set wsa:Action for response message
         // Use specified value if available
@@ -247,8 +250,17 @@ public class MessageContextBuilder {
         } else {
             faultContext.setTo(processingContext.getReplyTo());
         }
+        
         if(faultContext.getTo() == null){
             faultContext.setTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
+        }
+
+        // Not worth setting up the session information on a fault flow
+        // Only set a ReplyTo and a MessageId on async response messages. 
+        EndpointReference outboundToEPR = faultContext.getTo();
+        if (outboundToEPR != null && !outboundToEPR.hasAnonymousAddress()) {
+            faultContext.setMessageID(UUIDGenerator.getUUID());
+            faultContext.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
         }
 
         // do Target Resolution
