@@ -40,6 +40,9 @@ public abstract class AbstractContext {
         this.parent = parent;
     }
 
+    protected AbstractContext(){
+    }
+
     /**
      * @return Returns AbstractContext.
      */

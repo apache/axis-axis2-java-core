@@ -83,6 +83,9 @@ public class SessionContext extends AbstractContext implements Externalizable {
         super(parent);
     }
 
+    public SessionContext() {
+    }
+
     public void init(AxisConfiguration axisConfiguration) throws AxisFault {
     }
 
