@@ -429,7 +429,7 @@ public class HTTPConstants {
     /**
      * Field HTTP_METHOD
      */
-    public static final String HTTP_METHOD = "HTTP_METHOD";
+    public static final String HTTP_METHOD = "HTTP_METHOD_OBJECT";
 
     public static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
     public static final String HEADER_CONTENT_ENCODING = "Content-Encoding";
