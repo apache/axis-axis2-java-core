@@ -441,12 +441,10 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
          */
         private void processToEPRReferenceInformation(Map referenceInformation, OMElement parent) {
             if (referenceInformation != null && parent != null) {
-                Iterator iterator = referenceInformation.keySet().iterator();
+                Iterator iterator = referenceInformation.values().iterator();
                 while (iterator.hasNext()) {
-                    QName key = (QName) iterator.next();
-                    OMElement omElement = (OMElement) referenceInformation.get(key);
+                    OMElement omElement = (OMElement) iterator.next();
                     parent.addChild(ElementHelper.importOMElement(omElement, parent.getOMFactory()));
-
                     if (isFinalAddressingNamespace) {
                         omElement.addAttribute(Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE, Final.WSA_TYPE_ATTRIBUTE_VALUE,
                                 addressingNamespaceObject);
