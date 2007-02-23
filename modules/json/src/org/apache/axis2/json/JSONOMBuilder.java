@@ -21,51 +21,37 @@ import java.io.InputStream;
 
 import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.OMNamespaceImpl;
-import org.apache.axiom.om.impl.builder.OMBuilder;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.om.impl.llom.factory.OMLinkedListImplFactory;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.builder.OMBuilder;
+import org.apache.axis2.context.MessageContext;
 
 /**
  * Makes the OMSourcedElementImpl object with the JSONDataSource inside.
  */
 
 public class JSONOMBuilder implements OMBuilder {
-    InputStream jsonInputStream = null;
-    String localName = null;
-    String prefix = "";
+    
+    
 
     public JSONOMBuilder() {
     }
 
-	public void init(InputStream inputStream, String chatSetEncoding, String url, String contentType) {
-		this.jsonInputStream = inputStream;
-
-    }
-
     //returns the OMSourcedElementImpl with JSONDataSource inside
-    public OMElement getDocumentElement() {
-        OMFactory factory = OMAbstractFactory.getOMFactory();
+    public OMElement processDocument(InputStream inputStream, MessageContext messageContext) throws AxisFault {
+        String localName="";
+        String prefix = "";
         OMNamespace ns = new OMNamespaceImpl("", "");
-        if (localName == null) {
-            localName = getLocalName();
-        }
-        JSONDataSource jsonDataSource = getDataSource();
-        return new OMSourcedElementImpl(localName, ns, factory, jsonDataSource);
-    }
-
-    protected JSONDataSource getDataSource() {
-        return new JSONDataSource(this.jsonInputStream, "\"" + prefix + localName + "\"");
-    }
-
-    private String getLocalName() {
-        String localName = "";
+        
+    	OMFactory factory = OMAbstractFactory.getOMFactory();
         try {
-            char temp = (char) jsonInputStream.read();
+            char temp = (char) inputStream.read();
             while (temp != ':') {
                 if (temp != ' ' && temp != '{') {
                     localName += temp;
                 }
-                temp = (char) jsonInputStream.read();
+                temp = (char) inputStream.read();
             }
 
             if (localName.charAt(0) == '"') {
@@ -74,24 +60,24 @@ public class JSONOMBuilder implements OMBuilder {
                 } else {
                     prefix = localName.substring(1, localName.length()) + ":";
                     localName = "";
-                    temp = (char) jsonInputStream.read();
+                    temp = (char) inputStream.read();
                     while (temp != ':') {
                         if (temp != ' ') {
                             localName += temp;
                         }
-                        temp = (char) jsonInputStream.read();
+                        temp = (char) inputStream.read();
                     }
                     localName = localName.substring(0, localName.length() - 1);
                 }
             }
         } catch (IOException e) {
-            throw new OMException(e);
+            throw new AxisFault(e);
         }
-        return localName;
+        JSONDataSource jsonDataSource = getDataSource(inputStream,prefix,localName);
+        return new OMSourcedElementImpl(localName, ns, factory, jsonDataSource);
     }
 
-    public String getCharsetEncoding() {
-        return "UTF-8";
+    protected JSONDataSource getDataSource(InputStream jsonInputStream,String prefix,String localName) {
+        return new JSONDataSource(jsonInputStream, "\"" + prefix + localName + "\"");
     }
-
 }

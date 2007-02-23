@@ -16,10 +16,12 @@
 
 package org.apache.axis2.json;
 
+import java.io.InputStream;
+
 
 public class JSONBadgerfishOMBuilder extends JSONOMBuilder{
 
-    protected JSONDataSource getDataSource(){
-        return new JSONBadgerfishDataSource(this.jsonInputStream, "\"" + prefix + localName + "\"");
+    protected JSONDataSource getDataSource(InputStream jsonInputStream,String prefix, String localName){
+        return new JSONBadgerfishDataSource(jsonInputStream, "\"" + prefix + localName + "\"");
     }
 }
