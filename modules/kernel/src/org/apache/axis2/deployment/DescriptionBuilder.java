@@ -31,6 +31,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.builder.OMBuilder;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -42,6 +43,7 @@ import org.apache.axis2.description.PolicyInclude;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -216,16 +218,26 @@ public class DescriptionBuilder implements DeploymentConstants {
 			OMElement msgBuilderElement = (OMElement) msgBuilders.next();
 			final OMElement tempMsgBuilder = msgBuilderElement;
 			Class builderClass = null;
+			OMBuilder builderObject;
 			try {
 				builderClass = findAndValidateSelectorClass(tempMsgBuilder,
 						DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_BUILDER);
+				builderObject = (OMBuilder)builderClass.newInstance();
 			} catch (PrivilegedActionException e) {
 				throw (DeploymentException) e.getException();
+			} catch (InstantiationException e) {
+				throw new DeploymentException(
+						"Cannot instantiate the specified Builder Class  : "
+								+ builderClass.getName() + ".", e);
+			} catch (IllegalAccessException e) {
+				throw new DeploymentException(
+						"Cannot instantiate the specified Builder Class : "
+								+ builderClass.getName() + ".", e);
 			}
 			OMAttribute contentTypeAtt = msgBuilderElement
 					.getAttribute(new QName(TAG_CONTENT_TYPE));
 			builderSelector.put(contentTypeAtt.getAttributeValue(),
-					builderClass);
+					builderObject);
 		}
 		return builderSelector;
 	}
@@ -243,20 +255,20 @@ public class DescriptionBuilder implements DeploymentConstants {
 		while (msgFormatters.hasNext()) {
 			OMElement msgFormatterElement = (OMElement) msgFormatters.next();
 			final OMElement tempMsgFormatter = msgFormatterElement;
-			Object formatterObject;
+			MessageFormatter formatterObject;
 			Class formatterClass = null;
 			try {
 				formatterClass = findAndValidateSelectorClass(tempMsgFormatter,DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_FORMATTER );
-				formatterObject = formatterClass.newInstance();
+				formatterObject = (MessageFormatter)formatterClass.newInstance();
 			} catch (PrivilegedActionException e) {
 				throw (DeploymentException) e.getException();
 			} catch (InstantiationException e) {
 				throw new DeploymentException(
-						"Cannot instantiate the specified Builder Class  : "
+						"Cannot instantiate the specified Formatter Class  : "
 								+ formatterClass.getName() + ".", e);
 			} catch (IllegalAccessException e) {
 				throw new DeploymentException(
-						"Cannot instantiate the specified Builder Class : "
+						"Cannot instantiate the specified Formatter Class : "
 								+ formatterClass.getName() + ".", e);
 			}
 			OMAttribute contentTypeAtt = msgFormatterElement

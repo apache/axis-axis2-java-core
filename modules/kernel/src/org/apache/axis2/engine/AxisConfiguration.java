@@ -17,6 +17,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.builder.OMBuilder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
 import org.apache.axis2.deployment.DeploymentException;
@@ -178,7 +179,7 @@ public class AxisConfiguration extends AxisDescription {
 	 * @param messageBuilder
 	 */
 	public void addMessageBuilder(String contentType,
-			Class messageBuilder) {
+			OMBuilder messageBuilder) {
 		messageBuilders.put(contentType, messageBuilder);
 	}
 	
@@ -624,8 +625,8 @@ public class AxisConfiguration extends AxisDescription {
 	 * @return the configured message builder implementation class name against
 	 *         the given content type.
 	 */
-    public Class getMessageBuilder(String contentType) {
-        return (Class) messageBuilders.get(contentType);
+    public OMBuilder getMessageBuilder(String contentType) {
+        return (OMBuilder)messageBuilders.get(contentType);
     }
     
     /**

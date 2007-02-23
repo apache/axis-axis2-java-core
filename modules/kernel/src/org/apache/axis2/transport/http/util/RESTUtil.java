@@ -17,7 +17,7 @@ package org.apache.axis2.transport.http.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.OMNodeEx;
-import org.apache.axiom.om.impl.builder.OMBuilder;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPBody;
@@ -25,6 +25,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.builder.OMBuilder;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisBindingOperation;
@@ -293,7 +294,7 @@ public class RESTUtil {
 
                 // Create documentElement only if the content length is greator than 0
                 if (request.getContentLength() != 0) {
-                    OMBuilder builder = Builder.getPOXBuilder(inputStream, charSetEnc, null);
+                    StAXBuilder builder = Builder.getPOXBuilder(inputStream, charSetEnc, null);
                     OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
                     documentElement.setParent(null);
                     body.addChild(documentElement);

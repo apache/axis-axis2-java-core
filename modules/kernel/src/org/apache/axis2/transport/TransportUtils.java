@@ -26,7 +26,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.builder.OMBuilder;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -34,12 +34,13 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.builder.OMBuilder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.transport.http.ApplicationXMLFormatter;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.SOAPMessageFormatter;
-import org.apache.axis2.transport.http.ApplicationXMLFormatter;
 import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
@@ -87,7 +88,7 @@ public class TransportUtils {
 				charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
 			}
 			return createSOAPMessage(msgContext, inStream, soapNamespaceURI,
-					isMIME, (String) contentType, charSetEnc);
+					isMIME, contentType, charSetEnc);
 		} catch (AxisFault e) {
 			throw e;
 		} catch (OMException e) {
@@ -119,29 +120,38 @@ public class TransportUtils {
 			InputStream inStream, String soapNamespaceURI, boolean isMIME,
 			String contentType, String charSetEnc) throws AxisFault,
 			OMException, XMLStreamException, FactoryConfigurationError {
-    	OMBuilder builder=null;
-		OMElement documentElement;
+		OMElement documentElement=null;
+		String charsetEncoding=null;
 		if (isMIME) {
-			builder = Builder.getAttachmentsBuilder(
-					msgContext, inStream, (String) contentType, !(msgContext
+			StAXBuilder builder = Builder.getAttachmentsBuilder(
+					msgContext, inStream, contentType, !(msgContext
 							.isDoingREST()));
+			documentElement = builder.getDocumentElement();
+			charsetEncoding = builder.getDocument().getCharsetEncoding();
 		} else if (msgContext.isDoingREST()) {
-			builder = Builder.getPOXBuilder(inStream,
+			StAXBuilder builder = Builder.getPOXBuilder(inStream,
 					charSetEnc, soapNamespaceURI);
+			documentElement = builder.getDocumentElement();
+			charsetEncoding = builder.getDocument().getCharsetEncoding();
 //		} else if (soapNamespaceURI!=null){
 //				builder = Builder.getBuilder(inStream, charSetEnc,soapNamespaceURI);
 		}else if (contentType!=null)
 		{
-			builder = Builder.getBuilderFromSelector(contentType, inStream, msgContext,charSetEnc);
+			OMBuilder builder = Builder.getBuilderFromSelector(contentType, msgContext);
+			if (builder != null) {
+				documentElement = builder.processDocument(inStream, msgContext);
+//				charsetEncoding = builder.getCharsetEncoding();
+			}
 		}
-		if (builder==null)
+		if (documentElement==null)
 		{
 			//FIXME making soap defualt for the moment..might effect the performance
-			builder = Builder.getSOAPBuilder(inStream, charSetEnc,soapNamespaceURI);
+			StAXBuilder builder = Builder.getSOAPBuilder(inStream, charSetEnc,soapNamespaceURI);
+			documentElement = builder.getDocumentElement();
+			charsetEncoding = builder.getDocument().getCharsetEncoding();
 //			throw new AxisFault("Cannot find a matching builder for the message. Unsupported Content Type.");
 		}
 		
-		documentElement = builder.getDocumentElement();
 		SOAPEnvelope envelope;
 		//Check whether we have received a SOAPEnvelope or not
 		if (documentElement instanceof SOAPEnvelope) {
@@ -150,12 +160,10 @@ public class TransportUtils {
 			//If it is not a SOAPEnvelope we wrap that with a fake SOAPEnvelope.
 			SOAPFactory soapFactory = new SOAP11Factory();
 			envelope= soapFactory.getDefaultEnvelope();
-			envelope.getBody().addChild(
-					builder.getDocumentElement());
+			envelope.getBody().addChild(documentElement);
 		}
 
-		String charsetEncoding = builder.getCharsetEncoding();
-		if ((charsetEncoding != null)
+	/*	if ((charsetEncoding != null)
 				&& !"".equals(charsetEncoding)
 				&& (msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING) != null)
 				&& !charsetEncoding.equalsIgnoreCase((String) msgContext
@@ -172,7 +180,7 @@ public class TransportUtils {
             throw new AxisFault(
                     "Character Set Encoding from " + "transport information do not match with "
                     + "character set encoding in the received SOAP message", faultCode);
-        }
+        }*/
 		return envelope;
 	}
 

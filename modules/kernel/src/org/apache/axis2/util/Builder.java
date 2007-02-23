@@ -13,8 +13,8 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.MTOMConstants;
-import org.apache.axiom.om.impl.builder.OMBuilder;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.builder.XOPAwareStAXOMBuilder;
@@ -26,6 +26,7 @@ import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.builder.OMBuilder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -293,7 +294,7 @@ public class Builder {
      * @return Handler to a OMBuilder implementation instance
      * @throws XMLStreamException
      */
-    public static OMBuilder getBuilder(InputStream inStream) throws XMLStreamException {
+    public static StAXBuilder getBuilder(InputStream inStream) throws XMLStreamException {
     	XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream);
     	return new StAXOMBuilder(xmlReader);
     }
@@ -306,7 +307,7 @@ public class Builder {
      * @return Handler to a OMBuilder implementation instance
      * @throws XMLStreamException
      */
-    public static OMBuilder getBuilder(InputStream inStream, String charSetEnc) throws XMLStreamException {
+    public static StAXBuilder getBuilder(InputStream inStream, String charSetEnc) throws XMLStreamException {
     	XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
     	return new StAXOMBuilder(xmlReader);
     }
@@ -321,7 +322,7 @@ public class Builder {
      * @return Handler to a OMBuilder implementation instance
      * @throws XMLStreamException
      */
-    public static OMBuilder getSOAPBuilder(InputStream inStream, String soapNamespaceURI) throws XMLStreamException {
+    public static StAXBuilder getSOAPBuilder(InputStream inStream, String soapNamespaceURI) throws XMLStreamException {
     	XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(inStream);
         return new StAXSOAPModelBuilder(xmlreader, soapNamespaceURI);
     }
@@ -337,12 +338,12 @@ public class Builder {
      * @return Handler to a OMBuilder implementation instance
      * @throws XMLStreamException
      */
-    public static OMBuilder getSOAPBuilder(InputStream inStream, String charSetEnc, String soapNamespaceURI) throws XMLStreamException {
+    public static StAXBuilder getSOAPBuilder(InputStream inStream, String charSetEnc, String soapNamespaceURI) throws XMLStreamException {
        	XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
         return new StAXSOAPModelBuilder(xmlreader, soapNamespaceURI);
     }
 
-    public static OMBuilder getBuilder(SOAPFactory soapFactory, InputStream in, String charSetEnc) throws XMLStreamException {
+    public static StAXBuilder getBuilder(SOAPFactory soapFactory, InputStream in, String charSetEnc) throws XMLStreamException {
         StAXBuilder builder;
         XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in, charSetEnc);
         builder = new StAXOMBuilder(soapFactory, xmlreader);
@@ -357,35 +358,22 @@ public class Builder {
      * @return the builder registered against the given content-type
      * @throws AxisFault
      */
-    public static OMBuilder getBuilderFromSelector(String contentType,
-			InputStream inputStream, MessageContext msgContext,String charSetEncoding) throws AxisFault {
-    	String type;
-    	int index = contentType.indexOf(';');
-		if (index>0)
-    	{
-    		type = contentType.substring(0,index);
-    	}else{
-    		type = contentType;
-    	}
-		Class builderClass = msgContext.getConfigurationContext()
-				.getAxisConfiguration().getMessageBuilder(type);
-		if (builderClass != null) {
-			try {
-				OMBuilder builder = (OMBuilder) builderClass.newInstance();
-				builder.init(inputStream, charSetEncoding,msgContext.getTo().getAddress(), contentType);
-				// Setting the received content-type as the messageType to make
-				// sure that we respond using the received message serialisation
-				// format.
-				msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, type);
-				return builder;
-			} catch (InstantiationException e) {
-				throw new AxisFault("Cannot instantiate the specified Builder Class  : "
-								+ builderClass.getName() + ".", e);
-			} catch (IllegalAccessException e) {
-				throw new AxisFault("Cannot instantiate the specified Builder Class : "
-								+ builderClass.getName() + ".", e);
-			}
+    public static OMBuilder getBuilderFromSelector(String contentType, MessageContext msgContext) throws AxisFault {
+		String type;
+		int index = contentType.indexOf(';');
+		if (index > 0) {
+			type = contentType.substring(0, index);
+		} else {
+			type = contentType;
 		}
-		return null;
+		OMBuilder builder = msgContext.getConfigurationContext().getAxisConfiguration()
+				.getMessageBuilder(type);
+		if (builder != null) {
+			// Setting the received content-type as the messageType to make
+			// sure that we respond using the received message serialisation
+			// format.
+			msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, type);
+		}
+		return builder;
 	}
 }

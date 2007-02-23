@@ -30,13 +30,13 @@ import javax.jms.TextMessage;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.builder.OMBuilder;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.builder.OMBuilder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
@@ -293,7 +293,7 @@ public class JMSUtils {
         throws XMLStreamException {
 
         SOAPEnvelope envelope = null;
-        OMBuilder builder;
+        StAXBuilder builder;
         String contentType = JMSUtils.getProperty(message, JMSConstants.CONTENT_TYPE);
 
         if (contentType != null && contentType.indexOf(

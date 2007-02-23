@@ -20,6 +20,7 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.builder.OMBuilder;
 import org.apache.axis2.dataretrieval.DRConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
@@ -147,7 +148,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 Iterator keys = builderSelector.keySet().iterator();
                 while (keys.hasNext()) {
                     String key = (String) keys.next();
-                    axisConfig.addMessageBuilder(key, (Class) builderSelector.get(key));
+                    axisConfig.addMessageBuilder(key, (OMBuilder) builderSelector.get(key));
                 }
             }
 

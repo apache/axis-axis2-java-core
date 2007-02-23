@@ -39,13 +39,14 @@ import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import org.apache.axiom.om.OMXMLParserWrapper;
-import org.apache.axiom.om.impl.builder.OMBuilder;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.builder.OMBuilder;
 import org.apache.axis2.context.*;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
@@ -356,7 +357,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
                         }
 
                         InputStream inputStream = part.getInputStream();
-                        OMBuilder builder = Builder.getSOAPBuilder(inputStream, soapNamespaceURI);
+                        StAXBuilder builder = Builder.getSOAPBuilder(inputStream, soapNamespaceURI);
                         SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
                         msgContext.setEnvelope(envelope);
                     }
