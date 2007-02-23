@@ -17,13 +17,14 @@
 
 package org.apache.axis2.jaxws.util;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.ConnectException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+
 public class WSDL4JWrapper implements WSDLWrapper {
 	private static final Log log = LogFactory.getLog(WSDL4JWrapper.class);
 	private Definition wsdlDefinition = null;
@@ -55,47 +57,65 @@ public class WSDL4JWrapper implements WSDLWrapper {
 	
     public WSDL4JWrapper(URL wsdlURL)throws FileNotFoundException, UnknownHostException, 
     	ConnectException, WSDLException{
-		super();
-		this.wsdlURL = wsdlURL;
-		
-		
-		
-		try {
-			URL url = new URL(wsdlURL.toString());
-			URLConnection urlCon = url.openConnection();
-			InputStream is = urlCon.getInputStream();
-			is.close();
-			final String explicitWsdl = urlCon.getURL().toString();
-			try{
-			wsdlDefinition = (Definition)AccessController.doPrivileged(
+	super();
+	this.wsdlURL = wsdlURL;
+	try {
+		URL url=wsdlURL;
+		boolean isFileProtocol = (url!=null && "file".equals(url.getProtocol()))?true:false;
+		if(isFileProtocol){
+			String filePath = (url!=null)?url.getPath():null;
+			//Check is the uri has relative path i.e path is not absolute and is not starting with a "/"
+			boolean isRelativePath = (filePath!=null && !new File(filePath).isAbsolute())?true:false;
+			if(isRelativePath){
+				if(log.isDebugEnabled()){
+					log.debug("WSDL URL has a relative path");
+				}
+				ClassLoader loader = Thread.currentThread().getContextClassLoader();
+				//Lets read the complete WSDL URL for relative path from class loader
+				//Use relative path of url to fetch complete URL.              
+				url = loader.getResource(filePath);
+				if(url == null){
+					if(log.isDebugEnabled()){
+						log.debug("WSDL URL for relative path not found in ClassLoader");
+						log.warn("Unable to read WSDL from relative path, check the relative path");
+						log.info("Relative path example: file:/WEB-INF/wsdl/<wsdlfilename>");
+						log.warn("Using relative path as default wsdl URL to create wsdl Definition.");
+					}
+					url = wsdlURL;
+				}     
+			}
+		}
+            
+	    URLConnection urlCon = url.openConnection();
+	    InputStream is = urlCon.getInputStream();
+	    is.close();
+	    final String explicitWsdl = urlCon.getURL().toString();
+	    try{
+		wsdlDefinition = (Definition)AccessController.doPrivileged(
                     new PrivilegedExceptionAction() {
                         public Object run() throws WSDLException {
-                        	WSDLReader reader = getWSDLReader();
-                        	return reader.readWSDL(explicitWsdl);
+                            WSDLReader reader = getWSDLReader();
+                            return reader.readWSDL(explicitWsdl);
                         }
                     }
-        		);
-			}catch(PrivilegedActionException e){
-	        	if (log.isDebugEnabled()) {
+        	 );
+	    }catch(PrivilegedActionException e){
+	        if (log.isDebugEnabled()) {
 	                log.debug("Exception thrown from AccessController: " + e);
-	            }
-	            throw ExceptionFactory.makeWebServiceException(e.getException());
 	        }
+	        throw ExceptionFactory.makeWebServiceException(e.getException());
+	    }
 		
-		}
-		catch(FileNotFoundException ex) {
-			throw ex;
-		}
-		catch(UnknownHostException ex) {
-			throw ex;
-		}
-		catch(ConnectException ex) {
-			throw ex;
-		}
-		catch (Exception ex) {
+	}catch(FileNotFoundException ex) {
+	    throw ex;
+	}catch(UnknownHostException ex) {
+	    throw ex;
+	}catch(ConnectException ex) {
+	    throw ex;
+	}catch (Exception ex) {
             throw new WSDLException("WSDL4JWrapper : ", ex.getMessage());
-		}
 	}
+    }
 
     private static WSDLReader getWSDLReader() throws WSDLException {
         // Keep this method private
