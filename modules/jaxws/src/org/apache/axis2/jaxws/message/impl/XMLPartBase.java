@@ -79,6 +79,9 @@ import org.apache.commons.logging.LogFactory;
  *   XMLSpine _convertSE2Spine(SOAPEnvelope se)
  *   XMLSpine _createSpine(Protocol protocol)
  * 
+ * NOTE: For XML/HTTP (REST), a SOAP 1.1. Envelope is built and the rest payload is placed
+ * in the body.  This purposely mimics the Axis2 implementation.
+ * 
  * @see org.apache.axis2.jaxws.message.XMLPart
  * @see org.apache.axis2.jaxws.message.impl.XMLPartImpl
  * 
@@ -116,13 +119,11 @@ public abstract class XMLPartBase implements XMLPart {
 	 */
 	XMLPartBase(Protocol protocol) throws WebServiceException {
 		super();
-		this.protocol = protocol;
 		if (protocol.equals(Protocol.unknown)) {
 			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ProtocolIsNotKnown"));
-		} else if (protocol.equals(Protocol.rest)) {
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"));
-		}
-		content = _createSpine(protocol);
+		} 
+		content = _createSpine(protocol, getStyle(), getIndirection(), null);
+		this.protocol = ((XMLSpine) content).getProtocol();
 		contentType = SPINE;
 	}
 	
@@ -130,19 +131,30 @@ public abstract class XMLPartBase implements XMLPart {
 	 * XMLPart should be constructed via the XMLPartFactory.
 	 * This constructor creates an XMLPart from the specified root.
 	 * @param root
+     * @param protocol (if null, the soap protocol is inferred from the namespace)
 	 * @throws WebServiceException
 	 */
-	XMLPartBase(OMElement root) throws WebServiceException {
+	XMLPartBase(OMElement root, Protocol protocol) throws WebServiceException {
 		content = root;
 		contentType = OM;
 		QName qName = root.getQName();
-		if (qName.getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-			protocol = Protocol.soap11;
-		} else if (qName.getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-			protocol = Protocol.soap12;
-		} else {
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"));
-		}
+        if (protocol == null) {
+            if (qName.getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+                this.protocol = Protocol.soap11;
+            } else if (qName.getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+                this.protocol = Protocol.soap12;
+            } 
+        } else if (protocol == Protocol.rest) {
+            this.protocol = Protocol.rest;
+            // Axis2 stores XML/HTTP messages inside a soap11 envelope.  We will mimic this behavior
+            if (qName.getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+                // Okay
+            } else if (qName.getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+                throw ExceptionFactory.makeWebServiceException("UNEXPECTED");  // TODO NLS
+            } else {
+                _createSpine(Protocol.rest, Style.DOCUMENT, 0, root);
+            }
+        }
 	}
 	
 	/**
@@ -645,10 +657,10 @@ public abstract class XMLPartBase implements XMLPart {
 	 * @return 
 	 * @throws WebServiceException
 	 */
-	protected XMLSpine _createSpine(Protocol protocol) throws WebServiceException {
+	protected static XMLSpine _createSpine(Protocol protocol, Style style, int indirection, OMElement payload) throws WebServiceException {
 		// Default implementation is to simply construct the spine. 
 		// Derived classes may wish to construct a different kind of XMLSpine
-		return new XMLSpineImpl(protocol, getStyle(), getIndirection());
+		return new XMLSpineImpl(protocol, style, indirection, payload);
 	}
 	
 	private void setConsumed(boolean consume) { 

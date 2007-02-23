@@ -56,6 +56,9 @@ import org.apache.axis2.jaxws.registry.FactoryRegistry;
  * MessageImpl
  * A Message is an XML part + Attachments.
  * Most of the implementation delegates to the XMLPart implementation.
+ * 
+ * NOTE: For XML/HTTP (REST), a SOAP 1.1. Envelope is built and the rest payload is placed
+ * in the body.  This purposely mimics the Axis2 implementation.
  */
 /**
  * @author scheu
@@ -90,15 +93,17 @@ public class MessageImpl implements Message {
 	 * Message is constructed by the MessageFactory.
 	 * This constructor creates a message from the specified root.
 	 * @param root
+     * @param protocol or null
 	 */
-	MessageImpl(OMElement root) throws WebServiceException, XMLStreamException  {
-		createXMLPart(root);
+	MessageImpl(OMElement root, Protocol protocol) throws WebServiceException, XMLStreamException  {
+		createXMLPart(root, protocol);
 	}
 	
 	/**
 	 * Message is constructed by the MessageFactory.
 	 * This constructor creates a message from the specified root.
 	 * @param root
+     * @param protocol or null
 	 */
 	MessageImpl(SOAPEnvelope root) throws WebServiceException, XMLStreamException  {
 	    createXMLPart(root);
@@ -113,7 +118,7 @@ public class MessageImpl implements Message {
     private void createXMLPart(SOAPEnvelope root) throws WebServiceException, XMLStreamException {
         XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
         xmlPart = factory.createFrom(root);
-        protocol = xmlPart.getProtocol();
+        this.protocol = xmlPart.getProtocol();
         xmlPart.setParent(this); 
     }
     
@@ -123,10 +128,10 @@ public class MessageImpl implements Message {
      * @throws WebServiceException
      * @throws XMLStreamException
      */
-    private void createXMLPart(OMElement root) throws WebServiceException, XMLStreamException {
+    private void createXMLPart(OMElement root, Protocol protocol) throws WebServiceException, XMLStreamException {
         XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
-        xmlPart = factory.createFrom(root);
-        protocol = xmlPart.getProtocol();
+        xmlPart = factory.createFrom(root, protocol);
+        this.protocol = xmlPart.getProtocol();
         xmlPart.setParent(this);
     }
     
@@ -140,10 +145,7 @@ public class MessageImpl implements Message {
         this.protocol = protocol;
         if (protocol.equals(Protocol.unknown)) {
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("ProtocolIsNotKnown"));
-        } else if (protocol.equals(Protocol.rest)) {
-            // TODO Need REST support
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"));
-        }
+        } 
         XMLPartFactory factory = (XMLPartFactory) FactoryRegistry.getFactory(XMLPartFactory.class);
         xmlPart = factory.create(protocol);
         xmlPart.setParent(this);

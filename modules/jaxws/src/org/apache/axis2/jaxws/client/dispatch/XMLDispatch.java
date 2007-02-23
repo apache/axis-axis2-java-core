@@ -97,16 +97,17 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         if (log.isDebugEnabled()) {
             log.debug("Loaded block factory type [" + blockFactoryType.getName());
         }
-        
+        // The protocol of the Message that is created should be based
+        // on the binding information available.
+        Protocol proto = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());
         Message message = null;
         if (mode.equals(Mode.PAYLOAD)) {
             try {
                 MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
                 block = factory.createFrom(value, null, null);
                 
-                // The protocol of the Message that is created should be based
-                // on the binding information available.
-                Protocol proto = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());               
+                
+                               
                 message = mf.create(proto);
                 message.setBodyBlock(block);
             } catch (Exception e) {
@@ -123,7 +124,7 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
             		message = mf.createFrom((SOAPMessage) value);
             	} else {
             		block = factory.createFrom(value, null, null);
-            		message = mf.createFrom(block, null);
+            		message = mf.createFrom(block, null, proto);
             	}
             } catch (Exception e) {
             	throw ExceptionFactory.makeWebServiceException(e);

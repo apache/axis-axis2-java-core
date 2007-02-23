@@ -132,7 +132,7 @@ public class FaultTests extends TestCase {
 		// The JAX-WS layer creates a Message from the OM
 		MessageFactory mf = (MessageFactory)
 			FactoryRegistry.getFactory(MessageFactory.class);
-		Message m = mf.createFrom(omElement);
+		Message m = mf.createFrom(omElement, null);
 		
 		assertTrue(m.isFault());
 		
@@ -169,7 +169,7 @@ public class FaultTests extends TestCase {
 			// The JAX-WS layer creates a Message from the OM
 			MessageFactory mf = (MessageFactory) FactoryRegistry
 					.getFactory(MessageFactory.class);
-			Message m = mf.createFrom(omElement);
+			Message m = mf.createFrom(omElement, null);
 
 			assertTrue(m.isFault());
 			
@@ -224,7 +224,7 @@ public class FaultTests extends TestCase {
 		// The JAX-WS layer creates a Message from the OM
 		MessageFactory mf = (MessageFactory)
 			FactoryRegistry.getFactory(MessageFactory.class);
-		Message m = mf.createFrom(omElement);
+		Message m = mf.createFrom(omElement, null);
 		
 		assertTrue(m.isFault());
 		

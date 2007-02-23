@@ -20,6 +20,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.http.HTTPBinding;
 
 import java.io.StringReader;
 import java.security.PrivilegedExceptionAction;
@@ -97,7 +98,7 @@ public class EndpointController {
         ServiceDescription serviceDesc = getServiceDescription(requestMsgCtx, implClass);
         requestMsgCtx.setServiceDescription(serviceDesc);
 
-        if (!soapVersionsMatch(requestMsgCtx, serviceDesc)) {
+        if (!bindingTypesMatch(requestMsgCtx, serviceDesc)) {
             Protocol protocol = requestMsgCtx.getMessage().getProtocol();
             // only if protocol is soap12 and MISmatches the endpoint do we halt processing
             if (protocol.equals(Protocol.soap12)) {
@@ -327,7 +328,7 @@ public class EndpointController {
    }
    
 
-   private boolean soapVersionsMatch(MessageContext requestMsgCtx, ServiceDescription serviceDesc) {
+   private boolean bindingTypesMatch(MessageContext requestMsgCtx, ServiceDescription serviceDesc) {
        // compare soap versions and respond appropriately under SOAP 1.2 Appendix 'A'
        EndpointDescription[] eds = serviceDesc.getEndpointDescriptions();
        // dispatch endpoints do not have SEIs, so watch out for null or empty array
@@ -341,6 +342,8 @@ public class EndpointController {
            else if (protocol.equals(Protocol.soap12)) {
                return (SOAPBinding.SOAP12HTTP_BINDING.equalsIgnoreCase(endpointBindingType)) ||
                        (SOAPBinding.SOAP12HTTP_MTOM_BINDING.equalsIgnoreCase(endpointBindingType));
+           } else if (protocol.equals(Protocol.rest)) {
+               return HTTPBinding.HTTP_BINDING.equalsIgnoreCase(endpointBindingType);
            }
        }
        // safe to assume?
@@ -399,7 +402,8 @@ public class EndpointController {
                    XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(sr);
                    MessageFactory mf = (MessageFactory) 
                        FactoryRegistry.getFactory(MessageFactory.class);
-                   Message msg = mf.createFrom(xmlreader);
+                   Protocol protocol = requestMsgContext.getAxisMessageContext().isDoingREST() ? Protocol.rest : null ;
+                   Message msg = mf.createFrom(xmlreader, protocol);
                    requestMsgContext.setMessage(msg);
                } catch (Throwable e) {
                    ExceptionFactory.makeWebServiceException(e);

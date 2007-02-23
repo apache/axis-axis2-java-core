@@ -129,7 +129,7 @@ public class SOAP12Tests extends TestCase {
         Block block = f.createFrom(sampleSoap12Envelope, null, null);
         
         // Create a Message with the full XML contents that we have
-        Message m = mf.createFrom(block.getXMLStreamReader(true));
+        Message m = mf.createFrom(block.getXMLStreamReader(true), null);
         
         // Assuming no handlers are installed, the next thing that will happen
         // is a XMLStreamReader will be requested...to go to OM.   At this point the
@@ -168,7 +168,7 @@ public class SOAP12Tests extends TestCase {
         // The JAX-WS layer creates a Message from the OM
         MessageFactory mf = (MessageFactory)
             FactoryRegistry.getFactory(MessageFactory.class);
-        Message m = mf.createFrom(omElement);
+        Message m = mf.createFrom(omElement, null);
         
         // Make sure the right Protocol was set on the Message
         assertTrue(m.getProtocol().equals(Protocol.soap12));
@@ -206,7 +206,7 @@ public class SOAP12Tests extends TestCase {
         // The JAX-WS layer creates a Message from the OM
         MessageFactory mf = (MessageFactory)
             FactoryRegistry.getFactory(MessageFactory.class);
-        Message m = mf.createFrom(omElement);
+        Message m = mf.createFrom(omElement, null);
         
         // Make sure the right Protocol was set on the Message
         assertTrue(m.getProtocol().equals(Protocol.soap12));

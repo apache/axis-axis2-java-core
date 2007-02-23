@@ -41,28 +41,32 @@ public interface MessageFactory {
 	/**
 	 * create Message with the xml from the XMLStreamReader
 	 * @param reader XMLStreamReader
+     * @param protocol (if null, the soap protocol is inferred from the namespace)
 	 * @throws XMLStreamException
 	 */
-	public Message createFrom(XMLStreamReader reader) throws XMLStreamException, WebServiceException;
+	public Message createFrom(XMLStreamReader reader, Protocol protocol) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * create Message with the xml from the OMElement
 	 * @param omElement OMElement
+     * @param protocol (if null, the soap protocol is inferred from the namespace)
 	 * @throws XMLStreamException
 	 */
-	public Message createFrom(OMElement omElement) throws XMLStreamException, WebServiceException;
+	public Message createFrom(OMElement omElement, Protocol protocol) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * create Message from a Block
 	 * @param block
 	 * @param context Associated Context or null
+     * @param protocol (if null, the soap protocol is inferred from the namespace)
 	 * @throws XMLStreamException
 	 */
-	public Message createFrom(Block other, Object context) throws XMLStreamException, WebServiceException;
+	public Message createFrom(Block other, Object context, Protocol protocol) throws XMLStreamException, WebServiceException;
 
 	/**
 	 * create Message from SOAPMessage
 	 * The xml and attachments from the SOAPMessage are used to populate the new Message
+     * The protocol is inferred from the SOAPMessage
 	 * @param SOAPMessage
 	 * @throws XMLStreamException, WebServiceException
 	 */

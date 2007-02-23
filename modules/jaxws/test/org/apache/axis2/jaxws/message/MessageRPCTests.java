@@ -263,7 +263,7 @@ public class MessageRPCTests extends TestCase {
         // Create a SOAP 1.1 Message from the sample incoming XML
         MessageFactory mf = (MessageFactory)
             FactoryRegistry.getFactory(MessageFactory.class);
-        Message m = mf.createFrom(omElement);
+        Message m = mf.createFrom(omElement, null);
         
         // Check to see if the message is a fault.  The client/server will always call this method.
         // The Message must respond appropriately without doing a conversion.

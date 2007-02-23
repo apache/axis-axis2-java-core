@@ -51,10 +51,11 @@ public class XMLPartImpl extends  XMLPartBase {
 	 * XMLPart should be constructed via the XMLPartFactory.
 	 * This constructor creates an XMLPart from the specified root.
 	 * @param root
+     * @param protocol (if null, the soap protocol is inferred from the namespace)
 	 * @throws WebServiceException
 	 */
-	XMLPartImpl(OMElement root) throws WebServiceException {
-		super(root);
+	XMLPartImpl(OMElement root, Protocol protocol) throws WebServiceException {
+		super(root, protocol);
 	}
 	
 	/**
@@ -91,18 +92,12 @@ public class XMLPartImpl extends  XMLPartBase {
 
 	@Override
 	protected XMLSpine _convertOM2Spine(OMElement om) throws WebServiceException {
-		return new XMLSpineImpl((org.apache.axiom.soap.SOAPEnvelope) om, getStyle(), getIndirection());
+		return new XMLSpineImpl((org.apache.axiom.soap.SOAPEnvelope) om, getStyle(), getIndirection(), getProtocol());
 	}
 
 	@Override
 	protected XMLSpine _convertSE2Spine(SOAPEnvelope se) throws WebServiceException {
 		return _convertOM2Spine(_convertSE2OM(se));
-	}
-
-	@Override
-	protected XMLSpine _createSpine(Protocol protocol) throws WebServiceException {
-		// Use the default implementation provided in XMLPartBase
-		return super._createSpine(protocol);
 	}
 	
 	/**

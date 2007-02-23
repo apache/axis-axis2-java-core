@@ -50,6 +50,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Message;
+import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.attachments.AttachmentUtils;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -168,7 +169,8 @@ public class MessageUtils {
         if (soapEnv != null) {
             MessageFactory msgFactory = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
             try {
-                message = msgFactory.createFrom(soapEnv);
+                Protocol protocol = msgContext.isDoingREST() ? Protocol.rest : null;
+                message = msgFactory.createFrom(soapEnv, protocol);
             } catch (Exception e) {
                 throw ExceptionFactory.makeWebServiceException("Could not create new Message");
             }
@@ -272,6 +274,10 @@ public class MessageUtils {
             headerMap.put(mh.getName(), mh.getValue());
         }
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, headerMap);
+        
+        if (message.getProtocol() == Protocol.rest) {
+            msgContext.setDoingREST(true);
+        }
         
         // Enable MTOM Attachments 
         if (message.isMTOMEnabled()) {

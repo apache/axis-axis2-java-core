@@ -51,17 +51,17 @@ public class MessageFactoryImpl implements MessageFactory {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(javax.xml.stream.XMLStreamReader)
 	 */
-	public Message createFrom(XMLStreamReader reader) throws XMLStreamException, WebServiceException {
+	public Message createFrom(XMLStreamReader reader, Protocol protocol) throws XMLStreamException, WebServiceException {
 		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, null);  // Pass null has the version to trigger autodetection
 		SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
-		return createFrom(omEnvelope);
+		return createFrom(omEnvelope, protocol);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.MessageFactory#createFrom(org.apache.axiom.om.OMElement)
 	 */
-	public Message createFrom(OMElement omElement) throws XMLStreamException, WebServiceException {
-		return new MessageImpl(omElement);
+	public Message createFrom(OMElement omElement, Protocol protocol) throws XMLStreamException, WebServiceException {
+		return new MessageImpl(omElement, protocol);
 	}
 
 	/* (non-Javadoc)
@@ -96,13 +96,13 @@ public class MessageFactoryImpl implements MessageFactory {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(org.apache.axis2.jaxws.message.Block, java.lang.Object)
 	 */
-	public Message createFrom(Block block, Object context) throws XMLStreamException, WebServiceException {
+	public Message createFrom(Block block, Object context, Protocol protocol) throws XMLStreamException, WebServiceException {
 		
 		// Small optimization to quickly consider the SOAPEnvelope case
 		if (block instanceof SOAPEnvelopeBlock) {
-			return new MessageImpl((SOAPEnvelope) block.getBusinessObject(true));
+			return new MessageImpl((SOAPEnvelope) block.getBusinessObject(true), protocol);
 		}
-		return createFrom(block.getXMLStreamReader(true));
+		return createFrom(block.getXMLStreamReader(true), protocol);
 	}
 
 }

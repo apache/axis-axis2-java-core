@@ -1251,6 +1251,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     private boolean validateClientBindingID(String bindingId) {
         boolean isValid = true;
         if (bindingId != null && !(bindingId.equals(SOAPBinding.SOAP11HTTP_BINDING) ||
+                bindingId.equals(javax.xml.ws.http.HTTPBinding.HTTP_BINDING) ||
                 bindingId.equals(SOAPBinding.SOAP12HTTP_BINDING) ||
                 bindingId.equals(SOAPBinding.SOAP11HTTP_MTOM_BINDING) ||
                 bindingId.equals(SOAPBinding.SOAP12HTTP_MTOM_BINDING))) {

@@ -60,7 +60,7 @@ public class SOAPEnvelopeBlockImpl extends BlockImpl implements SOAPEnvelopeBloc
 	protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
 			throws XMLStreamException, WebServiceException {
 		MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
-		Message message = mf.createFrom(reader);
+		Message message = mf.createFrom(reader, null);
 		SOAPEnvelope env = message.getAsSOAPEnvelope();
 		this.setQName(getQName(env));
 		return env;

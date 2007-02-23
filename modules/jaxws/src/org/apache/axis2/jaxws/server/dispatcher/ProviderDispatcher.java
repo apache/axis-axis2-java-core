@@ -288,7 +288,7 @@ public class ProviderDispatcher extends JavaDispatcher{
                 }
                 else {
                     Block block = factory.createFrom(value, null, null);
-                    message = msgFactory.createFrom(block, null);
+                    message = msgFactory.createFrom(block, null, messageProtocol);
                 }
             }
             else {

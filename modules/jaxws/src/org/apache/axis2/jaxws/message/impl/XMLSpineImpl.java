@@ -63,7 +63,10 @@ import org.apache.commons.logging.LogFactory;
  * 
  * An XMLSpine consists is an OMEnvelope (either a default one or one create from an incoming message).
  * As Blocks are added or requested, they are placed in the tree as OMSourcedElements.
- *
+ * 
+ * NOTE: For XML/HTTP (REST) messages, a SOAP 1.1 envelope is built and the
+ * xml payload is placed in the body.  This purposely mimics the implementation used
+ * by Axis2.
  */
 class XMLSpineImpl implements XMLSpine {
 	
@@ -85,15 +88,18 @@ class XMLSpineImpl implements XMLSpine {
      * @param protocol Protocol
      * @param style Style
      * @param indirection (0 or 1) indicates location of body blocks
-     * @param opQName QName if the Style is RPC
+     * @param initialPayload (OMElement or null...used to add rest payload)
 	 */
-	public XMLSpineImpl(Protocol protocol, Style style, int indirection) {
+	public XMLSpineImpl(Protocol protocol, Style style, int indirection, OMElement payload) {
 		super();
 		this.protocol = protocol;
         this.style = style;
         this.indirection = indirection;
 		soapFactory = _getFactory(protocol);
-		root = _createEmptyEnvelope(protocol, style, soapFactory);
+		root = _createEmptyEnvelope(style, soapFactory);
+        if (payload != null) {
+            ((SOAPEnvelope) root).getBody().addChild(payload);
+        }
 	}
 	
 	/**
@@ -103,19 +109,20 @@ class XMLSpineImpl implements XMLSpine {
      * @param indirection (0 or 1) indicates location of body blocks
 	 * @throws WebServiceException
 	 */
-	public XMLSpineImpl(SOAPEnvelope envelope, Style style, int indirection) throws WebServiceException {
+	public XMLSpineImpl(SOAPEnvelope envelope, Style style, int indirection, Protocol protocol) throws WebServiceException {
 		super();
         this.style = style;
         this.indirection = indirection;
+        this.protocol = protocol;
 		init(envelope);
-		if (root.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-			protocol = Protocol.soap11;
-		} else if (root.getNamespace().getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-			protocol = Protocol.soap12;
-		} else {
-			// TODO Support for REST
-			throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"));
-		}
+        // If null, detect protocol from soap namespace
+        if (protocol == null) {
+            if (root.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+                this.protocol = Protocol.soap11;
+            } else if (root.getNamespace().getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+                this.protocol = Protocol.soap12;
+            }
+        }
 	} 
 
 	/**
@@ -540,8 +547,11 @@ class XMLSpineImpl implements XMLSpine {
             soapFactory = new SOAP11Factory();
         } else if (protocol == Protocol.soap12) {
             soapFactory = new SOAP12Factory();
+        } else if (protocol == Protocol.rest) {
+            // For REST, create a SOAP 1.1 Envelope to contain the message
+            // This is consistent with Axis2.
+            soapFactory = new SOAP11Factory();
         } else {
-            // TODO REST Support is needed
             throw ExceptionFactory.makeWebServiceException(Messages.getMessage("RESTIsNotSupported"), null);
         }
         return soapFactory;
@@ -554,7 +564,7 @@ class XMLSpineImpl implements XMLSpine {
      * @param factory
      * @return
      */
-    private static SOAPEnvelope _createEmptyEnvelope(Protocol protocol, Style style, SOAPFactory factory) {
+    private static SOAPEnvelope _createEmptyEnvelope(Style style, SOAPFactory factory) {
         SOAPEnvelope env = factory.createSOAPEnvelope();
         // Add an empty body and header
         factory.createSOAPBody(env);

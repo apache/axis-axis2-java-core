@@ -42,17 +42,17 @@ public class XMLPartFactoryImpl implements XMLPartFactory {
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.factory.XMLPartFactory#createFrom(javax.xml.stream.XMLStreamReader)
 	 */
-	public XMLPart createFrom(XMLStreamReader reader) throws XMLStreamException, WebServiceException {
+	public XMLPart createFrom(XMLStreamReader reader, Protocol protocol) throws XMLStreamException, WebServiceException {
 		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, null);  // Pass null has the version to trigger autodetection
 		SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
-		return createFrom(omEnvelope);
+		return createFrom(omEnvelope, protocol);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.MessageFactory#createFrom(org.apache.axiom.om.OMElement)
 	 */
-	public XMLPart createFrom(OMElement omElement) throws XMLStreamException, WebServiceException {
-		return new XMLPartImpl(omElement);
+	public XMLPart createFrom(OMElement omElement, Protocol protocol) throws XMLStreamException, WebServiceException {
+		return new XMLPartImpl(omElement, protocol);
 	}
 
 	/* (non-Javadoc)

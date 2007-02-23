@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.message;
 
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -69,6 +70,11 @@ public enum Protocol {
                 log.debug("SOAP 1.2 protocol configured for message");
             }
             return Protocol.soap12;
+        } else if (namespaceEquals(HTTPBinding.HTTP_BINDING, url)) {
+            if (debug) {
+                log.debug("XML/HTTP protocol configured for message");
+            }
+            return Protocol.rest;
         }
         else {
             if (debug) {

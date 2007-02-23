@@ -39,16 +39,18 @@ public interface XMLPartFactory {
 	/**
 	 * create XMLPart from XMLStreamReader
 	 * @param reader XMLStreamReader
+     * @param protocol (if null, the soap protocol is inferred from the namespace)
 	 * @throws MessageStreamException
 	 */
-	public XMLPart createFrom(XMLStreamReader reader) throws XMLStreamException, WebServiceException;
+	public XMLPart createFrom(XMLStreamReader reader, Protocol protocol) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * create XMLPart from OMElement
 	 * @param omElement OMElement
+     * @param protocol (if null, the soap protocol is inferred from the namespace)
 	 * @throws WebServiceException
 	 */
-	public XMLPart createFrom(OMElement omElement) throws XMLStreamException, WebServiceException;
+	public XMLPart createFrom(OMElement omElement, Protocol protocol) throws XMLStreamException, WebServiceException;
 	
 	/**
 	 * create XMLPart from SOAPEnvelope

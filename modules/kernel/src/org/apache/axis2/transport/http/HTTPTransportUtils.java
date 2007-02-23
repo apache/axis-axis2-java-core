@@ -246,7 +246,13 @@ public class HTTPTransportUtils {
 						.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
 					soapVersion = VERSION_SOAP11;
 					soapNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-				}
+				} else if (isRESTRequest(contentType)) {
+                    // If REST, construct a SOAP11 envelope to hold the rest message and
+                    // indicate that this is a REST message.
+                    soapVersion = VERSION_SOAP11; 
+                    soapNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+                    msgContext.setDoingREST(true);
+                }
 				if (JavaUtils.indexOfIgnoreCase(contentType,
 						HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
 					// It is MIME (MTOM or SwA)
@@ -333,5 +339,17 @@ public class HTTPTransportUtils {
         msgContext.setDoingREST(enableREST);
 
         return enableREST;
+    }
+    
+    /**
+     * Detect the REST using the WSDL 2.0 constants
+     * @param contentType
+     * @return
+     */
+    private static boolean isRESTRequest(String contentType) {
+        return ((contentType == null ||
+                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
+                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
+                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1));
     }
 }

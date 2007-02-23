@@ -73,6 +73,10 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
             } else {
                 context = new JAXBBlockContext(clazz.getPackage().getName());
             }
+            // The protocol of the Message that is created should be based
+            // on the binding information available.
+            Protocol proto = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());
+
             // Create a block from the value
             QName qName = XMLRootElementUtil.getXmlRootElementQNameFromObject(value);
             Block block = factory.createFrom(value, context, qName);
@@ -81,16 +85,13 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
             if (mode.equals(Mode.PAYLOAD)) {
                 // Normal case
                 
-                // The protocol of the Message that is created should be based
-                // on the binding information available.
-                Protocol proto = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID());
                 message = mf.create(proto);
                 message.setBodyBlock(block);
             } else {
                 // Message mode..rare case
                 
                 // Create Message from block
-                message = mf.createFrom(block, null);
+                message = mf.createFrom(block, null, proto);
             }
             
         } catch (Exception e) {
