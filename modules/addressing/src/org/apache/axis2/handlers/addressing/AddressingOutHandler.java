@@ -86,7 +86,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         if(log.isTraceEnabled()){
     		log.trace("Addressing version string from messageContext="+addressingVersionFromCurrentMsgCtxt);
     	}
-        boolean isFinalAddressingNamespace = Final.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt);
+        boolean isSubmissionNamespace = Submission.WSA_NAMESPACE.equals(addressingVersionFromCurrentMsgCtxt);
         
         // Determine whether to include optional addressing headers in the output.
         boolean includeOptionalHeaders = this.includeOptionalHeaders;
@@ -104,7 +104,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
         // headers if there are any (this was the case so far).
         boolean replaceHeaders = Utils.isExplicitlyTrue(msgContext, REPLACE_ADDRESSING_HEADERS);
 
-        WSAHeaderWriter writer = new WSAHeaderWriter(msgContext, isFinalAddressingNamespace, addMustUnderstandAttribute, replaceHeaders, includeOptionalHeaders);
+        WSAHeaderWriter writer = new WSAHeaderWriter(msgContext, isSubmissionNamespace, addMustUnderstandAttribute, replaceHeaders, includeOptionalHeaders);
         writer.writeHeaders();
         
         return InvocationResponse.CONTINUE;
@@ -127,9 +127,9 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
     	private boolean replaceHeaders;  // determines whether we replace the existing headers or not, if they present
     	private boolean includeOptionalHeaders;
     	
-    	public WSAHeaderWriter(MessageContext mc, boolean isFinal, boolean addMU, boolean replace, boolean includeOptional) {
+    	public WSAHeaderWriter(MessageContext mc, boolean isSubmissionNamespace, boolean addMU, boolean replace, boolean includeOptional) {
     		if(log.isDebugEnabled()){
-        		log.debug("WSAHeaderWriter: isFinal="+isFinal+" addMU="+addMU+" replace="+replace+" includeOptional="+includeOptional);
+        		log.debug("WSAHeaderWriter: isFinal="+isSubmissionNamespace+" addMU="+addMU+" replace="+replace+" includeOptional="+includeOptional);
         	}
     		
     		messageContext = mc;
@@ -145,10 +145,10 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             
             messageContextOptions = messageContext.getOptions();
             
-            addressingNamespace = (isFinal?Final.WSA_NAMESPACE:Submission.WSA_NAMESPACE);
+            addressingNamespace = (isSubmissionNamespace?Submission.WSA_NAMESPACE:Final.WSA_NAMESPACE);
             addressingNamespaceObject = factory.createOMNamespace(addressingNamespace, WSA_DEFAULT_PREFIX);
 
-            isFinalAddressingNamespace = isFinal;
+            isFinalAddressingNamespace = !isSubmissionNamespace;
             addMustUnderstandAttribute = addMU;
             replaceHeaders = replace;
             includeOptionalHeaders = includeOptional;
