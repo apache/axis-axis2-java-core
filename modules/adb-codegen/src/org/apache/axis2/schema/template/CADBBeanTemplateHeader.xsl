@@ -100,96 +100,85 @@
         *  <xsl:value-of select="$axis2_name"/> class class
         */
         typedef struct <xsl:value-of select="$axis2_name"/><xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_t;
-        typedef struct <xsl:value-of select="$axis2_name"/>_ops<xsl:text> </xsl:text><xsl:value-of select="$axis2_name"/>_ops_t;
-
-        struct <xsl:value-of select="$axis2_name"/>_ops
-        {
-            axis2_status_t (AXIS2_CALL*
-            free )(
-                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                const axis2_env_t *env);
-
-            <xsl:if test="not(@type)">
-              axis2_qname_t* (AXIS2_CALL*
-              get_qname )(
-                  <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                  const axis2_env_t *env);
-            </xsl:if>
-
-            axiom_node_t* (AXIS2_CALL*
-            serialize )(
-                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                const axis2_env_t *env,
-                axiom_node_t* <xsl:value-of select="$name"/>_om_node, int has_parent);
-
-            axis2_status_t (AXIS2_CALL*
-            deserialize )(
-                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                const axis2_env_t *env, axiom_node_t* parent);
-
-            <xsl:for-each select="property">
-                <xsl:variable name="propertyType">
-                   <xsl:choose>
-                     <xsl:when test="@isarray">axis2_array_list_t*</xsl:when>
-                     <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                     <xsl:when test="@ours">axis2_<xsl:value-of select="@type"/>_t*</xsl:when>
-                     <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
-                   </xsl:choose>
-                </xsl:variable>
-                <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
-                <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
-
-               /**
-                * Auto generated getter method
-                * @return <xsl:value-of select="$propertyName"/>
-                */
-                <xsl:value-of select="$propertyType"/> (AXIS2_CALL*
-                get_<xsl:value-of select="$CName"/>)(
-                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                        const axis2_env_t *env);
-
-               /**
-                * Auto generated setter method
-                * @param param <xsl:value-of select="$propertyName"/>
-                */
-                axis2_status_t (AXIS2_CALL*
-                set_<xsl:value-of select="$CName"/>)(
-                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                        const axis2_env_t *env,
-                        <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text> param_<xsl:value-of select="$CName"/>);
-
-               <xsl:if test="@isarray">
-               /**
-                * Auto generated resetter method
-                * @param param <xsl:value-of select="$propertyName"/>
-                */
-                axis2_status_t (AXIS2_CALL*
-                reset_<xsl:value-of select="$CName"/>)(
-                        <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                        const axis2_env_t *env);    
-               </xsl:if>
-            </xsl:for-each>
-        };
-        struct <xsl:value-of select="$axis2_name"/>
-        {
-            <xsl:value-of select="$axis2_name"/>_ops_t* ops;
-        };
 
         AXIS2_EXTERN <xsl:value-of select="$axis2_name"/>_t* AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_create(
             const axis2_env_t *env );
 
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_free (
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axis2_env_t *env);
+
+        <xsl:if test="not(@type)">
+        axis2_qname_t* AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_get_qname (
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axis2_env_t *env);
+        </xsl:if>
+
+        axiom_node_t* AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_serialize(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axis2_env_t *env,
+            axiom_node_t* <xsl:value-of select="$name"/>_om_node, int has_parent);
+
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_deserialize(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axis2_env_t *env, axiom_node_t* parent);
+
+        <xsl:for-each select="property">
+            <xsl:variable name="propertyType">
+            <xsl:choose>
+                <xsl:when test="@isarray">axis2_array_list_t*</xsl:when>
+                <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
+                <xsl:when test="@ours">axis2_<xsl:value-of select="@type"/>_t*</xsl:when>
+                <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
+            </xsl:choose>
+            </xsl:variable>
+            <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
+            <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
+
+        /**
+         * getter for <xsl:value-of select="$propertyName"/>.
+         */
+        <xsl:value-of select="$propertyType"/> AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axis2_env_t *env);
+
+        /**
+         * setter for <xsl:value-of select="$propertyName"/>
+         */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axis2_env_t *env,
+            <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text> param_<xsl:value-of select="$CName"/>);
+
+        <xsl:if test="@isarray">
+        /**
+        * resetter for <xsl:value-of select="$propertyName"/>
+        */
+        axis2_status_t AXIS2_CALL
+        <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(
+            <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
+            const axis2_env_t *env);
+        </xsl:if>
+        </xsl:for-each>
+
 
         #define <xsl:value-of select="$caps_axis2_name"/>_FREE(<xsl:value-of select="$name"/>, env) \
-             ((<xsl:value-of select="$name"/>)->ops->free(<xsl:value-of select="$name"/>, env))
+             <xsl:value-of select="$axis2_name"/>_free(<xsl:value-of select="$name"/>, env)
         <xsl:if test="not(@type)">
           #define <xsl:value-of select="$caps_axis2_name"/>_GET_QNAME(<xsl:value-of select="$name"/>, env) \
-               ((<xsl:value-of select="$name"/>)->ops->get_qname(<xsl:value-of select="$name"/>, env))
+               <xsl:value-of select="$axis2_name"/>_get_qname(<xsl:value-of select="$name"/>, env)
         </xsl:if>
         #define <xsl:value-of select="$caps_axis2_name"/>_SERIALIZE(<xsl:value-of select="$name"/>, env, node, has_parent) \
-             ((<xsl:value-of select="$name"/>)->ops->serialize(<xsl:value-of select="$name"/>, env, node, has_parent))
+             <xsl:value-of select="$axis2_name"/>_serialize(<xsl:value-of select="$name"/>, env, node, has_parent)
         #define <xsl:value-of select="$caps_axis2_name"/>_DESERIALIZE(<xsl:value-of select="$name"/>, env, parent) \
-             ((<xsl:value-of select="$name"/>)->ops->deserialize(<xsl:value-of select="$name"/>, env, parent))
+             <xsl:value-of select="$axis2_name"/>_deserialize(<xsl:value-of select="$name"/>, env, parent)
 
         <xsl:for-each select="property">
             <xsl:variable name="propertyType"><xsl:value-of select="@type"></xsl:value-of></xsl:variable>
@@ -198,15 +187,15 @@
             <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
             <xsl:variable name="capsCName"><xsl:value-of select="@caps-cname"></xsl:value-of></xsl:variable>
 
-            #define <xsl:value-of select="$caps_axis2_name"/>_GET_<xsl:value-of select="$capsCName"/>(<xsl:value-of select="$name"/>, env) \
-                 ((<xsl:value-of select="$name"/>)->ops->get_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env))
+        #define <xsl:value-of select="$caps_axis2_name"/>_GET_<xsl:value-of select="$capsCName"/>(<xsl:value-of select="$name"/>, env) \
+                 <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env)
 
-            #define <xsl:value-of select="$caps_axis2_name"/>_SET_<xsl:value-of select="$capsCName"/>(<xsl:value-of select="$name"/>, env, param) \
-                 ((<xsl:value-of select="$name"/>)->ops->set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env, param))
+        #define <xsl:value-of select="$caps_axis2_name"/>_SET_<xsl:value-of select="$capsCName"/>(<xsl:value-of select="$name"/>, env, param) \
+                 <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env, param)
 
             <xsl:if test="@isarray">
-            #define <xsl:value-of select="$caps_axis2_name"/>_RESET_<xsl:value-of select="$capsCName"/>(<xsl:value-of select="$name"/>, env) \
-                 ((<xsl:value-of select="$name"/>)->ops->reset_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env))
+        #define <xsl:value-of select="$caps_axis2_name"/>_RESET_<xsl:value-of select="$capsCName"/>(<xsl:value-of select="$name"/>, env) \
+                 <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(<xsl:value-of select="$name"/>, env)
             </xsl:if>
         </xsl:for-each>
      #ifdef __cplusplus

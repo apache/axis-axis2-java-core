@@ -62,12 +62,8 @@
           </xsl:choose>
 
 
-        typedef struct <xsl:value-of select="$axis2_name"/><xsl:text>_impl </xsl:text><xsl:value-of select="$axis2_name"/>_impl_t;
-
-        struct <xsl:value-of select="$axis2_name"/>_impl
+        struct <xsl:value-of select="$axis2_name"/>
         {
-            <xsl:value-of select="$axis2_name"/>_t <xsl:value-of select="$name"/>;
-
             <xsl:if test="not(@type)">
                 axis2_qname_t* qname;
             </xsl:if>
@@ -81,12 +77,6 @@
                      <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
                    </xsl:choose>
                 </xsl:variable>
-                <xsl:variable name="propertyBaseType">
-                   <xsl:choose>
-                     <xsl:when test="@ours">axis2_<xsl:value-of select="@type"/>_t*</xsl:when>
-                     <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
-                   </xsl:choose>
-                </xsl:variable>
                 <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
                 <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
 
@@ -94,99 +84,23 @@
             </xsl:for-each>
         };
 
-        #define AXIS2_INTF_TO_IMPL(<xsl:value-of select="$name"/>) \
-            ((<xsl:value-of select="$axis2_name"/>_impl_t *) <xsl:value-of select="$name"/>)
-
-        /************************* Function prototypes ********************************/
-
-        axis2_status_t AXIS2_CALL
-        <xsl:value-of select="$axis2_name"/>_free (
-                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                const axis2_env_t *env);
-
-        <xsl:if test="not(@type)">
-          axis2_qname_t* AXIS2_CALL
-          <xsl:value-of select="$axis2_name"/>_get_qname (
-                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                const axis2_env_t *env);
-        </xsl:if>
-
-        axiom_node_t* AXIS2_CALL
-        <xsl:value-of select="$axis2_name"/>_serialize(
-                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                const axis2_env_t *env,
-                axiom_node_t* <xsl:value-of select="$name"/>_om_node, int has_parent);
-
-        axis2_status_t AXIS2_CALL
-        <xsl:value-of select="$axis2_name"/>_deserialize(
-                <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                const axis2_env_t *env, axiom_node_t* parent);
-
-        <xsl:for-each select="property">
-            <xsl:variable name="propertyType">
-               <xsl:choose>
-                    <xsl:when test="@isarray">axis2_array_list_t*</xsl:when>
-                    <xsl:when test="not(@type)">axiom_node_t*</xsl:when> <!-- these are anonymous -->
-                    <xsl:when test="@ours">axis2_<xsl:value-of select="@type"/>_t*</xsl:when>
-                    <xsl:otherwise><xsl:value-of select="@type"/></xsl:otherwise>
-               </xsl:choose>
-            </xsl:variable>
-            <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
-            <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
-
-            /**
-             * getter for <xsl:value-of select="$propertyName"/>.
-             */
-            <xsl:value-of select="$propertyType"/> AXIS2_CALL
-            <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>(
-                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                    const axis2_env_t *env);
-
-            /**
-             * setter for <xsl:value-of select="$propertyName"/>
-             */
-            axis2_status_t AXIS2_CALL
-            <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>(
-                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                    const axis2_env_t *env,
-                    <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text> param_<xsl:value-of select="$CName"/>);
-
-            <xsl:if test="@isarray">
-            /**
-             * resetter for <xsl:value-of select="$propertyName"/>
-             */
-            axis2_status_t AXIS2_CALL
-            <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>(
-                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
-                    const axis2_env_t *env);
-            </xsl:if>            
-        </xsl:for-each>
 
        /************************* Function Implmentations ********************************/
         AXIS2_EXTERN <xsl:value-of select="$axis2_name"/>_t* AXIS2_CALL
         <xsl:value-of select="$axis2_name"/>_create(
             const axis2_env_t *env )
         {
-            <xsl:value-of select="$axis2_name"/>_impl_t* <xsl:value-of select="$name"/>_impl = NULL;
+            <xsl:value-of select="$axis2_name"/>_t *<xsl:value-of select="$name"/> = NULL;
             <xsl:if test="not(@type)">
               axis2_qname_t* qname = NULL;
             </xsl:if>
             AXIS2_ENV_CHECK(env, NULL);
 
-            <xsl:value-of select="$name"/>_impl = (<xsl:value-of select="$axis2_name"/>_impl_t *) AXIS2_MALLOC(env->
-                allocator, sizeof(<xsl:value-of select="$axis2_name"/>_impl_t));
+            <xsl:value-of select="$name"/> = (<xsl:value-of select="$axis2_name"/>_t *) AXIS2_MALLOC(env->
+                allocator, sizeof(<xsl:value-of select="$axis2_name"/>_t));
 
-            if(NULL == <xsl:value-of select="$name"/>_impl)
+            if(NULL == <xsl:value-of select="$name"/>)
             {
-                AXIS2_ERROR_SET(env->error, AXIS2_ERROR_NO_MEMORY, AXIS2_FAILURE);
-                return NULL;
-            }
-
-            <xsl:value-of select="$name"/>_impl-> <xsl:value-of select="$name"/>.ops =
-                            AXIS2_MALLOC (env->allocator, sizeof(<xsl:value-of select="$axis2_name"/>_ops_t));
-            if(NULL == <xsl:value-of select="$name"/>_impl-> <xsl:value-of select="$name"/>.ops)
-            {
-                axis2_<xsl:value-of select="$name"/>_free(&amp;(<xsl:value-of select="$name"/>_impl-><xsl:value-of select="$name"/>), env);
                 AXIS2_ERROR_SET(env->error, AXIS2_ERROR_NO_MEMORY, AXIS2_FAILURE);
                 return NULL;
             }
@@ -195,37 +109,22 @@
                 <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
                 <xsl:choose>
                   <xsl:when test="@ours">
-                    <xsl:value-of select="$name"/>_impl-> attrib_<xsl:value-of select="$CName"/>  = NULL;
+                    <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/>  = NULL;
                   </xsl:when>
                   <!-- todo for others -->
                 </xsl:choose>
             </xsl:for-each>
 
-            <xsl:value-of select="$name"/>_impl-><xsl:value-of select="$name"/>.ops->free = <xsl:value-of select="$axis2_name"/>_free;
-            <xsl:if test="not(@type)">
-              <xsl:value-of select="$name"/>_impl-><xsl:value-of select="$name"/>.ops->get_qname = <xsl:value-of select="$axis2_name"/>_get_qname;
-            </xsl:if>
-            <xsl:value-of select="$name"/>_impl-><xsl:value-of select="$name"/>.ops->serialize = <xsl:value-of select="$axis2_name"/>_serialize;
-            <xsl:value-of select="$name"/>_impl-><xsl:value-of select="$name"/>.ops->deserialize = <xsl:value-of select="$axis2_name"/>_deserialize;
-            <xsl:for-each select="property">
-                <xsl:variable name="propertyName"><xsl:value-of select="@name"></xsl:value-of></xsl:variable>
-                <xsl:variable name="CName"><xsl:value-of select="@cname"></xsl:value-of></xsl:variable>
-                <xsl:value-of select="$name"/>_impl-><xsl:value-of select="$name"/>.ops->get_<xsl:value-of select="$CName"/> = <xsl:value-of select="$axis2_name"/>_get_<xsl:value-of select="$CName"/>;
-                <xsl:value-of select="$name"/>_impl-><xsl:value-of select="$name"/>.ops->set_<xsl:value-of select="$CName"/> = <xsl:value-of select="$axis2_name"/>_set_<xsl:value-of select="$CName"/>;
-                <xsl:if test="@isarray">
-                <xsl:value-of select="$name"/>_impl-><xsl:value-of select="$name"/>.ops->reset_<xsl:value-of select="$CName"/> = <xsl:value-of select="$axis2_name"/>_reset_<xsl:value-of select="$CName"/>;
-                </xsl:if>
-            </xsl:for-each>
             <xsl:if test="not(@type)">
               qname =  axis2_qname_create (env,
                         "<xsl:value-of select="@originalName"/>",
                         "<xsl:value-of select="@nsuri"/>",
                         "<xsl:value-of select="@nsprefix"/>");
 
-              <xsl:value-of select="$name"/>_impl->qname = qname;
+              <xsl:value-of select="$name"/>->qname = qname;
             </xsl:if>
 
-            return &amp;(<xsl:value-of select="$name"/>_impl-><xsl:value-of select="$name"/>);
+            return <xsl:value-of select="$name"/>;
          }
 
         axis2_status_t AXIS2_CALL
@@ -233,7 +132,6 @@
                 <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                 const axis2_env_t *env)
         {
-            <xsl:value-of select="$axis2_name"/>_impl_t *<xsl:value-of select="$name"/>_impl = NULL;
             <!--<xsl:if test="property/@isarray and (property/@ours or property/@type='axis2_char_t*' or property/@type='axis2_date_time_t*' or property/@type='axis2_base64_binary_t*' or property/@type='axiom_node_t*')">-->
             <xsl:if test="property/@isarray">
                   int i = 0;
@@ -242,8 +140,6 @@
             </xsl:if>
 
             AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
-
-            <xsl:value-of select="$name"/>_impl = AXIS2_INTF_TO_IMPL(<xsl:value-of select="$name"/>);
 
             <xsl:for-each select="property">
              <!-- please check all the freeing thing below -->
@@ -285,13 +181,13 @@
               <xsl:variable name="attriName"><!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="@isarray">(<xsl:value-of select="$nativePropertyType"/>)element</xsl:when>
-                   <xsl:otherwise><xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/></xsl:otherwise>
+                   <xsl:otherwise><xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
               <xsl:variable name="justAttriName"><!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="@isarray">element</xsl:when>
-                   <xsl:otherwise><xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/></xsl:otherwise>
+                   <xsl:otherwise><xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
 
@@ -299,12 +195,12 @@
 
               <!-- handles arrays -->
               <xsl:if test="@isarray">
-                if ( <xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/> != NULL)
+                if ( <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/> != NULL)
                 {
-                    count = AXIS2_ARRAY_LIST_SIZE( <xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/>, env);
+                    count = AXIS2_ARRAY_LIST_SIZE( <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/>, env);
                     for( i = 0; i &lt; count; i ++)
                     {
-                       element = AXIS2_ARRAY_LIST_GET( <xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/>, env, i);
+                       element = AXIS2_ARRAY_LIST_GET( <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/>, env, i);
               </xsl:if>
 
               <!-- the following element can be inside array or independent one -->
@@ -363,30 +259,24 @@
               <!-- close tags arrays -->
               <xsl:if test="@isarray">
                     }
-                    AXIS2_ARRAY_LIST_FREE( <xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/>, env);
+                    AXIS2_ARRAY_LIST_FREE( <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/>, env);
                 }
               </xsl:if>
              </xsl:if> <!--close for test of primitive types -->
             </xsl:for-each>
 
             <xsl:if test="not(@type)">
-              if(<xsl:value-of select="$name"/>_impl->qname )
+              if(<xsl:value-of select="$name"/>->qname )
               {
-                  AXIS2_QNAME_FREE (<xsl:value-of select="$name"/>_impl->qname, env);
-                  <xsl:value-of select="$name"/>_impl->qname = NULL;
+                  AXIS2_QNAME_FREE (<xsl:value-of select="$name"/>->qname, env);
+                  <xsl:value-of select="$name"/>->qname = NULL;
               }
             </xsl:if>
 
-            if(<xsl:value-of select="$name"/>->ops)
+            if(<xsl:value-of select="$name"/>)
             {
-                AXIS2_FREE(env->allocator, <xsl:value-of select="$name"/>->ops);
-                <xsl:value-of select="$name"/>->ops = NULL;
-            }
-
-            if(<xsl:value-of select="$name"/>_impl)
-            {
-                AXIS2_FREE( env->allocator, <xsl:value-of select="$name"/>_impl);
-                <xsl:value-of select="$name"/>_impl = NULL;
+                AXIS2_FREE( env->allocator, <xsl:value-of select="$name"/>);
+                <xsl:value-of select="$name"/> = NULL;
             }
             return AXIS2_SUCCESS;
         }
@@ -397,13 +287,9 @@
                    <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                    const axis2_env_t *env)
            {
-               <xsl:value-of select="$axis2_name"/>_impl_t *<xsl:value-of select="$name"/>_impl = NULL;
-
                AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
 
-               <xsl:value-of select="$name"/>_impl = AXIS2_INTF_TO_IMPL(<xsl:value-of select="$name"/>);
-
-               return <xsl:value-of select="$name"/>_impl-> qname;
+               return <xsl:value-of select="$name"/>-> qname;
            }
         </xsl:if>
 
@@ -413,7 +299,6 @@
                 const axis2_env_t *env,
                 axiom_node_t* parent)
         {
-            <xsl:value-of select="$axis2_name"/>_impl_t *<xsl:value-of select="$name"/>_impl = NULL;
 
             axis2_status_t status = AXIS2_SUCCESS;
             axiom_namespace_t *ns1 = NULL;
@@ -463,7 +348,6 @@
                axiom_element_t *current_element = NULL;
             </xsl:if>
             AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
-            <xsl:value-of select="$name"/>_impl = AXIS2_INTF_TO_IMPL(<xsl:value-of select="$name"/>);
 
             ns1 = axiom_namespace_create (env,
                                          "<xsl:value-of select="$nsuri"/>",
@@ -484,7 +368,7 @@
                  <xsl:if test="position()=1">
                     current_element = AXIOM_NODE_GET_DATA_ELEMENT( parent, env);
                     qname = AXIOM_ELEMENT_GET_QNAME( current_element, env, parent);
-                    if ( AXIS2_QNAME_EQUALS( qname, env, <xsl:value-of select="$name"/>_impl-> qname ) )
+                    if ( AXIS2_QNAME_EQUALS( qname, env, <xsl:value-of select="$name"/>-> qname ) )
                     {
                         first_node = AXIOM_NODE_GET_FIRST_CHILD( parent, env);
                     }
@@ -544,13 +428,13 @@
               <xsl:variable name="attriName"><!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="@isarray">(<xsl:value-of select="$nativePropertyType"/>)element</xsl:when>
-                   <xsl:otherwise><xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/></xsl:otherwise>
+                   <xsl:otherwise><xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
               <xsl:variable name="justAttriName"><!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="@isarray">element</xsl:when>
-                   <xsl:otherwise><xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/></xsl:otherwise>
+                   <xsl:otherwise><xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
               <xsl:choose>
@@ -648,7 +532,7 @@
                         <!-- add hex_binary_t* s -->
                         <xsl:when test="$nativePropertyType='axis2_base64_binary_t*'">
                            element = (void*)axis2_base64_binary_create( env);
-                           AXIS2_BASE64_BINARY_SET_ENCODED_BINARY( <xsl:value-of select="$name"/>_impl-> attrib_<xsl:value-of select="$CName"/>, env,
+                           AXIS2_BASE64_BINARY_SET_ENCODED_BINARY( <xsl:value-of select="$name"/>-> attrib_<xsl:value-of select="$CName"/>, env,
                                                                       attrib_text);
                            <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>,
                                                           env, ( <xsl:value-of select="$nativePropertyType"/>)element);
@@ -894,7 +778,7 @@
                                     <xsl:when test="$nativePropertyType='axis2_base64_binary_t*'">
                                       element = (void*)axis2_base64_binary_create( env);
                                       text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                      status = AXIS2_BASE64_BINARY_SET_ENCODED_BINARY( <xsl:value-of select="$name"/>_impl-> attrib_<xsl:value-of select="$CName"/>, env,
+                                      status = AXIS2_BASE64_BINARY_SET_ENCODED_BINARY( (axis2_base64_binary_t*)element, env,
                                                                       text_value);
                                       if( AXIS2_FAILURE ==  status)
                                       {
@@ -1057,7 +941,7 @@
                                         <xsl:when test="$nativePropertyType='axis2_base64_binary_t*'">
                                           element = (void*)axis2_base64_binary_create( env);
                                           text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                          status = AXIS2_BASE64_BINARY_SET_ENCODED_BINARY( <xsl:value-of select="$name"/>_impl-> attrib_<xsl:value-of select="$CName"/>, env,
+                                          status = AXIS2_BASE64_BINARY_SET_ENCODED_BINARY( <xsl:value-of select="$name"/>-> attrib_<xsl:value-of select="$CName"/>, env,
                                                                           text_value);
                                           if( AXIS2_FAILURE ==  status)
                                           {
@@ -1212,7 +1096,7 @@
                                         <xsl:when test="$nativePropertyType='axis2_base64_binary_t*'">
                                           element = (void*)axis2_base64_binary_create( env);
                                           text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                          status = AXIS2_BASE64_BINARY_SET_ENCODED_BINARY( <xsl:value-of select="$name"/>_impl-> attrib_<xsl:value-of select="$CName"/>, env,
+                                          status = AXIS2_BASE64_BINARY_SET_ENCODED_BINARY( <xsl:value-of select="$name"/>-> attrib_<xsl:value-of select="$CName"/>, env,
                                                                           text_value);
                                           if( AXIS2_FAILURE ==  status)
                                           {
@@ -1258,8 +1142,6 @@
                 <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                 const axis2_env_t *env, axiom_node_t* parent, int has_parent)
         {
-            <xsl:value-of select="$axis2_name"/>_impl_t *<xsl:value-of select="$name"/>_impl = NULL;
-
             <!-- first declration part -->
             axiom_namespace_t *ns1 = NULL;
             <xsl:for-each select="property/@attribute">
@@ -1317,7 +1199,6 @@
                unsigned int end_input_str_len = 0;
             </xsl:if>
             AXIS2_ENV_CHECK(env, NULL);
-            <xsl:value-of select="$name"/>_impl = AXIS2_INTF_TO_IMPL(<xsl:value-of select="$name"/>);
 
             ns1 = axiom_namespace_create (env,
                                          "<xsl:value-of select="$nsuri"/>",
@@ -1396,13 +1277,13 @@
               <xsl:variable name="attriName"><!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="@isarray">(<xsl:value-of select="$nativePropertyType"/>)element</xsl:when>
-                   <xsl:otherwise><xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/></xsl:otherwise>
+                   <xsl:otherwise><xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
               <xsl:variable name="justAttriName"><!--these are used in arrays to take the native type-->
                  <xsl:choose>
                    <xsl:when test="@isarray">element</xsl:when>
-                   <xsl:otherwise><xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/></xsl:otherwise>
+                   <xsl:otherwise><xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/></xsl:otherwise>
                  </xsl:choose>
               </xsl:variable>
 
@@ -1521,16 +1402,16 @@
                      /**
                       * parsing <xsl:value-of select="$CName"/> array
                       */
-                     if ( <xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/> != NULL)
+                     if ( <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/> != NULL)
                      {
-                         start_input_str = "&lt;<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/>&gt;";
+                         start_input_str = "&lt;<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/><xsl:if test="@child-nsuri and @child-nsprefix and @ours"> xmlns:<xsl:value-of select="@child-nsprefix"/>=\"<xsl:value-of select="@child-nsuri"/>\"</xsl:if>&gt;";
                          start_input_str_len = axis2_strlen(start_input_str);
                          end_input_str = "&lt;/<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/>&gt;";
                          end_input_str_len = axis2_strlen(end_input_str);
-                         count = AXIS2_ARRAY_LIST_SIZE( <xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/>, env);
+                         count = AXIS2_ARRAY_LIST_SIZE( <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/>, env);
                          for( i = 0; i &lt; count; i ++)
                          {
-                            element = AXIS2_ARRAY_LIST_GET( <xsl:value-of select="$name"/>_impl->attrib_<xsl:value-of select="$CName"/>, env, i);
+                            element = AXIS2_ARRAY_LIST_GET( <xsl:value-of select="$name"/>->attrib_<xsl:value-of select="$CName"/>, env, i);
                     </xsl:if>
                      <!-- for each non attribute properties there will always be an element-->
                      /**
@@ -1541,7 +1422,7 @@
 
                     <!-- how to build all the ours things -->
                     <xsl:if test="not(@isarray)">
-                        start_input_str = "&lt;<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/>&gt;";
+                        start_input_str = "&lt;<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/><xsl:if test="@child-nsuri and @child-nsprefix and @ours"> xmlns:<xsl:value-of select="@child-nsprefix"/>=\"<xsl:value-of select="@child-nsuri"/>\"</xsl:if>&gt;";
                         start_input_str_len = axis2_strlen(start_input_str);
                         end_input_str = "&lt;/<xsl:value-of select="$nsprefix"/>:<xsl:value-of select="$propertyName"/>&gt;";
                         end_input_str_len = axis2_strlen(end_input_str);
@@ -1737,13 +1618,9 @@
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                     const axis2_env_t *env)
              {
-                <xsl:value-of select="$axis2_name"/>_impl_t *<xsl:value-of select="$name"/>_impl = NULL;
-
                 AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
 
-                <xsl:value-of select="$name"/>_impl = AXIS2_INTF_TO_IMPL(<xsl:value-of select="$name"/>);
-
-                return <xsl:value-of select="$name"/>_impl-> attrib_<xsl:value-of select="$CName"/>;
+                return <xsl:value-of select="$name"/>-> attrib_<xsl:value-of select="$CName"/>;
              }
 
             /**
@@ -1755,14 +1632,15 @@
                     const axis2_env_t *env,
                     <xsl:value-of select="$propertyType"/><xsl:text> </xsl:text> param_<xsl:value-of select="$CName"/>)
              {
-                <xsl:value-of select="$axis2_name"/>_impl_t *<xsl:value-of select="$name"/>_impl = NULL;
                 <xsl:if test="@isarray">
                  int size = 0;
                 </xsl:if>
 
                 AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
-
-                <xsl:value-of select="$name"/>_impl = AXIS2_INTF_TO_IMPL(<xsl:value-of select="$name"/>);
+                if(!<xsl:value-of select="$name"/>)
+                {
+                    return AXIS2_FAILURE;
+                }
 
                 <xsl:if test="@isarray">
                   size = AXIS2_ARRAY_LIST_SIZE( param_<xsl:value-of select="$CName"/>, env);
@@ -1792,7 +1670,7 @@
                       return AXIS2_FAILURE;
                   }
                 </xsl:if>
-                <xsl:value-of select="$name"/>_impl-> attrib_<xsl:value-of select="$CName"/> = param_<xsl:value-of select="$CName"/>;
+                <xsl:value-of select="$name"/>-> attrib_<xsl:value-of select="$CName"/> = param_<xsl:value-of select="$CName"/>;
                 return AXIS2_SUCCESS;
              }
 
@@ -1805,11 +1683,12 @@
                     <xsl:value-of select="$axis2_name"/>_t*<xsl:text> </xsl:text><xsl:value-of select="$name"/>,
                     const axis2_env_t *env)
              {
-                <xsl:value-of select="$axis2_name"/>_impl_t *<xsl:value-of select="$name"/>_impl = NULL;
                 AXIS2_ENV_CHECK(env, AXIS2_FAILURE);
-
-                <xsl:value-of select="$name"/>_impl = AXIS2_INTF_TO_IMPL(<xsl:value-of select="$name"/>);
-                <xsl:value-of select="$name"/>_impl-> attrib_<xsl:value-of select="$CName"/> = NULL;
+                if(!<xsl:value-of select="$name"/>)
+                {
+                    return AXIS2_FAILURE;
+                }
+                <xsl:value-of select="$name"/>-> attrib_<xsl:value-of select="$CName"/> = NULL;
                 return AXIS2_SUCCESS;
              }
             </xsl:if>

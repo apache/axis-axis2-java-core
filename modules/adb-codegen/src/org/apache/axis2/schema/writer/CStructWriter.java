@@ -24,10 +24,12 @@ import org.apache.axis2.schema.BeanWriterMetaInfoHolder;
 import org.apache.axis2.schema.SchemaCompiler;
 import org.apache.axis2.schema.util.SchemaPropertyLoader;
 import org.apache.axis2.schema.util.PrimitiveTypeFinder;
+import org.apache.axis2.schema.util.PrimitiveTypeWrapper;
 import org.apache.axis2.schema.i18n.SchemaCompilerMessages;
 import org.apache.axis2.util.XSLTUtils;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.XSLTTemplateProcessor;
+import org.apache.axis2.wsdl.databinding.CUtils;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
@@ -38,10 +40,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.namespace.QName;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
+import java.util.*;
 import java.io.*;
 
 import com.ibm.wsdl.util.xml.DOM2Writer;
@@ -394,9 +393,26 @@ public class CStructWriter implements BeanWriter {
             XSLTUtils.addAttribute(model, "extension", metainf.getExtensionClassName(), rootElt);
         }
 
+        if (metainf.isRestriction()) {
+            XSLTUtils.addAttribute(model, "restriction", metainf
+                    .getRestrictionClassName(), rootElt);
+        }
+
 
         if (metainf.isChoice()) {
             XSLTUtils.addAttribute(model, "choice", "yes", rootElt);
+        }
+
+         if (metainf.isSimple()) {
+            XSLTUtils.addAttribute(model, "simple", "yes", rootElt);
+        }
+
+        if (metainf.isUnion()) {
+            XSLTUtils.addAttribute(model, "union", "yes", rootElt);
+        }
+
+        if (metainf.isList()) {
+            XSLTUtils.addAttribute(model, "list", "yes", rootElt);
         }
 
         if (metainf.isOrdered()) {
@@ -410,8 +426,62 @@ public class CStructWriter implements BeanWriter {
         //populate all the information
         populateInfo(metainf, model, rootElt, propertyNames, typeMap, false);
 
+        if (metainf.isSimple() && metainf.isUnion()) {
+            populateMemberInfo(metainf, model, rootElt, typeMap);
+        }
+
+        if (metainf.isSimple() && metainf.isList()) {
+            populateListInfo(metainf, model, rootElt, typeMap);
+        }
 
         return rootElt;
+    }
+
+    protected void populateListInfo(BeanWriterMetaInfoHolder metainf,
+                                    Document model,
+                                    Element rootElement,
+                                    Map typeMap) {
+
+        String cName = makeUniqueCStructName(new ArrayList(), metainf.getItemTypeQName().getLocalPart());
+        Element itemType = XSLTUtils.addChildElement(model, "itemtype", rootElement);
+        XSLTUtils.addAttribute(model, "type", metainf.getItemTypeClassName(), itemType);
+        XSLTUtils.addAttribute(model, "nsuri", metainf.getItemTypeQName().getNamespaceURI(), itemType);
+        XSLTUtils.addAttribute(model, "originalName", metainf.getItemTypeQName().getLocalPart(), itemType);
+        XSLTUtils.addAttribute(model, "cname", cName, itemType);
+
+        if (typeMap.containsKey(metainf.getItemTypeQName())) {
+            XSLTUtils.addAttribute(model, "ours", "true", itemType);
+        }
+        if (PrimitiveTypeFinder.isPrimitive(metainf.getItemTypeClassName())) {
+            XSLTUtils.addAttribute(model, "primitive", "yes", itemType);
+        }
+
+    }
+
+    protected void populateMemberInfo(BeanWriterMetaInfoHolder metainf,
+                                      Document model,
+                                      Element rootElement,
+                                      Map typeMap) {
+        Map memberTypes = metainf.getMemberTypes();
+        QName memberQName;
+        for (Iterator iter = memberTypes.keySet().iterator(); iter.hasNext();) {
+            memberQName = (QName) iter.next();
+            String memberClass = (String) memberTypes.get(memberQName);
+            if (PrimitiveTypeFinder.isPrimitive(memberClass)) {
+                 memberClass = PrimitiveTypeWrapper.getWrapper(memberClass);
+            }
+
+        // add member type element
+            Element memberType = XSLTUtils.addChildElement(model, "memberType", rootElement);
+            XSLTUtils.addAttribute(model, "type", memberClass, memberType);
+            XSLTUtils.addAttribute(model, "nsuri", memberQName.getNamespaceURI(), memberType);
+            XSLTUtils.addAttribute(model, "originalName", memberQName.getLocalPart(), memberType);
+            XSLTUtils.addAttribute(model, "caps-originalName", memberQName.getLocalPart().toUpperCase(), memberType);
+            if (typeMap.containsKey(memberQName)) {
+                XSLTUtils.addAttribute(model, "ours", "true", memberType);
+            }
+
+        }
     }
 
     /**
@@ -448,17 +518,31 @@ public class CStructWriter implements BeanWriter {
                                     Map typeMap,
                                     boolean isInherited) throws SchemaCompilationException {
         // go in the loop and add the part elements
-        QName[] qNames;
+        QName[] qName;
+        ArrayList missingQNames = new ArrayList();
+        ArrayList qNames = new ArrayList();
+        BeanWriterMetaInfoHolder parentMetaInf = metainf.getParent();
+
         if (metainf.isOrdered()) {
-            qNames = metainf.getOrderedQNameArray();
+            qName = metainf.getOrderedQNameArray();
         } else {
-            qNames = metainf.getQNameArray();
+            qName = metainf.getQNameArray();
+        }
+
+        for (int i = 0; i < qName.length; i++) {
+            qNames.add(qName[i]);
+        }
+        //adding missing QNames to the end, including elements & attributes.
+        // for the simple types we have already add the parent elements
+        // it is almost consider as an extension
+        if (metainf.isRestriction() && !metainf.isSimple()) {
+            addMissingQNames(metainf, qNames, missingQNames);
         }
 
         QName name;
-        for (int i = 0; i < qNames.length; i++) {
+        for (int i = 0; i < qName.length; i++) {
             Element property = XSLTUtils.addChildElement(model, "property", rootElt);
-            name = qNames[i];
+            name = qName[i];
             String xmlName = name.getLocalPart();
 
             XSLTUtils.addAttribute(model, "name", xmlName, property);
@@ -525,6 +609,13 @@ public class CStructWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "inherited", "yes", property);
             }
 
+            QName schemaQName = metainf.getSchemaQNameForQName(name);
+            if(!schemaQName.getNamespaceURI().equals(name.getNamespaceURI())){
+                XSLTUtils.addAttribute(model, "child-nsuri", schemaQName.getNamespaceURI(), property);
+                XSLTUtils.addAttribute(model, "child-nsprefix", getPrefixForURI(schemaQName.getNamespaceURI(), null), property);
+
+            }
+
             if (metainf.getAnyStatusForQName(name)) {
                 XSLTUtils.addAttribute(model, "any", "yes", property);
             }
@@ -563,7 +654,231 @@ public class CStructWriter implements BeanWriter {
                 XSLTUtils.addAttribute(model, "maxOccurs", maxOccurs + "", property);
 
             }
+
+            if ((parentMetaInf != null) && metainf.isRestriction() && missingQNames.contains(name)) {
+                // this element details should be there with the parent meta Inf
+                addAttributesToProperty(
+                        parentMetaInf,
+                        name,
+                        model,
+                        property,
+                        typeMap,
+                        CClassNameForElement);
+
+            } else {
+                addAttributesToProperty(
+                        metainf,
+                        name,
+                        model,
+                        property,
+                        typeMap,
+                        CClassNameForElement);
+            }
         }
+    }
+
+    private void addAttributesToProperty(BeanWriterMetaInfoHolder metainf,
+                                             QName name,
+                                             Document model,
+                                             Element property,
+                                             Map typeMap,
+                                             String javaClassNameForElement) {
+            // add an attribute that says the type is default
+            if (metainf.getDefaultStatusForQName(name)) {
+                XSLTUtils.addAttribute(model, "default", "yes", property);
+            }
+
+            if (typeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
+                XSLTUtils.addAttribute(model, "ours", "yes", property);
+            }
+
+            if (metainf.getAttributeStatusForQName(name)) {
+                XSLTUtils.addAttribute(model, "attribute", "yes", property);
+            }
+
+            if (metainf.isNillable(name)) {
+                XSLTUtils.addAttribute(model, "nillable", "yes", property);
+            }
+
+            if (metainf.getOptionalAttributeStatusForQName(name)) {
+                XSLTUtils.addAttribute(model, "optional", "yes", property);
+            }
+
+            String shortTypeName;
+            if (metainf.getSchemaQNameForQName(name) != null) {
+                // see whether the QName is a basetype
+                if (baseTypeMap.containsKey(metainf.getSchemaQNameForQName(name))) {
+                    shortTypeName = metainf.getSchemaQNameForQName(name).getLocalPart();
+                } else {
+                    shortTypeName = getShortTypeName(javaClassNameForElement);
+                }
+            } else {
+                shortTypeName = getShortTypeName(javaClassNameForElement);
+            }
+            XSLTUtils.addAttribute(model, "shorttypename", shortTypeName, property);
+
+
+            if (metainf.getAnyStatusForQName(name)) {
+                XSLTUtils.addAttribute(model, "any", "yes", property);
+            }
+
+            if (metainf.getBinaryStatusForQName(name)) {
+                XSLTUtils.addAttribute(model, "binary", "yes", property);
+            }
+
+            if (metainf.isSimple() || metainf.getSimpleStatusForQName(name)) {
+                XSLTUtils.addAttribute(model, "simple", "yes", property);
+            }
+
+            // put the min occurs count irrespective of whether it's an array or
+            // not
+            long minOccurs = metainf.getMinOccurs(name);
+            XSLTUtils.addAttribute(model, "minOccurs", minOccurs + "", property);
+
+
+            if (metainf.getArrayStatusForQName(name)) {
+
+                XSLTUtils.addAttribute(model, "array", "yes", property);
+
+                int endIndex = javaClassNameForElement.indexOf("[");
+                if (endIndex >= 0) {
+                    XSLTUtils.addAttribute(model, "arrayBaseType",
+                            javaClassNameForElement.substring(0, endIndex), property);
+                } else {
+                    XSLTUtils.addAttribute(model, "arrayBaseType",
+                            javaClassNameForElement, property);
+                }
+
+                long maxOccurs = metainf.getMaxOccurs(name);
+                if (maxOccurs == Long.MAX_VALUE) {
+                    XSLTUtils.addAttribute(model, "unbound", "yes", property);
+                } else {
+                    XSLTUtils.addAttribute(model, "maxOccurs", maxOccurs + "", property);
+                }
+            }
+            if (metainf.isRestrictionBaseType(name)) {
+                XSLTUtils.addAttribute(model, "restrictionBaseType", "yes", property);
+            }
+
+            if (metainf.isExtensionBaseType(name)) {
+                XSLTUtils.addAttribute(model, "extensionBaseType", "yes", property);
+            }
+
+            if (metainf.isRestrictionBaseType(name) && metainf.getLengthFacet() != -1) {
+                XSLTUtils.addAttribute(model, "lenFacet", metainf.getLengthFacet() + "", property);
+            }
+
+            if (metainf.isRestrictionBaseType(name) && metainf.getMaxLengthFacet() != -1) {
+                XSLTUtils.addAttribute(model, "maxLenFacet", metainf.getMaxLengthFacet() + "", property);
+            }
+
+            if (metainf.isRestrictionBaseType(name) && metainf.getMinLengthFacet() != -1) {
+                XSLTUtils.addAttribute(model, "minLenFacet", metainf.getMinLengthFacet() + "", property);
+            }
+
+            if (metainf.isRestrictionBaseType(name) && metainf.getMaxExclusiveFacet() != null) {
+                XSLTUtils.addAttribute(model, "maxExFacet", metainf.getMaxExclusiveFacet() + "", property);
+            }
+
+            if (metainf.isRestrictionBaseType(name) && metainf.getMinExclusiveFacet() != null) {
+                XSLTUtils.addAttribute(model, "minExFacet", metainf.getMinExclusiveFacet() + "", property);
+            }
+
+            if (metainf.isRestrictionBaseType(name) && metainf.getMaxInclusiveFacet() != null) {
+                XSLTUtils.addAttribute(model, "maxInFacet", metainf.getMaxInclusiveFacet() + "", property);
+            }
+
+            if (metainf.isRestrictionBaseType(name) && metainf.getMinInclusiveFacet() != null) {
+                XSLTUtils.addAttribute(model, "minInFacet", metainf.getMinInclusiveFacet() + "", property);
+            }
+
+            if (!metainf.getEnumFacet().isEmpty()) {
+                boolean validJava = true;    // Assume all enum values are valid ids
+
+                Iterator iterator = metainf.getEnumFacet().iterator();
+                // Walk the values looking for invalid ids
+                while (iterator.hasNext()) {
+                    String value = (String) iterator.next();
+                    if (!JavaUtils.isJavaId(value)) {
+                        validJava = false;
+                    }
+                }
+
+                int id = 0;
+                iterator = metainf.getEnumFacet().iterator();
+                while (iterator.hasNext()) {
+                    Element enumFacet = XSLTUtils.addChildElement(model, "enumFacet", property);
+                    String attribValue = (String) iterator.next();
+                    XSLTUtils.addAttribute(model, "value", attribValue, enumFacet);
+                    if (validJava) {
+                        XSLTUtils.addAttribute(model, "id", attribValue, enumFacet);
+                    } else {
+                        id++;
+                        XSLTUtils.addAttribute(model, "id", "value" + id, enumFacet);
+                    }
+                }
+            }
+
+            if (metainf.isRestrictionBaseType(name) && metainf.getPatternFacet() != null) {
+                XSLTUtils.addAttribute(model, "patternFacet", metainf.getPatternFacet(), property);
+            }
+        }
+
+
+
+    private void addMissingQNames(BeanWriterMetaInfoHolder metainf, ArrayList qName, ArrayList missingQNames) {
+
+        QName[] qNames = null;
+        QName[] pQNames = null;
+
+        BeanWriterMetaInfoHolder parentMetaInf = metainf.getParent();
+
+        if (metainf.isOrdered()) {
+            qNames = metainf.getOrderedQNameArray();
+        } else {
+            qNames = metainf.getQNameArray();
+        }
+
+        if (parentMetaInf != null) {
+            if (parentMetaInf.isOrdered()) {
+                pQNames = parentMetaInf.getOrderedQNameArray();
+            } else {
+                pQNames = parentMetaInf.getQNameArray();
+            }
+        }
+
+
+        for (int i = 0; pQNames != null && i < pQNames.length; i++) {
+            if (qNameNotFound(pQNames[i], metainf)) {
+                missingQNames.add(pQNames[i]);
+            }
+        }
+        //adding missing QNames to the end of list.
+        if (!missingQNames.isEmpty()) {
+            for (int i = 0; i < missingQNames.size(); i++) {
+                qName.add(missingQNames.get(i));
+            }
+        }
+
+    }
+
+    private boolean qNameNotFound(QName qname, BeanWriterMetaInfoHolder metainf) {
+
+        boolean found = false;
+        QName[] qNames;
+
+        if (metainf.isOrdered()) {
+            qNames = metainf.getOrderedQNameArray();
+        } else {
+            qNames = metainf.getQNameArray();
+        }
+
+        for (int j = 0; j < qNames.length; j++) {
+            if (qname.getLocalPart().equals(qNames[j].getLocalPart())) {
+                found = true;
+            }
+        }
+        return !found;
     }
 
     /**
@@ -588,20 +903,22 @@ public class CStructWriter implements BeanWriter {
      * @return Returns String.
      */
     private String makeUniqueCStructName(List listOfNames, String xmlName) {
-        String javaName;
-        if (JavaUtils.isJavaKeyword(xmlName)) {
-            javaName = JavaUtils.makeNonJavaKeyword(xmlName);
+        String cName;
+        if (CUtils.isCKeyword(xmlName)) {
+            cName = CUtils.makeNonCKeyword(xmlName);
         } else {
             //javaName = JavaUtils.capitalizeFirstChar(JavaUtils.xmlNameToJava(xmlName));
-            javaName = xmlName;
+            cName = xmlName;
         }
 
-        while (listOfNames.contains(javaName.toLowerCase())) {
-            javaName = javaName + CStructWriter.count++;
+        while (listOfNames.contains(cName.toLowerCase())) {
+            cName = cName + CStructWriter.count++;
         }
 
-        listOfNames.add(javaName.toLowerCase());
-        return javaName;
+        String intName = cName.replace('.','_');
+        String outName = intName.replace('-','_');
+        listOfNames.add(outName.toLowerCase());
+        return outName;
     }
 
 
