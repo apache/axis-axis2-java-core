@@ -409,12 +409,20 @@
                     <include>**/*.jpg</include>
                 </includes>
             </resource>
-        <resource>
+            <resource>
                 <directory>test</directory>
                 <includes>
                     <include>**/*.bin</include>
                 </includes>
             </resource>
+	    <resource>
+	    	<directory>../../</directory>
+		<targetPath>META-INF</targetPath>
+		 <includes>
+		 	<include>NOTICE.txt</include>
+			<include>LICENSE.txt</include>
+		</includes>
+	    </resource>
         </resources>
     </build>
 </project>

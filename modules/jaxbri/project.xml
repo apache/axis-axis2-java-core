@@ -99,6 +99,18 @@
             <version>${jaxbri.version}</version>
         </dependency>
     </dependencies>
-    <build/>
+    
+     <build>
+         <resources>
+	     <resource>
+		<directory>../../</directory>
+		<targetPath>META-INF</targetPath>
+		<includes>
+		    <include>NOTICE.txt</include>
+		    <include>LICENSE.txt</include>
+		</includes>
+	    </resource>
+	</resources>
+    </build>													
     <reports/>
 </project>

@@ -75,6 +75,17 @@
         <nagEmailAddress></nagEmailAddress>
         <sourceDirectory>src</sourceDirectory>
 	<unitTestSourceDirectory>test</unitTestSourceDirectory>
+	
+	<resources>
+	    <resource>
+                <directory>../../</directory>
+                <targetPath>META-INF</targetPath>
+                <includes>
+                    <include>NOTICE.txt</include>
+                    <include>LICENSE.txt</include>
+                </includes>
+           </resource>
+	</resources>
 
         <unitTest>
             <includes>
@@ -329,4 +340,9 @@
             </properties>
         </dependency> 
     </dependencies>
+    <build>
+    <resources>
+        
+    </resources>
+    </build>
 </project>

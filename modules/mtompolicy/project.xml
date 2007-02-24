@@ -91,5 +91,15 @@
                 <include>**/*Test.java</include>
             </includes>
         </unitTest>
+    <resources>
+        <resource>
+            <directory>../../</directory>
+            <targetPath>META-INF</targetPath>
+            <includes>
+                <include>NOTICE.txt</include>
+                <include>LICENSE.txt</include>
+            </includes>
+       </resource>
+    </resources>
 	</build>
 </project>

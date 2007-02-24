@@ -80,7 +80,16 @@
                     <include>**/*.properties</include>
                     <include>**/*.xml</include>
                 </includes>
-            </resource>
+            </resource>	
+        
+	    <resource>
+            	<directory>../../</directory>
+		<targetPath>META-INF</targetPath>
+		<includes>
+                	<include>NOTICE.txt</include>
+			<include>LICENSE.txt</include>
+		</includes>
+	    </resource>
         </resources>
     </build>
 
