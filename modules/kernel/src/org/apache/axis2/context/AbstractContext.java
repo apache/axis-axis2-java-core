@@ -21,6 +21,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.cluster.ClusterManager;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.i18n.Messages;
+
 /**
  * This is the top most level of the Context hierarchy and is a bag of properties.
  */
@@ -35,7 +40,7 @@ public abstract class AbstractContext {
 
     protected transient AbstractContext parent;
     protected transient Map properties;
-
+    
     protected AbstractContext(AbstractContext parent) {
         this.parent = parent;
     }
@@ -166,4 +171,25 @@ public abstract class AbstractContext {
     public void setLastTouchedTime(long t) {
         lastTouchedTime = t;
     }
+    
+    public void flush () throws AxisFault {
+    	
+    	ConfigurationContext configContext = getRootContext();
+    	if (configContext==null) {
+    		throw new AxisFault (Messages.getMessage("cannotFlushRootNull"));
+    	}
+    	
+    	AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
+    	ClusterManager clusterManager = axisConfiguration.getClusterManager();
+    	
+    	//Calling the ClusterManager probably to replicate the updated state of the context.
+    	if (clusterManager!=null && clusterManager.isContextClusterable (this)) {
+    		clusterManager.updateState(this);
+    	}
+    	
+    	//Other logic needed for flushing the contexts
+    }
+    
+    public abstract ConfigurationContext getRootContext ();
+    
 }

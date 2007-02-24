@@ -1157,4 +1157,8 @@ public class OperationContext extends AbstractContext implements Externalizable 
         return logCorrelationIDString;
     }
     
+	public ConfigurationContext getRootContext() {
+		return this.getConfigurationContext();
+	}
+    
 }

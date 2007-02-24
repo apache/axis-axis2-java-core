@@ -20,6 +20,7 @@ package org.apache.axis2.context;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
@@ -65,6 +66,9 @@ public class ConfigurationContext extends AbstractContext {
         super(null);
         this.axisConfiguration = axisConfiguration;
         initConfigContextTimeout(axisConfiguration);
+        
+        if (axisConfiguration.getClusterManager()!=null)
+        	initCluster();
     }
 
     private void initConfigContextTimeout(AxisConfiguration axisConfiguration) {
@@ -77,6 +81,11 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
+    private void initCluster() {
+		ClusterManager clusterManager = axisConfiguration.getClusterManager();
+		clusterManager.init(this);
+	}
+    
     protected void finalize() throws Throwable {
         super.finalize();
     }
@@ -120,6 +129,11 @@ public class ConfigurationContext extends AbstractContext {
                     serviceGroupContext =ContextFactory.createServiceGroupContext(
                             messageContext.getConfigurationContext(),axisServiceGroup);
                     applicationSessionServiceGroupContextTable.put(serviceGroupName, serviceGroupContext);
+                    
+                    ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
+                    if (clusterManager!=null) {
+                    	clusterManager.addContext(serviceGroupContext);
+                    }
                 }
                 messageContext.setServiceGroupContext(serviceGroupContext);
                 messageContext.setServiceContext(ContextFactory.createServiceContext(
@@ -140,6 +154,12 @@ public class ConfigurationContext extends AbstractContext {
                     // set the serviceGroupContextID
                     serviceGroupContextId = UUIDGenerator.getUUID();
                     serviceGroupContext.setId(serviceGroupContextId);
+
+                    ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
+                    if (clusterManager!=null) {
+                    	clusterManager.addContext(serviceGroupContext);
+                    }
+                    
                     messageContext.setServiceGroupContextId(serviceGroupContextId);
                     registerServiceGroupContextintoSoapSessionTable(serviceGroupContext);
                 }
@@ -550,4 +570,10 @@ public class ConfigurationContext extends AbstractContext {
 
         }
     }
+
+	public ConfigurationContext getRootContext() {
+		return this;
+	}
+    
+    
 }

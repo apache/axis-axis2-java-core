@@ -17,6 +17,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.builder.OMBuilder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
@@ -137,6 +138,8 @@ public class AxisConfiguration extends AxisDescription {
     private boolean start;
 
     private ArrayList targetResolvers;
+    
+    private ClusterManager clusterManager;
 
     /**
      * Constructor AxisConfigurationImpl.
@@ -876,6 +879,14 @@ public class AxisConfiguration extends AxisDescription {
                     + defualtModuleVersion));
         }
     }
+    
+    public ClusterManager getClusterManager() {
+		return clusterManager;
+	}
+
+	public void setClusterManager(ClusterManager clusterManager) {
+		this.clusterManager = clusterManager;
+	}
 
     public Object getKey() {
         return toString();

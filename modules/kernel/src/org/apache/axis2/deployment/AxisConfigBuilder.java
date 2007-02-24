@@ -140,7 +140,14 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             if (defaultModuleVerionElement != null) {
                 processDefaultModuleVersions(defaultModuleVerionElement);
             }
-
+            
+            OMElement clusterElement = config_element
+					.getFirstChildWithName(new QName(TAG_CLUSTER));
+			if (clusterElement != null) {
+				ClusterBuilder clusterBuilder = new ClusterBuilder(axisConfig);
+				clusterBuilder.buildCluster(clusterElement);
+			}
+            
             // process MessageBuilders
             OMElement messageBuildersElement = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_BUILDERS));
             if (messageBuildersElement != null) {

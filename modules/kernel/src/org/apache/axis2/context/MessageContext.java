@@ -4222,4 +4222,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
             log.warn(getLogIDString() + ":" + methodname + "(): ****WARNING**** " + myClassName + ".activate(configurationContext) needs to be invoked.");
         }
     }
+
+	public ConfigurationContext getRootContext() {
+		return configurationContext;
+	}
+    
+    
 }

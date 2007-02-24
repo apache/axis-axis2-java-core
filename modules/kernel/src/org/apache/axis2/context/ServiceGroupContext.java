@@ -18,6 +18,7 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -143,6 +144,12 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         if (serviceContext == null) {
             serviceContext = new ServiceContext(service, this);
             serviceContextMap.put(service.getName(), serviceContext);
+            
+            ClusterManager clusterManager = axisService.getAxisConfiguration().getClusterManager();
+            if (clusterManager!=null) {
+            	clusterManager.addContext(serviceContext);
+            }
+            
         }
         return serviceContext;
     }
@@ -575,4 +582,9 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
             log.warn(myClassName+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
         }
     }
+    
+	public ConfigurationContext getRootContext() {
+		//parent of the ServiceGroupContext is the ConfigurationContext
+		return (ConfigurationContext) this.getParent();
+	}
 }
