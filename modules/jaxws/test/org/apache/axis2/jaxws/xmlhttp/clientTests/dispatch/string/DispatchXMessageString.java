@@ -23,13 +23,13 @@ import javax.xml.ws.http.HTTPBinding;
 
 import junit.framework.TestCase;
 
-public class DispatchXPayloadString extends TestCase {
+public class DispatchXMessageString extends TestCase {
 
     public String HOSTPORT = "http://localhost:8080";
         
-    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XPayloadStringProvider";
-    private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadStringProvider");
-    private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XPayloadStringProviderPort");
+    private String ENDPOINT_URL = HOSTPORT + "/axis2/services/XMessageStringProvider";
+    private QName SERVICE_NAME  = new QName("http://ws.apache.org/axis2", "XMessageStringProvider");
+    private QName PORT_NAME  = new QName("http://ws.apache.org/axis2", "XMessageStringProviderPort");
  
     private static String XML_TEXT = "<p:echo xmlns:p=\"http://sample\">hello world</p:echo>";
     private static String XML_TEXT_NPE = "<p:echo xmlns:p=\"http://sample\">NPE</p:echo>";
@@ -37,12 +37,12 @@ public class DispatchXPayloadString extends TestCase {
     public Dispatch<String> getDispatch() {
        Service service = Service.create(SERVICE_NAME);
        service.addPort(PORT_NAME, HTTPBinding.HTTP_BINDING,ENDPOINT_URL);
-       Dispatch<String> dispatch = service.createDispatch(PORT_NAME, String.class, Service.Mode.PAYLOAD);
+       Dispatch<String> dispatch = service.createDispatch(PORT_NAME, String.class, Service.Mode.MESSAGE);
        return dispatch;
     }
     
     /**
-     * Simple XML/HTTP Payload Test
+     * Simple XML/HTTP Message Test
      * @throws Exception
      */
     public void testSimple() throws Exception {
@@ -97,3 +97,4 @@ public class DispatchXPayloadString extends TestCase {
         assertTrue(request.equals(response));
     }
 }
+

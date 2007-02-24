@@ -453,6 +453,42 @@
 		  </ant:fileset>
 		</ant:copy>
 		
+		<ant:copy toDir="target/test-classes/services/XMessageStringProvider/">
+		  <ant:fileset dir="target/test-classes">
+		    <ant:include name="org/apache/axis2/jaxws/xmlhttp/provider/message/string/*.class"/>
+		  </ant:fileset>
+		  <ant:fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/string">
+		    <ant:include name="META-INF/**"/>
+		  </ant:fileset>
+		</ant:copy>
+		
+		<ant:copy toDir="target/test-classes/services/XPayloadSourceProvider/">
+		  <ant:fileset dir="target/test-classes">
+		    <ant:include name="org/apache/axis2/jaxws/xmlhttp/provider/payload/source/*.class"/>
+		  </ant:fileset>
+		  <ant:fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/payload/source">
+		    <ant:include name="META-INF/**"/>
+		  </ant:fileset>
+		</ant:copy>
+		
+		<ant:copy toDir="target/test-classes/services/XMessageSourceProvider/">
+		  <ant:fileset dir="target/test-classes">
+		    <ant:include name="org/apache/axis2/jaxws/xmlhttp/provider/message/source/*.class"/>
+		  </ant:fileset>
+		  <ant:fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/source">
+		    <ant:include name="META-INF/**"/>
+		  </ant:fileset>
+		</ant:copy>
+		
+		<ant:copy toDir="target/test-classes/services/XMessageDataSourceProvider/">
+		  <ant:fileset dir="target/test-classes">
+		    <ant:include name="org/apache/axis2/jaxws/xmlhttp/provider/message/datasource/*.class"/>
+		  </ant:fileset>
+		  <ant:fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/datasource">
+		    <ant:include name="META-INF/**"/>
+		  </ant:fileset>
+		</ant:copy>
+		
 		<!-- ================================================================ -->
         <!--- Java Bean Endpoint Samples -->
         <!-- ================================================================ -->

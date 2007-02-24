@@ -28,6 +28,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import javax.activation.DataSource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
@@ -350,6 +351,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
     private boolean isValidDispatchType(Class clazz) {
     	return clazz != null && (clazz == String.class || 
     			clazz == Source.class || 
+                clazz == DataSource.class ||
     			clazz == SOAPMessage.class);
     }
     

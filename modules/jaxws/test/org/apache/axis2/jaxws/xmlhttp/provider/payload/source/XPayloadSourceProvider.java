@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.xmlhttp.provider.payload.string;
+package org.apache.axis2.jaxws.xmlhttp.provider.payload.source;
 
+import javax.xml.transform.Source;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.WebServiceProvider;
@@ -26,12 +27,9 @@ import javax.xml.ws.http.HTTPBinding;
  */
 @WebServiceProvider()
 @BindingType(HTTPBinding.HTTP_BINDING)
-public class XPayloadStringProvider implements Provider<String> {
+public class XPayloadSourceProvider implements Provider<Source> {
 
-    public String invoke(String input) {
-        if (input.contains("NPE")) {
-            throw new NullPointerException("NPE Thrown!");
-        }
+    public Source invoke(Source input) {
         return input;
     }
 

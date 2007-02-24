@@ -16,7 +16,6 @@
  */
 package org.apache.axis2.jaxws.client.dispatch;
 
-import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
@@ -24,7 +23,6 @@ import javax.xml.transform.Source;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.Service.Mode;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -43,7 +41,6 @@ import org.apache.commons.logging.LogFactory;
 
 public class XMLDispatch<T> extends BaseDispatch<T> {
     private static final Log log = LogFactory.getLog(XMLDispatch.class);
-    private static QName SOAPENV_QNAME = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
     private Class type;
     private Class blockFactoryType;
     
@@ -168,27 +165,14 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
                 }
 				
 			} else if (mode.equals(Mode.MESSAGE)) {
-			   if (blockFactoryType.equals(SOAPEnvelopeBlockFactory.class)) {
-				   // This is an indication that we are in SOAPMessage Dispatch
-				   // Return the SOAPMessage
-				   value = message.getAsSOAPMessage();
-				   
-			   } else {
-                   // NOTE Similar code in JAXBDispatch
-                   
-				   // TODO: This doesn't seem right to me. We should not have an intermediate StringBlock.  
-				   // This is not performant. Scheu 
-				   OMElement messageOM = message.getAsOMElement();
-				   String stringValue = messageOM.toString();  
-				   QName soapEnvQname = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
-                    
-				   XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
-				   Block stringBlock = stringFactory.createFrom(stringValue, null, soapEnvQname);   
-				   BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(blockFactoryType);
-				   block = factory.createFrom(stringBlock, null);
-				   value = block.getBusinessObject(true);
-			   }
-			}
+                BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(blockFactoryType);
+                value = message.getValue(null, factory);
+                if (value == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("There are no elements to unmarshal.  XMLDispatch returns a null value");
+                    }
+                }
+            }
             
         } catch (Exception e) {
             if (log.isDebugEnabled()) {

@@ -152,7 +152,8 @@ public abstract class XMLPartBase implements XMLPart {
             } else if (qName.getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
                 throw ExceptionFactory.makeWebServiceException("UNEXPECTED");  // TODO NLS
             } else {
-                _createSpine(Protocol.rest, Style.DOCUMENT, 0, root);
+                content = _createSpine(Protocol.rest, Style.DOCUMENT, 0, root);
+                contentType = SPINE;
             }
         }
 	}
@@ -252,26 +253,6 @@ public abstract class XMLPartBase implements XMLPart {
 	 */
 	public SOAPEnvelope getAsSOAPEnvelope() throws WebServiceException {
 		return getContentAsSOAPEnvelope();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.XMLPart#getAsBlock(java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
-	 */
-	public Block getAsBlock(Object context, BlockFactory blockFactory) throws WebServiceException, XMLStreamException {
-		
-		// Get the content as the specfied block.  There is some optimization here to prevent unnecessary copies.
-		// More optimization may be added later.
-		Block block = null;
-		if (contentType == OM) {
-			block = blockFactory.createFrom((OMElement) content, context, null);
-		} else if (contentType == SOAPENVELOPE && 
-			blockFactory instanceof SOAPEnvelopeBlockFactory)	{
-			block = blockFactory.createFrom((SOAPEnvelope) content, null, null );
-		} else {
-			block = blockFactory.createFrom(getAsOMElement(), null, null);
-		}
-        block.setParent(getParent());
-		return block;
 	}
 
 	/* (non-Javadoc)

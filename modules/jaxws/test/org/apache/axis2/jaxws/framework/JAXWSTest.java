@@ -74,6 +74,11 @@ import org.apache.axis2.jaxws.sample.ParallelAsyncTests;
 import org.apache.axis2.jaxws.sample.WSGenTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.datasource.DispatchXMessageDataSource;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.jaxb.DispatchXPayloadJAXB;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source.DispatchXMessageSource;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source.DispatchXPayloadSource;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string.DispatchXMessageString;
 import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string.DispatchXPayloadString;
 import org.apache.log4j.BasicConfigurator;
 
@@ -159,7 +164,13 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(PolymorphicTests.class);
         suite.addTestSuite(NS2PkgTest.class);
         suite.addTestSuite(JAXBContextTest.class);
+        
         suite.addTestSuite(DispatchXPayloadString.class);
+        suite.addTestSuite(DispatchXMessageString.class);
+        suite.addTestSuite(DispatchXPayloadSource.class);
+        suite.addTestSuite(DispatchXMessageSource.class);
+        suite.addTestSuite(DispatchXPayloadJAXB.class);
+        suite.addTestSuite(DispatchXMessageDataSource.class);
         
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {

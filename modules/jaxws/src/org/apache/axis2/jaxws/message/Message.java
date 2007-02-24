@@ -23,6 +23,8 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.WebServiceException;
 
+import org.apache.axis2.jaxws.message.factory.BlockFactory;
+
 /**
  * Message
  * 
@@ -118,4 +120,12 @@ public interface Message extends XMLPart {
      * @return true if post pivot
      */
     public boolean isPostPivot();
+    
+    /* 
+     * Get the entire message rendered in a certain type of value (i.e. String, Source, SOAPMessage, etc.)
+     * @param context
+     * @param blockFactory blockfactory associated with the kind of rendering
+     */
+    public Object getValue(Object context, BlockFactory blockFactory)  
+        throws WebServiceException;
 }

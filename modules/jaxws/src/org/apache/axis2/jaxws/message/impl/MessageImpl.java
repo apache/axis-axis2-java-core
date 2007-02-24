@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.stream.XMLStreamException;
@@ -47,10 +48,14 @@ import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLPart;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.SAAJConverterFactory;
+import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLPartFactory;
+import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+
+import com.ibm.xslt4j.bcel.generic.RETURN;
 
 /**
  * MessageImpl
@@ -73,12 +78,6 @@ public class MessageImpl implements Message {
     private MimeHeaders mimeHeaders = new MimeHeaders(); 
     
     private boolean postPivot = false;
-    
-	// Constants
-	private static final String SOAP11_ENV_NS = "http://schemas.xmlsoap.org/soap/envelope/";
-	private static final String SOAP12_ENV_NS = "http://www.w3.org/2003/05/soap-envelope";
-	private static final String SOAP11_CONTENT_TYPE ="text/xml";
-	private static final String SOAP12_CONTENT_TYPE = "application/soap+xml";
 	
 	/**
 	 * MessageImpl should be constructed via the MessageFactory.
@@ -187,10 +186,10 @@ public class MessageImpl implements Message {
 
 			// Toggle based on SOAP 1.1 or SOAP 1.2
 			String contentType = null;
-			if (ns.getNamespaceURI().equals(SOAP11_ENV_NS)) {
-				contentType = SOAP11_CONTENT_TYPE;
+			if (ns.getNamespaceURI().equals(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE)) {
+				contentType = SOAPConstants.SOAP_1_1_CONTENT_TYPE;
 			} else {
-				contentType = SOAP12_CONTENT_TYPE;
+				contentType = SOAPConstants.SOAP_1_2_CONTENT_TYPE;
 			}
             
             // Override the content-type
@@ -214,15 +213,45 @@ public class MessageImpl implements Message {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.axis2.jaxws.message.XMLPart#getAsBlock(java.lang.Object,
-	 *      org.apache.axis2.jaxws.message.factory.BlockFactory)
-	 */
-	public Block getAsBlock(Object context, BlockFactory blockFactory) throws WebServiceException, XMLStreamException {
-		return xmlPart.getAsBlock(context, blockFactory);
-	}
+	
+    /* (non-Javadoc)
+     * @see org.apache.axis2.jaxws.message.Message#getValue(java.lang.Object, org.apache.axis2.jaxws.message.factory.BlockFactory)
+     */
+    public Object getValue(Object context, BlockFactory blockFactory) throws WebServiceException {
+        try {
+            Object value = null;
+            if (protocol == Protocol.rest) {
+                // The implementation of rest stores the rest xml inside a dummy soap 1.1 envelope.
+                // So use the get body block logic.
+                Block block = xmlPart.getBodyBlock(context, blockFactory);
+                if (block != null) {
+                    value = block.getBusinessObject(true);
+                }
+              
+            } else {
+                // Must be SOAP
+                if (blockFactory instanceof SOAPEnvelopeBlockFactory) {
+                    value = getAsSOAPMessage();
+                } else {
+                    // TODO: This doesn't seem right to me. We should not have an intermediate StringBlock.  
+                    // This is not performant. Scheu 
+                    OMElement messageOM = getAsOMElement();
+                    String stringValue = messageOM.toString();  
+                    String soapNS = (protocol == Protocol.soap11) ? SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE : SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE; 
+                    QName soapEnvQname = new QName(soapNS, "Envelope");
+
+                     
+                    XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
+                    Block stringBlock = stringFactory.createFrom(stringValue, null, soapEnvQname);   
+                    Block block = blockFactory.createFrom(stringBlock, context);
+                    value = block.getBusinessObject(true);
+                }
+            }
+            return value;
+        } catch (Throwable e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
 
 	/* (non-Javadoc)
 	 * @see org.apache.axis2.jaxws.message.XMLPart#getAttachments()
@@ -275,6 +304,7 @@ public class MessageImpl implements Message {
 		return protocol;
 	}
 
+    
 	public OMElement getAsOMElement() throws WebServiceException {
 		return xmlPart.getAsOMElement();
 	}

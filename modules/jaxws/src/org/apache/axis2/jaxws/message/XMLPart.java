@@ -177,25 +177,12 @@ public interface XMLPart {
 	
 	/**
 	 * getAsOMElement
-	 * Get the xml part as a read/write OM
-	 * @return OMElement (probably OM SOAPEnvelope)
+	 * Get the xml part as a read/write OM...note this returns an OM SOAPEnvelope
+     * for all protocols...even REST
+	 * @return OMElement
 	 * @throws WebServiceException
 	 */
 	public OMElement getAsOMElement() throws WebServiceException;
-	
-	/**
-	 * getAsBlock
-	 * Get the entire xml part as a Block
-	 * The BlockFactory and object context are passed in to help create the 
-	 * proper kind of block.
-	 * 
-	 * @return Block
-	 * @throws WebServiceException
-	 */
-	public Block getAsBlock(
-			Object context, 
-			BlockFactory blockFactory)  
-		throws WebServiceException, XMLStreamException;
 	
 	/**
 	 * getNumBodyBlocks

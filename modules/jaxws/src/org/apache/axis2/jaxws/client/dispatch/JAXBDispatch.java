@@ -20,7 +20,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service.Mode;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -31,7 +30,6 @@ import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
-import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
@@ -132,21 +130,14 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
                     value = null;
                 }
             } else {
-                // This is a very strange case, the user would need
-                // to have a JAXB object that represents the message (i.e. SOAPEnvelope)
-                
-                // TODO: This doesn't seem right to me. We should not have an intermediate StringBlock.  
-                // This is not performant. Scheu 
-                OMElement messageOM = message.getAsOMElement();
-                String stringValue = messageOM.toString();  
-                QName soapEnvQname = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
-                
-                XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
-                Block stringBlock = stringFactory.createFrom(stringValue, null, soapEnvQname);   
                 BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(JAXBBlockFactory.class);
                 JAXBBlockContext context = new JAXBBlockContext(jaxbContext);
-                Block block = factory.createFrom(stringBlock, context);
-                value = block.getBusinessObject(true);   
+                value = message.getValue(context, factory);
+                if (value == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("There are no elements to unmarshal.  JAXBDispatch returns a null value");
+                    }
+                }
             }
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);

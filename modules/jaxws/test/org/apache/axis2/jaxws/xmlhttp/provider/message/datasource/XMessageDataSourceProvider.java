@@ -14,24 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.axis2.jaxws.xmlhttp.provider.payload.string;
+package org.apache.axis2.jaxws.xmlhttp.provider.message.datasource;
 
+import javax.activation.DataSource;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
+import javax.xml.ws.Service;
+import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.http.HTTPBinding;
 
 /**
- * Sample XML/HTTP String Provider 
+ * Sample XML/HTTP DataSource Provider 
  */
 @WebServiceProvider()
 @BindingType(HTTPBinding.HTTP_BINDING)
-public class XPayloadStringProvider implements Provider<String> {
+@ServiceMode(value=Service.Mode.MESSAGE)
+public class XMessageDataSourceProvider implements Provider<DataSource> {
 
-    public String invoke(String input) {
-        if (input.contains("NPE")) {
-            throw new NullPointerException("NPE Thrown!");
-        }
+    public DataSource invoke(DataSource input) {
         return input;
     }
 

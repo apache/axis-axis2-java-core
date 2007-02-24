@@ -42,7 +42,9 @@ import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
+import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
+import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
@@ -119,28 +121,19 @@ public class ProviderDispatcher extends JavaDispatcher{
             providerServiceMode = endpointDesc.getServiceMode();
             
             if (providerServiceMode != null && providerServiceMode == Service.Mode.MESSAGE) {
-                // For MESSAGE mode, work with the entire message, Headers and Body
-                // This is based on logic in org.apache.axis2.jaxws.client.XMLDispatch.getValueFromMessage()
                 if (providerType.equals(SOAPMessage.class)) {
                     // We can get the SOAPMessage directly from the message itself
                     if (log.isDebugEnabled()) {
                         log.debug("Provider Type is SOAPMessage.");
                         log.debug("Number Message attachments=" + message.getAttachments().size());
                     }
-                    requestParamValue = message.getAsSOAPMessage();
                 }
-                else {
-                    // For Source and String, we have to do some conversions using the block factories
-                    // This is similar to the PAYLOAD logic, except it gets the entire message as a block
-                    // rather than just the body block (which is what PAYLOAD mode does).
-                    // TODO: This doesn't seem right to me. We should not have an intermediate StringBlock. This is not performant. Scheu 
-                    OMElement messageOM = message.getAsOMElement();
-                    String stringValue = messageOM.toString();  
-                    QName soapEnvQname = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Envelope");
-                    XMLStringBlockFactory stringFactory = (XMLStringBlockFactory) FactoryRegistry.getFactory(XMLStringBlockFactory.class);
-                    Block stringBlock = stringFactory.createFrom(stringValue, null, soapEnvQname);   
-                    Block messageBlock = factory.createFrom(stringBlock, null);
-                    requestParamValue = messageBlock.getBusinessObject(true);
+                
+                requestParamValue = message.getValue(null, factory);
+                if (requestParamValue == null) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("There are no elements to unmarshal.  ProviderDispatch will pass a null as input");
+                    }
                 }
             }
             else {

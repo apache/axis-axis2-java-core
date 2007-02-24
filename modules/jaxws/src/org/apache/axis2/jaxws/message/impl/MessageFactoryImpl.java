@@ -25,6 +25,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -52,9 +53,16 @@ public class MessageFactoryImpl implements MessageFactory {
 	 * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(javax.xml.stream.XMLStreamReader)
 	 */
 	public Message createFrom(XMLStreamReader reader, Protocol protocol) throws XMLStreamException, WebServiceException {
-		StAXSOAPModelBuilder builder = new StAXSOAPModelBuilder(reader, null);  // Pass null has the version to trigger autodetection
-		SOAPEnvelope omEnvelope = builder.getSOAPEnvelope();
-		return createFrom(omEnvelope, protocol);
+        StAXOMBuilder builder;
+        if (protocol == Protocol.rest) {
+            // Build a normal OM tree
+            builder = new StAXOMBuilder(reader);
+        } else {
+            // Build a SOAP OM tree
+            builder = new StAXSOAPModelBuilder(reader, null);  // Pass null as the version to trigger autodetection
+        }
+        OMElement omElement = builder.getDocumentElement();
+		return createFrom(omElement, protocol);
 	}
 
 	/* (non-Javadoc)
