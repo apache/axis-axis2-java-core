@@ -86,6 +86,12 @@
             <artifactId>jaxb-xjc</artifactId>
             <version>2.0.2</version>
         </dependency>
+        <dependency>
+          <groupId>xalan</groupId>
+          <artifactId>xalan</artifactId>
+          <version>2.7.0</version>
+          <scope>provided</scope>
+        </dependency>
 		<dependency>
 		  <groupId>javax.servlet</groupId>
 		  <artifactId>servlet-api</artifactId>
@@ -803,8 +809,8 @@
   		<inherited>true</inherited>
   		<configuration>
   			<skip>false</skip>
-  			<!-- Enable the next 2 lines if you want to attach a debugger
   			<forkMode>pertest</forkMode>
+  			<!-- Enable the next 2 lines if you want to attach a debugger
   			<argLine>-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5006</argLine>-->
   			<includes>
            	 <include>**/*Test.java</include>
