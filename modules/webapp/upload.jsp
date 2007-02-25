@@ -64,4 +64,4 @@
 <p>Hot deployment of new service archives is <%=request.getAttribute("hotDeployment") %></p>
 <p>Hot update of existing service archives is <%=request.getAttribute("hotUpdate") %></p>
 </blockquote>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="include/adminfooter.inc"/>

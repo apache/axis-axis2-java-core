@@ -153,4 +153,4 @@
 %> No services listed! Try hitting refresh. <%
     }
 %>
-<jsp:include page="include/adminfooter.jsp" />
+<jsp:include page="include/adminfooter.inc" />

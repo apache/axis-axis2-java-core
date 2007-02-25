@@ -102,7 +102,7 @@
 <%
   }
 %>
-<jsp:include page="include/adminfooter.jsp">
+<jsp:include page="include/adminfooter.inc">
 </jsp:include>
 </body>
 </html>

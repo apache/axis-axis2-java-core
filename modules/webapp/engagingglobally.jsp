@@ -67,4 +67,4 @@
 <p><font color="blue"><%=status%></font></p>
 <%
     } %>
-<jsp:include page="include/adminfooter.jsp"/>
+<jsp:include page="include/adminfooter.inc"/>

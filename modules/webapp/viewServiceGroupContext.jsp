@@ -68,4 +68,4 @@
 %> <h4>No service group context found</h4><%
     }
 %>
-<jsp:include page="include/adminfooter.jsp"></jsp:include>
+<jsp:include page="include/adminfooter.inc"></jsp:include>

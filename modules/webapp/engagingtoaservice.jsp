@@ -30,14 +30,14 @@
 %>
 <h1>Engage Module for a Service</h1>
 
-<p>To engage a module for a axis service,
+<p>To engage a module for a axis service,</p>
 
     <ol>
         <li>select the module you want to engage</li>
         <li>select the axis service you like the module to be engaged.</li>
         <li>click "Engage".</li>
     </ol>
-</p>
+
 <form method="get" name="selectModuleForm" action="axis2-admin/engageToService">
     <table border="0" width="100%" cellspacing="1" cellpadding="1">
         <tr>
@@ -139,5 +139,5 @@
         </tr>
     </table>
 </form>
-<jsp:include page="include/adminfooter.jsp"></jsp:include>
+<jsp:include page="include/adminfooter.inc"></jsp:include>
 
