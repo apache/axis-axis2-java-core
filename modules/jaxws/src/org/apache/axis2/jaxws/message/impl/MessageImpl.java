@@ -55,8 +55,6 @@ import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 
-import com.ibm.xslt4j.bcel.generic.RETURN;
-
 /**
  * MessageImpl
  * A Message is an XML part + Attachments.
