@@ -78,6 +78,8 @@ import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.datasource.DispatchXM
 import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.jaxb.DispatchXPayloadJAXB;
 //import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source.DispatchXMessageSource;
 //import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source.DispatchXPayloadSource;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source.DispatchXMessageSource;
+import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.source.DispatchXPayloadSource;
 import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string.DispatchXMessageString;
 import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.string.DispatchXPayloadString;
 import org.apache.log4j.BasicConfigurator;
@@ -167,8 +169,8 @@ public class JAXWSTest extends TestCase {
         
         suite.addTestSuite(DispatchXPayloadString.class);
         suite.addTestSuite(DispatchXMessageString.class);
-//        suite.addTestSuite(DispatchXPayloadSource.class);
-//        suite.addTestSuite(DispatchXMessageSource.class);
+        suite.addTestSuite(DispatchXPayloadSource.class);
+        suite.addTestSuite(DispatchXMessageSource.class);
         suite.addTestSuite(DispatchXPayloadJAXB.class);
         suite.addTestSuite(DispatchXMessageDataSource.class);
         
