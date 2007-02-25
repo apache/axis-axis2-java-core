@@ -31,6 +31,7 @@ import org.apache.axis2.transport.http.SimpleHTTPServer;
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.ServerSocket;
 
 /**
  * 
@@ -39,8 +40,6 @@ public class UtilServer {
     private static int count = 0;
 
     private static SimpleHTTPServer receiver;
-
-    public static final int TESTING_PORT = 5555;
 
     public static synchronized void deployService(AxisService service) throws AxisFault {
         receiver.getConfigurationContext().getAxisConfiguration().addService(service);
@@ -62,14 +61,16 @@ public class UtilServer {
         start(org.apache.axis2.Constants.TESTING_REPOSITORY);
     }
 
-    public static synchronized void start(String repository) throws Exception {
+    public static synchronized int start(String repository) throws Exception {
+        int testingPort = 0;
         if (count == 0) {
             ConfigurationContext er = getNewConfigurationContext(repository);
 
-            receiver = new SimpleHTTPServer(er, TESTING_PORT);
+            testingPort = findAvailablePort();
+            receiver = new SimpleHTTPServer(er, testingPort);
 
             receiver.start();
-            System.out.print("Server started on port " + TESTING_PORT + ".....");
+            System.out.print("Server started on port " + testingPort + ".....");
 
             try {
                 Thread.sleep(2000);
@@ -79,6 +80,7 @@ public class UtilServer {
 
         }
         count++;
+        return testingPort;
     }
 
     public static ConfigurationContext getNewConfigurationContext(String repository)
@@ -146,4 +148,14 @@ public class UtilServer {
                 .getServiceContext(service);
     }
 
+    protected static int findAvailablePort() {
+        try {
+            ServerSocket ss = new ServerSocket(0);
+            int result = ss.getLocalPort();
+            ss.close();
+            return result;
+        } catch (Exception e) {
+            return 5555;
+        }
+    }
 }

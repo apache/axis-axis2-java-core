@@ -51,13 +51,7 @@ import java.util.Iterator;
 
 public class IntegrationTest extends TestCase {
 
-    private static final String ADDRESS = "http://127.0.0.1:" +
-                                          (UtilServer.TESTING_PORT) +
-                                          "/axis2/services/Echo";
-//    private static final String ADDRESS = "http://127.0.0.1:8081" +
-//                                          "/axis2/services/Echo";
-    public static final EndpointReference TARGET_EPR = new EndpointReference(ADDRESS);
-
+    static int port;
     public static final QName SERVICE_NAME = new QName("Echo");
     public static final QName OPERATION_NAME = new QName("echo");
 
@@ -67,10 +61,16 @@ public class IntegrationTest extends TestCase {
         super(name);
     }
 
+    protected static String getAddress() {
+        return "http://127.0.0.1:" +
+                port +
+                "/axis2/services/Echo";
+    }
+
     public static Test suite() {
         return new TestSetup(new TestSuite(IntegrationTest.class)) {
             public void setUp() throws Exception {
-                UtilServer.start(SAAJ_REPO);
+                port = UtilServer.start(SAAJ_REPO);
                 Parameter eneblemtom = new Parameter("enableMTOM","true");
                 UtilServer.getConfigurationContext().getAxisConfiguration().addParameter(eneblemtom);
             }
@@ -102,7 +102,7 @@ public class IntegrationTest extends TestCase {
             createSimpleSOAPPart(request);
 
             SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
-            SOAPMessage response = sCon.call(request, ADDRESS);
+            SOAPMessage response = sCon.call(request, getAddress());
             assertFalse(response.getAttachments().hasNext());
             assertEquals(0, response.countAttachments());
 
@@ -156,7 +156,7 @@ public class IntegrationTest extends TestCase {
         request.addAttachmentPart(jpegAttach);
 
         SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
-        SOAPMessage response = sCon.call(request, ADDRESS);
+        SOAPMessage response = sCon.call(request, getAddress());
 
         int attachmentCount = response.countAttachments();
         assertTrue(attachmentCount == 2);
@@ -213,7 +213,7 @@ public class IntegrationTest extends TestCase {
         
 
         SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
-        SOAPMessage response = sCon.call(request, ADDRESS);
+        SOAPMessage response = sCon.call(request, getAddress());
 
         int attachmentCount = response.countAttachments();
         assertTrue(attachmentCount == 2);
