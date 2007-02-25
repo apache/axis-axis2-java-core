@@ -1,8 +1,8 @@
 package org.apache.axis2.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ArrayList;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *

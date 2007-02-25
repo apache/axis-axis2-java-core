@@ -30,16 +30,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
-
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.UTFDataFormatException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,8 +49,7 @@ import java.util.Set;
  * Provides functions for saving and restoring an
  * object's state.
  */
-public class ObjectStateUtils 
-{
+public class ObjectStateUtils {
     /*
      * setup for logging
      */
@@ -100,7 +95,7 @@ public class ObjectStateUtils
 
     /**
      * Write a string to the specified output stream.
-     * <P>
+     * <p/>
      * The format of the information written to the output stream is:
      * <BOLD>Non-Null String</BOLD>
      * <LI> UTF     - class name string 
@@ -108,27 +103,24 @@ public class ObjectStateUtils
      * <LI> int     - number of string sections
      * <LI> int     - byte buffer size
      * <LI> bytes(UTF) - string data
-     * <P>
+     * <p/>
      * <BOLD>Null String</BOLD>
      * <LI> UTF     - description
      * <LI> boolean - empty flag
-     * <P>
+     * <p/>
      * 
      * @param out    The output stream
      * @param str    The string to write
      * @param desc   A text description to use for logging
-     * @exception IOException
-     *                   Exception
+     * @throws IOException Exception
      */
-    public static void writeString(ObjectOutput out, String str, String desc) throws IOException
-    {
+    public static void writeString(ObjectOutput out, String str, String desc) throws IOException {
         // The total number of bytes needed to represent all 
         // the characters of a string is calculated when the string
         // is serialized. If this number is larger than 65535 (ie, 64 KB)
         // then a java.io.UTFDataFormatException is thrown 
 
-        if (str != null)
-        {
+        if (str != null) {
             String str_desc = str.getClass().getName();
             // this string is expected to fit the writeUTF limitations
             out.writeUTF(str_desc);
@@ -173,15 +165,12 @@ public class ObjectStateUtils
             outBuffer.close();
 
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:writeString(): ACTIVE string: str_desc ["+str_desc+"]    string ["+str+"]   desc ["+desc+"]   output byte buffer size ["+outSize+"]");
                 log.trace("ObjectStateUtils:writeString(): ACTIVE string: outBuffer ["+outBuffer.toString()+"]");
             }
 
-        }
-        else
-        {
+        } else {
             // this string is expected to fit the writeUTF limitations
             out.writeUTF(desc);
 
@@ -201,7 +190,7 @@ public class ObjectStateUtils
     /**
      * Read a string from the specified input stream. Returns null if no string
      * is available.
-     * <P>
+     * <p/>
      * The format of the information to be read from the input stream should be
      * <BOLD>Non-Null String</BOLD>
      * <LI> UTF     - class name string 
@@ -209,22 +198,19 @@ public class ObjectStateUtils
      * <LI> int     - number of string sections
      * <LI> int     - byte buffer size
      * <LI> bytes(UTF) - string data
-     * <P>
+     * <p/>
      * <BOLD>Null String</BOLD>
      * <LI> UTF     - description
      * <LI> boolean - empty flag
-     * <P>
+     * <p/>
      * 
      * @param in     The input stream
      * @param desc   A text description to use for logging
-     * 
      * @return The string or null, if not available
-     * 
-     * @exception IOException
-     * @exception ClassNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public static String readString(ObjectInput in, String desc) throws IOException, ClassNotFoundException 
-    {
+    public static String readString(ObjectInput in, String desc) throws IOException, ClassNotFoundException {
         String str = null;
 
         // get the marker
@@ -233,16 +219,13 @@ public class ObjectStateUtils
         // get the flag
         boolean isActive = in.readBoolean();
 
-        if (isActive == ACTIVE_OBJECT)
-        {
+        if (isActive == ACTIVE_OBJECT) {
             // then should have one or more sections of the string to get
             int numberStringSections = in.readInt();
 
-            if (numberStringSections > 1)
-            {
+            if (numberStringSections > 1) {
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:readString(): ACTIVE string: the ["+desc+"] string with saved description ["+str_desc+"] has ["+numberStringSections+"] sections");
                 }
 
@@ -252,16 +235,13 @@ public class ObjectStateUtils
 
                 StringBuffer sbuff = new StringBuffer();
 
-                for (int k=0; k<numberStringSections; k++)
-                {
+                for (int k = 0; k < numberStringSections; k++) {
                     String section = in.readUTF();
                     sbuff.append(section);
                 }
 
                 str = sbuff.toString();
-            }
-            else
-            {
+            } else {
                 // one string section
 
                 // get the size of the string in bytes
@@ -273,13 +253,11 @@ public class ObjectStateUtils
                 int bytesRead = in.read(buffer, 0, bufSize);
 
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:readString(): ACTIVE string: str_desc ["+str_desc+"]    bufSize ["+bufSize+"]   bytesRead ["+bytesRead+"]   desc ["+desc+"]");
                 }
 
-                if (bytesRead > 0)
-                {
+                if (bytesRead > 0) {
                     // -------------------------------------------------------------
                     // notes: there is some problem with the writeUTF(str) 
                     //        the ObjectOutputStream is getting the UTF string
@@ -309,13 +287,11 @@ public class ObjectStateUtils
         }
 
         String value = "null";
-        if (str != null)
-        {
+        if (str != null) {
             value = str;
         }
 
-        if (log.isTraceEnabled())
-        {
+        if (log.isTraceEnabled()) {
             log.trace("ObjectStateUtils:readString(): ["+desc+"]  returning  ["+value+"]  for  saved ["+str_desc+"]");
         }
 
@@ -323,35 +299,31 @@ public class ObjectStateUtils
     }
 
 
-
     /**
      * Write an object to the specified output stream.
-     * <P>
+     * <p/>
      * The format of the information written to the output stream is
-     * <P>
+     * <p/>
      * <BOLD>Non-Null Object</BOLD>
      * <LI> UTF     - class name string 
      * <LI> boolean - active flag
      * <LI> object  - object if no error 
      * <LI> LAST_ENTRY marker 
-     * <P>
+     * <p/>
      * <BOLD>Null Object</BOLD>
      * <LI> UTF     - description
      * <LI> boolean - empty flag
-     * <P>
+     * <p/>
      * 
      * @param out    The output stream
      * @param obj    The object to write
      * @param desc   A text description to use for logging
-     * @exception IOException
-     *                   Exception
+     * @throws IOException Exception
      */
-    public static void writeObject(ObjectOutput out, Object obj, String desc) throws IOException
-    {
+    public static void writeObject(ObjectOutput out, Object obj, String desc) throws IOException {
         IOException returned_exception = null;
 
-        if (obj != null)
-        {
+        if (obj != null) {
             String objClassName = obj.getClass().getName();
             String fullDesc     = desc +":"+ objClassName;
             // this string is expected to fit the writeUTF limitations
@@ -367,58 +339,48 @@ public class ObjectStateUtils
 
             boolean  canWrite = false;
 
-            try
-            {
+            try {
                 // write the object to the test buffer
                 test_objOut.writeObject(obj);
                 canWrite = true;
             }
-            catch (NotSerializableException nse2)
-            {
+            catch (NotSerializableException nse2) {
                 returned_exception = nse2;
                 // only trace the first time a particular class causes this exception
                 traceNotSerializable(obj, nse2, desc, "ObjectStateUtils.writeObject()", OBJ_SAVE_PROBLEM);
             }
-            catch (IOException exc2)
-            {
+            catch (IOException exc2) {
                 // use this as a generic point for exceptions for the test output stream
                 returned_exception = exc2;
 
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:writeObject(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc2.getClass().getName()+" : "+exc2.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc2);
                     //exc2.printStackTrace();
                 }
             }
 
-            if (canWrite)
-            {
+            if (canWrite) {
                 // write the object to the real output stream
-                try
-                {
+                try {
                     out.writeObject(obj);
 
                     // trace point
-                    if (log.isTraceEnabled())
-                    {
+                    if (log.isTraceEnabled()) {
                         log.trace("ObjectStateUtils:writeObject(): Object ["+objClassName+"]  desc ["+desc+"]");
                     }
                 }
-                catch (NotSerializableException nse)
-                {
+                catch (NotSerializableException nse) {
                     returned_exception = nse;
                     // only trace the first time a particular class causes this exception
                     traceNotSerializable(obj, nse, desc, "ObjectStateUtils.writeObject()", OBJ_SAVE_PROBLEM);
                 }
-                catch (IOException exc)
-                {
+                catch (IOException exc) {
                     // use this as a generic point for exceptions for the test output stream
                     returned_exception = exc;
 
                     // trace point
-                    if (log.isTraceEnabled())
-                    {
+                    if (log.isTraceEnabled()) {
                         log.trace("ObjectStateUtils:writeObject(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
                         //exc.printStackTrace();
                     }
@@ -431,23 +393,19 @@ public class ObjectStateUtils
             test_outBuffer.close();
             test_objOut.close();
 
-            if (returned_exception != null)
-            {
+            if (returned_exception != null) {
                 // let the caller know that there was a problem
                 // note the integrity of the real output stream has been preserved
                 throw returned_exception;
             }
-        }
-        else
-        {
+        } else {
             // this string is expected to fit the writeUTF limitations
             out.writeUTF(desc);
 
             out.writeBoolean(EMPTY_OBJECT);
 
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:writeObject(): EMPTY Object ["+desc+"]  ");
             }
         }
@@ -457,48 +415,41 @@ public class ObjectStateUtils
     /**
      * Read an object from the specified input stream. Returns null if no object
      * is available.
-     * <P>
+     * <p/>
      * The format of the information to be read from the input stream should be
      * <BOLD>Non-Null Object</BOLD>
      * <LI> UTF     - class name string 
      * <LI> boolean - active flag
      * <LI> object  - object if no error 
      * <LI> LAST_ENTRY marker 
-     * <P>
+     * <p/>
      * <BOLD>Null Object</BOLD>
      * <LI> UTF     - description
      * <LI> boolean - empty flag
-     * <P>
+     * <p/>
      * 
      * @param in     The input stream
      * @param desc   A text description to use for logging
-     * 
      * @return The object or null, if not available
-     * 
-     * @exception IOException
-     * @exception ClassNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public static Object readObject(ObjectInput in, String desc) throws IOException, ClassNotFoundException  
-    {
+    public static Object readObject(ObjectInput in, String desc) throws IOException, ClassNotFoundException {
         Object obj = null;
 
         String str_desc = in.readUTF();
 
         boolean isActive = in.readBoolean();
 
-        if (isActive == ACTIVE_OBJECT)
-        {
+        if (isActive == ACTIVE_OBJECT) {
             boolean done = false;
 
             obj = in.readObject();
 
-            if (obj != null)
-            {
-                if (obj instanceof String)
-                {
+            if (obj != null) {
+                if (obj instanceof String) {
                     String tmp = (String) obj;
-                    if (tmp.equalsIgnoreCase(LAST_ENTRY))
-                    {
+                    if (tmp.equalsIgnoreCase(LAST_ENTRY)) {
                         // this is the last entry
                         done = true;
 
@@ -509,31 +460,25 @@ public class ObjectStateUtils
             }
 
             // if we haven't got the end marker, then pull it from the stream
-            if (done == false)
-            {
+            if (done == false) {
                 Object obj2 = in.readObject();
                 
                 // verify that this is the end marker
                 boolean isConsistent = false;
 
-                if (obj2 != null)
-                {
-                    if (obj2 instanceof String)
-                    {
+                if (obj2 != null) {
+                    if (obj2 instanceof String) {
                         String tmp2 = (String) obj2;
-                        if (tmp2.equalsIgnoreCase(LAST_ENTRY))
-                        {
+                        if (tmp2.equalsIgnoreCase(LAST_ENTRY)) {
                             // ok
                             isConsistent = true;
                         }
                     }
                 }
 
-                if (isConsistent == false)
-                {
+                if (isConsistent == false) {
                     // trace the inconsistency
-                    if (log.isTraceEnabled())
-                    {
+                    if (log.isTraceEnabled()) {
                         log.trace("ObjectStateUtils:readObject(): Inconsistent results reading the stream for ["+desc+"]  for saved ["+str_desc+"]");
                     }
                     //System.trace.println("ObjectStateUtils:readObject(): Inconsistent results reading the stream for ["+desc+"]  ");
@@ -544,14 +489,12 @@ public class ObjectStateUtils
 
         String value = "null";
 
-        if (obj != null)
-        {
+        if (obj != null) {
             value = "("+str_desc+")" + ":" + obj.getClass().getName();
         }
 
         // trace point
-        if (log.isTraceEnabled())
-        {
+        if (log.isTraceEnabled()) {
             log.trace("ObjectStateUtils:readObject(): ["+desc+"]  returning  ["+value+"]   for saved ["+str_desc+"]");
         }
 
@@ -561,24 +504,23 @@ public class ObjectStateUtils
 
     /**
      * Write an array of objects to the specified output stream.
-     * <P>
+     * <p/>
      * The format of the information written to the output stream is
      * <LI> class name of the array
      * <LI> active or empty
      * <LI> data
-     * <P>
+     * <p/>
      * NOTE: each object in the array should implement either 
      * java.io.Serializable or java.io.Externalizable in order to be
      * saved
-     * <P>
+     * <p/>
+     *
      * @param out    The output stream
      * @param al     The ArrayList to write
      * @param desc   A text description to use for logging
-     * @exception IOException
-     *                   Exception
+     * @throws IOException Exception
      */
-    public static void writeArrayList(ObjectOutput out, ArrayList al, String desc) throws IOException
-    {
+    public static void writeArrayList(ObjectOutput out, ArrayList al, String desc) throws IOException {
         // The format of the data is
         //
         //  Non-null list:
@@ -598,20 +540,16 @@ public class ObjectStateUtils
 
         out.writeUTF(desc);
 
-        if ((al == null) || (al.isEmpty()))
-        {
+        if ((al == null) || (al.isEmpty())) {
             // handle null or empty
 
             out.writeBoolean(EMPTY_OBJECT);
 
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:writeArrayList(): EMPTY List ["+desc+"]  ");
             }
-        }
-        else
-        {
+        } else {
             // active flag
             out.writeBoolean(ACTIVE_OBJECT);
 
@@ -630,63 +568,52 @@ public class ObjectStateUtils
             // setup an iterator for the list
             Iterator i = al.iterator();
 
-            while (i.hasNext())
-            {
+            while (i.hasNext()) {
                 Object obj = i.next();
                 String tmpClassName = obj.getClass().getName();
 
                 boolean  canWrite = false;
 
-                try
-                {
+                try {
                     // write the object to the test buffer
                     test_objOut.writeObject(obj);
                     canWrite = true;
                 }
-                catch (NotSerializableException nse2)
-                {
+                catch (NotSerializableException nse2) {
                     // only trace the first time a particular class causes this exception
                     traceNotSerializable(obj, nse2, desc, "ObjectStateUtils.writeArrayList()", OBJ_SAVE_PROBLEM);
                 }
-                catch (Exception exc)
-                {
+                catch (Exception exc) {
                     // use this as a generic point for exceptions
 
                     // trace point
-                    if (log.isTraceEnabled())
-                    {
+                    if (log.isTraceEnabled()) {
                         log.trace("ObjectStateUtils:writeArrayList(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
                         //exc.printStackTrace();
                     }
                 }
 
-                if (canWrite)
-                {
+                if (canWrite) {
                     // write the object to the real output stream
-                    try
-                    {
+                    try {
                         out.writeObject(obj);
                         savedListSize++;
 
                         // trace point
-                        if (log.isTraceEnabled())
-                        {
+                        if (log.isTraceEnabled()) {
                             log.trace("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]");
                         }
 
                     }
-                    catch (NotSerializableException nse)
-                    {
+                    catch (NotSerializableException nse) {
                         // only trace the first time a particular class causes this exception
                         traceNotSerializable(obj, nse, desc, "ObjectStateUtils.writeArrayList()", OBJ_SAVE_PROBLEM);
                     }
-                    catch (Exception ex)
-                    {
+                    catch (Exception ex) {
                         // use this as a generic point for exceptions
 
                         // trace point
-                        if (log.isTraceEnabled())
-                        {
+                        if (log.isTraceEnabled()) {
                             log.trace("ObjectStateUtils:writeArrayList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM, ex);
                             //ex.printStackTrace();
                         }
@@ -704,8 +631,7 @@ public class ObjectStateUtils
             out.writeInt(savedListSize);
 
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:writeArrayList(): List ["+desc+"]   members saved ["+savedListSize+"]");
             }
 
@@ -719,27 +645,24 @@ public class ObjectStateUtils
     /**
      * Reads an array of objects from the specified input stream.  Returns
      * null if no array is available.
-     * <P>
+     * <p/>
      * The format of the information to be read from the input stream should be
      * <LI> class name
      * <LI> active or empty
      * <LI> data
-     * <P>
+     * <p/>
      * NOTE: each object in the array should implement either 
      * java.io.Serializable or java.io.Externalizable in order to be
      * saved
-     * <P>
+     * <p/>
      * 
      * @param in     The input stream
      * @param desc   A text description to use for logging
-     * 
      * @return The ArrayList or null, if not available
-     * 
-     * @exception IOException
-     * @exception ClassNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public static ArrayList readArrayList(ObjectInput in, String desc) throws IOException
-    {
+    public static ArrayList readArrayList(ObjectInput in, String desc) throws IOException {
         // The format of the data is
         //
         //  Non-null list:
@@ -763,8 +686,7 @@ public class ObjectStateUtils
 
         boolean isActive = in.readBoolean();
 
-        if (isActive == ACTIVE_OBJECT)
-        {
+        if (isActive == ACTIVE_OBJECT) {
             // get the expected number of entries
             int expectedListSize = in.readInt();
 
@@ -773,31 +695,25 @@ public class ObjectStateUtils
             int     count     = 0;
             Object  obj       = null;
 
-            while (keepGoing)
-            {
+            while (keepGoing) {
                 // stop when we get to the end-of-list marker
 
                 // get the object
-                try
-                {
+                try {
                     obj = in.readObject();
                     count++;
 
-                    if (obj != null)
-                    {
-                        if (obj instanceof String)
-                        {
+                    if (obj != null) {
+                        if (obj instanceof String) {
                             String tmp = (String) obj;
-                            if (tmp.equalsIgnoreCase(LAST_ENTRY))
-                            {
+                            if (tmp.equalsIgnoreCase(LAST_ENTRY)) {
                                 // this is the last entry
                                 keepGoing = false;
 
                             } //end if last entry marker
                         } // end if a String object
 
-                        if (keepGoing)
-                        {
+                        if (keepGoing) {
                             String tmpClassName = obj.getClass().getName();
 
                             // not at the end of the list so
@@ -805,31 +721,25 @@ public class ObjectStateUtils
                             list.add(obj);
 
                             // trace point
-                            if (log.isTraceEnabled())
-                            {
+                            if (log.isTraceEnabled()) {
                                 log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  index ["+count+"]  object ["+tmpClassName+"]   for saved ["+str_desc+"]");
                             }
                         }
-                    }
-                    else
-                    {
+                    } else {
                         // some other problem occurred
                         // the object to be read is null
                         // trace point
-                        if (log.isTraceEnabled())
-                        {
+                        if (log.isTraceEnabled()) {
                             log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"] ***Unexpected null object***   for saved ["+str_desc+"]");
                         }
                         keepGoing = false;
                     }
                 }
-                catch (Exception ex)
-                {
+                catch (Exception ex) {
                     // use this as a generic point for all exceptions
 
                     // trace point
-                    if (log.isTraceEnabled())
-                    {
+                    if (log.isTraceEnabled()) {
                         log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  object index ["+count+"]   for saved ["+str_desc+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM, ex);
                         //ex.printStackTrace();
                     }
@@ -842,38 +752,29 @@ public class ObjectStateUtils
             int adjustedNumberEntries = in.readInt();
 
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:readArrayList(): adjusted number of entries ["+adjustedNumberEntries+"]     for saved ["+str_desc+"] ");
             }
 
 
-            if (list.isEmpty())
-            {
+            if (list.isEmpty()) {
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]  for saved ["+str_desc+"]");
                 }
 
                 return null;
-            }
-            else
-            {
+            } else {
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [listsize="+list.size()+"]  for saved ["+str_desc+"]");
                 }
 
                 return list;
             }
-        }
-        else
-        {
+        } else {
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:readArrayList(): ["+desc+"]  returning  [null]    for saved ["+str_desc+"]");
             }
 
@@ -884,24 +785,23 @@ public class ObjectStateUtils
 
     /**
      * Write a hashmap of objects to the specified output stream.
-     * <P>
+     * <p/>
      * The format of the information written to the output stream is
      * <LI> class name of the array
      * <LI> active or empty
      * <LI> data
-     * <P>
+     * <p/>
      * NOTE: each object in the map should implement either 
      * java.io.Serializable or java.io.Externalizable in order to be
      * saved
-     * <P>
+     * <p/>
+     *
      * @param out    The output stream
      * @param map    The HashMap to write
      * @param desc   A text description to use for logging
-     * @exception IOException
-     *                   Exception
+     * @throws IOException Exception
      */
-    public static void writeHashMap(ObjectOutput out, HashMap map, String desc) throws IOException
-    {
+    public static void writeHashMap(ObjectOutput out, HashMap map, String desc) throws IOException {
         // The format of the data is
         //
         //  Non-null list:
@@ -921,20 +821,16 @@ public class ObjectStateUtils
 
         out.writeUTF(desc);
 
-        if ((map == null) || (map.isEmpty()))
-        {
+        if ((map == null) || (map.isEmpty())) {
             // handle null or empty
 
             out.writeBoolean(EMPTY_OBJECT);
 
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:writeHashMap(): EMPTY map ["+desc+"]  ");
             } 
-        }
-        else
-        {
+        } else {
             out.writeBoolean(ACTIVE_OBJECT);
 
             // the expected number of pairs in the map
@@ -951,8 +847,7 @@ public class ObjectStateUtils
             Set keyset = map.keySet();
             Iterator i = keyset.iterator();
 
-            while (i.hasNext())
-            {
+            while (i.hasNext()) {
                 // handle errors when can't access the value for the key
 
                 Object key = i.next();
@@ -960,88 +855,68 @@ public class ObjectStateUtils
 
                 boolean  canWritePair = false;
 
-                try
-                {
+                try {
                     // write the objects in pairs
                     pair_objOut.writeObject(key);
 
-                    try
-                    {
-                        if (value == null)
-                        {
+                    try {
+                        if (value == null) {
                             pair_objOut.writeObject(NULL_OBJECT);
-                        }
-                        else
-                        {
+                        } else {
                             pair_objOut.writeObject(value);
                         }
 
                         // ok, the pair can be saved so write them to our "real" buffer
                         canWritePair = true;
                     }
-                    catch (NotSerializableException nse)
-                    {
+                    catch (NotSerializableException nse) {
                         // only trace the first time a particular class causes this exception
                         traceNotSerializable(value, nse, desc, "ObjectStateUtils.writeHashMap() map value", OBJ_SAVE_PROBLEM);
                     }
-                    catch (Exception ex)
-                    {
+                    catch (Exception ex) {
                         // use this as a generic point for exceptions
 
                         // trace point
-                        if (log.isTraceEnabled())
-                        {
+                        if (log.isTraceEnabled()) {
                             log.trace("ObjectStateUtils:writeHashMap(): map value ["+value.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM, ex);
                             //ex.printStackTrace();
                         }
                     }
                 }
-                catch (NotSerializableException nse2)
-                {
+                catch (NotSerializableException nse2) {
                     // only trace the first time a particular class causes this exception
                     traceNotSerializable(key, nse2, desc, "ObjectStateUtils.writeHashMap() map key", OBJ_SAVE_PROBLEM);
                 }
-                catch (Exception exc)
-                {
+                catch (Exception exc) {
                     // use this as a generic point for exceptions
 
                     // trace point
-                    if (log.isTraceEnabled())
-                    {
+                    if (log.isTraceEnabled()) {
                         log.trace("ObjectStateUtils:writeHashMap(): map key ["+key.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
                         //exc.printStackTrace();
                     }
                 }
 
-                if (canWritePair)
-                {
-                    try
-                    {
+                if (canWritePair) {
+                    try {
                         // write the objects in pairs
                         out.writeObject(key);
 
                         // TODO: what if there is an error with the real output stream?
-                        try
-                        {
-                            if (value == null)
-                            {
+                        try {
+                            if (value == null) {
                                 out.writeObject(NULL_OBJECT);
-                            }
-                            else
-                            {
+                            } else {
                                 out.writeObject(value);
                             }
                         }
-                        catch (NotSerializableException nse3)
-                        {
+                        catch (NotSerializableException nse3) {
                             // only trace the first time a particular class causes this exception
                             traceNotSerializable(value, nse3, desc, "ObjectStateUtils.writeHashMap() map value output error", OBJ_SAVE_PROBLEM);
                         }
-                        catch (Exception excp)
-                        {
+                        catch (Exception excp) {
                             // trace point
-                            if (log.isTraceEnabled())
-                            {
+                            if (log.isTraceEnabled()) {
                                 log.trace("ObjectStateUtils:writeHashMap(): output error: map value ["+value.getClass().getName()+"]  ***Exception***  ["+excp.getClass().getName()+" : "+excp.getMessage()+"]  "+OBJ_SAVE_PROBLEM, excp);
                                 //excp.printStackTrace();
                             }
@@ -1052,19 +927,16 @@ public class ObjectStateUtils
 
                         savedListSize++;
                     }
-                    catch (NotSerializableException nse4)
-                    {
+                    catch (NotSerializableException nse4) {
                         // only trace the first time a particular class causes this exception
                         traceNotSerializable(key, nse4, desc, "ObjectStateUtils.writeHashMap() map key output error", OBJ_SAVE_PROBLEM);
                     }
-                    catch (Exception ex)
-                    {
+                    catch (Exception ex) {
                         // there was an error with the key to the real output stream
                         // so skip to the next pair
 
                         // trace point
-                        if (log.isTraceEnabled())
-                        {
+                        if (log.isTraceEnabled()) {
                             log.trace("ObjectStateUtils:writeHashMap(): output error: map key ["+key.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_SAVE_PROBLEM, ex);
                             //ex.printStackTrace();
                         }
@@ -1084,8 +956,7 @@ public class ObjectStateUtils
             out.writeInt(savedListSize);
 
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:writeHashMap(): map ["+desc+"]   members saved ["+savedListSize+"]");
             }
 
@@ -1098,27 +969,24 @@ public class ObjectStateUtils
     /**
      * Read a hashmap of objects from the specified input stream. Returns
      * null if no hashmap is available.
-     * <P>
+     * <p/>
      * The format of the information to be read from the input stream should be
      * <LI> class name
      * <LI> active or empty
      * <LI> data
-     * <P>
+     * <p/>
      * NOTE: each object in the array should implement either 
      * java.io.Serializable or java.io.Externalizable in order to be
      * saved
-     * <P>
+     * <p/>
      * 
      * @param in     The input stream
      * @param desc   A text description to use for logging
-     * 
      * @return The HashMap or null, if not available
-     * 
-     * @exception IOException
-     * @exception ClassNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public static HashMap readHashMap(ObjectInput in, String desc) throws IOException
-    {
+    public static HashMap readHashMap(ObjectInput in, String desc) throws IOException {
         // The format of the data is
         //
         //  Non-null list:
@@ -1142,8 +1010,7 @@ public class ObjectStateUtils
 
         boolean isActive = in.readBoolean();
 
-        if (isActive == ACTIVE_OBJECT)
-        {
+        if (isActive == ACTIVE_OBJECT) {
             // get the hashmap
 
             // first, get the expected number of pairs
@@ -1156,23 +1023,19 @@ public class ObjectStateUtils
             // process the object pairs
             boolean keepGoing = true;
 
-            while (keepGoing)
-            {
+            while (keepGoing) {
                 Object key = null;
                 Object value = null;
 
-                try
-                {
+                try {
 
                     key = in.readObject();
 
-                    if (key instanceof String)
-                    {
+                    if (key instanceof String) {
                         String tmpkey = (String) key;
 
                         // check to see if this is the last entry
-                        if (tmpkey.equalsIgnoreCase(LAST_ENTRY) == true)
-                        {
+                        if (tmpkey.equalsIgnoreCase(LAST_ENTRY) == true) {
                             // stop here
                             keepGoing = false;
                             break;
@@ -1186,36 +1049,29 @@ public class ObjectStateUtils
 
                     boolean keepPair = true;
 
-                    if (value instanceof String)
-                    {
+                    if (value instanceof String) {
                         String tmpvalue = (String) value;
 
                         // if the value object is not available, then
                         // don't preserve the key-value setting
-                        if (tmpvalue.equalsIgnoreCase(EMPTY_MARKER) == true)
-                        {
+                        if (tmpvalue.equalsIgnoreCase(EMPTY_MARKER) == true) {
                             // an empty value, so skip pair
                             keepPair = false;
 
                             // trace point
-                            if (log.isTraceEnabled())
-                            {
+                            if (log.isTraceEnabled()) {
                                 log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"]  will be skipped because the value object is unavailable.    For saved ["+str_desc+"]");
                             }
-                        }
-                        else if (tmpvalue.equalsIgnoreCase(NULL_OBJECT) == true)
-                        {
+                        } else if (tmpvalue.equalsIgnoreCase(NULL_OBJECT) == true) {
                             value = null;
                         }
                     }
 
-                    if (keepPair)
-                    {
+                    if (keepPair) {
                         map.put(key,value);
 
                         // trace point
-                        if (log.isTraceEnabled())
-                        {
+                        if (log.isTraceEnabled()) {
                             log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"]   for saved ["+str_desc+"]");
                         }
                     }
@@ -1223,13 +1079,11 @@ public class ObjectStateUtils
                     obtainedListSize++;
 
                 }
-                catch (Exception ex)
-                {
+                catch (Exception ex) {
                     // use this as a generic point for all exceptions
 
                     // trace point
-                    if (log.isTraceEnabled())
-                    {
+                    if (log.isTraceEnabled()) {
                         log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  object pair index ["+obtainedListSize+"]   for saved ["+str_desc+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM,ex);
                         //ex.printStackTrace();
                     }
@@ -1241,33 +1095,25 @@ public class ObjectStateUtils
             int savedListSize = in.readInt();
 
 
-            if (map.isEmpty())
-            {
+            if (map.isEmpty()) {
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]  for saved ["+str_desc+"]");
                 }
 
                 return null;
-            }
-            else
-            {
+            } else {
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [mapsize="+map.size()+"]    for saved ["+str_desc+"]");
                 }
 
                 return map;
             }
 
-        }
-        else
-        {
+        } else {
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:readHashMap(): ["+desc+"]  returning  [null]    for saved ["+str_desc+"]");
             }
 
@@ -1278,24 +1124,23 @@ public class ObjectStateUtils
 
     /**
      * Write a linked list of objects to the specified output stream.
-     * <P>
+     * <p/>
      * The format of the information written to the output stream is
      * <LI> class name of the array
      * <LI> active or empty
      * <LI> data
-     * <P>
+     * <p/>
      * NOTE: each object in the array should implement either 
      * java.io.Serializable or java.io.Externalizable in order to be
      * saved
-     * <P>
+     * <p/>
+     *
      * @param out    The output stream
      * @param list   The LinkedList to write
      * @param desc   A text description to use for logging
-     * @exception IOException
-     *                   Exception
+     * @throws IOException Exception
      */
-    public static void writeLinkedList(ObjectOutput out, LinkedList objlist, String desc) throws IOException
-    {
+    public static void writeLinkedList(ObjectOutput out, LinkedList objlist, String desc) throws IOException {
         // The format of the data is
         //
         //  Non-null list:
@@ -1315,19 +1160,15 @@ public class ObjectStateUtils
 
         out.writeUTF(desc);
 
-        if ((objlist == null) || (objlist.isEmpty()))
-        {
+        if ((objlist == null) || (objlist.isEmpty())) {
             // handle null or empty
 
             out.writeBoolean(EMPTY_OBJECT);
 
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:writeLinkedList(): EMPTY List ["+desc+"]  ");
             }
-        }
-        else
-        {
+        } else {
             // active flag
             out.writeBoolean(ACTIVE_OBJECT);
 
@@ -1346,63 +1187,52 @@ public class ObjectStateUtils
             // setup an iterator for the list
             Iterator i = objlist.iterator();
 
-            while (i.hasNext())
-            {
+            while (i.hasNext()) {
                 Object obj = i.next();
                 String tmpClassName = obj.getClass().getName();
 
                 boolean  canWrite = false;
 
-                try
-                {
+                try {
                     // write the object to the test buffer
                     test_objOut.writeObject(obj);
                     canWrite = true;
                 }
-                catch (NotSerializableException nse2)
-                {
+                catch (NotSerializableException nse2) {
                     // only trace the first time a particular class causes this exception
                     traceNotSerializable(obj, nse2, desc, "ObjectStateUtils.writeLinkedList()", OBJ_SAVE_PROBLEM);
                 }
-                catch (Exception exc)
-                {
+                catch (Exception exc) {
                     // use this as a generic point for exceptions
 
                     // trace point
-                    if (log.isTraceEnabled())
-                    {
+                    if (log.isTraceEnabled()) {
                         log.trace("ObjectStateUtils:writeLinkedList(): object["+obj.getClass().getName()+"]  ***Exception***  ["+exc.getClass().getName()+" : "+exc.getMessage()+"]  "+OBJ_SAVE_PROBLEM, exc);
                         //exc.printStackTrace();
                     }
                 }
 
-                if (canWrite)
-                {
+                if (canWrite) {
                     // write the object to the real output stream
-                    try
-                    {
+                    try {
                         out.writeObject(obj);
                         savedListSize++;
 
                         // trace point
-                        if (log.isTraceEnabled())
-                        {
+                        if (log.isTraceEnabled()) {
                             log.trace("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]");
                         }
 
                     }
-                    catch (NotSerializableException nse)
-                    {
+                    catch (NotSerializableException nse) {
                         // only trace the first time a particular class causes this exception
                         traceNotSerializable(obj, nse, desc, "ObjectStateUtils.writeLinkedList()", OBJ_SAVE_PROBLEM);
                     }
-                    catch (Exception ex)
-                    {
+                    catch (Exception ex) {
                         // use this as a generic point for exceptions
 
                         // trace point
-                        if (log.isTraceEnabled())
-                        {
+                        if (log.isTraceEnabled()) {
                             log.trace("ObjectStateUtils:writeLinkedList(): "+desc+" ["+obj.getClass().getName()+"]  ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"] "+OBJ_SAVE_PROBLEM, ex);
                             //ex.printStackTrace();
                         }
@@ -1420,8 +1250,7 @@ public class ObjectStateUtils
             out.writeInt(savedListSize);
 
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:writeLinkedList(): List ["+desc+"]   members saved ["+savedListSize+"]");
             }
 
@@ -1435,27 +1264,24 @@ public class ObjectStateUtils
     /**
      * Reads a linked list of objects from the specified input stream.  Returns
      * null if no array is available.
-     * <P>
+     * <p/>
      * The format of the information to be read from the input stream should be
      * <LI> class name
      * <LI> active or empty
      * <LI> data
-     * <P>
+     * <p/>
      * NOTE: each object in the array should implement either 
      * java.io.Serializable or java.io.Externalizable in order to be
      * saved
-     * <P>
+     * <p/>
      * 
      * @param in     The input stream
      * @param desc   A text description to use for logging
-     * 
      * @return The linked list or null, if not available
-     * 
-     * @exception IOException
-     * @exception ClassNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public static LinkedList readLinkedList(ObjectInput in, String desc) throws IOException
-    {
+    public static LinkedList readLinkedList(ObjectInput in, String desc) throws IOException {
         // The format of the data is
         //
         //  Non-null list:
@@ -1479,8 +1305,7 @@ public class ObjectStateUtils
 
         boolean isActive = in.readBoolean();
 
-        if (isActive == ACTIVE_OBJECT)
-        {
+        if (isActive == ACTIVE_OBJECT) {
             // get the expected number of entries
             int expectedListSize = in.readInt();
 
@@ -1489,31 +1314,25 @@ public class ObjectStateUtils
             int     count     = 0;
             Object  obj       = null;
 
-            while (keepGoing)
-            {
+            while (keepGoing) {
                 // stop when we get to the end-of-list marker
 
                 // get the object
-                try
-                {
+                try {
                     obj = in.readObject();
                     count++;
 
-                    if (obj != null)
-                    {
-                        if (obj instanceof String)
-                        {
+                    if (obj != null) {
+                        if (obj instanceof String) {
                             String tmp = (String) obj;
-                            if (tmp.equalsIgnoreCase(LAST_ENTRY))
-                            {
+                            if (tmp.equalsIgnoreCase(LAST_ENTRY)) {
                                 // this is the last entry
                                 keepGoing = false;
 
                             } //end if last entry marker
                         } // end if a String object
 
-                        if (keepGoing)
-                        {
+                        if (keepGoing) {
                             String tmpClassName = obj.getClass().getName();
 
                             // not at the end of the list so
@@ -1521,31 +1340,25 @@ public class ObjectStateUtils
                             list.add(obj);
 
                             // trace point
-                            if (log.isTraceEnabled())
-                            {
+                            if (log.isTraceEnabled()) {
                                 log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  index ["+count+"]  object ["+tmpClassName+"]   for saved ["+str_desc+"]");
                             }
                         }
-                    }
-                    else
-                    {
+                    } else {
                         // some other problem occurred
                         // the object to be read is null
                         // trace point
-                        if (log.isTraceEnabled())
-                        {
+                        if (log.isTraceEnabled()) {
                             log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"] ***Unexpected null object***   for saved ["+str_desc+"]");
                         }
                         keepGoing = false;
                     }
                 }
-                catch (Exception ex)
-                {
+                catch (Exception ex) {
                     // use this as a generic point for all exceptions
 
                     // trace point
-                    if (log.isTraceEnabled())
-                    {
+                    if (log.isTraceEnabled()) {
                         log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  object index ["+count+"]   for saved ["+str_desc+"] ***Exception***  ["+ex.getClass().getName()+" : "+ex.getMessage()+"]  "+OBJ_RESTORE_PROBLEM,ex);
                         //ex.printStackTrace();
                     }
@@ -1558,38 +1371,29 @@ public class ObjectStateUtils
             int adjustedNumberEntries = in.readInt();
 
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:readLinkedList(): adjusted number of entries ["+adjustedNumberEntries+"]     for saved ["+str_desc+"] ");
             }
 
 
-            if (list.isEmpty())
-            {
+            if (list.isEmpty()) {
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]  for saved ["+str_desc+"]");
                 }
 
                 return null;
-            }
-            else
-            {
+            } else {
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [listsize="+list.size()+"]   for saved ["+str_desc+"]");
                 }
 
                 return list;
             }
-        }
-        else
-        {
+        } else {
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:readLinkedList(): ["+desc+"]  returning  [null]   for saved ["+str_desc+"]");
             }
 
@@ -1607,37 +1411,30 @@ public class ObjectStateUtils
      * Find the AxisOperation object that matches the criteria
      * 
      * @param axisConfig The AxisConfiguration object
-     * @param opClassName
-     *                   the class name string for the target object
+     * @param opClassName the class name string for the target object
      *                   (could be a derived class)
      * @param opQName    the name associated with the operation
-     * 
      * @return the AxisOperation object that matches the given criteria
      */
-    public static AxisOperation findOperation(AxisConfiguration axisConfig, String opClassName, QName opQName)
-    {
+    public static AxisOperation findOperation(AxisConfiguration axisConfig, String opClassName, QName opQName) {
         HashMap services = axisConfig.getServices();
 
         Iterator its = services.values().iterator();
 
-        while (its.hasNext())
-        {
+        while (its.hasNext()) {
             AxisService service = (AxisService)its.next();
 
             Iterator ito = service.getOperations();
 
-            while (ito.hasNext())
-            {
+            while (ito.hasNext()) {
                 AxisOperation operation = (AxisOperation)ito.next();
 
                 String tmpOpName  = operation.getClass().getName();
                 QName  tmpOpQName = operation.getName();
 
-                if ((tmpOpName.equals(opClassName)) && (tmpOpQName.equals(opQName)))
-                {
+                if ((tmpOpName.equals(opClassName)) && (tmpOpQName.equals(opQName))) {
                     // trace point
-                    if (log.isTraceEnabled())
-                    {
+                    if (log.isTraceEnabled()) {
                         log.trace("ObjectStateUtils:findOperation(axisCfg): returning  ["+opClassName+"]   ["+opQName.toString()+"]");
                     }
 
@@ -1647,8 +1444,7 @@ public class ObjectStateUtils
         }
 
         // trace point
-        if (log.isTraceEnabled())
-        {
+        if (log.isTraceEnabled()) {
             log.trace("ObjectStateUtils:findOperation(axisCfg): ["+opClassName+"]   ["+opQName.toString()+"]  returning  [null]");
         }
 
@@ -1660,34 +1456,27 @@ public class ObjectStateUtils
      * Find the AxisOperation object that matches the criteria
      * 
      * @param service    The AxisService object
-     * @param opClassName
-     *                   The class name string for the target object
+     * @param opClassName The class name string for the target object
      *                   (could be a derived class)
      * @param opQName    the name associated with the operation
-     * 
      * @return the AxisOperation object that matches the given criteria
      */
-    public static AxisOperation findOperation(AxisService service, String opClassName, QName opQName)
-    {
-        if (service == null)
-        {
+    public static AxisOperation findOperation(AxisService service, String opClassName, QName opQName) {
+        if (service == null) {
             return null;
         }
 
         Iterator ito = service.getOperations();
 
-        while (ito.hasNext())
-        {
+        while (ito.hasNext()) {
             AxisOperation operation = (AxisOperation)ito.next();
 
             String tmpOpName  = operation.getClass().getName();
             QName  tmpOpQName = operation.getName();
 
-            if ((tmpOpName.equals(opClassName)) && (tmpOpQName.equals(opQName)))
-            {
+            if ((tmpOpName.equals(opClassName)) && (tmpOpQName.equals(opQName))) {
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:findOperation(service): returning  ["+opClassName+"]   ["+opQName.toString()+"]");
                 }
 
@@ -1696,8 +1485,7 @@ public class ObjectStateUtils
         }
 
         // trace point
-        if (log.isTraceEnabled())
-        {
+        if (log.isTraceEnabled()) {
             log.trace("ObjectStateUtils:findOperation(service): ["+opClassName+"]   ["+opQName.toString()+"]  returning  [null]");
         }
 
@@ -1709,32 +1497,25 @@ public class ObjectStateUtils
      * Find the AxisService object that matches the criteria
      * 
      * @param axisConfig The AxisConfiguration object
-     * @param serviceClassName
-     *                   the class name string for the target object
+     * @param serviceClassName the class name string for the target object
      *                   (could be a derived class)
-     * @param serviceName
-     *                   the name associated with the service
-     *
+     * @param serviceName      the name associated with the service
      * @return the AxisService object that matches the criteria
      */
-    public static AxisService findService(AxisConfiguration axisConfig, String serviceClassName, String serviceName)
-    {
+    public static AxisService findService(AxisConfiguration axisConfig, String serviceClassName, String serviceName) {
         HashMap services = axisConfig.getServices();
 
         Iterator its = services.values().iterator();
 
-        while (its.hasNext())
-        {
+        while (its.hasNext()) {
             AxisService service = (AxisService)its.next();
 
             String tmpServClassName = service.getClass().getName();
             String tmpServName      = service.getName();
 
-            if ((tmpServClassName.equals(serviceClassName)) && (tmpServName.equals(serviceName)))
-            {
+            if ((tmpServClassName.equals(serviceClassName)) && (tmpServName.equals(serviceName))) {
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:findService(): returning  ["+serviceClassName+"]   ["+serviceName+"]");
                 }
 
@@ -1743,8 +1524,7 @@ public class ObjectStateUtils
         }
 
         // trace point
-        if (log.isTraceEnabled())
-        {
+        if (log.isTraceEnabled()) {
             log.trace("ObjectStateUtils:findService(): ["+serviceClassName+"]   ["+serviceName+"]  returning  [null]");
         }
 
@@ -1753,50 +1533,40 @@ public class ObjectStateUtils
 
     /**
      * Find the AxisServiceGroup object that matches the criteria
-     * 
+     * <p/>
      * <B>Note<B> the saved service group meta information may not
      * match up with any of the serviceGroups that
      * are in the current AxisConfiguration object.
      * 
      * @param axisConfig The AxisConfiguration object
-     * @param serviceGrpClassName
-     *                   the class name string for the target object
+     * @param serviceGrpClassName the class name string for the target object
      *                   (could be a derived class)
-     * @param serviceGrpName
-     *                   the name associated with the service group
+     * @param serviceGrpName      the name associated with the service group
      * @return the AxisServiceGroup object that matches the criteria
      */
-    public static AxisServiceGroup findServiceGroup(AxisConfiguration axisConfig, String serviceGrpClassName, String serviceGrpName)
-    {
+    public static AxisServiceGroup findServiceGroup(AxisConfiguration axisConfig, String serviceGrpClassName, String serviceGrpName) {
         Iterator its = axisConfig.getServiceGroups();
 
-        while (its.hasNext())
-        {
+        while (its.hasNext()) {
             AxisServiceGroup serviceGroup = (AxisServiceGroup)its.next();
 
             String tmpSGClassName = serviceGroup.getClass().getName();
             String tmpSGName      = serviceGroup.getServiceGroupName();
 
-            if (tmpSGClassName.equals(serviceGrpClassName))
-            {
+            if (tmpSGClassName.equals(serviceGrpClassName)) {
                 boolean found = false;
 
                 // the serviceGroupName can be null, so either both the 
                 // service group names are null or they match
-                if ((tmpSGName == null) && (serviceGrpName == null))
-                {
+                if ((tmpSGName == null) && (serviceGrpName == null)) {
                     found = true;
-                }
-                else if ((tmpSGName != null) && (tmpSGName.equals(serviceGrpName)))
-                {
+                } else if ((tmpSGName != null) && (tmpSGName.equals(serviceGrpName))) {
                     found = true;
                 }
 
-                if (found)
-                {
+                if (found) {
                     // trace point
-                    if (log.isTraceEnabled())
-                    {
+                    if (log.isTraceEnabled()) {
                         log.trace("ObjectStateUtils:findServiceGroup(): returning  ["+serviceGrpClassName+"]   ["+serviceGrpName+"]");
                     }
 
@@ -1806,8 +1576,7 @@ public class ObjectStateUtils
         }
 
         // trace point
-        if (log.isTraceEnabled())
-        {
+        if (log.isTraceEnabled()) {
             log.trace("ObjectStateUtils:findServiceGroup(): ["+serviceGrpClassName+"]   ["+serviceGrpName+"]  returning  [null]");
         }
 
@@ -1821,11 +1590,9 @@ public class ObjectStateUtils
      * @param op             The AxisOperation object
      * @param msgName        The name associated with the message
      * @param msgElementName The name associated with the message element
-     * 
      * @return the AxisMessage object that matches the given criteria
      */
-    public static AxisMessage findMessage(AxisOperation op, String msgName, String msgElementName)
-    {
+    public static AxisMessage findMessage(AxisOperation op, String msgName, String msgElementName) {
         // Several kinds of AxisMessages can be associated with a particular 
         // AxisOperation.  The kinds of AxisMessages that are typically
         // accessible are associated with "in" and "out".  
@@ -1833,23 +1600,19 @@ public class ObjectStateUtils
         // type of AxisOperation can have its own mix of AxisMessages
         // depending on the style of message exchange pattern (mep)
 
-        if (op == null)
-        {
+        if (op == null) {
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:findMessage(): ["+msgName+"]  ["+msgElementName+"] returning  [null] - no AxisOperation");
             }
 
             return null;
         }
 
-        if (msgName == null)
-        {
+        if (msgName == null) {
             // nothing to match with, expect to match against a name
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:findMessage(): ["+msgName+"]  ["+msgElementName+"] returning  [null] - message name is not set");
             }
 
@@ -1864,22 +1627,18 @@ public class ObjectStateUtils
         // first try the "out" message
         //-------------------------------------
         AxisMessage out = null;
-        try
-        {
+        try {
             out = op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             // just absorb the exception
         }
 
-        if (out != null)
-        {
+        if (out != null) {
             tmpName = out.getName();
 
             QName tmpQout = out.getElementQName();
-            if (tmpQout != null)
-            {
+            if (tmpQout != null) {
                 tmpElementName = tmpQout.toString();
             }
         }
@@ -1888,11 +1647,9 @@ public class ObjectStateUtils
 
         boolean matching = matchMessageNames(tmpName, tmpElementName, msgName, msgElementName);
 
-        if (matching)
-        {
+        if (matching) {
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:findMessage(): returning OUT message  ["+msgName+"]  ["+msgElementName+"] ");
             }
 
@@ -1903,27 +1660,21 @@ public class ObjectStateUtils
         // next, try the "in" message 
         //-------------------------------------
         AxisMessage in = null;
-        try
-        {
+        try {
             in = op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             // just absorb the exception
         }
 
-        if (in != null)
-        {
+        if (in != null) {
             tmpName = in.getName();
 
             QName tmpQin = in.getElementQName();
-            if (tmpQin != null)
-            {
+            if (tmpQin != null) {
                 tmpElementName = tmpQin.toString();
             }
-        }
-        else
-        {
+        } else {
             tmpName        = null;
             tmpElementName = null;
         }
@@ -1932,11 +1683,9 @@ public class ObjectStateUtils
 
         matching = matchMessageNames(tmpName, tmpElementName, msgName, msgElementName);
 
-        if (matching)
-        {
+        if (matching) {
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:findMessage(): returning IN message ["+msgName+"]  ["+msgElementName+"] ");
             }
 
@@ -1946,8 +1695,7 @@ public class ObjectStateUtils
         // if we got here, then no match was found
 
         // trace point
-        if (log.isTraceEnabled())
-        {
+        if (log.isTraceEnabled()) {
             log.trace("ObjectStateUtils:findMessage(): ["+msgName+"]  ["+msgElementName+"] returning  [null]");
         }
 
@@ -1962,40 +1710,29 @@ public class ObjectStateUtils
      * be either null or non-null.
      * 
      * @param name1  The name for the first message
-     * @param elementName1
-     *               The element name for the first message
+     * @param elementName1 The element name for the first message
      * @param name2  The name for the second message
-     * @param elementName2
-     *               The element name for the second message
+     * @param elementName2 The element name for the second message
      * @return TRUE if there's a match,
      *         FALSE otherwise
      */
-    private static boolean matchMessageNames(String name1, String elementName1, String name2, String elementName2)
-    {
+    private static boolean matchMessageNames(String name1, String elementName1, String name2, String elementName2) {
         // the name for the message must exist
-        if ((name1 != null) && (name2 != null) && (name1.equals(name2)))
-        {
+        if ((name1 != null) && (name2 != null) && (name1.equals(name2))) {
             // there's a match on the name associated with the message object
 
             // element names need to match, including being null
-            if ((elementName1 == null) && (elementName2 == null))
-            {
+            if ((elementName1 == null) && (elementName2 == null)) {
                 // there's a match for the nulls
                 return true;
-            }
-            else if ((elementName1 != null) && (elementName2 != null) && (elementName1.equals(elementName2)))
-            {
+            } else if ((elementName1 != null) && (elementName2 != null) && (elementName1.equals(elementName2))) {
                 // there's a match for the element names
                 return true;
-            }
-            else
-            {
+            } else {
                 // there's some mismatch
                 return false;
             }
-        }
-        else
-        {
+        } else {
             // either a message name is null or the names don't match
             return false;
         }
@@ -2006,10 +1743,8 @@ public class ObjectStateUtils
      * Find the Handler object that matches the criteria
      * 
      * @param existingHandlers The list of existing handlers and phases
-     * @param handlerClassName
-     *                   the class name string for the target object
+     * @param handlerClassName the class name string for the target object
      *                   (could be a derived class)
-     *
      * @return the Handler object that matches the criteria
      */
     public static Object findHandler(ArrayList existingHandlers, MetaDataEntry metaDataEntry) //String handlerClassName)
@@ -2020,19 +1755,15 @@ public class ObjectStateUtils
         String handlerClassName = metaDataEntry.getClassName();
         String qNameAsString = metaDataEntry.getQNameAsString();
         
-        for (int i=0; i < existingHandlers.size(); i++)
-        {
-            if (existingHandlers.get(i) != null)
-            {
+        for (int i = 0; i < existingHandlers.size(); i++) {
+            if (existingHandlers.get(i) != null) {
                 String tmpClassName = existingHandlers.get(i).getClass().getName();
                 String tmpName      = ((Handler)existingHandlers.get(i)).getName().toString();
 
                 if ( (tmpClassName.equals(handlerClassName))
-                   && (tmpName.equals(qNameAsString)))
-                {
+                        && (tmpName.equals(qNameAsString))) {
                     // trace point
-                    if (log.isTraceEnabled())
-                    {
+                    if (log.isTraceEnabled()) {
                         log.trace(title+" ["+handlerClassName+"]  name ["+qNameAsString+"]  returned");
                     }
 
@@ -2042,8 +1773,7 @@ public class ObjectStateUtils
         }
 
         // trace point
-        if (log.isTraceEnabled())
-        {
+        if (log.isTraceEnabled()) {
             log.trace(title + " ["+handlerClassName+"]  name ["+qNameAsString+"] was not found in the existingHandlers list");
         }
         
@@ -2053,19 +1783,17 @@ public class ObjectStateUtils
 
     /**
      * Find the TransportListener object that matches the criteria
-     * 
+     * <p/>
      * <B>Note<B> the saved meta information may not
      * match up with any of the objects that
      * are in the current AxisConfiguration object.
      * 
      * @param axisConfig The AxisConfiguration object
-     * @param listenerClassName
-     *                   the class name string for the target object
+     * @param listenerClassName the class name string for the target object
      *                   (could be a derived class)
      * @return the TransportListener object that matches the criteria
      */
-    public static TransportListener findTransportListener(AxisConfiguration axisConfig, String listenerClassName)
-    {
+    public static TransportListener findTransportListener(AxisConfiguration axisConfig, String listenerClassName) {
         // TODO: investigate a better technique to match up with a TransportListener
 
         HashMap transportsIn = axisConfig.getTransportsIn();
@@ -2075,18 +1803,15 @@ public class ObjectStateUtils
 
         Iterator i = values.iterator();
         
-        while (i.hasNext())
-        {
+        while (i.hasNext()) {
             TransportInDescription ti = (TransportInDescription)i.next();
 
             TransportListener tl = ti.getReceiver();
             String tlClassName = tl.getClass().getName();
 
-            if (tlClassName.equals(listenerClassName))
-            {
+            if (tlClassName.equals(listenerClassName)) {
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:findTransportListener():  ["+listenerClassName+"]  returned");
                 }
 
@@ -2095,8 +1820,7 @@ public class ObjectStateUtils
         }
 
         // trace point
-        if (log.isTraceEnabled())
-        {
+        if (log.isTraceEnabled()) {
             log.trace("ObjectStateUtils:findTransportListener(): returning  [null]");
         }
 
@@ -2116,45 +1840,35 @@ public class ObjectStateUtils
      * @return TRUE if the two collections are equivalent
      *         FALSE, otherwise
      */
-    public static boolean isEquivalent(ArrayList a1, ArrayList a2, boolean strict)
-    {
-        if ((a1 != null) && (a2 != null))
-        {
+    public static boolean isEquivalent(ArrayList a1, ArrayList a2, boolean strict) {
+        if ((a1 != null) && (a2 != null)) {
             // check number of elements in lists
             int size1 = a1.size();
             int size2 = a2.size();
 
-            if (size1 != size2)
-            {
+            if (size1 != size2) {
                 // trace point
-                if (log.isTraceEnabled())
-                {
+                if (log.isTraceEnabled()) {
                     log.trace("ObjectStateUtils:isEquivalent(ArrayList,ArrayList): FALSE - size mismatch ["+size1+"] != ["+size2+"]");
                 }
                 return false;
             }
 
-            if (strict)
-            {
+            if (strict) {
                 // Strict checking
                 // The lists must contain the same elements in the same order.
                 return (a1.equals(a2));
-            }
-            else
-            {
+            } else {
                 // Non-strict checking
                 // The lists must contain the same elements but the order is not required.
                 Iterator i1 = a1.iterator();
 
-                while (i1.hasNext())
-                {
+                while (i1.hasNext()) {
                     Object obj1 = i1.next();
 
-                    if (!a2.contains(obj1))
-                    {
+                    if (!a2.contains(obj1)) {
                         // trace point
-                        if (log.isTraceEnabled())
-                        {
+                        if (log.isTraceEnabled()) {
                             log.trace("ObjectStateUtils:isEquivalent(ArrayList,ArrayList): FALSE - mismatch with element ["+obj1.getClass().getName()+"] ");
                         }
                         return false;
@@ -2164,34 +1878,23 @@ public class ObjectStateUtils
                 return true;
             }
 
-        }
-        else if ((a1 == null) && (a2 == null))
-        {
+        } else if ((a1 == null) && (a2 == null)) {
             return true;
-        }
-        else if ((a1 != null) && (a2 == null))
-        {
-            if (a1.size()==0)
-            {
+        } else if ((a1 != null) && (a2 == null)) {
+            if (a1.size() == 0) {
                 return true;
             }
             return false;
-        }
-        else if ((a1 == null) && (a2 != null))
-        {
-            if (a2.size()==0)
-            {
+        } else if ((a1 == null) && (a2 != null)) {
+            if (a2.size() == 0) {
                 return true;
             }
             return false;
-        }
-        else
-        {
+        } else {
             // mismatch
 
             // trace point
-            if (log.isTraceEnabled())
-            {
+            if (log.isTraceEnabled()) {
                 log.trace("ObjectStateUtils:isEquivalent(ArrayList,ArrayList): FALSE - mismatch in lists");
             }
             return false;
@@ -2211,49 +1914,37 @@ public class ObjectStateUtils
      * @return TRUE if the two collections are equivalent
      *         FALSE, otherwise
      */
-    public static boolean isEquivalent(Map m1, Map m2, boolean strict)
-    {
-        if ((m1 != null) && (m2 != null))
-        {
-            if (strict)
-            {
+    public static boolean isEquivalent(Map m1, Map m2, boolean strict) {
+        if ((m1 != null) && (m2 != null)) {
+            if (strict) {
                 // This is a strict test.
                 // Returns true if the given object is also a map and the two Maps 
                 // represent the same mappings. 
                 return (m1.equals(m2));
-            }
-            else
-            {
+            } else {
                 int size1 = m1.size();
                 int size2 = m2.size();
 
-                if (size1 != size2)
-                {
+                if (size1 != size2) {
                     return false;
                 }
 
                 // check the keys, ordering is not important between the two maps
                 Iterator it1 = m1.keySet().iterator();
 
-                while (it1.hasNext())
-                {
+                while (it1.hasNext()) {
                     Object key1 = it1.next();
 
-                    if (m2.containsKey(key1) == false)
-                    {
+                    if (m2.containsKey(key1) == false) {
                         return false;
                     }
                 }
 
                 return true;
             }
-        }
-        else if ((m1 == null) && (m2 == null))
-        {
+        } else if ((m1 == null) && (m2 == null)) {
             return true;
-        }
-        else
-        {
+        } else {
             // mismatch
             return false;
         }
@@ -2268,23 +1959,17 @@ public class ObjectStateUtils
      * @return TRUE if the two collections are equivalent
      *         FALSE, otherwise
      */
-    public static boolean isEquivalent(LinkedList l1, LinkedList l2)
-    {
-        if ((l1 != null) && (l2 != null))
-        {
+    public static boolean isEquivalent(LinkedList l1, LinkedList l2) {
+        if ((l1 != null) && (l2 != null)) {
             // This is a strict test.
             // Returns true if the specified object is also a list, 
             // both lists have the same size, and all corresponding pairs 
             // of elements in the two lists are equal where
             // they contain the same elements in the same order.
             return (l1.equals(l2));
-        }
-        else if ((l1 == null) && (l2 == null))
-        {
+        } else if ((l1 == null) && (l2 == null)) {
             return true;
-        }
-        else
-        {
+        } else {
             // mismatch
             return false;
         }
@@ -2302,21 +1987,17 @@ public class ObjectStateUtils
      * @param methodName  The method name which encountered the exception
      * @param desc        Text to be used for tracing
      */
-    public static void traceNotSerializable(Object obj, NotSerializableException nse, String objDesc, String methodName, String desc)
-    {
-        if (log.isTraceEnabled() == false)
-        {
+    public static void traceNotSerializable(Object obj, NotSerializableException nse, String objDesc, String methodName, String desc) {
+        if (log.isTraceEnabled() == false) {
             // if no tracing is being done, there's nothing to do
             // exit quickly
             return;
         }
 
-        if (obj != null)
-        {
+        if (obj != null) {
             String objName = obj.getClass().getName();
 
-            if (NotSerializableList.get(objName) == null)
-            {
+            if (NotSerializableList.get(objName) == null) {
                 // set up some information about the exception
                 // for now, just use an initial counter, which we aren't doing much with
                 // but takes less space than the original object that caused the exception

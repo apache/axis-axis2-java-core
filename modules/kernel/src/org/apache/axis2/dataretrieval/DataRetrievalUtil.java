@@ -16,9 +16,6 @@
 
 package org.apache.axis2.dataretrieval;
 
-import java.io.InputStream;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -26,6 +23,10 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.InputStream;
 
 public class DataRetrievalUtil {
     private static final Log log = LogFactory.getLog(DataRetrievalUtil.class);
@@ -41,10 +42,10 @@ public class DataRetrievalUtil {
 
     /**
      * Loading xml file content and convert to OMElement.
+     *
      * @param file - file path relative to the Service Repository
      * @return OMElement format of the xml file content 
      * @throws DataRetrievalException 
-     * 
      */
     
     public OMElement buildOM(ClassLoader classLoader, String file)
@@ -64,6 +65,7 @@ public class DataRetrievalUtil {
 
     /**
      * Convert servicexmlStream to OMElement
+     *
      * @param servicexmlStream InputStream contain xml content
      * @return OMElement format of the xml content 
      * @throws XMLStreamException

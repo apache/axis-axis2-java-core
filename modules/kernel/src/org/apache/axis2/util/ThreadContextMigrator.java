@@ -25,43 +25,42 @@ import org.apache.axis2.context.MessageContext;
  * ultimate thread of execution.  It is intended to provide a mechanism to
  * allow information to be migrated between the Axis2 contexts and thread
  * local storage.
- * 
+ * <p/>
  * Note: It is up to each particular programming model impl to decide whether
  * or not they wish to make use of the ThreadContextMigrators.
- * 
+ * <p/>
  * For each general MEP, here is the invocation pattern:
- * 
+ * <p/>
  * [one-way inbound]
  * migrateContextToThread(req)
  * cleanupThread(req)
- * 
+ * <p/>
  * [req/rsp inbound]
  * migrateContextToThread(req)
  * migrateThreadToContext(rsp)
  * cleanupContext(rsp)
  * cleanupThread(req)
- * 
+ * <p/>
  * [one-way outbound]
  * migrateThreadToContext(req)
  * cleanupContext(req)
- * 
+ * <p/>
  * [req/rsp outbound (both sync and async)]
  * migrateThreadToContext(req)
  * cleanupContext(req)
  * migrateContextToThread(rsp)
  * Note: there is no corresponding cleanupThread(rsp); one of the inbound
  *       cases would need to handle this
- * 
+ * <p/>
  * If a fault occurs during execution of one of the migrators, it will be
  * treated like any other service fault (i.e. like what will happen if we can't
  * deliver the message to a service or if a handler fails.
- * 
+ * <p/>
  * The cleanup* methods can be expected to be invoked after any exeception
  * that occurs within the scope of the migration that would cause that scope
  * to be left so that the thread and/or context may be cleaned up properly. 
  */
-public interface ThreadContextMigrator
-{
+public interface ThreadContextMigrator {
   /**
    * This method will be invoked when the processing of the message is
    * guaranteed to be on the thread of execution that will be used in

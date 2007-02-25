@@ -17,11 +17,10 @@
 package org.apache.axis2.util;
 
 import com.ibm.wsdl.Constants;
-
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.om.util.StAXUtils;
@@ -44,8 +43,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -57,8 +56,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -96,12 +95,10 @@ public class XMLUtils {
      *                         alone.
      * @param namespaceAware true if we want a namespace-aware parser
      * @param validating true if we want a validating parser
-     *
      */
     public static void initSAXFactory(String factoryClassName,
                                       boolean namespaceAware,
-                                      boolean validating)
-    {
+                                      boolean validating) {
         if (factoryClassName != null) {
             try {
                 saxFactory = (SAXParserFactory)Loader.loadClass(factoryClassName).
@@ -145,10 +142,13 @@ public class XMLUtils {
 
     /** 
      * Returns a SAX parser for reuse.
+     *
      * @param parser A SAX parser that is available for reuse
      */
     public static void releaseSAXParser(SAXParser parser) {
-        if(!tryReset) return;
+        if (!tryReset) {
+            return;
+        }
 
         //Free up possible ref. held by past contenthandler.
         try{
@@ -157,22 +157,22 @@ public class XMLUtils {
                 synchronized (XMLUtils.class ) {
                     saxParsers.push(parser);
                 }
-            }
-            else {
+            } else {
                 tryReset= false;
             }
         } catch (org.xml.sax.SAXException e) {
             tryReset= false;
         }
     }
+
     /**
      * Gets an empty new Document.
+     *
      * @return Returns Document.
      * @throws ParserConfigurationException if construction problems occur
      */
     public static Document newDocument() 
-         throws ParserConfigurationException
-    {
+            throws ParserConfigurationException {
         synchronized (dbf) {
             return dbf.newDocumentBuilder().newDocument();
         }
@@ -180,14 +180,14 @@ public class XMLUtils {
 
     /**
      * Gets a new Document read from the input source.
+     *
      * @return Returns Document.
      * @throws ParserConfigurationException if construction problems occur
      * @throws SAXException if the document has xml sax problems
      * @throws IOException if i/o exceptions occur
      */
     public static Document newDocument(InputSource inp)
-        throws ParserConfigurationException, SAXException, IOException
-    {
+            throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilder db;
         synchronized (dbf) {
             db = dbf.newDocumentBuilder();
@@ -199,27 +199,27 @@ public class XMLUtils {
 
     /**
      * Gets a new Document read from the input stream
+     *
      * @return Returns Document.
      * @throws ParserConfigurationException if construction problems occur
      * @throws SAXException if the document has xml sax problems
      * @throws IOException if i/o exceptions occur
      */
     public static Document newDocument(InputStream inp) 
-        throws ParserConfigurationException, SAXException, IOException 
-    {
+            throws ParserConfigurationException, SAXException, IOException {
         return XMLUtils.newDocument(new InputSource(inp));
     } 
 
     /**
      * Gets a new Document read from the indicated uri
+     *
      * @return Returns Document.
      * @throws ParserConfigurationException if construction problems occur
      * @throws SAXException if the document has xml sax problems
      * @throws IOException if i/o exceptions occur
      */
     public static Document newDocument(String uri) 
-        throws ParserConfigurationException, SAXException, IOException 
-    {
+            throws ParserConfigurationException, SAXException, IOException {
         // call the authenticated version as there might be 
         // username/password info embeded in the uri.
         return XMLUtils.newDocument(uri, null, null);
@@ -228,6 +228,7 @@ public class XMLUtils {
     /**
      * Creates a new document from the given URI. Uses the username and password
      * if the URI requires authentication.
+     *
      * @param uri the resource to get
      * @param username basic auth username
      * @param password basic auth password
@@ -236,8 +237,7 @@ public class XMLUtils {
      * @throws IOException if i/o exceptions occur
      */ 
     public static Document newDocument(String uri, String username, String password)
-        throws ParserConfigurationException, SAXException, IOException
-     {
+            throws ParserConfigurationException, SAXException, IOException {
          InputSource ins = XMLUtils.getInputSourceFromURI(uri, username, password);
          Document doc = XMLUtils.newDocument(ins);
          // Close the Stream
@@ -271,7 +271,9 @@ public class XMLUtils {
         while (e != null && (e.getNodeType() == Node.ELEMENT_NODE)) {
             Attr attr =
                 ((Element)e).getAttributeNodeNS(Constants.NS_URI_XMLNS, prefix);
-            if (attr != null) return attr.getValue();
+            if (attr != null) {
+                return attr.getValue();
+            }
             e = e.getParentNode();
         }
         return null;
@@ -284,15 +286,17 @@ public class XMLUtils {
      * @return Returns a QName generated from the given string representation.
      */
     public static QName getQNameFromString(String str, Node e) {
-        if (str == null || e == null)
+        if (str == null || e == null) {
             return null;
+        }
 
         int idx = str.indexOf(':');
         if (idx > -1) {
             String prefix = str.substring(0, idx);
             String ns = getNamespace(prefix, e);
-            if (ns == null)
+            if (ns == null) {
                 return null;
+            }
             return new QName(ns, str.substring(idx + 1));
         } else {
             return new QName("", str);
@@ -303,8 +307,7 @@ public class XMLUtils {
      * Returns a string for a particular QName, mapping a new prefix
      * if necessary.
      */
-    public static String getStringForQName(QName qname, Element e)
-    {
+    public static String getStringForQName(QName qname, Element e) {
         String uri = qname.getNamespaceURI();
         String prefix = getPrefix(uri, e);
         if (prefix == null) {
@@ -340,7 +343,8 @@ public class XMLUtils {
     while (tempNode != null) {
       switch (tempNode.getNodeType()) {
         case Node.TEXT_NODE :
-        case Node.CDATA_SECTION_NODE : charData = (CharacterData)tempNode;
+                case Node.CDATA_SECTION_NODE:
+                    charData = (CharacterData) tempNode;
                                        strBuf.append(charData.getData());
                                        break;
       }
@@ -349,8 +353,7 @@ public class XMLUtils {
     return strBuf.toString();
   }
     
-    public static class ParserErrorHandler implements ErrorHandler
-    {
+    public static class ParserErrorHandler implements ErrorHandler {
         /**
          * Returns a string describing parse exception details
          */
@@ -394,14 +397,13 @@ public class XMLUtils {
     }
 
 
-
     /**
      * Utility to get the bytes at a protected uri
-     * 
+     * <p/>
      * Retrieves the URL if a username and password are provided.
      * The java.net.URL class does not do Basic Authentication, so we have to
      * do it manually in this routine.
-     * 
+     * <p/>
      * If no username is provided, creates an InputSource from the uri
      * and lets the InputSource go fetch the contents.
      * 
@@ -412,8 +414,7 @@ public class XMLUtils {
     private static InputSource getInputSourceFromURI(String uri,
                                                      String username,
                                                      String password)
-        throws IOException, ProtocolException, UnsupportedEncodingException
-    {
+            throws IOException, ProtocolException, UnsupportedEncodingException {
         URL wsdlurl = null;
         try {
             wsdlurl = new URL(uri);
@@ -485,19 +486,22 @@ public class XMLUtils {
      */ 
     public static Node findNode(Node node, QName name){
         if(name.getNamespaceURI().equals(node.getNamespaceURI()) && 
-           name.getLocalPart().equals(node.getLocalName()))
+                name.getLocalPart().equals(node.getLocalName())) {
             return node;
+        }
         NodeList children = node.getChildNodes();
         for(int i=0;i<children.getLength();i++){
             Node ret = findNode(children.item(i), name);
-            if(ret != null)
+            if (ret != null) {
                 return ret;
+        }
         }
         return null;
     }
     
     /**
      * Converts a given DOM Element to an OMElement.
+     *
      * @param element
      * @return Returns OMElement.
      * @throws Exception
@@ -525,6 +529,7 @@ public class XMLUtils {
 
     /**
      * Converts a given OMElement to a DOM Element.
+     *
      * @param element
      * @return Returns Element.
      * @throws Exception
@@ -546,6 +551,7 @@ public class XMLUtils {
      * @param inputStream
      * @return
      * @throws javax.xml.stream.XMLStreamException
+     *
      */
     public static OMNode toOM(InputStream inputStream) throws XMLStreamException {
         XMLStreamReader xmlReader = StAXUtils

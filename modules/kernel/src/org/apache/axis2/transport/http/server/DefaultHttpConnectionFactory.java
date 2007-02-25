@@ -29,12 +29,12 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-import java.net.Socket;
-
 import org.apache.http.HttpServerConnection;
 import org.apache.http.impl.DefaultHttpServerConnection;
 import org.apache.http.params.HttpParams;
+
+import java.io.IOException;
+import java.net.Socket;
 
 public class DefaultHttpConnectionFactory implements HttpConnectionFactory {
 

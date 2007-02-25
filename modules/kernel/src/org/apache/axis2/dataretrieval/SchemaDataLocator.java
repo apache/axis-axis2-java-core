@@ -20,7 +20,6 @@ package org.apache.axis2.dataretrieval;
  * Axis 2 Data Locator responsibles for retrieving Schema metadata.
  * The class is created as model for schema specific data locator; and also
  * easier for any future implementation schema specific data retrieval logic.
- *
  */
 
 public class SchemaDataLocator  extends BaseAxisDataLocator  implements AxisDataLocator {

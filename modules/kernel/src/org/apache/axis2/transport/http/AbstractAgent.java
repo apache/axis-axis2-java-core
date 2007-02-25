@@ -18,20 +18,19 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * The AbstractAgent acts as a simple dispatcher for http requests.
@@ -86,7 +85,6 @@ public class AbstractAgent {
   }
 
   /**
-   *
    * Callback method for index page. Forwards to {@link DEFAULT_INDEX_JSP} by default.
    *
    * @param httpServletRequest The incoming request.
@@ -98,7 +96,6 @@ public class AbstractAgent {
   }
 
   /**
-   *
    * Callback method for unknown/unsupported requests. Returns HTTP Status 404 by default.
    *
    * @param httpServletRequest The incoming request.

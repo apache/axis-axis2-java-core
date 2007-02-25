@@ -277,8 +277,7 @@ public class AxisFault extends RemoteException {
      * @param message A string that's really only useful for logging.
      * @param faultMessageContext
      */
-    public AxisFault(String message, MessageContext faultMessageContext)
-    {
+    public AxisFault(String message, MessageContext faultMessageContext) {
       super(message);
       this.faultMessageContext = faultMessageContext;
     }
@@ -317,8 +316,9 @@ public class AxisFault extends RemoteException {
      * @return faultReason
      */
     public String getReason() {
-        if (faultReasonList.size() >= 1)
+        if (faultReasonList.size() >= 1) {
             return ((FaultReason) faultReasonList.get(0)).getText();
+        }
 
         return null;
     }
@@ -484,8 +484,7 @@ public class AxisFault extends RemoteException {
      * @return The MessageContext representing the fault message or null if the
      * fault was not created with MessageContext representation.
      */
-    public MessageContext getFaultMessageContext()
-    {
+    public MessageContext getFaultMessageContext() {
       return faultMessageContext;
     }
     

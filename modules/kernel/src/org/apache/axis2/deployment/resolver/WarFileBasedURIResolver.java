@@ -1,8 +1,8 @@
 package org.apache.axis2.deployment.resolver;
 
-import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.xml.sax.InputSource;
 
 import java.net.URI;

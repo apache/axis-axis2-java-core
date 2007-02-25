@@ -25,6 +25,7 @@ public class WSDLUtil {
     /**
      * returns whether the given mep uri is one of the
      * input meps
+     *
      * @param mep
      */
     public static boolean isInputPresentForMEP(String mep) {
@@ -38,6 +39,7 @@ public class WSDLUtil {
 
     /**
      * returns whether the given mep URI is one of the output meps
+     *
      * @param MEP
      */
     public static boolean isOutputPresentForMEP(String MEP) {
@@ -51,15 +53,16 @@ public class WSDLUtil {
 
     /**
      *  part names are not unique across messages. Hence
-     we need some way of making the part name a unique
-     one (due to the fact that the type mapper
-     is a global list of types).
-     The seemingly best way to do that is to
-     specify a namespace for the part QName reference which
-     is stored in the  list. This part qname is
-     temporary and should not be used with it's
-     namespace URI (which happened to be the operation name)
-     with _input (or a similar suffix) attached to it
+     * we need some way of making the part name a unique
+     * one (due to the fact that the type mapper
+     * is a global list of types).
+     * The seemingly best way to do that is to
+     * specify a namespace for the part QName reference which
+     * is stored in the  list. This part qname is
+     * temporary and should not be used with it's
+     * namespace URI (which happened to be the operation name)
+     * with _input (or a similar suffix) attached to it
+     *
      * @param opName
      * @param suffix
      * @param partName

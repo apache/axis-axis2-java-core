@@ -17,9 +17,12 @@
 
 package org.apache.axis2.transport.mail;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.util.Properties;
+import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 
 import javax.activation.CommandMap;
 import javax.activation.DataHandler;
@@ -38,13 +41,9 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
-import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.util.Properties;
 
 public class EMailSender {
     private Properties properties;

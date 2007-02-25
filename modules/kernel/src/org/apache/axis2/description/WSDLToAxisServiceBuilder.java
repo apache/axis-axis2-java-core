@@ -1,7 +1,7 @@
 package org.apache.axis2.description;
 
-import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.namespace.Constants;
 import org.apache.neethi.PolicyRegistry;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
@@ -126,7 +126,9 @@ public abstract class WSDLToAxisServiceBuilder {
     protected XmlSchema getXMLSchema(Element element, String baseUri) {
         XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
 
-        if (baseUri != null) schemaCollection.setBaseUri(baseUri);
+        if (baseUri != null) {
+            schemaCollection.setBaseUri(baseUri);
+        }
 
         if (customResolver != null) {
             schemaCollection.setSchemaResolver(customResolver);

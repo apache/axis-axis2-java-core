@@ -15,20 +15,20 @@
  */
 package org.apache.axis2.transport.http.util;
 
-import org.apache.axis2.context.MessageContext;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.WSDL20DefaultValueHolder;
-import org.apache.axiom.om.OMElement;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.woden.wsdl20.extensions.http.HTTPLocation;
 
 import javax.xml.namespace.QName;
-import java.net.URLEncoder;
-import java.net.URL;
-import java.net.MalformedURLException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 

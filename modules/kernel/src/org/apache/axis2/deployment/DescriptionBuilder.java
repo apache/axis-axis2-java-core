@@ -16,19 +16,8 @@
 
 package org.apache.axis2.deployment;
 
-import java.io.InputStream;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.builder.OMBuilder;
@@ -52,7 +41,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyEngine;
 import org.apache.neethi.PolicyReference;
-import org.omg.CORBA.OBJ_ADAPTER;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import java.io.InputStream;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * This class does the common tasks for all *Builder class.
@@ -115,8 +112,9 @@ public class DescriptionBuilder implements DeploymentConstants {
         }
         if (service != null) {
             messageReceiver = service.getMessageReceiver(mepURL);
-            if (messageReceiver != null)
+            if (messageReceiver != null) {
                 return messageReceiver;
+        }
         }
         return axisConfig.getMessageReceiver(mepURL);
     }
@@ -293,8 +291,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                             if ((className != null) && !"".equals(className)) {
                                 selectorClass = Loader.loadClass(Thread.currentThread()
                                         .getContextClassLoader(), className);
-                            }else
-                            {
+                            } else {
                                 throw new DeploymentException(Messages.getMessage(errorMsg,
                                         "Invalid Class Name",className));
                             }
@@ -310,11 +307,9 @@ public class DescriptionBuilder implements DeploymentConstants {
     /**
      * Processes flow elements in services.xml .
      * 
-     * @param flowelement
-     *            <code>OMElement</code>
+     * @param flowelement <code>OMElement</code>
      * @return Returns Flow.
-     * @throws DeploymentException
-     *             <code>DeploymentException</code>
+     * @throws DeploymentException <code>DeploymentException</code>
      */
     protected Flow processFlow(OMElement flowelement, ParameterInclude parent)
             throws DeploymentException {

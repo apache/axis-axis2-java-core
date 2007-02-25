@@ -15,18 +15,17 @@
  */
 package org.apache.axis2.util;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.apache.neethi.Assertion;
+import org.apache.neethi.Constants;
+import org.apache.neethi.Policy;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
-
-import org.apache.neethi.Assertion;
-import org.apache.neethi.Constants;
-import org.apache.neethi.Policy;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class ExternalPolicySerializer {
 

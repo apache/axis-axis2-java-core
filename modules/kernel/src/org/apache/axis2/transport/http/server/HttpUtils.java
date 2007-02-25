@@ -27,14 +27,14 @@
 */
 package org.apache.axis2.transport.http.server;
 
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.http.Header;
+import org.apache.http.HttpRequest;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
-
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.http.Header;
-import org.apache.http.HttpRequest;
 
 public class HttpUtils {
 

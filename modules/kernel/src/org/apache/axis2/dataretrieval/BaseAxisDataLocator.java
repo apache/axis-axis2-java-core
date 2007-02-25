@@ -15,17 +15,16 @@
 */
 package org.apache.axis2.dataretrieval;
 
-import java.util.ArrayList;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
 
 /**
  * BaseAxisDataLocator implements common code and serves as a base class
  * for the supported default Axis2 dialect data locators.  
- *
  */
 
 public abstract class BaseAxisDataLocator  {
@@ -38,7 +37,7 @@ public abstract class BaseAxisDataLocator  {
      * The default Axis2 Data locator getData API
      *   Checks data information configured in ServiceData.xml for the supported
      *   output forms: inline, url, EndpointReference.
-     * 
+     * <p/>
      * Note: Subclass that has its implementation of outInlineForm, outputLocationForm,
      *       and outputReferenceForm logic must implement the getData API.
      */
@@ -59,23 +58,21 @@ public abstract class BaseAxisDataLocator  {
      
         if (outputform == OutputForm.INLINE_FORM) {
             output = outputInlineForm(msgContext, dataList);
-        }
-        else if (outputform == OutputForm.LOCATION_FORM) {
+        } else if (outputform == OutputForm.LOCATION_FORM) {
             output = outputLocationForm(dataList);
             
-        }
-        else if (outputform == OutputForm.REFERENCE_FORM) {
+        } else if (outputform == OutputForm.REFERENCE_FORM) {
             output = outputReferenceForm(msgContext, dataList);
                     
-        }
-        else {
+        } else {
             output = outputInlineForm(msgContext, dataList);
             
         }
     
-        if (output == null)
+        if (output == null) {
                 log.info("Null data return! Data Locator does not know how to handle request for dialect= " + (String) request.getDialect()
                     + " in the form of " + outputFormString);
+        }
         
 
         log.trace("Default Base DataLocator getData ends");
@@ -95,8 +92,9 @@ public abstract class BaseAxisDataLocator  {
             for (int i = 0; i < size; i++) {
                 metaElement = serviceData[i].getFileContent(msgContext
                         .getAxisService().getClassLoader());
-                if (metaElement != null)
+                if (metaElement != null) {
                     result.add(new Data(metaElement, serviceData[i].getIdentifier()));
+                }
 
             }
 
@@ -115,9 +113,10 @@ public abstract class BaseAxisDataLocator  {
             for (int i = 0; i < serviceData.length; i++) {
 
                 String urlValue = serviceData[i].getURL();
-                if (urlValue != null)
+                if (urlValue != null) {
                     result.add(new Data(urlValue, serviceData[i].getIdentifier()));
             }
+        }
         }
         return (Data[]) result.toArray(new Data[0]);
     }
@@ -130,9 +129,10 @@ public abstract class BaseAxisDataLocator  {
             for (int i = 0; i < serviceData.length; i++) {
 
                 epr = serviceData[i].getEndpointReference();
-                if (epr != null)
+                if (epr != null) {
                     result.add(new Data((epr), serviceData[i].getIdentifier()));
             }
+        }
         }
         return (Data[]) result.toArray(new Data[0]);
     }

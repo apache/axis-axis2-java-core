@@ -29,8 +29,7 @@ import java.util.ListIterator;
  * model-level implementations (e.g. the Axis2 JAX-WS code) to invoke the
  * ThreadContextMigrators. 
  */
-public class ThreadContextMigratorUtil
-{  
+public class ThreadContextMigratorUtil {
   /**
    * Register a new ThreadContextMigrator.
    * 
@@ -40,12 +39,10 @@ public class ThreadContextMigratorUtil
    *                                    the list of migrators.
    * @param migrator
    */
-  public static void addThreadContextMigrator(ConfigurationContext configurationContext, String threadContextMigratorListID, ThreadContextMigrator migrator)
-  {
+    public static void addThreadContextMigrator(ConfigurationContext configurationContext, String threadContextMigratorListID, ThreadContextMigrator migrator) {
     List migratorList = (List)configurationContext.getProperty(threadContextMigratorListID);
 
-    if (migratorList == null)
-    {
+        if (migratorList == null) {
       migratorList = new LinkedList();
       configurationContext.setProperty(threadContextMigratorListID, migratorList);
     }
@@ -56,28 +53,24 @@ public class ThreadContextMigratorUtil
   /**
    * Activate any registered ThreadContextMigrators to move context info
    * to the thread of execution.
+     *
    * @param threadContextMigratorListID The name of the property in the
    *                                    ConfigurationContext that contains
    *                                    the list of migrators.
    * @param msgContext
-   * 
    * @throws AxisFault
    */
   public static void performMigrationToThread(String threadContextMigratorListID, MessageContext msgContext)
-  throws AxisFault
-  {
-    if (msgContext == null)
-    {
+            throws AxisFault {
+        if (msgContext == null) {
       return;
     }
       
     List migratorList = (List)msgContext.getConfigurationContext().getProperty(threadContextMigratorListID);
     
-    if (migratorList != null)
-    {
+        if (migratorList != null) {
       ListIterator threadContextMigrators = migratorList.listIterator();
-      while (threadContextMigrators.hasNext())
-      {
+            while (threadContextMigrators.hasNext()) {
         ((ThreadContextMigrator)threadContextMigrators.next()).migrateContextToThread(msgContext);
       }
     }
@@ -92,20 +85,16 @@ public class ThreadContextMigratorUtil
    *                                    the list of migrators.
    * @param msgContext
    */
-  public static void performThreadCleanup(String threadContextMigratorListID, MessageContext msgContext)
-  {
-    if (msgContext == null)
-    {
+    public static void performThreadCleanup(String threadContextMigratorListID, MessageContext msgContext) {
+        if (msgContext == null) {
       return;
     }
       
     List migratorList = (List)msgContext.getConfigurationContext().getProperty(threadContextMigratorListID);
     
-    if (migratorList != null)
-    {
+        if (migratorList != null) {
       ListIterator threadContextMigrators = migratorList.listIterator();
-      while (threadContextMigrators.hasNext())
-      {
+            while (threadContextMigrators.hasNext()) {
         ((ThreadContextMigrator)threadContextMigrators.next()).cleanupThread(msgContext);
       }
     }
@@ -122,20 +111,16 @@ public class ThreadContextMigratorUtil
    * @throws AxisFault
    */
   public static void performMigrationToContext(String threadContextMigratorListID, MessageContext msgContext)
-  throws AxisFault
-  {
-    if (msgContext == null)
-    {
+            throws AxisFault {
+        if (msgContext == null) {
       return;
     }
       
     List migratorList = (List)msgContext.getConfigurationContext().getProperty(threadContextMigratorListID);
 
-    if (migratorList != null)
-    {
+        if (migratorList != null) {
       ListIterator threadContextMigrators = migratorList.listIterator();
-      while (threadContextMigrators.hasNext())
-      {
+            while (threadContextMigrators.hasNext()) {
         ((ThreadContextMigrator)threadContextMigrators.next()).migrateThreadToContext(msgContext);
       }
     }
@@ -150,20 +135,16 @@ public class ThreadContextMigratorUtil
    *                                    the list of migrators.
    * @param msgContext
    */
-  public static void performContextCleanup(String threadContextMigratorListID, MessageContext msgContext)
-  {
-    if (msgContext == null)
-    {
+    public static void performContextCleanup(String threadContextMigratorListID, MessageContext msgContext) {
+        if (msgContext == null) {
       return;
     }
       
     List migratorList = (List)msgContext.getConfigurationContext().getProperty(threadContextMigratorListID);
 
-    if (migratorList != null)
-    {
+        if (migratorList != null) {
       ListIterator threadContextMigrators = migratorList.listIterator();
-      while (threadContextMigrators.hasNext())
-      {
+            while (threadContextMigrators.hasNext()) {
         ((ThreadContextMigrator)threadContextMigrators.next()).cleanupContext(msgContext);
       }
     }

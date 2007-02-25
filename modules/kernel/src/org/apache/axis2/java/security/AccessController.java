@@ -17,7 +17,6 @@
 
 package org.apache.axis2.java.security;
 
-import java.lang.SecurityManager;
 import java.security.AccessControlContext;
 import java.security.AccessControlException;
 import java.security.Permission;
@@ -34,10 +33,10 @@ import java.security.PrivilegedExceptionAction;
  * accessing the system resources (ie, read/write files, opening ports, and etc). 
  * This class also improve performance no matther Security Manager is being enabled
  * or not. 
- * 
+ * <p/>
  * Note: This utility should be used properly, otherwise might introduce
  * security holes.
- * 
+ * <p/>
  * Usage Example:
  * <code>
  *  public void changePassword() {
@@ -46,7 +45,7 @@ import java.security.PrivilegedExceptionAction;
  *          public Object run() {
  *              f = Util.openPasswordFile();
  *              ...
- *              
+ * <p/>
  *          }
  *      });
  *      ...
@@ -60,7 +59,7 @@ public class AccessController {
     /**
      * Performs the specified <code>PrivilegedAction</code> with privileges
      * enabled if a security manager is present.
-     * <p>
+     * <p/>
      * If the action's <code>run</code> method throws an (unchecked) exception,
      * it will propagate through this method.
      *
@@ -86,8 +85,8 @@ public class AccessController {
      * possessed by the caller's protection domain, and those possessed
      * by the domains represented by the specified
      * <code>AccessControlContext</code> if a security manager is present.
-     * <p>
-     *
+     * <p/>
+     * <p/>
      * If the action's <code>run</code> method throws an (unchecked) exception,
      * it will propagate through this method.
      *
@@ -112,7 +111,7 @@ public class AccessController {
      * Performs the specified <code>PrivilegedExceptionAction</code> with
      * privileges enabled.  The action is performed with <i>all</i> of the 
      * permissions possessed by the caller's protection domain.
-     * <p>
+     * <p/>
      * If the action's <code>run</code> method throws an <i>unchecked</i>
      * exception, it will propagate through this method.
      *
@@ -146,7 +145,7 @@ public class AccessController {
      * intersection of the the permissions possessed by the caller's
      * protection domain, and those possessed by the domains represented by the
      * specified <code>AccessControlContext</code>.
-     * <p>
+     * <p/>
      * If the action's <code>run</code> method throws an <i>unchecked</i>
      * exception, it will propagate through this method.
      *
@@ -184,9 +183,8 @@ public class AccessController {
      * and places it in an AccessControlContext object. This context may then
      * be checked at a later point, possibly in another thread.
      *
-     * @see AccessControlContext
-     *
      * @return the AccessControlContext based on the current context.
+     * @see AccessControlContext
      */
     public static AccessControlContext getContext() {
         return java.security.AccessController.getContext();
@@ -200,8 +198,7 @@ public class AccessController {
      * is permitted, or throws a suitable AccessControlException otherwise. 
      *
      * @param perm the requested permission.
-     * 
-     * @exception AccessControlException if the specified permission
+     * @throws AccessControlException if the specified permission
      * is not permitted, based on the current security policy.
      */
     public static void checkPermission(Permission perm) throws AccessControlException {
@@ -211,5 +208,6 @@ public class AccessController {
     /** 
      * No instantiation allowed
      */
-    private AccessController() {}
+    private AccessController() {
+    }
 }

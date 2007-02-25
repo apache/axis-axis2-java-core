@@ -23,7 +23,6 @@ import org.apache.axis2.context.MessageContext;
  * storing metadata or different types of data to retrieve may code their version of
  * Data Locator(s)by implementing the AxisDataLocator interface. Axis 2 support
  * Data Locator plugin by configuring in Axis2.xml or services.xml. </p>  
- * 
  */
 
 public interface AxisDataLocator {
@@ -32,12 +31,10 @@ public interface AxisDataLocator {
     /**
      * Retrieves and returns data based on the specified request.
      * 
-     * @param request
-     *            The {@link DataRetrievalRequest} allow to specify parameters
+     * @param request    The {@link DataRetrievalRequest} allow to specify parameters
      *            about the request, and additional information to process the
      *            request.
-     * @param msgContext
-     *            The {@link MessageContext} from the original request.
+     * @param msgContext The {@link MessageContext} from the original request.
      * @return {@link Data}[] for the request.
      * @throws DataRetrievalException
      */

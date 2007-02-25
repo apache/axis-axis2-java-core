@@ -29,8 +29,6 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.http.Header;
@@ -39,6 +37,8 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.protocol.HttpContext;
+
+import java.io.IOException;
 
 public class RequestSessionCookie implements HttpRequestInterceptor {
 

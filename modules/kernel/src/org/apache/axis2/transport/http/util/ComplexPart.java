@@ -18,24 +18,34 @@ package org.apache.axis2.transport.http.util;
 import org.apache.commons.httpclient.methods.multipart.PartBase;
 import org.apache.commons.httpclient.util.EncodingUtil;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 public class ComplexPart extends PartBase {
 
-    /** Default content encoding of string parameters. */
+    /**
+     * Default content encoding of string parameters.
+     */
     public static final String DEFAULT_CONTENT_TYPE = "application/xml";
 
-    /** Default charset of string parameters*/
+    /**
+     * Default charset of string parameters
+     */
     public static final String DEFAULT_CHARSET = "US-ASCII";
 
-    /** Default transfer encoding of string parameters*/
+    /**
+     * Default transfer encoding of string parameters
+     */
     public static final String DEFAULT_TRANSFER_ENCODING = "8bit";
 
-    /** Contents of this StringPart. */
+    /**
+     * Contents of this StringPart.
+     */
     private byte[] content;
 
-    /** The String value of this part. */
+    /**
+     * The String value of this part.
+     */
     private String value;
 
     /**
@@ -89,6 +99,7 @@ public class ComplexPart extends PartBase {
 
     /**
      * Writes the data to the given OutputStream.
+     *
      * @param out the OutputStream to write to
      * @throws IOException if there is a write error
      */
@@ -98,6 +109,7 @@ public class ComplexPart extends PartBase {
 
     /**
      * Return the length of the data.
+     *
      * @return The length of the data.
      * @throws IOException If an IO problem occurs
      * @see org.apache.commons.httpclient.methods.multipart.Part#lengthOfData()

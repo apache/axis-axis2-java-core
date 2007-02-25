@@ -21,7 +21,7 @@ package org.apache.axis2.util;
  * in this class can be used to verify that a character is a valid
  * XML character or if the character is a space, name start, or name
  * character.
- * <p>
+ * <p/>
  * A series of convenience methods are supplied to ease the burden
  * of the developer. Because inlining the checks can improve per
  * character performance, the tables of character properties are
@@ -30,7 +30,6 @@ package org.apache.axis2.util;
  * <code>MASK_VALID</code>), yields the same results as calling the
  * convenience methods. There is one exception: check the comments
  * for the <code>isValid</code> method for details.
- *
  */
 public class XMLChar {
 
@@ -38,22 +37,34 @@ public class XMLChar {
     // Constants
     //
 
-    /** Character flags. */
+    /**
+     * Character flags.
+     */
     private static final byte[] CHARS = new byte[1 << 16];
 
-    /** Valid character mask. */
+    /**
+     * Valid character mask.
+     */
     public static final int MASK_VALID = 0x01;
 
-    /** Space character mask. */
+    /**
+     * Space character mask.
+     */
     public static final int MASK_SPACE = 0x02;
 
-    /** Name start character mask. */
+    /**
+     * Name start character mask.
+     */
     public static final int MASK_NAME_START = 0x04;
 
-    /** Name character mask. */
+    /**
+     * Name character mask.
+     */
     public static final int MASK_NAME = 0x08;
 
-    /** Pubid character mask. */
+    /**
+     * Pubid character mask.
+     */
     public static final int MASK_PUBID = 0x10;
 
     /**
@@ -61,15 +72,19 @@ public class XMLChar {
      * be considered the start of markup, such as '&lt;' and '&amp;'.
      * The various newline characters are considered special as well.
      * All other valid XML characters can be considered content.
-     * <p>
+     * <p/>
      * This is an optimization for the inner loop of character scanning.
      */
     public static final int MASK_CONTENT = 0x20;
 
-    /** NCName start character mask. */
+    /**
+     * NCName start character mask.
+     */
     public static final int MASK_NCNAME_START = 0x40;
 
-    /** NCName character mask. */
+    /**
+     * NCName character mask.
+     */
     public static final int MASK_NCNAME = 0x80;
 
     //
@@ -389,7 +404,7 @@ public class XMLChar {
     /**
      * Returns true if the specified character is valid. This method
      * also checks the surrogate character range from 0x10000 to 0x10FFFF.
-     * <p>
+     * <p/>
      * If the program chooses to apply the mask directly to the
      * <code>CHARS</code> array, then they are responsible for checking
      * the surrogate character range.
@@ -517,11 +532,13 @@ public class XMLChar {
      * @return true if name is a valid Name
      */
     public static boolean isValidName(String name) {
-        if (name.length() == 0)
+        if (name.length() == 0) {
             return false;
+        }
         char ch = name.charAt(0);
-        if(!isNameStart(ch))
+        if (!isNameStart(ch)) {
            return false;
+        }
         for (int i = 1; i < name.length(); i++ ) {
            ch = name.charAt(i);
            if(!isName(ch) ){
@@ -544,11 +561,13 @@ public class XMLChar {
      * @return true if name is a valid NCName
      */
     public static boolean isValidNCName(String ncName) {
-        if (ncName.length() == 0)
+        if (ncName.length() == 0) {
             return false;
+        }
         char ch = ncName.charAt(0);
-        if(!isNCNameStart(ch))
+        if (!isNCNameStart(ch)) {
            return false;
+        }
         for (int i = 1; i < ncName.length(); i++ ) {
            ch = ncName.charAt(i);
            if(!isNCName(ch) ){
@@ -569,8 +588,9 @@ public class XMLChar {
      * @return true if nmtoken is a valid Nmtoken
      */
     public static boolean isValidNmtoken(String nmtoken) {
-        if (nmtoken.length() == 0)
+        if (nmtoken.length() == 0) {
             return false;
+        }
         for (int i = 0; i < nmtoken.length(); i++ ) {
            char ch = nmtoken.charAt(i);
            if(  ! isName( ch ) ){

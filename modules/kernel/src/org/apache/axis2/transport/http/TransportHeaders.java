@@ -16,13 +16,12 @@
 
 package org.apache.axis2.transport.http;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Pass-Thru / delayed get of the values from HttpServletRequest

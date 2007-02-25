@@ -21,7 +21,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 
@@ -48,6 +47,7 @@ public interface Module {
      * When engaging this module to some service or operation , module will be notify by calling this
      * method there module author can validate , add policy and do any thing that he want , and he can
      * refuce the engage as well
+     *
      * @param axisDescription
      * @throws AxisFault
      */

@@ -1,13 +1,27 @@
 package org.apache.axis2.description;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import com.ibm.wsdl.util.xml.DOM2Writer;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingHelper;
+import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
+import org.apache.axis2.util.PolicyUtil;
+import org.apache.axis2.util.XMLUtils;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
+import org.apache.axis2.wsdl.SoapAddress;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.util.WSDL4JImportedWSDLHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.neethi.Constants;
+import org.apache.neethi.Policy;
+import org.apache.neethi.PolicyReference;
+import org.apache.ws.commons.schema.utils.NamespaceMap;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingFault;
@@ -16,7 +30,6 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
-import javax.wsdl.Import;
 import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
@@ -46,30 +59,13 @@ import javax.wsdl.xml.WSDLLocator;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AddressingHelper;
-import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
-import org.apache.axis2.util.PolicyUtil;
-import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.wsdl.SOAPHeaderMessage;
-import org.apache.axis2.wsdl.SoapAddress;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.wsdl.WSDLUtil;
-import org.apache.axis2.wsdl.util.WSDL4JImportedWSDLHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.neethi.Constants;
-import org.apache.neethi.Policy;
-import org.apache.neethi.PolicyReference;
-import org.apache.ws.commons.schema.utils.NamespaceMap;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-
-import com.ibm.wsdl.util.xml.DOM2Writer;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -288,7 +284,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
 
     /**
-     *
      * @param binding
      * @param wsdl4jService must have atlease one port
      * @throws AxisFault
@@ -337,6 +332,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * soap style (rpc or document) and parts elememet of the soap body
      * On the otherhand we keep only one set of axis operations belongs to a selected port type in axis service
      * So setting qname refetences done only with the selected binding processing
+     *
      * @param axisEndpoint
      * @param wsdl4jPort
      * @param isSetMessageQNames
@@ -565,6 +561,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      *  return the service to process
      *  if user has specified we check whether it exists
      *  else pick a random service and throws an exception if not found any thing
+     *
      * @param definition
      * @return   service to process
      * @throws AxisFault
@@ -604,6 +601,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * Look for the relevant binding!
      * if user has spcifed a port get it
      * otherwise find first soap port or pick random one if there is no soap port
+     *
      * @param dif
      * @param service service can not be null
      * @throws AxisFault
@@ -1428,6 +1426,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     /**
      * creates a new shema complex element according to the elements sequence difined
+     *
      * @param document
      * @param xsdPrefix
      * @param partsIterator
@@ -1986,8 +1985,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         OperationType operationType = operation.getStyle();
         if (isServerSide) {
             if (operationType != null) {
-                if (operationType.equals(OperationType.REQUEST_RESPONSE))
+                if (operationType.equals(OperationType.REQUEST_RESPONSE)) {
                     return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT;
+                }
 
                 if (operationType.equals(OperationType.ONE_WAY)) {
                     if (operation.getFaults().size() > 0) {
@@ -1996,26 +1996,32 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY;
                 }
 
-                if (operationType.equals(OperationType.NOTIFICATION))
+                if (operationType.equals(OperationType.NOTIFICATION)) {
                     return WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY;
+                }
 
-                if (operationType.equals(OperationType.SOLICIT_RESPONSE))
+                if (operationType.equals(OperationType.SOLICIT_RESPONSE)) {
                     return WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN;
+                }
                 throw new AxisFault("Cannot Determine the MEP");
             }
         } else {
             if (operationType != null) {
-                if (operationType.equals(OperationType.REQUEST_RESPONSE))
+                if (operationType.equals(OperationType.REQUEST_RESPONSE)) {
                     return WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN;
+                }
 
-                if (operationType.equals(OperationType.ONE_WAY))
+                if (operationType.equals(OperationType.ONE_WAY)) {
                     return WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY;
+                }
 
-                if (operationType.equals(OperationType.NOTIFICATION))
+                if (operationType.equals(OperationType.NOTIFICATION)) {
                     return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY;
+                }
 
-                if (operationType.equals(OperationType.SOLICIT_RESPONSE))
+                if (operationType.equals(OperationType.SOLICIT_RESPONSE)) {
                     return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT;
+                }
                 throw new AxisFault("Cannot Determine the MEP");
             }
         }

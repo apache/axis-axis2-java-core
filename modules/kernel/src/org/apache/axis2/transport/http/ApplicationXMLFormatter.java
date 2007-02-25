@@ -15,20 +15,20 @@
  */
 package org.apache.axis2.transport.http;
 
-import org.apache.axis2.transport.MessageFormatter;
-import org.apache.axis2.transport.http.util.URLTemplatingUtil;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPFaultDetail;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.transport.http.util.URLTemplatingUtil;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.OutputStream;
-import java.io.IOException;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URL;
 
 /**

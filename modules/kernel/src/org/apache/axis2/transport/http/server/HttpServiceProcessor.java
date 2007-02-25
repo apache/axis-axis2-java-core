@@ -29,10 +29,6 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.ConnectionClosedException;
@@ -41,6 +37,10 @@ import org.apache.http.HttpServerConnection;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpExecutionContext;
 import org.apache.http.protocol.HttpService;
+
+import java.io.IOException;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 /**
  * I/O processor intended to process requests and fill in responses.

@@ -15,25 +15,20 @@
 */
 package org.apache.axis2.description;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.InputStream;
 
 
 /**
@@ -229,7 +224,7 @@ public class Parameter implements Externalizable {
 
     /**
      * Save the contents of this object.
-     * <p>
+     * <p/>
      * NOTE: Transient fields and static fields are not saved.
      *       Also, objects that represent "static" data are
      *       not saved, except for enough information to be
@@ -237,11 +232,9 @@ public class Parameter implements Externalizable {
      *       context is re-constituted.
      *
      * @param out    The stream to write the object contents to
-     * 
-     * @exception IOException
+     * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException
-    {
+    public void writeExternal(ObjectOutput out) throws IOException {
         // write out contents of this object
 
         //---------------------------------------------------------
@@ -275,8 +268,7 @@ public class Parameter implements Externalizable {
 
         String tmp = null;
 
-        if (parameterElement != null)
-        {
+        if (parameterElement != null) {
             tmp = parameterElement.toString();
         }
 
@@ -292,21 +284,18 @@ public class Parameter implements Externalizable {
 
     /**
      * Restore the contents of the object that was previously saved.
-     * <p> 
+     * <p/>
      * NOTE: The field data must read back in the same order and type
      * as it was written.  Some data will need to be validated when 
      * resurrected.
      *
      * @param in    The stream to read the object contents from 
-     * 
-     * @exception IOException
-     * @exception ClassNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
-    {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         // trace point
-        if (log.isTraceEnabled())
-        {
+        if (log.isTraceEnabled()) {
             log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
         }
 
@@ -317,14 +306,12 @@ public class Parameter implements Externalizable {
         int  revID = in.readInt();
 
         // make sure the object data is in a version we can handle
-        if (suid != serialVersionUID)
-        {
+        if (suid != serialVersionUID) {
             throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_SUID);
         }
 
         // make sure the object data is in a revision level we can handle
-        if (revID != REVISION_1)
-        {
+        if (revID != REVISION_1) {
             throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
         }
 
@@ -350,10 +337,8 @@ public class Parameter implements Externalizable {
         String tmp = (String) ObjectStateUtils.readObject(in, "Parameter.parameterElement");
 
         // convert to an OMElement
-        if (tmp != null)
-        {
-            try
-            {
+        if (tmp != null) {
+            try {
                 ByteArrayInputStream bais = new ByteArrayInputStream(tmp.getBytes());
 
                 XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(bais);
@@ -363,24 +348,18 @@ public class Parameter implements Externalizable {
 
                 OMElement docElement = builder.getDocumentElement();
 
-                if (docElement != null)
-                {
+                if (docElement != null) {
                     parameterElement = docElement;
-                }
-                else
-                {
+                } else {
                     // TODO: error handling if can't create an OMElement
                     parameterElement = null;
                 }
             }
-            catch (Exception exc)
-            {
+            catch (Exception exc) {
                 // TODO: error handling if can't create an OMElement
                 parameterElement = null;
             }
-        }
-        else
-        {
+        } else {
             parameterElement = null;
         }
 

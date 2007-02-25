@@ -18,12 +18,12 @@
  */
 package org.apache.axis2.description;
 
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.AxisConfiguration;
 
 import javax.xml.namespace.QName;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class AxisBinding extends AxisDescription{
 

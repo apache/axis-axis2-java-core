@@ -16,10 +16,6 @@
 
 package org.apache.axis2.engine;
 
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -36,6 +32,9 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.util.Map;
 
 /**
  * Dispatcher based on the WS-Addressing properties.

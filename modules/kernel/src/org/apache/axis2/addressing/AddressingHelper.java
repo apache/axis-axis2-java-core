@@ -15,17 +15,16 @@
 */
 package org.apache.axis2.addressing;
 
-import java.util.Map;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.Map;
 
 public class AddressingHelper {
 
@@ -75,6 +74,7 @@ public class AddressingHelper {
     /**
      * If the inbound FaultTo header was invalid and caused a fault, the fault should not be
      * sent to it.
+     *
      * @return true if the fault should be sent to the FaultTo
      */
     public static boolean shouldSendFaultToFaultTo(MessageContext messageContext){

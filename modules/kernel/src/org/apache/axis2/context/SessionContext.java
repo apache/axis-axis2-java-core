@@ -172,15 +172,13 @@ public class SessionContext extends AbstractContext implements Externalizable {
 
     /**
      * Save the contents of this object.
-     * <p>
+     * <p/>
      * NOTE: Transient fields and static fields are not saved.
      *
      * @param out    The stream to write the object contents to
-     *
-     * @exception IOException
+     * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException
-    {
+    public void writeExternal(ObjectOutput out) throws IOException {
         // write out contents of this object
 
         // NOTES: For each item, where appropriate,
@@ -218,8 +216,7 @@ public class SessionContext extends AbstractContext implements Externalizable {
 
         HashMap tmpHashMap = null;
 
-        if ((tmpMap != null) && (!tmpMap.isEmpty()))
-        {
+        if ((tmpMap != null) && (!tmpMap.isEmpty())) {
             tmpHashMap = new HashMap(tmpMap);
         }
 
@@ -241,21 +238,18 @@ public class SessionContext extends AbstractContext implements Externalizable {
     /**
      * Restore the contents of the MessageContext that was
      * previously saved.
-     * <p>
+     * <p/>
      * NOTE: The field data must read back in the same order and type
      * as it was written.  Some data will need to be validated when
      * resurrected.
      *
      * @param in    The stream to read the object contents from
-     *
-     * @exception IOException
-     * @exception ClassNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
-    {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         // trace point
-        if (log.isTraceEnabled())
-        {
+        if (log.isTraceEnabled()) {
             log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
         }
 
@@ -266,14 +260,12 @@ public class SessionContext extends AbstractContext implements Externalizable {
         int  revID = in.readInt();
 
         // make sure the object data is in a version we can handle
-        if (suid != serialVersionUID)
-        {
+        if (suid != serialVersionUID) {
             throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_SUID);
         }
 
         // make sure the object data is in a revision level we can handle
-        if (revID != REVISION_1)
-        {
+        if (revID != REVISION_1) {
             throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
         }
 
@@ -296,8 +288,7 @@ public class SessionContext extends AbstractContext implements Externalizable {
         HashMap tmpHashMap = ObjectStateUtils.readHashMap(in,"SessionContext.properties");
 
         properties = new HashMap();
-        if (tmpHashMap != null)
-        {
+        if (tmpHashMap != null) {
             setProperties(tmpHashMap);
         }
 
@@ -309,12 +300,9 @@ public class SessionContext extends AbstractContext implements Externalizable {
         // parent
         Object tmpParent = ObjectStateUtils.readObject(in, "SessionContext.parent");
 
-        if (tmpParent != null)
-        {
+        if (tmpParent != null) {
             parent = (AbstractContext) tmpParent;
-        }
-        else
-        {
+        } else {
             parent = null;
         }
 

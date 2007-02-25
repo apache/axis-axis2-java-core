@@ -29,15 +29,15 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.engine.DependencyManager;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class SessionManager {
 

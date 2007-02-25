@@ -15,20 +15,6 @@
 */
 package org.apache.axis2.transport.jms;
 
-import java.util.Hashtable;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
-
-import javax.jms.BytesMessage;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.TextMessage;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -36,7 +22,6 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.builder.OMBuilder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
@@ -48,12 +33,26 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.jms.BytesMessage;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.TextMessage;
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.StringTokenizer;
+
 public class JMSUtils {
 
     private static final Log log = LogFactory.getLog(JMSUtils.class);
 
     /**
      * Should this service be enabled on JMS transport?
+     *
      * @param service the Axis service
      * @return true if JMS should be enabled
      */
@@ -75,6 +74,7 @@ public class JMSUtils {
 
     /**
      * Get the JMS destination used by this service
+     *
      * @param service the Axis Service
      * @return the name of the JMS destination
      */
@@ -94,6 +94,7 @@ public class JMSUtils {
 
     /**
      * Extract connection factory properties from a given URL
+     *
      * @param url a JMS URL of the form jms:/<destination>?[<key>=<value>&]*
      * @return a Hashtable of extracted properties
      */
@@ -117,6 +118,7 @@ public class JMSUtils {
 
     /**
      * Marks the given service as faulty with the given comment
+     *
      * @param serviceName service name
      * @param msg comment for being faulty
      * @param axisCfg configuration context
@@ -137,6 +139,7 @@ public class JMSUtils {
 
     /**
      * Get an InputStream to the message
+     *
      * @param message the JMS message
      * @return an InputStream
      */
@@ -184,6 +187,7 @@ public class JMSUtils {
 
     /**
      * Get a String property from the JMS message
+     *
      * @param message JMS message
      * @param property property name
      * @return property value
@@ -198,6 +202,7 @@ public class JMSUtils {
 
     /**
      * Get the context type from the Axis MessageContext
+     *
      * @param msgCtx message context
      * @return the content type
      */
@@ -243,6 +248,7 @@ public class JMSUtils {
 
     /**
      * Get the SOAP Action from the message context
+     *
      * @param msgCtx the MessageContext
      * @return the SOAP Action as s String if present, or the WS-Action
      */
@@ -265,6 +271,7 @@ public class JMSUtils {
 
     /**
      * Return the destination name from the given URL
+     *
      * @param url the URL
      * @return the destination name
      */
@@ -282,11 +289,13 @@ public class JMSUtils {
     /**
      * Return a SOAPEnvelope created from the given JMS Message and Axis
      * MessageContext, and the InputStream into the message
+     *
      * @param message the JMS Message
      * @param msgContext the Axis MessageContext
      * @param in the InputStream into the message
      * @return SOAPEnvelope for the message
      * @throws javax.xml.stream.XMLStreamException
+     *
      */
     public static SOAPEnvelope getSOAPEnvelope(
         Message message, MessageContext msgContext, InputStream in)

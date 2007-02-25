@@ -34,8 +34,12 @@ public class CommandLineOption implements CommandLineOptionConstants {
 
     private void setOptionType(String type) {
         //cater for the long options first
-        if (type.startsWith("--")) type = type.replaceFirst("--", "");
-        if (type.startsWith("-")) type = type.replaceFirst("-", "");
+        if (type.startsWith("--")) {
+            type = type.replaceFirst("--", "");
+        }
+        if (type.startsWith("-")) {
+            type = type.replaceFirst("-", "");
+        }
 
         //we do not change the case of the option!
 
@@ -67,12 +71,12 @@ public class CommandLineOption implements CommandLineOptionConstants {
      * @return Returns the optionValues.
      */
     public String getOptionValue() {
-        if (optionValues != null)
+        if (optionValues != null) {
             return (String) optionValues.get(0);
-        else
+        } else {
             return null;
     }
-
+    }
 
 
     /**

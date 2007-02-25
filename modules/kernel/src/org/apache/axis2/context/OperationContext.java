@@ -17,17 +17,6 @@
 
 package org.apache.axis2.context;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
@@ -37,6 +26,16 @@ import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * An OperationContext represents a running "instance" of an operation, which is
@@ -246,12 +245,9 @@ public class OperationContext extends AbstractContext implements Externalizable 
      * @return Returns parent ServiceContext's parent EngineContext.
      */
     public ConfigurationContext getConfigurationContext() {
-        if (parent != null)
-        {
+        if (parent != null) {
             return ((ServiceContext) parent).getConfigurationContext();
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
@@ -310,7 +306,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
     /**
      * Save the contents of this object.
-     * <p>
+     * <p/>
      * NOTE: Transient fields and static fields are not saved.
      *       Also, objects that represent "static" data are
      *       not saved, except for enough information to be
@@ -318,11 +314,9 @@ public class OperationContext extends AbstractContext implements Externalizable 
      *       context is re-constituted.
      *
      * @param out    The stream to write the object contents to
-     * 
-     * @exception IOException
+     * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException
-    {
+    public void writeExternal(ObjectOutput out) throws IOException {
         //---------------------------------------------------------
         // in order to handle future changes to the message 
         // context definition, be sure to maintain the 
@@ -353,8 +347,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         HashMap tmpHashMap = null;
 
-        if ((tmpMap != null) && (!tmpMap.isEmpty()))
-        {
+        if ((tmpMap != null) && (!tmpMap.isEmpty())) {
             tmpHashMap = new HashMap(tmpMap);
         }
 
@@ -367,12 +360,9 @@ public class OperationContext extends AbstractContext implements Externalizable 
         String axisOpMarker = logCorrelationIDString+".axisOperation";
         ObjectStateUtils.writeString(out, axisOpMarker, axisOpMarker);
 
-        if (axisOperation == null)
-        {
+        if (axisOperation == null) {
             out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
-        }
-        else
-        {
+        } else {
             out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
             metaAxisOperation = new MetaDataEntry(axisOperation.getClass().getName(), axisOperation.getName().toString());
             ObjectStateUtils.writeObject(out, metaAxisOperation, logCorrelationIDString+".metaAxisOperation");
@@ -386,12 +376,9 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         AxisService axisService = (AxisService) axisOperation.getParent();
 
-        if (axisService == null)
-        {
+        if (axisService == null) {
             out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
-        }
-        else
-        {
+        } else {
             out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
             metaAxisService = new MetaDataEntry(axisService.getClass().getName(), axisService.getName());
             ObjectStateUtils.writeObject(out, metaAxisService, logCorrelationIDString+".metaAxisService");
@@ -422,8 +409,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // first deal with the original messageContexts table
         HashMap tmpMsgCtxMap = null;
 
-        if ((messageContexts != null) && (!messageContexts.isEmpty()))
-        {
+        if ((messageContexts != null) && (!messageContexts.isEmpty())) {
             // create a table of the non-isolated message contexts
             workingSet = new HashMap();
             tmpMsgCtxMap = new HashMap();
@@ -431,8 +417,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
             Set keySet = messageContexts.keySet();
             Iterator itKeys = keySet.iterator();
 
-            while (itKeys.hasNext())
-            {
+            while (itKeys.hasNext()) {
                 // expect the key to be a string
                 String keyObj = (String) itKeys.next();
 
@@ -442,21 +427,16 @@ public class OperationContext extends AbstractContext implements Externalizable 
                 boolean addToWorkingSet = true;
 
                 // check to see if this message context was isolated
-                if (isolatedMessageContexts != null)
-                {
-                    if (!isolatedMessageContexts.isEmpty())
-                    {
+                if (isolatedMessageContexts != null) {
+                    if (!isolatedMessageContexts.isEmpty()) {
                         // see if the message context was previously isolated
                         MessageContext valueIsolated = (MessageContext) isolatedMessageContexts.get(keyObj);
 
-                        if (valueIsolated != null)
-                        {
+                        if (valueIsolated != null) {
                             String idIsol = valueIsolated.getMessageID();
 
-                            if (idIsol != null)
-                            {
-                                if (idIsol.equals(value.getMessageID()))
-                                {
+                            if (idIsol != null) {
+                                if (idIsol.equals(value.getMessageID())) {
                                     // don't add to working set
                                     addToWorkingSet = false;
                                 }
@@ -465,8 +445,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
                     }
                 }
 
-                if (addToWorkingSet)
-                {
+                if (addToWorkingSet) {
                     // put the meta data entry in the list
                     workingSet.put(keyObj,value);
                 }
@@ -478,8 +457,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
             Set keySet2 = workingSet.keySet();
             Iterator itKeys2 = keySet2.iterator();
 
-            while (itKeys2.hasNext())
-            {
+            while (itKeys2.hasNext()) {
                 // expect the key to be a string
                 String keyObj2 = (String) itKeys2.next();
 
@@ -514,18 +492,16 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
     /**
      * Restore the contents of the object that was previously saved.
-     * <p> 
+     * <p/>
      * NOTE: The field data must read back in the same order and type
      * as it was written.  Some data will need to be validated when 
      * resurrected.
      *
      * @param in    The stream to read the object contents from 
-     * 
-     * @exception IOException
-     * @exception ClassNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
-    {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         // set the flag to indicate that the message context is being
         // reconstituted and will need to have certain object references 
         // to be reconciled with the current engine setup
@@ -545,14 +521,12 @@ public class OperationContext extends AbstractContext implements Externalizable 
         int  revID = in.readInt();
 
         // make sure the object data is in a version we can handle
-        if (suid != serialVersionUID)
-        {
+        if (suid != serialVersionUID) {
             throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_SUID);
         }
 
         // make sure the object data is in a revision level we can handle
-        if (revID != REVISION_1)
-        {
+        if (revID != REVISION_1) {
             throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
         }
 
@@ -580,8 +554,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         HashMap tmpHashMap = ObjectStateUtils.readHashMap(in,"OperationContext.properties");
 
         properties = new HashMap();
-        if (tmpHashMap != null)
-        {
+        if (tmpHashMap != null) {
             setProperties(tmpHashMap);
         }
 
@@ -597,12 +570,9 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         boolean metaAxisOperationIsActive = in.readBoolean();
 
-        if (metaAxisOperationIsActive == ObjectStateUtils.ACTIVE_OBJECT)
-        {
+        if (metaAxisOperationIsActive == ObjectStateUtils.ACTIVE_OBJECT) {
             metaAxisOperation = (MetaDataEntry) ObjectStateUtils.readObject(in, "OperationContext.metaAxisOperation");
-        }
-        else
-        {
+        } else {
             metaAxisOperation = null;
         }
 
@@ -613,12 +583,9 @@ public class OperationContext extends AbstractContext implements Externalizable 
         
         boolean metaAxisServiceIsActive = in.readBoolean();
 
-        if (metaAxisServiceIsActive == ObjectStateUtils.ACTIVE_OBJECT)
-        {
+        if (metaAxisServiceIsActive == ObjectStateUtils.ACTIVE_OBJECT) {
             metaAxisService = (MetaDataEntry) ObjectStateUtils.readObject(in, "OperationContext.metaAxisService");
-        }
-        else
-        {
+        } else {
             metaAxisService = null;
         }
         
@@ -663,11 +630,9 @@ public class OperationContext extends AbstractContext implements Externalizable 
      * 
      * @param cc     The configuration context object representing the active configuration
      */
-    public void activate(ConfigurationContext cc)
-    {
+    public void activate(ConfigurationContext cc) {
         // see if there's any work to do
-        if (!needsToBeReconciled)
-        {
+        if (!needsToBeReconciled) {
             // return quick
             return;
         }
@@ -679,20 +644,15 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // We previously saved metaAxisService; restore it
         AxisService axisService = null;
 
-        if (metaAxisService != null) 
-        {
+        if (metaAxisService != null) {
             axisService = ObjectStateUtils.findService(axisConfig, metaAxisService.getClassName(), metaAxisService.getQNameAsString());
         }
 
         // We previously saved metaAxisOperation; restore it
-        if (metaAxisOperation != null)
-        {
-            if (axisService != null)
-            {
+        if (metaAxisOperation != null) {
+            if (axisService != null) {
                 this.axisOperation = ObjectStateUtils.findOperation(axisService, metaAxisOperation.getClassName(), metaAxisOperation.getQName());
-            }
-            else
-            {
+            } else {
                 this.axisOperation = ObjectStateUtils.findOperation(axisConfig, metaAxisOperation.getClassName(), metaAxisOperation.getQName());
             }
         }
@@ -700,8 +660,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // the parent ServiceContext object was saved
         // either use the restored object or sync up with 
         // an existing ServiceContext object
-        if (metaParent != null)
-        {
+        if (metaParent != null) {
             // find out if a copy of the ServiceContext object exists on this
             // engine where this OperationContext is being restored/activated
             // if so, use that object instead of the restored object
@@ -715,34 +674,28 @@ public class OperationContext extends AbstractContext implements Externalizable 
             // first look for the ServiceContext via the ServiceContextGroup
             ServiceGroupContext sgc = cc.getServiceGroupContext(groupName);
 
-            if (sgc != null)
-            {
+            if (sgc != null) {
                 existingSC = sgc.findServiceContext(serviceName);
             }
 
-            if (existingSC == null)
-            {
+            if (existingSC == null) {
                 // we couldn't find the ServiceContext via the ServiceContextGroup
                 // try via the set of existing operation contexts 
                 OperationContext existingOC = cc.findOperationContext(getOperationName(), serviceName, groupName);
 
-                if (existingOC != null)
-                {
+                if (existingOC != null) {
                     existingSC = (ServiceContext) existingOC.getParent();
                 }
             }
 
-            if (existingSC == null)
-            {
+            if (existingSC == null) {
                 // could not find an existing ServiceContext
                 // use the restored object
                 metaParent.activate(cc);
 
                 // set parent 
                 this.setParent(metaParent);
-            }
-            else
-            {
+            } else {
                 // switch over to the existing object
                 this.setParent(existingSC);
 
@@ -756,9 +709,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
                 // is important to be restored.
                 metaParent.putContextProperties(existingSC,true);
             }
-        }
-        else
-        {
+        } else {
             // set parent  to null
             this.setParent(metaParent);
         }
@@ -768,12 +719,9 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         ServiceContext serv = getServiceContext();
         ConfigurationContext activeCC ;
-        if (serv != null)
-        {
+        if (serv != null) {
             activeCC = serv.getConfigurationContext();
-        }
-        else
-        {
+        } else {
             activeCC = cc;
         }
 
@@ -795,13 +743,11 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // to call this operation context object so we don't
         // need to handle the metaMessagecontextMap table here
 
-        if ((workingSet != null) && (!workingSet.isEmpty()))
-        {
+        if ((workingSet != null) && (!workingSet.isEmpty())) {
             Set keySet = workingSet.keySet();
             Iterator itKeys = keySet.iterator();
 
-            while (itKeys.hasNext())
-            {
+            while (itKeys.hasNext()) {
                 // expect the key to be a string
                 String keyObj = (String) itKeys.next();
 
@@ -809,8 +755,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
                 MessageContext value = (MessageContext) workingSet.get((Object)keyObj);
 
                 // activate that object 
-                if (value != null)
-                {
+                if (value != null) {
                     // trace point
                     log.trace(logCorrelationIDString+":activate():  key ["+keyObj+"]  message id ["+value.getMessageID()+"]");
 
@@ -818,8 +763,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
                     value.activateWithOperationContext(this);
                     suppressWarnings = false;
 
-                    if (messageContexts == null)
-                    {
+                    if (messageContexts == null) {
                         messageContexts = new HashMap();
                     }
                 }
@@ -844,30 +788,26 @@ public class OperationContext extends AbstractContext implements Externalizable 
      * saving the entire message context object,
      * just setup some metadata about the message
      * context.
-     * <P>
+     * <p/>
      * Note: this will remove the specified 
      * message context object from the message context
      * table.
      * 
      * @param mc     The message context object
      */
-    public void isolateMessageContext(MessageContext mc)
-    {
-        if (mc == null)
-        {
+    public void isolateMessageContext(MessageContext mc) {
+        if (mc == null) {
             return;
         }
 
-        if ((messageContexts == null) || (messageContexts.isEmpty()))
-        {
+        if ((messageContexts == null) || (messageContexts.isEmpty())) {
             return;
         }
 
         // get the message ID from the message context
         String messageID = mc.getMessageID();
 
-        if (messageID == null)
-        {
+        if (messageID == null) {
             // can't locate it without identification
             return;
         }
@@ -875,24 +815,20 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         Iterator it = messageContexts.keySet().iterator();
 
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             // get the key
             Object keyObj = it.next();
 
             // get the value associated with that key
             MessageContext value = (MessageContext) messageContexts.get(keyObj);
 
-            if (value != null)
-            {
+            if (value != null) {
                 String valueID = value.getMessageID();
 
-                if ((valueID != null) && valueID.equals(messageID))
-                {
+                if ((valueID != null) && valueID.equals(messageID)) {
                     // found the input message context in our table
 
-                    if (metaMessageContextMap == null)
-                    {
+                    if (metaMessageContextMap == null) {
                         metaMessageContextMap = new HashMap();
                     }
 
@@ -915,8 +851,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
                     //  messageContexts.remove(keyObj);
 
                     // put the original entry in the temporary list
-                    if (isolatedMessageContexts == null)
-                    {
+                    if (isolatedMessageContexts == null) {
                         isolatedMessageContexts = new HashMap();
                     }
 
@@ -943,26 +878,22 @@ public class OperationContext extends AbstractContext implements Externalizable 
      *
      * @param msg   The message context object 
      */
-    public void restoreMessageContext(MessageContext msg)
-    {
+    public void restoreMessageContext(MessageContext msg) {
         // see if the activation has been done
-        if (needsToBeReconciled)
-        {
+        if (needsToBeReconciled) {
             // nope, need to do the activation first
             log.trace(logCorrelationIDString+":restoreMessageContext(): *** WARNING : need to invoke activate() prior to restoring the MessageContext to the list.");
 
             return;
         }
 
-        if (msg == null)
-        {
+        if (msg == null) {
             return;
         }
 
         String msgID = msg.getMessageID();
 
-        if (msgID == null)
-        {
+        if (msgID == null) {
             // can't identify message context
             log.trace(logCorrelationIDString+":restoreMessageContext(): *** WARNING : MessageContext does not have a message ID.");
             return;
@@ -972,27 +903,22 @@ public class OperationContext extends AbstractContext implements Externalizable 
         // the specified message context object matches any
         // of the metadata entries.  
 
-        if ((metaMessageContextMap != null) && (!metaMessageContextMap.isEmpty()))
-        {
+        if ((metaMessageContextMap != null) && (!metaMessageContextMap.isEmpty())) {
             Iterator itMeta = metaMessageContextMap.keySet().iterator();
 
-            while (itMeta.hasNext())
-            {
+            while (itMeta.hasNext()) {
                 String keyM = (String) itMeta.next();
 
                 MetaDataEntry valueM = (MetaDataEntry) metaMessageContextMap.get(keyM);
                 String valueM_ID ;
 
-                if (valueM != null)
-                {
+                if (valueM != null) {
                     valueM_ID = valueM.getQNameAsString();
 
-                    if (msgID.equals(valueM_ID))
-                    {
+                    if (msgID.equals(valueM_ID)) {
                         String label = valueM.getExtraName();
 
-                        if (messageContexts == null)
-                        {
+                        if (messageContexts == null) {
                             messageContexts = new HashMap();
                         }
 
@@ -1008,26 +934,21 @@ public class OperationContext extends AbstractContext implements Externalizable 
                     }
                 }
             }
-        }
-        else 
+        } else
         // see if we can put the msg directly in the messageContexts table
-        if ((messageContexts != null) && (!messageContexts.isEmpty()))
-        {
+            if ((messageContexts != null) && (!messageContexts.isEmpty())) {
             Iterator itList = messageContexts.keySet().iterator();
 
-            while (itList.hasNext())
-            {
+                while (itList.hasNext()) {
                 String key = (String) itList.next();
 
                 MessageContext value = (MessageContext) messageContexts.get(key);
                 String valueID ;
 
-                if (value != null)
-                {
+                    if (value != null) {
                     valueID = value.getMessageID();
 
-                    if (msgID.equals(valueID))
-                    {
+                        if (msgID.equals(valueID)) {
                         // update the entry
                         messageContexts.put(key, msg);
                     }
@@ -1042,15 +963,12 @@ public class OperationContext extends AbstractContext implements Externalizable 
      * 
      * @return The name String
      */
-    public String getOperationName()
-    {
+    public String getOperationName() {
         String opName = null;
 
-        if (axisOperation != null)
-        {
+        if (axisOperation != null) {
             QName qname = axisOperation.getName();
-            if (qname != null)
-            {
+            if (qname != null) {
                 opName = qname.toString();
             }
         }
@@ -1063,19 +981,16 @@ public class OperationContext extends AbstractContext implements Externalizable 
      * 
      * @return The name String
      */
-    public String getServiceName()
-    {
+    public String getServiceName() {
         String srvName = null;
 
         ServiceContext sc = (ServiceContext) getParent();
 
-        if (sc == null)
-        {
+        if (sc == null) {
             sc = metaParent;
         }
 
-        if (sc != null)
-        {
+        if (sc != null) {
             srvName = sc.getName();
         }
 
@@ -1087,19 +1002,16 @@ public class OperationContext extends AbstractContext implements Externalizable 
      * 
      * @return The name String
      */
-    public String getServiceGroupName()
-    {
+    public String getServiceGroupName() {
         String srvGroupName = null;
 
         ServiceContext sc = (ServiceContext) getParent();
 
-        if (sc == null)
-        {
+        if (sc == null) {
             sc = metaParent;
         }
 
-        if (sc != null)
-        {
+        if (sc != null) {
             srvGroupName = sc.getGroupName();
         }
 
@@ -1111,29 +1023,26 @@ public class OperationContext extends AbstractContext implements Externalizable 
      * Compares key parts of the state from the current instance of 
      * this class with the specified instance to see if they are 
      * equivalent. 
-     * <P>
+     * <p/>
      * This differs from the java.lang.Object.equals() method in
      * that the equals() method generally looks at both the 
      * object identity (location in memory) and the object state
      * (data).
-     * <P>
+     * <p/>
      * 
      * @param ctx  The object to compare with
      * @return TRUE if this object is equivalent with the specified object
      *              that is, key fields match
      *         FALSE, otherwise
      */
-    public boolean isEquivalent(OperationContext ctx)
-    {
+    public boolean isEquivalent(OperationContext ctx) {
         // NOTE: the input object is expected to exist (ie, be non-null)
 
-        if (this.isComplete != ctx.isComplete())
-        {
+        if (this.isComplete != ctx.isComplete()) {
             return false;
         }
 
-        if (!this.axisOperation.equals(ctx.getAxisOperation()))
-        {
+        if (!this.axisOperation.equals(ctx.getAxisOperation())) {
             return false;
         }
 
@@ -1152,8 +1061,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
      * for this object instance.  It is suitable for matching related log
      * entries. 
      */
-    public String getLogCorrelationIDString()
-    {
+    public String getLogCorrelationIDString() {
         return logCorrelationIDString;
     }
     

@@ -381,8 +381,7 @@ public class Phase implements Handler {
             }
             pi = handler.invoke(msgctx);
 
-            if (!pi.equals(InvocationResponse.CONTINUE))
-            {
+            if (!pi.equals(InvocationResponse.CONTINUE)) {
               return pi;
             }
 
@@ -399,33 +398,26 @@ public class Phase implements Handler {
         return pi;
     }
 
-    public void flowComplete(MessageContext msgContext)
-    {
-      if (isDebugEnabled)
-      {
+    public void flowComplete(MessageContext msgContext) {
+        if (isDebugEnabled) {
         log.debug(msgContext.getLogIDString()+" Invoking flowComplete() in Phase \"" + phaseName + "\"");
       }
       
       /*This will be non-zero if we failed during execution of one of the
        *handlers in this phase*/
       int currentHandlerIndex = msgContext.getCurrentPhaseIndex();
-      if (currentHandlerIndex == 0)
-      {
+        if (currentHandlerIndex == 0) {
         currentHandlerIndex = handlers.size();
-      }
-      else
-      {
+        } else {
         /*We need to set it to 0 so that any previous phases will execute all
          * of their handlers.*/
         msgContext.setCurrentPhaseIndex(0);
       }
       
-      for (; currentHandlerIndex > 0; currentHandlerIndex--)
-      {
+        for (; currentHandlerIndex > 0; currentHandlerIndex--) {
         Handler handler = (Handler) handlers.get(currentHandlerIndex-1);
         
-        if (isDebugEnabled)
-        {
+            if (isDebugEnabled) {
           log.debug(msgContext.getLogIDString()+" Invoking flowComplete() for Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
         }
         

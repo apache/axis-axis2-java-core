@@ -126,8 +126,9 @@ public class RepositoryListener implements DeploymentConstants {
                 for (int i = 0; (urls != null) && i < urls.length; i++) {
                     String path = urls[i].getPath();
                     //If it is a drive letter, adjust accordingly.
-                    if (path.length() >= 3 && path.charAt(0) == '/' && path.charAt(2) == ':')
+                    if (path.length() >= 3 && path.charAt(0) == '/' && path.charAt(2) == ':') {
                         path = path.substring(1);
+                    }
                     java.io.File file = new java.io.File(URLDecoder.decode(urls[i].getPath()).replace('/',
                             File.separatorChar).replace('|', ':'));
                     if (file.isFile()) {

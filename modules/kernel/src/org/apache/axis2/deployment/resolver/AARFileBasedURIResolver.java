@@ -1,16 +1,18 @@
 package org.apache.axis2.deployment.resolver;
 
-import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.deployment.util.Utils;
-import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.xml.sax.InputSource;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URI;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.net.URI;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -84,7 +86,9 @@ public class AARFileBasedURIResolver extends DefaultURIResolver {
                 throw new RuntimeException(e);
             } finally {
                 try {
-                    if (zin != null) zin.close();
+                    if (zin != null) {
+                        zin.close();
+                    }
                 } catch (IOException e) {
                     log.debug(e);
                 }

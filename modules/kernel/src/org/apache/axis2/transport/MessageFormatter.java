@@ -15,15 +15,15 @@
  */
 package org.apache.axis2.transport;
 
-import java.io.OutputStream;
-import java.net.URL;
-
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 
+import java.io.OutputStream;
+import java.net.URL;
+
 /**
- * <p>
+ * <p/>
  * MessageFormatter implementations are used by Axis2 to support serialization
  * of messages to different message formats. (Eg: JSON). Users can register
  * MessageFormatter implementations against a message type using the axis2.xml.
@@ -31,7 +31,7 @@ import org.apache.axis2.context.MessageContext;
  * property in the MessageContext. This can also be given as a parameter in the
  * service.xml/axis2.xml for a per service based/engine wide configuration.
  * </p>
- * <p>
+ * <p/>
  * <messageFormatters> 
  *         <messageFormatter contentType="application/soap+xml"
  *             class="org.apache.axis2.transport.http.SOAPMessageFormatter"/>
@@ -50,7 +50,7 @@ public interface MessageFormatter {
     /**
      * To support deffered writing transports as in http chunking.. Axis2 was
      * doing this for some time..
-     * 
+     * <p/>
      * Preserve flag can be used to preserve the envelope for later use. This is
      * usefull when implementing authentication machnisms like NTLM.
      * 
@@ -64,6 +64,7 @@ public interface MessageFormatter {
     /**
      * Different message formats can set their own content types
      * Eg: JSONFormatter can set the content type as application/json
+     *
      * @param messageContext
      * @param format
      * @param soapAction

@@ -29,10 +29,10 @@
 
 package org.apache.axis2.transport.http.server;
 
+import org.apache.http.HttpServerConnection;
+
 import java.io.IOException;
 import java.net.Socket;
-
-import org.apache.http.HttpServerConnection;
 
 public interface HttpConnectionFactory {
 

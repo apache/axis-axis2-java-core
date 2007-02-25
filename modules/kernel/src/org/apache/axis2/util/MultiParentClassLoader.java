@@ -16,12 +16,10 @@
  */
 package org.apache.axis2.util;
 
+import org.apache.commons.logging.LogFactory;
+
 import java.beans.Introspector;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
@@ -30,9 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A MultiParentClassLoader is a simple extension of the URLClassLoader that simply changes the single parent class
@@ -359,7 +354,9 @@ public class MultiParentClassLoader extends URLClassLoader {
 
     public void destroy() {
         synchronized(this) {
-            if (destroyed) return;
+            if (destroyed) {
+                return;
+            }
             destroyed = true;
         }
 

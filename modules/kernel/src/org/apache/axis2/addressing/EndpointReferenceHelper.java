@@ -15,16 +15,6 @@
 */
 package org.apache.axis2.addressing;
 
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.io.ByteArrayInputStream;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -38,11 +28,19 @@ import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 /**
  * The methods in this class are used to process {@link EndpointReference} objects
  * according to the rules of the 2005/08 (Final) and 2004/08 (submission) WS-Addressing
  * specifications.
- *
  */
 public class EndpointReferenceHelper {
 
@@ -78,12 +76,10 @@ public class EndpointReferenceHelper {
                 if (log.isDebugEnabled()){
                     log.debug("fromOM: Found address element for namespace, " + AddressingConstants.Submission.WSA_NAMESPACE);
                 }
-            }
-            else {
+            } else {
                 throw new AxisFault("Unable to locate an address element for the endpoint reference type.");
             }
-        }
-        else {
+        } else {
             OMElement address = eprOMElement.getFirstChildWithName((QName) finalQNames.get(AddressingConstants.EPR_ADDRESS));
             
             if (address != null) {
@@ -93,8 +89,7 @@ public class EndpointReferenceHelper {
                 if (log.isDebugEnabled()){
                     log.debug("fromOM: Found address element for namespace, " + AddressingConstants.Final.WSA_NAMESPACE);
                 }
-            }
-            else {
+            } else {
                 throw new AxisFault("Unable to locate an address element for the endpoint reference type.");
             }
         }
@@ -145,8 +140,7 @@ public class EndpointReferenceHelper {
             if (log.isDebugEnabled()){
                 log.debug("fromOM: Found address element for namespace, " + AddressingConstants.Final.WSA_NAMESPACE);
             }
-        }
-        else {
+        } else {
             address = eprOMElement.getFirstChildWithName((QName) submissionQNames.get(AddressingConstants.EPR_ADDRESS));
             
             if (address != null) {
@@ -156,8 +150,7 @@ public class EndpointReferenceHelper {
                 if (log.isDebugEnabled()){
                     log.debug("fromOM: Found address element for namespace, " + AddressingConstants.Submission.WSA_NAMESPACE);
                 }
-            }
-            else {
+            } else {
                 throw new AxisFault("Unable to locate an address element for the endpoint reference type.");
             }
         }
@@ -292,15 +285,13 @@ public class EndpointReferenceHelper {
                     addressAttributes.add(attribute);
                 }
                 epr.setAddressAttributes(addressAttributes);
-            }
-            else if (map.get(AddressingConstants.EPR_REFERENCE_PARAMETERS).equals(qname)) {
+            } else if (map.get(AddressingConstants.EPR_REFERENCE_PARAMETERS).equals(qname)) {
                 Iterator iterator = eprChildElement.getChildElements();
                 while (iterator.hasNext()) {
                     OMElement element = (OMElement) iterator.next();
                     epr.addReferenceParameter(element);
                 }
-            }
-            else if (isFinalAddressingNamespace &&
+            } else if (isFinalAddressingNamespace &&
                     map.get(AddressingConstants.Final.WSA_METADATA).equals(qname)) {
                 Iterator iterator = eprChildElement.getChildElements();
                 while (iterator.hasNext()) {
@@ -314,8 +305,7 @@ public class EndpointReferenceHelper {
                     metadataAttributes.add(attribute);
                 }
                 epr.setMetadataAttributes(metadataAttributes);
-            }
-            else if (!isFinalAddressingNamespace &&
+            } else if (!isFinalAddressingNamespace &&
                     map.get(AddressingConstants.Submission.EPR_REFERENCE_PROPERTIES).equals(qname)) {
                 // since we have the model for WS-Final, we don't have a place to keep this reference properties.
                 // The only compatible place is reference properties
@@ -324,8 +314,7 @@ public class EndpointReferenceHelper {
                     OMElement element = (OMElement) iterator.next();
                     epr.addReferenceParameter(element);
                 }
-            }
-            else {
+            } else {
                 epr.addExtensibleElement(eprChildElement);
             }
         }

@@ -16,11 +16,6 @@
 
 package org.apache.axis2.util;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-
-
 /**
  * @deprecated
  */

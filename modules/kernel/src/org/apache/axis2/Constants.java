@@ -315,6 +315,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         
         /**
          * This is used to specify the message format which the message needs to be serializes.
+         *
          * @see org.apache.axis2.transport.MessageFormatter
          */
         public static final String MESSAGE_TYPE = "messageType";

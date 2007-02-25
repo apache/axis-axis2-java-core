@@ -27,9 +27,19 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.deployment.WarBasedAxisConfigurator;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisBindingMessage;
+import org.apache.axis2.description.AxisBindingOperation;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.Handler.InvocationResponse;
@@ -49,7 +59,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.SocketException;
 import java.util.Map;
 
@@ -119,8 +133,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 Object contextWritten = null;
                 OperationContext operationContext = msgContext.getOperationContext();
 
-                if (operationContext != null)
+                if (operationContext != null) {
                     contextWritten = operationContext.getProperty(Constants.RESPONSE_WRITTEN);
+                }
 
                 response.setContentType("text/xml; charset="
                                         + msgContext

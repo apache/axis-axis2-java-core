@@ -182,8 +182,9 @@ public class Messages {
     public static String getMessageFromBundle(String messageBundleKey, String key)
             throws MissingResourceException, Exception {
         MessageBundle messageBundle = getMessageBundle(messageBundleKey);
-        if (messageBundle == null)
+        if (messageBundle == null) {
             throw new Exception(NO_MESSAGE_BUNDLE);
+        }
 
         return messageBundle.getMessage(key);
     }
@@ -199,8 +200,9 @@ public class Messages {
     public static String getMessageFromBundle(String messageBundleKey, String key, String arg0)
             throws MissingResourceException, Exception {
         MessageBundle messageBundle = getMessageBundle(messageBundleKey);
-        if (messageBundle == null)
+        if (messageBundle == null) {
             throw new Exception(NO_MESSAGE_BUNDLE);
+        }
 
         return messageBundle.getMessage(key, arg0);
     }
@@ -217,8 +219,9 @@ public class Messages {
     public static String getMessageFromBundle(String messageBundleKey, String key, String arg0, String arg1)
             throws MissingResourceException, Exception {
         MessageBundle messageBundle = getMessageBundle(messageBundleKey);
-        if (messageBundle == null)
+        if (messageBundle == null) {
             throw new Exception(NO_MESSAGE_BUNDLE);
+        }
 
         return messageBundle.getMessage(key, arg0, arg1);
     }
@@ -236,8 +239,9 @@ public class Messages {
     public static String getMessageFromBundle(String messageBundleKey, String key, String arg0, String arg1, String arg2)
             throws MissingResourceException, Exception {
         MessageBundle messageBundle = getMessageBundle(messageBundleKey);
-        if (messageBundle == null)
+        if (messageBundle == null) {
             throw new Exception(NO_MESSAGE_BUNDLE);
+        }
 
         return messageBundle.getMessage(key, arg0, arg1, arg2);
     }
@@ -256,8 +260,9 @@ public class Messages {
     public static String getMessageFromBundle(String messageBundleKey, String key, String arg0, String arg1, String arg2, String arg3)
             throws MissingResourceException, Exception {
         MessageBundle messageBundle = getMessageBundle(messageBundleKey);
-        if (messageBundle == null)
+        if (messageBundle == null) {
             throw new Exception(NO_MESSAGE_BUNDLE);
+        }
 
         return messageBundle.getMessage(key, arg0, arg1, arg2, arg3);
     }
@@ -277,8 +282,9 @@ public class Messages {
     public static String getMessageFromBundle(String messageBundleKey, String key, String arg0, String arg1, String arg2, String arg3, String arg4)
             throws MissingResourceException, Exception {
         MessageBundle messageBundle = getMessageBundle(messageBundleKey);
-        if (messageBundle == null)
+        if (messageBundle == null) {
             throw new Exception(NO_MESSAGE_BUNDLE);
+        }
 
         return messageBundle.getMessage(key, arg0, arg1, arg2, arg3, arg4);
     }

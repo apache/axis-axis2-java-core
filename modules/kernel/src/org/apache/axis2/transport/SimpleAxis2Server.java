@@ -16,10 +16,6 @@
 
 package org.apache.axis2.transport;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.engine.ListenerManager;
@@ -29,6 +25,10 @@ import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.util.OptionsValidator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 public class SimpleAxis2Server {
 
@@ -56,8 +56,7 @@ public class SimpleAxis2Server {
             }
         });
         
-        if ((invalidOptionsList.size()>0)||(args.length>4))
-        {
+        if ((invalidOptionsList.size() > 0) || (args.length > 4)) {
             printUsage();
             return;
         }

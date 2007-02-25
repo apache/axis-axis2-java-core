@@ -17,7 +17,6 @@
 package org.apache.axis2.dataretrieval;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisService2OM;
@@ -26,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Axis 2 Data Locator responsibles for retrieving WSDL metadata. 
- *
  */
 public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLocator {
     private static final Log log = LogFactory.getLog(WSDLDataLocator.class);
@@ -41,6 +39,7 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
     
     /**
      * Constructor 
+     *
      * @param data an array of ServiceData instance defined in the 
      *             ServiceData.xml for the WSDL dialect.
      */
@@ -70,24 +69,23 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
      
         if (outputform == OutputForm.INLINE_FORM) {
             output = outputInlineForm(msgContext, dataList);
-        }
-        else if (outputform == OutputForm.LOCATION_FORM) {
+        } else if (outputform == OutputForm.LOCATION_FORM) {
             output = outputLocationForm(dataList);
             
-        }
-        else if (outputform == OutputForm.REFERENCE_FORM) {
+        } else if (outputform == OutputForm.REFERENCE_FORM) {
             output = outputReferenceForm(msgContext, dataList);
                     
-        }
-        else {
+        } else {
             output = outputInlineForm(msgContext, dataList);
             
         }
     
-        if (output == null)
-            if (log.isTraceEnabled())
+        if (output == null) {
+            if (log.isTraceEnabled()) {
                 log.trace("Null data return! Data Locator does not know how to handle request for dialect= " + (String) request.getDialect()
                     + " in the form of " + outputFormString);
+            }
+        }
         
 
         log.trace("Default WSDL DataLocator getData ends");

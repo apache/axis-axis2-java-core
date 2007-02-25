@@ -38,20 +38,19 @@ public class DataLocatorFactory {
       if (dialect.equals(DRConstants.SPEC.DIALECT_TYPE_WSDL)){
           dataLocator = getWsdlDataLocator(serviceDataArray); 
           
-      }
-      else if (dialect.trim().equals(DRConstants.SPEC.DIALECT_TYPE_POLICY)){
-          if (policyDataLocator == null)
+        } else if (dialect.trim().equals(DRConstants.SPEC.DIALECT_TYPE_POLICY)) {
+            if (policyDataLocator == null) {
               dataLocator = new PolicyDataLocator(serviceDataArray);
-          else
+            } else {
               dataLocator = policyDataLocator;
       }
-      else if (dialect.equals(DRConstants.SPEC.DIALECT_TYPE_SCHEMA)){
-          if (schemaDataLocator == null)
+        } else if (dialect.equals(DRConstants.SPEC.DIALECT_TYPE_SCHEMA)) {
+            if (schemaDataLocator == null) {
               dataLocator = new SchemaDataLocator(serviceDataArray);
-          else
+            } else {
               dataLocator = schemaDataLocator;
       }
-      else {
+        } else {
           dataLocator = null;
       }
       return dataLocator;
@@ -59,9 +58,9 @@ public class DataLocatorFactory {
   
   protected static AxisDataLocator getWsdlDataLocator(ServiceData[] serviceDataArray) {
 
-        if (wsdlDataLocator == null)
+        if (wsdlDataLocator == null) {
             wsdlDataLocator = new org.apache.axis2.dataretrieval.WSDLDataLocator(serviceDataArray);
-        else {
+        } else {
             wsdlDataLocator.setServiceData(serviceDataArray);
         }
         return wsdlDataLocator;

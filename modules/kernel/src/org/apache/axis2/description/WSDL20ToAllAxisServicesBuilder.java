@@ -18,27 +18,19 @@
 
 package org.apache.axis2.description;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import org.apache.woden.wsdl20.Description;
-import org.apache.woden.wsdl20.Endpoint;
-import org.apache.woden.wsdl20.Interface;
-import org.apache.woden.wsdl20.Service;
-
-
-import javax.wsdl.WSDLException;
-
 import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.woden.wsdl20.Endpoint;
+import org.apache.woden.wsdl20.Service;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Extends the WSDL20ToAxisServiceBuilder class to provide functionality to return
  * multiple AxisService objects; one for each endpoint on each service in the WSDL 2.0 file.
- *
  */
 public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
     protected static final Log log =
@@ -48,6 +40,7 @@ public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
     
     /**
      * Class constructor.  
+     *
      * @param in  - Contains the wsdl 2.0 file
      */
     public WSDL20ToAllAxisServicesBuilder(InputStream in) {
@@ -63,6 +56,7 @@ public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
      * is not unique to a wsdl 2.0 file.  Multiple services in the file may have endpoints
      * with the same name.  Therefore the name of the AxisService needs to be a combination
      * of service/endpoint name to be unique to the wsdl.  
+     *
      * @return A List containing one AxisService object for each port in the wsdl file.
      * The name of the AxisService is modified to uniquely represent the service/endpoint
      * pair.  The format of the name is "<wsdl service name>#<wsdl endpoint name>"

@@ -28,8 +28,7 @@ import org.apache.axis2.context.MessageContext;
  * enables both of those scenarios by allowing the transport to expose
  * controls to the rest of the engine via a callback.     
  */
-public interface RequestResponseTransport
-{
+public interface RequestResponseTransport {
     
   /*This is the name of the property that is to be stored on the
     MessageContext*/
@@ -70,6 +69,7 @@ public interface RequestResponseTransport
   
   /**
    * This gives the current status of an RequestResponseTransport object.  
+     *
    * @return
    */
   public RequestResponseTransportStatus getStatus ();
@@ -99,8 +99,7 @@ public interface RequestResponseTransport
           this.value = value;
       }
       
-      public int hashCode()
-      {
+        public int hashCode() {
         return value;
       }
       

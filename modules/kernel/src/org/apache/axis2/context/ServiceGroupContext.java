@@ -23,8 +23,8 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.axis2.util.MetaDataEntry;
+import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -177,22 +177,18 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * 
      * @param srvctx The ServiceContext object to add
      */
-    public void addServiceContext(ServiceContext srvctx)
-    {
-        if (srvctx == null)
-        {
+    public void addServiceContext(ServiceContext srvctx) {
+        if (srvctx == null) {
             return;
         }
 
         AxisService axisService = srvctx.getAxisService();
         
-        if (axisService == null)
-        {
+        if (axisService == null) {
             return;
         }
 
-        if (serviceContextMap == null)
-        {
+        if (serviceContextMap == null) {
             serviceContextMap = new HashMap();
         }
 
@@ -208,14 +204,11 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * context.
      * 
      * @param name The name associated with the ServiceContext
-     *
      * @return The ServiceContext associated with the name,
      *         or null, if none can be found
      */
-    public ServiceContext findServiceContext(String name)
-    {
-        if (serviceContextMap == null)
-        {
+    public ServiceContext findServiceContext(String name) {
+        if (serviceContextMap == null) {
             return null;
         }
 
@@ -230,19 +223,15 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * of service contexts for this service group
      * context.
      * 
-     *
      * @return The ServiceContext associated with the AxisService
      *         or null, if none can be found
      */
-    public ServiceContext findServiceContext(AxisService axisSrv)
-    {
-        if (axisSrv == null)
-        {
+    public ServiceContext findServiceContext(AxisService axisSrv) {
+        if (axisSrv == null) {
             return null;
         }
 
-        if (serviceContextMap == null)
-        {
+        if (serviceContextMap == null) {
             return null;
         }
 
@@ -256,8 +245,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * @param context The ServiceGroupContext object to hold the merged properties
      */
     public void putContextProperties(ServiceGroupContext context) {
-        if (context != null)
-        {
+        if (context != null) {
             // get the current properties on this context object
             Map props = getProperties();
 
@@ -275,7 +263,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
     /**
      * Save the contents of this object.
-     * <p>
+     * <p/>
      * NOTE: Transient fields and static fields are not saved.
      *       Also, objects that represent "static" data are
      *       not saved, except for enough information to be
@@ -283,11 +271,9 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      *       context is re-constituted.
      *
      * @param out    The stream to write the object contents to
-     * 
-     * @exception IOException
+     * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException
-    {
+    public void writeExternal(ObjectOutput out) throws IOException {
         // write out contents of this object
 
         //---------------------------------------------------------
@@ -307,8 +293,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
         out.writeLong(getLastTouchedTime());
 
-        if (id == null)
-        {
+        if (id == null) {
             // generate an ID to use when this object is restored
             id = UUIDGenerator.getUUID();
         }
@@ -322,8 +307,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
         HashMap tmpHashMap = null;
 
-        if ((tmpMap != null) && (!tmpMap.isEmpty()))
-        {
+        if ((tmpMap != null) && (!tmpMap.isEmpty())) {
             tmpHashMap = new HashMap(tmpMap);
         }
 
@@ -337,12 +321,9 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         String axisServGrpMarker = "ServiceGroupContext.axisServiceGroup";
         ObjectStateUtils.writeString(out, axisServGrpMarker, axisServGrpMarker);
 
-        if (axisServiceGroup == null)
-        {
+        if (axisServiceGroup == null) {
             out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
-        }
-        else
-        {
+        } else {
             out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
             metaAxisServiceGroup = new MetaDataEntry(axisServiceGroup.getClass().getName(), axisServiceGroup.getServiceGroupName());
             ObjectStateUtils.writeObject(out, metaAxisServiceGroup, "ServiceGroupContext.metaAxisServiceGroup");
@@ -364,26 +345,23 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
     /**
      * Restore the contents of the object that was previously saved.
-     * <p> 
+     * <p/>
      * NOTE: The field data must read back in the same order and type
      * as it was written.  Some data will need to be validated when 
      * resurrected.
      *
      * @param in    The stream to read the object contents from 
-     * 
-     * @exception IOException
-     * @exception ClassNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
-    {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         // set the flag to indicate that the message context is being
         // reconstituted and will need to have certain object references 
         // to be reconciled with the current engine setup
         needsToBeReconciled = true;
 
         // trace point
-        if (log.isTraceEnabled())
-        {
+        if (log.isTraceEnabled()) {
             log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
         }
 
@@ -394,14 +372,12 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         int  revID = in.readInt();
 
         // make sure the object data is in a version we can handle
-        if (suid != serialVersionUID)
-        {
+        if (suid != serialVersionUID) {
             throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_SUID);
         }
 
         // make sure the object data is in a revision level we can handle
-        if (revID != REVISION_1)
-        {
+        if (revID != REVISION_1) {
             throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
         }
 
@@ -423,8 +399,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         HashMap tmpHashMap = ObjectStateUtils.readHashMap(in,"ServiceGroupContext.properties");
 
         properties = new HashMap();
-        if (tmpHashMap != null)
-        {
+        if (tmpHashMap != null) {
             setProperties(tmpHashMap);
         }
 
@@ -439,12 +414,9 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         
         boolean metaAxisServiceGrpIsActive = in.readBoolean();
 
-        if (metaAxisServiceGrpIsActive == ObjectStateUtils.ACTIVE_OBJECT)
-        {
+        if (metaAxisServiceGrpIsActive == ObjectStateUtils.ACTIVE_OBJECT) {
             metaAxisServiceGroup = (MetaDataEntry) ObjectStateUtils.readObject(in, "ServiceGroupContext.metaAxisServiceGroup");
-        }
-        else
-        {
+        } else {
             metaAxisServiceGroup = null;
         }
         
@@ -481,11 +453,9 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * if additional work needs to be done in order to complete
      * the object reconstitution.
      */
-    public void activate(ConfigurationContext cc)
-    {
+    public void activate(ConfigurationContext cc) {
         // see if there's any work to do
-        if (!needsToBeReconciled)
-        {
+        if (!needsToBeReconciled) {
             // return quick
             return;
         }
@@ -496,9 +466,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         // We previously saved metaAxisServiceGroup; restore it
         if (metaAxisServiceGroup != null) {
             axisServiceGroup = ObjectStateUtils.findServiceGroup(axisConfig, metaAxisServiceGroup.getClassName(), metaAxisServiceGroup.getQNameAsString());
-        }
-        else
-        {
+        } else {
             axisServiceGroup = null;
         }
 
@@ -520,43 +488,35 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * Compares key parts of the state from the current instance of 
      * this class with the specified instance to see if they are 
      * equivalent. 
-     * <P>
+     * <p/>
      * This differs from the java.lang.Object.equals() method in
      * that the equals() method generally looks at both the 
      * object identity (location in memory) and the object state
      * (data).
-     * <P>
+     * <p/>
      * 
      * @param ctx  The object to compare with
      * @return TRUE if this object is equivalent with the specified object
      *              that is, key fields match
      *         FALSE, otherwise
      */
-    public boolean isEquivalent(ServiceGroupContext ctx)
-    {
+    public boolean isEquivalent(ServiceGroupContext ctx) {
         // NOTE: the input object is expected to exist (ie, be non-null)
 
-        if (!this.axisServiceGroup.equals(ctx.getDescription()))
-        {
+        if (!this.axisServiceGroup.equals(ctx.getDescription())) {
             return false;
         }
 
         String ctxid = ctx.getId();
 
-        if ((this.id != null) && (ctxid != null))
-        {
-            if (!this.id.equals(ctxid))
-            {
+        if ((this.id != null) && (ctxid != null)) {
+            if (!this.id.equals(ctxid)) {
                 return false;
             }
 
-        }
-        else if ((this.id == null) && (ctxid == null)) 
-        {
+        } else if ((this.id == null) && (ctxid == null)) {
             // keep going
-        }
-        else
-        {
+        } else {
             // mismatch
             return false;
         }
@@ -576,8 +536,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
      * 
      * @param methodname The method where the warning occurs
      */
-    private void checkActivateWarning(String methodname)
-    {
+    private void checkActivateWarning(String methodname) {
         if (needsToBeReconciled) {
             log.warn(myClassName+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
         }

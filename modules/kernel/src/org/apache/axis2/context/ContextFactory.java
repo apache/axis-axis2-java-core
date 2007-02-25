@@ -1,9 +1,9 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.AxisOperation;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

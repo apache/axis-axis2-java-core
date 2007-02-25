@@ -32,7 +32,8 @@ package org.apache.axis2.transport.http.server;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/** Default hander for failures in connection listener IOProcessors.
+/**
+ * Default hander for failures in connection listener IOProcessors.
  *  Supports configuration of number retries, delay per retry, and uptime interval considered a success (resets number retries to zero).
  */
 public class DefaultConnectionListenerFailureHandler implements ConnectionListenerFailureHandler {
@@ -47,14 +48,17 @@ public class DefaultConnectionListenerFailureHandler implements ConnectionListen
     private long lastFirstFailure;
     private int numRetries;
     
-    /** Create a new DefaultConnectionListenerFailureHandler with default settings.
+    /**
+     * Create a new DefaultConnectionListenerFailureHandler with default settings.
      * retryDelay is 1 second, successInterval is 60 seconds, maxRetries is 10
      */
     public DefaultConnectionListenerFailureHandler() {
         this(1000, 60000, 10);
     }
 
-    /** Create a new DefaultConnectionListenerFailureHandler
+    /**
+     * Create a new DefaultConnectionListenerFailureHandler
+     *
      * @param retryDelay millis to wait before retrying
      * @param successInterval millis after which an initial or retry attempt will be deemed a success, resetting retry count to 0
      * @param maxRetries maximum number of retries allowed without a success, after which the listener will terminate
@@ -67,7 +71,8 @@ public class DefaultConnectionListenerFailureHandler implements ConnectionListen
         this.numRetries = 0;
     }
 
-    /** Default behavior is to log a warning and attempt retry per constructor config, eventually failing with a logged error and notification.
+    /**
+     * Default behavior is to log a warning and attempt retry per constructor config, eventually failing with a logged error and notification.
      * May subclass and override this method to change the behavior.
      */
     public boolean failed(IOProcessor connectionListener, Throwable cause) {
@@ -85,14 +90,16 @@ public class DefaultConnectionListenerFailureHandler implements ConnectionListen
             return false;
         } else {
             numRetries++;
-            if (LOG.isWarnEnabled())
+            if (LOG.isWarnEnabled()) {
                 LOG.warn("Attempt number " + numRetries + " of " + maxRetries + " to reestalish connection listener " + connectionListener + " due to failure ",
                          cause);
+            }
             return true;
         }
     }
 
-    /** Default bevarior is to log the error.
+    /**
+     * Default bevarior is to log the error.
      * May subclass and override this method to change behavior.
      */
     public void notifyAbnormalTermination(IOProcessor connectionListener, String message, Throwable cause) {

@@ -28,7 +28,6 @@ import java.lang.reflect.Method;
  *   An XML pretty printer based on jtidy (http://sourceforge.net/projects/jtidy)
  *   The Jtidy jar needs to be in classpath for this to work and can be found at
  *   http://sourceforge.net/project/showfiles.php?group_id=13153
- * 
  */
 public class XMLPrettyPrinter {
 

@@ -1,13 +1,13 @@
 package org.apache.axis2.deployment.resolver;
 
-import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.schema.resolver.DefaultURIResolver;
 import org.xml.sax.InputSource;
 
 import javax.wsdl.xml.WSDLLocator;
+import java.io.InputStream;
 import java.net.URI;
-import java.io.*;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

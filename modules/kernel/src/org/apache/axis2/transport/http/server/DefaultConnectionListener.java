@@ -29,13 +29,13 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpServerConnection;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class DefaultConnectionListener implements IOProcessor {
 
@@ -49,22 +49,29 @@ public class DefaultConnectionListener implements IOProcessor {
     private ServerSocket serversocket = null;
     private final ConnectionListenerFailureHandler failureHandler;
     
-    /** Default constructor called by HttpFactory.  A custom HttpFactory subclass can call the other constructor to provide a custom ConnectionListenerErrorHandler */
+    /**
+     * Default constructor called by HttpFactory.  A custom HttpFactory subclass can call the other constructor to provide a custom ConnectionListenerErrorHandler
+     */
     public DefaultConnectionListener(int port, HttpConnectionFactory connfactory, HttpConnectionManager connmanager) throws IOException {
         this(port, connfactory, connmanager, new DefaultConnectionListenerFailureHandler());
     }
 
-    /** Use this constructor to provide a custom ConnectionListenerFailureHandler, e.g. by subclassing DefaultConnectionListenerFailureHandler */
+    /**
+     * Use this constructor to provide a custom ConnectionListenerFailureHandler, e.g. by subclassing DefaultConnectionListenerFailureHandler
+     */
     public DefaultConnectionListener(int port, HttpConnectionFactory connfactory, HttpConnectionManager connmanager,
                                      ConnectionListenerFailureHandler failureHandler)
     throws IOException {
         super();
-        if (connfactory == null)
+        if (connfactory == null) {
             throw new IllegalArgumentException("Connection factory may not be null");
-        if (connmanager == null)
+        }
+        if (connmanager == null) {
             throw new IllegalArgumentException("Connection manager may not be null");
-        if (failureHandler == null)
+        }
+        if (failureHandler == null) {
             throw new IllegalArgumentException("Failure handler may not be null");
+        }
         this.port = port;
         this.connmanager = connmanager;
         this.connfactory = connfactory;
@@ -91,11 +98,13 @@ public class DefaultConnectionListener implements IOProcessor {
                     HttpServerConnection conn = this.connfactory.newConnection(socket);
                     this.connmanager.process(conn);
                 } catch (Throwable ex) {
-                    if (Thread.interrupted())
+                    if (Thread.interrupted()) {
                         break;
-                    if (!failureHandler.failed(this, ex))
+                    }
+                    if (!failureHandler.failed(this, ex)) {
                         break;
                 }
+            }
             }
         } finally {
             destroy();

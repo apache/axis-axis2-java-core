@@ -17,8 +17,8 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.builder.OMBuilder;
+import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
 import org.apache.axis2.deployment.DeploymentException;
@@ -178,6 +178,7 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * Register a messageBuilder implementation against a content type.
      * This is used by Axis2 to support different message formats.
+     *
      * @param contentType
      * @param messageBuilder
      */
@@ -191,6 +192,7 @@ public class AxisConfiguration extends AxisDescription {
      * Register a messageFormatter implementation against a content type.
      * This is used by Axis2 to support serialization of messages to different 
      * message formats. (Eg: JSON)
+     *
      * @param contentType
      * @param messageFormatter
      */
@@ -279,7 +281,9 @@ public class AxisConfiguration extends AxisDescription {
                     AxisOperation axisOperation = (AxisOperation) operatins
                             .next();
                     
-                    if (axisOperation.isControlOperation()) { continue; }
+                    if (axisOperation.isControlOperation()) {
+                        continue;
+                    }
                     
                     if (axisOperation.getMessageReceiver() == null) {
                         axisService.setWsdlFound(false);
@@ -1017,6 +1021,7 @@ public class AxisConfiguration extends AxisDescription {
     /**
      * For internal used only! To store instance of DataLocator when it is first loaded. This allows to     
      * re-use DataLocator after it is initially loaded. 
+     *
      * @param dialect- an absolute URI represents the format and version of data
      * @param dataLocator - specified an DataLocator instance  to support retrieval 
      *                  of the specified dialect.
@@ -1047,6 +1052,7 @@ public class AxisConfiguration extends AxisDescription {
      * for all the flows. If they have been changed,throws a DeploymentException.
      *
      * @throws org.apache.axis2.deployment.DeploymentException
+     *
      */
     public void validateSystemPredefinedPhases() throws DeploymentException {
         PhasesInfo phasesInfo = getPhasesInfo();

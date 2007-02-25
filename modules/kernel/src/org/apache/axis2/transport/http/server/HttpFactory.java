@@ -29,10 +29,6 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
-
 import edu.emory.mathcs.backport.java.util.concurrent.BlockingQueue;
 import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
 import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
@@ -60,6 +56,9 @@ import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 
+import javax.xml.namespace.QName;
+import java.io.IOException;
+
 /**
  * Factory used to configure and create the various instances required in http transports.
  * Either configure this class in axis2.xml, or in code via the setters, or subclass it and specialize some factory methods to gain more control.
@@ -68,31 +67,49 @@ import org.apache.http.protocol.ResponseServer;
  */
 public class HttpFactory {
 
-    /** Name of axis2.xml port parameter for SimpleHTTPServer configuration */
+    /**
+     * Name of axis2.xml port parameter for SimpleHTTPServer configuration
+     */
     public static final String PARAMETER_PORT = "port";
     
-    /** Name of axis2.xml hostname parameter for SimpleHTTPServer configuration */
+    /**
+     * Name of axis2.xml hostname parameter for SimpleHTTPServer configuration
+     */
     public static final String PARAMETER_HOST_ADDRESS = "hostname";
 
-    /** Name of axis2.xml originServer parameter for SimpleHTTPServer configuration */
+    /**
+     * Name of axis2.xml originServer parameter for SimpleHTTPServer configuration
+     */
     public static final String PARAMETER_ORIGIN_SERVER = "originServer";
 
-    /** Name of axis2.xml requestTimeout parameter for SimpleHTTPServer configuration */
+    /**
+     * Name of axis2.xml requestTimeout parameter for SimpleHTTPServer configuration
+     */
     public static final String PARAMETER_REQUEST_SOCKET_TIMEOUT = "requestTimeout";
 
-    /** Name of axis2.xml requestTcpNoDelay parameter for SimpleHTTPServer configuration */
+    /**
+     * Name of axis2.xml requestTcpNoDelay parameter for SimpleHTTPServer configuration
+     */
     public static final String PARAMETER_REQUEST_TCP_NO_DELAY = "requestTcpNoDelay";
 
-    /** Name of axis2.xml requestCoreThreadPoolSize parameter for SimpleHTTPServer configuration */
+    /**
+     * Name of axis2.xml requestCoreThreadPoolSize parameter for SimpleHTTPServer configuration
+     */
     public static final String PARAMETER_REQUEST_CORE_THREAD_POOL_SIZE = "requestCoreThreadPoolSize";
 
-    /** Name of axis2.xml requestMaxThreadPoolSize parameter for SimpleHTTPServer configuration */
+    /**
+     * Name of axis2.xml requestMaxThreadPoolSize parameter for SimpleHTTPServer configuration
+     */
     public static final String PARAMETER_REQUEST_MAX_THREAD_POOL_SIZE = "requestMaxThreadPoolSize";
 
-    /** Name of axis2.xml threadKeepAliveTime parameter for SimpleHTTPServer configuration */
+    /**
+     * Name of axis2.xml threadKeepAliveTime parameter for SimpleHTTPServer configuration
+     */
     public static final String PARAMETER_THREAD_KEEP_ALIVE_TIME = "threadKeepAliveTime";
 
-    /** Name of axis2.xml threadKeepAliveTimeUnit parameter for SimpleHTTPServer configuration */
+    /**
+     * Name of axis2.xml threadKeepAliveTimeUnit parameter for SimpleHTTPServer configuration
+     */
     public static final String PARAMETER_THREAD_KEEP_ALIVE_TIME_UNIT = "threadKeepAliveTimeUnit";
     
     private ConfigurationContext configurationContext;
@@ -111,7 +128,9 @@ public class HttpFactory {
     
     private static final QName HTTP_NAME = new QName(Constants.TRANSPORT_HTTP);
     
-    /** Create and configure a new HttpFactory */
+    /**
+     * Create and configure a new HttpFactory
+     */
     public HttpFactory(ConfigurationContext configurationContext) throws AxisFault {
         this.configurationContext = configurationContext;
         httpConfiguration = configurationContext.getAxisConfiguration().getTransportIn(HTTP_NAME);
@@ -126,13 +145,17 @@ public class HttpFactory {
         threadKeepAliveTimeUnit = getTimeUnitParam(PARAMETER_THREAD_KEEP_ALIVE_TIME_UNIT, TimeUnit.SECONDS);
     }
     
-    /** Create and configure a new HttpFactory */
+    /**
+     * Create and configure a new HttpFactory
+     */
     public HttpFactory(ConfigurationContext configurationContext, int port) throws AxisFault {
         this(configurationContext);
         this.port = port;
     }
     
-    /** Create and configure a new HttpFactory */
+    /**
+     * Create and configure a new HttpFactory
+     */
     public HttpFactory(ConfigurationContext configurationContext, int port, WorkerFactory requestWorkerFactory) throws AxisFault {
         this(configurationContext, port);
         this.requestWorkerFactory = requestWorkerFactory;
@@ -140,40 +163,45 @@ public class HttpFactory {
 
     private int getIntParam(String name, int def) {
         String config = getStringParam(name, null);
-        if (config!=null)
+        if (config != null) {
             return Integer.parseInt(config);
-        else 
+        } else {
             return def;
+    }
     }
     
     private long getLongParam(String name, long def) {
         String config = getStringParam(name, null);
-        if (config!=null)
+        if (config != null) {
             return Long.parseLong(config);
-        else 
+        } else {
             return def;
+    }
     }
     
     private boolean getBooleanParam(String name, boolean def) throws AxisFault {
         String config = getStringParam(name, null);
         if (config!=null) {
-            if (config.equals("yes") || config.equals("true"))
+            if (config.equals("yes") || config.equals("true")) {
                 return true;
-            else if (config.equals("no") || config.equals("false"))
+            } else if (config.equals("no") || config.equals("false")) {
                 return false;
-            else throw new AxisFault("Boolean value must be yes, true, no or false for parameter " + name + ":  " + config);
+            } else {
+                throw new AxisFault("Boolean value must be yes, true, no or false for parameter " + name + ":  " + config);
+            }
         }
         return def;
     }
     
     private TimeUnit getTimeUnitParam(String name, TimeUnit def) throws AxisFault {
         String config = getStringParam(name, null);
-        if (config!=null)
+        if (config != null) {
             try {
                 return (TimeUnit) TimeUnit.class.getField(config).get(null);
             } catch (Exception e) {
                 throw new AxisFault(e);
             }
+        }
         return def;
     }
         
@@ -182,13 +210,16 @@ public class HttpFactory {
         if (param!=null) {
 //            assert param.getParameterType() == Parameter.TEXT_PARAMETER;
             String config = (String) param.getValue();
-            if (config!=null)
+            if (config != null) {
                 return config;
+        }
         }
         return def;
     }
     
-    /** Return the configured listener manager or create and configure one with configurationContext */
+    /**
+     * Return the configured listener manager or create and configure one with configurationContext
+     */
     public ListenerManager getListenerManager() {
         ListenerManager lm = configurationContext.getListenerManager();
         if (lm==null) {
@@ -198,24 +229,32 @@ public class HttpFactory {
         return lm;
     }
     
-    /** Create the executor used to launch the single requestConnectionListener */
+    /**
+     * Create the executor used to launch the single requestConnectionListener
+     */
     public ExecutorService newListenerExecutor(int port) {
         return new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue(),
                 new DefaultThreadFactory(new ThreadGroup("Listener thread group"), "HttpListener-" + this.port));
     }
     
-    /** Create the listener for request connections */
+    /**
+     * Create the listener for request connections
+     */
     public IOProcessor newRequestConnectionListener(HttpConnectionFactory factory, HttpConnectionManager manager, int port) throws IOException {
         return new DefaultConnectionListener(port, factory, manager);
     }
     
-    /** Create a request connection */
+    /**
+     * Create a request connection
+     */
     public HttpConnectionFactory newRequestConnectionFactory(HttpParams params) {
         return new DefaultHttpConnectionFactory(params);
     }
     
-    /** Create and set the parameters applied to incoming request connections */
+    /**
+     * Create and set the parameters applied to incoming request connections
+     */
     public HttpParams newRequestConnectionParams() {
         HttpParams params = new DefaultHttpParams(); 
         params
@@ -227,31 +266,39 @@ public class HttpFactory {
         return params;
     }
     
-    /** Create the connection manager used to launch request threads */
+    /**
+     * Create the connection manager used to launch request threads
+     */
     public HttpConnectionManager newRequestConnectionManager(ExecutorService requestExecutor, WorkerFactory workerFactory, HttpParams params) {
         return new DefaultHttpConnectionManager(configurationContext, requestExecutor, workerFactory, params);
     }
     
-    /** Create the executor use the manage request processing threads */
+    /**
+     * Create the executor use the manage request processing threads
+     */
     public ExecutorService newRequestExecutor(int port) {
         return new ThreadPoolExecutor(requestCoreThreadPoolSize, requestMaxThreadPoolSize, threadKeepAliveTime, threadKeepAliveTimeUnit,
                                       newRequestBlockingQueue(),
                                       new DefaultThreadFactory(new ThreadGroup("Connection thread group"), "HttpConnection-" + port));
     }
     
-    /** Create the queue used to hold incoming requests when requestCoreThreadPoolSize threads are busy.
+    /**
+     * Create the queue used to hold incoming requests when requestCoreThreadPoolSize threads are busy.
      * Default is an unbounded queue.
      */
     public BlockingQueue newRequestBlockingQueue() {
         return new LinkedBlockingQueue();
     }
     
-    /** Create the factory for request workers */
+    /**
+     * Create the factory for request workers
+     */
     public WorkerFactory newRequestWorkerFactory() {
-        if (requestWorkerFactory!=null)
+        if (requestWorkerFactory != null) {
             return requestWorkerFactory;
-        else
+        } else {
             return new HTTPWorkerFactory();
+    }
     }
 
     public HttpProcessor newHttpProcessor() {
@@ -277,65 +324,85 @@ public class HttpFactory {
     // Getters and Setters
     // *****
 
-    /** Getter for configurationContext */
+    /**
+     * Getter for configurationContext
+     */
     public ConfigurationContext getConfigurationContext() {
         return configurationContext;
     }
 
-    /** Getter for httpConfiguration */
+    /**
+     * Getter for httpConfiguration
+     */
     public TransportInDescription getHttpConfiguration() {
         return httpConfiguration;
     }
 
-    /** Getter for port
+    /**
+     * Getter for port
       * return the port on which to listen for http connections (default = 6060)
      */
     public int getPort() {
         return port;
     }
 
-    /** Setter for port */
+    /**
+     * Setter for port
+     */
     public void setPort(int port) {
         this.port = port;
     }
 
-    /** Getter for hostAddress
+    /**
+     * Getter for hostAddress
+     *
      * @return the host address (or name) to be use in reply-to endpoint references, or null if not specified (default = null)
      */
     public String getHostAddress() {
         return hostAddress;
     }
 
-    /** Setter for hostAddress */
+    /**
+     * Setter for hostAddress
+     */
     public void setHostAddress(String hostAddress) {
         this.hostAddress = hostAddress;
     }
 
-    /** Getter for originServer
+    /**
+     * Getter for originServer
+     *
      * @return the Server header string for outgoing messages (default "Simple-Server/1.1")
      */
     public String getOriginServer() {
         return originServer;
     }
 
-    /** Setter for originServer */
+    /**
+     * Setter for originServer
+     */
     public void setOriginServer(String originServer) {
         this.originServer = originServer;
     }
 
-    /** Getter for requestSocketTimeout
+    /**
+     * Getter for requestSocketTimeout
+     *
      * @return the maximum time in millis to wait for data on a request socket (default 20000)
      */
     public int getRequestSocketTimeout() {
         return requestSocketTimeout;
     }
 
-    /** Setter for requestSocketTimeout */
+    /**
+     * Setter for requestSocketTimeout
+     */
     public void setRequestSocketTimeout(int requestSocketTimeout) {
         this.requestSocketTimeout = requestSocketTimeout;
     }
 
-    /** Getter for requestTcpNoDelay
+    /**
+     * Getter for requestTcpNoDelay
      * return false iff Nagle's algorithm should be used to conserve bandwidth by minimizing segments
      *              at the cost of latency and performance (default true, i.e. maximize performance at
      *              the cost of bandwidth)
@@ -344,24 +411,32 @@ public class HttpFactory {
         return requestTcpNoDelay;
     }
 
-    /** Setter for requestTcpNoDelay */
+    /**
+     * Setter for requestTcpNoDelay
+     */
     public void setRequestTcpNoDelay(boolean requestTcpNoDelay) {
         this.requestTcpNoDelay = requestTcpNoDelay;
     }
 
-    /** Getter for RequestCoreThreadPoolSize
+    /**
+     * Getter for RequestCoreThreadPoolSize
+     *
      * @return the size of the thread pool use to process requests assuming there is adequate queue space (default 25)
      */
     public int getRequestCoreThreadPoolSize() {
         return requestCoreThreadPoolSize;
     }
 
-    /** Setter for RequestCoreThreadPoolSize */
+    /**
+     * Setter for RequestCoreThreadPoolSize
+     */
     public void setRequestCoreThreadPoolSize(int requestCoreThreadPoolSize) {
         this.requestCoreThreadPoolSize = requestCoreThreadPoolSize;
     }
 
-    /** Getter for requestMaxThreadPoolSize
+    /**
+     * Getter for requestMaxThreadPoolSize
+     *
      * @return the maximum size of the thread pool used to process requests if the queue fills up (default 150).
      *         Since the default queue is unbounded this parameter is meaningless unless you override newRequestBlockingQueue()
      */
@@ -369,12 +444,16 @@ public class HttpFactory {
         return requestMaxThreadPoolSize;
     }
 
-    /** Setter for requestMaxThreadPoolSize */
+    /**
+     * Setter for requestMaxThreadPoolSize
+     */
     public void setRequestMaxThreadPoolSize(int requestMaxThreadPoolSize) {
         this.requestMaxThreadPoolSize = requestMaxThreadPoolSize;
     }
 
-    /** Getter for threadKeepAliveTime
+    /**
+     * Getter for threadKeepAliveTime
+     *
      * @return how long a request processing thread in excess of the core pool size will be kept alive it if is inactive
      *         (default with threadKeepAliveTimeUnit to 180 seconds)
      */
@@ -382,19 +461,24 @@ public class HttpFactory {
         return threadKeepAliveTime;
     }
 
-    /** Setter for threadKeepAliveTime */
+    /**
+     * Setter for threadKeepAliveTime
+     */
     public void setThreadKeepAliveTime(long threadKeepAliveTime) {
         this.threadKeepAliveTime = threadKeepAliveTime;
     }
 
-    /** Getter for threadKeepAliveTimeUnit
+    /**
+     * Getter for threadKeepAliveTimeUnit
      * return the time unit for threadKeepAliveTime (default SECONDS)
      */
     public TimeUnit getThreadKeepAliveTimeUnit() {
         return threadKeepAliveTimeUnit;
     }
 
-    /** Setter for threadKeepAliveTimeUnit */
+    /**
+     * Setter for threadKeepAliveTimeUnit
+     */
     public void setThreadKeepAliveTimeUnit(TimeUnit threadKeepAliveTimeUnit) {
         this.threadKeepAliveTimeUnit = threadKeepAliveTimeUnit;
     }

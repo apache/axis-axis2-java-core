@@ -29,8 +29,6 @@
 
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.http.HTTPConstants;
@@ -40,6 +38,8 @@ import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.message.BufferedHeader;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.CharArrayBuffer;
+
+import java.io.IOException;
 
 public class ResponseSessionCookie implements HttpResponseInterceptor {
 

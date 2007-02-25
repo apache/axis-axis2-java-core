@@ -21,7 +21,6 @@ import java.util.HashMap;
 /**
  * Allow to specify options/parameters for getData request. The list is extensible
  * based on the information needed for the Data Locator to process the request. 
- *
  */
 
 public class DataRetrievalRequest extends HashMap{
@@ -42,22 +41,24 @@ public class DataRetrievalRequest extends HashMap{
     public final static String OUTPUT_FORM = "OutputForm";
     
    
- 
     /**
      * Returns the Dialect value specified in the request.
+     *
      * @return a String that has dialect info.
      */
     
     public String getDialect() throws DataRetrievalException{
         String dialect = (String)(get(DIALET));
-        if (dialect == null || dialect.length() == 0)
+        if (dialect == null || dialect.length() == 0) {
             throw new DataRetrievalException("Empty dialect was detected. Dialect must have value.");
+        }
     
         return (dialect);
     }
     
     /**
      * Returns the Identifier value specified in the request.
+     *
      * @return a String that has Identifier info.
      */
     
@@ -67,6 +68,7 @@ public class DataRetrievalRequest extends HashMap{
 
     /**
      * Returns the output format specified in the request.
+     *
      * @return output format of data retrieved.
      */
 
@@ -76,18 +78,21 @@ public class DataRetrievalRequest extends HashMap{
     
     /**
      * Allow to set the dialect of data to retrieve
+     *
      * @param dialect - Valid dialect value supported by the Data Locator.
      * @throws DataRetrievalException
      */
     
     public void putDialect(String dialect)throws DataRetrievalException {
-        if (dialect == null || dialect.length() == 0)
+        if (dialect == null || dialect.length() == 0) {
             throw new DataRetrievalException("Empty dialect was detected. Dialect must have value.");
+        }
          put(DIALET, dialect);
     }
     
     /**
      * Allow to set the identifier of data to retrieve
+     *
      * @param identifier - identifier value 
      * @throws DataRetrievalException
      */
@@ -98,6 +103,7 @@ public class DataRetrievalRequest extends HashMap{
     
     /**
      * Allow to set the output format of the data retrieved.
+     *
      * @param form - Valid output format types supported by the Data Locator.
      * @throws DataRetrievalException
      */

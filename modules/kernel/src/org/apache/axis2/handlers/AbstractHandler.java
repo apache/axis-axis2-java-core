@@ -102,7 +102,6 @@ public abstract class AbstractHandler implements Handler {
         return handlerDesc.getParameter(name);
     }
     
-    public void flowComplete(MessageContext msgContext)
-    {
+    public void flowComplete(MessageContext msgContext) {
     }
 }

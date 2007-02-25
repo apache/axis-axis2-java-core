@@ -17,14 +17,14 @@
 
 package org.apache.axis2.context;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * This is the top most level of the Context hierarchy and is a bag of properties.
@@ -116,15 +116,13 @@ public abstract class AbstractContext {
      * @param props The table of properties to copy
      */
     public void mergeProperties(Map props) {
-        if (props != null)
-        {
+        if (props != null) {
             Iterator iterator = props.keySet().iterator();
 
             while (iterator.hasNext()) {
                 Object key = iterator.next();
 
-                if (this.properties == null)
-                {
+                if (this.properties == null) {
                     this.properties = new HashMap();
                 }
 

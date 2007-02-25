@@ -277,17 +277,21 @@ public class EndpointReference implements Serializable {
             buffer.append(", Address Attributes: ").append(addressAttributes);
         }
         
-        if (metaData != null)
+        if (metaData != null) {
             buffer.append(", Metadata: ").append(metaData);
+        }
 
-        if (referenceParameters != null)
+        if (referenceParameters != null) {
             buffer.append(", Reference Parameters: ").append(referenceParameters);
+        }
 
-        if (extensibleElements != null)
+        if (extensibleElements != null) {
             buffer.append(", Extensibility elements: ").append(extensibleElements);
+        }
 
-        if (attributes != null)
+        if (attributes != null) {
             buffer.append(", Attributes: ").append(attributes);
+        }
 
         return buffer.toString();
     }
@@ -420,53 +424,40 @@ public class EndpointReference implements Serializable {
      * Compares key parts of the state from the current instance of 
      * this class with the specified instance to see if they are 
      * equivalent. 
-     * <P>
+     * <p/>
      * This differs from the java.lang.Object.equals() method in
      * that the equals() method generally looks at both the 
      * object identity (location in memory) and the object state
      * (data).
-     * <P>
+     * <p/>
      * 
      * @param epr  The object to compare with
      * @return TRUE if this object is equivalent with the specified object
      *              that is, key fields match
      *         FALSE, otherwise
      */
-    public boolean isEquivalent(EndpointReference epr)
-    {
+    public boolean isEquivalent(EndpointReference epr) {
         // NOTE: the input object is expected to exist (ie, be non-null)
 
-        if ((this.name != null) && (epr.getName() != null)) 
-        {
-            if (!this.name.equals(epr.getName()))
-            {
+        if ((this.name != null) && (epr.getName() != null)) {
+            if (!this.name.equals(epr.getName())) {
                 return false;
             }
-        }
-        else if ((this.name == null) && (epr.getName() == null)) 
-        {
+        } else if ((this.name == null) && (epr.getName() == null)) {
             // continue
-        }
-        else
-        {
+        } else {
             // mismatch
             return false;
         }
 
 
-        if ((this.address != null) && (epr.getAddress() != null))
-        {
-            if (!this.address.equals(epr.getAddress()))
-            {
+        if ((this.address != null) && (epr.getAddress() != null)) {
+            if (!this.address.equals(epr.getAddress())) {
                 return false;
             }
-        }
-        else if ((this.address == null) && (epr.getAddress() == null))
-        {
+        } else if ((this.address == null) && (epr.getAddress() == null)) {
             // continue
-        }
-        else
-        {
+        } else {
             // mismatch
             return false;
         }
@@ -476,10 +467,8 @@ public class EndpointReference implements Serializable {
 
         ArrayList eprMetaData = epr.getMetaData();
 
-        if ( (this.metaData != null) && (eprMetaData != null) )
-        {
-            if (!this.metaData.equals(eprMetaData))
-            {
+        if ((this.metaData != null) && (eprMetaData != null)) {
+            if (!this.metaData.equals(eprMetaData)) {
                 // This is a strict test
                 // Returns true if and only if the specified object 
                 // is also a list, both lists have the same size, and 
@@ -489,25 +478,18 @@ public class EndpointReference implements Serializable {
 
                 return false;
             }
-        }
-        else if ((this.metaData == null) && (eprMetaData == null))
-        {
+        } else if ((this.metaData == null) && (eprMetaData == null)) {
             // keep going
-        }
-        else
-        {
+        } else {
             // one of the lists is null
             return false;
         }
-
 
 
         ArrayList eprExtensibleElements = epr.getExtensibleElements();
 
-        if ( (this.extensibleElements != null) && (eprExtensibleElements != null) )
-        {
-            if (!this.extensibleElements.equals(eprExtensibleElements))
-            {
+        if ((this.extensibleElements != null) && (eprExtensibleElements != null)) {
+            if (!this.extensibleElements.equals(eprExtensibleElements)) {
                 // This is a strict test
                 // Returns true if and only if the specified object 
                 // is also a list, both lists have the same size, and 
@@ -517,25 +499,18 @@ public class EndpointReference implements Serializable {
 
                 return false;
             }
-        }
-        else if ((this.extensibleElements == null) && (eprExtensibleElements == null))
-        {
+        } else if ((this.extensibleElements == null) && (eprExtensibleElements == null)) {
             // keep going
-        }
-        else
-        {
+        } else {
             // one of the lists is null
             return false;
         }
 
 
-
         ArrayList eprAttributes = epr.getAttributes();
 
-        if ( (this.attributes != null) && (eprAttributes != null) )
-        {
-            if (!this.attributes.equals(eprAttributes))
-            {
+        if ((this.attributes != null) && (eprAttributes != null)) {
+            if (!this.attributes.equals(eprAttributes)) {
                 // This is a strict test
                 // Returns true if and only if the specified object 
                 // is also a list, both lists have the same size, and 
@@ -545,13 +520,9 @@ public class EndpointReference implements Serializable {
 
                 return false;
             }
-        }
-        else if ((this.attributes == null) && (eprAttributes == null))
-        {
+        } else if ((this.attributes == null) && (eprAttributes == null)) {
             // keep going
-        }
-        else
-        {
+        } else {
             // one of the lists is null
             return false;
         }
@@ -570,17 +541,14 @@ public class EndpointReference implements Serializable {
      * (at least in some cases.)
      */
     private void writeObject(java.io.ObjectOutputStream out)
-    throws IOException
-    {
+            throws IOException {
       OMElement om = EndpointReferenceHelper.toOM(OMAbstractFactory.getOMFactory(), this, new QName("urn:axis2","omepr","ser"), AddressingConstants.Final.WSA_NAMESPACE);
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       
-      try
-      {
+        try {
         om.serialize(baos);
       }
-      catch (javax.xml.stream.XMLStreamException e)
-      {
+        catch (javax.xml.stream.XMLStreamException e) {
         throw (IOException)(new IOException("Unable to serialize the EPR")).initCause(e);
       }
       out.writeInt(baos.size());
@@ -591,24 +559,21 @@ public class EndpointReference implements Serializable {
      * Read the EPR to the specified InputStream.
      */
     private void readObject(java.io.ObjectInputStream in)
-    throws IOException, ClassNotFoundException
-    {
+            throws IOException, ClassNotFoundException {
       int numBytes = in.readInt();
       
       byte[] serBytes = new byte[numBytes];
       
       in.read(serBytes, 0, numBytes);
       ByteArrayInputStream bais = new ByteArrayInputStream(serBytes);
-      try
-      {
+        try {
         XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(bais);
         StAXOMBuilder builder = new StAXOMBuilder(xmlReader);
         OMElement om = builder.getDocumentElement();
         
         EndpointReferenceHelper.fromOM(this, om, AddressingConstants.Final.WSA_NAMESPACE);
       }
-      catch (javax.xml.stream.XMLStreamException e)
-      {
+        catch (javax.xml.stream.XMLStreamException e) {
         throw (IOException)(new IOException("Unable to deserialize the EPR")).initCause(e);
       }
     }

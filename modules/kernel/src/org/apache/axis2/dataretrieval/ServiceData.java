@@ -16,17 +16,15 @@
 
 package org.apache.axis2.dataretrieval;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 
+import javax.xml.namespace.QName;
+
 /**
- * 
  * This represents the service data for a dialect and identifier if specified.
  * Basically, the Data element defined in the ServiceData.xml packaged in 
  * a Web Service's achieve file.
- *
  */
 
 public class ServiceData {
@@ -40,8 +38,8 @@ public class ServiceData {
 
     /**
      * Constructor 
-     * @param in_data an Data element in the ServiceData.
      * 
+     * @param in_data an Data element in the ServiceData.
      */
 
     protected ServiceData(OMElement in_data) {
@@ -55,8 +53,9 @@ public class ServiceData {
 
         String value = null;
         OMAttribute attribute = data.getAttribute(new QName(qName));
-        if (attribute != null)
+        if (attribute != null) {
             value = attribute.getAttributeValue();
+        }
 
         return value;
 
@@ -85,8 +84,9 @@ public class ServiceData {
         String urlValue = null;
         OMElement url = data.getFirstChildWithName(new QName(
                 DRConstants.SERVICE_DATA.URL));
-        if (url != null)
+        if (url != null) {
             urlValue = url.getText();
+        }
 
         return urlValue;
     }

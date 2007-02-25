@@ -129,8 +129,7 @@ public abstract class Stub {
      * and then append the addressFromBinding string to available address
      *
      * @param _operationClient
-     * @param addressFromBinding
-     * return existing address
+     * @param addressFromBinding return existing address
      */
 
 
@@ -154,6 +153,7 @@ public abstract class Stub {
 
     /**
      * sets the epr of the service client to given value
+     *
      * @param address
      */
 
@@ -186,6 +186,7 @@ public abstract class Stub {
 
     /**
      * sets the propertykey and propertyValue as a pair to operation client
+     *
      * @param operationClient
      * @param propertyKey
      * @param propertyValue

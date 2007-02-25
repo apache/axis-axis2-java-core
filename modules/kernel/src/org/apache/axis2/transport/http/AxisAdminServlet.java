@@ -15,16 +15,15 @@
  */
 package org.apache.axis2.transport.http;
 
-import java.io.IOException;
+import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContext;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContext;
+import java.io.IOException;
 
 /**
  *

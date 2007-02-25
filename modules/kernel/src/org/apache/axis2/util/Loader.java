@@ -17,13 +17,13 @@
 
 package org.apache.axis2.util;
 
+import org.apache.axis2.java.security.AccessController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.axis2.java.security.AccessController;
-import java.security.PrivilegedAction;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.security.PrivilegedAction;
 
 /**
  * Loads resources (or images) from various sources.
@@ -127,8 +127,9 @@ public class Loader {
         try {
             if(loader != null) {
                 Class c = loader.loadClass(clazz);
-                if (c != null)
+                if (c != null) {
                     return c;
+            }
             }
         } catch (Throwable e) {
             log.debug(e);
@@ -152,8 +153,9 @@ public class Loader {
             
             if(tcl != null) {
                 Class c = tcl.loadClass(clazz);
-                if (c != null)
+                if (c != null) {
                     return c;
+            }
             }
         } catch (Throwable e) {
             log.debug(e);

@@ -16,12 +16,12 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.commons.httpclient.Header;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.commons.httpclient.Header;
 
 public class CommonsTransportHeaders implements Map {
     private Header[] headers;

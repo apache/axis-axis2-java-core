@@ -21,30 +21,30 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-public class SelfManagedDataHolder implements Externalizable
-{
+public class SelfManagedDataHolder implements Externalizable {
 
     private transient String classname;
     private transient String id;
     private transient byte[] data;
 
-    public SelfManagedDataHolder()
-    {
+    public SelfManagedDataHolder() {
         // should only be used by the ObjectStateUtils
     }
 
     // TODO better exception
     public SelfManagedDataHolder(String classname, String id, byte[] data) throws Exception {
         if ((classname == null)
-            || (id == null))
+                || (id == null)) {
             throw new Exception("Argument cannot be null: classname = " + classname + ", id = " + id);
+        }
         this.classname = classname;
         this.id = id;
 
         // TODO deep copy necessary?
         this.data = new byte[data.length];
-        for (int i = 0; i < data.length; i++)
+        for (int i = 0; i < data.length; i++) {
             this.data[i] = data[i];
+    }
     }
 
 
@@ -65,18 +65,15 @@ public class SelfManagedDataHolder implements Externalizable
     }
 
 
-    public String getClassname()
-    {
+    public String getClassname() {
         return classname;
     }
 
-    public byte[] getData()
-    {
+    public byte[] getData() {
         return data;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 

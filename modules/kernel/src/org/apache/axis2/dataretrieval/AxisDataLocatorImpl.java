@@ -15,19 +15,19 @@
 */
 package org.apache.axis2.dataretrieval;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import javax.xml.namespace.QName;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
 /**
  * The Default Axis2 Data Locator implementation 
- *
  */
 
 public class AxisDataLocatorImpl implements AxisDataLocator {
@@ -41,8 +41,8 @@ public class AxisDataLocatorImpl implements AxisDataLocator {
     
     /**
      * Constructor
-     * @throws DataRetrievalException 
      *
+     * @throws DataRetrievalException
      */
     public AxisDataLocatorImpl(AxisService in_axisService) throws  DataRetrievalException{
         super();
@@ -50,7 +50,6 @@ public class AxisDataLocatorImpl implements AxisDataLocator {
     }
 
     /**
-     *
      * Retrieves and returns data based on the specified request.
      */
     public Data[] getData(DataRetrievalRequest request,
@@ -62,10 +61,10 @@ public class AxisDataLocatorImpl implements AxisDataLocator {
         ArrayList dataList = new ArrayList();
         if (identifier != null){
             key = key + identifier;
-            if (dataMap.get(key) != null)
+            if (dataMap.get(key) != null) {
                 dataList.add(dataMap.get(key));
         }
-        else {
+        } else {
            dataList = getDataList(dialect);
         }
 
@@ -123,8 +122,9 @@ public class AxisDataLocatorImpl implements AxisDataLocator {
             saveKey = data.getDialect();
 
             String identifier = data.getIdentifier();
-            if (identifier != null)
+            if (identifier != null) {
                 saveKey = saveKey + identifier;
+            }
             dataMap.put(saveKey, data);
 
             

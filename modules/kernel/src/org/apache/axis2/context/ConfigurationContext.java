@@ -33,7 +33,12 @@ import org.apache.axis2.util.threadpool.ThreadPool;
 
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * This contains all the configuration information for Axis2.
@@ -67,8 +72,9 @@ public class ConfigurationContext extends AbstractContext {
         this.axisConfiguration = axisConfiguration;
         initConfigContextTimeout(axisConfiguration);
         
-        if (axisConfiguration.getClusterManager()!=null)
+        if (axisConfiguration.getClusterManager() != null) {
             initCluster();
+    }
     }
 
     private void initConfigContextTimeout(AxisConfiguration axisConfiguration) {

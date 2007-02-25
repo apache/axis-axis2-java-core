@@ -71,11 +71,13 @@ public interface AddressingConstants {
     
     public static final String ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS = "addMustUnderstandToAddressingHeaders";
     
-    /** A property pointing to an ArrayList of OMAttribute objects representing any attributes
+    /**
+     * A property pointing to an ArrayList of OMAttribute objects representing any attributes
      * of the wsa:Action header.
      */
     public static final String ACTION_ATTRIBUTES = "actionAttributes";
-    /** A property pointing to an ArrayList of OMAttribute objects representing any attributes
+    /**
+     * A property pointing to an ArrayList of OMAttribute objects representing any attributes
      * of the wsa:MessageID header.
      */
     public static final String MESSAGEID_ATTRIBUTES = "messageidAttributes";
@@ -89,7 +91,7 @@ public interface AddressingConstants {
     /**
      * This property, if set to Boolean.TRUE, will mean that the addressing handler allows partially
      * ws-addressed messages to be sent even if they are then invalid rather than throwing a fault.
-     * 
+     * <p/>
      * It is not clear how necessary this property is and it may be removed before the next release if
      * it is not seen to be necessary - davidillsley@apache.org
      */

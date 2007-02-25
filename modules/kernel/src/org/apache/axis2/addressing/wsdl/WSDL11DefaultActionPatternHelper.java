@@ -15,6 +15,9 @@
  */
 package org.apache.axis2.addressing.wsdl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
 import javax.wsdl.Input;
@@ -22,9 +25,6 @@ import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Output;
 import javax.wsdl.PortType;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Generates a wsa:Action value using the Default Action Pattern defined at
@@ -45,7 +45,7 @@ public class WSDL11DefaultActionPatternHelper {
     
     /**
      * Generate the Action for an Input using the Default Action Pattern
-     * 
+     * <p/>
      * Pattern is defined as [target namespace][delimiter][port type name][delimiter][input name]
      * 
      * @param def is required to obtain the targetNamespace
@@ -165,7 +165,7 @@ public class WSDL11DefaultActionPatternHelper {
     
     /**
      * Generate the Action for an Output using the Default Action Pattern
-     * 
+     * <p/>
      * Pattern is defined as [target namespace][delimiter][port type name][delimiter][output name]
      * 
      * @param def is required to obtain the targetNamespace
@@ -285,7 +285,7 @@ public class WSDL11DefaultActionPatternHelper {
     
     /**
      * Generate the Action for a Fault using the Default Action Pattern
-     * 
+     * <p/>
      * Pattern is defined as [target namespace][delimiter][port type name][delimiter][operation name][delimiter]Fault[delimiter][fault name]
      * 
      * @param def is required to obtain the targetNamespace

@@ -15,7 +15,9 @@
 */
 package org.apache.axis2.transport.jms;
 
-import java.util.Hashtable;
+import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -23,10 +25,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
-
-import org.apache.axis2.transport.OutTransportInfo;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.Hashtable;
 
 /**
  * The JMS OutTransportInfo
@@ -42,6 +41,7 @@ public class JMSOutTransportInfo implements OutTransportInfo {
 
     /**
      * Creates an instance using the given connection factory and destination
+     *
      * @param connectionFactory the connection factory
      * @param dest the destination
      */
@@ -52,6 +52,7 @@ public class JMSOutTransportInfo implements OutTransportInfo {
 
     /**
      * Creates and instance using the given URL
+     *
      * @param url the URL
      */
     JMSOutTransportInfo(String url) {
@@ -74,6 +75,7 @@ public class JMSOutTransportInfo implements OutTransportInfo {
 
     /**
      * Get the referenced ConnectionFactory using the properties from the context
+     *
      * @param context the context to use for lookup
      * @param props the properties which contains the JNDI name of the factory
      * @return the connection factory
@@ -96,6 +98,7 @@ public class JMSOutTransportInfo implements OutTransportInfo {
 
     /**
      * Get the JMS destination specified by the given URL from the context
+     *
      * @param context the Context to lookup
      * @param url URL
      * @return the JMS destination, or null if it does not exist

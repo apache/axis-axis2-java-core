@@ -49,8 +49,9 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
     private Map parse(String[] args) {
         Map commandLineOptions = new HashMap();
 
-        if (0 == args.length)
+        if (0 == args.length) {
             return commandLineOptions;
+        }
 
         //State 0 means started
         //State 1 means earlier one was a new -option

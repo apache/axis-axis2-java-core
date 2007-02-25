@@ -17,14 +17,6 @@
 
 package org.apache.axis2.transport.tcp;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.SocketAddress;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -37,6 +29,14 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
 import org.apache.axis2.util.URL;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.Socket;
+import java.net.SocketAddress;
 
 public class TCPTransportSender extends AbstractHandler implements TransportSender {
     protected Writer out;

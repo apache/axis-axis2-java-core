@@ -1172,10 +1172,11 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
     public void setAxisService(AxisService axisService) {
         this.axisService = axisService;
-        if (this.axisService != null)
+        if (this.axisService != null) {
             this.axisServiceGroup = (AxisServiceGroup) this.axisService.getParent();
-        else
+        } else {
             this.axisServiceGroup = null;
+    }
     }
 
     /*
@@ -1617,6 +1618,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     /**
      * Access the DataHandler of the attachment contained in the map corresponding to the given
      * content ID. Returns "NULL" if a attachment cannot be found by the given content ID.
+     *
      * @param contentID :
      *            Content ID of the MIME attachment
      * @return Data handler of the attachment
@@ -1631,6 +1633,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     /**
      * Removes the attachment with the given content ID from the Attachments Map
      * Do nothing if a attachment cannot be found by the given content ID.
+     *
      * @param contentID of the attachment
      */
     public void removeAttachment(String contentID) {

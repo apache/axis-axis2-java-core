@@ -27,15 +27,18 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
 import org.apache.axis2.dataretrieval.AxisDataLocatorImpl;
 import org.apache.axis2.dataretrieval.DRConstants;
+import org.apache.axis2.dataretrieval.Data;
 import org.apache.axis2.dataretrieval.DataRetrievalException;
+import org.apache.axis2.dataretrieval.DataRetrievalRequest;
 import org.apache.axis2.dataretrieval.LocatorType;
 import org.apache.axis2.dataretrieval.OutputForm;
-
-import org.apache.axis2.dataretrieval.Data;
-import org.apache.axis2.dataretrieval.DataRetrievalRequest;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.engine.*;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.DefaultObjectSupplier;
+import org.apache.axis2.engine.MessageReceiver;
+import org.apache.axis2.engine.ObjectSupplier;
+import org.apache.axis2.engine.ServiceLifeCycle;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.phaseresolver.PhaseResolver;
@@ -52,12 +55,12 @@ import org.apache.ws.commons.schema.XmlSchemaExternal;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.ws.commons.schema.utils.NamespacePrefixList;
+import org.apache.ws.java2wsdl.AnnotationConstants;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
-import org.apache.ws.java2wsdl.AnnotationConstants;
 import org.apache.ws.java2wsdl.utils.TypeTable;
-import org.codehaus.jam.JMethod;
 import org.codehaus.jam.JAnnotation;
+import org.codehaus.jam.JMethod;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -77,7 +80,17 @@ import java.io.OutputStream;
 import java.net.SocketException;
 import java.net.URL;
 import java.security.PrivilegedAction;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class AxisService
@@ -299,16 +312,16 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * @deprecated use AxisService#getEndpointName() instead.
      * @return name of the port type
+     * @deprecated use AxisService#getEndpointName() instead.
      */
     public String getPortTypeName() {
         return endpointName;
     }
 
     /**
-     * @deprecated use AxisService#setEndpointName() instead
      * @param portTypeName
+     * @deprecated use AxisService#setEndpointName() instead
      */
     public void setPortTypeName(String portTypeName) {
         this.endpointName = portTypeName;
@@ -667,8 +680,7 @@ public class AxisService extends AxisDescription {
                     log.debug("mapActionToOperation: This operation is already mapped to this action: " + action + "; AxisOperation: " 
                             + currentlyMappedOperation + " named: " + currentlyMappedOperation.getName());
                 }
-            }
-            else {
+            } else {
                 // This action is already mapped, but it is to a different operation.  Remove
                 // the action mapping from the alias table and add it to the list of invalid mappings
                 operationsAliasesMap.remove(action);
@@ -682,8 +694,7 @@ public class AxisService extends AxisDescription {
                 }
             }
             return;
-        }
-        else {
+        } else {
             operationsAliasesMap.put(action, axisOperation);
         }
     }
@@ -1317,6 +1328,7 @@ public class AxisService extends AxisDescription {
 
     /**
      * To eneble service to be expose in all the transport
+     *
      * @param enableAllTransports
      */
     public void setEnableAllTransports(boolean enableAllTransports) {
@@ -2092,11 +2104,13 @@ public class AxisService extends AxisDescription {
                 data = dataLocator.getData(request, msgContext);
                 if (data==null){
                     data = bubbleupDataLocators(nextIndex, request, msgContext);
+                } else {
+                    return data;
                 }
-                else return data;
 
+            } else {
+                data = bubbleupDataLocators(nextIndex, request, msgContext);
             }
-            else data = bubbleupDataLocators(nextIndex, request, msgContext);
             
 
         }
@@ -2121,18 +2135,19 @@ public class AxisService extends AxisDescription {
      */
     private AxisDataLocator getDataLocator(LocatorType locatorType, String dialect) throws AxisFault {
         AxisDataLocator locator = null;
-        if (locatorType == LocatorType.SERVICE_DIALECT)   
+        if (locatorType == LocatorType.SERVICE_DIALECT) {
              locator =  getServiceDataLocator( dialect);  
-        else if (locatorType == LocatorType.SERVICE_LEVEL)   
+        } else if (locatorType == LocatorType.SERVICE_LEVEL) {
                locator =  getServiceDataLocator( DRConstants.SERVICE_LEVEL); 
-        else if (locatorType == LocatorType.GLOBAL_DIALECT)   
+        } else if (locatorType == LocatorType.GLOBAL_DIALECT) {
               locator =  getGlobalDataLocator( dialect);     
-        else if (locatorType == LocatorType.GLOBAL_LEVEL)   
+        } else if (locatorType == LocatorType.GLOBAL_LEVEL) {
              locator =  getGlobalDataLocator( DRConstants.GLOBAL_LEVEL);
-        else if (locatorType == LocatorType.DEFAULT_AXIS)   
+        } else if (locatorType == LocatorType.DEFAULT_AXIS) {
                 locator =  getDefaultDataLocator();
-        else
+        } else {
              locator =  getDefaultDataLocator();
+        }
     
       
         return locator;
@@ -2141,8 +2156,9 @@ public class AxisService extends AxisDescription {
     // Return default Axis2 Data Locator
     private AxisDataLocator getDefaultDataLocator() throws DataRetrievalException {
 
-        if (defaultDataLocator == null)
+        if (defaultDataLocator == null) {
             defaultDataLocator = new AxisDataLocatorImpl(this);
+        }
         
         defaultDataLocator.loadServiceData();
         
@@ -2224,6 +2240,7 @@ public class AxisService extends AxisDescription {
     /**
      * When we are trying to find out the operation by the QName of the SOAPBody first child, this
      * map will help to retrieve that data very fast.
+     *
      * @param messageQNameToOperationMap
      */
     public void setMessageNameToOperationsMap(Map messageQNameToOperationMap) {

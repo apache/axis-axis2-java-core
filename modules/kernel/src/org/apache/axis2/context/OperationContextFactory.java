@@ -18,9 +18,9 @@
 package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 /**
  * This is the factory for OperationContext.

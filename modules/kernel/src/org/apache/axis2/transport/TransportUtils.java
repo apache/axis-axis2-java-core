@@ -17,12 +17,6 @@
 
 package org.apache.axis2.transport;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMOutputFormat;
@@ -45,6 +39,11 @@ import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class TransportUtils {
 
@@ -135,16 +134,14 @@ public class TransportUtils {
             charsetEncoding = builder.getDocument().getCharsetEncoding();
 //        } else if (soapNamespaceURI!=null){
 //                builder = Builder.getBuilder(inStream, charSetEnc,soapNamespaceURI);
-        }else if (contentType!=null)
-        {
+        } else if (contentType != null) {
             OMBuilder builder = Builder.getBuilderFromSelector(contentType, msgContext);
             if (builder != null) {
                 documentElement = builder.processDocument(inStream, msgContext);
 //                charsetEncoding = builder.getCharsetEncoding();
             }
         }
-        if (documentElement==null)
-        {
+        if (documentElement == null) {
             //FIXME making soap defualt for the moment..might effect the performance
             StAXBuilder builder = Builder.getSOAPBuilder(inStream, charSetEnc,soapNamespaceURI);
             documentElement = builder.getDocumentElement();
@@ -253,6 +250,7 @@ public class TransportUtils {
     /**
      * Initial work for a builder selector which selects the builder for a given message format based on the the content type of the recieved message.
      * content-type to builder mapping can be specified through the Axis2.xml.
+     *
      * @param msgContext
      * @return the builder registered against the given content-type
      * @throws AxisFault

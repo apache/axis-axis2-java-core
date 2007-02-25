@@ -27,12 +27,11 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.xml.namespace.QName;
 
 public class WSDLBasedPolicyProcessor {
     private HashMap ns2modules = new HashMap();

@@ -17,16 +17,6 @@
 
 package org.apache.axis2.transport.http;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
@@ -51,6 +41,15 @@ import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 public class HTTPTransportUtils {
 
@@ -206,8 +205,7 @@ public class HTTPTransportUtils {
 
             if (headers != null) {
                 if (HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING)) ||
-                    HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING_LOWERCASE)))
-                {
+                        HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING_LOWERCASE))) {
                     in = new GZIPInputStream(in);
                 }
                 }
@@ -343,6 +341,7 @@ public class HTTPTransportUtils {
     
     /**
      * Detect the REST using the WSDL 2.0 constants
+     *
      * @param contentType
      * @return
      */

@@ -1,8 +1,7 @@
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 
 /*
 * Copyright 2004,2005 The Apache Software Foundation.

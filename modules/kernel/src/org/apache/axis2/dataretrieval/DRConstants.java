@@ -33,9 +33,7 @@ public interface DRConstants {
     }
     
     /**
-     * 
      * Defines contants references in WS-Mex specification 
-     *
      */
     
     public interface SPEC {
@@ -74,9 +72,7 @@ public interface DRConstants {
     String GLOBAL_LEVEL = "GlobalLevel";
 
   /**
-   * 
    * Defines contants references in Service Data 
-   *
    */
     
      public interface SERVICE_DATA {

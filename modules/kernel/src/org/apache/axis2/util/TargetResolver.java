@@ -19,10 +19,10 @@ import org.apache.axis2.context.MessageContext;
 
 /**
  * TargetResolver
- * 
+ * <p/>
  * Interface to be implemented by code to update the invocation target URL
  * before the transport is selected and the engine invoked.
- * 
+ * <p/>
  * Examples of use:
  * 1. wsa:To set to a URN value which needs translated to a targetable URL
  * 2. support clustering where a single URI may repesent multiple servers and one must be selected

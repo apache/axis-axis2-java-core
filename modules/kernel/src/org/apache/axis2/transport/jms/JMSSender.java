@@ -15,21 +15,6 @@
 */
 package org.apache.axis2.transport.jms;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import javax.jms.BytesMessage;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
@@ -42,14 +27,30 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.jms.BytesMessage;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 /**
  * The TransportSender for JMS
  */
 public class JMSSender extends AbstractHandler implements TransportSender {
 
     private static final Log log = LogFactory.getLog(JMSSender.class);
+
     /**
      * Performs the actual sending of the JMS message
+     *
      * @param msgContext the message context to be sent
      * @throws AxisFault on exception
      */
@@ -66,20 +67,17 @@ public class JMSSender extends AbstractHandler implements TransportSender {
 
         if (targetAddress != null) {
             transportInfo = new JMSOutTransportInfo(targetAddress);            
-        }
-        else if (targetAddress == null && msgContext.getTo() != null &&
+        } else if (targetAddress == null && msgContext.getTo() != null &&
             !msgContext.getTo().hasAnonymousAddress()) {
             targetAddress = msgContext.getTo().getAddress();
             
             if (!msgContext.getTo().hasNoneAddress()) {
                 transportInfo = new JMSOutTransportInfo(targetAddress);
-            }
-            else {
+            } else {
                 //Don't send the message.
               return InvocationResponse.CONTINUE;        
             }
-        }
-        else if (msgContext.isServerSide()){
+        } else if (msgContext.isServerSide()) {
             // get the jms ReplyTo
             transportInfo = (JMSOutTransportInfo)
                 msgContext.getProperty(Constants.OUT_TRANSPORT_INFO);                
@@ -178,7 +176,8 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             if (con != null) {
                 try {
                     con.close(); // closes all sessions, producers, temp Q's etc
-                } catch (JMSException e) {} // ignore
+                } catch (JMSException e) {
+                } // ignore
             }
         }
         return InvocationResponse.CONTINUE;        
@@ -200,6 +199,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
     /**
      * Create a JMS Message from the given MessageContext and using the given
      * session
+     *
      * @param msgContext the MessageContext
      * @param session the JMS session
      * @return a JMS message from the context and session

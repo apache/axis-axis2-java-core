@@ -27,8 +27,6 @@
 */
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -37,6 +35,8 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
+
+import java.io.IOException;
 
 /**
  * This class wraps an arbitrary {@link HttpProcessor} and extends it with 

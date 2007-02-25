@@ -19,20 +19,16 @@ package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
-import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.description.AxisBindingOperation;
-import org.apache.axis2.util.Utils;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Iterator;
@@ -111,8 +107,7 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
 
             if (-1 != index) {
                 service =  path.substring(index);
-            }
-             else {
+        } else {
                 int queryIndex = path.indexOf("?");
                 if (queryIndex != -1) {
                     service = path.substring(queryIndex);

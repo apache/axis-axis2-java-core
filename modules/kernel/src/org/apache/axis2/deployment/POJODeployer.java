@@ -8,7 +8,12 @@ import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.java2wsdl.AnnotationConstants;
-import org.codehaus.jam.*;
+import org.codehaus.jam.JAnnotation;
+import org.codehaus.jam.JClass;
+import org.codehaus.jam.JamClassIterator;
+import org.codehaus.jam.JamService;
+import org.codehaus.jam.JamServiceFactory;
+import org.codehaus.jam.JamServiceParams;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -17,7 +17,6 @@
 package org.apache.axis2.dataretrieval;
 
 /**
- * 
  * Defines Data Locator types as described below:
  * DEFAULT_AXIS - Default Axis2 data locator 
  * GLOBAL_LEVEL - Global level data locator i.e.,plug-in data locator registered
@@ -28,7 +27,6 @@ package org.apache.axis2.dataretrieval;
  *                using <dataLocator> element in services.xml.
  * SERVICE_DIALECT - Service level dialect specific data locator i.e. plug-in data locator registered
  *                using <dialectLocator> element in services.xml.
- *
  */
 
 public class LocatorType {

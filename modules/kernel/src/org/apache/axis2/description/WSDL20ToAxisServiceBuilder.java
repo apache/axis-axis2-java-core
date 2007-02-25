@@ -33,7 +33,6 @@ import org.apache.woden.wsdl20.InterfaceFaultReference;
 import org.apache.woden.wsdl20.InterfaceMessageReference;
 import org.apache.woden.wsdl20.InterfaceOperation;
 import org.apache.woden.wsdl20.Service;
-import org.apache.woden.wsdl20.TypeDefinition;
 import org.apache.woden.wsdl20.enumeration.MessageLabel;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingFaultExtensions;
 import org.apache.woden.wsdl20.extensions.http.HTTPBindingMessageReferenceExtensions;
@@ -56,11 +55,16 @@ import org.w3c.dom.Document;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.InputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -414,6 +418,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         String soapVersion;
         if ((soapVersion = soapBindingExtensions.getSoapVersion()) != null)
 
+        {
             if (soapVersion.equals(WSDL2Constants.SOAP_VERSION_1_1)) {
                 // Might have to remove this as its a binding specific property
                 axisService.setSoapNsUri(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
@@ -425,6 +430,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION,
                         WSDL2Constants.SOAP_VERSION_1_2);
             }
+        }
 
         URI soapUnderlyingProtocol = soapBindingExtensions.getSoapUnderlyingProtocol();
         if (soapUnderlyingProtocol != null) {
@@ -885,8 +891,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             elementQName = messageReference.getElementDeclaration().getName();
         } else if (WSDLConstants.WSDL20_2006Constants.NMTOKEN_ANY.equals(messageContentModelName)) {
            elementQName = Constants.XSD_ANY;
-        } else
-        if (WSDLConstants.WSDL20_2006Constants.NMTOKEN_NONE.equals(messageContentModelName)) {
+        } else if (WSDLConstants.WSDL20_2006Constants.NMTOKEN_NONE.equals(messageContentModelName)) {
             // nothing to do here keep the message element as null
         } else {
             throw new AxisFault("Sorry we do not support " + messageContentModelName +
@@ -913,13 +918,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     /**
      * Convert woden dependent SOAPHeaderBlock objects to SOAPHeaderMessage objects
+     *
      * @param soapHeaderBlocks - An array of SOAPHeaderBlock objects
      * @return ArrayList - An ArrayList of SOAPHeaderMessage objects
      */
     private ArrayList createSoapHeaders(SOAPHeaderBlock soapHeaderBlocks[]) {
 
-        if (soapHeaderBlocks.length ==0)
+        if (soapHeaderBlocks.length == 0) {
         return null;
+        }
         ArrayList soapHeaderMessages = new ArrayList();
 
         for (int i = 0; i < soapHeaderBlocks.length; i++) {
@@ -940,13 +947,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     /**
      * Convert woden dependent SOAPHeaderBlock objects to SOAPHeaderMessage objects
+     *
      * @param soapModules - An array of SOAPModule objects
      * @return ArrayList - An ArrayList of SOAPHeaderMessage objects
      */
     private ArrayList createSoapModules(SOAPModule soapModules[]) {
 
-        if (soapModules.length ==0)
+        if (soapModules.length == 0) {
         return null;
+        }
         ArrayList soapModuleMessages = new ArrayList();
 
         for (int i = 0; i < soapModules.length; i++) {
@@ -960,13 +969,15 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     /**
      * Convert woden dependent HTTPHeader objects to Header objects
+     *
      * @param httpHeaders - An array of HTTPHeader objects
      * @return ArrayList - An ArrayList of Header objects
      */
     private ArrayList createHttpHeaders(HTTPHeader httpHeaders[]) {
 
-        if (httpHeaders.length ==0)
+        if (httpHeaders.length == 0) {
         return null;
+        }
         ArrayList httpHeaderMessages = new ArrayList();
 
         for (int i = 0; i < httpHeaders.length; i++) {

@@ -8,9 +8,17 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.DeploymentConstants;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
-import org.apache.axis2.description.*;
+import org.apache.axis2.deployment.repository.util.DeploymentFileData;
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.MessageReceiver;
@@ -19,20 +27,32 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
+import org.apache.ws.java2wsdl.AnnotationConstants;
 import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import org.apache.ws.java2wsdl.SchemaGenerator;
-import org.apache.ws.java2wsdl.AnnotationConstants;
 import org.apache.ws.java2wsdl.utils.TypeTable;
-import org.codehaus.jam.JMethod;
 import org.codehaus.jam.JAnnotation;
+import org.codehaus.jam.JMethod;
 
 import javax.xml.namespace.QName;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Stack;
+import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -494,7 +514,8 @@ public class Utils {
         }
         int leadingSlashes = 0;
         for (leadingSlashes = 0 ; leadingSlashes < uri.length()
-                && uri.charAt(leadingSlashes) == '/' ; ++leadingSlashes) {}
+                && uri.charAt(leadingSlashes) == '/'; ++leadingSlashes) {
+        }
         boolean isDir = (uri.charAt(uri.length() - 1) == '/');
         StringTokenizer st = new StringTokenizer(uri, "/");
         LinkedList clean = new LinkedList();

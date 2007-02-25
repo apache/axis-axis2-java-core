@@ -648,10 +648,11 @@ public class RB {
         boolean didNull = false;
 
         if (caller != null) {
-            if (caller instanceof Class)
+            if (caller instanceof Class) {
                 curClass = (Class) caller;
-            else
+            } else {
                 curClass = caller.getClass();
+        }
         }
 
         while (msg == null) {
@@ -688,16 +689,18 @@ public class RB {
                 // Get the superclass
                 curClass = curClass.getSuperclass();
                 if (curClass == null) {
-                    if (didNull)
+                    if (didNull) {
                         throw firstEx;
+                    }
                     didNull = true;
                     caller = null;
                 } else {
                     String cname = curClass.getName();
                     if (cname.startsWith("java.") ||
                             cname.startsWith("javax.")) {
-                        if (didNull)
+                        if (didNull) {
                             throw firstEx;
+                        }
                         didNull = true;
                         caller = null;
                         curClass = null;

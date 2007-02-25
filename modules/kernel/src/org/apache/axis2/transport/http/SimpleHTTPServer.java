@@ -17,31 +17,30 @@
 
 package org.apache.axis2.transport.http;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.SocketException;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpFactory;
 import org.apache.axis2.transport.http.server.HttpUtils;
-import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.axis2.transport.http.server.SessionManager;
+import org.apache.axis2.transport.http.server.SimpleHttpServer;
 import org.apache.axis2.util.OptionsParser;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
+import java.io.File;
+import java.io.IOException;
+import java.net.SocketException;
+import java.util.Iterator;
 
 /**
  * This is a simple implementation of an HTTP server for processing
@@ -103,17 +102,20 @@ public class SimpleHTTPServer implements TransportListener {
             this.configurationContext = axisConf;
 
             Parameter param = transprtIn.getParameter(PARAM_PORT);
-            if (param != null)
+            if (param != null) {
                 this.port = Integer.parseInt((String) param.getValue());
+            }
 
-            if (httpFactory == null)
+            if (httpFactory == null) {
                 httpFactory = new HttpFactory(configurationContext, port);
+            }
 
             param = transprtIn.getParameter(HOST_ADDRESS);
-            if (param != null)
+            if (param != null) {
                 hostAddress = ((String) param.getValue()).trim();
-            else
+            } else {
                 hostAddress = httpFactory.getHostAddress();
+            }
         } catch (Exception e1) {
             throw new AxisFault(e1);
         }
@@ -142,15 +144,11 @@ public class SimpleHTTPServer implements TransportListener {
         
         boolean startAllTransports = "all".equals(optionsParser.isValueSet('t'));
         String repository= optionsParser.isValueSet('r');
-        if (repository ==null)
-        {
+        if (repository == null) {
             args = optionsParser.getRemainingArgs();
-            if (args!=null && args[0]!=null && args[0]!="")
-            {
+            if (args != null && args[0] != null && args[0] != "") {
                 repository = args[0];
-            }
-            else 
-            {
+            } else {
                 printUsage();
             }
         }

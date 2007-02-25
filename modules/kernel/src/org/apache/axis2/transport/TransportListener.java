@@ -20,8 +20,8 @@ package org.apache.axis2.transport;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.TransportInDescription;
 
 /**
@@ -40,11 +40,11 @@ public interface TransportListener {
     void stop() throws AxisFault;
 
     /**
-     * @deprecated Transport listener can expose more than EPRs. So this method should return an array of EPRs.
-     * Deprecating this method for now and please use getEPRsForServices instead.
      * @param serviceName
      * @param ip
      * @throws AxisFault
+     * @deprecated Transport listener can expose more than EPRs. So this method should return an array of EPRs.
+     *             Deprecating this method for now and please use getEPRsForServices instead.
      */
     EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault;
 
@@ -53,6 +53,7 @@ public interface TransportListener {
     /**
      * To get the sessionContext transport dependent manner. So that transport listener
      * can return its own implementation of session managment
+     *
      * @param messageContext : MessageContext which has all the relavent data
      * @return SessionContext
      */

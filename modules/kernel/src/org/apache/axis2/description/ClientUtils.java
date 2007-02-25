@@ -45,7 +45,9 @@ public class ClientUtils {
                 TransportOutDescription transportOut = ac.getTransportOut(new QName(transport));
                 if (transportOut == null) {
                     throw new AxisFault("No Tranport Sender found for : " + transport);
-                } else return ac.getTransportOut(new QName(transport));
+                } else {
+                    return ac.getTransportOut(new QName(transport));
+                }
             } else {
                 throw new AxisFault(Messages.getMessage("cannotInferTransport", transportURI));
             }

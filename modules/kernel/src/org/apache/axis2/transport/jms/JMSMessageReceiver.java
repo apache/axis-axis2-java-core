@@ -15,7 +15,16 @@
 */
 package org.apache.axis2.transport.jms;
 
-import java.io.InputStream;
+import edu.emory.mathcs.backport.java.util.concurrent.Executor;
+import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.engine.AxisEngine;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -25,17 +34,7 @@ import javax.jms.Queue;
 import javax.jms.Topic;
 import javax.naming.Context;
 import javax.xml.stream.XMLStreamException;
-
-import edu.emory.mathcs.backport.java.util.concurrent.Executor;
-import org.apache.axiom.om.util.UUIDGenerator;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.ContextFactory;
-import org.apache.axis2.engine.AxisEngine;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.InputStream;
 
 /**
  * This is the actual receiver which listens for and accepts JMS messages, and
@@ -47,15 +46,22 @@ public class JMSMessageReceiver implements MessageListener {
 
     private static final Log log = LogFactory.getLog(JMSMessageReceiver.class);
 
-    /** The thread pool of workers */
+    /**
+     * The thread pool of workers
+     */
     private Executor workerPool = null;
-    /** The Axis configuration context */
+    /**
+     * The Axis configuration context
+     */
     private ConfigurationContext axisConf = null;
-    /** A reference to the JMS Connection Factory */
+    /**
+     * A reference to the JMS Connection Factory
+     */
     private JMSConnectionFactory jmsConFac = null;
 
     /**
      * Create a new JMSMessage receiver
+     *
      * @param jmsConFac the JMS connection factory associated with
      * @param workerPool the worker thead pool to be used
      * @param axisConf the Axis2 configuration
@@ -69,6 +75,7 @@ public class JMSMessageReceiver implements MessageListener {
 
     /**
      * Return the Axis configuration
+     *
      * @return the Axis configuration
      */
     public ConfigurationContext getAxisConf() {
@@ -77,6 +84,7 @@ public class JMSMessageReceiver implements MessageListener {
 
     /**
      * Set the worker thread pool
+     *
      * @param workerPool the worker thead pool
      */
     public void setWorkerPool(Executor workerPool) {
@@ -85,6 +93,7 @@ public class JMSMessageReceiver implements MessageListener {
 
     /**
      * The entry point on the recepit of each JMS message
+     *
      * @param message the JMS message received
      */
     public void onMessage(Message message) {
@@ -101,6 +110,7 @@ public class JMSMessageReceiver implements MessageListener {
     /**
      * Creates an Axis MessageContext for the received JMS message and
      * sets up the transports and various properties
+     *
      * @param message the JMS message
      * @return the Axis MessageContext
      */

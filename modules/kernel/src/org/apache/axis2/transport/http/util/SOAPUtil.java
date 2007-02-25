@@ -15,11 +15,6 @@
  */
 package org.apache.axis2.transport.http.util;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axis2.AxisFault;
@@ -31,6 +26,10 @@ import org.apache.axis2.transport.http.HTTPTransportUtils;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * @deprecated Since we are not using this class and this might lead to mis-use of this class, we will
@@ -68,18 +67,20 @@ public class SOAPUtil {
                                                       request.getRequestURL().toString());
 
             Object contextWritten = null;
-            if (msgContext.getOperationContext()!=null)
+            if (msgContext.getOperationContext() != null) {
                 contextWritten = msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
+            }
 
             response.setContentType("text/xml; charset="
                                     + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
             if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 Integer statusCode = (Integer) msgContext.getProperty(Constants.RESPONSE_CODE);
-                if (statusCode!=null) 
+                if (statusCode != null) {
                     response.setStatus(statusCode.intValue());
-                else
+                } else {
                     response.setStatus(HttpServletResponse.SC_ACCEPTED);
+            }
             }
 
             boolean closeReader = true;

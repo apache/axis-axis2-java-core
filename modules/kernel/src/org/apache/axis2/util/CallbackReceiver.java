@@ -16,8 +16,6 @@
 
 package org.apache.axis2.util;
 
-import java.util.HashMap;
-
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
@@ -26,6 +24,8 @@ import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.MessageReceiver;
+
+import java.util.HashMap;
 
 /**
  * This is a MessageReceiver which is used on the client side to accept the
@@ -44,8 +44,7 @@ public class CallbackReceiver implements MessageReceiver {
         callbackStore.put(MsgID, callback);
     }
 
-    public Callback lookupCallback(String msgID)
-    {
+    public Callback lookupCallback(String msgID) {
       return (Callback)callbackStore.get(msgID);
     }
 

@@ -20,7 +20,6 @@ import org.apache.axis2.AxisFault;
 
 /**
  * Exception class for reporting Data Retrieval problems 
- *
  */
 
 public class DataRetrievalException extends AxisFault {

@@ -16,10 +16,11 @@
 package org.apache.axis2.util;
 
 import java.text.Collator;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
 /**
  * JavaUtils
  */
@@ -46,17 +47,20 @@ public class JavaUtils {
                     "while"
             };
 
-    /** Collator for comparing the strings */
+    /**
+     * Collator for comparing the strings
+     */
     static final Collator englishCollator = Collator.getInstance(Locale.ENGLISH);
 
-    /** Use this character as suffix */
+    /**
+     * Use this character as suffix
+     */
     static final char keywordPrefix = '_';
 
     /**
      * Is this an XML punctuation character?
      */
-    private static boolean isPunctuation(char c)
-    {
+    private static boolean isPunctuation(char c) {
         return '-' == c
                 || '.' == c
                 || ':' == c
@@ -68,6 +72,7 @@ public class JavaUtils {
 
     /**
      * Checks if the input string is a valid java keyword.
+     *
      * @return Returns boolean.
      */
     public static boolean isJavaKeyword(String keyword) {
@@ -85,8 +90,9 @@ public class JavaUtils {
      * @return
      */
     public static boolean hasUpperCase(String word) {
-        if (word == null)
+        if (word == null) {
             return false;
+        }
         int len = word.length();
         for (int i = 0; i < len; i++) {
             if (Character.isUpperCase(word.charAt(i))) {
@@ -106,8 +112,9 @@ public class JavaUtils {
 
     public static String xmlNameToJava(String name) {
         // protect ourselves from garbage
-        if (name == null || name.length() == 0)
+        if (name == null || name.length() == 0) {
             return name;
+        }
 
         char[] nameArray = name.toCharArray();
         int nameLen = name.length();
@@ -128,14 +135,12 @@ public class JavaUtils {
             result.append(nameArray[i]);
             //wordStart = !Character.isLetter(nameArray[i]);
             wordStart = !Character.isLetter(nameArray[i]) && nameArray[i] != "_".charAt(0);
-        }
-        else {
+        } else {
             // The identifier cannot be mapped strictly according to
             // JSR 101
             if (Character.isJavaIdentifierPart(nameArray[0])) {
                 result.append("_").append(nameArray[0]);
-            }
-            else {
+            } else {
                 // The XML identifier does not contain any characters
                 // we can map to Java.  Using the length of the string
                 // will make it somewhat unique.
@@ -159,8 +164,7 @@ public class JavaUtils {
             }
             if (wordStart && Character.isLowerCase(c)) {
                 result.append(Character.toUpperCase(c));
-            }
-            else {
+            } else {
                 result.append(c);
             }
             // If c is not a character, but is a legal Java
@@ -174,8 +178,9 @@ public class JavaUtils {
         String newName = result.toString();
 
         // check for Java keywords
-        if (isJavaKeyword(newName))
+        if (isJavaKeyword(newName)) {
             newName = makeNonJavaKeyword(newName);
+        }
 
         return newName;
     } // xmlNameToJava
@@ -205,6 +210,7 @@ public class JavaUtils {
 
     /**
      * converts an xml name to a java identifier
+     *
      * @param name
      * @return java identifier
      */
@@ -222,7 +228,7 @@ public class JavaUtils {
     /**
      * Tests the String 'value':
      *   return 'false' if its 'false', '0', or 'no' - else 'true'
-     * 
+     * <p/>
      * Follow in 'C' tradition of boolean values:
      * false is specific (0), everything else is true;
      */
@@ -250,7 +256,9 @@ public class JavaUtils {
      *   All other types return 'true'
      */
     public static final boolean isTrueExplicitly(Object value, boolean defaultVal) {
-        if ( value == null ) return defaultVal;
+        if (value == null) {
+            return defaultVal;
+        }
         if ( value instanceof Boolean ) {
             return ((Boolean)value).booleanValue();
         }
@@ -286,7 +294,7 @@ public class JavaUtils {
     /**
      * Tests the String 'value':
      *   return 'true' if its 'false', '0', or 'no' - else 'false'
-     * 
+     * <p/>
      * Follow in 'C' tradition of boolean values:
      * false is specific (0), everything else is true;
      */
@@ -314,7 +322,9 @@ public class JavaUtils {
      *   All other types return 'false'
      */
     public static final boolean isFalseExplicitly(Object value, boolean defaultVal) {
-        if ( value == null ) return defaultVal;
+        if (value == null) {
+            return defaultVal;
+        }
         if ( value instanceof Boolean ) {
             return !((Boolean)value).booleanValue();
         }
@@ -348,13 +358,17 @@ public class JavaUtils {
     }
 
     public static boolean isJavaId(String id) {
-        if (id == null || id.length() == 0 || isJavaKeyword(id))
+        if (id == null || id.length() == 0 || isJavaKeyword(id)) {
             return false;
-        if (!Character.isJavaIdentifierStart(id.charAt(0)))
+        }
+        if (!Character.isJavaIdentifierStart(id.charAt(0))) {
             return false;
-        for (int i=1; i<id.length(); i++)
-            if (!Character.isJavaIdentifierPart(id.charAt(i)))
+        }
+        for (int i = 1; i < id.length(); i++) {
+            if (!Character.isJavaIdentifierPart(id.charAt(i))) {
                 return false;
+            }
+        }
         return true;
     }
 
@@ -416,24 +430,24 @@ public class JavaUtils {
         return (String[]) list.toArray(new String[list.size()]);
     }
 
-    public static Class getWrapperClass(Class primitive)
-    {
-        if (primitive == int.class)
+    public static Class getWrapperClass(Class primitive) {
+        if (primitive == int.class) {
             return java.lang.Integer.class;
-        else if (primitive == short.class)
+        } else if (primitive == short.class) {
             return java.lang.Short.class;
-        else if (primitive == boolean.class)
+        } else if (primitive == boolean.class) {
             return java.lang.Boolean.class;
-        else if (primitive == byte.class)
+        } else if (primitive == byte.class) {
             return java.lang.Byte.class;
-        else if (primitive == long.class)
+        } else if (primitive == long.class) {
             return java.lang.Long.class;
-        else if (primitive == double.class)
+        } else if (primitive == double.class) {
             return java.lang.Double.class;
-        else if (primitive == float.class)
+        } else if (primitive == float.class) {
             return java.lang.Float.class;
-        else if (primitive == char.class)
+        } else if (primitive == char.class) {
             return java.lang.Character.class;
+        }
         
         return null;
     }
@@ -443,8 +457,7 @@ public class JavaUtils {
      * comparing characters.
      *
      * @param string
-     * @param search
-     *            If test is empty -1 is always returned.
+     * @param search If test is empty -1 is always returned.
      * @return -1 if the string was not found or the index of the first matching
      *         character
      */

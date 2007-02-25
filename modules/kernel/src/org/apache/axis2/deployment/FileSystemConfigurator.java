@@ -105,7 +105,9 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
             throw new AxisFault("System can not find the given axis2.xml " + axis2xml);
         }
         Parameter axis2repoPara = axisConfig.getParameter(DeploymentConstants.AXIS2_REPO);
-        if (axis2repoPara != null) repoLocation = (String) axis2repoPara.getValue();
+        if (axis2repoPara != null) {
+            repoLocation = (String) axis2repoPara.getValue();
+        }
         if (!(repoLocation == null || "".equals(repoLocation))) {
             loadRepository(repoLocation);
         } else {

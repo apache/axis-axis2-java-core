@@ -16,11 +16,7 @@
 
 package org.apache.axis2.transport.http;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.MIMEOutputUtils;
-import org.apache.axiom.soap.SOAPFault;
-import org.apache.axiom.soap.SOAPFaultDetail;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
@@ -43,10 +39,8 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
@@ -170,8 +164,9 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             if (transportOut!=null) {
                 Parameter param = transportOut.getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
                 Object value = null;
-                if (param!=null)
+                if (param != null) {
                     value = param.getValue();
+                }
                 
                 if (value!=null && JavaUtils.isTrueExplicitly(value)) {
                     if (msgContext.isSOAP11()!=true) {

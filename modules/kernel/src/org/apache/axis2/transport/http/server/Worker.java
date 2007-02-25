@@ -27,12 +27,12 @@
 */
 package org.apache.axis2.transport.http.server;
 
-import java.io.IOException;
-
 import org.apache.axis2.context.MessageContext;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+
+import java.io.IOException;
 
 public interface Worker {
 

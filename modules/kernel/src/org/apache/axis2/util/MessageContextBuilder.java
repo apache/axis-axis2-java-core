@@ -40,7 +40,11 @@ import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
@@ -130,10 +134,11 @@ public class MessageContextBuilder {
         if (axisService != null && Constants.SCOPE_SOAP_SESSION.equals(axisService.getScope())) {
             //If the wsa 2004/08 (submission) spec is in effect use the wsa anonymous URI as the default replyTo value.
             //This is necessary because the wsa none URI is not available in that spec.
-            if (AddressingConstants.Submission.WSA_NAMESPACE.equals(inMessageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION)))
+            if (AddressingConstants.Submission.WSA_NAMESPACE.equals(inMessageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION))) {
                 newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Submission.WSA_ANONYMOUS_URL));
-            else
+            } else {
                 newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
+            }
             
             newmsgCtx.setMessageID(UUIDGenerator.getUUID());
 
@@ -187,11 +192,9 @@ public class MessageContextBuilder {
 
         // See if the throwable is an AxisFault and if it already contains the
         // fault MessageContext
-        if (e instanceof AxisFault)
-        {
+        if (e instanceof AxisFault) {
           MessageContext faultMessageContext = ((AxisFault)e).getFaultMessageContext();
-          if (faultMessageContext != null)
-          {
+            if (faultMessageContext != null) {
             // These may not have been set correctly when the original context
             // was created -- an example of this is with the SimpleHTTPServer.
             // I'm not sure if this is the correct thing to do, or if the
@@ -217,8 +220,7 @@ public class MessageContextBuilder {
         }
 
         // Register the fault message context
-        if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null)
-        {
+        if (processingContext.getAxisOperation() != null && processingContext.getOperationContext() != null) {
             processingContext.getAxisOperation().addFaultMessageContext(faultContext, processingContext.getOperationContext());
         }
 
@@ -410,8 +412,7 @@ public class MessageContextBuilder {
         } else if (axisFault != null) {
 
             Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME) != null)
-            {
+            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME) != null) {
                 fault.setCode((SOAPFaultCode) faultElementsMap.get(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME));
             } else {
                 QName faultCodeQName = axisFault.getFaultCode();
@@ -448,8 +449,7 @@ public class MessageContextBuilder {
             message = soapException.getMessage();
         } else if (axisFault != null) {
             Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME) != null)
-            {
+            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME) != null) {
                 fault.setReason((SOAPFaultReason) faultElementsMap.get(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME));
             } else {
                 message = axisFault.getReason();
@@ -474,8 +474,7 @@ public class MessageContextBuilder {
             fault.getRole().setText((String) faultRole);
         } else if (axisFault != null) {
             Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME) != null)
-            {
+            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME) != null) {
                 fault.setRole((SOAPFaultRole) faultElementsMap.get(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME));
             }
         }
@@ -485,8 +484,7 @@ public class MessageContextBuilder {
             fault.getNode().setText((String) faultNode);
         } else if (axisFault != null) {
             Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME) != null)
-            {
+            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME) != null) {
                 fault.setNode((SOAPFaultNode) faultElementsMap.get(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME));
             }
         }
@@ -513,8 +511,7 @@ public class MessageContextBuilder {
             fault.setDetail((SOAPFaultDetail) faultDetail);
         } else if (axisFault != null) {
             Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME) != null)
-            {
+            if (faultElementsMap != null && faultElementsMap.get(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME) != null) {
                 fault.setDetail((SOAPFaultDetail) faultElementsMap.get(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME));
             } else {
                 OMElement detail = axisFault.getDetail();

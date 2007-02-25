@@ -24,9 +24,9 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 
 import javax.xml.namespace.QName;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.net.URL;
 
 /**
  * <p>This holds the information about a Module. </p>

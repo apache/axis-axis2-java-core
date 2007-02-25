@@ -16,13 +16,13 @@
 
 package org.apache.axis2.transport.mail.server;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-
 import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class POP3Server extends Thread {
     private static final Log log = LogFactory.getLog(POP3Server.class);

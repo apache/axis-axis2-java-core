@@ -15,10 +15,8 @@
 */
 package org.apache.axis2.transport.jms;
 
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -30,29 +28,30 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Encapsulate a JMS Connection factory definition within an Axis2.xml
- *
+ * <p/>
  * More than one JMS connection factory could be defined within an Axis2 XML
  * specifying the JMSListener as the transportReceiver.
- *
+ * <p/>
  * These connection factories are created at the initialization of the
  * transportReceiver, and any service interested in using any of these could
  * specify the name of the factory and the destination through Parameters named
  * JMSConstants.CONFAC_PARAM and JMSConstants.DEST_PARAM as shown below.
- *
+ * <p/>
  * <parameter name="transport.jms.ConnectionFactory" locked="true">myQueueConnectionFactory</parameter>
  * <parameter name="transport.jms.Destination" locked="true">TestQueue</parameter>
- *
+ * <p/>
  * If a connection factory is defined by a parameter named
  * JMSConstants.DEFAULT_CONFAC_NAME in the Axis2 XML, services which does not
  * explicitly specify a connection factory will be defaulted to it - if it is
  * defined in the Axis2 configuration.
- *
+ * <p/>
  * e.g.
  *   <transportReceiver name="jms" class="org.apache.axis2.transport.jms.JMSListener">
  *       <parameter name="myTopicConnectionFactory" locked="false">
@@ -79,27 +78,46 @@ public class JMSConnectionFactory {
 
     private static final Log log = LogFactory.getLog(JMSConnectionFactory.class);
 
-    /** The name used for the connection factory definition within Axis2 */
+    /**
+     * The name used for the connection factory definition within Axis2
+     */
     private String name = null;
-    /** The JNDI name of the actual connection factory */
+    /**
+     * The JNDI name of the actual connection factory
+     */
     private String jndiName = null;
-    /** A map of destinations to service names they belong to */
+    /**
+     * A map of destinations to service names they belong to
+     */
     private Map destinations = null;
-    /** The JMS Sessions listening for messages */
+    /**
+     * The JMS Sessions listening for messages
+     */
     private Map jmsSessions = null;
-    /** Properties of the connection factory */
+    /**
+     * Properties of the connection factory
+     */
     private Hashtable properties = null;
-    /** The JNDI Context used */
+    /**
+     * The JNDI Context used
+     */
     private Context context = null;
-    /** The actual ConnectionFactory instance held within */
+    /**
+     * The actual ConnectionFactory instance held within
+     */
     private ConnectionFactory conFactory = null;
-    /** The JMS Connection is opened. */
+    /**
+     * The JMS Connection is opened.
+     */
     private Connection connection = null;
-    /** The JMS Message receiver for this connection factory */
+    /**
+     * The JMS Message receiver for this connection factory
+     */
     private JMSMessageReceiver msgRcvr = null;
 
     /**
      * Create a JMSConnectionFactory for the given Axis2 name and JNDI name
+     *
      * @param name the local Axis2 name of the connection factory
      * @param jndiName the JNDI name of the actual connection factory used
      */
@@ -113,6 +131,7 @@ public class JMSConnectionFactory {
 
     /**
      * Create a JMSConnectionFactory for the given Axis2 name
+     *
      * @param name the local Axis2 name of the connection factory
      */
     JMSConnectionFactory(String name) {
@@ -121,6 +140,7 @@ public class JMSConnectionFactory {
 
     /**
      * Connect to the actual JMS connection factory specified by the JNDI name
+     *
      * @throws NamingException if the connection factory cannot be found
      */
     public void connect() throws NamingException {
@@ -133,6 +153,7 @@ public class JMSConnectionFactory {
 
     /**
      * Creates the initial context using the set properties
+     *
      * @throws NamingException
      */
     private void createInitialContext() throws NamingException {
@@ -141,6 +162,7 @@ public class JMSConnectionFactory {
 
     /**
      * Set the JNDI connection factory name
+     *
      * @param jndiName
      */
     public void setJndiName(String jndiName) {
@@ -149,6 +171,7 @@ public class JMSConnectionFactory {
 
     /**
      * Add a listen destination on this connection factory on behalf of the given service
+     *
      * @param destinationJndi destination JNDI name
      * @param serviceName the service to which it belongs
      */
@@ -158,6 +181,7 @@ public class JMSConnectionFactory {
 
     /**
      * Remove listen destination on this connection factory
+     *
      * @param destinationJndi the JMS destination to be removed
      */
     public void removeDestination(String destinationJndi) throws JMSException {
@@ -167,6 +191,7 @@ public class JMSConnectionFactory {
 
     /**
      * Add a property to the connection factory
+     *
      * @param key
      * @param value
      */
@@ -176,6 +201,7 @@ public class JMSConnectionFactory {
 
     /**
      * Return the name of the connection factory
+     *
      * @return the Axis2 name of this factory
      */
     public String getName() {
@@ -184,6 +210,7 @@ public class JMSConnectionFactory {
 
     /**
      * Get the JNDI name of the actual factory
+     *
      * @return the jndi name of the actual connection factory
      */
     public String getJndiName() {
@@ -192,6 +219,7 @@ public class JMSConnectionFactory {
 
     /**
      * Get the actual underlying connection factory
+     *
      * @return actual connection factory
      */
     public ConnectionFactory getConFactory() {
@@ -200,6 +228,7 @@ public class JMSConnectionFactory {
 
     /**
      * Get the list of destinations associated with this connection factory
+     *
      * @return destinations to service maping
      */
     public Map getDestinations() {
@@ -208,6 +237,7 @@ public class JMSConnectionFactory {
 
     /**
      * Get the connection factory properties
+     *
      * @return properties
      */
     public Hashtable getProperties() {
@@ -218,6 +248,7 @@ public class JMSConnectionFactory {
      * Begin listening for messages on the list of destinations associated
      * with this connection factory. (Called during Axis2 initialization of
      * the Transport receivers)
+     *
      * @param msgRcvr the message receiver which will process received messages
      * @throws JMSException on exceptions
      */
@@ -297,6 +328,7 @@ public class JMSConnectionFactory {
 
     /**
      * Return the service name using this destination
+     *
      * @param destination the destination name
      * @return the service which uses the given destination, or null
      */

@@ -17,14 +17,6 @@
 
 package org.apache.axis2.transport.mail;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.mail.PasswordAuthentication;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -42,6 +34,13 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.axis2.util.Utils;
+
+import javax.mail.PasswordAuthentication;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * 0. For this profile we only care about SOAP 1.2

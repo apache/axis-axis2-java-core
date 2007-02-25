@@ -15,7 +15,9 @@
  */
 package org.apache.axis2.addressing.wsdl;
 
-import java.util.List;
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
@@ -25,10 +27,7 @@ import javax.wsdl.Output;
 import javax.wsdl.PortType;
 import javax.wsdl.extensions.AttributeExtensible;
 import javax.xml.namespace.QName;
-
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.List;
 
 /**
  * The WSDL11ActionHelper provides 3 static methods to determine the correct wsa:Action value from
@@ -45,6 +44,7 @@ public class WSDL11ActionHelper {
     
     /**
      * getActionFromInputElement
+     *
      * @param def the wsdl:definitions which contains the wsdl:portType
      * @param wsdl4jPortType the wsdl:portType which contains the wsdl:operation
      * @param op the wsdl:operation which contains the input element
@@ -62,6 +62,7 @@ public class WSDL11ActionHelper {
     
     /**
      * getActionFromOutputElement
+     *
      * @param def the wsdl:definitions which contains the wsdl:portType
      * @param wsdl4jPortType the wsdl:portType which contains the wsdl:operation
      * @param op the wsdl:operation which contains the output element
@@ -79,6 +80,7 @@ public class WSDL11ActionHelper {
     
     /**
      * getActionFromFaultElement
+     *
      * @param def the wsdl:definitions which contains the wsdl:portType
      * @param wsdl4jPortType the wsdl:portType which contains the wsdl:operation
      * @param op the wsdl:operation which contains the fault element

@@ -1,19 +1,7 @@
 package org.apache.axis2.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PushbackInputStream;
-import java.io.Reader;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMException;
-import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
@@ -30,6 +18,16 @@ import org.apache.axis2.builder.OMBuilder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.transport.http.HTTPConstants;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PushbackInputStream;
+import java.io.Reader;
 
 public class Builder {
     public static final int BOM_SIZE = 4;
@@ -275,11 +273,10 @@ public class Builder {
     }
 
     /**
-     * @deprecated If some one really need this method, please shout.
-     * 
      * @param in
      * @return
      * @throws XMLStreamException
+     * @deprecated If some one really need this method, please shout.
      */
     public static StAXBuilder getBuilder(Reader in) throws XMLStreamException {
         XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(in);
@@ -353,6 +350,7 @@ public class Builder {
     /**
      * Initial work for a builder selector which selects the builder for a given message format based on the the content type of the recieved message.
      * content-type to builder mapping can be specified through the Axis2.xml.
+     *
      * @param contentType
      * @param msgContext
      * @return the builder registered against the given content-type

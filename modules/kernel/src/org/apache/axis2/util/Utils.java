@@ -17,19 +17,18 @@
 
 package org.apache.axis2.util;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.cluster.ClusterManager;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -48,6 +47,11 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 
+import javax.xml.namespace.QName;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+
 public class Utils {
     public static void addHandler(Flow flow, Handler handler, String phaseName) {
         HandlerDescription handlerDesc = new HandlerDescription();
@@ -60,8 +64,8 @@ public class Utils {
     }
 
     /**
-     * @deprecated (post 1.1 branch)
      * @see org.apache.axis2.util.MessageContextBuilder.createOutMessageContext()
+     * @deprecated (post1.1branch)
      */
     public static MessageContext createOutMessageContext(MessageContext inMessageContext)
             throws AxisFault {
@@ -380,7 +384,7 @@ public class Utils {
      * Get an AxisFault object to represent the SOAPFault in the SOAPEnvelope attached
      * to the provided MessageContext. This first check for an already extracted AxisFault
      * and otherwise does a simple extract.
-     * 
+     * <p/>
      * MUST NOT be passed a MessageContext which does not contain a SOAPFault
      * 
      * @param messageContext

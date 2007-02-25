@@ -16,10 +16,10 @@
 
 package org.apache.axis2.transport.http;
 
+import org.apache.commons.httpclient.methods.RequestEntity;
+
 import java.io.IOException;
 import java.io.OutputStream;
-
-import org.apache.commons.httpclient.methods.RequestEntity;
 
 public class RESTRequestEntity2 implements RequestEntity {
     private String contentType;

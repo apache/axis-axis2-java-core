@@ -16,13 +16,6 @@
 
 package org.apache.axis2.util;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-import java.util.Random;
-
 /**
  * @deprecated
  */

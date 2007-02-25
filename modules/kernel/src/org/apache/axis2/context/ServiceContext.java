@@ -26,8 +26,8 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.axis2.util.MetaDataEntry;
+import org.apache.axis2.util.ObjectStateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -95,11 +95,14 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
     private transient ConfigurationContext configContext;
 
-    /** Should we cache the last OperationContext? */
+    /**
+     * Should we cache the last OperationContext?
+     */
     private boolean cachingOperationContext;
-    /** A cache for the last OperationContext */
+    /**
+     * A cache for the last OperationContext
+     */
     private transient OperationContext lastOperationContext;
-
 
     //----------------------------------------------------------------
     // MetaData for data to be restored in activate after readExternal
@@ -249,21 +252,18 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
     /**
      * Returns a name associated with this ServiceContext.
-     * <P>
+     * <p/>
      * Note: this name is from the corresponding
      * AxisService object.
      * 
      * @return The name string, or null if no name can be found
      */
-    public String getName()
-    {
-        if (axisService != null)
-        {
+    public String getName() {
+        if (axisService != null) {
             return axisService.getName();
         }
 
-        if (metaAxisService != null)
-        {
+        if (metaAxisService != null) {
             return metaAxisService.getName();
         }
 
@@ -277,15 +277,12 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      * 
      * @return The name string, or null if no name can be found
      */
-    public String getGroupName()
-    {
-        if (serviceGroupContext != null)
-        {
+    public String getGroupName() {
+        if (serviceGroupContext != null) {
             return serviceGroupContext.getId();
         }
 
-        if (metaParent != null)
-        {
+        if (metaParent != null) {
             return metaParent.getId();
         }
 
@@ -300,7 +297,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
     /**
      * Save the contents of this object.
-     * <p>
+     * <p/>
      * NOTE: Transient fields and static fields are not saved.
      *       Also, objects that represent "static" data are
      *       not saved, except for enough information to be
@@ -308,11 +305,9 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      *       context is re-constituted.
      *
      * @param out    The stream to write the object contents to
-     * 
-     * @exception IOException
+     * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException
-    {
+    public void writeExternal(ObjectOutput out) throws IOException {
         //---------------------------------------------------------
         // in order to handle future changes to the message 
         // context definition, be sure to maintain the 
@@ -338,26 +333,22 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         // so that the writing to the output stream continues
         // even if one of the objects can't be serialized
 
-        try
-        {
+        try {
             // EndpointReference targetEPR
             ObjectStateUtils.writeObject(out, targetEPR, "ServiceContext.targetEPR");
         }
-        catch (Exception e1)
-        {
+        catch (Exception e1) {
             // note that the utility class will provide the trace for the 
             // exception so we won't have to
             // so just consume the exception for now
         }
 
 
-        try
-        {
+        try {
             // EndpointReference myEPR
             ObjectStateUtils.writeObject(out, myEPR, "ServiceContext.myEPR");
         }
-        catch (Exception e2)
-        {
+        catch (Exception e2) {
             // note that the utility class will provide the trace for the 
             // exception so we won't have to
             // so just consume the exception for now
@@ -371,8 +362,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
         HashMap tmpHashMap = null;
 
-        if ((tmpMap != null) && (!tmpMap.isEmpty()))
-        {
+        if ((tmpMap != null) && (!tmpMap.isEmpty())) {
             tmpHashMap = new HashMap(tmpMap);
         }
 
@@ -386,12 +376,9 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         String axisServMarker = "ServiceContext.metaAxisService";
         ObjectStateUtils.writeString(out, axisServMarker, axisServMarker);
 
-        if (axisService == null)
-        {
+        if (axisService == null) {
             out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
-        }
-        else
-        {
+        } else {
             out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
             metaAxisService = new MetaDataEntry(axisService.getClass().getName(), axisService.getName());
             ObjectStateUtils.writeObject(out, metaAxisService, "ServiceContext.metaAxisService");
@@ -412,18 +399,16 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
     /**
      * Restore the contents of the object that was previously saved.
-     * <p> 
+     * <p/>
      * NOTE: The field data must read back in the same order and type
      * as it was written.  Some data will need to be validated when 
      * resurrected.
      *
      * @param in    The stream to read the object contents from 
-     * 
-     * @exception IOException
-     * @exception ClassNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
-    {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         // set the flag to indicate that the message context is being
         // reconstituted and will need to have certain object references 
         // to be reconciled with the current engine setup
@@ -445,14 +430,12 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         int  revID = in.readInt();
 
         // make sure the object data is in a version we can handle
-        if (suid != serialVersionUID)
-        {
+        if (suid != serialVersionUID) {
             throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_SUID);
         }
 
         // make sure the object data is in a revision level we can handle
-        if (revID != REVISION_1)
-        {
+        if (revID != REVISION_1) {
             throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
         }
 
@@ -486,8 +469,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         HashMap tmpHashMap = ObjectStateUtils.readHashMap(in,"ServiceContext.properties");
 
         properties = new HashMap();
-        if (tmpHashMap != null)
-        {
+        if (tmpHashMap != null) {
             setProperties(tmpHashMap);
         }
 
@@ -502,12 +484,9 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         
         boolean metaAxisServiceIsActive = in.readBoolean();
 
-        if (metaAxisServiceIsActive == ObjectStateUtils.ACTIVE_OBJECT)
-        {
+        if (metaAxisServiceIsActive == ObjectStateUtils.ACTIVE_OBJECT) {
             metaAxisService = (MetaDataEntry) ObjectStateUtils.readObject(in, "ServiceContext.metaAxisService");
-        }
-        else
-        {
+        } else {
             metaAxisService = null;
         }
         
@@ -546,11 +525,9 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      * 
      * @param cc     The configuration context object representing the active configuration
      */
-    public void activate(ConfigurationContext cc)
-    {
+    public void activate(ConfigurationContext cc) {
         // see if there's any work to do
-        if (!needsToBeReconciled)
-        {
+        if (!needsToBeReconciled) {
             // return quick
             return;
         }
@@ -564,8 +541,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         // We previously saved metaAxisService; restore it
         axisService = null;
 
-        if (metaAxisService != null) 
-        {
+        if (metaAxisService != null) {
             axisService = ObjectStateUtils.findService(axisConfig, metaAxisService.getClassName(), metaAxisService.getQNameAsString());
         }
 
@@ -573,8 +549,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         // the parent ServiceGroupContext object was saved
         // either use the restored object or sync up with 
         // an existing ServiceGroupContext object
-        if (metaParent != null)
-        {
+        if (metaParent != null) {
             // find out if a copy of the ServiceGroupContext object exists on this
             // engine where this ServiceContext is being restored/activated
             // if so, use that object instead of the restored object
@@ -586,17 +561,14 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
             ServiceGroupContext sgc = cc.getServiceGroupContext(groupName);
 
-            if (existingSGC == null)
-            {
+            if (existingSGC == null) {
                 // could not find an existing ServiceGroupContext
                 // use the restored object
                 metaParent.activate(cc);
 
                 // set parent 
                 this.setParent(metaParent);
-            }
-            else
-            {
+            } else {
                 // switch over to the existing object
                 this.setParent(existingSGC);
 
@@ -611,9 +583,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
                 metaParent.putContextProperties(existingSGC);
             }
 
-        }
-        else
-        {
+        } else {
             // set parent to null
             this.setParent(metaParent);
         }
@@ -621,8 +591,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         // this is another pointer to our parent object
         serviceGroupContext = (ServiceGroupContext) this.getParent();
 
-        if (serviceGroupContext != null)
-        {
+        if (serviceGroupContext != null) {
             // add the service context to the table
             serviceGroupContext.addServiceContext(this);
         }
@@ -634,8 +603,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         needsToBeReconciled = false;
 
         // make sure this restored object is in the parent's list
-        if (metaParent != null)
-        {
+        if (metaParent != null) {
             // make sure this restored object is in the parent's list
             metaParent.addServiceContext(this);
         }
@@ -650,31 +618,24 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      * @param doParentProperties  Indicates whether to go up the context hierachy 
      *                            copy the properties at each level
      */
-    public void putContextProperties(ServiceContext context, boolean doParentProperties)
-    {
-        if (context != null)
-        {
+    public void putContextProperties(ServiceContext context, boolean doParentProperties) {
+        if (context != null) {
             // get the current properties on this context object
             Map props = getProperties();
 
             // copy them to the specified context object
             context.mergeProperties(props);
 
-            if (doParentProperties)
-            {
+            if (doParentProperties) {
                 ServiceGroupContext mySGC = null;
 
-                if (serviceGroupContext != null)
-                {
+                if (serviceGroupContext != null) {
                     mySGC = serviceGroupContext;
-                }
-                else if (metaParent != null) 
-                {
+                } else if (metaParent != null) {
                         mySGC = metaParent;
                 }
 
-                if (mySGC != null)
-                {
+                if (mySGC != null) {
                     ServiceGroupContext sgc = context.getServiceGroupContext();
                     mySGC.putContextProperties(sgc);
                 }
@@ -687,62 +648,48 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      * Compares key parts of the state from the current instance of 
      * this class with the specified instance to see if they are 
      * equivalent. 
-     * <P>
+     * <p/>
      * This differs from the java.lang.Object.equals() method in
      * that the equals() method generally looks at both the 
      * object identity (location in memory) and the object state
      * (data).
-     * <P>
+     * <p/>
      * 
+     * @param ctx
      * @return TRUE if this object is equivalent with the specified object
      *              that is, key fields match
      *         FALSE, otherwise
-     * @param ctx
      */
-    public boolean isEquivalent(ServiceContext ctx)
-    {
+    public boolean isEquivalent(ServiceContext ctx) {
         // NOTE: the input object is expected to exist (ie, be non-null)
 
-        if (!this.axisService.equals(ctx.getAxisService()))
-        {
+        if (!this.axisService.equals(ctx.getAxisService())) {
             return false;
         }
 
 
         EndpointReference targetEPR2 = ctx.getTargetEPR();
 
-        if ( (this.targetEPR != null) && (targetEPR2 != null) )
-        {
-            if (!this.targetEPR.isEquivalent(targetEPR2))
-            {
+        if ((this.targetEPR != null) && (targetEPR2 != null)) {
+            if (!this.targetEPR.isEquivalent(targetEPR2)) {
                 return false;
             }
-        }
-        else if ((this.targetEPR == null) && (targetEPR2 == null))
-        {
+        } else if ((this.targetEPR == null) && (targetEPR2 == null)) {
             // keep going
-        }
-        else
-        {
+        } else {
             // one of the objects is null
             return false;
         }
 
         EndpointReference myEPR2 = ctx.getMyEPR();
 
-        if ( (this.myEPR != null) && (myEPR2 != null) )
-        {
-            if (!this.myEPR.isEquivalent(myEPR2))
-            {
+        if ((this.myEPR != null) && (myEPR2 != null)) {
+            if (!this.myEPR.isEquivalent(myEPR2)) {
                 return false;
             }
-        }
-        else if ((this.myEPR == null) && (myEPR2 == null))
-        {
+        } else if ((this.myEPR == null) && (myEPR2 == null)) {
             // keep going
-        }
-        else
-        {
+        } else {
             // one of the objects is null
             return false;
         }
@@ -762,8 +709,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      * for this object instance.  It is suitable for matching related log
      * entries. 
      */
-    public String getLogCorrelationIDString()
-    {
+    public String getLogCorrelationIDString() {
         return logCorrelationIDString;
     }
 
@@ -774,8 +720,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
      * 
      * @param methodname The method where the warning occurs
      */
-    private void checkActivateWarning(String methodname)
-    {
+    private void checkActivateWarning(String methodname) {
         if (needsToBeReconciled) {
             log.warn(logCorrelationIDString+":"+methodname+"(): ****WARNING**** "+myClassName+".activate(configurationContext) needs to be invoked.");
         }

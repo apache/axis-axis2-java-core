@@ -17,7 +17,6 @@ package org.apache.axis2.dataretrieval;
 
 /**
  * Data contains instance of the data Object for the specified identifier if applicable.
- *
  */
 
 public class Data {
@@ -27,6 +26,7 @@ public class Data {
       
    /**
     * Constructor
+     *
     * @param in_data          instance of Object about the data
     * @param in_identifier    identifier of the data instance.
     */
@@ -38,6 +38,7 @@ public class Data {
    
    /**
     * Returns data
+     *
     * @return data Object
     */
    
@@ -47,6 +48,7 @@ public class Data {
    
    /**
     * Returns string representing identifier of this data object.
+     *
     * @return
     */
    public String getIdentifier(){

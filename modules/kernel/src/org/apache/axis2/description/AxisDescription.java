@@ -16,13 +16,6 @@
 
 package org.apache.axis2.description;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -32,6 +25,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 public abstract class AxisDescription implements ParameterInclude,
         DescriptionConstants {
@@ -90,7 +89,9 @@ public abstract class AxisDescription implements ParameterInclude,
 
     public Object getParameterValue(String name) {
         Parameter param = getParameter(name);
-        if (param == null) return null;
+        if (param == null) {
+            return null;
+        }
         return param.getValue();
     }
 
@@ -150,7 +151,7 @@ public abstract class AxisDescription implements ParameterInclude,
     /**
      * This method sets the policy as the default of this AxisDescription
      * instance. Further more this method does the followings.
-     * 
+     * <p/>
      * (1) Engage whatever modules necessary to execute new the effective policy
      * of this AxisDescription instance. (2) Disengage whatever modules that are
      * not necessary to execute the new effective policy of this AxisDescription
@@ -159,12 +160,10 @@ public abstract class AxisDescription implements ParameterInclude,
      * notify the user. (5) Else notify each module about the new effective
      * policy.
      * 
-     * @param policy
-     *            the new policy of this AxisDescription instance. The effective
+     * @param policy the new policy of this AxisDescription instance. The effective
      *            policy is the merge of this argument with effective policy of
      *            parent of this AxisDescription.
-     * @throws AxisFault
-     *             if any module is unable to execute the effective policy of
+     * @throws AxisFault if any module is unable to execute the effective policy of
      *             this AxisDescription instance successfully or no module to
      *             execute some portion (one or more PrimtiveAssertions ) of
      *             that effective policy.
@@ -245,7 +244,6 @@ public abstract class AxisDescription implements ParameterInclude,
      * Applies the policies on the Description Hierarchy recursively.
      * 
      * @throws AxisFault
-     * 
      */
     public void applyPolicy() throws AxisFault {
         

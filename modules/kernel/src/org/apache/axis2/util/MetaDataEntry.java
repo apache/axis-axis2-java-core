@@ -16,35 +16,19 @@
 
 package org.apache.axis2.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import javax.xml.namespace.QName;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
 
 
 /**
  * An internal class for holding a set of information 
  * about an object.  
  */
-public class MetaDataEntry implements Externalizable
-{
+public class MetaDataEntry implements Externalizable {
     // serialization identifier
     private static final long serialVersionUID = 8978361069526299875L;
 
@@ -69,15 +53,13 @@ public class MetaDataEntry implements Externalizable
     /**
      * Simple constructor
      */
-    public MetaDataEntry()
-    {
+    public MetaDataEntry() {
     }
 
     /**
      * Constructor
      */
-    public MetaDataEntry(String c, String n)
-    {
+    public MetaDataEntry(String c, String n) {
         className = c;
         qnameAsString = n;
     }
@@ -85,8 +67,7 @@ public class MetaDataEntry implements Externalizable
     /**
      * Constructor
      */
-    public MetaDataEntry(String c, String n, String e)
-    {
+    public MetaDataEntry(String c, String n, String e) {
         className = c;
         qnameAsString = n;
         extraName = e;
@@ -95,8 +76,7 @@ public class MetaDataEntry implements Externalizable
     /**
      * Constructor
      */
-    public MetaDataEntry(String c, String n, ArrayList l)
-    {
+    public MetaDataEntry(String c, String n, ArrayList l) {
         className = c;
         qnameAsString = n;
         list = l;
@@ -108,8 +88,7 @@ public class MetaDataEntry implements Externalizable
      * 
      * @return the class name string
      */
-    public String getClassName()
-    {
+    public String getClassName() {
         return className;
     }
 
@@ -119,8 +98,7 @@ public class MetaDataEntry implements Externalizable
      * 
      * @param c      the class name string
      */
-    public void setClassName(String c)
-    {
+    public void setClassName(String c) {
         className = c;
     }
 
@@ -130,14 +108,10 @@ public class MetaDataEntry implements Externalizable
      * 
      * @return the QName based on the qnameAsString value
      */
-    public QName getQName()
-    {
-        if (qnameAsString != null)
-        {
+    public QName getQName() {
+        if (qnameAsString != null) {
             return QName.valueOf(qnameAsString);
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
@@ -148,14 +122,10 @@ public class MetaDataEntry implements Externalizable
      *
      * @param q      the QName
      */
-    public void setQName(QName q)
-    {
-        if (q != null)
-        {
+    public void setQName(QName q) {
+        if (q != null) {
             qnameAsString = q.toString();
-        }
-        else
-        {
+        } else {
             qnameAsString = null;
         }
     }
@@ -165,8 +135,7 @@ public class MetaDataEntry implements Externalizable
      *
      * @param n      the QName as a string
      */
-    public void setQName(String n)
-    {
+    public void setQName(String n) {
         qnameAsString = n;
     }
 
@@ -176,8 +145,7 @@ public class MetaDataEntry implements Externalizable
      * 
      * @return the QName as a string
      */
-    public String getQNameAsString()
-    {
+    public String getQNameAsString() {
         return qnameAsString;
     }
 
@@ -188,8 +156,7 @@ public class MetaDataEntry implements Externalizable
      * 
      * @return the name 
      */
-    public String getName()
-    {
+    public String getName() {
         return qnameAsString;
     }
 
@@ -199,8 +166,7 @@ public class MetaDataEntry implements Externalizable
      * 
      * @return the additional name string
      */
-    public String getExtraName()
-    {
+    public String getExtraName() {
         return extraName;
     }
 
@@ -210,8 +176,7 @@ public class MetaDataEntry implements Externalizable
      * 
      * @param c      the extra name string
      */
-    public void setExtraName(String e)
-    {
+    public void setExtraName(String e) {
         extraName = e;
     }
 
@@ -221,10 +186,8 @@ public class MetaDataEntry implements Externalizable
      * 
      * @return false for a non-empty list, true for an empty list
      */
-    public boolean isListEmpty()
-    {
-        if (list == null)
-        {
+    public boolean isListEmpty() {
+        if (list == null) {
             return true;
         }
 
@@ -237,8 +200,7 @@ public class MetaDataEntry implements Externalizable
      * 
      * @return the array list
      */
-    public ArrayList getList()
-    {
+    public ArrayList getList() {
         return list;
     }
 
@@ -248,8 +210,7 @@ public class MetaDataEntry implements Externalizable
      * 
      * @param L      the ArrayList of MetaDataEntry objects
      */
-    public void setList(ArrayList L)
-    {
+    public void setList(ArrayList L) {
         list = L;
     }
 
@@ -258,10 +219,8 @@ public class MetaDataEntry implements Externalizable
      * 
      * @param e      the MetaDataEntry object to add to the list
      */
-    public void addToList(MetaDataEntry e)
-    {
-        if (list == null)
-        {
+    public void addToList(MetaDataEntry e) {
+        if (list == null) {
             list = new ArrayList();
         }
         list.add(e);
@@ -269,10 +228,8 @@ public class MetaDataEntry implements Externalizable
 
     /**
      * Remove the list
-     * 
      */
-    public void removeList()
-    {
+    public void removeList() {
         list = null;
     }
 
@@ -288,11 +245,9 @@ public class MetaDataEntry implements Externalizable
      * Save the contents of this object
      *
      * @param out    The stream to write the object contents to
-     * 
-     * @exception IOException
+     * @throws IOException
      */
-    public void writeExternal(ObjectOutput out) throws IOException
-    {
+    public void writeExternal(ObjectOutput out) throws IOException {
         // write out contents of this object
 
         //---------------------------------------------------------
@@ -320,17 +275,15 @@ public class MetaDataEntry implements Externalizable
     /**
      * Restore the contents of the object that was 
      * previously saved. 
-     * <p> 
+     * <p/>
      * NOTE: The field data must read back in the same order and type
      * as it was written.
      *
      * @param in    The stream to read the object contents from 
-     * 
-     * @exception IOException
-     * @exception ClassNotFoundException
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
-    {
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
         // serialization version ID
         long suid = in.readLong();
@@ -339,14 +292,12 @@ public class MetaDataEntry implements Externalizable
         int  revID = in.readInt();
 
         // make sure the object data is in a version we can handle
-        if (suid != serialVersionUID)
-        {
+        if (suid != serialVersionUID) {
             throw new ClassNotFoundException(UNSUPPORTED_SUID);
         }
 
         // make sure the object data is in a revision level we can handle
-        if (revID != REVISION_1)
-        {
+        if (revID != REVISION_1) {
             throw new ClassNotFoundException(UNSUPPORTED_REVID);
         }
 
