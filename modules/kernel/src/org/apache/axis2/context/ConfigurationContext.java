@@ -68,7 +68,7 @@ public class ConfigurationContext extends AbstractContext {
         initConfigContextTimeout(axisConfiguration);
         
         if (axisConfiguration.getClusterManager()!=null)
-        	initCluster();
+            initCluster();
     }
 
     private void initConfigContextTimeout(AxisConfiguration axisConfiguration) {
@@ -82,9 +82,9 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     private void initCluster() {
-		ClusterManager clusterManager = axisConfiguration.getClusterManager();
-		clusterManager.init(this);
-	}
+        ClusterManager clusterManager = axisConfiguration.getClusterManager();
+        clusterManager.init(this);
+    }
     
     protected void finalize() throws Throwable {
         super.finalize();
@@ -132,7 +132,7 @@ public class ConfigurationContext extends AbstractContext {
                     
                     ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
                     if (clusterManager!=null) {
-                    	clusterManager.addContext(serviceGroupContext);
+                        clusterManager.addContext(serviceGroupContext);
                     }
                 }
                 messageContext.setServiceGroupContext(serviceGroupContext);
@@ -157,7 +157,7 @@ public class ConfigurationContext extends AbstractContext {
 
                     ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
                     if (clusterManager!=null) {
-                    	clusterManager.addContext(serviceGroupContext);
+                        clusterManager.addContext(serviceGroupContext);
                     }
                     
                     messageContext.setServiceGroupContextId(serviceGroupContextId);
@@ -571,9 +571,9 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-	public ConfigurationContext getRootContext() {
-		return this;
-	}
+    public ConfigurationContext getRootContext() {
+        return this;
+    }
     
     
 }

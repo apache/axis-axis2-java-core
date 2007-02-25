@@ -35,8 +35,8 @@ import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
 
 public class LocalTransportSender extends AbstractHandler implements TransportSender {
-	
-	private ByteArrayOutputStream out;
+    
+    private ByteArrayOutputStream out;
     private ByteArrayOutputStream response;
 
     public void init(ConfigurationContext confContext, TransportOutDescription transportOut)

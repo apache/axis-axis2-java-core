@@ -31,9 +31,9 @@ public class Data {
     * @param in_identifier    identifier of the data instance.
     */
    public Data(Object in_data, String in_identifier){
-	   super();
-	   data = in_data;
-	   identifier =in_identifier;
+       super();
+       data = in_data;
+       identifier =in_identifier;
    }
    
    /**
@@ -42,7 +42,7 @@ public class Data {
     */
    
    public Object getData(){
-	   return data;
+       return data;
    }
    
    /**
@@ -50,6 +50,6 @@ public class Data {
     * @return
     */
    public String getIdentifier(){
-	   return identifier;
+       return identifier;
    }
 }

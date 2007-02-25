@@ -438,42 +438,42 @@ public class JavaUtils {
         return null;
     }
 
-	/**
-	 * Scans the parameter string for the parameter search ignoring case when
-	 * comparing characters.
-	 *
-	 * @param string
-	 * @param search
-	 *            If test is empty -1 is always returned.
-	 * @return -1 if the string was not found or the index of the first matching
-	 *         character
-	 */
-	public static int indexOfIgnoreCase(final String string,
-			final String search) {
-		int index = -1;
-		final int stringLength = string.length();
-		final int testLength = search.length();
-		if (stringLength > 1 || testLength > 1) {
-			final char firstCharOfTest = Character.toLowerCase(search.charAt(0));
-			final int lastStringCharacterToCheck = stringLength - testLength + 1;
+    /**
+     * Scans the parameter string for the parameter search ignoring case when
+     * comparing characters.
+     *
+     * @param string
+     * @param search
+     *            If test is empty -1 is always returned.
+     * @return -1 if the string was not found or the index of the first matching
+     *         character
+     */
+    public static int indexOfIgnoreCase(final String string,
+            final String search) {
+        int index = -1;
+        final int stringLength = string.length();
+        final int testLength = search.length();
+        if (stringLength > 1 || testLength > 1) {
+            final char firstCharOfTest = Character.toLowerCase(search.charAt(0));
+            final int lastStringCharacterToCheck = stringLength - testLength + 1;
 
-			for (int i = 0; i < lastStringCharacterToCheck; i++) {
-				if (firstCharOfTest == Character.toLowerCase(string.charAt(i))) {
-					index = i;
-					for (int j = 1; j < testLength; j++) {
-						final char c = string.charAt(i + j);
-						final char otherChar = search.charAt(j);
-						if (Character.toLowerCase(c) != Character.toLowerCase(otherChar)) {
-							index = -1;
-							break;
-						}
-					}
-					if( -1 != index ){
-						break;
-					}
-				}
-			}
-		}
-		return index;
-	}
+            for (int i = 0; i < lastStringCharacterToCheck; i++) {
+                if (firstCharOfTest == Character.toLowerCase(string.charAt(i))) {
+                    index = i;
+                    for (int j = 1; j < testLength; j++) {
+                        final char c = string.charAt(i + j);
+                        final char otherChar = search.charAt(j);
+                        if (Character.toLowerCase(c) != Character.toLowerCase(otherChar)) {
+                            index = -1;
+                            break;
+                        }
+                    }
+                    if( -1 != index ){
+                        break;
+                    }
+                }
+            }
+        }
+        return index;
+    }
 }

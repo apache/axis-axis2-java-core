@@ -20,14 +20,20 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
+import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.repository.util.WSInfo;
 import org.apache.axis2.deployment.scheduler.DeploymentIterator;
 import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.Flow;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -37,7 +43,13 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -158,7 +170,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     ArrayList servicelist = populateService(serviceGroup,
                             servicesURL,
                             fileUrl.substring(0, fileUrl.indexOf(".aar")));
-                    addServiceGroup(serviceGroup, servicelist, servicesURL, null,axisConfig);
+                    addServiceGroup(serviceGroup, servicelist, servicesURL, null, axisConfig);
                 }
             }
         } catch (MalformedURLException e) {
@@ -194,7 +206,7 @@ public class DeploymentEngine implements DeploymentConstants {
                     module.setName(new QName(moduleName));
                     populateModule(module, moduleurl);
                     module.setFileName(moduleurl);
-                    addNewModule(module,axisConfig);
+                    addNewModule(module, axisConfig);
                 }
             }
             org.apache.axis2.util.Utils.calculateDefaultModuleVersion(
@@ -227,8 +239,8 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     protected ArrayList populateService(AxisServiceGroup serviceGroup,
-                                      URL servicesURL,
-                                      String serviceName) throws DeploymentException {
+                                        URL servicesURL,
+                                        String serviceName) throws DeploymentException {
         try {
             serviceGroup.setServiceGroupName(serviceName);
             DeploymentClassLoader serviceClassLoader = new DeploymentClassLoader(
@@ -236,15 +248,15 @@ public class DeploymentEngine implements DeploymentConstants {
             String metainf = "meta-inf";
             serviceGroup.setServiceGroupClassLoader(serviceClassLoader);
             //processing wsdl.list
-            InputStream wsdlfilesStream =serviceClassLoader.getResourceAsStream("meta-inf/wsdl.list");
-            if(wsdlfilesStream==null){
-                wsdlfilesStream =serviceClassLoader.getResourceAsStream("META-INF/wsdl.list");
-                if(wsdlfilesStream!=null){
+            InputStream wsdlfilesStream = serviceClassLoader.getResourceAsStream("meta-inf/wsdl.list");
+            if (wsdlfilesStream == null) {
+                wsdlfilesStream = serviceClassLoader.getResourceAsStream("META-INF/wsdl.list");
+                if (wsdlfilesStream != null) {
                     metainf = "META-INF";
                 }
             }
             HashMap servicesMap = new HashMap();
-            if(wsdlfilesStream!=null){
+            if (wsdlfilesStream != null) {
                 ArchiveReader reader = new ArchiveReader();
                 BufferedReader input = new BufferedReader(new InputStreamReader(wsdlfilesStream));
                 String line;
@@ -253,10 +265,10 @@ public class DeploymentEngine implements DeploymentConstants {
                     if (line.length() > 0) {
                         line = metainf + "/" + line;
                         try {
-                            AxisService service =  reader.getAxisServiceFromWsdl(
+                            AxisService service = reader.getAxisServiceFromWsdl(
                                     serviceClassLoader.getResourceAsStream(line),
-                                    serviceClassLoader,line);
-                            servicesMap.put(service.getName(),service);
+                                    serviceClassLoader, line);
+                            servicesMap.put(service.getName(), service);
                         } catch (Exception e) {
                             throw new DeploymentException(e);
                         }
@@ -357,7 +369,7 @@ public class DeploymentEngine implements DeploymentConstants {
         return axisConfig.getMessageReceiver(mepURL);
     }
 
-    public static void addNewModule(AxisModule modulemetadata ,
+    public static void addNewModule(AxisModule modulemetadata,
                                     AxisConfiguration axisConfiguration) throws AxisFault {
 
         Flow inflow = modulemetadata.getInFlow();
@@ -390,10 +402,10 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     public static void addServiceGroup(AxisServiceGroup serviceGroup,
-                                 ArrayList serviceList,
-                                 URL serviceLocation,
-                                 DeploymentFileData currentDeploymentFile,
-                                 AxisConfiguration axisConfiguration)
+                                       ArrayList serviceList,
+                                       URL serviceLocation,
+                                       DeploymentFileData currentDeploymentFile,
+                                       AxisConfiguration axisConfiguration)
             throws AxisFault {
         fillServiceGroup(serviceGroup, serviceList, serviceLocation, axisConfiguration);
         axisConfiguration.addServiceGroup(serviceGroup);
@@ -404,9 +416,9 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     protected static void fillServiceGroup(AxisServiceGroup serviceGroup,
-                                         ArrayList serviceList,
-                                         URL serviceLocation,
-                                         AxisConfiguration axisConfig) throws AxisFault {
+                                           ArrayList serviceList,
+                                           URL serviceLocation,
+                                           AxisConfiguration axisConfig) throws AxisFault {
         serviceGroup.setParent(axisConfig);
         // module from services.xml at serviceGroup level
         ArrayList groupModules = serviceGroup.getModuleRefs();
@@ -472,8 +484,8 @@ public class DeploymentEngine implements DeploymentConstants {
     }
 
     private static void addAsWebResources(File in,
-                                     String serviceFileName,
-                                     AxisServiceGroup serviceGroup) {
+                                          String serviceFileName,
+                                          AxisServiceGroup serviceGroup) {
         try {
             if (webLocationString == null) {
                 return;
@@ -535,13 +547,13 @@ public class DeploymentEngine implements DeploymentConstants {
             for (int i = 0; i < wsToDeploy.size(); i++) {
                 DeploymentFileData currentDeploymentFile = (DeploymentFileData) wsToDeploy.get(i);
                 String type = currentDeploymentFile.getType();
-                if(TYPE_SERVICE.equals(type)){
+                if (TYPE_SERVICE.equals(type)) {
                     serviceDeployer.deploy(currentDeploymentFile);
-                } else if (TYPE_MODULE.equals(type)){
+                } else if (TYPE_MODULE.equals(type)) {
                     moduleDeployer.deploy(currentDeploymentFile);
-                } else{
+                } else {
                     Deployer deployer = (Deployer) extensioToDeployerMappingMap.get(type);
-                    if(deployer!=null){
+                    if (deployer != null) {
                         deployer.deploy(currentDeploymentFile);
                     }
                 }
@@ -553,6 +565,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     /**
      * Checks if the modules, referred by server.xml, exist or that they are deployed.
+     *
      * @throws org.apache.axis2.AxisFault : If smt goes wrong
      */
     public void engageModules() throws AxisFault {
@@ -583,7 +596,7 @@ public class DeploymentEngine implements DeploymentConstants {
      */
     public AxisConfiguration populateAxisConfiguration(InputStream in) throws DeploymentException {
         axisConfig = new AxisConfiguration();
-        AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig,this);
+        AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig, this);
         builder.populateConfig();
         try {
             if (in != null) {
@@ -598,6 +611,7 @@ public class DeploymentEngine implements DeploymentConstants {
 
     /**
      * Starts the Deployment engine to perform Hot deployment and so on.
+     *
      * @param listener : RepositoryListener
      */
     protected void startSearch(RepositoryListener listener) {
@@ -614,14 +628,14 @@ public class DeploymentEngine implements DeploymentConstants {
                     String fileType = wsInfo.getType();
                     if (TYPE_SERVICE.equals(fileType)) {
                         if (isHotUpdate()) {
-                          serviceDeployer.unDeploy(wsInfo.getFileName());
+                            serviceDeployer.unDeploy(wsInfo.getFileName());
                         } else {
                             axisConfig.removeFaultyService(wsInfo.getFileName());
                         }
                     } else {
                         if (isHotUpdate()) {
                             Deployer deployer = (Deployer) extensioToDeployerMappingMap.get(fileType);
-                            if(deployer!=null){
+                            if (deployer != null) {
                                 deployer.unDeploy(wsInfo.getFileName());
                             }
                         }
@@ -847,7 +861,7 @@ public class DeploymentEngine implements DeploymentConstants {
         initializeDeployers(this.configContext);
     }
 
-    private void initializeDeployers(ConfigurationContext configContext){
+    private void initializeDeployers(ConfigurationContext configContext) {
         serviceDeployer = new ServiceDeployer();
         serviceDeployer.init(configContext);
         Iterator deployers = extensioToDeployerMappingMap.values().iterator();

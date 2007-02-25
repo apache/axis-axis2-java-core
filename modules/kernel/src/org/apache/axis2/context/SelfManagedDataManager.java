@@ -60,7 +60,7 @@ public interface SelfManagedDataManager {
      *         by the implementor.
      * @exception IOException
      */
-	public ByteArrayOutputStream serializeSelfManagedData(MessageContext mc) throws IOException;
+    public ByteArrayOutputStream serializeSelfManagedData(MessageContext mc) throws IOException;
 
     /**
      * This method is invoked when the MessageContext object is being restored.
@@ -73,19 +73,19 @@ public interface SelfManagedDataManager {
      * @param mc     the MessageContext object being restored
      * @exception IOException
      */
-	public void deserializeSelfManagedData(ByteArrayInputStream data, MessageContext mc) throws IOException;
+    public void deserializeSelfManagedData(ByteArrayInputStream data, MessageContext mc) throws IOException;
 
 
-	/**
+    /**
      * This method is invoked when the MessageContext object is being restored and
      * after the deserializeSelfManagedData() method.
      *
      * Implementors use this method to re-establish transient message-specific data,
      * particularly if the implementor did not save any user data in the 
      * serializeSelfManagedData() method.
-	 * 
-	 * @param mc the MessageContext object being restored
-	 */
-	public void restoreTransientData(MessageContext mc);
+     * 
+     * @param mc the MessageContext object being restored
+     */
+    public void restoreTransientData(MessageContext mc);
 
 }

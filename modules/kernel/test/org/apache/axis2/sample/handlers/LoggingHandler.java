@@ -26,7 +26,7 @@ public class LoggingHandler extends AbstractHandler {
 
     private static final long serialVersionUID = 7656851260678664746L;
     
-	private static final Log log = LogFactory.getLog(LoggingHandler.class);
+    private static final Log log = LogFactory.getLog(LoggingHandler.class);
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         log.info("Incoming message From " + msgContext.getTo().getAddress());

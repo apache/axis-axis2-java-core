@@ -369,13 +369,13 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         if (axisOperation == null)
         {
-        	out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
+            out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
         }
         else
         {
-        	out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
-        	metaAxisOperation = new MetaDataEntry(axisOperation.getClass().getName(), axisOperation.getName().toString());
-        	ObjectStateUtils.writeObject(out, metaAxisOperation, logCorrelationIDString+".metaAxisOperation");
+            out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
+            metaAxisOperation = new MetaDataEntry(axisOperation.getClass().getName(), axisOperation.getName().toString());
+            ObjectStateUtils.writeObject(out, metaAxisOperation, logCorrelationIDString+".metaAxisOperation");
         }
 
         // save the meta data for the corresponding axis service to better
@@ -388,13 +388,13 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         if (axisService == null)
         {
-        	out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
+            out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
         }
         else
         {
-        	out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
-        	metaAxisService = new MetaDataEntry(axisService.getClass().getName(), axisService.getName());
-        	ObjectStateUtils.writeObject(out, metaAxisService, logCorrelationIDString+".metaAxisService");
+            out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
+            metaAxisService = new MetaDataEntry(axisService.getClass().getName(), axisService.getName());
+            ObjectStateUtils.writeObject(out, metaAxisService, logCorrelationIDString+".metaAxisService");
         }
         
 
@@ -599,11 +599,11 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         if (metaAxisOperationIsActive == ObjectStateUtils.ACTIVE_OBJECT)
         {
-        	metaAxisOperation = (MetaDataEntry) ObjectStateUtils.readObject(in, "OperationContext.metaAxisOperation");
+            metaAxisOperation = (MetaDataEntry) ObjectStateUtils.readObject(in, "OperationContext.metaAxisOperation");
         }
         else
         {
-        	metaAxisOperation = null;
+            metaAxisOperation = null;
         }
 
 
@@ -615,11 +615,11 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         if (metaAxisServiceIsActive == ObjectStateUtils.ACTIVE_OBJECT)
         {
-        	metaAxisService = (MetaDataEntry) ObjectStateUtils.readObject(in, "OperationContext.metaAxisService");
+            metaAxisService = (MetaDataEntry) ObjectStateUtils.readObject(in, "OperationContext.metaAxisService");
         }
         else
         {
-        	metaAxisService = null;
+            metaAxisService = null;
         }
         
 
@@ -681,7 +681,7 @@ public class OperationContext extends AbstractContext implements Externalizable 
 
         if (metaAxisService != null) 
         {
-        	axisService = ObjectStateUtils.findService(axisConfig, metaAxisService.getClassName(), metaAxisService.getQNameAsString());
+            axisService = ObjectStateUtils.findService(axisConfig, metaAxisService.getClassName(), metaAxisService.getQNameAsString());
         }
 
         // We previously saved metaAxisOperation; restore it
@@ -1157,8 +1157,8 @@ public class OperationContext extends AbstractContext implements Externalizable 
         return logCorrelationIDString;
     }
     
-	public ConfigurationContext getRootContext() {
-		return this.getConfigurationContext();
-	}
+    public ConfigurationContext getRootContext() {
+        return this.getConfigurationContext();
+    }
     
 }

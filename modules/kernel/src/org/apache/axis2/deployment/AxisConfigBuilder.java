@@ -142,11 +142,11 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             }
             
             OMElement clusterElement = config_element
-					.getFirstChildWithName(new QName(TAG_CLUSTER));
-			if (clusterElement != null) {
-				ClusterBuilder clusterBuilder = new ClusterBuilder(axisConfig);
-				clusterBuilder.buildCluster(clusterElement);
-			}
+                    .getFirstChildWithName(new QName(TAG_CLUSTER));
+            if (clusterElement != null) {
+                ClusterBuilder clusterBuilder = new ClusterBuilder(axisConfig);
+                clusterBuilder.buildCluster(clusterElement);
+            }
             
             // process MessageBuilders
             OMElement messageBuildersElement = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_BUILDERS));
@@ -512,29 +512,29 @@ public class AxisConfigBuilder extends DescriptionBuilder {
      * process data locator configuration for data retrieval.
      */
     private void processDataLocatorConfig(OMElement dataLocatorElement) {
-		OMAttribute serviceOverallDataLocatorclass = dataLocatorElement
-				.getAttribute(new QName(DRConstants.CLASS_ATTRIBUTE));
-		if (serviceOverallDataLocatorclass != null) {
-			String className = serviceOverallDataLocatorclass
-					.getAttributeValue();
-			axisConfig.addDataLocatorClassNames(DRConstants.GLOBAL_LEVEL,
-					className);
-		}
-		Iterator iterator = dataLocatorElement.getChildrenWithName(new QName(
-				DRConstants.DIALECT_LOCATOR_ELEMENT));
+        OMAttribute serviceOverallDataLocatorclass = dataLocatorElement
+                .getAttribute(new QName(DRConstants.CLASS_ATTRIBUTE));
+        if (serviceOverallDataLocatorclass != null) {
+            String className = serviceOverallDataLocatorclass
+                    .getAttributeValue();
+            axisConfig.addDataLocatorClassNames(DRConstants.GLOBAL_LEVEL,
+                    className);
+        }
+        Iterator iterator = dataLocatorElement.getChildrenWithName(new QName(
+                DRConstants.DIALECT_LOCATOR_ELEMENT));
 
-		while (iterator.hasNext()) {
-			OMElement locatorElement = (OMElement) iterator.next();
-			OMAttribute dialect = locatorElement.getAttribute(new QName(
-					DRConstants.DIALECT_ATTRIBUTE));
-			OMAttribute dialectclass = locatorElement.getAttribute(new QName(
-					DRConstants.CLASS_ATTRIBUTE));
-			axisConfig.addDataLocatorClassNames(dialect.getAttributeValue(),
-					dialectclass.getAttributeValue());
+        while (iterator.hasNext()) {
+            OMElement locatorElement = (OMElement) iterator.next();
+            OMAttribute dialect = locatorElement.getAttribute(new QName(
+                    DRConstants.DIALECT_ATTRIBUTE));
+            OMAttribute dialectclass = locatorElement.getAttribute(new QName(
+                    DRConstants.CLASS_ATTRIBUTE));
+            axisConfig.addDataLocatorClassNames(dialect.getAttributeValue(),
+                    dialectclass.getAttributeValue());
 
-		}
-	}
-	
+        }
+    }
+    
     
     private Phase getPhase(String className)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException {

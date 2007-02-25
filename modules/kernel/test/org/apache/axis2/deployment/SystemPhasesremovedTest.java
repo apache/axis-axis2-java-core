@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 public class SystemPhasesremovedTest extends TestCase {
 
     AxisConfiguration er;
-	private static final Log log = LogFactory.getLog(SystemPhasesremovedTest.class);
+    private static final Log log = LogFactory.getLog(SystemPhasesremovedTest.class);
 
     public void testPhaseOrderchage() {
         try {

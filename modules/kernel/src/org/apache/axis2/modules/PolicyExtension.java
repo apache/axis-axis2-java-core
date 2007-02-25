@@ -24,6 +24,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public interface PolicyExtension {
-	public void addMethodsToStub(Document document, Element element, QName methodName, List assertions);
+    public void addMethodsToStub(Document document, Element element, QName methodName, List assertions);
 
 }

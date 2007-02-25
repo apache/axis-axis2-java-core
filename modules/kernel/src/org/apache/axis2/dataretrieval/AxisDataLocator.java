@@ -27,21 +27,21 @@ import org.apache.axis2.context.MessageContext;
  */
 
 public interface AxisDataLocator {
-	
+    
 
-	/**
-	 * Retrieves and returns data based on the specified request.
-	 * 
-	 * @param request
-	 *            The {@link DataRetrievalRequest} allow to specify parameters
-	 *            about the request, and additional information to process the
-	 *            request.
-	 * @param msgContext
-	 *            The {@link MessageContext} from the original request.
-	 * @return {@link Data}[] for the request.
-	 * @throws DataRetrievalException
-	 */
-	
-	public Data[] getData(DataRetrievalRequest request, MessageContext msgContext) throws DataRetrievalException;
-	
+    /**
+     * Retrieves and returns data based on the specified request.
+     * 
+     * @param request
+     *            The {@link DataRetrievalRequest} allow to specify parameters
+     *            about the request, and additional information to process the
+     *            request.
+     * @param msgContext
+     *            The {@link MessageContext} from the original request.
+     * @return {@link Data}[] for the request.
+     * @throws DataRetrievalException
+     */
+    
+    public Data[] getData(DataRetrievalRequest request, MessageContext msgContext) throws DataRetrievalException;
+    
 }

@@ -44,53 +44,53 @@ public class SimpleAxis2Server {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-		String repoLocation = null;
-		String confLocation = null;
+        String repoLocation = null;
+        String confLocation = null;
 
-		CommandLineOptionParser optionsParser = new CommandLineOptionParser(args);
-		List invalidOptionsList = optionsParser.getInvalidOptions(new OptionsValidator() {
-			public boolean isInvalid(CommandLineOption option) {
-				String optionType = option.getOptionType();
-				return !("repo".equalsIgnoreCase(optionType) || "conf"
-						.equalsIgnoreCase(optionType));
-			}
-		});
-		
-		if ((invalidOptionsList.size()>0)||(args.length>4))
-		{
-			printUsage();
-			return;
-		}
-		
-		Map optionsMap = optionsParser.getAllOptions();
+        CommandLineOptionParser optionsParser = new CommandLineOptionParser(args);
+        List invalidOptionsList = optionsParser.getInvalidOptions(new OptionsValidator() {
+            public boolean isInvalid(CommandLineOption option) {
+                String optionType = option.getOptionType();
+                return !("repo".equalsIgnoreCase(optionType) || "conf"
+                        .equalsIgnoreCase(optionType));
+            }
+        });
+        
+        if ((invalidOptionsList.size()>0)||(args.length>4))
+        {
+            printUsage();
+            return;
+        }
+        
+        Map optionsMap = optionsParser.getAllOptions();
 
-		CommandLineOption repoOption = (CommandLineOption) optionsMap
-				.get("repo");
-		CommandLineOption confOption = (CommandLineOption) optionsMap
-				.get("conf");
+        CommandLineOption repoOption = (CommandLineOption) optionsMap
+                .get("repo");
+        CommandLineOption confOption = (CommandLineOption) optionsMap
+                .get("conf");
 
-		log.info("[SimpleAxisServer] Starting");
-		if (repoOption != null) {
-			repoLocation = repoOption.getOptionValue();
-			log.info("[SimpleAxisServer] Using the Axis2 Repository"
-					+ new File(repoLocation).getAbsolutePath());
-		}
-		if (confOption != null) {
-			confLocation = confOption.getOptionValue();
-			System.out
-					.println("[SimpleAxisServer] Using the Axis2 Configuration File"
-							+ new File(confLocation).getAbsolutePath());
-		}
-		
-		try {
-			ConfigurationContext configctx = ConfigurationContextFactory
-					.createConfigurationContextFromFileSystem(repoLocation,
-							confLocation);
-			ListenerManager listenerManager =  new ListenerManager();
-				listenerManager.init(configctx);
-			listenerManager.start();
-			log.info("[SimpleAxisServer] Started");
-		} catch (Throwable t) {
+        log.info("[SimpleAxisServer] Starting");
+        if (repoOption != null) {
+            repoLocation = repoOption.getOptionValue();
+            log.info("[SimpleAxisServer] Using the Axis2 Repository"
+                    + new File(repoLocation).getAbsolutePath());
+        }
+        if (confOption != null) {
+            confLocation = confOption.getOptionValue();
+            System.out
+                    .println("[SimpleAxisServer] Using the Axis2 Configuration File"
+                            + new File(confLocation).getAbsolutePath());
+        }
+        
+        try {
+            ConfigurationContext configctx = ConfigurationContextFactory
+                    .createConfigurationContextFromFileSystem(repoLocation,
+                            confLocation);
+            ListenerManager listenerManager =  new ListenerManager();
+                listenerManager.init(configctx);
+            listenerManager.start();
+            log.info("[SimpleAxisServer] Started");
+        } catch (Throwable t) {
             log.fatal("[SimpleAxisServer] Shutting down. Error starting SimpleAxisServer", t);
         }
     }

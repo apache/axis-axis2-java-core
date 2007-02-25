@@ -211,7 +211,7 @@ public class AxisService extends AxisDescription {
     private HashMap dataLocatorClassNames;
     private AxisDataLocatorImpl defaultDataLocator;
     // Define search sequence for datalocator based on Data Locator types. 
-	LocatorType[] availableDataLocatorTypes = new LocatorType[]{LocatorType.SERVICE_DIALECT, LocatorType.SERVICE_LEVEL,LocatorType.GLOBAL_DIALECT, LocatorType.GLOBAL_LEVEL, LocatorType.DEFAULT_AXIS};
+    LocatorType[] availableDataLocatorTypes = new LocatorType[]{LocatorType.SERVICE_DIALECT, LocatorType.SERVICE_LEVEL,LocatorType.GLOBAL_DIALECT, LocatorType.GLOBAL_LEVEL, LocatorType.DEFAULT_AXIS};
 
     // name of the  binding used : use in codegeneration
     private String bindingName;
@@ -744,8 +744,8 @@ public class AxisService extends AxisDescription {
                 try {
                     Definition definition = (Definition) wsld4jdefinition.getValue();
                     if (isModifyUserWSDLPortAddress()) {
-						setPortAddress(definition);
-					}
+                        setPortAddress(definition);
+                    }
                     WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
                     writer.writeWSDL(definition, out);
                 } catch (WSDLException e) {
@@ -850,9 +850,9 @@ public class AxisService extends AxisDescription {
             if (wsld4jdefinition != null) {
                 try {
                     Definition definition = (Definition) wsld4jdefinition.getValue();
-					if (isModifyUserWSDLPortAddress()){
-						setPortAddress(definition);
-					}
+                    if (isModifyUserWSDLPortAddress()){
+                        setPortAddress(definition);
+                    }
                     WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
                     writer.writeWSDL(definition, out);
                 } catch (WSDLException e) {
@@ -869,7 +869,7 @@ public class AxisService extends AxisDescription {
     }
 
     private void setPortAddress(Definition definition) throws AxisFault {
-		setPortAddress(definition,null);
+        setPortAddress(definition,null);
     }
 
     private void setPortAddress(Definition definition,String requestIP) throws AxisFault {
@@ -883,11 +883,11 @@ public class AxisService extends AxisDescription {
                 for (int i = 0; i < list.size(); i++) {
                     Object extensibilityEle = list.get(i);
                     if (extensibilityEle instanceof SOAPAddress) {
-						if (requestIP==null) {
-							((SOAPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
-						} else {
-							((SOAPAddress) extensibilityEle).setLocationURI(getEPRs(requestIP)[0]);
-						}
+                        if (requestIP==null) {
+                            ((SOAPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
+                        } else {
+                            ((SOAPAddress) extensibilityEle).setLocationURI(getEPRs(requestIP)[0]);
+                        }
                     }
                 }
             }
@@ -895,36 +895,36 @@ public class AxisService extends AxisDescription {
     }
 
     private void getWSDL(OutputStream out, String[] serviceURL,
-			String servicePath) throws AxisFault {
-		if (this.wsdlFound) {
-		
-			// Retrieve WSDL using the same data retrieval path for GetMetadata request.
-			DataRetrievalRequest request = new DataRetrievalRequest();
-			request.putDialect(DRConstants.SPEC.DIALECT_TYPE_WSDL);
-			request.putOutputForm(OutputForm.INLINE_FORM);
-			            
+            String servicePath) throws AxisFault {
+        if (this.wsdlFound) {
+        
+            // Retrieve WSDL using the same data retrieval path for GetMetadata request.
+            DataRetrievalRequest request = new DataRetrievalRequest();
+            request.putDialect(DRConstants.SPEC.DIALECT_TYPE_WSDL);
+            request.putOutputForm(OutputForm.INLINE_FORM);
+                        
             MessageContext context = new MessageContext();
-			context.setAxisService(this);
-			context.setTo(new EndpointReference(serviceURL[0]));
-			
+            context.setAxisService(this);
+            context.setTo(new EndpointReference(serviceURL[0]));
+            
             Data[] result = getData(request, context);
-			OMElement wsdlElement;
-			if (result != null && result[0] != null) {
-				wsdlElement = (OMElement) (result[0].getData());
-				try {
-					wsdlElement.serialize(out);
-					out.flush();
-					out.close();
-				} catch (Exception e) {
-					throw new AxisFault(e);
-				}
-			}
+            OMElement wsdlElement;
+            if (result != null && result[0] != null) {
+                wsdlElement = (OMElement) (result[0].getData());
+                try {
+                    wsdlElement.serialize(out);
+                    out.flush();
+                    out.close();
+                } catch (Exception e) {
+                    throw new AxisFault(e);
+                }
+            }
 
-		} else {
-			printWSDLError(out);
-		}
+        } else {
+            printWSDLError(out);
+        }
 
-	}
+    }
 
     private void printWSDLError(OutputStream out) throws AxisFault {
         try {
@@ -1990,7 +1990,7 @@ public class AxisService extends AxisDescription {
 
     /**
      * By default the port address in user WSDLs is modified, set 
-     * the following parameter to override this behaviour	
+     * the following parameter to override this behaviour    
      * <parameter name="modifyUserWSDLPortAddress">false</parameter>
      */
     public boolean isModifyUserWSDLPortAddress() {
@@ -2048,60 +2048,60 @@ public class AxisService extends AxisDescription {
      */
     
     public Data[] getData(DataRetrievalRequest request,
-			MessageContext msgContext) throws AxisFault {
-    	
-		Data[] data = null;
-		String dialect = request.getDialect();
-		AxisDataLocator dataLocator = null;
-		int nextDataLocatorIndex = 0;
-		int totalLocators = availableDataLocatorTypes.length;
-		for (int i = 0; i < totalLocators; i++) {
-			dataLocator = getDataLocator(availableDataLocatorTypes[i], dialect);
-			if (dataLocator != null) {
-				nextDataLocatorIndex = i + 1;
-				break;
-			}
-		}
+            MessageContext msgContext) throws AxisFault {
+        
+        Data[] data = null;
+        String dialect = request.getDialect();
+        AxisDataLocator dataLocator = null;
+        int nextDataLocatorIndex = 0;
+        int totalLocators = availableDataLocatorTypes.length;
+        for (int i = 0; i < totalLocators; i++) {
+            dataLocator = getDataLocator(availableDataLocatorTypes[i], dialect);
+            if (dataLocator != null) {
+                nextDataLocatorIndex = i + 1;
+                break;
+            }
+        }
 
-		data = dataLocator.getData(request, msgContext);
-		// Null means Data Locator not understood request. Automatically find
-		// Data Locator in the hierarchy to process the request.
-		if (data == null) {
-			if (nextDataLocatorIndex < totalLocators) {
-				data = bubbleupDataLocators(nextDataLocatorIndex, request,
-						msgContext);
-			}
+        data = dataLocator.getData(request, msgContext);
+        // Null means Data Locator not understood request. Automatically find
+        // Data Locator in the hierarchy to process the request.
+        if (data == null) {
+            if (nextDataLocatorIndex < totalLocators) {
+                data = bubbleupDataLocators(nextDataLocatorIndex, request,
+                        msgContext);
+            }
 
-		}
-		return data;
-	}
+        }
+        return data;
+    }
    
     /*
      * To search the next Data Locator from the available Data Locators that understood
      * the data retrieval request.
      */
     private Data[] bubbleupDataLocators(int nextIndex,
-			DataRetrievalRequest request, MessageContext msgContext)
-			throws AxisFault {
-		Data[] data = null;
-		if (nextIndex < availableDataLocatorTypes.length) {
-			AxisDataLocator dataLocator = getDataLocator(
-					availableDataLocatorTypes[nextIndex], request.getDialect());
-			nextIndex++;
-			if (dataLocator != null) {
-				data = dataLocator.getData(request, msgContext);
-				if (data==null){
-					data = bubbleupDataLocators(nextIndex, request, msgContext);
-				}
-				else return data;
+            DataRetrievalRequest request, MessageContext msgContext)
+            throws AxisFault {
+        Data[] data = null;
+        if (nextIndex < availableDataLocatorTypes.length) {
+            AxisDataLocator dataLocator = getDataLocator(
+                    availableDataLocatorTypes[nextIndex], request.getDialect());
+            nextIndex++;
+            if (dataLocator != null) {
+                data = dataLocator.getData(request, msgContext);
+                if (data==null){
+                    data = bubbleupDataLocators(nextIndex, request, msgContext);
+                }
+                else return data;
 
-			}
-			else data = bubbleupDataLocators(nextIndex, request, msgContext);
-			
+            }
+            else data = bubbleupDataLocators(nextIndex, request, msgContext);
+            
 
-		}
-		return data;
-	}
+        }
+        return data;
+    }
    
      /**
      * Save data Locator configured at service level for this Axis Service
@@ -2120,104 +2120,104 @@ public class AxisService extends AxisDescription {
      * Get data locator instance based on the LocatorType and dialect.
      */
     private AxisDataLocator getDataLocator(LocatorType locatorType, String dialect) throws AxisFault {
-    	AxisDataLocator locator = null;
+        AxisDataLocator locator = null;
         if (locatorType == LocatorType.SERVICE_DIALECT)   
-        	 locator =  getServiceDataLocator( dialect);  
+             locator =  getServiceDataLocator( dialect);  
         else if (locatorType == LocatorType.SERVICE_LEVEL)   
-          	 locator =  getServiceDataLocator( DRConstants.SERVICE_LEVEL); 
+               locator =  getServiceDataLocator( DRConstants.SERVICE_LEVEL); 
         else if (locatorType == LocatorType.GLOBAL_DIALECT)   
-         	 locator =  getGlobalDataLocator( dialect); 	
+              locator =  getGlobalDataLocator( dialect);     
         else if (locatorType == LocatorType.GLOBAL_LEVEL)   
-        	 locator =  getGlobalDataLocator( DRConstants.GLOBAL_LEVEL);
+             locator =  getGlobalDataLocator( DRConstants.GLOBAL_LEVEL);
         else if (locatorType == LocatorType.DEFAULT_AXIS)   
-       	     locator =  getDefaultDataLocator();
+                locator =  getDefaultDataLocator();
         else
-        	 locator =  getDefaultDataLocator();
+             locator =  getDefaultDataLocator();
     
       
-    	return locator;
+        return locator;
     }
-    	  
+          
     // Return default Axis2 Data Locator
     private AxisDataLocator getDefaultDataLocator() throws DataRetrievalException {
 
-		if (defaultDataLocator == null)
-			defaultDataLocator = new AxisDataLocatorImpl(this);
-		
-		defaultDataLocator.loadServiceData();
-		
-		return defaultDataLocator;
-	}
+        if (defaultDataLocator == null)
+            defaultDataLocator = new AxisDataLocatorImpl(this);
+        
+        defaultDataLocator.loadServiceData();
+        
+        return defaultDataLocator;
+    }
        
     
-	/*
-	 * Checks if service level data locator configured for specified dialect.
-	 * Returns an instance of the data locator if exists, and null otherwise.
-	 */
-	private AxisDataLocator getServiceDataLocator(String dialect)
-			throws AxisFault {
-		AxisDataLocator locator = null;
-		locator = (AxisDataLocator)dataLocators.get(dialect);
-		if (locator == null) {
-			String className = (String)dataLocatorClassNames.get(dialect);
-			if (className != null) {
-				locator = loadDataLocator(className);
-				dataLocators.put(dialect, locator);
-			}
+    /*
+     * Checks if service level data locator configured for specified dialect.
+     * Returns an instance of the data locator if exists, and null otherwise.
+     */
+    private AxisDataLocator getServiceDataLocator(String dialect)
+            throws AxisFault {
+        AxisDataLocator locator = null;
+        locator = (AxisDataLocator)dataLocators.get(dialect);
+        if (locator == null) {
+            String className = (String)dataLocatorClassNames.get(dialect);
+            if (className != null) {
+                locator = loadDataLocator(className);
+                dataLocators.put(dialect, locator);
+            }
 
-		}
-
-		return locator;
-
-	}
-      
-	/*
-	 * Checks if global level data locator configured for specified dialect.
-	 * @param dialect- an absolute URI represents the Dialect i.e. WSDL, Policy, Schema or
-     *                 "GlobalLevel" for non-dialect Global level data locator.
-	 * Returns an instance of the data locator if exists, and null otherwise.
-	 */
-	
-	public AxisDataLocator getGlobalDataLocator(String dialect)
-			throws AxisFault {
-		AxisConfiguration axisConfig = getAxisConfiguration();
-		AxisDataLocator locator = null;
-		if (axisConfig != null) {
-			locator = axisConfig.getDataLocator(dialect);
-			if (locator == null) {
-			    String className = axisConfig.getDataLocatorClassName(dialect);
-			    if (className != null) {
-			        locator = loadDataLocator(className);
-			        axisConfig.addDataLocator(dialect, locator);
-			    }
-			} 
         }
 
-		return locator;
+        return locator;
 
-	}
+    }
+      
+    /*
+     * Checks if global level data locator configured for specified dialect.
+     * @param dialect- an absolute URI represents the Dialect i.e. WSDL, Policy, Schema or
+     *                 "GlobalLevel" for non-dialect Global level data locator.
+     * Returns an instance of the data locator if exists, and null otherwise.
+     */
+    
+    public AxisDataLocator getGlobalDataLocator(String dialect)
+            throws AxisFault {
+        AxisConfiguration axisConfig = getAxisConfiguration();
+        AxisDataLocator locator = null;
+        if (axisConfig != null) {
+            locator = axisConfig.getDataLocator(dialect);
+            if (locator == null) {
+                String className = axisConfig.getDataLocatorClassName(dialect);
+                if (className != null) {
+                    locator = loadDataLocator(className);
+                    axisConfig.addDataLocator(dialect, locator);
+                }
+            } 
+        }
+
+        return locator;
+
+    }
        
     
     protected AxisDataLocator loadDataLocator(String className)
-			throws AxisFault {
+            throws AxisFault {
 
-		AxisDataLocator locator = null;
+        AxisDataLocator locator = null;
 
-		try {
-			Class dataLocator;
-			dataLocator = Class.forName(className, true, serviceClassLoader);
-			locator = (AxisDataLocator) dataLocator.newInstance();
-		} catch (ClassNotFoundException e) {
-			throw new AxisFault(e);
-		} catch (IllegalAccessException e) {
-			throw new AxisFault(e);
-		} catch (InstantiationException e) {
-			throw new AxisFault(e);
+        try {
+            Class dataLocator;
+            dataLocator = Class.forName(className, true, serviceClassLoader);
+            locator = (AxisDataLocator) dataLocator.newInstance();
+        } catch (ClassNotFoundException e) {
+            throw new AxisFault(e);
+        } catch (IllegalAccessException e) {
+            throw new AxisFault(e);
+        } catch (InstantiationException e) {
+            throw new AxisFault(e);
 
-		}
+        }
 
-		return locator;
-	}
+        return locator;
+    }
 
 
    

@@ -34,103 +34,103 @@ import junit.framework.TestCase;
 
 public class WSDL11ActionHelperTest extends TestCase {
 
-	String testWSDLFile = "/target/test-resources/wsdl/actionTests.wsdl";
-	
-	Definition definition;
-	
-	protected void setUp() throws Exception {
-		super.setUp();
-		WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+    String testWSDLFile = "/target/test-resources/wsdl/actionTests.wsdl";
+    
+    Definition definition;
+    
+    protected void setUp() throws Exception {
+        super.setUp();
+        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         reader.setFeature("javax.wsdl.importDocuments", false);
         reader.setFeature("javax.wsdl.verbose", false);
 
         URL wsdlFile = new File(System.getProperty("basedir")+testWSDLFile).toURL();//getClass().getClassLoader().getResource(testWSDLFile);
         definition =  reader.readWSDL(wsdlFile.toString());
-	}
+    }
 
 
-	 // Test DefaultActionPattern (no names in WSDL)
-	 // Test not required for Fault as Fault elements MUST have naes per the WSDL 1.1 spec
-	 //	portType=withoutWSAWActionNoName
-	 // operation=echo
-	 public void testGenerateInputActionNoNames(){
-		 String expectedAction = "http://ws.apache.org/axis2/actiontest/withoutWSAWActionNoName/echoRequest";
-		 PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withoutWSAWActionNoName"));
-		 List operations = pt.getOperations();
-		 Operation op = (Operation)operations.get(0);
-		 Input in = op.getInput();
-		 String actualAction = WSDL11ActionHelper.getActionFromInputElement(definition,pt,op,in);
-		 assertEquals(expectedAction, actualAction);
-	 }
-	 public void testGenerateOutputActionNoNames(){
-		 String expectedAction = "http://ws.apache.org/axis2/actiontest/withoutWSAWActionNoName/echoResponse";
-		 PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withoutWSAWActionNoName"));
-		 List operations = pt.getOperations();
-		 Operation op = (Operation)operations.get(0);
-		 Output out = op.getOutput();
-		 String actualAction = WSDL11ActionHelper.getActionFromOutputElement(definition,pt,op,out);
-		 assertEquals(expectedAction, actualAction);
-	 }
-	
-	 // Test DefaultActionPattern (names explicitly set in WSDL)
-	 //	portType=withoutWSAWAction
-	 // operation=echo
-	 public void testGenerateInputAction(){
-		 String expectedAction = "http://ws.apache.org/axis2/actiontest/withoutWSAWAction/NamedInput";
-		 PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withoutWSAWAction"));
-		 List operations = pt.getOperations();
-		 Operation op = (Operation)operations.get(0);
-		 Input in = op.getInput();
-		 String actualAction = WSDL11ActionHelper.getActionFromInputElement(definition,pt,op,in);
-		 assertEquals(expectedAction, actualAction);
-	 }
-	 public void testGenerateOutputAction(){
-		 String expectedAction = "http://ws.apache.org/axis2/actiontest/withoutWSAWAction/NamedOutput";
-		 PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withoutWSAWAction"));
-		 List operations = pt.getOperations();
-		 Operation op = (Operation)operations.get(0);
-		 Output out = op.getOutput();
-		 String actualAction = WSDL11ActionHelper.getActionFromOutputElement(definition,pt,op,out);
-		 assertEquals(expectedAction, actualAction);
-	 }
-	 public void testGenerateFaultAction(){
-		 String expectedAction = "http://ws.apache.org/axis2/actiontest/withoutWSAWAction/echo/Fault/echoFault";
-		 PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withoutWSAWAction"));
-		 List operations = pt.getOperations();
-		 Operation op = (Operation)operations.get(0);
-		 Fault fault = op.getFault("echoFault");
-		 String actualAction = WSDL11ActionHelper.getActionFromFaultElement(definition,pt,op,fault);
-		 assertEquals(expectedAction, actualAction);
-	 }
-	
-	 // Test reading wsaw:Action values
-	 // portType=withWSAWAction
-	 // operation=echo
-	 public void testGetWSAWInputAction(){
-		 String expectedAction = "http://example.org/action/echoIn";
-		 PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withWSAWAction"));
-		 List operations = pt.getOperations();
-		 Operation op = (Operation)operations.get(0);
-		 Input in = op.getInput();
-		 String actualAction = WSDL11ActionHelper.getActionFromInputElement(definition,pt,op,in);
-		 assertEquals(expectedAction, actualAction);
-	 }
-	 public void testGetWSAWOutputAction(){
-		 String expectedAction = "http://example.org/action/echoOut";
-		 PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withWSAWAction"));
-		 List operations = pt.getOperations();
-		 Operation op = (Operation)operations.get(0);
-		 Output out = op.getOutput();
-		 String actualAction = WSDL11ActionHelper.getActionFromOutputElement(definition,pt,op,out);
-		 assertEquals(expectedAction, actualAction);
-	 }
-	 public void testGetWSAWFaultAction(){
-		 String expectedAction = "http://example.org/action/echoFault";
-		 PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withWSAWAction"));
-		 List operations = pt.getOperations();
-		 Operation op = (Operation)operations.get(0);
-		 Fault fault = op.getFault("echoFault");
-		 String actualAction = WSDL11ActionHelper.getActionFromFaultElement(definition,pt,op,fault);
-		 assertEquals(expectedAction, actualAction);
-	 }
+     // Test DefaultActionPattern (no names in WSDL)
+     // Test not required for Fault as Fault elements MUST have naes per the WSDL 1.1 spec
+     //    portType=withoutWSAWActionNoName
+     // operation=echo
+     public void testGenerateInputActionNoNames(){
+         String expectedAction = "http://ws.apache.org/axis2/actiontest/withoutWSAWActionNoName/echoRequest";
+         PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withoutWSAWActionNoName"));
+         List operations = pt.getOperations();
+         Operation op = (Operation)operations.get(0);
+         Input in = op.getInput();
+         String actualAction = WSDL11ActionHelper.getActionFromInputElement(definition,pt,op,in);
+         assertEquals(expectedAction, actualAction);
+     }
+     public void testGenerateOutputActionNoNames(){
+         String expectedAction = "http://ws.apache.org/axis2/actiontest/withoutWSAWActionNoName/echoResponse";
+         PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withoutWSAWActionNoName"));
+         List operations = pt.getOperations();
+         Operation op = (Operation)operations.get(0);
+         Output out = op.getOutput();
+         String actualAction = WSDL11ActionHelper.getActionFromOutputElement(definition,pt,op,out);
+         assertEquals(expectedAction, actualAction);
+     }
+    
+     // Test DefaultActionPattern (names explicitly set in WSDL)
+     //    portType=withoutWSAWAction
+     // operation=echo
+     public void testGenerateInputAction(){
+         String expectedAction = "http://ws.apache.org/axis2/actiontest/withoutWSAWAction/NamedInput";
+         PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withoutWSAWAction"));
+         List operations = pt.getOperations();
+         Operation op = (Operation)operations.get(0);
+         Input in = op.getInput();
+         String actualAction = WSDL11ActionHelper.getActionFromInputElement(definition,pt,op,in);
+         assertEquals(expectedAction, actualAction);
+     }
+     public void testGenerateOutputAction(){
+         String expectedAction = "http://ws.apache.org/axis2/actiontest/withoutWSAWAction/NamedOutput";
+         PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withoutWSAWAction"));
+         List operations = pt.getOperations();
+         Operation op = (Operation)operations.get(0);
+         Output out = op.getOutput();
+         String actualAction = WSDL11ActionHelper.getActionFromOutputElement(definition,pt,op,out);
+         assertEquals(expectedAction, actualAction);
+     }
+     public void testGenerateFaultAction(){
+         String expectedAction = "http://ws.apache.org/axis2/actiontest/withoutWSAWAction/echo/Fault/echoFault";
+         PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withoutWSAWAction"));
+         List operations = pt.getOperations();
+         Operation op = (Operation)operations.get(0);
+         Fault fault = op.getFault("echoFault");
+         String actualAction = WSDL11ActionHelper.getActionFromFaultElement(definition,pt,op,fault);
+         assertEquals(expectedAction, actualAction);
+     }
+    
+     // Test reading wsaw:Action values
+     // portType=withWSAWAction
+     // operation=echo
+     public void testGetWSAWInputAction(){
+         String expectedAction = "http://example.org/action/echoIn";
+         PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withWSAWAction"));
+         List operations = pt.getOperations();
+         Operation op = (Operation)operations.get(0);
+         Input in = op.getInput();
+         String actualAction = WSDL11ActionHelper.getActionFromInputElement(definition,pt,op,in);
+         assertEquals(expectedAction, actualAction);
+     }
+     public void testGetWSAWOutputAction(){
+         String expectedAction = "http://example.org/action/echoOut";
+         PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withWSAWAction"));
+         List operations = pt.getOperations();
+         Operation op = (Operation)operations.get(0);
+         Output out = op.getOutput();
+         String actualAction = WSDL11ActionHelper.getActionFromOutputElement(definition,pt,op,out);
+         assertEquals(expectedAction, actualAction);
+     }
+     public void testGetWSAWFaultAction(){
+         String expectedAction = "http://example.org/action/echoFault";
+         PortType pt = definition.getPortType(new QName("http://ws.apache.org/axis2/actiontest/","withWSAWAction"));
+         List operations = pt.getOperations();
+         Operation op = (Operation)operations.get(0);
+         Fault fault = op.getFault("echoFault");
+         String actualAction = WSDL11ActionHelper.getActionFromFaultElement(definition,pt,op,fault);
+         assertEquals(expectedAction, actualAction);
+     }
 }

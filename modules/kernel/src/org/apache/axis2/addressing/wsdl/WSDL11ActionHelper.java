@@ -37,104 +37,104 @@ import org.apache.commons.logging.LogFactory;
  * Default Action Pattern for WSDL1.1 at http://www.w3.org/TR/2006/WD-ws-addr-wsdl-20060216/#defactionwsdl11
  */
 public class WSDL11ActionHelper {
-	
-	private static final Log log = LogFactory.getLog(WSDL11ActionHelper.class);
-	private static final QName submissionWSAWNS = new QName(AddressingConstants.Submission.WSA_NAMESPACE, AddressingConstants.WSA_ACTION);
+    
+    private static final Log log = LogFactory.getLog(WSDL11ActionHelper.class);
+    private static final QName submissionWSAWNS = new QName(AddressingConstants.Submission.WSA_NAMESPACE, AddressingConstants.WSA_ACTION);
     private static final QName finalWSANS       = new QName(AddressingConstants.Final.WSA_NAMESPACE, AddressingConstants.WSA_ACTION);
     private static final QName finalWSAWNS      = new QName(AddressingConstants.Final.WSAW_NAMESPACE, AddressingConstants.WSA_ACTION);
     
-	/**
-	 * getActionFromInputElement
-	 * @param def the wsdl:definitions which contains the wsdl:portType
-	 * @param wsdl4jPortType the wsdl:portType which contains the wsdl:operation
-	 * @param op the wsdl:operation which contains the input element
-	 * @param input the input element to be examined to generate the wsa:Action
-	 * @return either the wsaw:Action from the input element or an action generated using the DefaultActionPattern
-	 */
+    /**
+     * getActionFromInputElement
+     * @param def the wsdl:definitions which contains the wsdl:portType
+     * @param wsdl4jPortType the wsdl:portType which contains the wsdl:operation
+     * @param op the wsdl:operation which contains the input element
+     * @param input the input element to be examined to generate the wsa:Action
+     * @return either the wsaw:Action from the input element or an action generated using the DefaultActionPattern
+     */
     public static String getActionFromInputElement(Definition def, PortType wsdl4jPortType, Operation op, Input input){
         String result = getWSAWActionExtensionAttribute(input);
         if(result == null){
             result = WSDL11DefaultActionPatternHelper.generateActionFromInputElement(def, wsdl4jPortType, op, input);
         }
         log.trace(result);
-    	return result;
+        return result;
     }
     
     /**
-	 * getActionFromOutputElement
-	 * @param def the wsdl:definitions which contains the wsdl:portType
-	 * @param wsdl4jPortType the wsdl:portType which contains the wsdl:operation
-	 * @param op the wsdl:operation which contains the output element
-	 * @param output the input element to be examined to generate the wsa:Action
-	 * @return either the wsaw:Action from the output element or an action generated using the DefaultActionPattern
-	 */
+     * getActionFromOutputElement
+     * @param def the wsdl:definitions which contains the wsdl:portType
+     * @param wsdl4jPortType the wsdl:portType which contains the wsdl:operation
+     * @param op the wsdl:operation which contains the output element
+     * @param output the input element to be examined to generate the wsa:Action
+     * @return either the wsaw:Action from the output element or an action generated using the DefaultActionPattern
+     */
     public static String getActionFromOutputElement(Definition def, PortType wsdl4jPortType, Operation op, Output output){
-    	String result = getWSAWActionExtensionAttribute(output);
-    	if(result == null){
-    		result = WSDL11DefaultActionPatternHelper.generateActionFromOutputElement(def, wsdl4jPortType, op, output);
+        String result = getWSAWActionExtensionAttribute(output);
+        if(result == null){
+            result = WSDL11DefaultActionPatternHelper.generateActionFromOutputElement(def, wsdl4jPortType, op, output);
         }
-    	log.trace(result);
-    	return result;
+        log.trace(result);
+        return result;
     }
     
     /**
-	 * getActionFromFaultElement
-	 * @param def the wsdl:definitions which contains the wsdl:portType
-	 * @param wsdl4jPortType the wsdl:portType which contains the wsdl:operation
-	 * @param op the wsdl:operation which contains the fault element
-	 * @param fault the fault element to be examined to generate the wsa:Action
-	 * @return either the wsaw:Action from the fault element or an action generated using the DefaultActionPattern
-	 */
+     * getActionFromFaultElement
+     * @param def the wsdl:definitions which contains the wsdl:portType
+     * @param wsdl4jPortType the wsdl:portType which contains the wsdl:operation
+     * @param op the wsdl:operation which contains the fault element
+     * @param fault the fault element to be examined to generate the wsa:Action
+     * @return either the wsaw:Action from the fault element or an action generated using the DefaultActionPattern
+     */
     public static String getActionFromFaultElement(Definition def, PortType wsdl4jPortType, Operation op, Fault fault){
-    	String result = getWSAWActionExtensionAttribute(fault);
-    	if(result == null){
-    		result = WSDL11DefaultActionPatternHelper.generateActionFromFaultElement(def, wsdl4jPortType, op, fault);
+        String result = getWSAWActionExtensionAttribute(fault);
+        if(result == null){
+            result = WSDL11DefaultActionPatternHelper.generateActionFromFaultElement(def, wsdl4jPortType, op, fault);
         }
-    	log.trace(result);
-    	return result;
+        log.trace(result);
+        return result;
     }
     
     private static String getWSAWActionExtensionAttribute(AttributeExtensible ae){
-    	// Search first for a wsaw:Action using the submission namespace
-    	Object attribute = ae.getExtensionAttribute(submissionWSAWNS);
-    	// Then if that did not exist one using the w3c namespace
-    	if(attribute == null){
-    		attribute = ae.getExtensionAttribute(finalWSAWNS);
+        // Search first for a wsaw:Action using the submission namespace
+        Object attribute = ae.getExtensionAttribute(submissionWSAWNS);
+        // Then if that did not exist one using the w3c namespace
+        if(attribute == null){
+            attribute = ae.getExtensionAttribute(finalWSAWNS);
         }
         // Then finally if that did not exist, try the 2005/08 NS
         // (Included here because it's needed for Apache Muse)
         if(attribute == null){
             attribute = ae.getExtensionAttribute(finalWSANS);
         }
-    	
-    	// wsdl4j may return a String, QName or a List of either
-    	// If it is a list, extract the first element
-    	if(attribute instanceof List){
-    		List l = (List)attribute;
-    		if(l.size()>0){
-    			attribute = l.get(0);
-    		}else{
-    			attribute = null;
-    		}
-    	}
-    	
-    	// attribute must now be a QName or String or null
-    	// If it is a QName, take the LocalPart as a String
-    	if(attribute instanceof QName){
-    		QName qn = (QName)attribute;
-    		attribute = qn.getLocalPart();
-    	}
-    	
-    	if((attribute instanceof String)) {
-    		String result = (String)attribute;
-    		log.trace(result);
-    		return result;
-    	} else {
-    		if(log.isTraceEnabled()){
-    			log.trace("No wsaw:Action attribute found");
-    		}
-    		return null;
-    	}
+        
+        // wsdl4j may return a String, QName or a List of either
+        // If it is a list, extract the first element
+        if(attribute instanceof List){
+            List l = (List)attribute;
+            if(l.size()>0){
+                attribute = l.get(0);
+            }else{
+                attribute = null;
+            }
+        }
+        
+        // attribute must now be a QName or String or null
+        // If it is a QName, take the LocalPart as a String
+        if(attribute instanceof QName){
+            QName qn = (QName)attribute;
+            attribute = qn.getLocalPart();
+        }
+        
+        if((attribute instanceof String)) {
+            String result = (String)attribute;
+            log.trace(result);
+            return result;
+        } else {
+            if(log.isTraceEnabled()){
+                log.trace("No wsaw:Action attribute found");
+            }
+            return null;
+        }
     }
     
     public static String getInputActionFromStringInformation(String messageExchangePattern, String targetNamespace, String portTypeName, String operationName, String inputName){

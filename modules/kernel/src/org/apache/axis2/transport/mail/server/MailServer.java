@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class MailServer {
-	private static final Log log = LogFactory.getLog(MailServer.class);
+    private static final Log log = LogFactory.getLog(MailServer.class);
     Storage st = null;
     public ConfigurationContext configurationContext = null;
     private POP3Server pop3Server;

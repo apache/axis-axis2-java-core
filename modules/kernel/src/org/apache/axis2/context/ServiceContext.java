@@ -388,13 +388,13 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
         if (axisService == null)
         {
-        	out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
+            out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
         }
         else
         {
-        	out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
-        	metaAxisService = new MetaDataEntry(axisService.getClass().getName(), axisService.getName());
-        	ObjectStateUtils.writeObject(out, metaAxisService, "ServiceContext.metaAxisService");
+            out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
+            metaAxisService = new MetaDataEntry(axisService.getClass().getName(), axisService.getName());
+            ObjectStateUtils.writeObject(out, metaAxisService, "ServiceContext.metaAxisService");
         }
         
 
@@ -504,11 +504,11 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
         if (metaAxisServiceIsActive == ObjectStateUtils.ACTIVE_OBJECT)
         {
-        	metaAxisService = (MetaDataEntry) ObjectStateUtils.readObject(in, "ServiceContext.metaAxisService");
+            metaAxisService = (MetaDataEntry) ObjectStateUtils.readObject(in, "ServiceContext.metaAxisService");
         }
         else
         {
-        	metaAxisService = null;
+            metaAxisService = null;
         }
         
 
@@ -566,7 +566,7 @@ public class ServiceContext extends AbstractContext implements Externalizable {
 
         if (metaAxisService != null) 
         {
-        	axisService = ObjectStateUtils.findService(axisConfig, metaAxisService.getClassName(), metaAxisService.getQNameAsString());
+            axisService = ObjectStateUtils.findService(axisConfig, metaAxisService.getClassName(), metaAxisService.getQNameAsString());
         }
 
 
@@ -781,9 +781,9 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         }
     }
 
-	public ConfigurationContext getRootContext() {
-		return configContext;
-	}
+    public ConfigurationContext getRootContext() {
+        return configContext;
+    }
     
     
 }

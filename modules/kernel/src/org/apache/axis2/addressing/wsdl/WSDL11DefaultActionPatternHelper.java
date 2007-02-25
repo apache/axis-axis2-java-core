@@ -31,95 +31,95 @@ import org.apache.commons.logging.LogFactory;
  * http://www.w3.org/TR/2006/WD-ws-addr-wsdl-20060216/#defactionwsdl11
  */
 public class WSDL11DefaultActionPatternHelper {
-	
-	private static final Log log = LogFactory.getLog(WSDL11DefaultActionPatternHelper.class);
-	
-	// String constants used extensively in this class
-	private static final String URN = "urn";
-	private static final String SLASH = "/";
-	private static final String COLON = ":";
-	private static final String REQUEST = "Request";
-	private static final String RESPONSE = "Response";
-	private static final String SOLICIT = "Solicit";
-	private static final String FAULT = "Fault";
-	
-	/**
-	 * Generate the Action for an Input using the Default Action Pattern
-	 * 
-	 * Pattern is defined as [target namespace][delimiter][port type name][delimiter][input name]
-	 * 
-	 * @param def is required to obtain the targetNamespace
-	 * @param wsdl4jPortType is required to obtain the portType name
-	 * @param op is required to generate the input name if not explicitly specified
-	 * @param input is required for its name if specified
-	 * @return a wsa:Action value based on the Default Action Pattern and the provided objects
-	 */
-	public static String generateActionFromInputElement(Definition def, PortType wsdl4jPortType, Operation op, Input input){
-		// Get the targetNamespace of the wsdl:definitions
-		String targetNamespace = def.getTargetNamespace();
-		
-		// Determine the delimiter. Per the spec: 'is ":" when the [target namespace] is a URN, otherwise "/". 
-		// Note that for IRI schemes other than URNs which aren't path-based (i.e. those that outlaw the "/" 
-		// character), the default action value may not conform to the rules of the IRI scheme. Authors
-		// are advised to specify explicit values in the WSDL in this case.'
-    	String delimiter = SLASH;
-    	if(targetNamespace.toLowerCase().startsWith(URN)){
-    		delimiter = COLON;
-    	}
-    	
-    	// Get the portType name (as a string to be included in the action)
-    	String portTypeName = wsdl4jPortType.getQName().getLocalPart();
-    	// Get the name of the input element (and generate one if none explicitly specified)
-    	String inputName = getNameFromInputElement(op, input);
-    	
-    	// Append the bits together
-    	StringBuffer sb = new StringBuffer();
-    	sb.append(targetNamespace);
-    	// Deal with the problem that the targetNamespace may or may not have a trailing delimiter
-    	if(!targetNamespace.endsWith(delimiter)){
-    		sb.append(delimiter);
-    	}
-    	sb.append(portTypeName);
-    	sb.append(delimiter);
-    	sb.append(inputName);
-    	
-    	// Resolve the action from the StringBuffer
-    	String result = sb.toString();
-    	
-    	if(log.isTraceEnabled()){
-    		log.trace("generateActionFromInputElement result: "+result);
-    	}
-    	
-    	return result;
+    
+    private static final Log log = LogFactory.getLog(WSDL11DefaultActionPatternHelper.class);
+    
+    // String constants used extensively in this class
+    private static final String URN = "urn";
+    private static final String SLASH = "/";
+    private static final String COLON = ":";
+    private static final String REQUEST = "Request";
+    private static final String RESPONSE = "Response";
+    private static final String SOLICIT = "Solicit";
+    private static final String FAULT = "Fault";
+    
+    /**
+     * Generate the Action for an Input using the Default Action Pattern
+     * 
+     * Pattern is defined as [target namespace][delimiter][port type name][delimiter][input name]
+     * 
+     * @param def is required to obtain the targetNamespace
+     * @param wsdl4jPortType is required to obtain the portType name
+     * @param op is required to generate the input name if not explicitly specified
+     * @param input is required for its name if specified
+     * @return a wsa:Action value based on the Default Action Pattern and the provided objects
+     */
+    public static String generateActionFromInputElement(Definition def, PortType wsdl4jPortType, Operation op, Input input){
+        // Get the targetNamespace of the wsdl:definitions
+        String targetNamespace = def.getTargetNamespace();
+        
+        // Determine the delimiter. Per the spec: 'is ":" when the [target namespace] is a URN, otherwise "/". 
+        // Note that for IRI schemes other than URNs which aren't path-based (i.e. those that outlaw the "/" 
+        // character), the default action value may not conform to the rules of the IRI scheme. Authors
+        // are advised to specify explicit values in the WSDL in this case.'
+        String delimiter = SLASH;
+        if(targetNamespace.toLowerCase().startsWith(URN)){
+            delimiter = COLON;
+        }
+        
+        // Get the portType name (as a string to be included in the action)
+        String portTypeName = wsdl4jPortType.getQName().getLocalPart();
+        // Get the name of the input element (and generate one if none explicitly specified)
+        String inputName = getNameFromInputElement(op, input);
+        
+        // Append the bits together
+        StringBuffer sb = new StringBuffer();
+        sb.append(targetNamespace);
+        // Deal with the problem that the targetNamespace may or may not have a trailing delimiter
+        if(!targetNamespace.endsWith(delimiter)){
+            sb.append(delimiter);
+        }
+        sb.append(portTypeName);
+        sb.append(delimiter);
+        sb.append(inputName);
+        
+        // Resolve the action from the StringBuffer
+        String result = sb.toString();
+        
+        if(log.isTraceEnabled()){
+            log.trace("generateActionFromInputElement result: "+result);
+        }
+        
+        return result;
     }
             
-	/**
-	 * Get the name of the specified Input element using the rules defined in WSDL 1.1
-	 * Section 2.4.5 http://www.w3.org/TR/wsdl#_names
-	 */
+    /**
+     * Get the name of the specified Input element using the rules defined in WSDL 1.1
+     * Section 2.4.5 http://www.w3.org/TR/wsdl#_names
+     */
     private static String getNameFromInputElement(Operation op, Input input) {
-    	// Get the name from the input element if specified.
-		String result = input.getName();
-		
-		// If not we'll have to generate it.
-		if (result == null) {
-			// If Request-Response or Solicit-Response do something special per
-			// WSDL 1.1 Section 2.4.5
-			OperationType operationType = op.getStyle();
-			if (null != operationType) {
-				if (operationType.equals(OperationType.REQUEST_RESPONSE)){
-					result = op.getName() + REQUEST;
-				}else if (operationType.equals(OperationType.SOLICIT_RESPONSE)){
-					result = op.getName() + RESPONSE;
-				}
-			}
-			// If the OperationType was not available for some reason, assume on-way or notification
-			if(result == null){
-				result = op.getName();
-			}
-		}
-		return result;
-	}
+        // Get the name from the input element if specified.
+        String result = input.getName();
+        
+        // If not we'll have to generate it.
+        if (result == null) {
+            // If Request-Response or Solicit-Response do something special per
+            // WSDL 1.1 Section 2.4.5
+            OperationType operationType = op.getStyle();
+            if (null != operationType) {
+                if (operationType.equals(OperationType.REQUEST_RESPONSE)){
+                    result = op.getName() + REQUEST;
+                }else if (operationType.equals(OperationType.SOLICIT_RESPONSE)){
+                    result = op.getName() + RESPONSE;
+                }
+            }
+            // If the OperationType was not available for some reason, assume on-way or notification
+            if(result == null){
+                result = op.getName();
+            }
+        }
+        return result;
+    }
     
     protected static String getInputActionFromStringInformation(String messageExchangePattern, String targetNamespace, String portTypeName, String operationName, String inputName){
         if(messageExchangePattern == null && inputName == null){
@@ -163,83 +163,83 @@ public class WSDL11DefaultActionPatternHelper {
         return result;
     }
     
-	/**
-	 * Generate the Action for an Output using the Default Action Pattern
-	 * 
-	 * Pattern is defined as [target namespace][delimiter][port type name][delimiter][output name]
-	 * 
-	 * @param def is required to obtain the targetNamespace
-	 * @param wsdl4jPortType is required to obtain the portType name
-	 * @param op is required to generate the output name if not explicitly specified
-	 * @param output is required for its name if specified
-	 * @return a wsa:Action value based on the Default Action Pattern and the provided objects
-	 */
+    /**
+     * Generate the Action for an Output using the Default Action Pattern
+     * 
+     * Pattern is defined as [target namespace][delimiter][port type name][delimiter][output name]
+     * 
+     * @param def is required to obtain the targetNamespace
+     * @param wsdl4jPortType is required to obtain the portType name
+     * @param op is required to generate the output name if not explicitly specified
+     * @param output is required for its name if specified
+     * @return a wsa:Action value based on the Default Action Pattern and the provided objects
+     */
     public static String generateActionFromOutputElement(Definition def, PortType wsdl4jPortType, Operation op, Output output){
-    	// Get the targetNamespace of the wsdl:definition
-		String targetNamespace = def.getTargetNamespace();
-		
-		// Determine the delimiter. Per the spec: 'is ":" when the [target namespace] is a URN, otherwise "/". 
-		// Note that for IRI schemes other than URNs which aren't path-based (i.e. those that outlaw the "/" 
-		// character), the default action value may not conform to the rules of the IRI scheme. Authors
-		// are advised to specify explicit values in the WSDL in this case.'
-    	String delimiter = SLASH;
-    	if(targetNamespace.toLowerCase().startsWith(URN)){
-    		delimiter = COLON;
-    	}
-    	
-    	// Get the portType name (as a string to be included in the action)
-    	String portTypeName = wsdl4jPortType.getQName().getLocalPart();
-    	// Get the name of the output element (and generate one if none explicitly specified)
-    	String outputName = getNameFromOutputElement(op, output);
-    	
-    	// Append the bits together
-    	StringBuffer sb = new StringBuffer();
-    	sb.append(targetNamespace);
-    	// Deal with the problem that the targetNamespace may or may not have a trailing delimiter
-    	if(!targetNamespace.endsWith(delimiter)){
-    		sb.append(delimiter);
-    	}
-    	sb.append(portTypeName);
-    	sb.append(delimiter);
-    	sb.append(outputName);
-    	
-    	// Resolve the action from the StringBuffer
-    	String result = sb.toString();
-    	
-    	if(log.isTraceEnabled()){
-    		log.trace("generateActionFromOutputElement result: "+result);
-    	}
-    	
-    	return result;
+        // Get the targetNamespace of the wsdl:definition
+        String targetNamespace = def.getTargetNamespace();
+        
+        // Determine the delimiter. Per the spec: 'is ":" when the [target namespace] is a URN, otherwise "/". 
+        // Note that for IRI schemes other than URNs which aren't path-based (i.e. those that outlaw the "/" 
+        // character), the default action value may not conform to the rules of the IRI scheme. Authors
+        // are advised to specify explicit values in the WSDL in this case.'
+        String delimiter = SLASH;
+        if(targetNamespace.toLowerCase().startsWith(URN)){
+            delimiter = COLON;
+        }
+        
+        // Get the portType name (as a string to be included in the action)
+        String portTypeName = wsdl4jPortType.getQName().getLocalPart();
+        // Get the name of the output element (and generate one if none explicitly specified)
+        String outputName = getNameFromOutputElement(op, output);
+        
+        // Append the bits together
+        StringBuffer sb = new StringBuffer();
+        sb.append(targetNamespace);
+        // Deal with the problem that the targetNamespace may or may not have a trailing delimiter
+        if(!targetNamespace.endsWith(delimiter)){
+            sb.append(delimiter);
+        }
+        sb.append(portTypeName);
+        sb.append(delimiter);
+        sb.append(outputName);
+        
+        // Resolve the action from the StringBuffer
+        String result = sb.toString();
+        
+        if(log.isTraceEnabled()){
+            log.trace("generateActionFromOutputElement result: "+result);
+        }
+        
+        return result;
     }
     
-	/**
-	 * Get the name of the specified Output element using the rules defined in WSDL 1.1
-	 * Section 2.4.5 http://www.w3.org/TR/wsdl#_names
-	 */
+    /**
+     * Get the name of the specified Output element using the rules defined in WSDL 1.1
+     * Section 2.4.5 http://www.w3.org/TR/wsdl#_names
+     */
     private static String getNameFromOutputElement(Operation op, Output output) {
-    	// Get the name from the output element if specified.
-		String result = output.getName();
-		
-		// If not we'll have to generate it.
-		if (result == null) {
-			// If Request-Response or Solicit-Response do something special per
-			// WSDL 1.1 Section 2.4.5
-			OperationType operationType = op.getStyle();
-			if (null != operationType) {
-				if (operationType.equals(OperationType.REQUEST_RESPONSE)){
-					return op.getName() + RESPONSE;
-				}else if (operationType.equals(OperationType.SOLICIT_RESPONSE)){
-					return op.getName() + SOLICIT;
-				}
-			}
-			// If the OperationType was not available for some reason, assume on-way or notification
-			if(result == null){
-				result = op.getName();
-			}
-		}
-		return result;
-	}
+        // Get the name from the output element if specified.
+        String result = output.getName();
+        
+        // If not we'll have to generate it.
+        if (result == null) {
+            // If Request-Response or Solicit-Response do something special per
+            // WSDL 1.1 Section 2.4.5
+            OperationType operationType = op.getStyle();
+            if (null != operationType) {
+                if (operationType.equals(OperationType.REQUEST_RESPONSE)){
+                    return op.getName() + RESPONSE;
+                }else if (operationType.equals(OperationType.SOLICIT_RESPONSE)){
+                    return op.getName() + SOLICIT;
+                }
+            }
+            // If the OperationType was not available for some reason, assume on-way or notification
+            if(result == null){
+                result = op.getName();
+            }
+        }
+        return result;
+    }
     
     protected static String getOutputActionFromStringInformation(String messageExchangePattern, String targetNamespace, String portTypeName, String operationName, String outputName){
         if(messageExchangePattern == null && outputName == null){
@@ -284,16 +284,16 @@ public class WSDL11DefaultActionPatternHelper {
     }
     
     /**
-	 * Generate the Action for a Fault using the Default Action Pattern
-	 * 
-	 * Pattern is defined as [target namespace][delimiter][port type name][delimiter][operation name][delimiter]Fault[delimiter][fault name]
-	 * 
-	 * @param def is required to obtain the targetNamespace
-	 * @param wsdl4jPortType is required to obtain the portType name
-	 * @param op is required to obtain the operation name
-	 * @param fault is required to obtain the fault name
-	 * @return a wsa:Action value based on the Default Action Pattern and the provided objects
-	 */
+     * Generate the Action for a Fault using the Default Action Pattern
+     * 
+     * Pattern is defined as [target namespace][delimiter][port type name][delimiter][operation name][delimiter]Fault[delimiter][fault name]
+     * 
+     * @param def is required to obtain the targetNamespace
+     * @param wsdl4jPortType is required to obtain the portType name
+     * @param op is required to obtain the operation name
+     * @param fault is required to obtain the fault name
+     * @return a wsa:Action value based on the Default Action Pattern and the provided objects
+     */
     public static String generateActionFromFaultElement(Definition def, PortType wsdl4jPortType, Operation op, Fault fault){
         // Get the targetNamespace of the wsdl:definition
         String targetNamespace = def.getTargetNamespace();
@@ -306,7 +306,7 @@ public class WSDL11DefaultActionPatternHelper {
         if(targetNamespace.toLowerCase().startsWith(URN)){
             delimiter = COLON;
         }
-    	
+        
         // Get the portType name (as a string to be included in the action)
         String portTypeName = wsdl4jPortType.getQName().getLocalPart();
         // Get the operation name (as a string to be included in the action)
@@ -314,7 +314,7 @@ public class WSDL11DefaultActionPatternHelper {
         
         // Get the name of the fault element (name is mandatory on fault elements)
         String faultName = fault.getName();
-    	
+        
         // Append the bits together
         StringBuffer sb = new StringBuffer();
         sb.append(targetNamespace);
@@ -329,14 +329,14 @@ public class WSDL11DefaultActionPatternHelper {
         sb.append(FAULT);
         sb.append(delimiter);
         sb.append(faultName);
-    	
+        
         // Resolve the action from the StringBuffer
         String result = sb.toString();
-    	
+        
         if(log.isTraceEnabled()){
             log.trace("generateActionFromFaultElement result: "+result);
         }
-    	
+        
         return result;
     }
     

@@ -24,9 +24,9 @@ import org.apache.axis2.AxisFault;
  */
 public class PhaseException extends AxisFault {
 
-	private static final long serialVersionUID = 5690503396724929322L;
+    private static final long serialVersionUID = 5690503396724929322L;
 
-	/**
+    /**
      * Constructor PhaseException
      *
      * @param message

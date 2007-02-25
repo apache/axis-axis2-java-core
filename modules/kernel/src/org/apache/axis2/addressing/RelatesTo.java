@@ -48,7 +48,7 @@ public class RelatesTo implements Externalizable {
      * Refer to the "serialVer" utility to compute a serialization
      * version ID.
      */
-	private static final long serialVersionUID = -1120384315333414960L;
+    private static final long serialVersionUID = -1120384315333414960L;
 
     /**
      * @serial Tracks the revision level of a class to identify changes to the 
@@ -64,7 +64,7 @@ public class RelatesTo implements Externalizable {
 
     
 
-	/**
+    /**
      * Field relationshipType
      */
     private String relationshipType;

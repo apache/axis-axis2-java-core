@@ -36,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
  * in the thread pool.
  */
 public class ThreadPool implements ThreadFactory {
-	private static final Log log = LogFactory.getLog(ThreadPool.class);
+    private static final Log log = LogFactory.getLog(ThreadPool.class);
     protected static long SLEEP_INTERVAL = 1000;
     private static boolean shutDown;
     protected ThreadPoolExecutor executor;
@@ -50,8 +50,8 @@ public class ThreadPool implements ThreadFactory {
     }
     
     public ThreadPool(int corePoolSize,int maxPoolSize) {
-    	this.corePoolSize = corePoolSize;
-    	this.maxPoolSize = maxPoolSize;
+        this.corePoolSize = corePoolSize;
+        this.maxPoolSize = maxPoolSize;
         setExecutor(createDefaultExecutor("Axis2 Task", Thread.NORM_PRIORITY, true));
     }
 
@@ -116,7 +116,7 @@ public class ThreadPool implements ThreadFactory {
                                     return newThread;
                                 }
                             }
-                        );        	
+                        );            
                 } 
                 catch(PrivilegedActionException e) {
                     // note: inner class can't have its own static log variable

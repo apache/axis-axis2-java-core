@@ -34,47 +34,47 @@ public class MorePermissionAccessControlContext implements Actor {
 
     // Constructor
     public MorePermissionAccessControlContext(Actor a, boolean usingDoPrivilege) {
-	_actor = a;
-	_usingDoPrivilege = usingDoPrivilege;
+    _actor = a;
+    _usingDoPrivilege = usingDoPrivilege;
 
     }
 
     // Implementing Actor's takeAction method
     public void takeAction() {
-	try {
-	    if (_usingDoPrivilege) {
-		final AccessControlContext acc = AccessController.getContext();
-		  // Print out maven's base,build, and test direcotories
-		String baseDir = System.getProperty("basedir");
-		System.out.println("basedir => " + baseDir);
-	    
-		// Convert the \ (back slash) to / (forward slash)
-		String baseDirM = baseDir.replace('\\', '/');
-		System.out.println("baseDirM => "+ baseDirM);
-	    
-		String fs = "/";
-		String fileName = "private/private.txt";
-	    
-		// Build the file URL
-		String fileURL=baseDirM+fs+"test-resources"+fs+"java2sec"+fs+fileName;
-		Permission perm = new java.io.FilePermission(fileURL, "read");
-		acc.checkPermission(perm);
-		// Demostrate the usage of AccessController's doPrivilege(PrivilegeAction action, AccessContext ctx)
-		AccessController.doPrivileged(
-		    new PrivilegedAction() {
-			public Object run() {
-			    _actor.takeAction();
-			    return null;
-			    }
-			}, acc);
-	    }
-	    else {
-		// Use no doPrivileged
-		_actor.takeAction();   
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace(System.out);
-	}
+    try {
+        if (_usingDoPrivilege) {
+        final AccessControlContext acc = AccessController.getContext();
+          // Print out maven's base,build, and test direcotories
+        String baseDir = System.getProperty("basedir");
+        System.out.println("basedir => " + baseDir);
+        
+        // Convert the \ (back slash) to / (forward slash)
+        String baseDirM = baseDir.replace('\\', '/');
+        System.out.println("baseDirM => "+ baseDirM);
+        
+        String fs = "/";
+        String fileName = "private/private.txt";
+        
+        // Build the file URL
+        String fileURL=baseDirM+fs+"test-resources"+fs+"java2sec"+fs+fileName;
+        Permission perm = new java.io.FilePermission(fileURL, "read");
+        acc.checkPermission(perm);
+        // Demostrate the usage of AccessController's doPrivilege(PrivilegeAction action, AccessContext ctx)
+        AccessController.doPrivileged(
+            new PrivilegedAction() {
+            public Object run() {
+                _actor.takeAction();
+                return null;
+                }
+            }, acc);
+        }
+        else {
+        // Use no doPrivileged
+        _actor.takeAction();   
+        }
+    } catch (Exception e) {
+        e.printStackTrace(System.out);
+    }
     }    
 }
 

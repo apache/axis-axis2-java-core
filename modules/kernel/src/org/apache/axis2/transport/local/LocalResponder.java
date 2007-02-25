@@ -34,7 +34,7 @@ import org.apache.axis2.transport.http.HTTPTransportUtils;
  * LocalResponder
  */
 public class LocalResponder extends AbstractHandler implements TransportSender {
-	LocalTransportSender sender;
+    LocalTransportSender sender;
 
     public LocalResponder(LocalTransportSender sender) {
         this.sender = sender;

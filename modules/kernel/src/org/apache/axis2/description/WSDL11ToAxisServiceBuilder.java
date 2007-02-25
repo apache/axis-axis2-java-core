@@ -735,7 +735,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         addQNameReference(inMessage, wsdl4jOperation, isWrapped, extensibilityElements, wsdl4jMessage);
     }
     
-	/**
+    /**
      * Add the QName for the binding output
      *
      * @param outMessage
@@ -757,8 +757,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
     }
 
-	private void addQNameReference(AxisMessage message, Operation wsdl4jOperation, boolean isWrapped, List extensibilityElements, Message wsdl4jMessage) {
-		for (int i = 0; i < extensibilityElements.size(); i++) {
+    private void addQNameReference(AxisMessage message, Operation wsdl4jOperation, boolean isWrapped, List extensibilityElements, Message wsdl4jMessage) {
+        for (int i = 0; i < extensibilityElements.size(); i++) {
             ExtensibilityElement extElement = (ExtensibilityElement) extensibilityElements.get(i);
 
             List bindingPartsList = null;
@@ -776,27 +776,27 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             if (bindingPartsList != null && !bindingPartsList.isEmpty()) {
                 // we can process a single part only
                 if (bindingPartsList.size() > 1) {
-				    // do something here - perhaps throw and exception
-				} else {
-				    // find the part from the relevant message
-				    Part wsdl4jMessagePart = wsdl4jMessage
-				            .getPart((String) bindingPartsList.get(0));
-				    // the part name better be there - if not throw an exception
-				    if (wsdl4jMessagePart == null) {
-				        throw new WSDLProcessingException("Missing part named \""
-				                + bindingPartsList.get(0) + "\"");
-				    }
-				    QName name = wsdl4jMessagePart.getElementName();
-				    if (name == null) {
-				        name = wsdl4jMessagePart.getTypeName();
-				    }
-				    if (name == null) {
-				        throw new WSDLProcessingException(
-				                "Element reference / Type name  missing for "
-				                        + bindingPartsList.get(0) + "!");
-				    }
-				    message.setElementQName(wsdl4jMessagePart.getElementName());
-				}
+                    // do something here - perhaps throw and exception
+                } else {
+                    // find the part from the relevant message
+                    Part wsdl4jMessagePart = wsdl4jMessage
+                            .getPart((String) bindingPartsList.get(0));
+                    // the part name better be there - if not throw an exception
+                    if (wsdl4jMessagePart == null) {
+                        throw new WSDLProcessingException("Missing part named \""
+                                + bindingPartsList.get(0) + "\"");
+                    }
+                    QName name = wsdl4jMessagePart.getElementName();
+                    if (name == null) {
+                        name = wsdl4jMessagePart.getTypeName();
+                    }
+                    if (name == null) {
+                        throw new WSDLProcessingException(
+                                "Element reference / Type name  missing for "
+                                        + bindingPartsList.get(0) + "!");
+                    }
+                    message.setElementQName(wsdl4jMessagePart.getElementName());
+                }
                 // there are no parts named in the binding - process the
                 // items normally
                 // by looking at the single message part - or the wrapped
@@ -829,7 +829,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
             }
         }
-	}
+    }
 
     /**
      * Add the QName for the binding output
@@ -1616,33 +1616,33 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 // <wsp:Policy>
                 if (WSDLConstants.WSDL11Constants.POLICY.equals(type)) {
-                	if (isTraceEnabled) {
+                    if (isTraceEnabled) {
                         log.trace("copyExtensibleElements:: PolicyElement found " + unknown);
                     }
                     Policy policy = (Policy) PolicyUtil.getPolicyComponent(unknown.getElement());
                     int attachmentScope = getPolicyAttachmentPoint(description, originOfExtensibilityElements);
-					if(attachmentScope > -1){
-						description.getPolicyInclude().addPolicyElement(
-								attachmentScope, policy);
-					}
+                    if(attachmentScope > -1){
+                        description.getPolicyInclude().addPolicyElement(
+                                attachmentScope, policy);
+                    }
                     // <wsp:PolicyReference>
                 } else if (WSDLConstants.WSDL11Constants.POLICY_REFERENCE
                         .equals(type)) {
-                	if (isTraceEnabled) {
+                    if (isTraceEnabled) {
                         log.trace("copyExtensibleElements:: PolicyReference found " + unknown);
                     }
                     PolicyReference policyReference = (PolicyReference) PolicyUtil
                             .getPolicyComponent(unknown.getElement());
                     int attachmentScope = getPolicyAttachmentPoint(description, originOfExtensibilityElements);
-					if(attachmentScope > -1){
-						description.getPolicyInclude().addPolicyRefElement(
-					            attachmentScope, policyReference);
-					}
+                    if(attachmentScope > -1){
+                        description.getPolicyInclude().addPolicyRefElement(
+                                attachmentScope, policyReference);
+                    }
                 } else if (AddressingConstants.Final.WSAW_USING_ADDRESSING
                         .equals(type)
                         || AddressingConstants.Submission.WSAW_USING_ADDRESSING
                         .equals(unknown.getElementType())) {
-                	if (isTraceEnabled) {
+                    if (isTraceEnabled) {
                         log.trace("copyExtensibleElements:: wsaw:UsingAddressing found " + unknown);
                     }
                     // FIXME We need to set this the appropriate Axis Description AxisEndpoint or
@@ -1863,51 +1863,51 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     }
     
     private int getPolicyAttachmentPoint(AxisDescription description,
-    		String originOfExtensibilityElements) {
-    	int result = -1; // Attachment Point Not Identified
-    	if (description instanceof AxisService) {
+            String originOfExtensibilityElements) {
+        int result = -1; // Attachment Point Not Identified
+        if (description instanceof AxisService) {
             // wsdl:service
-    		if (SERVICE.equals(originOfExtensibilityElements)) {
-    			result = PolicyInclude.SERVICE_POLICY;
+            if (SERVICE.equals(originOfExtensibilityElements)) {
+                result = PolicyInclude.SERVICE_POLICY;
             // wsdl:service -> wsdl:port
-    		} else if (PORT.equals(originOfExtensibilityElements)) {
-    			result =PolicyInclude.PORT_POLICY;
+            } else if (PORT.equals(originOfExtensibilityElements)) {
+                result =PolicyInclude.PORT_POLICY;
             // wsdl:binding
-    		} else if (BINDING.equals(originOfExtensibilityElements)) {
-    			result = PolicyInclude.BINDING_POLICY;
-    		}
-    	    // TODO policy for wsdl:portType ?
-    	} else if (description instanceof AxisOperation) {
+            } else if (BINDING.equals(originOfExtensibilityElements)) {
+                result = PolicyInclude.BINDING_POLICY;
+            }
+            // TODO policy for wsdl:portType ?
+        } else if (description instanceof AxisOperation) {
             // wsdl:portType -> wsdl:operation
-    		if (PORT_TYPE_OPERATION.equals(originOfExtensibilityElements)) {
-    			result = PolicyInclude.OPERATION_POLICY;
+            if (PORT_TYPE_OPERATION.equals(originOfExtensibilityElements)) {
+                result = PolicyInclude.OPERATION_POLICY;
             // wsdl:binding -> wsdl:operation
-    		} else {
-    			result = PolicyInclude.BINDING_POLICY;
-    		} 
-    	} else {
+            } else {
+                result = PolicyInclude.BINDING_POLICY;
+            } 
+        } else {
             // wsdl:portType -> wsdl:operation -> wsdl:input
-    		if (PORT_TYPE_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
-    			result = PolicyInclude.INPUT_POLICY;
+            if (PORT_TYPE_OPERATION_INPUT.equals(originOfExtensibilityElements)) {
+                result = PolicyInclude.INPUT_POLICY;
             // wsdl:binding -> wsdl:operation -> wsdl:input
-    		} else if (BINDING_OPERATION_INPUT
-    				.equals(originOfExtensibilityElements)) {
-    			result = PolicyInclude.BINDING_INPUT_POLICY;
+            } else if (BINDING_OPERATION_INPUT
+                    .equals(originOfExtensibilityElements)) {
+                result = PolicyInclude.BINDING_INPUT_POLICY;
             // wsdl:portType -> wsdl:operation -> wsdl:put
-    		} else if (PORT_TYPE_OPERATION_OUTPUT
-    				.equals(originOfExtensibilityElements)) {
-    			result = PolicyInclude.OUTPUT_POLICY;
+            } else if (PORT_TYPE_OPERATION_OUTPUT
+                    .equals(originOfExtensibilityElements)) {
+                result = PolicyInclude.OUTPUT_POLICY;
             // wsdl:binding -> wsdl:operation -> wsdl:output
-    		} else if (BINDING_OPERATION_OUTPUT
-    				.equals(originOfExtensibilityElements)) {
-    			result = PolicyInclude.BINDING_OUTPUT_POLICY;
-    		}
+            } else if (BINDING_OPERATION_OUTPUT
+                    .equals(originOfExtensibilityElements)) {
+                result = PolicyInclude.BINDING_OUTPUT_POLICY;
+            }
         // TODO Faults ..
-    	}
-    	if(isTraceEnabled){
-    		log.trace("getPolicyAttachmentPoint:: axisDescription="+description+" extensibilityPoint="+originOfExtensibilityElements+" result="+result);
-    	}
-    	return result;
+        }
+        if(isTraceEnabled){
+            log.trace("getPolicyAttachmentPoint:: axisDescription="+description+" extensibilityPoint="+originOfExtensibilityElements+" result="+result);
+        }
+        return result;
     }
     
     /**

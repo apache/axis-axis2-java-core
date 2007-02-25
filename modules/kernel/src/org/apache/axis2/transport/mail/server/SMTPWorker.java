@@ -47,7 +47,7 @@ public class SMTPWorker extends Thread {
     boolean runThread = true;
     private ArrayList receivers = new ArrayList();
     private MimeMessage mail = null;
-	private static final Log log = LogFactory.getLog(SMTPWorker.class);
+    private static final Log log = LogFactory.getLog(SMTPWorker.class);
     private boolean dataWriting = false;
     private ConfigurationContext configurationContext = null;
     private boolean bodyData = false;

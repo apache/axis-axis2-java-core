@@ -265,7 +265,7 @@ public class HTTPWorker implements Worker {
             response.setStatusLine(new BasicStatusLine(ver, 202, "OK"));
         }
     }
-	
+    
     public String getHostAddress(HttpRequest request) throws java.net.SocketException{
         try {
             Header hostHeader = request.getFirstHeader("host");
@@ -277,11 +277,11 @@ public class HTTPWorker implements Worker {
             
         }
         return HttpUtils.getIpAddress();
-    }	
+    }    
 
     class SimpleHTTPRequestResponseTransport implements RequestResponseTransport
     {
-    	
+        
       private CountDownLatch responseReadySignal = new CountDownLatch(1);
       RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
       
@@ -293,18 +293,18 @@ public class HTTPWorker implements Worker {
       
       public void awaitResponse() throws InterruptedException
       {
-    	  status = RequestResponseTransportStatus.WAITING;
-    	  responseReadySignal.await();
+          status = RequestResponseTransportStatus.WAITING;
+          responseReadySignal.await();
       }
       
       public void signalResponseReady()
       {
-    	  status = RequestResponseTransportStatus.SIGNALLED;
-    	  responseReadySignal.countDown();
+          status = RequestResponseTransportStatus.SIGNALLED;
+          responseReadySignal.countDown();
       }
 
       public RequestResponseTransportStatus getStatus() {
-		return status;
+        return status;
       }
       
     }

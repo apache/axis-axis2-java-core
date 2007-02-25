@@ -43,55 +43,55 @@ public class Action implements Actor {
 
     // Implementing Actor's takeAction method
     public void takeAction () {
-	try {
-	    // Print out maven's base,build, and test direcotories
-	    String baseDir = System.getProperty("basedir");
-	    System.out.println("basedir => " + baseDir);
+    try {
+        // Print out maven's base,build, and test direcotories
+        String baseDir = System.getProperty("basedir");
+        System.out.println("basedir => " + baseDir);
 
-	    String buildDir = System.getProperty("maven_build_dir");
-	    System.out.println("buildDir => " + buildDir);
-	    
-	    String testDir = System.getProperty("maven_test_dest");
-	    System.out.println("testDir => " + testDir);
-	    
-	    // Convert the \ (back slash) to / (forward slash)
-	    String baseDirM = baseDir.replace('\\', '/');
-	    System.out.println("baseDirM => "+ baseDirM);
-	    
-	    String fs = "/";
+        String buildDir = System.getProperty("maven_build_dir");
+        System.out.println("buildDir => " + buildDir);
+        
+        String testDir = System.getProperty("maven_test_dest");
+        System.out.println("testDir => " + testDir);
+        
+        // Convert the \ (back slash) to / (forward slash)
+        String baseDirM = baseDir.replace('\\', '/');
+        System.out.println("baseDirM => "+ baseDirM);
+        
+        String fs = "/";
 
-	    // Build the file URL
-	    String fileURL=baseDirM+fs+"test-resources"+fs+"java2sec"+fs+fileName;
-	    System.out.println("File URL => " + fileURL);
-        	
-	    if (fileName != null)
-		    fileReader = new FileReader(fileURL);
-	    else 
-		    fileReader = new FileReader("public.txt");
-        	
+        // Build the file URL
+        String fileURL=baseDirM+fs+"test-resources"+fs+"java2sec"+fs+fileName;
+        System.out.println("File URL => " + fileURL);
+            
+        if (fileName != null)
+            fileReader = new FileReader(fileURL);
+        else 
+            fileReader = new FileReader("public.txt");
+            
             try {
                 CharArrayWriter caw = new CharArrayWriter();
                 int c;
-		while ((c = fileReader.read()) != -1) {
+        while ((c = fileReader.read()) != -1) {
                     caw.write(c);
                 }
-		// Set/save the file input as test result onto Java2SecTest
+        // Set/save the file input as test result onto Java2SecTest
                 Java2SecTest.testResult = caw.toString();
             }
             catch (IOException e) {
-		e.printStackTrace(System.out);
+        e.printStackTrace(System.out);
             }
             finally {
                 try {
                     fileReader.close();
                 }
                 catch (IOException e) {
-		    e.printStackTrace(System.out);
+            e.printStackTrace(System.out);
                 }
             }
         }
         catch (IOException e) {
-	    e.printStackTrace(System.out);
+        e.printStackTrace(System.out);
         }
     }
 }

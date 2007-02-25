@@ -2017,9 +2017,9 @@ public class ObjectStateUtils
 
         String title = "ObjectStateUtils:findHandler(): ";
 
-    	String handlerClassName = metaDataEntry.getClassName();
-    	String qNameAsString = metaDataEntry.getQNameAsString();
-    	
+        String handlerClassName = metaDataEntry.getClassName();
+        String qNameAsString = metaDataEntry.getQNameAsString();
+        
         for (int i=0; i < existingHandlers.size(); i++)
         {
             if (existingHandlers.get(i) != null)

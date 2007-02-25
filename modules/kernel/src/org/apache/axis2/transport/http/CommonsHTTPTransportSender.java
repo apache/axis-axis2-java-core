@@ -54,192 +54,192 @@ import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 public class CommonsHTTPTransportSender extends AbstractHandler implements
-		TransportSender {
+        TransportSender {
 
 
-	protected static final String PROXY_HOST_NAME = "proxy_host";
+    protected static final String PROXY_HOST_NAME = "proxy_host";
 
-	protected static final String PROXY_PORT = "proxy_port";
+    protected static final String PROXY_PORT = "proxy_port";
 
-	int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
+    int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
 
-	/**
-	 * proxydiscription
-	 */
-	protected TransportOutDescription proxyOutSetting = null;
+    /**
+     * proxydiscription
+     */
+    protected TransportOutDescription proxyOutSetting = null;
 
-	private static final Log log = LogFactory
-			.getLog(CommonsHTTPTransportSender.class);
+    private static final Log log = LogFactory
+            .getLog(CommonsHTTPTransportSender.class);
 
-	protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+    protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
 
-	private boolean chunked = false;
+    private boolean chunked = false;
 
-	int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
+    int connectionTimeout = HTTPConstants.DEFAULT_CONNECTION_TIMEOUT;
 
-	public void cleanup(MessageContext msgContext) throws AxisFault {
-		HttpMethod httpMethod = (HttpMethod) msgContext
-				.getProperty(HTTPConstants.HTTP_METHOD);
+    public void cleanup(MessageContext msgContext) throws AxisFault {
+        HttpMethod httpMethod = (HttpMethod) msgContext
+                .getProperty(HTTPConstants.HTTP_METHOD);
 
-		if (httpMethod != null) {
-			httpMethod.releaseConnection();
-		}
-	}
+        if (httpMethod != null) {
+            httpMethod.releaseConnection();
+        }
+    }
 
-	public void init(ConfigurationContext confContext,
-			TransportOutDescription transportOut) throws AxisFault {
+    public void init(ConfigurationContext confContext,
+            TransportOutDescription transportOut) throws AxisFault {
 
-		// <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter> or
-		// <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter> is
-		// checked
-		Parameter version = transportOut
-				.getParameter(HTTPConstants.PROTOCOL_VERSION);
-		if (version != null) {
-			if (HTTPConstants.HEADER_PROTOCOL_11.equals(version.getValue())) {
-				httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
+        // <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter> or
+        // <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter> is
+        // checked
+        Parameter version = transportOut
+                .getParameter(HTTPConstants.PROTOCOL_VERSION);
+        if (version != null) {
+            if (HTTPConstants.HEADER_PROTOCOL_11.equals(version.getValue())) {
+                httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
 
-				Parameter transferEncoding = transportOut
-						.getParameter(HTTPConstants.HEADER_TRANSFER_ENCODING);
+                Parameter transferEncoding = transportOut
+                        .getParameter(HTTPConstants.HEADER_TRANSFER_ENCODING);
 
-				if ((transferEncoding != null)
-						&& HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED
-								.equals(transferEncoding.getValue())) {
-					chunked = true;
-				}
-			} else if (HTTPConstants.HEADER_PROTOCOL_10.equals(version
-					.getValue())) {
-				httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
-			} else {
-				throw new AxisFault("Parameter "
-						+ HTTPConstants.PROTOCOL_VERSION
-						+ " Can have values only HTTP/1.0 or HTTP/1.1");
-			}
-		}
+                if ((transferEncoding != null)
+                        && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED
+                                .equals(transferEncoding.getValue())) {
+                    chunked = true;
+                }
+            } else if (HTTPConstants.HEADER_PROTOCOL_10.equals(version
+                    .getValue())) {
+                httpVersion = HTTPConstants.HEADER_PROTOCOL_10;
+            } else {
+                throw new AxisFault("Parameter "
+                        + HTTPConstants.PROTOCOL_VERSION
+                        + " Can have values only HTTP/1.0 or HTTP/1.1");
+            }
+        }
 
-		// Get the timeout values from the configuration
-		try {
-			Parameter tempSoTimeoutParam = transportOut
-					.getParameter(HTTPConstants.SO_TIMEOUT);
-			Parameter tempConnTimeoutParam = transportOut
-					.getParameter(HTTPConstants.CONNECTION_TIMEOUT);
+        // Get the timeout values from the configuration
+        try {
+            Parameter tempSoTimeoutParam = transportOut
+                    .getParameter(HTTPConstants.SO_TIMEOUT);
+            Parameter tempConnTimeoutParam = transportOut
+                    .getParameter(HTTPConstants.CONNECTION_TIMEOUT);
 
-			if (tempSoTimeoutParam != null) {
-				soTimeout = Integer.parseInt((String) tempSoTimeoutParam
-						.getValue());
-			}
+            if (tempSoTimeoutParam != null) {
+                soTimeout = Integer.parseInt((String) tempSoTimeoutParam
+                        .getValue());
+            }
 
-			if (tempConnTimeoutParam != null) {
-				connectionTimeout = Integer
-						.parseInt((String) tempConnTimeoutParam.getValue());
-			}
-		} catch (NumberFormatException nfe) {
+            if (tempConnTimeoutParam != null) {
+                connectionTimeout = Integer
+                        .parseInt((String) tempConnTimeoutParam.getValue());
+            }
+        } catch (NumberFormatException nfe) {
 
-			// If there's a problem log it and use the default values
-			log.error("Invalid timeout value format: not a number", nfe);
-		}
-	}
+            // If there's a problem log it and use the default values
+            log.error("Invalid timeout value format: not a number", nfe);
+        }
+    }
 
-	public void stop() {
-		// Any code that , need to invoke when sender stop
-	}
+    public void stop() {
+        // Any code that , need to invoke when sender stop
+    }
 
-	public InvocationResponse invoke(MessageContext msgContext)
-			throws AxisFault {
-		try {
-			OMOutputFormat format = new OMOutputFormat();
-			// if (!msgContext.isDoingMTOM())
-			msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
-			msgContext.setDoingSwA(HTTPTransportUtils.doWriteSwA(msgContext));
-			msgContext.setDoingREST(HTTPTransportUtils.isDoingREST(msgContext));
-			format.setSOAP11(msgContext.isSOAP11());
-			format.setDoOptimize(msgContext.isDoingMTOM());
-			format.setDoingSWA(msgContext.isDoingSwA());
-			format.setCharSetEncoding(HTTPTransportUtils
-					.getCharSetEncoding(msgContext));
+    public InvocationResponse invoke(MessageContext msgContext)
+            throws AxisFault {
+        try {
+            OMOutputFormat format = new OMOutputFormat();
+            // if (!msgContext.isDoingMTOM())
+            msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
+            msgContext.setDoingSwA(HTTPTransportUtils.doWriteSwA(msgContext));
+            msgContext.setDoingREST(HTTPTransportUtils.isDoingREST(msgContext));
+            format.setSOAP11(msgContext.isSOAP11());
+            format.setDoOptimize(msgContext.isDoingMTOM());
+            format.setDoingSWA(msgContext.isDoingSwA());
+            format.setCharSetEncoding(HTTPTransportUtils
+                    .getCharSetEncoding(msgContext));
 
-			Object mimeBoundaryProperty = msgContext
-					.getProperty(Constants.Configuration.MIME_BOUNDARY);
-			if (mimeBoundaryProperty != null) {
-				format.setMimeBoundary((String) mimeBoundaryProperty);
-			}
-			
-			TransportOutDescription transportOut = msgContext.getConfigurationContext().
-										getAxisConfiguration().getTransportOut(new QName (Constants.TRANSPORT_HTTP));
-			
-			//if a parameter hs set been set, we will omit the SOAP action for SOAP 1.2 
-			if (transportOut!=null) {
-				Parameter param = transportOut.getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
-				Object value = null;
-				if (param!=null)
-					value = param.getValue();
-				
-				if (value!=null && JavaUtils.isTrueExplicitly(value)) {
-					if (msgContext.isSOAP11()!=true) {
-						msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION, Boolean.TRUE);
-					}
-				}
-			}
+            Object mimeBoundaryProperty = msgContext
+                    .getProperty(Constants.Configuration.MIME_BOUNDARY);
+            if (mimeBoundaryProperty != null) {
+                format.setMimeBoundary((String) mimeBoundaryProperty);
+            }
+            
+            TransportOutDescription transportOut = msgContext.getConfigurationContext().
+                                        getAxisConfiguration().getTransportOut(new QName (Constants.TRANSPORT_HTTP));
+            
+            //if a parameter hs set been set, we will omit the SOAP action for SOAP 1.2 
+            if (transportOut!=null) {
+                Parameter param = transportOut.getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
+                Object value = null;
+                if (param!=null)
+                    value = param.getValue();
+                
+                if (value!=null && JavaUtils.isTrueExplicitly(value)) {
+                    if (msgContext.isSOAP11()!=true) {
+                        msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION, Boolean.TRUE);
+                    }
+                }
+            }
 
-			// Trasnport URL can be different from the WSA-To. So processing
-			// that now.
-			EndpointReference epr = null;
-			String transportURL = (String) msgContext
-					.getProperty(Constants.Configuration.TRANSPORT_URL);
+            // Trasnport URL can be different from the WSA-To. So processing
+            // that now.
+            EndpointReference epr = null;
+            String transportURL = (String) msgContext
+                    .getProperty(Constants.Configuration.TRANSPORT_URL);
 
-			if (transportURL != null) {
-				epr = new EndpointReference(transportURL);
-			} else if (msgContext.getTo() != null
-					&& !msgContext.getTo().hasAnonymousAddress()) {
-				epr = msgContext.getTo();
-			}
+            if (transportURL != null) {
+                epr = new EndpointReference(transportURL);
+            } else if (msgContext.getTo() != null
+                    && !msgContext.getTo().hasAnonymousAddress()) {
+                epr = msgContext.getTo();
+            }
 
-			// Check for the REST behaviour, if you desire rest beahaviour
-			// put a <parameter name="doREST" value="true"/> at the
-			// server.xml/client.xml file
-			// ######################################################
-			// Change this place to change the wsa:toepr
-			// epr = something
-			// ######################################################
+            // Check for the REST behaviour, if you desire rest beahaviour
+            // put a <parameter name="doREST" value="true"/> at the
+            // server.xml/client.xml file
+            // ######################################################
+            // Change this place to change the wsa:toepr
+            // epr = something
+            // ######################################################
 
-			if ((epr != null) && (!epr.hasNoneAddress())) {
-				writeMessageWithCommons(msgContext, epr, format);
-			} else if (msgContext.getProperty(MessageContext.TRANSPORT_OUT) != null) {
-				sendUsingOutputStream(msgContext, format);
-			} else {
-				throw new AxisFault(
-						"Both the TO and MessageContext.TRANSPORT_OUT property are Null, No where to send");
-			}
+            if ((epr != null) && (!epr.hasNoneAddress())) {
+                writeMessageWithCommons(msgContext, epr, format);
+            } else if (msgContext.getProperty(MessageContext.TRANSPORT_OUT) != null) {
+                sendUsingOutputStream(msgContext, format);
+            } else {
+                throw new AxisFault(
+                        "Both the TO and MessageContext.TRANSPORT_OUT property are Null, No where to send");
+            }
 
-			if (msgContext.getOperationContext() != null) {
-				msgContext.getOperationContext().setProperty(
-						Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);
-			}
-		} catch (XMLStreamException e) {
-			log.debug(e);
-			throw new AxisFault(e);
-		} catch (FactoryConfigurationError e) {
-			log.debug(e);
-			throw new AxisFault(e);
-		} catch (IOException e) {
-			log.debug(e);
-			throw new AxisFault(e);
-		}
-		return InvocationResponse.CONTINUE;
-	}
+            if (msgContext.getOperationContext() != null) {
+                msgContext.getOperationContext().setProperty(
+                        Constants.RESPONSE_WRITTEN, Constants.VALUE_TRUE);
+            }
+        } catch (XMLStreamException e) {
+            log.debug(e);
+            throw new AxisFault(e);
+        } catch (FactoryConfigurationError e) {
+            log.debug(e);
+            throw new AxisFault(e);
+        } catch (IOException e) {
+            log.debug(e);
+            throw new AxisFault(e);
+        }
+        return InvocationResponse.CONTINUE;
+    }
 
-	private void sendUsingOutputStream(MessageContext msgContext,
-			OMOutputFormat format) throws AxisFault, XMLStreamException {
+    private void sendUsingOutputStream(MessageContext msgContext,
+            OMOutputFormat format) throws AxisFault, XMLStreamException {
         
         OutputStream out = (OutputStream) msgContext
-				.getProperty(MessageContext.TRANSPORT_OUT);
+                .getProperty(MessageContext.TRANSPORT_OUT);
 
-		// I Don't thinik we need this check.. Content type needs to be set in
-		// any case. (thilina)
-		// if (msgContext.isServerSide()) {
-		OutTransportInfo transportInfo = (OutTransportInfo) msgContext
-				.getProperty(Constants.OUT_TRANSPORT_INFO);
+        // I Don't thinik we need this check.. Content type needs to be set in
+        // any case. (thilina)
+        // if (msgContext.isServerSide()) {
+        OutTransportInfo transportInfo = (OutTransportInfo) msgContext
+                .getProperty(Constants.OUT_TRANSPORT_INFO);
 
-		ServletBasedOutTransportInfo servletBasedOutTransportInfo = null;
+        ServletBasedOutTransportInfo servletBasedOutTransportInfo = null;
         if (transportInfo != null && transportInfo instanceof ServletBasedOutTransportInfo) {
             servletBasedOutTransportInfo =
                     (ServletBasedOutTransportInfo) transportInfo;
@@ -282,71 +282,71 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
     }
 
     private void writeMessageWithCommons(MessageContext messageContext,
-			EndpointReference toEPR, OMOutputFormat format)
-			throws AxisFault {
-		try {
-			URL url = new URL(toEPR.getAddress());
+            EndpointReference toEPR, OMOutputFormat format)
+            throws AxisFault {
+        try {
+            URL url = new URL(toEPR.getAddress());
 
-			// select the Message Sender depending on the REST status
-			AbstractHTTPSender sender;
+            // select the Message Sender depending on the REST status
+            AbstractHTTPSender sender;
 
             sender = new HTTPSender();
 
-			if (messageContext.getProperty(HTTPConstants.CHUNKED) != null) {
-				chunked = JavaUtils.isTrueExplicitly(messageContext
-						.getProperty(HTTPConstants.CHUNKED));
-			}
+            if (messageContext.getProperty(HTTPConstants.CHUNKED) != null) {
+                chunked = JavaUtils.isTrueExplicitly(messageContext
+                        .getProperty(HTTPConstants.CHUNKED));
+            }
 
-			if (messageContext.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION) != null) {
-				httpVersion = (String) messageContext
-						.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION);
-			}
-			// Following order needed to be preserved because,
-			// HTTP/1.0 does not support chunk encoding
-			sender.setChunked(chunked);
-			sender.setHttpVersion(httpVersion);
-			sender.setFormat(format);
+            if (messageContext.getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION) != null) {
+                httpVersion = (String) messageContext
+                        .getProperty(HTTPConstants.HTTP_PROTOCOL_VERSION);
+            }
+            // Following order needed to be preserved because,
+            // HTTP/1.0 does not support chunk encoding
+            sender.setChunked(chunked);
+            sender.setHttpVersion(httpVersion);
+            sender.setFormat(format);
 
-			sender.send(messageContext, url, findSOAPAction(messageContext));
-		} catch (MalformedURLException e) {
-			log.debug(e);
-			throw new AxisFault(e);
-		} catch (HttpException e) {
-			log.debug(e);
-			throw new AxisFault(e);
-		} catch (IOException e) {
-			log.debug(e);
-			throw new AxisFault(e);
-		}
-	}
+            sender.send(messageContext, url, findSOAPAction(messageContext));
+        } catch (MalformedURLException e) {
+            log.debug(e);
+            throw new AxisFault(e);
+        } catch (HttpException e) {
+            log.debug(e);
+            throw new AxisFault(e);
+        } catch (IOException e) {
+            log.debug(e);
+            throw new AxisFault(e);
+        }
+    }
 
-	private static String findSOAPAction(MessageContext messageContext) {
-		String soapActionString = null;
+    private static String findSOAPAction(MessageContext messageContext) {
+        String soapActionString = null;
 
-		Object disableSoapAction = messageContext.getOptions().getProperty(
-				Constants.Configuration.DISABLE_SOAP_ACTION);
+        Object disableSoapAction = messageContext.getOptions().getProperty(
+                Constants.Configuration.DISABLE_SOAP_ACTION);
 
-		if (!JavaUtils.isTrueExplicitly(disableSoapAction)) {
-			// first try to get the SOAP action from message context
-			soapActionString = messageContext.getSoapAction();
-			if ((soapActionString == null) || (soapActionString.length() == 0)) {
-				// now let's try to get WSA action
-				soapActionString = messageContext.getWSAAction();
-				if (messageContext.getAxisOperation() != null
-						&& ((soapActionString == null) || (soapActionString
-								.length() == 0))) {
-					// last option is to get it from the axis operation
-					soapActionString = messageContext.getAxisOperation()
-							.getInputAction();
-				}
-			}
-		}
+        if (!JavaUtils.isTrueExplicitly(disableSoapAction)) {
+            // first try to get the SOAP action from message context
+            soapActionString = messageContext.getSoapAction();
+            if ((soapActionString == null) || (soapActionString.length() == 0)) {
+                // now let's try to get WSA action
+                soapActionString = messageContext.getWSAAction();
+                if (messageContext.getAxisOperation() != null
+                        && ((soapActionString == null) || (soapActionString
+                                .length() == 0))) {
+                    // last option is to get it from the axis operation
+                    soapActionString = messageContext.getAxisOperation()
+                            .getInputAction();
+                }
+            }
+        }
 
-		//Since action is optional for SOAP 1.2 we can return null here.
-		if (soapActionString == null && messageContext.isSOAP11()) {
-			soapActionString = "\"\"";
-		}
-		
-		return soapActionString;
-	}
+        //Since action is optional for SOAP 1.2 we can return null here.
+        if (soapActionString == null && messageContext.isSOAP11()) {
+            soapActionString = "\"\"";
+        }
+        
+        return soapActionString;
+    }
 }

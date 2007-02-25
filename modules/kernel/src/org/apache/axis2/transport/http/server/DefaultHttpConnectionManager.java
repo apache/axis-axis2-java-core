@@ -65,9 +65,9 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
     
     public DefaultHttpConnectionManager(
             final ConfigurationContext configurationContext,
-    		final Executor executor,
+            final Executor executor,
             final WorkerFactory workerfactory,
-    		final HttpParams params) {
+            final HttpParams params) {
         super();
         if (configurationContext == null) {
             throw new IllegalArgumentException("Configuration context may not be null");
@@ -188,5 +188,5 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         }
         this.processors.clear();
     }
-	
+    
 }

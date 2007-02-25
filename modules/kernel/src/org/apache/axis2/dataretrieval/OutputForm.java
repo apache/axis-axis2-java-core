@@ -17,24 +17,24 @@
 package org.apache.axis2.dataretrieval;
 
 public class OutputForm {
-	String type;
+    String type;
 
-	/**
+    /**
      *  Possible Output formats as stated in <xs:choice> of <MetadataSection>
      *  in the WS-MEX specification.
      */
-	
-	public final static OutputForm  INLINE_FORM = new OutputForm("INLINE_FORM");
-	public final static OutputForm  LOCATION_FORM = new OutputForm("LOCATION_FORM");
-	public final static OutputForm  REFERENCE_FORM = new OutputForm("REFERENCE_FORM");
-	
-	protected OutputForm (String intype) {
+    
+    public final static OutputForm  INLINE_FORM = new OutputForm("INLINE_FORM");
+    public final static OutputForm  LOCATION_FORM = new OutputForm("LOCATION_FORM");
+    public final static OutputForm  REFERENCE_FORM = new OutputForm("REFERENCE_FORM");
+    
+    protected OutputForm (String intype) {
         this.type= intype;
     }
-	
+    
     public String getType() {
         return type;
     }
 
-	
+    
 }

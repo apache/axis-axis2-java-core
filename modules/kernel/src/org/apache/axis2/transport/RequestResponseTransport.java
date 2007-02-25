@@ -30,7 +30,7 @@ import org.apache.axis2.context.MessageContext;
  */
 public interface RequestResponseTransport
 {
-	
+    
   /*This is the name of the property that is to be stored on the
     MessageContext*/
   public static final String TRANSPORT_CONTROL
@@ -78,27 +78,27 @@ public interface RequestResponseTransport
    * Used to give the current status of the RequestResponseTransport object.
    */
   public class RequestResponseTransportStatus {
-	  /**
-	   * Transport is in its initial stage.
-	   */
-	  public static RequestResponseTransportStatus INITIAL = new RequestResponseTransportStatus (1);
-	  
-	  /**
-	   * awaitResponse has been called.
-	   */
-	  public static RequestResponseTransportStatus WAITING = new RequestResponseTransportStatus (2);
-	  
-	  /**
-	   * 'signalResponseReady' has been called.
-	   */
-	  public static RequestResponseTransportStatus SIGNALLED = new RequestResponseTransportStatus (3);
-	  
-	  private int value;
-	  
-	  private RequestResponseTransportStatus (int value) {
-		  this.value = value;
-	  }
-	  
+      /**
+       * Transport is in its initial stage.
+       */
+      public static RequestResponseTransportStatus INITIAL = new RequestResponseTransportStatus (1);
+      
+      /**
+       * awaitResponse has been called.
+       */
+      public static RequestResponseTransportStatus WAITING = new RequestResponseTransportStatus (2);
+      
+      /**
+       * 'signalResponseReady' has been called.
+       */
+      public static RequestResponseTransportStatus SIGNALLED = new RequestResponseTransportStatus (3);
+      
+      private int value;
+      
+      private RequestResponseTransportStatus (int value) {
+          this.value = value;
+      }
+      
       public int hashCode()
       {
         return value;
@@ -111,9 +111,9 @@ public interface RequestResponseTransport
         final RequestResponseTransportStatus instance = (RequestResponseTransportStatus)obj;
         return (value==instance.value);
       }
-	  
+      
       public String toString() {
-    	  return Integer.toString(value);
+          return Integer.toString(value);
       }
       
   }

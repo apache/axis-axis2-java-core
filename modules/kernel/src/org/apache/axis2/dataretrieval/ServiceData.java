@@ -30,85 +30,85 @@ import org.apache.axiom.om.OMElement;
  */
 
 public class ServiceData {
-	OMElement data;
+    OMElement data;
 
-	String identifier;
+    String identifier;
 
-	String dialect;
+    String dialect;
 
-	String fileName;
+    String fileName;
 
-	/**
-	 * Constructor 
-	 * @param in_data an Data element in the ServiceData.
-	 * 
-	 */
+    /**
+     * Constructor 
+     * @param in_data an Data element in the ServiceData.
+     * 
+     */
 
-	protected ServiceData(OMElement in_data) {
-		data = in_data;
-		identifier = getAttributeValue(DRConstants.SERVICE_DATA.IDENTIFIER);
-		dialect = getAttributeValue(DRConstants.SERVICE_DATA.DIALECT);
-		fileName = getAttributeValue(DRConstants.SERVICE_DATA.FILE);
-	}
+    protected ServiceData(OMElement in_data) {
+        data = in_data;
+        identifier = getAttributeValue(DRConstants.SERVICE_DATA.IDENTIFIER);
+        dialect = getAttributeValue(DRConstants.SERVICE_DATA.DIALECT);
+        fileName = getAttributeValue(DRConstants.SERVICE_DATA.FILE);
+    }
 
-	protected String getAttributeValue(String qName) {
+    protected String getAttributeValue(String qName) {
 
-		String value = null;
-		OMAttribute attribute = data.getAttribute(new QName(qName));
-		if (attribute != null)
-			value = attribute.getAttributeValue();
+        String value = null;
+        OMAttribute attribute = data.getAttribute(new QName(qName));
+        if (attribute != null)
+            value = attribute.getAttributeValue();
 
-		return value;
+        return value;
 
-	}
+    }
 
-	// return identifier for this Data element
-	protected String getIdentifier() {
-		return identifier;
-	}
+    // return identifier for this Data element
+    protected String getIdentifier() {
+        return identifier;
+    }
 
-	// return dialect for this Data element
-	protected String getDialect() {
-		return dialect;
-	}
+    // return dialect for this Data element
+    protected String getDialect() {
+        return dialect;
+    }
 
-	// return the Data ELement
-	protected OMElement getOMData() {
-		return data;
-	}
+    // return the Data ELement
+    protected OMElement getOMData() {
+        return data;
+    }
 
-	
-	
-	// Get URL from data Element
-	protected String getURL() {
+    
+    
+    // Get URL from data Element
+    protected String getURL() {
 
-		String urlValue = null;
-		OMElement url = data.getFirstChildWithName(new QName(
-				DRConstants.SERVICE_DATA.URL));
-		if (url != null)
-			urlValue = url.getText();
+        String urlValue = null;
+        OMElement url = data.getFirstChildWithName(new QName(
+                DRConstants.SERVICE_DATA.URL));
+        if (url != null)
+            urlValue = url.getText();
 
-		return urlValue;
-	}
-	
-	// Get ENDPOINT_REFERENCE from Data Element
-	protected OMElement getEndpointReference() {
-		OMElement epr = data.getFirstChildWithName(new QName(
-				DRConstants.SERVICE_DATA.ENDPOINT_REFERENCE));
-		return epr;
-	}
-	
-	// Load the file content of the file specified in the file attribute
-	// in the data element.
-	protected OMElement getFileContent(ClassLoader classloader)
-			throws DataRetrievalException {
+        return urlValue;
+    }
+    
+    // Get ENDPOINT_REFERENCE from Data Element
+    protected OMElement getEndpointReference() {
+        OMElement epr = data.getFirstChildWithName(new QName(
+                DRConstants.SERVICE_DATA.ENDPOINT_REFERENCE));
+        return epr;
+    }
+    
+    // Load the file content of the file specified in the file attribute
+    // in the data element.
+    protected OMElement getFileContent(ClassLoader classloader)
+            throws DataRetrievalException {
 
-		OMElement metaElement = null;
-		if (fileName != null) {
-			DataRetrievalUtil util = DataRetrievalUtil.getInstance();
+        OMElement metaElement = null;
+        if (fileName != null) {
+            DataRetrievalUtil util = DataRetrievalUtil.getInstance();
 
-			metaElement = util.buildOM(classloader, fileName);
-		}
-		return metaElement;
-	}
+            metaElement = util.buildOM(classloader, fileName);
+        }
+        return metaElement;
+    }
 }

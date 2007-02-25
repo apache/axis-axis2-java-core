@@ -69,17 +69,17 @@ public class SOAPUtil {
 
             Object contextWritten = null;
             if (msgContext.getOperationContext()!=null)
-            	contextWritten = msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
+                contextWritten = msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
 
             response.setContentType("text/xml; charset="
                                     + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
             if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
-            	Integer statusCode = (Integer) msgContext.getProperty(Constants.RESPONSE_CODE);
-            	if (statusCode!=null) 
-            		response.setStatus(statusCode.intValue());
-            	else
-            		response.setStatus(HttpServletResponse.SC_ACCEPTED);
+                Integer statusCode = (Integer) msgContext.getProperty(Constants.RESPONSE_CODE);
+                if (statusCode!=null) 
+                    response.setStatus(statusCode.intValue());
+                else
+                    response.setStatus(HttpServletResponse.SC_ACCEPTED);
             }
 
             boolean closeReader = true;

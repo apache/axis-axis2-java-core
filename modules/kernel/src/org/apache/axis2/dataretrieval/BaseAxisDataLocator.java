@@ -29,122 +29,122 @@ import org.apache.commons.logging.LogFactory;
  */
 
 public abstract class BaseAxisDataLocator  {
-	private static final Log log = LogFactory.getLog(BaseAxisDataLocator.class);
+    private static final Log log = LogFactory.getLog(BaseAxisDataLocator.class);
 
-	protected ServiceData[] dataList = null;
+    protected ServiceData[] dataList = null;
     private OutputForm outputform= OutputForm.INLINE_FORM;
     
-	/**
-	 * The default Axis2 Data locator getData API
-	 *   Checks data information configured in ServiceData.xml for the supported
-	 *   output forms: inline, url, EndpointReference.
-	 * 
-	 * Note: Subclass that has its implementation of outInlineForm, outputLocationForm,
-	 *       and outputReferenceForm logic must implement the getData API.
-	 */
+    /**
+     * The default Axis2 Data locator getData API
+     *   Checks data information configured in ServiceData.xml for the supported
+     *   output forms: inline, url, EndpointReference.
+     * 
+     * Note: Subclass that has its implementation of outInlineForm, outputLocationForm,
+     *       and outputReferenceForm logic must implement the getData API.
+     */
     
-	public Data[] getData(DataRetrievalRequest request,
-			MessageContext msgContext) throws DataRetrievalException {
-		log.trace("Default Base DataLocator getData starts");
+    public Data[] getData(DataRetrievalRequest request,
+            MessageContext msgContext) throws DataRetrievalException {
+        log.trace("Default Base DataLocator getData starts");
 
-		OutputForm outputform = (OutputForm) request.getOutputForm();
+        OutputForm outputform = (OutputForm) request.getOutputForm();
 
-		if (outputform == null) { // not defined, defualt to inline
-			outputform = OutputForm.INLINE_FORM;
-		}
+        if (outputform == null) { // not defined, defualt to inline
+            outputform = OutputForm.INLINE_FORM;
+        }
 
-		Data[] output = null;
-				
-		String outputFormString = outputform.getType();
+        Data[] output = null;
+                
+        String outputFormString = outputform.getType();
      
-		if (outputform == OutputForm.INLINE_FORM) {
-	    	output = outputInlineForm(msgContext, dataList);
-		}
-		else if (outputform == OutputForm.LOCATION_FORM) {
-	    	output = outputLocationForm(dataList);
-			
-		}
-		else if (outputform == OutputForm.REFERENCE_FORM) {
-			output = outputReferenceForm(msgContext, dataList);
-					
-		}
-		else {
-			output = outputInlineForm(msgContext, dataList);
-			
-		}
-	
-		if (output == null)
-				log.info("Null data return! Data Locator does not know how to handle request for dialect= " + (String) request.getDialect()
-					+ " in the form of " + outputFormString);
-		
+        if (outputform == OutputForm.INLINE_FORM) {
+            output = outputInlineForm(msgContext, dataList);
+        }
+        else if (outputform == OutputForm.LOCATION_FORM) {
+            output = outputLocationForm(dataList);
+            
+        }
+        else if (outputform == OutputForm.REFERENCE_FORM) {
+            output = outputReferenceForm(msgContext, dataList);
+                    
+        }
+        else {
+            output = outputInlineForm(msgContext, dataList);
+            
+        }
+    
+        if (output == null)
+                log.info("Null data return! Data Locator does not know how to handle request for dialect= " + (String) request.getDialect()
+                    + " in the form of " + outputFormString);
+        
 
-		log.trace("Default Base DataLocator getData ends");
+        log.trace("Default Base DataLocator getData ends");
 
-		return output;
-	}
+        return output;
+    }
 
-	/*
-	 * WSDL or a policy document
-	 */
-	protected Data[] outputInlineForm(MessageContext msgContext,
-			ServiceData[] serviceData) throws DataRetrievalException {
-		OMElement metaElement = null;
-		ArrayList result = new ArrayList();
-		if (serviceData != null) {
-			int size = serviceData.length;
-			for (int i = 0; i < size; i++) {
-				metaElement = serviceData[i].getFileContent(msgContext
-						.getAxisService().getClassLoader());
-				if (metaElement != null)
-					result.add(new Data(metaElement, serviceData[i].getIdentifier()));
+    /*
+     * WSDL or a policy document
+     */
+    protected Data[] outputInlineForm(MessageContext msgContext,
+            ServiceData[] serviceData) throws DataRetrievalException {
+        OMElement metaElement = null;
+        ArrayList result = new ArrayList();
+        if (serviceData != null) {
+            int size = serviceData.length;
+            for (int i = 0; i < size; i++) {
+                metaElement = serviceData[i].getFileContent(msgContext
+                        .getAxisService().getClassLoader());
+                if (metaElement != null)
+                    result.add(new Data(metaElement, serviceData[i].getIdentifier()));
 
-			}
+            }
 
-	
-		}
-		return (Data[]) result.toArray(new Data[0]);
+    
+        }
+        return (Data[]) result.toArray(new Data[0]);
 
-	}
+    }
 
-			                				
-	protected Data[] outputLocationForm(ServiceData[] serviceData)
-			throws DataRetrievalException {
+                                            
+    protected Data[] outputLocationForm(ServiceData[] serviceData)
+            throws DataRetrievalException {
 
-		ArrayList result = new ArrayList();
-		if (serviceData != null) {
-			for (int i = 0; i < serviceData.length; i++) {
+        ArrayList result = new ArrayList();
+        if (serviceData != null) {
+            for (int i = 0; i < serviceData.length; i++) {
 
-				String urlValue = serviceData[i].getURL();
-		        if (urlValue != null)
-				    result.add(new Data(urlValue, serviceData[i].getIdentifier()));
-			}
-		}
-		return (Data[]) result.toArray(new Data[0]);
-	}
+                String urlValue = serviceData[i].getURL();
+                if (urlValue != null)
+                    result.add(new Data(urlValue, serviceData[i].getIdentifier()));
+            }
+        }
+        return (Data[]) result.toArray(new Data[0]);
+    }
 
-	protected Data[] outputReferenceForm(MessageContext msgContext,
-			ServiceData[] serviceData) throws DataRetrievalException {
-		OMElement epr = null;
-		ArrayList result = new ArrayList();
-		if (serviceData != null) {
-			for (int i = 0; i < serviceData.length; i++) {
+    protected Data[] outputReferenceForm(MessageContext msgContext,
+            ServiceData[] serviceData) throws DataRetrievalException {
+        OMElement epr = null;
+        ArrayList result = new ArrayList();
+        if (serviceData != null) {
+            for (int i = 0; i < serviceData.length; i++) {
 
-				epr = serviceData[i].getEndpointReference();
+                epr = serviceData[i].getEndpointReference();
                 if (epr != null)
-				    result.add(new Data((epr), serviceData[i].getIdentifier()));
-			}
-		}
-		return (Data[]) result.toArray(new Data[0]);
-	}
-	
+                    result.add(new Data((epr), serviceData[i].getIdentifier()));
+            }
+        }
+        return (Data[]) result.toArray(new Data[0]);
+    }
+    
 
-	protected void setServiceData(ServiceData[] inServiceData) {
-		this.dataList = inServiceData;
-	}
+    protected void setServiceData(ServiceData[] inServiceData) {
+        this.dataList = inServiceData;
+    }
 
-			
-	protected OutputForm getOutputForm(){
-		return outputform;
-	}
+            
+    protected OutputForm getOutputForm(){
+        return outputform;
+    }
 
 }

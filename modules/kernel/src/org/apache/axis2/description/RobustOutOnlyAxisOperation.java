@@ -85,7 +85,7 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
             responseMessageContext.setTransportIn(msgctx.getTransportIn());
             responseMessageContext.setTransportOut(msgctx.getTransportOut());
             responseMessageContext.setProperty(MessageContext.TRANSPORT_HEADERS,
-    				msgctx.getProperty(MessageContext.TRANSPORT_HEADERS));
+                    msgctx.getProperty(MessageContext.TRANSPORT_HEADERS));
 
             SOAPEnvelope envelope = responseMessageContext.getEnvelope();
             if (envelope == null) {

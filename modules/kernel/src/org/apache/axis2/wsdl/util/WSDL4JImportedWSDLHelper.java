@@ -14,29 +14,28 @@
 
 package org.apache.axis2.wsdl.util;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Import;
 import javax.wsdl.Types;
 import javax.wsdl.extensions.ExtensibilityElement;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * This class provides support for processing a WSDL4J defintion which includes imports.
  * It allows the imports to be processed into a single WSDL4J Definition object
  */
 public class WSDL4JImportedWSDLHelper {
-	
-	protected static final Log log = LogFactory.getLog(WSDL4JImportedWSDLHelper.class);
-	private static final boolean isTraceEnabled = log.isTraceEnabled();
-	
-	/**
+
+    protected static final Log log = LogFactory.getLog(WSDL4JImportedWSDLHelper.class);
+    private static final boolean isTraceEnabled = log.isTraceEnabled();
+
+    /**
      * The intention of this procedure is to process the imports. When
      * processing the imports the imported documents will be populating the
      * items in the main document recursivley
@@ -44,9 +43,9 @@ public class WSDL4JImportedWSDLHelper {
      * @param wsdl4JDefinition
      */
     public static void processImports(Definition wsdl4JDefinition) {
-    	if(isTraceEnabled){
-    		log.trace("processImports: wsdl4JDefinition="+wsdl4JDefinition);
-    	}
+        if (isTraceEnabled) {
+            log.trace("processImports: wsdl4JDefinition=" + wsdl4JDefinition);
+        }
         Map imported_defs = new HashMap();
         getImportedDefinitions(wsdl4JDefinition, imported_defs);
 
@@ -103,7 +102,7 @@ public class WSDL4JImportedWSDLHelper {
                     .addAll(imported_def.getExtensibilityElements());
         }
     }
-    
+
     private static void getImportedDefinitions(Definition definition, Map importedDefs) {
         Map wsdlImports = definition.getImports();
 
@@ -116,9 +115,9 @@ public class WSDL4JImportedWSDLHelper {
             Iterator iter2 = imports.iterator();
             while (iter2.hasNext()) {
                 wsdl_import = (Import) iter2.next();
-                if(isTraceEnabled){
-            		log.trace("getImportedDefinitions: import uri="+wsdl_import.getLocationURI());
-            	}
+                if (isTraceEnabled) {
+                    log.trace("getImportedDefinitions: import uri=" + wsdl_import.getLocationURI());
+                }
                 imported_def = wsdl_import.getDefinition();
 
                 import_def_key = imported_def.getDocumentBaseURI();

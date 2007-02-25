@@ -28,75 +28,75 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class DataRetrievalUtil {
-	private static final Log log = LogFactory.getLog(DataRetrievalUtil.class);
+    private static final Log log = LogFactory.getLog(DataRetrievalUtil.class);
 
-	private static DataRetrievalUtil instance = null;
+    private static DataRetrievalUtil instance = null;
 
-	public static DataRetrievalUtil getInstance() {
-		if (instance == null) {
-			instance = new DataRetrievalUtil();
-		}
-		return instance;
-	}
+    public static DataRetrievalUtil getInstance() {
+        if (instance == null) {
+            instance = new DataRetrievalUtil();
+        }
+        return instance;
+    }
 
-	/**
-	 * Loading xml file content and convert to OMElement.
-	 * @param file - file path relative to the Service Repository
-	 * @return OMElement format of the xml file content 
-	 * @throws DataRetrievalException 
-	 * 
-	 */
-	
-	public OMElement buildOM(ClassLoader classLoader, String file)
-			throws DataRetrievalException {
-		OMElement element = null;
-		InputStream servicexmlStream = null;
-		try {
-			servicexmlStream = getInputStream(classLoader, file);
+    /**
+     * Loading xml file content and convert to OMElement.
+     * @param file - file path relative to the Service Repository
+     * @return OMElement format of the xml file content 
+     * @throws DataRetrievalException 
+     * 
+     */
+    
+    public OMElement buildOM(ClassLoader classLoader, String file)
+            throws DataRetrievalException {
+        OMElement element = null;
+        InputStream servicexmlStream = null;
+        try {
+            servicexmlStream = getInputStream(classLoader, file);
 
-			element = convertToOMElement(servicexmlStream);
-		} catch (XMLStreamException e) {
-			throw new DataRetrievalException(e);
-		}
+            element = convertToOMElement(servicexmlStream);
+        } catch (XMLStreamException e) {
+            throw new DataRetrievalException(e);
+        }
 
-		return element;
-	}
+        return element;
+    }
 
-	/**
-	 * Convert servicexmlStream to OMElement
-	 * @param servicexmlStream InputStream contain xml content
-	 * @return OMElement format of the xml content 
-	 * @throws XMLStreamException
-	 */
+    /**
+     * Convert servicexmlStream to OMElement
+     * @param servicexmlStream InputStream contain xml content
+     * @return OMElement format of the xml content 
+     * @throws XMLStreamException
+     */
 
-	public static OMElement convertToOMElement(InputStream servicexmlStream)
-			throws XMLStreamException {
-		OMElement element = null;
+    public static OMElement convertToOMElement(InputStream servicexmlStream)
+            throws XMLStreamException {
+        OMElement element = null;
 
-		XMLStreamReader xmlReader = StAXUtils
-				.createXMLStreamReader(servicexmlStream);
-		OMFactory fac = OMAbstractFactory.getOMFactory();
-		StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
-		element = staxOMBuilder.getDocumentElement();
-		element.build();
-		return element;
-	}
+        XMLStreamReader xmlReader = StAXUtils
+                .createXMLStreamReader(servicexmlStream);
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+        StAXOMBuilder staxOMBuilder = new StAXOMBuilder(fac, xmlReader);
+        element = staxOMBuilder.getDocumentElement();
+        element.build();
+        return element;
+    }
 
-	private static InputStream getInputStream(ClassLoader classLoader,
-			String file) throws XMLStreamException {
+    private static InputStream getInputStream(ClassLoader classLoader,
+            String file) throws XMLStreamException {
 
-		InputStream servicexmlStream = classLoader.getResourceAsStream(file);
+        InputStream servicexmlStream = classLoader.getResourceAsStream(file);
 
-		if (servicexmlStream == null) {
-			String message = "File does not exist in the Service Repository! File="
-					+ file;
+        if (servicexmlStream == null) {
+            String message = "File does not exist in the Service Repository! File="
+                    + file;
             if(log.isDebugEnabled()) {
                 log.debug(message);
             }
-			throw new XMLStreamException(message);
-		}
-		return servicexmlStream;
+            throw new XMLStreamException(message);
+        }
+        return servicexmlStream;
 
-	}
+    }
 
 }

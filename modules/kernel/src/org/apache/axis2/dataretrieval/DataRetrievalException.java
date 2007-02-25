@@ -24,16 +24,16 @@ import org.apache.axis2.AxisFault;
  */
 
 public class DataRetrievalException extends AxisFault {
-	 private static final long serialVersionUID = -374933082062124908L;
-	 public DataRetrievalException(String message) {
-			super(message);
-		}
+     private static final long serialVersionUID = -374933082062124908L;
+     public DataRetrievalException(String message) {
+            super(message);
+        }
 
-		public DataRetrievalException(Throwable e) {
-			super(e);
-		}
+        public DataRetrievalException(Throwable e) {
+            super(e);
+        }
 
-		public DataRetrievalException(String message, Throwable e) {
-			super(message, e);
-		}
+        public DataRetrievalException(String message, Throwable e) {
+            super(message, e);
+        }
 }

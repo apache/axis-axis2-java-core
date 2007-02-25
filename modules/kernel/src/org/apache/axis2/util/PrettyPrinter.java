@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
  * commons rather than a specific module
  */
 public class PrettyPrinter {
-	private static final Log log = LogFactory.getLog(PrettyPrinter.class);
+    private static final Log log = LogFactory.getLog(PrettyPrinter.class);
 
 
     /**

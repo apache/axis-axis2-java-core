@@ -24,16 +24,16 @@ package org.apache.axis2.dataretrieval;
  *
  */
 public class PolicyDataLocator  extends BaseAxisDataLocator implements AxisDataLocator {
-		
-	protected PolicyDataLocator() {
+        
+    protected PolicyDataLocator() {
 
-	}
+    }
 
-	/**
-	 * Constructor
-	 */
-	protected PolicyDataLocator(ServiceData[] data) {
-		dataList = data;
-	}
+    /**
+     * Constructor
+     */
+    protected PolicyDataLocator(ServiceData[] data) {
+        dataList = data;
+    }
 
 }

@@ -56,26 +56,26 @@ public class CallbackReceiver implements MessageReceiver {
         }
         String messageID = relatesTO.getValue();
         Callback callback = (Callback) callbackStore.get(messageID);
-		AsyncResult result = new AsyncResult(messageCtx);
+        AsyncResult result = new AsyncResult(messageCtx);
 
-		if (callback != null) {
-			try {
-				// check weather the result is a fault.
-				SOAPEnvelope envelope = result.getResponseEnvelope();
-				SOAPFault fault = envelope.getBody().getFault();
+        if (callback != null) {
+            try {
+                // check weather the result is a fault.
+                SOAPEnvelope envelope = result.getResponseEnvelope();
+                SOAPFault fault = envelope.getBody().getFault();
 
-				if (fault == null) {
-					// if there is not fault call the onComplete method
-					callback.onComplete(result);
-				} else {
-					// else call the on error method with the fault
-					AxisFault axisFault = Utils.getInboundFaultFromMessageContext(messageCtx);
-					callback.onError(axisFault);
-				}
-			} finally {
-				callback.setComplete(true);
-			}
-		} else {
+                if (fault == null) {
+                    // if there is not fault call the onComplete method
+                    callback.onComplete(result);
+                } else {
+                    // else call the on error method with the fault
+                    AxisFault axisFault = Utils.getInboundFaultFromMessageContext(messageCtx);
+                    callback.onError(axisFault);
+                }
+            } finally {
+                callback.setComplete(true);
+            }
+        } else {
             throw new AxisFault("The Callback realtes to MessageID " + messageID + " is not found");
         }
     }

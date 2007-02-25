@@ -96,7 +96,7 @@ public class OutInAxisOperation extends TwoChannelAxisOperation {
 class OutInAxisOperationClient extends OperationClient {
 
     private static Log log = LogFactory.getLog(OutInAxisOperationClient.class);
-	
+    
     OutInAxisOperationClient(OutInAxisOperation axisOp, ServiceContext sc,
                              Options options) {
         super(axisOp, sc, options);
@@ -151,7 +151,7 @@ class OutInAxisOperationClient extends OperationClient {
      * @throws AxisFault if something goes wrong during the execution of the MEP.
      */
     public void execute(boolean block) throws AxisFault {
-    	if(log.isDebugEnabled()) log.debug("Entry: OutInAxisOperationClient::execute, " + block);
+        if(log.isDebugEnabled()) log.debug("Entry: OutInAxisOperationClient::execute, " + block);
         if (completed) {
             throw new AxisFault(Messages.getMessage("mepiscomplted"));
         }
@@ -179,34 +179,34 @@ class OutInAxisOperationClient extends OperationClient {
          */
         boolean useAsync = false;
         if(!options.isUseSeparateListener()) {
-        	Boolean useAsyncOption = (Boolean) mc.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
-        	if(useAsyncOption != null) useAsync = useAsyncOption.booleanValue();
+            Boolean useAsyncOption = (Boolean) mc.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
+            if(useAsyncOption != null) useAsync = useAsyncOption.booleanValue();
         }
         
         if (useAsync || options.isUseSeparateListener()) {
-        	if(log.isDebugEnabled())
-        		log.debug("useAsync=" + useAsync + ", seperateListener=" + options.isUseSeparateListener());
-        	/**
-        	 * We are following the async path. If the user hasn't set a callback object then we must
-        	 * block until the whole MEP is complete, as they have no other way to get their reply message.
-        	 */
-        	CallbackReceiver callbackReceiver = null;
-        	if(axisOp.getMessageReceiver() != null && axisOp.getMessageReceiver() instanceof CallbackReceiver) {
-        		callbackReceiver = (CallbackReceiver) axisOp.getMessageReceiver();
-        	} else {
-            	if(log.isDebugEnabled()) log.debug("Creating new callback receiver");
-        		callbackReceiver = new CallbackReceiver();
-        		axisOp.setMessageReceiver(callbackReceiver);
-        	}
-        	
-        	SyncCallBack internalCallback = null;
-        	if(callback != null) {
+            if(log.isDebugEnabled())
+                log.debug("useAsync=" + useAsync + ", seperateListener=" + options.isUseSeparateListener());
+            /**
+             * We are following the async path. If the user hasn't set a callback object then we must
+             * block until the whole MEP is complete, as they have no other way to get their reply message.
+             */
+            CallbackReceiver callbackReceiver = null;
+            if(axisOp.getMessageReceiver() != null && axisOp.getMessageReceiver() instanceof CallbackReceiver) {
+                callbackReceiver = (CallbackReceiver) axisOp.getMessageReceiver();
+            } else {
+                if(log.isDebugEnabled()) log.debug("Creating new callback receiver");
+                callbackReceiver = new CallbackReceiver();
+                axisOp.setMessageReceiver(callbackReceiver);
+            }
+            
+            SyncCallBack internalCallback = null;
+            if(callback != null) {
                 callbackReceiver.addCallback(mc.getMessageID(), callback);
-        	} else {
-            	if(log.isDebugEnabled()) log.debug("Creating internal callback");
-        		internalCallback = new SyncCallBack();
-        		callbackReceiver.addCallback(mc.getMessageID(), internalCallback);
-        	}
+            } else {
+                if(log.isDebugEnabled()) log.debug("Creating internal callback");
+                internalCallback = new SyncCallBack();
+                callbackReceiver.addCallback(mc.getMessageID(), internalCallback);
+            }
             
             /**
              * If USE_CUSTOM_LISTENER is set to 'true' the replyTo value will not be replaced and Axis2 will not
@@ -236,36 +236,36 @@ class OutInAxisOperationClient extends OperationClient {
             engine.send(mc);
             
             if(internalCallback != null) {
-	            long timeout = options.getTimeOutInMilliSeconds();
-	            long waitTime = timeout;
-	            long startTime = System.currentTimeMillis();
-	
-	            synchronized (internalCallback) {
-	                while (! internalCallback.isComplete() && waitTime >= 0) {
-	                    try {
-	                    	internalCallback.wait(timeout);
-	                    } catch (InterruptedException e) {
-	                        // We were interrupted for some reason, keep waiting
-	                        // or throw new AxisFault( "Callback was interrupted by someone?" );
-	                    }
-	                    // The wait finished, compute remaining time
-	                    // - wait can end prematurely, see Object.wait( int timeout )
-	                    waitTime = timeout - (System.currentTimeMillis() - startTime);
-	                }
-	            }
-				// process the result of the invocation
-				if (internalCallback.envelope != null) {
-					// The call ended normally, so there is nothing to do
-				} else {
-					if (internalCallback.error instanceof AxisFault) {
-						throw (AxisFault) internalCallback.error;
-					} else if (internalCallback.error != null) {
-						throw new AxisFault(internalCallback.error);
-					} else if (! internalCallback.isComplete()) {
-						throw new AxisFault(Messages.getMessage("responseTimeOut"));
-					} else
-						throw new AxisFault(Messages.getMessage("callBackCompletedWithError"));
-				}
+                long timeout = options.getTimeOutInMilliSeconds();
+                long waitTime = timeout;
+                long startTime = System.currentTimeMillis();
+    
+                synchronized (internalCallback) {
+                    while (! internalCallback.isComplete() && waitTime >= 0) {
+                        try {
+                            internalCallback.wait(timeout);
+                        } catch (InterruptedException e) {
+                            // We were interrupted for some reason, keep waiting
+                            // or throw new AxisFault( "Callback was interrupted by someone?" );
+                        }
+                        // The wait finished, compute remaining time
+                        // - wait can end prematurely, see Object.wait( int timeout )
+                        waitTime = timeout - (System.currentTimeMillis() - startTime);
+                    }
+                }
+                // process the result of the invocation
+                if (internalCallback.envelope != null) {
+                    // The call ended normally, so there is nothing to do
+                } else {
+                    if (internalCallback.error instanceof AxisFault) {
+                        throw (AxisFault) internalCallback.error;
+                    } else if (internalCallback.error != null) {
+                        throw new AxisFault(internalCallback.error);
+                    } else if (! internalCallback.isComplete()) {
+                        throw new AxisFault(Messages.getMessage("responseTimeOut"));
+                    } else
+                        throw new AxisFault(Messages.getMessage("callBackCompletedWithError"));
+                }
             }
         } else {
             if (block) {
@@ -398,10 +398,10 @@ class OutInAxisOperationClient extends OperationClient {
                 }
 
             } catch (Exception e) {
-				callback.onError(e);
-			} finally {
-				callback.setComplete(true);
-			}
+                callback.onError(e);
+            } finally {
+                callback.setComplete(true);
+            }
         }
     }
     
@@ -410,34 +410,34 @@ class OutInAxisOperationClient extends OperationClient {
      */
     private class SyncCallBack extends Callback {
 
-		private SOAPEnvelope envelope;
+        private SOAPEnvelope envelope;
 
-		private Exception error;
+        private Exception error;
 
-		public void onComplete(AsyncResult result) {
-        	if(log.isDebugEnabled()) log.debug("Entry: OutInAxisOperationClient$SyncCallBack::onComplete");
+        public void onComplete(AsyncResult result) {
+            if(log.isDebugEnabled()) log.debug("Entry: OutInAxisOperationClient$SyncCallBack::onComplete");
             // Transport input stream gets closed after calling setComplete
             // method. Have to build the whole envelope including the
             // attachments at this stage. Data might get lost if the input
             // stream gets closed before building the whole envelope.
             this.envelope = result.getResponseEnvelope();
             this.envelope.buildWithAttachments();
-        	if(log.isDebugEnabled()) log.debug("Exit: OutInAxisOperationClient$SyncCallBack::onComplete");
+            if(log.isDebugEnabled()) log.debug("Exit: OutInAxisOperationClient$SyncCallBack::onComplete");
         }
 
         public void setComplete(boolean complete) {
-        	if(log.isDebugEnabled()) log.debug("Entry: OutInAxisOperationClient$SyncCallBack::setComplete, " + complete);
+            if(log.isDebugEnabled()) log.debug("Entry: OutInAxisOperationClient$SyncCallBack::setComplete, " + complete);
             super.setComplete(complete);
             synchronized (this) {
                 notify();
             }
-        	if(log.isDebugEnabled()) log.debug("Exit: OutInAxisOperationClient$SyncCallBack::setComplete, " + complete);
+            if(log.isDebugEnabled()) log.debug("Exit: OutInAxisOperationClient$SyncCallBack::setComplete, " + complete);
         }
 
         public void onError(Exception e) {
-        	if(log.isDebugEnabled()) log.debug("Entry: OutInAxisOperationClient$SyncCallBack::onError, " + e);
+            if(log.isDebugEnabled()) log.debug("Entry: OutInAxisOperationClient$SyncCallBack::onError, " + e);
             error = e;
-        	if(log.isDebugEnabled()) log.debug("Exit: OutInAxisOperationClient$SyncCallBack::onError");
+            if(log.isDebugEnabled()) log.debug("Exit: OutInAxisOperationClient$SyncCallBack::onError");
         }
     }
 

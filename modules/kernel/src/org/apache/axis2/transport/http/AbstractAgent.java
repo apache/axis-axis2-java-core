@@ -42,7 +42,7 @@ public class AbstractAgent {
   protected static final String DEFAULT_INDEX_JSP = "index.jsp";
 
   private static final String METHOD_PREFIX = "process";
-	private static final Log log = LogFactory.getLog(AbstractAgent.class);
+    private static final Log log = LogFactory.getLog(AbstractAgent.class);
 
   protected transient Map operationCache = new HashMap();
   protected transient ConfigurationContext configContext;

@@ -36,7 +36,7 @@ public class DefaultThreadFactory implements ThreadFactory {
     final ThreadGroup group;
     final AtomicInteger count;
     final String namePrefix;
-	
+    
     public DefaultThreadFactory(final ThreadGroup group, final String namePrefix) {
         super();
         this.count = new AtomicInteger(1);
@@ -45,10 +45,10 @@ public class DefaultThreadFactory implements ThreadFactory {
     }
 
     public Thread newThread(final Runnable runnable) {
-    	StringBuffer buffer = new StringBuffer();
-    	buffer.append(this.namePrefix);
-    	buffer.append('-');
-    	buffer.append(this.count.getAndIncrement());
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(this.namePrefix);
+        buffer.append('-');
+        buffer.append(this.count.getAndIncrement());
         Thread t = new Thread(group, runnable, buffer.toString(), 0);
         t.setDaemon(false);
         t.setPriority(Thread.NORM_PRIORITY);

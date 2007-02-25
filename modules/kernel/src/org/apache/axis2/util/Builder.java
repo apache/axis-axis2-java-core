@@ -43,13 +43,13 @@ public class Builder {
     }
 
     /**
-	 * Use the BOM Mark to identify the encoding to be used. Fall back to
-	 * default encoding specified
-	 *
-	 * @param is
-	 * @param charSetEncoding
-	 * @throws java.io.IOException
-	 */
+     * Use the BOM Mark to identify the encoding to be used. Fall back to
+     * default encoding specified
+     *
+     * @param is
+     * @param charSetEncoding
+     * @throws java.io.IOException
+     */
     public static Reader getReader(InputStream is, String charSetEncoding) throws IOException {
         PushbackInputStream is2 = new PushbackInputStream(is, BOM_SIZE);
         String encoding;
@@ -147,75 +147,75 @@ public class Builder {
     }
 
     public static StAXBuilder getAttachmentsBuilder(MessageContext msgContext,
-			InputStream inStream, String contentTypeString, boolean isSOAP)
-			throws OMException, XMLStreamException, FactoryConfigurationError {
-		StAXBuilder builder = null;
-		XMLStreamReader streamReader;
+            InputStream inStream, String contentTypeString, boolean isSOAP)
+            throws OMException, XMLStreamException, FactoryConfigurationError {
+        StAXBuilder builder = null;
+        XMLStreamReader streamReader;
 
         Attachments attachments = createAttachmentsMap(msgContext, inStream, contentTypeString);
-		String charSetEncoding = getCharSetEncoding(attachments.getSOAPPartContentType());
+        String charSetEncoding = getCharSetEncoding(attachments.getSOAPPartContentType());
 
-		if ((charSetEncoding == null)
-				|| "null".equalsIgnoreCase(charSetEncoding)) {
-			charSetEncoding = MessageContext.UTF_8;
-		}
-		msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-				charSetEncoding);
+        if ((charSetEncoding == null)
+                || "null".equalsIgnoreCase(charSetEncoding)) {
+            charSetEncoding = MessageContext.UTF_8;
+        }
+        msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+                charSetEncoding);
 
-		try {
-			streamReader = StAXUtils.createXMLStreamReader(getReader(
-					attachments.getSOAPPartInputStream(), charSetEncoding));
-		} catch (IOException e) {
-			throw new XMLStreamException(e);
-		}
+        try {
+            streamReader = StAXUtils.createXMLStreamReader(getReader(
+                    attachments.getSOAPPartInputStream(), charSetEncoding));
+        } catch (IOException e) {
+            throw new XMLStreamException(e);
+        }
 
-		
-		//  Put a reference to Attachments Map in to the message context For
-		// backword compatibility with Axis2 1.0 
-		msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
+        
+        //  Put a reference to Attachments Map in to the message context For
+        // backword compatibility with Axis2 1.0 
+        msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
 
-		// Setting the Attachments map to new SwA API
-		msgContext.setAttachmentMap(attachments);
+        // Setting the Attachments map to new SwA API
+        msgContext.setAttachmentMap(attachments);
 
-		String soapEnvelopeNamespaceURI = getEnvelopeNamespace(contentTypeString);
+        String soapEnvelopeNamespaceURI = getEnvelopeNamespace(contentTypeString);
 
-		if (isSOAP) {
-			if (attachments.getAttachmentSpecType().equals(
-					MTOMConstants.MTOM_TYPE)) {
-				//Creates the MTOM specific MTOMStAXSOAPModelBuilder
-				builder = new MTOMStAXSOAPModelBuilder(streamReader,
-						attachments, soapEnvelopeNamespaceURI);
-				msgContext.setDoingMTOM(true);
-			} else if (attachments.getAttachmentSpecType().equals(
-					MTOMConstants.SWA_TYPE)) {
-				builder = new StAXSOAPModelBuilder(streamReader,
-						soapEnvelopeNamespaceURI);
-			} else if (attachments.getAttachmentSpecType().equals(
+        if (isSOAP) {
+            if (attachments.getAttachmentSpecType().equals(
+                    MTOMConstants.MTOM_TYPE)) {
+                //Creates the MTOM specific MTOMStAXSOAPModelBuilder
+                builder = new MTOMStAXSOAPModelBuilder(streamReader,
+                        attachments, soapEnvelopeNamespaceURI);
+                msgContext.setDoingMTOM(true);
+            } else if (attachments.getAttachmentSpecType().equals(
+                    MTOMConstants.SWA_TYPE)) {
+                builder = new StAXSOAPModelBuilder(streamReader,
+                        soapEnvelopeNamespaceURI);
+            } else if (attachments.getAttachmentSpecType().equals(
                     MTOMConstants.SWA_TYPE_12) ) {
                 builder = new StAXSOAPModelBuilder(streamReader,
                         soapEnvelopeNamespaceURI);
             }
 
-		}
-		// To handle REST XOP case
-		else {
-			if (attachments.getAttachmentSpecType().equals(
-					MTOMConstants.MTOM_TYPE)) {
-				XOPAwareStAXOMBuilder stAXOMBuilder = new XOPAwareStAXOMBuilder(
-						streamReader, attachments);
-				builder = stAXOMBuilder;
+        }
+        // To handle REST XOP case
+        else {
+            if (attachments.getAttachmentSpecType().equals(
+                    MTOMConstants.MTOM_TYPE)) {
+                XOPAwareStAXOMBuilder stAXOMBuilder = new XOPAwareStAXOMBuilder(
+                        streamReader, attachments);
+                builder = stAXOMBuilder;
 
-			} else if (attachments.getAttachmentSpecType().equals(
-					MTOMConstants.SWA_TYPE)) {
-				builder = new StAXOMBuilder(streamReader);
-			} else if (attachments.getAttachmentSpecType().equals(
+            } else if (attachments.getAttachmentSpecType().equals(
+                    MTOMConstants.SWA_TYPE)) {
+                builder = new StAXOMBuilder(streamReader);
+            } else if (attachments.getAttachmentSpecType().equals(
                     MTOMConstants.SWA_TYPE_12) ) {
                 builder = new StAXOMBuilder(streamReader);
             }
-		}
+        }
 
-		return builder;
-	}
+        return builder;
+    }
 
     private static Attachments createAttachmentsMap(MessageContext msgContext, InputStream inStream, String contentTypeString) {
         Object cacheAttachmentProperty = msgContext
@@ -295,8 +295,8 @@ public class Builder {
      * @throws XMLStreamException
      */
     public static StAXBuilder getBuilder(InputStream inStream) throws XMLStreamException {
-    	XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream);
-    	return new StAXOMBuilder(xmlReader);
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream);
+        return new StAXOMBuilder(xmlReader);
     }
     
     /**
@@ -308,8 +308,8 @@ public class Builder {
      * @throws XMLStreamException
      */
     public static StAXBuilder getBuilder(InputStream inStream, String charSetEnc) throws XMLStreamException {
-    	XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
-    	return new StAXOMBuilder(xmlReader);
+        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
+        return new StAXOMBuilder(xmlReader);
     }
     
     /**
@@ -323,7 +323,7 @@ public class Builder {
      * @throws XMLStreamException
      */
     public static StAXBuilder getSOAPBuilder(InputStream inStream, String soapNamespaceURI) throws XMLStreamException {
-    	XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(inStream);
+        XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(inStream);
         return new StAXSOAPModelBuilder(xmlreader, soapNamespaceURI);
     }
     
@@ -339,7 +339,7 @@ public class Builder {
      * @throws XMLStreamException
      */
     public static StAXBuilder getSOAPBuilder(InputStream inStream, String charSetEnc, String soapNamespaceURI) throws XMLStreamException {
-       	XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
+           XMLStreamReader xmlreader = StAXUtils.createXMLStreamReader(inStream, charSetEnc);
         return new StAXSOAPModelBuilder(xmlreader, soapNamespaceURI);
     }
 
@@ -359,21 +359,21 @@ public class Builder {
      * @throws AxisFault
      */
     public static OMBuilder getBuilderFromSelector(String contentType, MessageContext msgContext) throws AxisFault {
-		String type;
-		int index = contentType.indexOf(';');
-		if (index > 0) {
-			type = contentType.substring(0, index);
-		} else {
-			type = contentType;
-		}
-		OMBuilder builder = msgContext.getConfigurationContext().getAxisConfiguration()
-				.getMessageBuilder(type);
-		if (builder != null) {
-			// Setting the received content-type as the messageType to make
-			// sure that we respond using the received message serialisation
-			// format.
-			msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, type);
-		}
-		return builder;
-	}
+        String type;
+        int index = contentType.indexOf(';');
+        if (index > 0) {
+            type = contentType.substring(0, index);
+        } else {
+            type = contentType;
+        }
+        OMBuilder builder = msgContext.getConfigurationContext().getAxisConfiguration()
+                .getMessageBuilder(type);
+        if (builder != null) {
+            // Setting the received content-type as the messageType to make
+            // sure that we respond using the received message serialisation
+            // format.
+            msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE, type);
+        }
+        return builder;
+    }
 }

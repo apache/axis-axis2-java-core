@@ -34,30 +34,30 @@ public class LessPermission implements Actor {
     
     // Construtor
     public LessPermission(Actor a, boolean usingDoPrivilege) {
-	_actor = a;
-	_usingDoPrivilege = usingDoPrivilege;
+    _actor = a;
+    _usingDoPrivilege = usingDoPrivilege;
     }
-	
+    
     // Implement Actor's takeAction method
     public void takeAction() {
-   	try {
-	    if (_usingDoPrivilege) {
-		// Use AccessController's doPrivilege
-		AccessController.doPrivileged(
-		    new PrivilegedAction() {
-			public Object run() {
-			    _actor.takeAction();
-			    return null;
-		    }
-		});       
-	    }
-	    else {  
-		// Use no AccessController's doPrivilege
-		_actor.takeAction();
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace(System.out);
-	}
+       try {
+        if (_usingDoPrivilege) {
+        // Use AccessController's doPrivilege
+        AccessController.doPrivileged(
+            new PrivilegedAction() {
+            public Object run() {
+                _actor.takeAction();
+                return null;
+            }
+        });       
+        }
+        else {  
+        // Use no AccessController's doPrivilege
+        _actor.takeAction();
+        }
+    } catch (Exception e) {
+        e.printStackTrace(System.out);
+    }
     }
 }
 

@@ -40,7 +40,7 @@ import org.apache.http.HttpServerConnection;
 public class DefaultConnectionListener implements IOProcessor {
 
     private static Log LOG = LogFactory.getLog(DefaultConnectionListener.class);
-	
+    
     private volatile boolean destroyed = false;
 
     private final int port;
@@ -58,7 +58,7 @@ public class DefaultConnectionListener implements IOProcessor {
     public DefaultConnectionListener(int port, HttpConnectionFactory connfactory, HttpConnectionManager connmanager,
                                      ConnectionListenerFailureHandler failureHandler)
     throws IOException {
-    	super();
+        super();
         if (connfactory == null)
             throw new IllegalArgumentException("Connection factory may not be null");
         if (connmanager == null)
@@ -86,7 +86,7 @@ public class DefaultConnectionListener implements IOProcessor {
                     Socket socket = this.serversocket.accept();
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Incoming HTTP connection from " + 
-                        		socket.getRemoteSocketAddress());
+                                socket.getRemoteSocketAddress());
                     }
                     HttpServerConnection conn = this.connfactory.newConnection(socket);
                     this.connmanager.process(conn);
@@ -102,7 +102,7 @@ public class DefaultConnectionListener implements IOProcessor {
         }
     }
     
-	public void close() throws IOException {
+    public void close() throws IOException {
         if(this.serversocket != null){
             this.serversocket.close();
         }

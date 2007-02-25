@@ -18,7 +18,12 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.deployment.*;
+import org.apache.axis2.deployment.AxisConfigBuilder;
+import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.DeploymentEngine;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.deployment.FileSystemConfigurator;
+import org.apache.axis2.deployment.URLBasedAxisConfigurator;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -79,7 +84,7 @@ public class ConfigurationContextFactory {
             String maxScope = SessionUtils.calculateMaxScopeForServiceGroup(axisServiceGroup);
             if (Constants.SCOPE_APPLICATION.equals(maxScope)) {
                 ServiceGroupContext serviceGroupContext = ContextFactory.createServiceGroupContext(
-                        configCtx,axisServiceGroup);
+                        configCtx, axisServiceGroup);
                 configCtx.addServiceGroupContextintoApplicatoionScopeTable(serviceGroupContext);
                 DependencyManager.initService(serviceGroupContext);
             }
@@ -97,6 +102,7 @@ public class ConfigurationContextFactory {
             }
         }
     }
+
     private static void setContextPaths(AxisConfiguration axisConfig,
                                         ConfigurationContext configContext) {
         // Checking for context path
@@ -181,6 +187,7 @@ public class ConfigurationContextFactory {
 
     /**
      * Initializes modules and creates Transports.
+     *
      * @param configContext ConfigurationContext
      */
 
@@ -262,7 +269,7 @@ public class ConfigurationContextFactory {
         InputStream in = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
 
         AxisConfiguration axisConfig = new AxisConfiguration();
-        AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig,null);
+        AxisConfigBuilder builder = new AxisConfigBuilder(in, axisConfig, null);
         builder.populateConfig();
         axisConfig.validateSystemPredefinedPhases();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);

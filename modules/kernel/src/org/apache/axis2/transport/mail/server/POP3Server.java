@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class POP3Server extends Thread {
-	private static final Log log = LogFactory.getLog(POP3Server.class);
+    private static final Log log = LogFactory.getLog(POP3Server.class);
     private Storage st = null;
     private ServerSocket serverSocket;
 

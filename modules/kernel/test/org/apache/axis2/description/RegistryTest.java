@@ -82,7 +82,7 @@ public class RegistryTest extends AbstractTestCase {
     public void testHandlers() throws AxisFault {
         Handler handler = new AbstractHandler() {
 
-			public InvocationResponse invoke(MessageContext msgContext)  {
+            public InvocationResponse invoke(MessageContext msgContext)  {
                 return InvocationResponse.CONTINUE;        
             }
         };

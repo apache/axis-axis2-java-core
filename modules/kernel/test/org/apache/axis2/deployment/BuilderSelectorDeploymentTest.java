@@ -56,10 +56,10 @@ public class BuilderSelectorDeploymentTest extends AbstractTestCase {
         FileSystemConfigurator fsc = new FileSystemConfigurator(repo.getAbsolutePath(), xml.getAbsolutePath());
         AxisFault testFault=null;
         try {
-			fsc.getAxisConfiguration();
-		} catch (AxisFault e) {
-			testFault = e;
-		}
-		assertNotNull(testFault);
+            fsc.getAxisConfiguration();
+        } catch (AxisFault e) {
+            testFault = e;
+        }
+        assertNotNull(testFault);
     }
 }

@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class OptionsParser {
-	private static final Log log = LogFactory.getLog(OptionsParser.class);
+    private static final Log log = LogFactory.getLog(OptionsParser.class);
     String args[] = null;
     Vector usedArgs = null;
 

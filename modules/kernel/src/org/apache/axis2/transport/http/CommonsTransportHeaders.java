@@ -24,102 +24,102 @@ import java.util.Set;
 import org.apache.commons.httpclient.Header;
 
 public class CommonsTransportHeaders implements Map {
-	private Header[] headers;
+    private Header[] headers;
 
-	HashMap headerMap = null;
+    HashMap headerMap = null;
 
-	public CommonsTransportHeaders(Header[] headers) {
-		this.headers = headers;
-	}
+    public CommonsTransportHeaders(Header[] headers) {
+        this.headers = headers;
+    }
 
-	private void init() {
-		headerMap = new HashMap();
+    private void init() {
+        headerMap = new HashMap();
 
-		for (int i = 0; i < headers.length; i++) {
-			headerMap.put(headers[i].getName(), headers[i].getValue());
-		}
-	}
+        for (int i = 0; i < headers.length; i++) {
+            headerMap.put(headers[i].getName(), headers[i].getValue());
+        }
+    }
 
-	public int size() {
-		if (headerMap == null) {
-			init();
-		}
-		return headerMap.size();
-	}
+    public int size() {
+        if (headerMap == null) {
+            init();
+        }
+        return headerMap.size();
+    }
 
-	public void clear() {
-		if (headerMap != null) {
-			headerMap.clear();
-		}
-	}
+    public void clear() {
+        if (headerMap != null) {
+            headerMap.clear();
+        }
+    }
 
-	public boolean isEmpty() {
-		if (headerMap == null) {
-			init();
-		}
-		return headerMap.isEmpty();
-	}
+    public boolean isEmpty() {
+        if (headerMap == null) {
+            init();
+        }
+        return headerMap.isEmpty();
+    }
 
-	public boolean containsKey(Object key) {
-		if (headerMap == null) {
-			init();
-		}
-		return headerMap.containsKey(key);
-	}
+    public boolean containsKey(Object key) {
+        if (headerMap == null) {
+            init();
+        }
+        return headerMap.containsKey(key);
+    }
 
-	public boolean containsValue(Object value) {
-		if (headerMap == null) {
-			init();
-		}
-		return headerMap.containsValue(value);
-	}
+    public boolean containsValue(Object value) {
+        if (headerMap == null) {
+            init();
+        }
+        return headerMap.containsValue(value);
+    }
 
-	public Collection values() {
-		if (headerMap == null) {
-			init();
-		}
-		return headerMap.values();
-	}
+    public Collection values() {
+        if (headerMap == null) {
+            init();
+        }
+        return headerMap.values();
+    }
 
-	public void putAll(Map t) {
-		if (headerMap == null) {
-			init();
-		}
-		headerMap.putAll(t);
-	}
+    public void putAll(Map t) {
+        if (headerMap == null) {
+            init();
+        }
+        headerMap.putAll(t);
+    }
 
-	public Set entrySet() {
-		if (headerMap == null) {
-			init();
-		}
-		return headerMap.entrySet();
-	}
+    public Set entrySet() {
+        if (headerMap == null) {
+            init();
+        }
+        return headerMap.entrySet();
+    }
 
-	public Set keySet() {
-		if (headerMap == null) {
-			init();
-		}
-		return headerMap.keySet();
-	}
+    public Set keySet() {
+        if (headerMap == null) {
+            init();
+        }
+        return headerMap.keySet();
+    }
 
-	public Object get(Object key) {
-		if (headerMap == null) {
-			init();
-		}
-		return headerMap.get(key);
-	}
+    public Object get(Object key) {
+        if (headerMap == null) {
+            init();
+        }
+        return headerMap.get(key);
+    }
 
-	public Object remove(Object key) {
-		if (headerMap == null) {
-			init();
-		}
-		return headerMap.remove(key);
-	}
+    public Object remove(Object key) {
+        if (headerMap == null) {
+            init();
+        }
+        return headerMap.remove(key);
+    }
 
-	public Object put(Object key, Object value) {
-		if (headerMap == null) {
-			init();
-		}
-		return headerMap.put(key, value);
-	}
+    public Object put(Object key, Object value) {
+        if (headerMap == null) {
+            init();
+        }
+        return headerMap.put(key, value);
+    }
 }

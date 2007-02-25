@@ -135,32 +135,32 @@ public class HTTPTransportUtils {
     }
     
     /**
-	 * Utility method to query CharSetEncoding. First look in the
-	 * MessageContext. If it's not there look in the OpContext. Use the defualt,
-	 * if it's not given in either contexts.
-	 * 
-	 * @param msgContext
-	 * @return CharSetEncoding
-	 */
+     * Utility method to query CharSetEncoding. First look in the
+     * MessageContext. If it's not there look in the OpContext. Use the defualt,
+     * if it's not given in either contexts.
+     * 
+     * @param msgContext
+     * @return CharSetEncoding
+     */
     public static String getCharSetEncoding(MessageContext msgContext) {
-		String charSetEnc = (String) msgContext
-				.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+        String charSetEnc = (String) msgContext
+                .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 
-		if (charSetEnc == null) {
-			OperationContext opctx = msgContext.getOperationContext();
-			if (opctx != null) {
-				charSetEnc = (String) opctx
-						.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-			}
-			/**
-			 * If the char set enc is still not found use the default
-			 */
-			if (charSetEnc == null) {
-				charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
-			}
-		}
-		return charSetEnc;
-	}
+        if (charSetEnc == null) {
+            OperationContext opctx = msgContext.getOperationContext();
+            if (opctx != null) {
+                charSetEnc = (String) opctx
+                        .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+            }
+            /**
+             * If the char set enc is still not found use the default
+             */
+            if (charSetEnc == null) {
+                charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+            }
+        }
+        return charSetEnc;
+    }
 
     public static boolean processHTTPGetRequest(MessageContext msgContext,
                                                 OutputStream out, String soapAction, String requestURI,
@@ -238,39 +238,39 @@ public class HTTPTransportUtils {
 
             String soapNS = null;
             if (contentType != null) {
-				if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
-					soapVersion = VERSION_SOAP12;
-					soapNS = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-					processContentTypeForAction(contentType, msgContext);
-				} else if (contentType
-						.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
-					soapVersion = VERSION_SOAP11;
-					soapNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-				} else if (isRESTRequest(contentType)) {
+                if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+                    soapVersion = VERSION_SOAP12;
+                    soapNS = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+                    processContentTypeForAction(contentType, msgContext);
+                } else if (contentType
+                        .indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+                    soapVersion = VERSION_SOAP11;
+                    soapNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+                } else if (isRESTRequest(contentType)) {
                     // If REST, construct a SOAP11 envelope to hold the rest message and
                     // indicate that this is a REST message.
                     soapVersion = VERSION_SOAP11; 
                     soapNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
                     msgContext.setDoingREST(true);
                 }
-				if (JavaUtils.indexOfIgnoreCase(contentType,
-						HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
-					// It is MIME (MTOM or SwA)
-					isMIME = true;
-				} else if (soapVersion == VERSION_SOAP11) {
-					// Deployment configuration parameter
-					Parameter enableREST = msgContext
-							.getParameter(Constants.Configuration.ENABLE_REST);
-					if ((soapActionHeader == null) && (enableREST != null)) {
-						if (Constants.VALUE_TRUE.equals(enableREST.getValue())) {
-							// If the content Type is text/xml (BTW which is the
-							// SOAP 1.1 Content type ) and the SOAP Action is
-							// absent it is rest !!
-							msgContext.setDoingREST(true);
-						}
-					}
-				}
-			}
+                if (JavaUtils.indexOfIgnoreCase(contentType,
+                        HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
+                    // It is MIME (MTOM or SwA)
+                    isMIME = true;
+                } else if (soapVersion == VERSION_SOAP11) {
+                    // Deployment configuration parameter
+                    Parameter enableREST = msgContext
+                            .getParameter(Constants.Configuration.ENABLE_REST);
+                    if ((soapActionHeader == null) && (enableREST != null)) {
+                        if (Constants.VALUE_TRUE.equals(enableREST.getValue())) {
+                            // If the content Type is text/xml (BTW which is the
+                            // SOAP 1.1 Content type ) and the SOAP Action is
+                            // absent it is rest !!
+                            msgContext.setDoingREST(true);
+                        }
+                    }
+                }
+            }
             envelope = TransportUtils.createSOAPMessage(msgContext,in,soapNS,isMIME,contentType,charSetEnc);
             msgContext.setEnvelope(envelope);
             AxisEngine engine = new AxisEngine(msgContext.getConfigurationContext());

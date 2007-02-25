@@ -147,7 +147,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
             
             ClusterManager clusterManager = axisService.getAxisConfiguration().getClusterManager();
             if (clusterManager!=null) {
-            	clusterManager.addContext(serviceContext);
+                clusterManager.addContext(serviceContext);
             }
             
         }
@@ -339,13 +339,13 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
         if (axisServiceGroup == null)
         {
-        	out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
+            out.writeBoolean(ObjectStateUtils.EMPTY_OBJECT);
         }
         else
         {
-        	out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
-        	metaAxisServiceGroup = new MetaDataEntry(axisServiceGroup.getClass().getName(), axisServiceGroup.getServiceGroupName());
-        	ObjectStateUtils.writeObject(out, metaAxisServiceGroup, "ServiceGroupContext.metaAxisServiceGroup");
+            out.writeBoolean(ObjectStateUtils.ACTIVE_OBJECT);
+            metaAxisServiceGroup = new MetaDataEntry(axisServiceGroup.getClass().getName(), axisServiceGroup.getServiceGroupName());
+            ObjectStateUtils.writeObject(out, metaAxisServiceGroup, "ServiceGroupContext.metaAxisServiceGroup");
         }
         
 
@@ -441,11 +441,11 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
         if (metaAxisServiceGrpIsActive == ObjectStateUtils.ACTIVE_OBJECT)
         {
-        	metaAxisServiceGroup = (MetaDataEntry) ObjectStateUtils.readObject(in, "ServiceGroupContext.metaAxisServiceGroup");
+            metaAxisServiceGroup = (MetaDataEntry) ObjectStateUtils.readObject(in, "ServiceGroupContext.metaAxisServiceGroup");
         }
         else
         {
-        	metaAxisServiceGroup = null;
+            metaAxisServiceGroup = null;
         }
         
 
@@ -495,7 +495,7 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
         // We previously saved metaAxisServiceGroup; restore it
         if (metaAxisServiceGroup != null) {
-        	axisServiceGroup = ObjectStateUtils.findServiceGroup(axisConfig, metaAxisServiceGroup.getClassName(), metaAxisServiceGroup.getQNameAsString());
+            axisServiceGroup = ObjectStateUtils.findServiceGroup(axisConfig, metaAxisServiceGroup.getClassName(), metaAxisServiceGroup.getQNameAsString());
         }
         else
         {
@@ -583,8 +583,8 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
         }
     }
     
-	public ConfigurationContext getRootContext() {
-		//parent of the ServiceGroupContext is the ConfigurationContext
-		return (ConfigurationContext) this.getParent();
-	}
+    public ConfigurationContext getRootContext() {
+        //parent of the ServiceGroupContext is the ConfigurationContext
+        return (ConfigurationContext) this.getParent();
+    }
 }

@@ -35,31 +35,31 @@ public class LessPermissionAccessControlContext implements Actor {
     
     // Construtor
     public LessPermissionAccessControlContext(Actor a, boolean usingDoPrivilege) {
-	_actor = a;
-	_usingDoPrivilege = usingDoPrivilege;
+    _actor = a;
+    _usingDoPrivilege = usingDoPrivilege;
     }
-	
+    
     // Implement Actor's takeAction method
     public void takeAction() {
-   	try {
-	    if (_usingDoPrivilege) {
-		final AccessControlContext acc = AccessController.getContext();
-		// Demostrate the usage of AccessController.doPrivileged(PrivilegeAction action, AccessContext ctx)
-		AccessController.doPrivileged(
-		    new PrivilegedAction() {
-			public Object run() {
-			    _actor.takeAction();
-			    return null;
-		    }
-		}, acc);       
-	    }
-	    else {  
-		// Use no doPrivileged
-		_actor.takeAction();
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace(System.out);
-	}
+       try {
+        if (_usingDoPrivilege) {
+        final AccessControlContext acc = AccessController.getContext();
+        // Demostrate the usage of AccessController.doPrivileged(PrivilegeAction action, AccessContext ctx)
+        AccessController.doPrivileged(
+            new PrivilegedAction() {
+            public Object run() {
+                _actor.takeAction();
+                return null;
+            }
+        }, acc);       
+        }
+        else {  
+        // Use no doPrivileged
+        _actor.takeAction();
+        }
+    } catch (Exception e) {
+        e.printStackTrace(System.out);
+    }
     }
 }
 

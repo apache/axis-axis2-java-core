@@ -21,9 +21,9 @@ import org.apache.axis2.AxisFault;
 
 public class DeploymentException extends AxisFault {
 
-	private static final long serialVersionUID = -206215612208580684L;
+    private static final long serialVersionUID = -206215612208580684L;
 
-	public DeploymentException(String message) {
+    public DeploymentException(String message) {
         super(message);
     }
 

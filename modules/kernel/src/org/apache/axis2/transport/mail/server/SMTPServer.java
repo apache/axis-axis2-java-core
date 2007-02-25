@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class SMTPServer extends Thread {
-	private static final Log log = LogFactory.getLog(SMTPServer.class);
+    private static final Log log = LogFactory.getLog(SMTPServer.class);
     private boolean actAsMailet = false;
     private boolean running = false;
     private ConfigurationContext configurationContext;

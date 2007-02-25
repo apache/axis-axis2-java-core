@@ -37,7 +37,7 @@ public class MailClient extends Authenticator {
     public static final int SHOW_MESSAGES = 1;
     public static final int CLEAR_MESSAGES = 2;
     public static final int SHOW_AND_CLEAR = SHOW_MESSAGES + CLEAR_MESSAGES;
-	private static final Log log = LogFactory.getLog(MailClient.class);
+    private static final Log log = LogFactory.getLog(MailClient.class);
     protected PasswordAuthentication authentication;
     protected String from;
     protected Session session;

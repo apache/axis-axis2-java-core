@@ -21,7 +21,6 @@ import org.apache.axis2.description.AxisDescription;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.PolicyInclude;
 import org.apache.neethi.Constants;
 import org.apache.neethi.Policy;
@@ -49,24 +48,24 @@ public class PolicyUtil {
             char c = chars[i];
 
             switch (c) {
-            case '\\':
-                sbuf.append('\\');
-                sbuf.append('\\');
-                break;
-            case '"':
-                sbuf.append('\\');
-                sbuf.append('"');
-                break;
-            case '\n':
-                sbuf.append('\\');
-                sbuf.append('n');
-                break;
-            case '\r':
-                sbuf.append('\\');
-                sbuf.append('r');
-                break;
-            default:
-                sbuf.append(c);
+                case'\\':
+                    sbuf.append('\\');
+                    sbuf.append('\\');
+                    break;
+                case'"':
+                    sbuf.append('\\');
+                    sbuf.append('"');
+                    break;
+                case'\n':
+                    sbuf.append('\\');
+                    sbuf.append('n');
+                    break;
+                case'\r':
+                    sbuf.append('\\');
+                    sbuf.append('r');
+                    break;
+                default:
+                    sbuf.append(c);
             }
         }
 
@@ -77,7 +76,7 @@ public class PolicyUtil {
             PolicyComponent policyComponent,
             ExternalPolicySerializer externalPolicySerializer)
             throws XMLStreamException, FactoryConfigurationError {
-        
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         if (policyComponent instanceof Policy) {
@@ -162,33 +161,33 @@ public class PolicyUtil {
 
         return baos.toString();
     }
-    
+
     public static String generateId(AxisDescription description) {
         PolicyInclude policyInclude = description.getPolicyInclude();
         String identifier = "-policy-1";
-        
+
         if (description instanceof AxisMessage) {
             identifier = "msg-" + ((AxisMessage) description).getName() + identifier;
             description = description.getParent();
-        } 
-        
+        }
+
         if (description instanceof AxisOperation) {
             identifier = "op-" + ((AxisOperation) description).getName() + identifier;
-            description = description.getParent();     
-        }  
-        
+            description = description.getParent();
+        }
+
         if (description instanceof AxisService) {
             identifier = "service-" + ((AxisService) description).getName() + identifier;
         }
-        
+
         /*
-         *  Int 49 is the value of the Character '1'. Here we want to change '1' to '2' or
-         *  '2' to '3' .. etc. to construct a unique identifier.
-         */
+        *  Int 49 is the value of the Character '1'. Here we want to change '1' to '2' or
+        *  '2' to '3' .. etc. to construct a unique identifier.
+        */
         for (int index = 49; policyInclude.getPolicy(identifier) != null; index++) {
-            identifier = identifier.replace((char) index, (char) (index + 1));            
+            identifier = identifier.replace((char) index, (char) (index + 1));
         }
-        
+
         return identifier;
     }
 }

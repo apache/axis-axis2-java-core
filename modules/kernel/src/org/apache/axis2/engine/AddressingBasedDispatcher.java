@@ -67,7 +67,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
     }
 
     public AxisService findService(MessageContext messageContext) throws AxisFault {
-    	EndpointReference toEPR = messageContext.getTo();
+        EndpointReference toEPR = messageContext.getTo();
         AxisService service = null;
 
         if (toEPR != null) {
@@ -135,7 +135,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             String relatesTo = msgctx.getRelatesTo().getValue();
 
             if(isDebugEnabled){
-            	log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("checkingrelatesto",
+                log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("checkingrelatesto",
                     relatesTo));
             }
             if ((relatesTo != null) && !"".equals(relatesTo)) {
@@ -144,11 +144,11 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                                 .getOperationContext(relatesTo);
 
                 if (operationContext != null) {
-                	if(operationContext.isComplete()){
-                		// If the dispatch happens because of the RelatesTo and the mep is complete
-                		// we should throw a more descriptive fault.
-                		throw new AxisFault(Messages.getMessage("duplicaterelatesto",relatesTo));
-                	}
+                    if(operationContext.isComplete()){
+                        // If the dispatch happens because of the RelatesTo and the mep is complete
+                        // we should throw a more descriptive fault.
+                        throw new AxisFault(Messages.getMessage("duplicaterelatesto",relatesTo));
+                    }
                     msgctx.setAxisOperation(operationContext.getAxisOperation());
                     msgctx.setOperationContext(operationContext);
                     msgctx.setServiceContext((ServiceContext) operationContext.getParent());

@@ -18,8 +18,8 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.ServiceBuilder;
 import org.apache.axis2.description.AxisOperation;
@@ -36,8 +36,8 @@ import java.io.InputStream;
 public class ModuleConfigTest extends TestCase {
 
     AxisConfiguration ar;
-    String axis2xml = System.getProperty("basedir")+"/target/test-resources/deployment/moduleConfig/axis2.xml";
-    String repo = System.getProperty("basedir")+"/target/test-resources/deployment/moduleConfig";
+    String axis2xml = System.getProperty("basedir") + "/target/test-resources/deployment/moduleConfig/axis2.xml";
+    String repo = System.getProperty("basedir") + "/target/test-resources/deployment/moduleConfig";
 
 
     public void testModuleConfigAtAxisConfig() {

@@ -76,8 +76,8 @@ public class RequestURIOperationDispatcher extends AbstractDispatcher {
      */
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         // This Dispatcher does not need to resolve the service, as that is handled
-    	// by the RequestURIBasedDispatcher.
-    	return null;
+        // by the RequestURIBasedDispatcher.
+        return null;
     }
 
     public void initDispatcher() {

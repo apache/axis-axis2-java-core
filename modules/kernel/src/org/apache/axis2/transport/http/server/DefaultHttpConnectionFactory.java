@@ -38,8 +38,8 @@ import org.apache.http.params.HttpParams;
 
 public class DefaultHttpConnectionFactory implements HttpConnectionFactory {
 
-	final HttpParams params;
-	
+    final HttpParams params;
+    
     public DefaultHttpConnectionFactory(final HttpParams params) {
         super();
         if (params == null) {
@@ -63,18 +63,18 @@ public class DefaultHttpConnectionFactory implements HttpConnectionFactory {
         public String getRemoteIPAddress() {
             java.net.SocketAddress sa = socket.getRemoteSocketAddress();
             if (sa instanceof java.net.InetSocketAddress) {
-            	return ((java.net.InetSocketAddress) sa).getAddress().getHostAddress();
+                return ((java.net.InetSocketAddress) sa).getAddress().getHostAddress();
             } else {
-            	return sa.toString();
+                return sa.toString();
             }
         }
 
         public String getRemoteHostName() {
-        	java.net.SocketAddress sa = socket.getRemoteSocketAddress();
-        	if (sa instanceof java.net.InetSocketAddress) {
-          	return ((java.net.InetSocketAddress) sa).getHostName();
+            java.net.SocketAddress sa = socket.getRemoteSocketAddress();
+            if (sa instanceof java.net.InetSocketAddress) {
+              return ((java.net.InetSocketAddress) sa).getHostName();
           } else {
-          	return sa.toString(); // fail-safe and fall back to something which one can use in place of the host name
+              return sa.toString(); // fail-safe and fall back to something which one can use in place of the host name
           }
         }
     }

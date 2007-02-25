@@ -137,8 +137,8 @@ public class Utils {
         
         ClusterManager clusterManager = configurationContext.getAxisConfiguration().getClusterManager();
         if (clusterManager!=null) {
-        	clusterManager.addContext(serviceGroupContext);
-        	clusterManager.addContext(serviceContext);
+            clusterManager.addContext(serviceGroupContext);
+            clusterManager.addContext(serviceContext);
         }
         
         return serviceContext;

@@ -132,13 +132,13 @@ public class MetaDataEntry implements Externalizable
      */
     public QName getQName()
     {
-    	if (qnameAsString != null)
+        if (qnameAsString != null)
         {
-    		return QName.valueOf(qnameAsString);
+            return QName.valueOf(qnameAsString);
         }
         else
         {
-    	    return null;
+            return null;
         }
     }
 
@@ -150,13 +150,13 @@ public class MetaDataEntry implements Externalizable
      */
     public void setQName(QName q)
     {
-    	if (q != null)
+        if (q != null)
         {
-    		qnameAsString = q.toString();
+            qnameAsString = q.toString();
         }
-    	else
+        else
         {
-    		qnameAsString = null;
+            qnameAsString = null;
         }
     }
 

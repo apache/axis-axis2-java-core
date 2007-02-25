@@ -18,9 +18,9 @@ package org.apache.axis2.engine;
 
 public class AxisError extends RuntimeException {
 
-	private static final long serialVersionUID = 6291062136407995920L;
+    private static final long serialVersionUID = 6291062136407995920L;
 
-	public AxisError() {
+    public AxisError() {
     }
 
     /**

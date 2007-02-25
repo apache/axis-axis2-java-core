@@ -175,36 +175,36 @@ public class AxisConfiguration extends AxisDescription {
         messageReceivers.put(mepURL, messageReceiver);
     }
 
-	/**
-	 * Register a messageBuilder implementation against a content type.
-	 * This is used by Axis2 to support different message formats.
-	 * @param contentType
-	 * @param messageBuilder
-	 */
-	public void addMessageBuilder(String contentType,
-			OMBuilder messageBuilder) {
-		messageBuilders.put(contentType, messageBuilder);
-	}
-	
-
-	/**
-	 * Register a messageFormatter implementation against a content type.
-	 * This is used by Axis2 to support serialization of messages to different 
-	 * message formats. (Eg: JSON)
-	 * @param contentType
-	 * @param messageFormatter
-	 */
-	public void addMessageFormatter(String contentType,
-			MessageFormatter messageFormatter) {
-		messageFormatters.put(contentType, messageFormatter);
-	}
+    /**
+     * Register a messageBuilder implementation against a content type.
+     * This is used by Axis2 to support different message formats.
+     * @param contentType
+     * @param messageBuilder
+     */
+    public void addMessageBuilder(String contentType,
+            OMBuilder messageBuilder) {
+        messageBuilders.put(contentType, messageBuilder);
+    }
+    
 
     /**
-	 * Method addModule.
-	 * 
-	 * @param module
-	 * @throws AxisFault
-	 */
+     * Register a messageFormatter implementation against a content type.
+     * This is used by Axis2 to support serialization of messages to different 
+     * message formats. (Eg: JSON)
+     * @param contentType
+     * @param messageFormatter
+     */
+    public void addMessageFormatter(String contentType,
+            MessageFormatter messageFormatter) {
+        messageFormatters.put(contentType, messageFormatter);
+    }
+
+    /**
+     * Method addModule.
+     * 
+     * @param module
+     * @throws AxisFault
+     */
     public void addModule(AxisModule module) throws AxisFault {
         module.setParent(this);
         notifyObservers(AxisEvent.MODULE_DEPLOY, module);
@@ -624,19 +624,19 @@ public class AxisConfiguration extends AxisDescription {
     }
     
     /**
-	 * @param contentType
-	 * @return the configured message builder implementation class name against
-	 *         the given content type.
-	 */
+     * @param contentType
+     * @return the configured message builder implementation class name against
+     *         the given content type.
+     */
     public OMBuilder getMessageBuilder(String contentType) {
         return (OMBuilder)messageBuilders.get(contentType);
     }
     
     /**
-	 * @param contentType
-	 * @return the configured message formatter implementation class name
-	 *         against the given content type.
-	 */
+     * @param contentType
+     * @return the configured message formatter implementation class name
+     *         against the given content type.
+     */
     public MessageFormatter getMessageFormatter(String contentType) {
         return (MessageFormatter) messageFormatters.get(contentType);
     }
@@ -881,12 +881,12 @@ public class AxisConfiguration extends AxisDescription {
     }
     
     public ClusterManager getClusterManager() {
-		return clusterManager;
-	}
+        return clusterManager;
+    }
 
-	public void setClusterManager(ClusterManager clusterManager) {
-		this.clusterManager = clusterManager;
-	}
+    public void setClusterManager(ClusterManager clusterManager) {
+        this.clusterManager = clusterManager;
+    }
 
     public Object getKey() {
         return toString();
@@ -1015,7 +1015,7 @@ public class AxisConfiguration extends AxisDescription {
     }
    
     /**
-     * For internal used only! To store instance of DataLocator when it is first loaded. This allows to 	
+     * For internal used only! To store instance of DataLocator when it is first loaded. This allows to     
      * re-use DataLocator after it is initially loaded. 
      * @param dialect- an absolute URI represents the format and version of data
      * @param dataLocator - specified an DataLocator instance  to support retrieval 

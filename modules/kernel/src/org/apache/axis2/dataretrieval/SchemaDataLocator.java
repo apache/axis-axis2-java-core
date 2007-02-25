@@ -24,16 +24,16 @@ package org.apache.axis2.dataretrieval;
  */
 
 public class SchemaDataLocator  extends BaseAxisDataLocator  implements AxisDataLocator {
-	
-	protected SchemaDataLocator() {
+    
+    protected SchemaDataLocator() {
 
-	}
+    }
 
-	/**
-	 * Constructor
-	 */
-	protected SchemaDataLocator(ServiceData[] data) {
-		dataList = data;
-	}
-	
+    /**
+     * Constructor
+     */
+    protected SchemaDataLocator(ServiceData[] data) {
+        dataList = data;
+    }
+    
 }

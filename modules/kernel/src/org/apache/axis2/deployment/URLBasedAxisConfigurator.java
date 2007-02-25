@@ -31,7 +31,7 @@ import java.net.URL;
 
 public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisConfigurator {
 
-	private static final Log log = LogFactory.getLog(URLBasedAxisConfigurator.class);
+    private static final Log log = LogFactory.getLog(URLBasedAxisConfigurator.class);
     private URL axis2xml;
     private URL repositoy;
 
@@ -95,7 +95,7 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                     }
                 }
             } else {
-            	loadServicesFromUrl(repositoy);
+                loadServicesFromUrl(repositoy);
             }
         } catch (MalformedURLException e) {
             log.info(e);

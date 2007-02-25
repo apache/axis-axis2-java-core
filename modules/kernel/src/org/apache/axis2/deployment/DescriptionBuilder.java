@@ -205,117 +205,117 @@ public class DescriptionBuilder implements DeploymentConstants {
     }
     
     /**
-	 * Processes the message builders specified in axis2.xml or services.xml.
-	 * 
-	 * @param messageBuildersElement
-	 */
-	protected HashMap processMessageBuilders(OMElement messageBuildersElement)
-			throws DeploymentException {
-		HashMap builderSelector = new HashMap();
-		Iterator msgBuilders = messageBuildersElement
-				.getChildrenWithName(new QName(TAG_MESSAGE_BUILDER));
-		while (msgBuilders.hasNext()) {
-			OMElement msgBuilderElement = (OMElement) msgBuilders.next();
-			final OMElement tempMsgBuilder = msgBuilderElement;
-			Class builderClass = null;
-			OMBuilder builderObject;
-			try {
-				builderClass = findAndValidateSelectorClass(tempMsgBuilder,
-						DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_BUILDER);
-				builderObject = (OMBuilder)builderClass.newInstance();
-			} catch (PrivilegedActionException e) {
-				throw (DeploymentException) e.getException();
-			} catch (InstantiationException e) {
-				throw new DeploymentException(
-						"Cannot instantiate the specified Builder Class  : "
-								+ builderClass.getName() + ".", e);
-			} catch (IllegalAccessException e) {
-				throw new DeploymentException(
-						"Cannot instantiate the specified Builder Class : "
-								+ builderClass.getName() + ".", e);
-			}
-			OMAttribute contentTypeAtt = msgBuilderElement
-					.getAttribute(new QName(TAG_CONTENT_TYPE));
-			builderSelector.put(contentTypeAtt.getAttributeValue(),
-					builderObject);
-		}
-		return builderSelector;
-	}
-	
+     * Processes the message builders specified in axis2.xml or services.xml.
+     * 
+     * @param messageBuildersElement
+     */
+    protected HashMap processMessageBuilders(OMElement messageBuildersElement)
+            throws DeploymentException {
+        HashMap builderSelector = new HashMap();
+        Iterator msgBuilders = messageBuildersElement
+                .getChildrenWithName(new QName(TAG_MESSAGE_BUILDER));
+        while (msgBuilders.hasNext()) {
+            OMElement msgBuilderElement = (OMElement) msgBuilders.next();
+            final OMElement tempMsgBuilder = msgBuilderElement;
+            Class builderClass = null;
+            OMBuilder builderObject;
+            try {
+                builderClass = findAndValidateSelectorClass(tempMsgBuilder,
+                        DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_BUILDER);
+                builderObject = (OMBuilder)builderClass.newInstance();
+            } catch (PrivilegedActionException e) {
+                throw (DeploymentException) e.getException();
+            } catch (InstantiationException e) {
+                throw new DeploymentException(
+                        "Cannot instantiate the specified Builder Class  : "
+                                + builderClass.getName() + ".", e);
+            } catch (IllegalAccessException e) {
+                throw new DeploymentException(
+                        "Cannot instantiate the specified Builder Class : "
+                                + builderClass.getName() + ".", e);
+            }
+            OMAttribute contentTypeAtt = msgBuilderElement
+                    .getAttribute(new QName(TAG_CONTENT_TYPE));
+            builderSelector.put(contentTypeAtt.getAttributeValue(),
+                    builderObject);
+        }
+        return builderSelector;
+    }
+    
     /**
-	 * Processes the message builders specified in axis2.xml or services.xml.
-	 * 
-	 * @param messageBuildersElement
-	 */
-	protected HashMap processMessageFormatters(OMElement messageFormattersElement)
-			throws DeploymentException {
-		HashMap messageFormatters = new HashMap();
-		Iterator msgFormatters = messageFormattersElement
-				.getChildrenWithName(new QName(TAG_MESSAGE_FORMATTER));
-		while (msgFormatters.hasNext()) {
-			OMElement msgFormatterElement = (OMElement) msgFormatters.next();
-			final OMElement tempMsgFormatter = msgFormatterElement;
-			MessageFormatter formatterObject;
-			Class formatterClass = null;
-			try {
-				formatterClass = findAndValidateSelectorClass(tempMsgFormatter,DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_FORMATTER );
-				formatterObject = (MessageFormatter)formatterClass.newInstance();
-			} catch (PrivilegedActionException e) {
-				throw (DeploymentException) e.getException();
-			} catch (InstantiationException e) {
-				throw new DeploymentException(
-						"Cannot instantiate the specified Formatter Class  : "
-								+ formatterClass.getName() + ".", e);
-			} catch (IllegalAccessException e) {
-				throw new DeploymentException(
-						"Cannot instantiate the specified Formatter Class : "
-								+ formatterClass.getName() + ".", e);
-			}
-			OMAttribute contentTypeAtt = msgFormatterElement
-					.getAttribute(new QName(TAG_CONTENT_TYPE));
-			messageFormatters.put(contentTypeAtt.getAttributeValue(),
-					formatterObject);
-		}
-		return messageFormatters;
-	}
+     * Processes the message builders specified in axis2.xml or services.xml.
+     * 
+     * @param messageBuildersElement
+     */
+    protected HashMap processMessageFormatters(OMElement messageFormattersElement)
+            throws DeploymentException {
+        HashMap messageFormatters = new HashMap();
+        Iterator msgFormatters = messageFormattersElement
+                .getChildrenWithName(new QName(TAG_MESSAGE_FORMATTER));
+        while (msgFormatters.hasNext()) {
+            OMElement msgFormatterElement = (OMElement) msgFormatters.next();
+            final OMElement tempMsgFormatter = msgFormatterElement;
+            MessageFormatter formatterObject;
+            Class formatterClass = null;
+            try {
+                formatterClass = findAndValidateSelectorClass(tempMsgFormatter,DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_FORMATTER );
+                formatterObject = (MessageFormatter)formatterClass.newInstance();
+            } catch (PrivilegedActionException e) {
+                throw (DeploymentException) e.getException();
+            } catch (InstantiationException e) {
+                throw new DeploymentException(
+                        "Cannot instantiate the specified Formatter Class  : "
+                                + formatterClass.getName() + ".", e);
+            } catch (IllegalAccessException e) {
+                throw new DeploymentException(
+                        "Cannot instantiate the specified Formatter Class : "
+                                + formatterClass.getName() + ".", e);
+            }
+            OMAttribute contentTypeAtt = msgFormatterElement
+                    .getAttribute(new QName(TAG_CONTENT_TYPE));
+            messageFormatters.put(contentTypeAtt.getAttributeValue(),
+                    formatterObject);
+        }
+        return messageFormatters;
+    }
 
-	protected Class findAndValidateSelectorClass(final OMElement tempMsgBuilder, final String errorMsg)
-			throws PrivilegedActionException {
-		return (Class) org.apache.axis2.java.security.AccessController
-				.doPrivileged(new PrivilegedExceptionAction() {
-					public Object run()
-							throws org.apache.axis2.deployment.DeploymentException {
-						OMAttribute builderName = tempMsgBuilder
-								.getAttribute(new QName(TAG_CLASS_NAME));
-						String className = builderName.getAttributeValue();
-						Class selectorClass;
-						try {
-							if ((className != null) && !"".equals(className)) {
-								selectorClass = Loader.loadClass(Thread.currentThread()
-										.getContextClassLoader(), className);
-							}else
-							{
-								throw new DeploymentException(Messages.getMessage(errorMsg,
-										"Invalid Class Name",className));
-							}
-						} catch (ClassNotFoundException e) {
-							throw new DeploymentException(Messages.getMessage(errorMsg,
-													"ClassNotFoundException",className), e);
-						}
-						return selectorClass;
-					}
-				});
-	}
+    protected Class findAndValidateSelectorClass(final OMElement tempMsgBuilder, final String errorMsg)
+            throws PrivilegedActionException {
+        return (Class) org.apache.axis2.java.security.AccessController
+                .doPrivileged(new PrivilegedExceptionAction() {
+                    public Object run()
+                            throws org.apache.axis2.deployment.DeploymentException {
+                        OMAttribute builderName = tempMsgBuilder
+                                .getAttribute(new QName(TAG_CLASS_NAME));
+                        String className = builderName.getAttributeValue();
+                        Class selectorClass;
+                        try {
+                            if ((className != null) && !"".equals(className)) {
+                                selectorClass = Loader.loadClass(Thread.currentThread()
+                                        .getContextClassLoader(), className);
+                            }else
+                            {
+                                throw new DeploymentException(Messages.getMessage(errorMsg,
+                                        "Invalid Class Name",className));
+                            }
+                        } catch (ClassNotFoundException e) {
+                            throw new DeploymentException(Messages.getMessage(errorMsg,
+                                                    "ClassNotFoundException",className), e);
+                        }
+                        return selectorClass;
+                    }
+                });
+    }
 
     /**
-	 * Processes flow elements in services.xml .
-	 * 
-	 * @param flowelement
-	 *            <code>OMElement</code>
-	 * @return Returns Flow.
-	 * @throws DeploymentException
-	 *             <code>DeploymentException</code>
-	 */
+     * Processes flow elements in services.xml .
+     * 
+     * @param flowelement
+     *            <code>OMElement</code>
+     * @return Returns Flow.
+     * @throws DeploymentException
+     *             <code>DeploymentException</code>
+     */
     protected Flow processFlow(OMElement flowelement, ParameterInclude parent)
             throws DeploymentException {
         Flow flow = new Flow();

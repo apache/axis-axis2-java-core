@@ -211,27 +211,27 @@ public abstract class AbstractHTTPSender {
      */
     protected void obtainHTTPHeaderInformation(HttpMethodBase method,
                                                MessageContext msgContext) {
-       	Map transportHeaders =  new CommonsTransportHeaders(method.getResponseHeaders());
-    	msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,transportHeaders);
+           Map transportHeaders =  new CommonsTransportHeaders(method.getResponseHeaders());
+        msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,transportHeaders);
         Header header =method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
 
         if (header != null) {
-        	HeaderElement[] headers = header.getElements();
-        	OperationContext opContext = msgContext.getOperationContext();
-        	
-        	if (opContext != null) {
-        		opContext.setProperty(
-        				HTTPConstants.CONTENT_TYPE,header.getValue());
+            HeaderElement[] headers = header.getElements();
+            OperationContext opContext = msgContext.getOperationContext();
+            
+            if (opContext != null) {
+                opContext.setProperty(
+                        HTTPConstants.CONTENT_TYPE,header.getValue());
         
-        	for (int i = 0; i < headers.length; i++) {
-        		NameValuePair charsetEnc =headers[i].getParameterByName(
-        				HTTPConstants.CHAR_SET_ENCODING);
-        		if (charsetEnc != null) {
-        				opContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-        						charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
-        		}
-        	}
-        	}
+            for (int i = 0; i < headers.length; i++) {
+                NameValuePair charsetEnc =headers[i].getParameterByName(
+                        HTTPConstants.CHAR_SET_ENCODING);
+                if (charsetEnc != null) {
+                        opContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+                                charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
+                }
+            }
+            }
         }
 
         String sessionCookie = null;

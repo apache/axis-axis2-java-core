@@ -67,15 +67,15 @@ public class ModuleBuilder extends DescriptionBuilder {
                 final Class fmoduleClass = moduleClass;
                 final AxisModule fmodule = module;
                 try {
-                	AccessController.doPrivileged( new PrivilegedExceptionAction() {
-                		public Object run() throws IllegalAccessException, InstantiationException {
-                			Module new_module = (Module) fmoduleClass.newInstance();
-                        	fmodule.setModule(new_module);
-                        	return null;
+                    AccessController.doPrivileged( new PrivilegedExceptionAction() {
+                        public Object run() throws IllegalAccessException, InstantiationException {
+                            Module new_module = (Module) fmoduleClass.newInstance();
+                            fmodule.setModule(new_module);
+                            return null;
                         }
-                    });  	
+                    });      
                 } catch (PrivilegedActionException e) {
-                	throw e.getException();
+                    throw e.getException();
                 }   
             }
         } catch (Exception e) {

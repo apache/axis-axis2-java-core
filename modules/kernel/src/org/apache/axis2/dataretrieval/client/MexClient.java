@@ -16,60 +16,60 @@ import org.apache.axis2.description.AxisService;
 
 public class MexClient extends ServiceClient {
 
-	public MexClient(ConfigurationContext configContext, AxisService axisService)
-			throws AxisFault {
-		super(configContext, axisService);
-	}
+    public MexClient(ConfigurationContext configContext, AxisService axisService)
+            throws AxisFault {
+        super(configContext, axisService);
+    }
 
-	public MexClient(ConfigurationContext configContext,
-			Definition wsdl4jDefinition, QName wsdlServiceName, String portName)
-			throws AxisFault {
-		super(configContext, wsdl4jDefinition, wsdlServiceName, portName);
-	}
+    public MexClient(ConfigurationContext configContext,
+            Definition wsdl4jDefinition, QName wsdlServiceName, String portName)
+            throws AxisFault {
+        super(configContext, wsdl4jDefinition, wsdlServiceName, portName);
+    }
 
-	public MexClient(ConfigurationContext configContext, URL wsdlURL,
-			QName wsdlServiceName, String portName) throws AxisFault {
-		super(configContext, wsdlURL, wsdlServiceName, portName);
-	}
+    public MexClient(ConfigurationContext configContext, URL wsdlURL,
+            QName wsdlServiceName, String portName) throws AxisFault {
+        super(configContext, wsdlURL, wsdlServiceName, portName);
+    }
 
-	public MexClient() throws AxisFault {
-	}
+    public MexClient() throws AxisFault {
+    }
 
-	/**
-	 * Builds OMElement that makes up of SOAP body.
-	 */
-	public OMElement setupGetMetadataRequest(String dialect,
-			String identifier) throws AxisFault {
-		
-		// Attempt to engage MEX module
-	/*	try{
-	       super.engageModule(new QName("metadataExchange"));
-		}
-		catch (Exception e){
-		  throw new AxisFault ("Unable to proceed with GetMetadata Request!", e);  	
-		} */
-		
-		OMFactory fac = OMAbstractFactory.getOMFactory();
+    /**
+     * Builds OMElement that makes up of SOAP body.
+     */
+    public OMElement setupGetMetadataRequest(String dialect,
+            String identifier) throws AxisFault {
+        
+        // Attempt to engage MEX module
+    /*    try{
+           super.engageModule(new QName("metadataExchange"));
+        }
+        catch (Exception e){
+          throw new AxisFault ("Unable to proceed with GetMetadata Request!", e);      
+        } */
+        
+        OMFactory fac = OMAbstractFactory.getOMFactory();
 
-		OMNamespace omNs = fac.createOMNamespace(
-				DRConstants.SPEC.NS_URI, DRConstants.SPEC.NS_PREFIX);
+        OMNamespace omNs = fac.createOMNamespace(
+                DRConstants.SPEC.NS_URI, DRConstants.SPEC.NS_PREFIX);
 
-		OMElement method = fac.createOMElement(DRConstants.SPEC.GET_METADATA,
-				omNs);
-		if (dialect != null) {
-			OMElement dialect_Elem = fac.createOMElement(
-					DRConstants.SPEC.DIALET, omNs);
+        OMElement method = fac.createOMElement(DRConstants.SPEC.GET_METADATA,
+                omNs);
+        if (dialect != null) {
+            OMElement dialect_Elem = fac.createOMElement(
+                    DRConstants.SPEC.DIALET, omNs);
 
-			dialect_Elem.setText(dialect);
-			method.addChild(dialect_Elem);
-		}
-		// create Identifier element
-		if (identifier != null) {
-			OMElement id_Elem = fac.createOMElement(
-					DRConstants.SPEC.IDENTIFIER, omNs);
-			id_Elem.setText(identifier);
-			method.addChild(id_Elem);
-		}
-		return method;
-	}
+            dialect_Elem.setText(dialect);
+            method.addChild(dialect_Elem);
+        }
+        // create Identifier element
+        if (identifier != null) {
+            OMElement id_Elem = fac.createOMElement(
+                    DRConstants.SPEC.IDENTIFIER, omNs);
+            id_Elem.setText(identifier);
+            method.addChild(id_Elem);
+        }
+        return method;
+    }
 }

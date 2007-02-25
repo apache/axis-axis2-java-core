@@ -118,63 +118,63 @@ public class AdminAgent extends AbstractAgent {
 
     protected void processUpload(HttpServletRequest req, HttpServletResponse res)
     throws IOException, ServletException {
-    	String hasHotDeployment =
-    		(String) configContext.getAxisConfiguration().getParameterValue("hotdeployment");
-    	String hasHotUpdate =
-    		(String) configContext.getAxisConfiguration().getParameterValue("hotupdate");
-    	req.setAttribute("hotDeployment", (hasHotDeployment.equals("true")) ? "enabled"
-    			: "disabled");
-    	req.setAttribute("hotUpdate", (hasHotUpdate.equals("true")) ? "enabled" : "disabled");
+        String hasHotDeployment =
+            (String) configContext.getAxisConfiguration().getParameterValue("hotdeployment");
+        String hasHotUpdate =
+            (String) configContext.getAxisConfiguration().getParameterValue("hotupdate");
+        req.setAttribute("hotDeployment", (hasHotDeployment.equals("true")) ? "enabled"
+                : "disabled");
+        req.setAttribute("hotUpdate", (hasHotUpdate.equals("true")) ? "enabled" : "disabled");
         RequestContext reqContext = new ServletRequestContext(req);
 
-    	boolean isMultipart = ServletFileUpload.isMultipartContent(reqContext);
+        boolean isMultipart = ServletFileUpload.isMultipartContent(reqContext);
         if (isMultipart) {
 
-    		try {
-    			//Create a factory for disk-based file items
- 		     	FileItemFactory factory = new DiskFileItemFactory();
-    			//Create a new file upload handler
-    			ServletFileUpload upload = new ServletFileUpload(factory);
-    			List items = upload.parseRequest(req);
-    			// Process the uploaded items
-    			Iterator iter = items.iterator();
-    			while (iter.hasNext()) {
-    				FileItem item = (FileItem) iter.next();
-    				if (!item.isFormField()) {
+            try {
+                //Create a factory for disk-based file items
+                  FileItemFactory factory = new DiskFileItemFactory();
+                //Create a new file upload handler
+                ServletFileUpload upload = new ServletFileUpload(factory);
+                List items = upload.parseRequest(req);
+                // Process the uploaded items
+                Iterator iter = items.iterator();
+                while (iter.hasNext()) {
+                    FileItem item = (FileItem) iter.next();
+                    if (!item.isFormField()) {
 
-    					String fileName = item.getName();
-    					String fileExtesion = fileName;
-    					fileExtesion = fileExtesion.toLowerCase();
-    					if (!(fileExtesion.endsWith(".jar") || fileExtesion.endsWith(".aar"))) {
-    						req.setAttribute("status", "failure");
-    						req.setAttribute("cause", "Unsupported file type " + fileExtesion);
-    					} else {
+                        String fileName = item.getName();
+                        String fileExtesion = fileName;
+                        fileExtesion = fileExtesion.toLowerCase();
+                        if (!(fileExtesion.endsWith(".jar") || fileExtesion.endsWith(".aar"))) {
+                            req.setAttribute("status", "failure");
+                            req.setAttribute("cause", "Unsupported file type " + fileExtesion);
+                        } else {
 
-    						String fileNameOnly ;
-    						if (fileName.indexOf("\\") < 0) {
-    							fileNameOnly =
-    								fileName.substring(fileName.lastIndexOf("/") + 1, fileName
-    										.length());
-    						} else {
-    							fileNameOnly =
-    								fileName.substring(fileName.lastIndexOf("\\") + 1, fileName
-    										.length());
-    						}
+                            String fileNameOnly ;
+                            if (fileName.indexOf("\\") < 0) {
+                                fileNameOnly =
+                                    fileName.substring(fileName.lastIndexOf("/") + 1, fileName
+                                            .length());
+                            } else {
+                                fileNameOnly =
+                                    fileName.substring(fileName.lastIndexOf("\\") + 1, fileName
+                                            .length());
+                            }
 
-    						File uploadedFile = new File(serviceDir, fileNameOnly);
-    						item.write(uploadedFile);
-    						req.setAttribute("status", "success");
-    						req.setAttribute("filename", fileNameOnly);
-    					}
-    				}
-    			}
-    		} catch (Exception e) {
-    			req.setAttribute("status", "failure");
-    			req.setAttribute("cause", e.getMessage());
+                            File uploadedFile = new File(serviceDir, fileNameOnly);
+                            item.write(uploadedFile);
+                            req.setAttribute("status", "success");
+                            req.setAttribute("filename", fileNameOnly);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                req.setAttribute("status", "failure");
+                req.setAttribute("cause", e.getMessage());
 
-    		}
-    	}
-    	renderView("upload.jsp", req, res);
+            }
+        }
+        renderView("upload.jsp", req, res);
     }
 
 
@@ -206,49 +206,49 @@ public class AdminAgent extends AbstractAgent {
 
     protected void processEditServicePara(HttpServletRequest req, HttpServletResponse res)
     throws IOException, ServletException {
-    	String serviceName = req.getParameter("axisService");
-    	if (req.getParameter("changePara") != null) {
-    		AxisService service = configContext.getAxisConfiguration().getService(serviceName);
-    		if (service != null) {
-    			ArrayList service_para = service.getParameters();
+        String serviceName = req.getParameter("axisService");
+        if (req.getParameter("changePara") != null) {
+            AxisService service = configContext.getAxisConfiguration().getService(serviceName);
+            if (service != null) {
+                ArrayList service_para = service.getParameters();
 
-    			for (int i = 0; i < service_para.size(); i++) {
-    				Parameter parameter = (Parameter) service_para.get(i);
-    				String para = req.getParameter(serviceName + "_" + parameter.getName());
-    				service.addParameter(new Parameter(parameter.getName(), para));
-    			}
+                for (int i = 0; i < service_para.size(); i++) {
+                    Parameter parameter = (Parameter) service_para.get(i);
+                    String para = req.getParameter(serviceName + "_" + parameter.getName());
+                    service.addParameter(new Parameter(parameter.getName(), para));
+                }
 
-    			for (Iterator iterator = service.getOperations(); iterator.hasNext();) {
-    				AxisOperation axisOperation = (AxisOperation) iterator.next();
-    				String op_name = axisOperation.getName().getLocalPart();
-    				ArrayList operation_para = axisOperation.getParameters();
+                for (Iterator iterator = service.getOperations(); iterator.hasNext();) {
+                    AxisOperation axisOperation = (AxisOperation) iterator.next();
+                    String op_name = axisOperation.getName().getLocalPart();
+                    ArrayList operation_para = axisOperation.getParameters();
 
-    				for (int i = 0; i < operation_para.size(); i++) {
-    					Parameter parameter = (Parameter) operation_para.get(i);
-    					String para = req.getParameter(op_name + "_" + parameter.getName());
+                    for (int i = 0; i < operation_para.size(); i++) {
+                        Parameter parameter = (Parameter) operation_para.get(i);
+                        String para = req.getParameter(op_name + "_" + parameter.getName());
 
-    					axisOperation.addParameter(new Parameter(parameter.getName(), para));
-    				}
-    			}
-    		}
-    		res.setContentType("text/html");
-    		req.setAttribute("status", "Parameters Changed Successfully.");
-    		req.getSession().removeAttribute(Constants.SERVICE);
-    	} else {
-    		AxisService serviceTemp =
-    			configContext.getAxisConfiguration().getServiceForActivation(serviceName);
-    		if (serviceTemp.isActive()) {
+                        axisOperation.addParameter(new Parameter(parameter.getName(), para));
+                    }
+                }
+            }
+            res.setContentType("text/html");
+            req.setAttribute("status", "Parameters Changed Successfully.");
+            req.getSession().removeAttribute(Constants.SERVICE);
+        } else {
+            AxisService serviceTemp =
+                configContext.getAxisConfiguration().getServiceForActivation(serviceName);
+            if (serviceTemp.isActive()) {
 
-    			if (serviceName != null) {
-    				req.getSession().setAttribute(Constants.SERVICE,
-    						configContext.getAxisConfiguration().getService(serviceName));
-    			}
-    		} else {
-    			req.setAttribute("status", "Service " + serviceName + " is not an active service" +
-    			". \n Only parameters of active services can be edited.");
-    		}
-    	}
-    	renderView(SERVICE_PARA_EDIT_JSP_NAME, req, res);
+                if (serviceName != null) {
+                    req.getSession().setAttribute(Constants.SERVICE,
+                            configContext.getAxisConfiguration().getService(serviceName));
+                }
+            } else {
+                req.setAttribute("status", "Service " + serviceName + " is not an active service" +
+                ". \n Only parameters of active services can be edited.");
+            }
+        }
+        renderView(SERVICE_PARA_EDIT_JSP_NAME, req, res);
     }
 
     protected void processEngagingGlobally(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
@@ -488,7 +488,7 @@ public class AdminAgent extends AbstractAgent {
 
     protected void processListSingleService(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
-    	req.getSession().setAttribute(Constants.IS_FAULTY, ""); //Clearing out any old values.
+        req.getSession().setAttribute(Constants.IS_FAULTY, ""); //Clearing out any old values.
         String serviceName = req.getParameter("serviceName");
         if (serviceName != null) {
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
@@ -523,7 +523,7 @@ public class AdminAgent extends AbstractAgent {
     }
 
     protected void processdisengageModule(HttpServletRequest req, HttpServletResponse res) 
-    													throws IOException, ServletException {
+                                                        throws IOException, ServletException {
         String type = req.getParameter("type");
         String serviceName = req.getParameter("serviceName");
         String moduleName = req.getParameter("module");
@@ -533,22 +533,22 @@ public class AdminAgent extends AbstractAgent {
         if (type.equals("operation")) {
             if (service.isEngaged(module.getName()) || axisConfiguration.isEngaged(module.getName())) {
                 req.getSession().setAttribute("status", "Can not disengage module " + moduleName + 
-                		". This module is engaged at a higher level.");
+                        ". This module is engaged at a higher level.");
             } else {
                 String opName = req.getParameter("operation");
                 AxisOperation op = service.getOperation(new QName(opName));
                 op.disengageModule(module);
                 req.getSession().setAttribute("status", "Module " + moduleName + " was disengaged from " +
-                		"operation " + opName + " in service " + serviceName + ".");
+                        "operation " + opName + " in service " + serviceName + ".");
             }
         } else {
             if (axisConfiguration.isEngaged(module.getName())) {
                 req.getSession().setAttribute("status", "Can not disengage module " + moduleName + ". " +
-                		"This module is engaged at a higher level.");
+                        "This module is engaged at a higher level.");
             } else {
                 service.disengageModule(axisConfiguration.getModule(new QName(moduleName)));
                 req.getSession().setAttribute("status", "Module " + moduleName + " was disengaged from" +
-                		" service " + serviceName + ".");
+                        " service " + serviceName + ".");
             }
         }
         renderView("disengage.jsp", req, res);

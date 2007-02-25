@@ -32,19 +32,19 @@ package org.apache.axis2.dataretrieval;
  */
 
 public class LocatorType {
-	int type;
-	public final static LocatorType  DEFAULT_AXIS = new LocatorType(0);
-	public final static LocatorType  GLOBAL_LEVEL = new LocatorType(1);
-	public final static LocatorType  GLOBAL_DIALECT = new LocatorType(2);
-	public final static LocatorType  SERVICE_LEVEL = new LocatorType(3);
-	public final static LocatorType  SERVICE_DIALECT = new LocatorType(4);
-	
+    int type;
+    public final static LocatorType  DEFAULT_AXIS = new LocatorType(0);
+    public final static LocatorType  GLOBAL_LEVEL = new LocatorType(1);
+    public final static LocatorType  GLOBAL_DIALECT = new LocatorType(2);
+    public final static LocatorType  SERVICE_LEVEL = new LocatorType(3);
+    public final static LocatorType  SERVICE_DIALECT = new LocatorType(4);
+    
 
-	protected LocatorType (int intype) {
+    protected LocatorType (int intype) {
         this.type= intype;
     }
 
-	public int getType() {
+    public int getType() {
         return type;
     }
 

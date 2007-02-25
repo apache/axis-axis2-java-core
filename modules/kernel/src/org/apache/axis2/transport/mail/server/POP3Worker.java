@@ -34,7 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class POP3Worker extends Thread {
-	private static final Log log = LogFactory.getLog(POP3Worker.class);
+    private static final Log log = LogFactory.getLog(POP3Worker.class);
     boolean doneProcess = false;
     int numDeleted = 0;    // This is a small hack to get the deleting working with the ArrayList. To keep it simple.
     ArrayList messages = new ArrayList();

@@ -346,7 +346,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             OMElement dataLocatorElement =
                 service_element.getFirstChildWithName(new QName(DRConstants.DATA_LOCATOR_ELEMENT));
             if (dataLocatorElement != null) {
-            	processDataLocatorConfig(dataLocatorElement, service);
+                processDataLocatorConfig(dataLocatorElement, service);
              }         
         
         } catch (XMLStreamException e) {

@@ -29,7 +29,7 @@ import java.net.URL;
  * Loads resources (or images) from various sources.
  */
 public class Loader {
-	private static final Log log = LogFactory.getLog(Loader.class);
+    private static final Log log = LogFactory.getLog(Loader.class);
 
     /**
      * Searches for <code>resource</code> in different
@@ -108,11 +108,11 @@ public class Loader {
      * @throws InvocationTargetException
      */
     static public ClassLoader getTCL() throws IllegalAccessException, InvocationTargetException {
-    	return (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
-    		public Object run() {
-    			return Thread.currentThread().getContextClassLoader();
-    		}
-    	});
+        return (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                return Thread.currentThread().getContextClassLoader();
+            }
+        });
     }
 
     /**
@@ -148,7 +148,7 @@ public class Loader {
      */
     static public Class loadClass(String clazz) throws ClassNotFoundException {
         try {
-            ClassLoader tcl = getTCL();	
+            ClassLoader tcl = getTCL();    
             
             if(tcl != null) {
                 Class c = tcl.loadClass(clazz);

@@ -49,24 +49,24 @@ public class ClusterBuilder extends DescriptionBuilder {
      * Populates service from corresponding OM.
      */
     public void buildCluster(OMElement clusterElement)
-			throws DeploymentException {
-    	
-		String className = clusterElement.getAttribute(
-				new QName(TAG_CLASS_NAME)).getAttributeValue();
-		ClusterManager clusterManager;
-		try {
-			Class clazz = Class.forName(className);
-			clusterManager = (ClusterManager) clazz.newInstance();
-			axisConfig.setClusterManager(clusterManager);
-			return;
-		} catch (ClassNotFoundException e) {
-			throw new DeploymentException (Messages.getMessage("clusterImplNotFound"));
-		} catch (InstantiationException e) {
-			throw new DeploymentException (Messages.getMessage("cannotLoadClusterImpl"));
-		} catch (IllegalAccessException e) {
-			throw new DeploymentException (e);
-		}
+            throws DeploymentException {
+        
+        String className = clusterElement.getAttribute(
+                new QName(TAG_CLASS_NAME)).getAttributeValue();
+        ClusterManager clusterManager;
+        try {
+            Class clazz = Class.forName(className);
+            clusterManager = (ClusterManager) clazz.newInstance();
+            axisConfig.setClusterManager(clusterManager);
+            return;
+        } catch (ClassNotFoundException e) {
+            throw new DeploymentException (Messages.getMessage("clusterImplNotFound"));
+        } catch (InstantiationException e) {
+            throw new DeploymentException (Messages.getMessage("cannotLoadClusterImpl"));
+        } catch (IllegalAccessException e) {
+            throw new DeploymentException (e);
+        }
 
-	}
+    }
 
 }

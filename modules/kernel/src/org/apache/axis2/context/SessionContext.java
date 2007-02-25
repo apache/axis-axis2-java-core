@@ -324,10 +324,10 @@ public class SessionContext extends AbstractContext implements Externalizable {
 
     }
 
-	public ConfigurationContext getRootContext() {
-		// Session Context does not live within the hierarchy
-		return null;
-	}
+    public ConfigurationContext getRootContext() {
+        // Session Context does not live within the hierarchy
+        return null;
+    }
 
     
 

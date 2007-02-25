@@ -173,21 +173,21 @@ public abstract class AbstractContext {
     }
     
     public void flush () throws AxisFault {
-    	
-    	ConfigurationContext configContext = getRootContext();
-    	if (configContext==null) {
-    		throw new AxisFault (Messages.getMessage("cannotFlushRootNull"));
-    	}
-    	
-    	AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
-    	ClusterManager clusterManager = axisConfiguration.getClusterManager();
-    	
-    	//Calling the ClusterManager probably to replicate the updated state of the context.
-    	if (clusterManager!=null && clusterManager.isContextClusterable (this)) {
-    		clusterManager.updateState(this);
-    	}
-    	
-    	//Other logic needed for flushing the contexts
+        
+        ConfigurationContext configContext = getRootContext();
+        if (configContext==null) {
+            throw new AxisFault (Messages.getMessage("cannotFlushRootNull"));
+        }
+        
+        AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
+        ClusterManager clusterManager = axisConfiguration.getClusterManager();
+        
+        //Calling the ClusterManager probably to replicate the updated state of the context.
+        if (clusterManager!=null && clusterManager.isContextClusterable (this)) {
+            clusterManager.updateState(this);
+        }
+        
+        //Other logic needed for flushing the contexts
     }
     
     public abstract ConfigurationContext getRootContext ();

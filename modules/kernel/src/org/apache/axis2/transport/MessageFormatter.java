@@ -33,55 +33,55 @@ import org.apache.axis2.context.MessageContext;
  * </p>
  * <p>
  * <messageFormatters> 
- * 		<messageFormatter contentType="application/soap+xml"
- * 			class="org.apache.axis2.transport.http.SOAPMessageFormatter"/>
+ *         <messageFormatter contentType="application/soap+xml"
+ *             class="org.apache.axis2.transport.http.SOAPMessageFormatter"/>
  * </messageFormatters>
  * </p>
  */
 public interface MessageFormatter {
-	
-	/**
-	 * @return a byte array of the message formatted according to the given
-	 *         message format.
-	 */
-	public byte[] getBytes(MessageContext messageContext, OMOutputFormat format)
-			throws AxisFault;
+    
+    /**
+     * @return a byte array of the message formatted according to the given
+     *         message format.
+     */
+    public byte[] getBytes(MessageContext messageContext, OMOutputFormat format)
+            throws AxisFault;
 
-	/**
-	 * To support deffered writing transports as in http chunking.. Axis2 was
-	 * doing this for some time..
-	 * 
-	 * Preserve flag can be used to preserve the envelope for later use. This is
-	 * usefull when implementing authentication machnisms like NTLM.
-	 * 
-	 * @param outputStream
-	 * @param preserve :
-	 *            do not consume the OM when this is set..
-	 */
-	public void writeTo(MessageContext messageContext, OMOutputFormat format,
-			OutputStream outputStream, boolean preserve) throws AxisFault;
+    /**
+     * To support deffered writing transports as in http chunking.. Axis2 was
+     * doing this for some time..
+     * 
+     * Preserve flag can be used to preserve the envelope for later use. This is
+     * usefull when implementing authentication machnisms like NTLM.
+     * 
+     * @param outputStream
+     * @param preserve :
+     *            do not consume the OM when this is set..
+     */
+    public void writeTo(MessageContext messageContext, OMOutputFormat format,
+            OutputStream outputStream, boolean preserve) throws AxisFault;
 
-	/**
-	 * Different message formats can set their own content types
-	 * Eg: JSONFormatter can set the content type as application/json
-	 * @param messageContext
-	 * @param format
-	 * @param soapAction
-	 */
-	public String getContentType(MessageContext messageContext, OMOutputFormat format,
-			String soapAction);
+    /**
+     * Different message formats can set their own content types
+     * Eg: JSONFormatter can set the content type as application/json
+     * @param messageContext
+     * @param format
+     * @param soapAction
+     */
+    public String getContentType(MessageContext messageContext, OMOutputFormat format,
+            String soapAction);
 
-	/**
-	 * Some message formats may want to alter the target url.
-	 * 
-	 * @return the target URL
-	 */
-	public URL getTargetAddress(MessageContext messageContext, OMOutputFormat format,
-			URL targetURL) throws AxisFault;
+    /**
+     * Some message formats may want to alter the target url.
+     * 
+     * @return the target URL
+     */
+    public URL getTargetAddress(MessageContext messageContext, OMOutputFormat format,
+            URL targetURL) throws AxisFault;
 
-	/**
-	 * @return this only if you want set a transport header for SOAP Action
-	 */
-	public String formatSOAPAction(MessageContext messageContext, OMOutputFormat format,
-			String soapAction);
+    /**
+     * @return this only if you want set a transport header for SOAP Action
+     */
+    public String formatSOAPAction(MessageContext messageContext, OMOutputFormat format,
+            String soapAction);
 }

@@ -48,7 +48,7 @@ import org.apache.commons.logging.LogFactory;
  * and the receive method is called.
  */
 public class MailSorter {
-	private static final Log log = LogFactory.getLog(MailSorter.class);
+    private static final Log log = LogFactory.getLog(MailSorter.class);
     Storage st = null;
     private ArrayList sUsers = new ArrayList();
 
@@ -86,7 +86,7 @@ public class MailSorter {
                     mimeMessage.getEncoding());
             String soapAction = getMailHeader(Constants.HEADER_SOAP_ACTION, mimeMessage);
             if (soapAction == null){
-            	soapAction = mimeMessage.getSubject();
+                soapAction = mimeMessage.getSubject();
             }
 
             msgContext.setSoapAction(soapAction);

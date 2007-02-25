@@ -144,15 +144,15 @@ public class SimpleHTTPServer implements TransportListener {
         String repository= optionsParser.isValueSet('r');
         if (repository ==null)
         {
-        	args = optionsParser.getRemainingArgs();
-        	if (args!=null && args[0]!=null && args[0]!="")
-        	{
-        		repository = args[0];
-        	}
-        	else 
-        	{
-        		printUsage();
-        	}
+            args = optionsParser.getRemainingArgs();
+            if (args!=null && args[0]!=null && args[0]!="")
+            {
+                repository = args[0];
+            }
+            else 
+            {
+                printUsage();
+            }
         }
 
         System.out.println("[SimpleHTTPServer] Starting");
