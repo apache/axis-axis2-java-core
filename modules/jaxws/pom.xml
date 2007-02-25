@@ -293,6 +293,13 @@
             <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/doclitbare.wsdl"/>
         </java>
 
+        <echo>Generating java from greeterTypes.xsd</echo>
+        <java classname="com.sun.tools.xjc.Driver" fork="true"> 
+            <classpath refid="maven.runtime.classpath"/>
+            <classpath location="${compiled.classes.dir}"/>
+            <arg line="-d ${schema.generated.src.dir} -quiet ${schema.source.dir}/greeterTypes.xsd"/>
+        </java>
+
     	<echo>Generating java from EchoMessage.wsdl for javabean endpoint support</echo>
    	    <java classname="com.sun.tools.xjc.Driver" fork="true"> 
    	        <classpath refid="maven.runtime.classpath"/>
@@ -539,6 +546,55 @@
 		        <include name="org/apache/axis2/jaxws/server/**"/>
 			</fileset>
 		</copy>
+
+		<!-- ================================================================ -->
+        <!--- XML HTTP Tests -->
+        <!-- ================================================================ -->
+        <copy toDir="target/test-classes/services/XPayloadStringProvider/">
+		  <fileset dir="target/test-classes">
+		    <include name="org/apache/axis2/jaxws/xmlhttp/provider/payload/string/*.class"/>
+		  </fileset>
+		  <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/payload/string">
+		    <include name="META-INF/**"/>
+		  </fileset>
+		</copy>
+		
+		<copy toDir="target/test-classes/services/XMessageStringProvider/">
+		  <fileset dir="target/test-classes">
+		    <include name="org/apache/axis2/jaxws/xmlhttp/provider/message/string/*.class"/>
+		  </fileset>
+		  <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/string">
+		    <include name="META-INF/**"/>
+		  </fileset>
+		</copy>
+		
+		<copy toDir="target/test-classes/services/XPayloadSourceProvider/">
+		  <fileset dir="target/test-classes">
+		    <include name="org/apache/axis2/jaxws/xmlhttp/provider/payload/source/*.class"/>
+		  </fileset>
+		  <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/payload/source">
+		    <include name="META-INF/**"/>
+		  </fileset>
+		</copy>
+		
+		<copy toDir="target/test-classes/services/XMessageSourceProvider/">
+		  <fileset dir="target/test-classes">
+		    <include name="org/apache/axis2/jaxws/xmlhttp/provider/message/source/*.class"/>
+		  </fileset>
+		  <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/source">
+		    <include name="META-INF/**"/>
+		  </fileset>
+		</copy>
+		
+		<copy toDir="target/test-classes/services/XMessageDataSourceProvider/">
+		  <fileset dir="target/test-classes">
+		    <include name="org/apache/axis2/jaxws/xmlhttp/provider/message/datasource/*.class"/>
+		  </fileset>
+		  <fileset dir="test/org/apache/axis2/jaxws/xmlhttp/provider/message/datasource">
+		    <include name="META-INF/**"/>
+		  </fileset>
+		</copy>
+
 		<!-- ================================================================ -->
         <!--- Java Bean Endpoint Samples -->
         <!-- ================================================================ -->
@@ -595,6 +651,19 @@
 			   <include name="org/apache/axis2/jaxws/server/**"/>
 			</fileset>
 		</copy>
+
+		<copy toDir="target/test-classes/services/GreeterService/">
+			<fileset dir="target/test-classes">
+			   <include name="org/apache/axis2/jaxws/sample/dlwmin/**"/>
+			</fileset>
+			<fileset dir="test/org/apache/axis2/jaxws/sample/dlwmin">
+			   <include name="META-INF/**"/>
+			</fileset>
+			<fileset dir="target/classes">
+			   <include name="org/apache/axis2/jaxws/server/**"/>
+			</fileset>
+		</copy>
+
 		<copy toDir="target/test-classes/services/AsyncService/">
 			<fileset dir="target/test-classes">
 			   <include name="org/apache/axis2/jaxws/sample/parallelasync/**"/>
@@ -606,6 +675,7 @@
 			   <include name="org/apache/axis2/jaxws/server/**"/>
 			</fileset>
 		</copy>
+
 		<copy toDir="target/test-classes/services/FaultyWebServiceService/">
 			<fileset dir="target/test-classes">
 			   <include name="org/apache/axis2/jaxws/sample/faults/**"/>
