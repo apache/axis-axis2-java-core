@@ -599,9 +599,8 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
                 }
                 tempDBC = superDBC;
             } //Done with implied SEI's superclasses
-                
+            retrieveList = removeOverriddenMethods(retrieveList, dbc);  
         }//Done with implied SEI's
-        retrieveList = removeOverriddenMethods(retrieveList, dbc);
         
         return retrieveList.iterator();
     }
