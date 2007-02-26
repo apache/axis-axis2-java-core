@@ -24,14 +24,14 @@ import org.apache.axiom.om.impl.OMNamespaceImpl;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
 import org.apache.axiom.om.impl.llom.factory.OMLinkedListImplFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.builder.OMBuilder;
+import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
 
 /**
  * Makes the OMSourcedElementImpl object with the JSONDataSource inside.
  */
 
-public class JSONOMBuilder implements OMBuilder {
+public class JSONOMBuilder implements Builder {
     
     
 
@@ -39,7 +39,7 @@ public class JSONOMBuilder implements OMBuilder {
     }
 
     //returns the OMSourcedElementImpl with JSONDataSource inside
-    public OMElement processDocument(InputStream inputStream, MessageContext messageContext) throws AxisFault {
+    public OMElement processDocument(InputStream inputStream,String contentType, MessageContext messageContext) throws AxisFault {
         String localName="";
         String prefix = "";
         OMNamespace ns = new OMNamespaceImpl("", "");
