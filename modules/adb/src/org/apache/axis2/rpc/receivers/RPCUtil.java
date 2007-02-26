@@ -27,6 +27,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Iterator;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -210,14 +212,35 @@ public class RPCUtil {
                             objArray, service.isElementFormDefault(), service.getTypeTable());
                     envelope.getBody().addChild(bodyChild);
                 } else {
-                    if (service.isElementFormDefault()) {
-                        RPCUtil.processResponse(fac, resObject, bodyContent, ns,
-                                envelope, method, service.isElementFormDefault(),
+                    if(SimpleTypeMapper.isCollection(resObject.getClass())){
+                        Collection collection = (Collection) resObject;
+                        int size = collection.size();
+                        Object values [] = new Object[size];
+                        int count = 0;
+                        for (Iterator iterator = collection.iterator(); iterator.hasNext();)
+                        {
+                            values[count] = iterator.next();
+                            count ++;
+
+                        }
+                        QName resName = new QName(elementQName.getNamespaceURI(),
+                                method.getName() + "Response",
+                                elementQName.getPrefix());
+                        OMElement bodyChild = RPCUtil.getResponseElement(resName,
+                                values,
+                                service.isElementFormDefault(),
                                 service.getTypeTable());
+                        envelope.getBody().addChild(bodyChild);
                     } else {
-                        RPCUtil.processResponse(fac, resObject, bodyContent, ns,
-                                envelope, method, service.isElementFormDefault(),
-                                null);
+                        if (service.isElementFormDefault()) {
+                            RPCUtil.processResponse(fac, resObject, bodyContent, ns,
+                                    envelope, method, service.isElementFormDefault(),
+                                    service.getTypeTable());
+                        } else {
+                            RPCUtil.processResponse(fac, resObject, bodyContent, ns,
+                                    envelope, method, service.isElementFormDefault(),
+                                    null);
+                        }
                     }
                 }
             }
