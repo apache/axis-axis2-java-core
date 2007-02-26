@@ -170,7 +170,7 @@ public class WSDL2CodeMojo extends AbstractMojo
     /**
      * @parameter
      */
-    private NamespaceURIMapping[] namespaceURIs;
+    private NamespaceURIMapping[] namespaceURIs = null;
 
     private static class InheritedArtifact
     {
@@ -341,12 +341,14 @@ public class WSDL2CodeMojo extends AbstractMojo
                         CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION,
                         new String[]{portName}));
         // set the namespaces
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
-                        new String[]{getNamespaceToPackagesMap()}));
-
+	if(!((namespaceToPackages == null) && (namespaceURIs == null)))
+	{
+        	optionMap.put(
+                	CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
+                	new CommandLineOption(
+                        	CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
+                        	new String[]{getNamespaceToPackagesMap()}));
+	}
         return optionMap;
     }
 
