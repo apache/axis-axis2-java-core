@@ -20,7 +20,9 @@ import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.builder.OMBuilder;
+import org.apache.axis2.builder.Builder;
+import org.apache.axis2.builder.MIMEBuilder;
+import org.apache.axis2.builder.SOAPBuilder;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -208,37 +210,40 @@ public class DescriptionBuilder implements DeploymentConstants {
      * @param messageBuildersElement
      */
     protected HashMap processMessageBuilders(OMElement messageBuildersElement)
-            throws DeploymentException {
+    throws DeploymentException {
         HashMap builderSelector = new HashMap();
         Iterator msgBuilders = messageBuildersElement
-                .getChildrenWithName(new QName(TAG_MESSAGE_BUILDER));
+        .getChildrenWithName(new QName(TAG_MESSAGE_BUILDER));
         while (msgBuilders.hasNext()) {
             OMElement msgBuilderElement = (OMElement) msgBuilders.next();
-            final OMElement tempMsgBuilder = msgBuilderElement;
+            OMElement tempMsgBuilder = msgBuilderElement;
+            OMAttribute builderName = tempMsgBuilder.getAttribute(new QName(TAG_CLASS_NAME));
+            String className = builderName.getAttributeValue();
             Class builderClass = null;
-            OMBuilder builderObject;
+            Builder builderObject;
             try {
-                builderClass = findAndValidateSelectorClass(tempMsgBuilder,
+                builderClass = findAndValidateSelectorClass(className,
                         DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_BUILDER);
-                builderObject = (OMBuilder)builderClass.newInstance();
+                builderObject = (Builder)builderClass.newInstance();
             } catch (PrivilegedActionException e) {
                 throw (DeploymentException) e.getException();
             } catch (InstantiationException e) {
                 throw new DeploymentException(
                         "Cannot instantiate the specified Builder Class  : "
-                                + builderClass.getName() + ".", e);
+                        + builderClass.getName() + ".", e);
             } catch (IllegalAccessException e) {
                 throw new DeploymentException(
                         "Cannot instantiate the specified Builder Class : "
-                                + builderClass.getName() + ".", e);
+                        + builderClass.getName() + ".", e);
             }
             OMAttribute contentTypeAtt = msgBuilderElement
-                    .getAttribute(new QName(TAG_CONTENT_TYPE));
+            .getAttribute(new QName(TAG_CONTENT_TYPE));
             builderSelector.put(contentTypeAtt.getAttributeValue(),
                     builderObject);
-        }
+        }		
         return builderSelector;
     }
+    
     
     /**
      * Processes the message builders specified in axis2.xml or services.xml.
@@ -246,62 +251,62 @@ public class DescriptionBuilder implements DeploymentConstants {
      * @param messageBuildersElement
      */
     protected HashMap processMessageFormatters(OMElement messageFormattersElement)
-            throws DeploymentException {
+    throws DeploymentException {
         HashMap messageFormatters = new HashMap();
         Iterator msgFormatters = messageFormattersElement
-                .getChildrenWithName(new QName(TAG_MESSAGE_FORMATTER));
+        .getChildrenWithName(new QName(TAG_MESSAGE_FORMATTER));
         while (msgFormatters.hasNext()) {
             OMElement msgFormatterElement = (OMElement) msgFormatters.next();
-            final OMElement tempMsgFormatter = msgFormatterElement;
+            OMElement tempMsgFormatter = msgFormatterElement;
+            OMAttribute formatterName = tempMsgFormatter.getAttribute(new QName(TAG_CLASS_NAME));
+            String className = formatterName.getAttributeValue();
             MessageFormatter formatterObject;
             Class formatterClass = null;
             try {
-                formatterClass = findAndValidateSelectorClass(tempMsgFormatter,DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_FORMATTER );
+                formatterClass = findAndValidateSelectorClass(className,DeploymentErrorMsgs.ERROR_LOADING_MESSAGE_FORMATTER );
                 formatterObject = (MessageFormatter)formatterClass.newInstance();
             } catch (PrivilegedActionException e) {
                 throw (DeploymentException) e.getException();
             } catch (InstantiationException e) {
                 throw new DeploymentException(
                         "Cannot instantiate the specified Formatter Class  : "
-                                + formatterClass.getName() + ".", e);
+                        + formatterClass.getName() + ".", e);
             } catch (IllegalAccessException e) {
                 throw new DeploymentException(
                         "Cannot instantiate the specified Formatter Class : "
-                                + formatterClass.getName() + ".", e);
+                        + formatterClass.getName() + ".", e);
             }
             OMAttribute contentTypeAtt = msgFormatterElement
-                    .getAttribute(new QName(TAG_CONTENT_TYPE));
+            .getAttribute(new QName(TAG_CONTENT_TYPE));
             messageFormatters.put(contentTypeAtt.getAttributeValue(),
                     formatterObject);
         }
         return messageFormatters;
     }
-
-    protected Class findAndValidateSelectorClass(final OMElement tempMsgBuilder, final String errorMsg)
-            throws PrivilegedActionException {
+    
+    protected Class findAndValidateSelectorClass(final String className, final String errorMsg)
+    throws PrivilegedActionException {
         return (Class) org.apache.axis2.java.security.AccessController
-                .doPrivileged(new PrivilegedExceptionAction() {
-                    public Object run()
-                            throws org.apache.axis2.deployment.DeploymentException {
-                        OMAttribute builderName = tempMsgBuilder
-                                .getAttribute(new QName(TAG_CLASS_NAME));
-                        String className = builderName.getAttributeValue();
-                        Class selectorClass;
-                        try {
-                            if ((className != null) && !"".equals(className)) {
-                                selectorClass = Loader.loadClass(Thread.currentThread()
-                                        .getContextClassLoader(), className);
-                            } else {
-                                throw new DeploymentException(Messages.getMessage(errorMsg,
-                                        "Invalid Class Name",className));
-                            }
-                        } catch (ClassNotFoundException e) {
-                            throw new DeploymentException(Messages.getMessage(errorMsg,
-                                                    "ClassNotFoundException",className), e);
-                        }
-                        return selectorClass;
+        .doPrivileged(new PrivilegedExceptionAction() {
+            public Object run()
+            throws org.apache.axis2.deployment.DeploymentException {
+                Class selectorClass;
+                try {
+                    if ((className != null) && !"".equals(className)) {
+                        selectorClass = Loader.loadClass(Thread.currentThread()
+                                .getContextClassLoader(), className);
+                    }else
+                    {
+                        throw new DeploymentException(Messages.getMessage(errorMsg,
+                                "Invalid Class Name",className));
                     }
-                });
+                } catch (ClassNotFoundException e) {
+                    throw new DeploymentException(Messages.getMessage(errorMsg,
+                            "ClassNotFoundException",className), e);
+                }
+                return selectorClass;
+            }
+        });
     }
 
     /**

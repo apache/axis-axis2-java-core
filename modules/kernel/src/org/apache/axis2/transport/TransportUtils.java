@@ -19,23 +19,26 @@ package org.apache.axis2.transport;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMException;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axiom.soap.impl.llom.soap11.SOAP11Factory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.builder.OMBuilder;
+import org.apache.axis2.builder.BuilderUtil;
+import org.apache.axis2.builder.Builder;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.ApplicationXMLFormatter;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.SOAPMessageFormatter;
-import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,53 +56,40 @@ public class TransportUtils {
         try {
             InputStream inStream = (InputStream) msgContext
                     .getProperty(MessageContext.TRANSPORT_IN);
-
             msgContext.setProperty(MessageContext.TRANSPORT_IN, null);
 
-            // this inputstram is set by the TransportSender represents a two
-            // way transport or by a Transport Recevier
-            if (inStream == null) {
-                throw new AxisFault(Messages.getMessage("inputstreamNull"));
-            }
-            Object contentTypeObject;
-            boolean isMIME = false;
-            
-            contentTypeObject = msgContext.getProperty(HTTPConstants.CONTENT_TYPE);
+			// this inputstram is set by the TransportSender represents a two
+			// way transport or a Transport Recevier
+			if (inStream == null) {
+				throw new AxisFault(Messages.getMessage("inputstreamNull"));
+			}
 
-            String contentType=null;
-            if(contentTypeObject!=null){
-                contentType =(String) contentTypeObject;
-                if (JavaUtils.indexOfIgnoreCase(contentType,
-                        HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
-                    isMIME = true;
-                }
-            }
-            
-            String soapNamespaceURI = getSOAPNamespaceFromContentType(contentType, null);
+			String contentType = (String) msgContext
+					.getProperty(Constants.Configuration.CONTENT_TYPE);
 
-            String charSetEnc = (String) msgContext
-                    .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-            if (charSetEnc == null) {
-                charSetEnc = (String) msgContext
-                        .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-            }
-            if (charSetEnc == null) {
-                charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
-            }
-            return createSOAPMessage(msgContext, inStream, soapNamespaceURI,
-                    isMIME, contentType, charSetEnc);
-        } catch (AxisFault e) {
-            throw e;
-        } catch (OMException e) {
-            throw new AxisFault(e);
-        } catch (XMLStreamException e) {
-            throw new AxisFault(e);
-        } catch (FactoryConfigurationError e) {
-            throw new AxisFault(e);
-        }
-    }
+			// get the type of char encoding
+			String charSetEnc = (String) msgContext
+					.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+			if (charSetEnc == null && contentType != null) {
+				charSetEnc = BuilderUtil.getCharSetEncoding(contentType);
+			} else if (charSetEnc == null) {
+				charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
+			}
+			msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
 
-    /**
+			return createSOAPMessage(msgContext, inStream, contentType);
+		} catch (AxisFault e) {
+			throw e;
+		} catch (OMException e) {
+			throw new AxisFault(e);
+		} catch (XMLStreamException e) {
+			throw new AxisFault(e);
+		} catch (FactoryConfigurationError e) {
+			throw new AxisFault(e);
+		}
+	}
+
+	/**
      * Objective of this method is to capture the SOAPEnvelope creation logic
      * and make it a common for all the transports and to in/out flows.
      * 
@@ -115,69 +105,52 @@ public class TransportUtils {
      * @throws XMLStreamException
      * @throws FactoryConfigurationError
      */
-    public static SOAPEnvelope createSOAPMessage(MessageContext msgContext,
-            InputStream inStream, String soapNamespaceURI, boolean isMIME,
-            String contentType, String charSetEnc) throws AxisFault,
-            OMException, XMLStreamException, FactoryConfigurationError {
-        OMElement documentElement=null;
-        String charsetEncoding=null;
-        if (isMIME) {
-            StAXBuilder builder = Builder.getAttachmentsBuilder(
-                    msgContext, inStream, contentType, !(msgContext
-                            .isDoingREST()));
-            documentElement = builder.getDocumentElement();
-            charsetEncoding = builder.getDocument().getCharsetEncoding();
-        } else if (msgContext.isDoingREST()) {
-            StAXBuilder builder = Builder.getPOXBuilder(inStream,
-                    charSetEnc, soapNamespaceURI);
-            documentElement = builder.getDocumentElement();
-            charsetEncoding = builder.getDocument().getCharsetEncoding();
-//        } else if (soapNamespaceURI!=null){
-//                builder = Builder.getBuilder(inStream, charSetEnc,soapNamespaceURI);
-        } else if (contentType != null) {
-            OMBuilder builder = Builder.getBuilderFromSelector(contentType, msgContext);
-            if (builder != null) {
-                documentElement = builder.processDocument(inStream, msgContext);
-//                charsetEncoding = builder.getCharsetEncoding();
-            }
-        }
-        if (documentElement == null) {
-            //FIXME making soap defualt for the moment..might effect the performance
-            StAXBuilder builder = Builder.getSOAPBuilder(inStream, charSetEnc,soapNamespaceURI);
-            documentElement = builder.getDocumentElement();
-            charsetEncoding = builder.getDocument().getCharsetEncoding();
-//            throw new AxisFault("Cannot find a matching builder for the message. Unsupported Content Type.");
-        }
-        
-        SOAPEnvelope envelope;
-        //Check whether we have received a SOAPEnvelope or not
-        if (documentElement instanceof SOAPEnvelope) {
-            envelope = (SOAPEnvelope) documentElement;
-        } else {
-            //If it is not a SOAPEnvelope we wrap that with a fake SOAPEnvelope.
-            SOAPFactory soapFactory = new SOAP11Factory();
-            envelope= soapFactory.getDefaultEnvelope();
-            envelope.getBody().addChild(documentElement);
-        }
+	public static SOAPEnvelope createSOAPMessage(MessageContext msgContext, InputStream inStream,
+			String contentType) throws AxisFault, OMException, XMLStreamException,
+			FactoryConfigurationError {
+		OMElement documentElement = null;
+		String charsetEncoding = null;
+		if (msgContext.isDoingREST()) {
+			//TODO KEITH :Do we need this anymore
+			String charSetEnc = (String) msgContext
+					.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+			StAXBuilder builder = BuilderUtil.getPOXBuilder(inStream, charSetEnc);
+			documentElement = builder.getDocumentElement();
+			charsetEncoding = builder.getDocument().getCharsetEncoding();
+		} else if (contentType != null) {
+			String type;
+			int index = contentType.indexOf(';');
+			if (index > 0) {
+				type = contentType.substring(0, index);
+			} else {
+				type = contentType;
+			}
+			Builder builder = BuilderUtil.getBuilderFromSelector(type, msgContext);
+			if (builder != null) {
+				documentElement = builder.processDocument(inStream, contentType, msgContext);
+			}
+		}
+		if (documentElement == null) {
+			// FIXME making soap defualt for the moment..might effect the
+			// performance
+			String charSetEnc = (String) msgContext
+					.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+			StAXBuilder builder = BuilderUtil.getSOAPBuilder(inStream, charSetEnc);
+			documentElement = builder.getDocumentElement();
+			charsetEncoding = builder.getDocument().getCharsetEncoding();
+		}
 
-    /*    if ((charsetEncoding != null)
-                && !"".equals(charsetEncoding)
-                && (msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING) != null)
-                && !charsetEncoding.equalsIgnoreCase((String) msgContext
-                                .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING))) {
-            String faultCode;
-
-            if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(
-                    envelope.getNamespace().getNamespaceURI())) {
-                faultCode = SOAP12Constants.FAULT_CODE_SENDER;
-            } else {
-                faultCode = SOAP11Constants.FAULT_CODE_SENDER;
-            }
-
-            throw new AxisFault(
-                    "Character Set Encoding from " + "transport information do not match with "
-                    + "character set encoding in the received SOAP message", faultCode);
-        }*/
+		SOAPEnvelope envelope;
+		// Check whether we have received a SOAPEnvelope or not
+		if (documentElement instanceof SOAPEnvelope) {
+			envelope = (SOAPEnvelope) documentElement;
+		} else {
+			// If it is not a SOAPEnvelope we wrap that with a fake
+			// SOAPEnvelope.
+			SOAPFactory soapFactory = new SOAP11Factory();
+			envelope = soapFactory.getDefaultEnvelope();
+			envelope.getBody().addChild(documentElement);
+		}
         return envelope;
     }
 

@@ -30,7 +30,6 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportSender;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.axis2.util.Utils;
@@ -165,7 +164,7 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
     }
 
     private void runtimeMailParameterSetting(MessageContext msgContext) {
-        Object obj = msgContext.getProperty(HTTPConstants.MAIL_SMTP);
+        Object obj = msgContext.getProperty(Constants.MAIL_SMTP);
         if (obj != null) {
             // Overide the axis2.xml cofiguration setting
             if (obj instanceof HttpTransportProperties.MailProperties) {

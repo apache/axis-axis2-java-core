@@ -31,6 +31,7 @@ import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisModule;
@@ -45,7 +46,6 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Handler;
 import org.apache.axis2.engine.Phase;
-import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.ObjectStateUtils;
@@ -2951,7 +2951,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
                 try {
                     if (persistedWithOptimizedMTOM) {
                         boolean isSOAP = true;
-                        StAXBuilder builder = Builder.getAttachmentsBuilder(this, msgBuffer, contentType, isSOAP);
+                        StAXBuilder builder = BuilderUtil.getAttachmentsBuilder(this, msgBuffer, contentType, isSOAP);
                         envelope = (SOAPEnvelope) builder.getDocumentElement();
                     } else {
                         xmlreader = StAXUtils.createXMLStreamReader(msgBuffer, charSetEnc);

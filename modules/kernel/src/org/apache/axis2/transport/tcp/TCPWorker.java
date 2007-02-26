@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -29,7 +30,6 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.i18n.Messages;
-import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -80,7 +80,7 @@ public class TCPWorker implements Runnable {
 
                 // create the SOAP Envelope
                 Reader in = new InputStreamReader(socket.getInputStream());
-                OMXMLParserWrapper builder = Builder.getBuilder(in);
+                OMXMLParserWrapper builder = BuilderUtil.getBuilder(in);
                 SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
 
                 msgContext.setEnvelope(envelope);

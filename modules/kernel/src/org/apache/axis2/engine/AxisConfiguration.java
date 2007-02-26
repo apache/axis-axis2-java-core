@@ -17,7 +17,7 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.builder.OMBuilder;
+import org.apache.axis2.builder.Builder;
 import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
@@ -169,25 +169,23 @@ public class AxisConfiguration extends AxisDescription {
         this.phasesinfo = new PhasesInfo();
         targetResolvers = new ArrayList();
     }
-
+    
     public void addMessageReceiver(String mepURL,
-                                   MessageReceiver messageReceiver) {
+            MessageReceiver messageReceiver) {
         messageReceivers.put(mepURL, messageReceiver);
     }
-
+    
     /**
      * Register a messageBuilder implementation against a content type.
      * This is used by Axis2 to support different message formats.
-     *
      * @param contentType
      * @param messageBuilder
      */
     public void addMessageBuilder(String contentType,
-            OMBuilder messageBuilder) {
+            Builder messageBuilder) {
         messageBuilders.put(contentType, messageBuilder);
     }
     
-
     /**
      * Register a messageFormatter implementation against a content type.
      * This is used by Axis2 to support serialization of messages to different 
@@ -632,8 +630,8 @@ public class AxisConfiguration extends AxisDescription {
      * @return the configured message builder implementation class name against
      *         the given content type.
      */
-    public OMBuilder getMessageBuilder(String contentType) {
-        return (OMBuilder)messageBuilders.get(contentType);
+    public Builder getMessageBuilder(String contentType) {
+        return (Builder)messageBuilders.get(contentType);
     }
     
     /**

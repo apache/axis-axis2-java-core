@@ -214,6 +214,7 @@ public class HTTPWorker implements Worker {
             if (inentity.getContentType() != null) {
                 contenttype = inentity.getContentType().getValue();
             }
+            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,contenttype);
             InvocationResponse pi = HTTPTransportUtils.processHTTPPostRequest(
                     msgContext,
                     inentity.getContent(),

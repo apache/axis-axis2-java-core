@@ -15,6 +15,15 @@
  */
 package org.apache.axis2.transport.http.util;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.zip.GZIPInputStream;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.impl.OMNodeEx;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
@@ -23,6 +32,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisBindingOperation;
@@ -37,18 +47,9 @@ import org.apache.axis2.engine.RequestURIBasedDispatcher;
 import org.apache.axis2.engine.RequestURIOperationDispatcher;
 import org.apache.axis2.engine.SOAPActionBasedDispatcher;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.SchemaUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.commons.schema.XmlSchemaElement;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
 
 /**
  *
@@ -108,7 +109,7 @@ public class RESTUtil {
             msgContext.setEnvelope(soapEnvelope);
             msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD,
                                    org.apache.axis2.transport.http.HTTPConstants.HTTP_METHOD_POST);
-            msgContext.setProperty(org.apache.axis2.transport.http.HTTPConstants.CONTENT_TYPE,
+            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,
                                    contentType);
             msgContext.setDoingREST(true);
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, response.getOutputStream());
@@ -267,7 +268,7 @@ public class RESTUtil {
             if (checkContentType(
                     org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_MULTIPART_RELATED,
                     contentType)) {
-                body.addChild(Builder.getAttachmentsBuilder(msgCtxt,
+                body.addChild(BuilderUtil.getAttachmentsBuilder(msgCtxt,
                                                             inputStream,
                                                             contentType,
                                                             false).getDocumentElement());
@@ -278,7 +279,7 @@ public class RESTUtil {
                             org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_APPLICATION_XML,
                             contentType)) {
 
-                String charSetEnc = Builder.getCharSetEncoding(contentType);
+                String charSetEnc = BuilderUtil.getCharSetEncoding(contentType);
                 if (charSetEnc == null) {
                     // If charset is not specified
                     charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
@@ -288,7 +289,7 @@ public class RESTUtil {
 
                 // Create documentElement only if the content length is greator than 0
                 if (request.getContentLength() != 0) {
-                    StAXBuilder builder = Builder.getPOXBuilder(inputStream, charSetEnc, null);
+                    StAXBuilder builder = BuilderUtil.getPOXBuilder(inputStream, charSetEnc);
                     OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
                     documentElement.setParent(null);
                     body.addChild(documentElement);

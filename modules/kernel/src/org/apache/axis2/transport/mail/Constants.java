@@ -71,4 +71,8 @@ public class Constants {
     public final static String NOOP = "NOOP";
     public final static String LIST = "LIST";
     public final static String DELE = "DELE";
+
+	public static final String MAIL_SMTP = "_MAIL_SMTP_";
+
+	public static final String MAIL_POP3 = "_MAIL_POP3_";
 }

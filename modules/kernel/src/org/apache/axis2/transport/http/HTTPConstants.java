@@ -377,10 +377,13 @@ public class HTTPConstants {
      */
     public static final byte SENDER[] = "400".getBytes();
     public static final String PROXY = "PROXY";
-    public static final String MAIL_SMTP = "_MAIL_SMTP_";
-    public static final String MAIL_POP3 = "_MAIL_POP3_";
     public static final String AUTHENTICATE = "_NTLM_DIGEST_BASIC_AUTHENTICATION_";
+    
+    /**
+     * @deprecated
+     */
     public static final String MTOM_RECEIVED_CONTENT_TYPE = "MTOM_RECEIVED";
+    
     /**
      * Field ISE[]
      */
@@ -467,6 +470,10 @@ public class HTTPConstants {
     public static final String COOKIE_STRING = "Cookie";
     public static final String HTTP_METHOD_GET = "GET";
     public static final String HTTP_METHOD_POST = "POST";
+    
+    /**
+     * @deprecated Please use Constants.Configuration.CONTENT_TYPE
+     */
     public static final String CONTENT_TYPE = "Content-Type";
 
     public static final String OMIT_SOAP_12_ACTION = "OmitSOAP12Action";

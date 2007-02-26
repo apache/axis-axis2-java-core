@@ -59,6 +59,7 @@ public class SOAPUtil {
                 response.setHeader("Server",server(msgContext));
             }
             String soapAction = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
+            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,request.getContentType());
             HTTPTransportUtils.processHTTPPostRequest(msgContext,
                                                       request.getInputStream(),
                                                       response.getOutputStream(),

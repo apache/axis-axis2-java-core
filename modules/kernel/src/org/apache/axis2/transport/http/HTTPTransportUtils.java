@@ -30,6 +30,7 @@ import org.apache.axiom.soap.impl.llom.soap12.SOAP12Factory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -38,7 +39,6 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.transport.TransportUtils;
-import org.apache.axis2.util.Builder;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
 
@@ -194,22 +194,21 @@ public class HTTPTransportUtils {
     public static InvocationResponse processHTTPPostRequest(MessageContext msgContext, InputStream in,
                                               OutputStream out, String contentType, String soapActionHeader, String requestURI)
             throws AxisFault {
-
         int soapVersion = VERSION_UNKNOWN;
-
         InvocationResponse pi = InvocationResponse.CONTINUE;
         
         try {
 
             Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
-
+            
             if (headers != null) {
-                if (HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING)) ||
-                        HTTPConstants.COMPRESSION_GZIP.equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING_LOWERCASE))) {
+                if (HTTPConstants.COMPRESSION_GZIP.equals(headers
+                        .get(HTTPConstants.HEADER_CONTENT_ENCODING))
+                        || HTTPConstants.COMPRESSION_GZIP.equals(headers
+                                .get(HTTPConstants.HEADER_CONTENT_ENCODING_LOWERCASE))) {
                     in = new GZIPInputStream(in);
                 }
-                }
-
+            }
 
             // remove the starting and trailing " from the SOAP Action
             if ((soapActionHeader != null) && soapActionHeader.charAt(0) == '\"'
@@ -227,49 +226,41 @@ public class HTTPTransportUtils {
             boolean isMIME=false;
 
             // get the type of char encoding
-            String charSetEnc = Builder.getCharSetEncoding(contentType);
+            String charSetEnc = BuilderUtil.getCharSetEncoding(contentType);
             if(charSetEnc == null){
                 charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
             }
-            // Setting the value in msgCtx
             msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
 
-            String soapNS = null;
             if (contentType != null) {
-                if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
-                    soapVersion = VERSION_SOAP12;
-                    soapNS = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-                    processContentTypeForAction(contentType, msgContext);
-                } else if (contentType
-                        .indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
-                    soapVersion = VERSION_SOAP11;
-                    soapNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-                } else if (isRESTRequest(contentType)) {
+				if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+					soapVersion = VERSION_SOAP12;
+					processContentTypeForAction(contentType, msgContext);
+				} else if (contentType
+						.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+					soapVersion = VERSION_SOAP11;
+				} else if (isRESTRequest(contentType)) {
                     // If REST, construct a SOAP11 envelope to hold the rest message and
                     // indicate that this is a REST message.
                     soapVersion = VERSION_SOAP11; 
-                    soapNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
                     msgContext.setDoingREST(true);
                 }
-                if (JavaUtils.indexOfIgnoreCase(contentType,
-                        HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
-                    // It is MIME (MTOM or SwA)
-                    isMIME = true;
-                } else if (soapVersion == VERSION_SOAP11) {
-                    // Deployment configuration parameter
-                    Parameter enableREST = msgContext
-                            .getParameter(Constants.Configuration.ENABLE_REST);
-                    if ((soapActionHeader == null) && (enableREST != null)) {
-                        if (Constants.VALUE_TRUE.equals(enableREST.getValue())) {
-                            // If the content Type is text/xml (BTW which is the
-                            // SOAP 1.1 Content type ) and the SOAP Action is
-                            // absent it is rest !!
-                            msgContext.setDoingREST(true);
-                        }
-                    }
-                }
-            }
-            envelope = TransportUtils.createSOAPMessage(msgContext,in,soapNS,isMIME,contentType,charSetEnc);
+				if (soapVersion == VERSION_SOAP11) {
+					// TODO Keith : Do we need this anymore
+					// Deployment configuration parameter
+					Parameter enableREST = msgContext
+							.getParameter(Constants.Configuration.ENABLE_REST);
+					if ((soapActionHeader == null) && (enableREST != null)) {
+						if (Constants.VALUE_TRUE.equals(enableREST.getValue())) {
+							// If the content Type is text/xml (BTW which is the
+							// SOAP 1.1 Content type ) and the SOAP Action is
+							// absent it is rest !!
+							msgContext.setDoingREST(true);
+						}
+					}
+				}
+			}
+            envelope = TransportUtils.createSOAPMessage(msgContext,in,contentType);
             msgContext.setEnvelope(envelope);
             AxisEngine engine = new AxisEngine(msgContext.getConfigurationContext());
 

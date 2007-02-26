@@ -15,29 +15,6 @@
 */
 package org.apache.axis2.transport.jms;
 
-import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.soap.SOAP11Constants;
-import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
-import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.util.Builder;
-import org.apache.axis2.util.JavaUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.jms.BytesMessage;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.TextMessage;
-import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -45,6 +22,30 @@ import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import javax.jms.BytesMessage;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.TextMessage;
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.om.impl.builder.StAXBuilder;
+import org.apache.axiom.soap.SOAP11Constants;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.builder.BuilderUtil;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class JMSUtils {
 
@@ -165,7 +166,7 @@ public class JMSUtils {
                     return
                         new ByteArrayInputStream(
                             txtMsg.getText().getBytes(
-                            Builder.getCharSetEncoding(contentType)));
+                            BuilderUtil.getCharSetEncoding(contentType)));
                 } else {
                     return
                         new ByteArrayInputStream(txtMsg.getText().getBytes());
@@ -307,13 +308,13 @@ public class JMSUtils {
 
         if (contentType != null && contentType.indexOf(
                 HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED) > -1) {
-            builder = Builder.getAttachmentsBuilder(
+            builder = BuilderUtil.getAttachmentsBuilder(
                     msgContext, in, contentType, true);
             envelope = (SOAPEnvelope) builder.getDocumentElement();
         } else {
-            String charSetEnc = Builder.getCharSetEncoding(contentType);
-            String soapNS = Builder.getEnvelopeNamespace(contentType);
-            builder = Builder.getSOAPBuilder(in, charSetEnc, soapNS);
+            String charSetEnc = BuilderUtil.getCharSetEncoding(contentType);
+            String soapNS = BuilderUtil.getEnvelopeNamespace(contentType);
+            builder = BuilderUtil.getSOAPBuilder(in, charSetEnc);
 
             // Set the encoding scheme in the message context
             msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);

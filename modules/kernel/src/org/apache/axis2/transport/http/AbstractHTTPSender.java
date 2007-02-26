@@ -214,9 +214,9 @@ public abstract class AbstractHTTPSender {
             OperationContext opContext = msgContext.getOperationContext();
             
             if (opContext != null) {
-                opContext.setProperty(
-                        HTTPConstants.CONTENT_TYPE,header.getValue());
-        
+                opContext.setProperty(Constants.Configuration.CONTENT_TYPE,
+                        header.getValue());
+                
             for (int i = 0; i < headers.length; i++) {
                 NameValuePair charsetEnc =headers[i].getParameterByName(
                         HTTPConstants.CHAR_SET_ENCODING);

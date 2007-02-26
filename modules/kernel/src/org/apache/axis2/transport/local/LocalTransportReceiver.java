@@ -22,13 +22,13 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
-import org.apache.axis2.util.Builder;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
@@ -68,7 +68,7 @@ public class LocalTransportReceiver {
             msgCtx.setProperty(MessageContext.TRANSPORT_OUT, sender.getResponse());
 
             InputStreamReader streamReader = new InputStreamReader(in);
-            OMXMLParserWrapper builder = Builder.getBuilder(streamReader);
+            OMXMLParserWrapper builder = BuilderUtil.getBuilder(streamReader);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
 
             msgCtx.setEnvelope(envelope);

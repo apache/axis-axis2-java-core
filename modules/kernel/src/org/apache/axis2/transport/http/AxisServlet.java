@@ -110,6 +110,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         String contentType = request.getContentType();
         if (!isRESTRequest(contentType)) {
             msgContext = createMessageContext(request, response);
+            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,contentType);
             try {
                 // adding ServletContext into msgContext;
                 InvocationResponse pi = HTTPTransportUtils.
