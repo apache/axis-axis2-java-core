@@ -63,10 +63,6 @@
                          class="org.apache.axis2.transport.http.XFormURLEncodedFormatter"/>
         <messageFormatter contentType="application/xml"
                          class="org.apache.axis2.transport.http.ApplicationXMLFormatter"/>
-        <messageFormatter contentType="text/xml"
-                         class="org.apache.axis2.transport.http.ApplicationXMLFormatter"/>
-        <messageFormatter contentType="application/echo+xml"
-                         class="org.apache.axis2.transport.http.ApplicationXMLFormatter"/>
     </messageFormatters>
 
     <!-- ================================================= -->
