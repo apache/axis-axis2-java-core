@@ -1,3 +1,20 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ * Copyright 2006 International Business Machines Corp.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.axis2.jaxws.wsdl.impl;
 
 import java.util.ArrayList;
@@ -7,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.wsdl.Definition;
@@ -35,6 +53,9 @@ public class SchemaReaderImpl implements SchemaReader {
 	private Definition wsdlDefinition = null;
 	private static Log log = LogFactory.getLog(SchemaReaderImpl.class);
 	
+	/* (non-Javadoc)
+	 * @see org.apache.axis2.jaxws.wsdl.SchemaReader#readPackagesFromSchema(javax.wsdl.Definition)
+	 */
 	public Set<String> readPackagesFromSchema(Definition wsdlDefinition) throws SchemaReaderException{
 		if(wsdlDefinition == null){
 			if(log.isDebugEnabled()){
@@ -43,56 +64,44 @@ public class SchemaReaderImpl implements SchemaReader {
 			throw new SchemaReaderException(Messages.getMessage("SchemaReaderErr1"));
 		}
 		this.wsdlDefinition = wsdlDefinition;
-		HashSet<String> set = new HashSet<String>();
+		List<Schema> schemaList = new ArrayList<Schema>();
+		Set<String> packageList = new TreeSet<String>();
 		//Add WSDL TargetNamespace
 		String namespace = wsdlDefinition.getTargetNamespace();
 		String packageString = JavaUtils.getPackageFromNamespace(namespace);
-		set.add(packageString);
+		packageList.add(packageString);
 		
-		//Read Schema Definition in wsdl;
+		//Read All Schema Definition in wsdl;
 		Types types = wsdlDefinition.getTypes();
 		if(types == null){
 			if(log.isDebugEnabled()){
 				log.debug("WARNING: Could not find any Scheam/Types from WSDL");
 				log.debug("no packages will derived from WSDL schema");
 			}
-			return set;
+			return packageList;
 		}
 		List extensibilityElements = types.getExtensibilityElements();
-		
-		//Read the schema defined in the wsdl
 		for(Object obj:extensibilityElements){
-			if(isSchema((ExtensibilityElement)obj)){
+			if(obj!=null && isSchema((ExtensibilityElement)obj)){
 				Schema schema = (Schema)obj;
-				//First Read all inline Schema packages
-				List<String> inlineSchemaPkgList = readPackagesFromInlineSchema(schema);
-				for(String pkgAsString:inlineSchemaPkgList){
-					if(pkgAsString!=null){
-						set.add(pkgAsString);
-					}
-				}
-				
-				//Then read all imported schema definitions
-				ArrayList<String> schemaImportPkgList = readPackagesFromImports(schema);
-				for(String pkgAsString : schemaImportPkgList){
-					if(pkgAsString!=null){
-						set.add(pkgAsString);
-					}
-				}
+				//process schemas and read packages from them.
+				processSchema(schema, schemaList, packageList);
 			}
 		}
-		//Set always stores unique objects, so I dont have to worry about removing duplicates from this set.
-		return set;
-	}
-	/*
-	 * Read ShemaBinding from inline schema, if not SchemaBinding defined then read the targetnamespace.
-	 * Inline Schema - Schema defined in WSDL Types.
-	 */
-	private ArrayList<String> readPackagesFromInlineSchema(Schema schema){
-		ArrayList<String> pkgList = new ArrayList<String>();
 		
-		//check if there is any jaxb customization/binding defined namely schemaBinding.
+		//Set always stores unique objects, so I dont have to worry about removing duplicates from this set.
+		return packageList;
+	}
+	
+	private void processSchema(Schema schema, List<Schema> schemaList, Set<String> packageList) throws SchemaReaderException{
+		if(schemaList.contains(schema)){
+			return;
+		}
+		List<SchemaImport> importList = new ArrayList<SchemaImport>();		
+		//Start reading inline schema
+		//Check if there is Binding customization and read package from it.
 		String packageString = readSchemaBindingPackageName(schema);
+		//No binding customization present then get the Targetnamespace of Schema
 		if(packageString == null){
 			//no Schema Binding package name found, this means no jaxb customizations in schema, lets read wsdl 
 			//targetnamespace. Thats what will be used by RI tooling to store java Beans
@@ -101,59 +110,36 @@ public class SchemaReaderImpl implements SchemaReader {
 				packageString = JavaUtils.getPackageFromNamespace(namespace);
 			}
 		}
-		pkgList.add(packageString);
-		
-		return pkgList;
-	}
-	/*
-	 * Read ShemaBinding from import schema, if not SchemaBinding defined then read the targetnamespace.
-	 * import Schema - import defined in Schema section of WSDL Types.
-	 */
-	private ArrayList<String> readPackagesFromImports(Schema schema) throws SchemaReaderException{
-		ArrayList<String> schemaImportPkgList = new ArrayList<String>();
+		//Gather all imports and process Schema from these imports
 		Map map  = schema.getImports();
 		Collection collection = map.values();
 		for(Iterator i =collection.iterator(); i.hasNext(); ){
 			Vector value = (Vector) i.next();
 			for(Object vectorObj:value){
 				SchemaImport si = (SchemaImport)vectorObj;
+				importList.add(si);
 				if(log.isDebugEnabled()){
 					if(si!=null)
 						log.debug("Reading import for SchemaLocation ="+si.getSchemaLocationURI());
 				}
-				
-				Schema refSchema = si.getReferencedSchema();
-				
-				//Implementing recursion for reading import within import
-
-				//First read inline schema for imported schema
-				ArrayList<String> inlineSchemaPkgList  = readPackagesFromInlineSchema(refSchema);
-				for(String packageString:inlineSchemaPkgList){
-					if(packageString!=null){
-						schemaImportPkgList.add(packageString);
-					}
-				}
-				//Before we fetch import within imports lets check for circular dependency
-				//Circular dependency is two imports calling each other in different xsd files.
-				if(isCircularDependency(this.readSchemaTargetnamespace(schema), refSchema)){
-					if(log.isDebugEnabled()){
-						log.debug("Circular Dependency Found in WSDL Schema Imports, Two Schemas are importing each other.");
-					}
-					throw new SchemaReaderException(Messages.getMessage("SchemaReaderErr2"));
-				}
-				
-				//Lets read if import has any imports by recurisvely calling readPackageFromImport again....
-				ArrayList<String> rec_ImportPkgList = readPackagesFromImports(refSchema);
-				for(String packageString:rec_ImportPkgList){
-					if(packageString!=null){
-						schemaImportPkgList.add(packageString);
-					}
-				}
 			}
-			
 		}
 		
-		return schemaImportPkgList;
+		//Get namespace and flag the schema as read
+		schemaList.add(schema);
+		//Package String could be null if there is no schema defintion inside types
+		if(packageString!=null){
+			packageList.add(packageString);
+		}
+		for(SchemaImport si:importList){
+			processImport(si, schemaList, packageList);
+		}
+		
+	}
+	
+	private void processImport(SchemaImport si,  List<Schema> schemaList, Set<String> packageList)throws SchemaReaderException{	
+		Schema refSchema = si.getReferencedSchema();
+		processSchema(refSchema, schemaList, packageList);
 	}
 	
 	private String readSchemaTargetnamespace(Schema schema){
@@ -167,6 +153,7 @@ public class SchemaReaderImpl implements SchemaReader {
 		}
 		return null;
 	}
+	
 	private String readSchemaBindingPackageName(Schema schema){
 		
 		/* JAXB Specification section 7.6 have following important points
@@ -217,29 +204,6 @@ public class SchemaReaderImpl implements SchemaReader {
 	
 	private boolean isSchema(ExtensibilityElement exElement){
 		return WSDLWrapper.SCHEMA.equals(exElement.getElementType());
-	}
-	/*
-	 * Check if Schema1 imports Schema2 and Schema2 imports Schema1
-	 */
-	private boolean isCircularDependency(String targetNamespaceSchema1, Schema Schema2){
-		//Get All imports of the schema2
-		Map map  = Schema2.getImports();
-		Collection collection =map.values();
-		for(Iterator i =collection.iterator(); i.hasNext(); ){
-			Vector value = (Vector) i.next();
-			for(Object vectorObj:value){
-				SchemaImport si = (SchemaImport)vectorObj;
-				
-				//Comparte Schema2 import targetNamespace URI with targetNamespace of Schema1 if they match its a circular
-				//dependency.
-				//TODO should we also check for Schema location here.
-				if(si.getNamespaceURI().equals(targetNamespaceSchema1)){
-					return true;
-				}
-			}
-			
-		}
-		return false;
 	}
 	
 }
