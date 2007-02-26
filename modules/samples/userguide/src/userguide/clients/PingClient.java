@@ -36,6 +36,7 @@ public class PingClient {
             Options options = new Options();
             serviceClient.setOptions(options);
             options.setTo(targetEPR);
+            options.setAction("urn:ping");
 
             serviceClient.fireAndForget(payload);
             /**

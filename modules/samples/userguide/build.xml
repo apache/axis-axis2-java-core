@@ -71,12 +71,14 @@
         <java classname="userguide.clients.EchoBlockingClient"
               classpathref="axis.classpath" fork="true">
             <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
+	    <jvmarg value="-Daxis2.xml=conf/axis2.xml"/>
         </java>
     </target>
     <target name="run.client.blockingdual" depends="compile">
         <java classname="userguide.clients.EchoBlockingDualClient"
               classpathref="axis.classpath" fork="true">
             <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
+	    <jvmarg value="-Daxis2.xml=conf/axis2.xml"/>
         </java>
     </target>
     
@@ -84,6 +86,7 @@
         <java classname="userguide.clients.EchoNonBlockingClient"
               classpathref="axis.classpath" fork="true">
             <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
+	    <jvmarg value="-Daxis2.xml=conf/axis2.xml"/>
         </java>
     </target>
     
@@ -91,6 +94,7 @@
         <java classname="userguide.clients.EchoNonBlockingDualClient"
               classpathref="axis.classpath" fork="true">
             <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
+	    <jvmarg value="-Daxis2.xml=conf/axis2.xml"/>
         </java>
     </target>
     
@@ -98,13 +102,17 @@
         <java classname="userguide.clients.PingClient"
               classpathref="axis.classpath" fork="true">
             <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
+	    <jvmarg value="-Daxis2.xml=conf/axis2.xml"/>
         </java>
     </target>
     
     <target name="run.client.servicewithmodule" depends="compile">
+    	<echo message="${mainDir}" />
+	<echo message="${mainDir}/repository/conf/axis2.xml" />
         <java classname="userguide.clients.ClientForWebServiceWithModule"
               classpathref="axis.classpath" fork="true">
-            <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>
+           <jvmarg value="-Daxis2.repo=${mainDir}/repository"/>	   
+	   <jvmarg value="-Daxis2.xml=conf/axis2.xml"/>
         </java>
     </target>
     

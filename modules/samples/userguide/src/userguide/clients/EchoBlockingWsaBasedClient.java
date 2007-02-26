@@ -49,7 +49,7 @@ public class EchoBlockingWsaBasedClient {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         //Blocking invocation via wsa mapping
-        options.setAction("urn:sample/echo");
+        options.setAction("urn:echo");
 
         ServiceClient sender = new ServiceClient();
         sender.setOptions(options);

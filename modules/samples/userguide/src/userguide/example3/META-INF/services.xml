@@ -7,7 +7,7 @@
         <operation name="echo">
             <messageReceiver
                     class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
-            <actionMapping>urn:sample/echo</actionMapping>
+            <actionMapping>urn:echo</actionMapping>
         </operation>
     </service>
 </serviceGroup>

@@ -1,4 +1,4 @@
-<module name="logging" class="userguide.loggingmodule.LoggingModule">
+<module name="sample-logging" class="userguide.loggingmodule.LoggingModule">
     <InFlow>
         <handler name="InFlowLogHandler" class="userguide.loggingmodule.LogHandler">
             <order phase="loggingPhase"/>

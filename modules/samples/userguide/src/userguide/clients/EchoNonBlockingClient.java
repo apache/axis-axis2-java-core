@@ -38,6 +38,7 @@ public class EchoNonBlockingClient {
             OMElement payload = ClientUtil.getEchoOMElement();
             Options options = new Options();
             options.setTo(targetEPR);
+            options.setAction("urn:echo");
 
             //Callback to handle the response
             Callback callback = new Callback() {

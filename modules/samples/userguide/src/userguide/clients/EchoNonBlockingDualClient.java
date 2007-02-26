@@ -43,6 +43,7 @@ public class EchoNonBlockingDualClient {
 
             Options options = new Options();
             options.setTo(targetEPR);
+            options.setAction("urn:echo");
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setUseSeparateListener(true);
             options.setAction("urn:echo");  // this is the action mapping we put within the service.xml

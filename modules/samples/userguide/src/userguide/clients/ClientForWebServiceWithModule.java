@@ -35,6 +35,7 @@ public class ClientForWebServiceWithModule {
             OMElement payload = ClientUtil.getEchoOMElement();
             Options options = new Options();
             options.setTo(targetEPR);
+            options.setAction("urn:echo");
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             ServiceClient sender = new ServiceClient();
             sender.setOptions(options);

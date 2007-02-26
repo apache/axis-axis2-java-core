@@ -35,6 +35,7 @@ public class EchoBlockingClient {
             OMElement payload = ClientUtil.getEchoOMElement();
             Options options = new Options();
             options.setTo(targetEPR);
+            options.setAction("urn:echo");
 
             //Blocking invocation
             ServiceClient sender = new ServiceClient();

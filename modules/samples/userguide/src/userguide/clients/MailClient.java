@@ -37,6 +37,7 @@ public class MailClient {
         Options options = new Options();
         options.setTo(
                 new EndpointReference(toEpr));
+        options.setAction("urn:echo");
         ServiceClient servicClient = new ServiceClient();
 
         servicClient.setOptions(options);
