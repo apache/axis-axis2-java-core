@@ -386,6 +386,18 @@ public class BeanWriterMetaInfoHolder {
     }
 
     /**
+     *
+     * @param qName
+     * @return is this a inner choice
+     */
+
+    public boolean getInnerChoiceStatusForQName(QName qName){
+        Integer state = (Integer) specialTypeFlagMap.get(qName);
+        return state != null && getStatus(state.intValue(),
+                SchemaConstants.INNER_CHOICE_ELEMENT);
+    }
+
+    /**
      * Gets whether a given QName refers to Simple Type.
      *
      * @param qName

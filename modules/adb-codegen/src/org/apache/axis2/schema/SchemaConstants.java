@@ -88,6 +88,7 @@ public class SchemaConstants {
     public static final int BINARY_TYPE = 0x10;
     public static final int OPTIONAL_TYPE = 0x20;
     public static final int SIMPLE_TYPE_OR_CONTENT = 0x40;
+    public static final int INNER_CHOICE_ELEMENT = 0x80;
 
     public static class SchemaPropertyNames{
 

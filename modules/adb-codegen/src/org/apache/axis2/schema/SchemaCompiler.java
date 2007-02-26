@@ -325,7 +325,7 @@ public class SchemaCompiler {
                     //process simple type
                     processSimpleSchemaType((XmlSchemaSimpleType) schemaType,
                             null,
-                            schema,null);
+                            schema, null);
                 }
             }
         }
@@ -1003,7 +1003,7 @@ public class SchemaCompiler {
                     }
                 } else if (type instanceof XmlSchemaSimpleType) {
                     //process simple type
-                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema,null);
+                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema, null);
                 }
             }
 
@@ -1184,7 +1184,7 @@ public class SchemaCompiler {
                 }
 
                 // we have to copy the list type data to parent if it is a list
-                if (baseMetaInfoHolder.isList()){
+                if (baseMetaInfoHolder.isList()) {
                     metaInfHolder.setList(true);
                     metaInfHolder.setItemTypeQName(baseMetaInfoHolder.getItemTypeQName());
                     metaInfHolder.setItemTypeClassName(baseMetaInfoHolder.getItemTypeClassName());
@@ -1222,7 +1222,7 @@ public class SchemaCompiler {
                     }
                 } else if (type instanceof XmlSchemaSimpleType) {
                     //process simple type
-                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema,null);
+                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema, null);
                 }
             }
 
@@ -1264,7 +1264,7 @@ public class SchemaCompiler {
                     }
                 } else if (type instanceof XmlSchemaSimpleType) {
                     //process simple type
-                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema,null);
+                    processSimpleSchemaType((XmlSchemaSimpleType) type, null, parentSchema, null);
                 }
             }
             //process restriction base type
@@ -1397,7 +1397,7 @@ public class SchemaCompiler {
                 XmlSchemaPatternFacet pattern = (XmlSchemaPatternFacet) obj;
                 // some patterns contain \ so we have to replace them
                 String patternString = pattern.getValue().toString();
-                metaInfHolder.setPatternFacet(patternString.replaceAll("\\\\","\\\\\\\\"));
+                metaInfHolder.setPatternFacet(patternString.replaceAll("\\\\", "\\\\\\\\"));
             }
 
             else if (obj instanceof XmlSchemaEnumerationFacet) {
@@ -1509,7 +1509,7 @@ public class SchemaCompiler {
                         if (simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
                             if (!isAlreadyProcessed(schemaTypeName)) {
                                 //process simple type
-                                processSimpleSchemaType(simpleType, null, parentSchema,null);
+                                processSimpleSchemaType(simpleType, null, parentSchema, null);
                             }
                             metainf.registerMapping(att.getQName(),
                                     schemaTypeName,
@@ -1616,10 +1616,15 @@ public class SchemaCompiler {
         Map processedElementTypeMap = new LinkedHashMap();
         List localNillableList = new ArrayList();
 
+        // this list is used to keep the details of the
+        // elements within a choice withing sequence
+        List innerChoiceElementList = new ArrayList();
+
         Map elementOrderMap = new HashMap();
 
+        int sequenceCounter = 0;
         for (int i = 0; i < count; i++) {
-            XmlSchemaObject item = items.getItem(i);
+            XmlSchemaObject item = items.getItem(sequenceCounter);
 
             if (item instanceof XmlSchemaElement) {
                 //recursively process the element
@@ -1631,7 +1636,7 @@ public class SchemaCompiler {
                 if (order) {
                     //we need to keep the order of the elements. So push the elements to another
                     //hashmap with the order number
-                    elementOrderMap.put(xsElt, new Integer(i));
+                    elementOrderMap.put(xsElt, new Integer(sequenceCounter));
                 }
 
                 //handle xsd:any ! We place an OMElement (or an array of OMElements) in the generated class
@@ -1640,16 +1645,42 @@ public class SchemaCompiler {
                 processedElementTypeMap.put(new QName(ANY_ELEMENT_FIELD_NAME), any);
                 //any can also be inside a sequence
                 if (order) {
-                    elementOrderMap.put(any, new Integer(i));
+                    elementOrderMap.put(any, new Integer(sequenceCounter));
                 }
                 //we do not register the array status for the any type
                 processedElementArrayStatusMap.put(any, isArray(any) ? Boolean.TRUE : Boolean.FALSE);
+            } else if (order && (item instanceof XmlSchemaChoice)) {
+
+                // this is a tempory patch for process only inner sequence choices
+                // but we have do this with a proper design
+                XmlSchemaChoice choice = (XmlSchemaChoice) item;
+                XmlSchemaObject choiceChild;
+                XmlSchemaObjectCollection schemaItems = choice.getItems();
+                for (int j = 0; j < schemaItems.getCount(); j++) {
+                   choiceChild = schemaItems.getItem(j);
+                   if (choiceChild instanceof XmlSchemaElement){
+                       // i.e this is an inner choice element
+                       //recursively process the element
+                        XmlSchemaElement xsElt = (XmlSchemaElement) choiceChild;
+
+                        boolean isArray = isArray(xsElt);
+                        processElement(xsElt, processedElementTypeMap, localNillableList, parentSchema); //we know for sure this is not an outer type
+                        processedElementArrayStatusMap.put(xsElt, (isArray) ? Boolean.TRUE : Boolean.FALSE);
+                        if (order) {
+                            //we need to keep the order of the elements. So push the elements to another
+                            //hashmap with the order number
+                            elementOrderMap.put(xsElt, new Integer(sequenceCounter));
+                            sequenceCounter++;
+                        }
+                       innerChoiceElementList.add(xsElt.getQName());
+                   }
+                }
+
             } else {
                 //there may be other types to be handled here. Add them
                 //when we are ready
             }
-
-
+          sequenceCounter++;
         }
 
         // loop through the processed items and add them to the matainf object
@@ -1675,6 +1706,9 @@ public class SchemaCompiler {
                                 ((Boolean) processedElementArrayStatusMap.get(elt)).booleanValue() ?
                                         SchemaConstants.ARRAY_TYPE :
                                         SchemaConstants.ELEMENT_TYPE);
+                        if (innerChoiceElementList.contains(referencedQName)){
+                            metainfHolder.addtStatus(referencedQName,SchemaConstants.INNER_CHOICE_ELEMENT);
+                        }
                     }
                 }
 
@@ -1772,7 +1806,7 @@ public class SchemaCompiler {
     private XmlSchemaType getType(XmlSchema schema, QName schemaTypeName) throws SchemaCompilationException {
         // first check with the current parent schema
         XmlSchemaType typeByName = schema.getTypeByName(schemaTypeName);
-        if (typeByName == null){
+        if (typeByName == null) {
             // try to resolve schema using the target names space
             schema = resolveParentSchema(schemaTypeName, schema);
             typeByName = schema.getTypeByName(schemaTypeName);
@@ -1811,7 +1845,7 @@ public class SchemaCompiler {
 
     private XmlSchemaElement getReferencedElement(XmlSchema parentSchema, QName referencedQName)
             throws SchemaCompilationException {
-        XmlSchema schema = resolveParentSchema(referencedQName,parentSchema);
+        XmlSchema schema = resolveParentSchema(referencedQName, parentSchema);
         XmlSchemaElement refElement = schema.getElementByName(referencedQName);
         if (refElement == null) {
             // The referenced element seems to come from an imported
@@ -1866,11 +1900,10 @@ public class SchemaCompiler {
     }
 
     /**
-     *
      * @param simpleType
      * @param xsElt
      * @param parentSchema
-     * @param qname  - fake Qname to use if the xsElt is null.
+     * @param qname        - fake Qname to use if the xsElt is null.
      * @throws SchemaCompilationException
      */
     private void processSimpleSchemaType(XmlSchemaSimpleType simpleType,
@@ -1893,7 +1926,7 @@ public class SchemaCompiler {
         } else {
 
             QName fakeQname;
-            if (xsElt != null){
+            if (xsElt != null) {
                 fakeQname = new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart());
                 // we have to set this otherwise the ours attribute would not set properly if refered to this simple
                 // type from any other element
@@ -1922,7 +1955,7 @@ public class SchemaCompiler {
         if (simpleType.getQName() == null) {
             this.processedAnonymousComplexTypesMap.put(xsElt, metaInfHolder);
             QName fakeQname;
-            if (xsElt != null){
+            if (xsElt != null) {
                 fakeQname = new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart());
             } else {
                 fakeQname = qname;
@@ -1970,7 +2003,7 @@ public class SchemaCompiler {
                     XmlSchemaType restrictionBaseType = getType(parentSchema, baseTypeName);
                     if (restrictionBaseType instanceof XmlSchemaSimpleType) {
                         if ((restrictionBaseType != null) && (!isAlreadyProcessed(baseTypeName))) {
-                            processSimpleSchemaType((XmlSchemaSimpleType) restrictionBaseType, null, parentSchema,null);
+                            processSimpleSchemaType((XmlSchemaSimpleType) restrictionBaseType, null, parentSchema, null);
                         }
                         // process restriction
                         processSimpleRestrictionBaseType(parentSimpleTypeQname, restriction.getBaseTypeName(), metaInfHolder, parentSchema);
@@ -1981,7 +2014,7 @@ public class SchemaCompiler {
             } else if (content instanceof XmlSchemaSimpleTypeUnion) {
                 XmlSchemaSimpleTypeUnion simpleTypeUnion = (XmlSchemaSimpleTypeUnion) content;
                 QName[] qnames = simpleTypeUnion.getMemberTypesQNames();
-                if (qnames != null){
+                if (qnames != null) {
                     QName qname;
                     for (int i = 0; i < qnames.length; i++) {
                         qname = qnames[i];
@@ -1992,7 +2025,7 @@ public class SchemaCompiler {
                             if (type instanceof XmlSchemaSimpleType) {
                                 XmlSchemaSimpleType memberSimpleType = (XmlSchemaSimpleType) type;
                                 if (!isAlreadyProcessed(qname)) {
-                                    processSimpleSchemaType(memberSimpleType, null, parentSchema,null);
+                                    processSimpleSchemaType(memberSimpleType, null, parentSchema, null);
                                 }
                                 metaInfHolder.addMemberType(qname, (String) processedTypemap.get(qname));
                             } else {
@@ -2005,19 +2038,19 @@ public class SchemaCompiler {
                     XmlSchemaObject xmlSchemaObject;
                     QName childQname;
                     int i = 1;
-                    for (Iterator iter = xmlSchemaObjectCollection.getIterator();iter.hasNext();){
+                    for (Iterator iter = xmlSchemaObjectCollection.getIterator(); iter.hasNext();) {
                         xmlSchemaObject = (XmlSchemaObject) iter.next();
                         i++;
-                        if (xmlSchemaObject instanceof XmlSchemaSimpleType){
+                        if (xmlSchemaObject instanceof XmlSchemaSimpleType) {
                             XmlSchemaSimpleType unionSimpleType = (XmlSchemaSimpleType) xmlSchemaObject;
                             childQname = unionSimpleType.getQName();
-                            if (childQname == null){
+                            if (childQname == null) {
                                 // we create a fake Qname for all these simple types since most propably they don't have one
-                                childQname = new QName(parentSimpleTypeQname.getNamespaceURI(),parentSimpleTypeQname.getLocalPart() + "_type" + i);
+                                childQname = new QName(parentSimpleTypeQname.getNamespaceURI(), parentSimpleTypeQname.getLocalPart() + "_type" + i);
                             }
                             // this is an inner simple type of the union so it shold not have
                             // processed
-                            processSimpleSchemaType(unionSimpleType,null,parentSchema,childQname);
+                            processSimpleSchemaType(unionSimpleType, null, parentSchema, childQname);
                             metaInfHolder.addMemberType(childQname, (String) processedTypemap.get(childQname));
                         }
 
@@ -2030,25 +2063,25 @@ public class SchemaCompiler {
                 XmlSchemaSimpleTypeList simpleTypeList = (XmlSchemaSimpleTypeList) content;
                 QName itemTypeQName = simpleTypeList.getItemTypeName();
 
-                if (itemTypeQName != null){
-                   if (!isAlreadyProcessed(itemTypeQName)){
-                        XmlSchemaType simpleSchemaType = getType(parentSchema,itemTypeQName);
-                        if (simpleSchemaType instanceof XmlSchemaSimpleType){
-                            processSimpleSchemaType((XmlSchemaSimpleType)simpleSchemaType,null,parentSchema,null);
+                if (itemTypeQName != null) {
+                    if (!isAlreadyProcessed(itemTypeQName)) {
+                        XmlSchemaType simpleSchemaType = getType(parentSchema, itemTypeQName);
+                        if (simpleSchemaType instanceof XmlSchemaSimpleType) {
+                            processSimpleSchemaType((XmlSchemaSimpleType) simpleSchemaType, null, parentSchema, null);
                         }
                     }
                 } else {
                     XmlSchemaSimpleType listSimpleType = simpleTypeList.getItemType();
                     itemTypeQName = listSimpleType.getQName();
-                    if (itemTypeQName == null){
+                    if (itemTypeQName == null) {
                         // we create a fake Qname for all these simple types since most propably they don't have one
-                        itemTypeQName = new QName(parentSimpleTypeQname.getNamespaceURI(),parentSimpleTypeQname.getLocalPart() + "_type0");
+                        itemTypeQName = new QName(parentSimpleTypeQname.getNamespaceURI(), parentSimpleTypeQname.getLocalPart() + "_type0");
                     }
-                    processSimpleSchemaType(listSimpleType,null,parentSchema,itemTypeQName);
+                    processSimpleSchemaType(listSimpleType, null, parentSchema, itemTypeQName);
 
                 }
 
-                String className = findClassName(itemTypeQName,false);
+                String className = findClassName(itemTypeQName, false);
                 metaInfHolder.setList(true);
                 metaInfHolder.setItemTypeQName(itemTypeQName);
                 metaInfHolder.setItemTypeClassName(className);

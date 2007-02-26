@@ -122,7 +122,7 @@
 			  <ant:echo>Running codegen RPC WSDLs - take 3</ant:echo>
 		  <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-o target/rpc-test3 -uri test-resources/rpc/test-rpc-2.wsdl -uw -d xmlbeans"/>
+			<arg line="-o target/rpc-test3 -uri test-resources/rpc/test-rpc-2.wsdl -uw"/>
 		   </java>
 		  <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test3"
 							 target="jar.client"/>
@@ -130,7 +130,7 @@
 			   <ant:echo>Running codegen RPC WSDLs - take 4</ant:echo>
 		  <java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath"/>
-			<arg line="-o target/rpc-test4 -uri test-resources/rpc/test-rpc-2.wsdl -uw -d xmlbeans -ss -sd"/>
+			<arg line="-o target/rpc-test4 -uri test-resources/rpc/test-rpc-2.wsdl -uw -ss -sd"/>
 		   </java>
 		  <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/rpc-test4"
 							 target="jar.server"/>

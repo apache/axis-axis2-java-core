@@ -18,8 +18,7 @@
     <xsd:element name="myRootElem">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="Child1" type="xsd:int" >
-                </xsd:element>
+                <xsd:element name="Child1" type="xsd:int" ></xsd:element>
                 <xsd:choice>
                     <xsd:element name="SomeChoice1" type="test1:SomeChoice1_Type" nillable="true" maxOccurs="unbounded"/>
                     <xsd:element name="SomeChoice2" type="test1:SomeChoice2_Type" nillable="true" maxOccurs="unbounded">

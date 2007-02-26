@@ -197,6 +197,7 @@ public class CodeGenerationUtility {
                 for (Iterator operations = axisService.getOperations();
                      operations.hasNext();) {
                     AxisOperation op = (AxisOperation) operations.next();
+
                     if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
                         AxisMessage message = op.getMessage(
                                 WSDLConstants.MESSAGE_LABEL_IN_VALUE);
@@ -231,6 +232,43 @@ public class CodeGenerationUtility {
                             }
                         }
                     }
+
+                     if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
+                        AxisMessage message = op.getMessage(
+                                WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                        if (message != null && message.getParameter(Constants.UNWRAPPED_KEY) != null) {
+                            SchemaGlobalElement xmlbeansElement = sts.findElement(message.getElementQName());
+                            SchemaType sType = xmlbeansElement.getType();
+
+                            SchemaProperty[] elementProperties = sType.getElementProperties();
+                            for (int i = 0; i < elementProperties.length; i++) {
+                                SchemaProperty elementProperty = elementProperties[i];
+
+                                QName partQName = WSDLUtil.getPartQName(op.getName().getLocalPart(),
+                                        WSDLConstants.OUTPUT_PART_QNAME_SUFFIX,
+                                        elementProperty.getName().getLocalPart());
+
+                                //this type is based on a primitive type- use the
+                                //primitive type name in this case
+                                String fullJaveName = elementProperty.getType().getFullJavaName();
+                                if (elementProperty.extendsJavaArray()) {
+                                    fullJaveName = fullJaveName.concat("[]");
+                                }
+                                mapper.addTypeMappingName(partQName, fullJaveName);
+                                SchemaType primitiveType = elementProperty.getType().getPrimitiveType();
+
+
+                                if (primitiveType != null) {
+                                    mapper.addTypeMappingStatus(partQName, Boolean.TRUE);
+                                }
+                                if (elementProperty.extendsJavaArray()) {
+                                    mapper.addTypeMappingStatus(partQName, Constants.ARRAY_TYPE);
+                                }
+                            }
+                        }
+                    }
+
+
                 }
             }
 
