@@ -739,6 +739,7 @@
                 <include name="version/**/*.*"/>
                 <include name="servicelifecycle/**/*.*"/>
                 <include name="pojo/**/*.*"/>
+		<include name="ping/**/*.*"/>
                 <!-- Docs related samples -->
                 <include name="userguide/**/*.*"/>
                 <include name="pojoguide/**/*.*"/>
