@@ -393,23 +393,23 @@
         
 			<wsdl:input>
 				<soap:header use="literal" message="tns:echoStringWSGEN1Request" part="headerPart"/>			
-				<soap:body use="literal" message="tns:echoStringWSGEN1Request" part="bodyPart"/>			
+				<soap:body use="literal" message="tns:echoStringWSGEN1Request" parts="bodyPart"/>
 			</wsdl:input>
 			<wsdl:output>
-				<soap:body use="literal" />		
+				<soap:body use="literal" />
 			</wsdl:output>
 		</wsdl:operation>
-		
+
 		<wsdl:operation name="echoStringWSGEN2">
 			<soap:operation
 				soapAction="http://addheaders.sample.test.org/echoStringWSGEN2" />
-        
+
 			<wsdl:input>
-                 <soap:body use="literal" />	
+                 <soap:body use="literal" />
 			</wsdl:input>
 			<wsdl:output>
-			    <soap:header use="literal" message="tns:echoStringWSGEN2Response" part="headerPart"/>			
-				<soap:body use="literal" message="tns:echoStringWSGEN2Response" part="bodyPart"/>			
+			    <soap:header use="literal" message="tns:echoStringWSGEN2Response" part="headerPart"/>
+				<soap:body use="literal" message="tns:echoStringWSGEN2Response" parts="bodyPart"/>
 			</wsdl:output>
 		</wsdl:operation>
 
