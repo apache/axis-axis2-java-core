@@ -29,6 +29,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,12 +47,11 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
      */
     public static final String NAME = "AddressingBasedDispatcher";
     private static final Log log = LogFactory.getLog(AddressingBasedDispatcher.class);
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     // TODO this logic needed to be improved, as the Dispatching is almost guaranteed to fail
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
-        if(isDebugEnabled){
+        if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
         log.debug(messageContext.getLogIDString()+" "+Messages.getMessage("checkingoperation",
                 messageContext.getWSAAction()));
         }
@@ -75,7 +75,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             }
 
             String address = toEPR.getAddress();
-            if(isDebugEnabled){
+            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
             log.debug(messageContext.getLogIDString()+" "+Messages.getMessage("checkingserviceforepr", address));
             }
             QName serviceName;
@@ -86,7 +86,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                 return null;
             }
 
-            if(isDebugEnabled){
+            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
             log.debug(messageContext.getLogIDString()+" "+Messages.getMessage("checkingserviceforepr", values[0]));
             }
             if (values[0] != null) {
@@ -133,7 +133,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         if (msgctx.getRelatesTo() != null) {
             String relatesTo = msgctx.getRelatesTo().getValue();
 
-            if(isDebugEnabled){
+            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
                 log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("checkingrelatesto",
                     relatesTo));
             }
@@ -157,7 +157,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                     msgctx.setServiceGroupContextId(
                             ((ServiceGroupContext) msgctx.getServiceContext().getParent()).getId());
                     
-                    if(isDebugEnabled){
+                    if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
                         log.debug(msgctx.getLogIDString()+" Dispatched successfully on the RelatesTo. operation="+operationContext.getAxisOperation());
                     }
                     return InvocationResponse.CONTINUE;

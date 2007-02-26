@@ -25,6 +25,7 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +39,6 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
 
     public static final String NAME = "RequestURIBasedDispatcher";
     private static final Log log = LogFactory.getLog(RequestURIBasedDispatcher.class);
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     /*
      *  (non-Javadoc)
@@ -59,13 +59,13 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
         EndpointReference toEPR = messageContext.getTo();
 
         if (toEPR != null) {
-            if (isDebugEnabled) {
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug(messageContext.getLogIDString() +
                         " Checking for Service using target endpoint address : " +
                         toEPR.getAddress());
             }
             String filePart = toEPR.getAddress();
-            //REVIEW: (nagy) Parsing the RequestURI will also give us the operationName if present, so we could conceivably store it in the MessageContext, but doing so and retrieving it is probably no faster than simply reparsing the URI
+            //REVIEW: Parsing the RequestURI will also give us the operationName if present, so we could conceivably store it in the MessageContext, but doing so and retrieving it is probably no faster than simply reparsing the URI
             ConfigurationContext configurationContext = messageContext.getConfigurationContext();
             String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
                                                                           configurationContext.getServiceContextPath());
@@ -95,14 +95,14 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
 
                 return axisService;
             } else {
-                if (isDebugEnabled) {
+                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                     log.debug(messageContext.getLogIDString() +
                             " Attempted to check for Service using target endpoint URI, but the service fragment was missing");
                 }
                 return null;
             }
         } else {
-            if (isDebugEnabled) {
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug(messageContext.getLogIDString() +
                         " Attempted to check for Service using null target endpoint URI");
             }

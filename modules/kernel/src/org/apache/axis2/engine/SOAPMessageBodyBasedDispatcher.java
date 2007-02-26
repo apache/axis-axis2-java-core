@@ -25,6 +25,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,7 +43,6 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      */
     public static final String NAME = "SOAPMessageBodyBasedDispatcher";
     private static final Log log = LogFactory.getLog(SOAPMessageBodyBasedDispatcher.class);
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
@@ -53,7 +53,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
         if (bodyFirstChild == null) {
             return null;
         } else {
-            if(isDebugEnabled){
+            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
             log.debug(messageContext.getLogIDString()+
                     " Checking for Operation using SOAP message body's first child's local name : "
                             + bodyFirstChild.getLocalName());
@@ -84,7 +84,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
             if (ns != null) {
                 String filePart = ns.getNamespaceURI();
 
-                if(isDebugEnabled){
+                if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
                 log.debug(messageContext.getLogIDString()+
                         " Checking for Service using SOAP message body's first child's namespace : "
                                 + filePart);

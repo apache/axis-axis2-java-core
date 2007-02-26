@@ -21,6 +21,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -28,18 +29,17 @@ public class RelatesToBasedServiceDispatcher extends AbstractServiceDispatcher {
 
     public static final String NAME = "RelatesToBasedServiceDispatcher";
     private static final Log log = LogFactory.getLog(RelatesToBasedServiceDispatcher.class);
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         RelatesTo relatesTo = messageContext.getRelatesTo();
-        if(isDebugEnabled){
+        if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
             log.debug(messageContext.getLogIDString()+" Checking for OperationContext using RelatesTo : " + relatesTo);
         }
         if((relatesTo!=null) && (relatesTo.getValue()!=null)){
             ConfigurationContext configurationContext = messageContext.getConfigurationContext();
             OperationContext operationContext = configurationContext.getOperationContext(relatesTo.getValue());
             if(operationContext != null){
-                if(isDebugEnabled){
+                if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
                     log.debug(messageContext.getLogIDString()+" Found OperationContext: " + operationContext);
                 }
                 return operationContext.getServiceContext().getAxisService();

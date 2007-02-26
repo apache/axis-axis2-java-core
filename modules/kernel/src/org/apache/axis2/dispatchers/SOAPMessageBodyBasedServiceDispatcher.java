@@ -21,6 +21,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +30,6 @@ public class SOAPMessageBodyBasedServiceDispatcher extends AbstractServiceDispat
 
     public static final String NAME = "SOAPMessageBodyBasedServiceDispatcher";
     private static final Log log = LogFactory.getLog(SOAPMessageBodyBasedServiceDispatcher.class);
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         String serviceName = null;
@@ -41,7 +41,7 @@ public class SOAPMessageBodyBasedServiceDispatcher extends AbstractServiceDispat
             if (ns != null) {
                 String filePart = ns.getNamespaceURI();
 
-                if(isDebugEnabled){
+                if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
                 log.debug(messageContext.getLogIDString()+
                         "Checking for Service using SOAP message body's first child's namespace : "
                                 + filePart);

@@ -33,6 +33,7 @@ import org.apache.axis2.engine.Handler.InvocationResponse;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.util.CallbackReceiver;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,8 +51,6 @@ public class AxisEngine {
      * Field log
      */
     private static final Log log = LogFactory.getLog(AxisEngine.class);
-    private static final boolean isTraceEnabled = log.isTraceEnabled();
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
     private ConfigurationContext engineContext;
 
     private static boolean RESUMING_EXECUTION = true;
@@ -156,7 +155,7 @@ public class AxisEngine {
      * @see Handler
      */
     public InvocationResponse receive(MessageContext msgContext) throws AxisFault {
-        if(isTraceEnabled){
+        if(LoggingControl.debugLoggingAllowed && log.isTraceEnabled()){
             log.trace(msgContext.getLogIDString()+" receive:"+msgContext.getMessageID());
         }
         ConfigurationContext confContext = msgContext.getConfigurationContext();
@@ -300,7 +299,7 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public InvocationResponse resumeReceive(MessageContext msgContext) throws AxisFault {
-        if(isTraceEnabled){
+        if(LoggingControl.debugLoggingAllowed && log.isTraceEnabled()){
             log.trace(msgContext.getLogIDString()+" resumeReceive:"+msgContext.getMessageID());
         }
 
@@ -342,7 +341,7 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public InvocationResponse resumeSend(MessageContext msgContext) throws AxisFault {
-        if(isTraceEnabled){
+        if(LoggingControl.debugLoggingAllowed && log.isTraceEnabled()){
             log.trace(msgContext.getLogIDString()+" resumeSend:"+msgContext.getMessageID());
         }
 
@@ -374,7 +373,7 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public InvocationResponse receiveFault(MessageContext msgContext) throws AxisFault {
-        if(isDebugEnabled) {
+        if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
             log.debug(msgContext.getLogIDString()+" "+Messages.getMessage("receivederrormessage",
                     msgContext.getMessageID()));
         }
@@ -428,7 +427,7 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public InvocationResponse resume(MessageContext msgctx) throws AxisFault {
-        if(isTraceEnabled){
+        if(LoggingControl.debugLoggingAllowed && log.isTraceEnabled()){
             log.trace(msgctx.getLogIDString()+" resume:"+msgctx.getMessageID());
         }
 
@@ -452,7 +451,7 @@ public class AxisEngine {
      * @see Handler
      */
     public void send(MessageContext msgContext) throws AxisFault {
-        if(isTraceEnabled){
+        if(LoggingControl.debugLoggingAllowed && log.isTraceEnabled()){
             log.trace(msgContext.getLogIDString()+" send:"+msgContext.getMessageID());
         }
         // find and invoke the Phases
@@ -510,7 +509,7 @@ public class AxisEngine {
      * @throws AxisFault
      */
     public void sendFault(MessageContext msgContext) throws AxisFault {
-        if(isTraceEnabled){
+        if(LoggingControl.debugLoggingAllowed && log.isTraceEnabled()){
             log.trace(msgContext.getLogIDString()+" sendFault:"+msgContext.getMessageID());
         }
         OperationContext opContext = msgContext.getOperationContext();

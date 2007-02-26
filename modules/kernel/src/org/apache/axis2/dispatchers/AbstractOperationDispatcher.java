@@ -21,6 +21,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +30,6 @@ public abstract class AbstractOperationDispatcher extends AbstractHandler {
 
     public static final String NAME = "AbstractOperationDispatcher";
     private static final Log log = LogFactory.getLog(AbstractOperationDispatcher.class);
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     public AbstractOperationDispatcher() {
         init(new HandlerDescription(NAME));
@@ -57,7 +57,7 @@ public abstract class AbstractOperationDispatcher extends AbstractHandler {
             AxisOperation axisOperation = findOperation(msgctx.getAxisService(), msgctx);
 
             if (axisOperation != null) {
-                if (isDebugEnabled) {
+                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                     log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("operationfound",
                             axisOperation.getName().getLocalPart()));
                 }

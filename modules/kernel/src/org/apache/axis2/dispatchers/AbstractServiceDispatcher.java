@@ -20,6 +20,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -27,7 +28,6 @@ public abstract class AbstractServiceDispatcher extends AbstractHandler {
 
     public static final String NAME = "AbstractServiceDispatcher";
     private static final Log log = LogFactory.getLog(AbstractServiceDispatcher.class);
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     public AbstractServiceDispatcher() {
         init(new HandlerDescription(NAME));
@@ -55,7 +55,7 @@ public abstract class AbstractServiceDispatcher extends AbstractHandler {
             axisService = findService(msgctx);
 
             if (axisService != null) {
-                if (isDebugEnabled) {
+                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                     log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("servicefound",
                             axisService.getName()));
                 }

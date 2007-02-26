@@ -20,6 +20,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.util.LoggingControl;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,7 +29,6 @@ public class RequestURIBasedServiceDispatcher extends AbstractServiceDispatcher 
 
     public static final String NAME = "RequestURIBasedServiceDispatcher";
     private static final Log log = LogFactory.getLog(RequestURIBasedServiceDispatcher.class);
-    private static final boolean isDebugEnabled = log.isDebugEnabled();
 
     /*
      *  (non-Javadoc)
@@ -38,7 +38,7 @@ public class RequestURIBasedServiceDispatcher extends AbstractServiceDispatcher 
         EndpointReference toEPR = messageContext.getTo();
 
         if (toEPR != null) {
-            if(isDebugEnabled){
+            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
                 log.debug(messageContext.getLogIDString()+" Checking for Service using target endpoint address : " + toEPR.getAddress());
             }
             String filePart = toEPR.getAddress();
@@ -52,13 +52,13 @@ public class RequestURIBasedServiceDispatcher extends AbstractServiceDispatcher 
 
                 return registry.getService(values[0]);
             } else {
-                if(isDebugEnabled){
+                if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
                     log.debug(messageContext.getLogIDString()+" Attempted to check for Service using target endpoint URI, but the service fragment was missing");
                 }
                 return null;
             }
         } else {
-            if(isDebugEnabled){
+            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
                 log.debug(messageContext.getLogIDString()+" Attempted to check for Service using null target endpoint URI");
             }
             return null;
