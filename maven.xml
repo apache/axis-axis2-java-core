@@ -416,6 +416,12 @@
                     file="modules/adb-codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
         </ant:copy>
 
+	<!-- Copy the json jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset
+                    file="modules/json/target/axis2-json-${pom.currentVersion}.jar"/>
+        </ant:copy>
+
         <!-- Copy the java2wsdl jar -->
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
@@ -700,6 +706,8 @@
                     file="modules/adb-codegen/target/axis2-adb-codegen-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/xmlbeans/target/axis2-xmlbeans-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
+
+	    <ant:fileset file="modules/json/target/axis2-json-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/saaj/target/axis2-saaj-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/tool/target/axis2-tools-${pom.currentVersion}.jar"/>
             <ant:fileset file="modules/spring/target/axis2-spring-${pom.currentVersion}.jar"/>
@@ -722,6 +730,7 @@
         <ant:copy todir="${std.bin.temp.dir}/samples/">
             <ant:fileset dir="modules/samples/">
                 <include name="yahoorestsearch/**/*.*"/>
+		<include name="yahoojsonsearch/**/*.*"/>
                 <include name="databinding/**/*.*"/>
                 <include name="googlespellcheck/**/*.*"/>
                 <include name="faulthandling/**/*.*"/>
@@ -870,7 +879,7 @@
         <ant:mkdir dir="${std_dep_cache}"/>
         <j:if test="${stdDeps.uptodate != 'yes'}">
             <macros:copy-deps copyToDir="${std_dep_cache}"
-                              mods="webapp,jibx,spring,saaj,kernel,adb"/>
+                              mods="webapp,jibx,spring,saaj,kernel,adb,json"/>
             <property name="stdDeps.uptodate" value="yes"/>
         </j:if>
 
