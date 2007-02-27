@@ -905,7 +905,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // populate this map so that this can be used in SOAPBody based dispatching
         if (elementQName != null) {
             axisService
-                    .addmessageNameToOperationMapping(elementQName.getLocalPart(), axisOperation);
+                    .addMessageElementQNameToOperationMapping(elementQName, axisOperation);
         }
     }
 

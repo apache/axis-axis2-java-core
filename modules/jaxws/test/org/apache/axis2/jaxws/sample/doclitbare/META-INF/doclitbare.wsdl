@@ -103,21 +103,18 @@
 		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
 
 		<wsdl:operation name="oneWayEmpty">
-			<soap:operation soapAction="http://doclitbare.sample.test.org/oneWayEmpty" />
 			<wsdl:input>
 				<soap:body use="literal"  />
 			</wsdl:input>
 		</wsdl:operation>
 		
 		<wsdl:operation name="oneWay">
-			<soap:operation soapAction="http://doclitbare.sample.test.org/oneWay" />
 			<wsdl:input>
 				<soap:body use="literal"  />
 			</wsdl:input>
 		</wsdl:operation>
 		
 		<wsdl:operation name="twoWaySimple">
-			<soap:operation soapAction="twoWaySimple" />
 			<wsdl:input>
 				<soap:body use="literal"  />
 			</wsdl:input>
@@ -127,7 +124,6 @@
 		</wsdl:operation>	
 		
 		<wsdl:operation name="twoWayHolder">
-			<soap:operation soapAction="http://doclitbare.sample.test.org/twoWayReturn" />
 			<wsdl:input>
 				<soap:body use="literal"  />
 			</wsdl:input>
@@ -147,7 +143,7 @@
 	
 	<wsdl:service name="BareDocLitService">
 		<wsdl:port binding="tns:DocLitBare" name="BareDocLitPort">
-			<soap:address location="http://localhost:8080/axis2/services/BareDocLitService" />
+			<soap:address location="http://localhost:1234/axis2/services/BareDocLitService" />
 		</wsdl:port>
 	</wsdl:service>
 	

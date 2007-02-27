@@ -49,7 +49,7 @@ public class SOAPMessageBodyBasedOperationDispatcher extends AbstractOperationDi
         AxisOperation axisOperation = service.getOperation(operationName);
 
         if (axisOperation == null) {
-            axisOperation = service.getOperationByMessageName(bodyFirstChild.getLocalName());
+            axisOperation = service.getOperationByMessageElementQName(bodyFirstChild.getQName());
         }
         return axisOperation;
     }

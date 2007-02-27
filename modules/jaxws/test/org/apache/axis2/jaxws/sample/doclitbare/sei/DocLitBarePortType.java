@@ -28,7 +28,7 @@ public interface DocLitBarePortType {
     /**
      * 
      */
-    @WebMethod(action = "http://doclitbare.sample.test.org/oneWayEmpty")
+    @WebMethod
     @Oneway
     public void oneWayEmpty();
 
@@ -36,7 +36,7 @@ public interface DocLitBarePortType {
      * 
      * @param allByMyself
      */
-    @WebMethod(action = "http://doclitbare.sample.test.org/oneWay")
+    @WebMethod
     @Oneway
     public void oneWay(
         @WebParam(name = "String", targetNamespace = "http://doclitbare.sample.test.org", partName = "allByMyself")
@@ -48,7 +48,7 @@ public interface DocLitBarePortType {
      * @return
      *     returns java.lang.String
      */
-    @WebMethod(action = "http://doclitbare.sample.test.org/twoWaySimple")
+    @WebMethod
     @WebResult(name = "String", targetNamespace = "http://doclitbare.sample.test.org", partName = "allByMyself")
     public String twoWaySimple(
         @WebParam(name = "Integer", targetNamespace = "http://doclitbare.sample.test.org", partName = "allByMyself")
@@ -60,7 +60,7 @@ public interface DocLitBarePortType {
      * @throws FaultBeanWithWrapper
      * @throws SimpleFault
      */
-    @WebMethod(action = "http://doclitbare.sample.test.org/twoWayReturn")
+    @WebMethod
     public void twoWayHolder(
         @WebParam(name = "Composite", targetNamespace = "http://doclitbare.sample.test.org", mode = Mode.INOUT, partName = "allByMyself")
         Holder<Composite> allByMyself)

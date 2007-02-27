@@ -8,6 +8,7 @@ import javax.xml.ws.BindingProvider;
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.BareDocLitService;
 import org.apache.axis2.jaxws.sample.doclitbare.sei.DocLitBarePortType;
+import org.apache.log4j.BasicConfigurator;
 
 public class BareTests extends TestCase {
 	
@@ -33,7 +34,24 @@ public class BareTests extends TestCase {
 		}
 	}
 	
-	public void testOneWayEmpty(){
+    public void testTwoWaySyncWithBodyRouting(){
+        System.out.println("------------------------------");
+        System.out.println("Test : "+getName());
+        
+        try{
+            
+            BareDocLitService service = new BareDocLitService();
+            DocLitBarePortType proxy = service.getBareDocLitPort();
+            String response = proxy.twoWaySimple(10);
+            System.out.println("Sync Response =" + response);
+            System.out.println("------------------------------");
+        }catch(Exception e){
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+    public void testOneWayEmpty(){
 		System.out.println("------------------------------");
 		System.out.println("Test : "+getName());
 		

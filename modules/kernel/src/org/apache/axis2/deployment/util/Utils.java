@@ -340,7 +340,7 @@ public class Utils {
                     QName complexSchemaType = table.getComplexSchemaType(jmethod.getSimpleName());
                     inMessage.setElementQName(complexSchemaType);
                     if (complexSchemaType != null) {
-                        axisService.addmessageNameToOperationMapping(complexSchemaType.getLocalPart(), operation);
+                        axisService.addMessageElementQNameToOperationMapping(complexSchemaType, operation);
                     }
                 }
                 if (!jmethod.getReturnType().isVoidType()) {
@@ -350,7 +350,7 @@ public class Utils {
                             Java2WSDLConstants.RESPONSE);
                     outMessage.setElementQName(qNamefortheType);
                     if (qNamefortheType != null) {
-                        axisService.addmessageNameToOperationMapping(qNamefortheType.getLocalPart(), operation);
+                        axisService.addMessageElementQNameToOperationMapping(qNamefortheType, operation);
                     }
                     outMessage.setName(opName + Java2WSDLConstants.RESPONSE);
                 }

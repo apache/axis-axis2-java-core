@@ -799,6 +799,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         QName elementName = part.getElementName();
                         if (elementName != null) {
                             message.setElementQName(elementName);
+                            ((AxisService)message.getParent().getParent()).addMessageElementQNameToOperationMapping(elementName, (AxisOperation)message.getParent());
                         } else {
                             throw new WSDLProcessingException("No element type is defined for message " +
                                     wsdl4jMessage.getQName().getLocalPart());
@@ -824,6 +825,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         QName elementName = part.getElementName();
                         if (elementName != null) {
                             message.setElementQName(elementName);
+                            ((AxisService)message.getParent().getParent()).addMessageElementQNameToOperationMapping(elementName, (AxisOperation)message.getParent());
                         } else {
                             throw new WSDLProcessingException("No element type is defined for message" +
                                     wsdl4jMessage.getQName().getLocalPart());

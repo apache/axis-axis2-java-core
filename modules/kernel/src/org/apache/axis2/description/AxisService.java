@@ -98,8 +98,12 @@ import java.util.Set;
 public class AxisService extends AxisDescription {
 
     private Map endpointMap = new HashMap();
-
-    private Map messageNameToOperationsMap = new HashMap();
+    
+    /*This is a map between the QName of the element of a message
+     *specified in the WSDL and an Operation.  It enables SOAP Body-based
+     *dispatching for doc-literal bindings.
+     */ 
+    private Map messageElementQNameToOperationMap = new HashMap();
 
     private int nsCount = 0;
     private static final Log log = LogFactory.getLog(AxisService.class);
@@ -2235,24 +2239,51 @@ public class AxisService extends AxisDescription {
         return locator;
     }
 
-
-   
     /**
-     * When we are trying to find out the operation by the QName of the SOAPBody first child, this
-     * map will help to retrieve that data very fast.
+     * Set the map of WSDL message element QNames to AxisOperations for this
+     * service.  This map is used during SOAP Body-based routing for
+     * document/literal bare services to match the first child element of the
+     * SOAP Body element to an operation.  (Routing for RPC and
+     * document/literal wrapped services occurs via the operationsAliasesMap.)
      *
-     * @param messageQNameToOperationMap
+     * From section 4.7.6 of the WS-I BP 1.1:
+     * the "operation signature" is "the fully qualified name of the child
+     * element of SOAP body of the SOAP input message described by an operation
+     * in a WSDL binding," and thus this map must be from a QName to an
+     * operation.
+     * 
+     * @param messageElementQNameToOperationMap The map from WSDL message
+     *                                          element QNames to
+     *                                          AxisOperations.
      */
-    public void setMessageNameToOperationsMap(Map messageQNameToOperationMap) {
-        this.messageNameToOperationsMap = messageQNameToOperationMap;
+    public void setMessageElementQNameToOperationMap(Map messageElementQNameToOperationMap) {
+        this.messageElementQNameToOperationMap = messageElementQNameToOperationMap;
     }
 
-    public AxisOperation getOperationByMessageName(String messageName) {
-            return (AxisOperation) messageNameToOperationsMap.get(messageName);
+    /**
+     * Look up an AxisOperation for this service based off of an element QName
+     * from a WSDL message element.
+     * 
+     * @param messageElementQName The QName to search for.
+     * @return The AxisOperation registered to the QName or null if no match
+     *         was found.
+     * @see #setMessageElementQNameToOperationMap(Map)
+     */
+    public AxisOperation getOperationByMessageElementQName(QName messageElementQName) {
+            return (AxisOperation) messageElementQNameToOperationMap.get(messageElementQName);
     }
 
-    public void addmessageNameToOperationMapping(String messageName, AxisOperation operation) {
-        messageNameToOperationsMap.put(messageName, operation);
+    /**
+     * Add an entry to the map between element QNames in WSDL messages and
+     * AxisOperations for this service.
+     * 
+     * @param messageElementQName The QName of the element on the input message
+     *                            that maps to the given operation.
+     * @param operation The AxisOperation to be mapped to.
+     * @see #setMessageElementQNameToOperationMap(Map)
+     */
+    public void addMessageElementQNameToOperationMapping(QName messageElementQName, AxisOperation operation) {
+        messageElementQNameToOperationMap.put(messageElementQName, operation);
     }
 
     public String getEndpointURL() {
