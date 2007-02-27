@@ -46,8 +46,9 @@ goto end
 :okHome
 rem set the classes
 setlocal EnableDelayedExpansion
+rem append the existing classpath to AXIS2_CLASS_PATH
+set AXIS2_CLASS_PATH=%CLASSPATH%;%AXIS2_HOME%
 rem loop through the libs and add them to the class path
-set AXIS2_CLASS_PATH=%AXIS2_HOME%
 FOR %%c in ("%AXIS2_HOME%\lib\*.jar") DO set AXIS2_CLASS_PATH=!AXIS2_CLASS_PATH!;%%c
 
 rem ----- Execute The Requested Command ---------------------------------------
