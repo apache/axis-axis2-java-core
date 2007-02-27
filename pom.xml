@@ -82,6 +82,19 @@
 			</modules>
 		</profile>
 	</profiles>
+
+	<ciManagement>
+            <system>continuum</system>
+            <url>http://vmbuild.apache.org/continuum</url>
+            <notifiers>
+                <notifier>
+                    <configuration>
+                        <address>axis2-cvs@ws.apache.org</address>
+                    </configuration>
+                </notifier>
+            </notifiers>
+        </ciManagement>
+
 	<scm>
 		<connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/</connection>
 		<developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/</developerConnection>
