@@ -420,8 +420,8 @@ public class MessageContextBuilder {
                     if (faultCodeQName.getLocalPart().indexOf(":") == -1) {
                         String prefix = faultCodeQName.getPrefix();
                         String uri = faultCodeQName.getNamespaceURI();
-                        prefix = prefix == null || "".equals(prefix) ? Constants.AXIS2_NAMESPACE_PREFIX : prefix;
-                        uri = uri == null || "".equals(uri) ? Constants.AXIS2_NAMESPACE_URI : uri;
+                        prefix = prefix == null || "".equals(prefix) ? fault.getNamespace().getPrefix() : prefix;
+                        uri = uri == null || "" .equals(uri) ? fault.getNamespace().getNamespaceURI() : uri;
                         soapFaultCode = prefix + ":" + faultCodeQName.getLocalPart();
                         fault.declareNamespace(uri, prefix);
                     } else {
