@@ -447,100 +447,108 @@ public class DescriptionBuilderComposite implements TMAnnotationComposite, TMFAn
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		String newLine = "\n";
-		sb.append("***** BEGIN DescriptionBuilderComposite *****");
+		final String newLine = "\n";
+        final String sameLine = "; ";
+        sb.append(super.toString());
 		sb.append(newLine);
-		sb.append("DBC.className= " + className);
-		sb.append(newLine);
-		sb.append("DBC.superClass=" + extendsClass);
-		sb.append(newLine);
+		sb.append("ClassName: " + className);
+		sb.append(sameLine);
+		sb.append("SuperClass:" + extendsClass);
+		
+        sb.append(newLine);
+        sb.append("Class modifiers: "); 
 		if(classModifiers != null) {
 			for(int i=0; i < classModifiers.length; i++) {
-				sb.append("DBC.classModifier=" + classModifiers[i]);
-				sb.append(newLine);
+				sb.append(classModifiers[i]);
+				sb.append(sameLine);
 			}
 		}
-		sb.append(newLine);
+	
+        sb.append(newLine);
+        sb.append("Interfaces: ");
 		Iterator<String> intIter = interfacesList.iterator();
 		while(intIter.hasNext()) {
 			String inter = intIter.next();
-			sb.append("DBC.interface= " + inter);
-			sb.append(newLine);
+			sb.append(inter);
+			sb.append(sameLine);
 		}
-		sb.append(newLine);
+		
 		if(webServiceAnnot != null) {
-			sb.append("\t ** @WebService **");
-			sb.append(newLine);
-			sb.append("\t" + webServiceAnnot.toString());
+            sb.append(newLine);
+            sb.append("WebService: ");
+			sb.append(webServiceAnnot.toString());
 		}
-		sb.append(newLine);
+		
 		if(webServiceProviderAnnot != null) {
-			sb.append("\t ** @WebServiceProvider **");
-			sb.append(newLine);
-			sb.append("\t" + webServiceProviderAnnot.toString());
+            sb.append(newLine);
+            sb.append("WebServiceProvider: ");
+			sb.append(webServiceProviderAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(bindingTypeAnnot != null) {
-			sb.append("\t ** @BindingType **");
-			sb.append(newLine);
-			sb.append("\t" + bindingTypeAnnot.toString());
+            sb.append(newLine);
+            sb.append("BindingType: ");
+			sb.append(bindingTypeAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(webServiceClientAnnot != null) {
-			sb.append("\t ** @WebServiceClient **");
-			sb.append(newLine);
-			sb.append("\t" + webServiceClientAnnot.toString());
+            sb.append(newLine);
+            sb.append("WebServiceClient: ");
+			sb.append(webServiceClientAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(webFaultAnnot != null) {
-			sb.append("\t ** @WebFault **");
-			sb.append(newLine);
-			sb.append("\t" + webFaultAnnot.toString());
+            sb.append(newLine);
+            sb.append("WebFault: ");
+			sb.append(webFaultAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(serviceModeAnnot != null) {
-			sb.append("\t ** @ServiceMode **");
-			sb.append(newLine);
-			sb.append("\t" + serviceModeAnnot.toString());
+            sb.append(newLine);
+            sb.append("ServiceMode: ");
+			sb.append(serviceModeAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(soapBindingAnnot != null) {
-			sb.append("\t ** @SOAPBinding **");
-			sb.append(newLine);
-			sb.append("\t" + soapBindingAnnot.toString());
+            sb.append(newLine);
+            sb.append("SOAPBinding: ");
+			sb.append(soapBindingAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(handlerChainAnnot != null) {
-			sb.append("\t ** @HandlerChain **");
-			sb.append(newLine);
-			sb.append("\t" + handlerChainAnnot.toString());
+            sb.append(newLine);
+            sb.append("HandlerChain: ");
+			sb.append(handlerChainAnnot.toString());
 		}
+		
+        if (webServiceRefAnnotList.size() > 0) {
+            sb.append(newLine);
+            sb.append("Number of WebServiceRef:  " + webServiceRefAnnotList.size());
+            Iterator<WebServiceRefAnnot> wsrIter = webServiceRefAnnotList.iterator();
+            while(wsrIter.hasNext()) {
+                WebServiceRefAnnot wsr = wsrIter.next();
+                sb.append(wsr.toString());
+                sb.append(sameLine);
+            }
+        }
+        
 		sb.append(newLine);
-		Iterator<WebServiceRefAnnot> wsrIter = webServiceRefAnnotList.iterator();
-		while(wsrIter.hasNext()) {
-			WebServiceRefAnnot wsr = wsrIter.next();
-			sb.append("\t ** @WebServiceRef **");
-			sb.append(newLine);
-			sb.append("\t" + wsr.toString());
-			sb.append(newLine);
-		}
-		sb.append(newLine);
+        sb.append("Number of Method Descriptions: " + methodDescriptions.size());
 		Iterator<MethodDescriptionComposite> mdcIter =  methodDescriptions.iterator();
-		sb.append(newLine);
 		while(mdcIter.hasNext()) {
+            sb.append(newLine);
 			MethodDescriptionComposite mdc = mdcIter.next();
-			sb.append("\t\t" + mdc.toString());
-			sb.append(newLine);
+			sb.append(mdc.toString());
 		}
-		sb.append(newLine);
+		
+        sb.append(newLine);
+        sb.append("Number of Field Descriptions: " + fieldDescriptions.size());
 		Iterator<FieldDescriptionComposite> fdcIter = fieldDescriptions.iterator();
-		sb.append(newLine);
 		while(fdcIter.hasNext()) {
+            sb.append(newLine);
 			FieldDescriptionComposite fdc = fdcIter.next();
-			sb.append("\t\t" + fdc.toString());
-			sb.append(newLine);
+			sb.append(fdc.toString());
 		}
-		sb.append("***** END DescriptionBuilderComposite *****");
 		return sb.toString();
 	}
 	

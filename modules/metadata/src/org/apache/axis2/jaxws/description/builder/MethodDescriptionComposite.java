@@ -404,84 +404,84 @@ public class MethodDescriptionComposite implements TMAnnotationComposite, TMFAnn
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		String newLine = "\n";
-		sb.append("***** BEGIN MethodDescriptionComposite *****");
+		final String newLine = "\n";
+        final String sameLine = "; ";
+        sb.append(super.toString());
 		sb.append(newLine);
-		sb.append("MDC.name= " + methodName);
-		sb.append(newLine);
-		sb.append("MDC.returnType= " + returnType);
+		sb.append("Name: " + methodName);
+		sb.append(sameLine);
+		sb.append("ReturnType: " + returnType);
+        
+        sb.append(newLine);
+        sb.append("Exceptions: ");
 		if(exceptions != null) {
 			for(int i=0; i < exceptions.length; i++) {
-				sb.append("MDC.exception= " + exceptions[i]);
-				sb.append(newLine);
+				sb.append(exceptions[i]);
+				sb.append(sameLine);
 			}
 		}
-		sb.append(newLine);
-		sb.append("\t ** @OneWay **");
-		sb.append(newLine);
-		sb.append("\t isOneWay= ");
+        
 		if(oneWayAnnotated) {
-			sb.append("true");
+            sb.append(newLine);
+            sb.append("OneWay");
 		}
-		else {
-			sb.append("false");
-		}
-		sb.append(newLine);
+
 		if(webMethodAnnot != null) {
-			sb.append("\t ** @WebMethod **");
-			sb.append(newLine);
-			sb.append("\t" + webMethodAnnot.toString());
+            sb.append(newLine);
+            sb.append("WebMethod: ");
+			sb.append(webMethodAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(requestWrapperAnnot != null) {
-			sb.append("\t ** @RequestWrapper **");
-			sb.append(newLine);
-			sb.append("\t" + requestWrapperAnnot.toString());
+            sb.append(newLine);
+            sb.append("RequestWrapper: ");
+			sb.append(requestWrapperAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(responseWrapperAnnot != null) {
-			sb.append("\t ** @ResponsetWrapper **");
-			sb.append(newLine);
-			sb.append("\t" + responseWrapperAnnot.toString());
+            sb.append(newLine);
+            sb.append("ResponsetWrapper: ");
+			sb.append(responseWrapperAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(soapBindingAnnot != null) {
-			sb.append("\t ** @SOAPBinding **");
-			sb.append(newLine);
-			sb.append("\t" + soapBindingAnnot.toString());
+            sb.append(newLine);
+            sb.append("SOAPBinding: ");
+			sb.append(soapBindingAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(webEndpointAnnot != null) {
-			sb.append("\t ** @WebEndpoint **");
-			sb.append(newLine);
-			sb.append("\t" + webEndpointAnnot.toString());
+            sb.append(newLine);
+            sb.append("WebEndpoint: ");
+			sb.append(webEndpointAnnot.toString());
 		}
-		sb.append(newLine);
+
 		if(webResultAnnot != null) {
-			sb.append("\t ** @WebResult **");
-			sb.append(newLine);
-			sb.append("\t" + webResultAnnot.toString());
+            sb.append(newLine);
+            sb.append("WebResult: ");
+			sb.append(webResultAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(webServiceRefAnnot != null) {
-			sb.append("\t ** @WebServiceRef **");
-			sb.append(newLine);
-			sb.append("\t" + webServiceRefAnnot.toString());
+            sb.append(newLine);
+            sb.append("WebServiceRef: ");
+			sb.append(webServiceRefAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(handlerChainAnnot != null) {
-			sb.append("\t ** @HandlerChain **");
-			sb.append(newLine);
-			sb.append("\t" + handlerChainAnnot.toString());
+            sb.append(newLine);
+            sb.append("HandlerChain: ");
+			sb.append(handlerChainAnnot.toString());
 		}
+        
 		sb.append(newLine);
+        sb.append("Number of Parameter Descriptions: " + parameterDescriptions.size());
 		Iterator<ParameterDescriptionComposite> pdcIter = parameterDescriptions.iterator();
 		while(pdcIter.hasNext()) {
+            sb.append(newLine);
 			ParameterDescriptionComposite pdc = pdcIter.next();
-			sb.append("\t\t" + pdc.toString());
-			sb.append(newLine);
+			sb.append(pdc.toString());
 		}
-		sb.append("***** END MethodDescriptionComposite *****");
 		return sb.toString();
 	}
 }

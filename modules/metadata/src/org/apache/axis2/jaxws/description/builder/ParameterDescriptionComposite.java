@@ -205,23 +205,23 @@ public class ParameterDescriptionComposite {
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		String newLine = "\n";
-		sb.append("***** BEGIN ParameterDescriptionComposite *****");
-		sb.append("PDC.parameterType= " + parameterType);
-		sb.append(newLine);
+		final String newLine = "\n";
+        final String sameLine = "; ";
+		sb.append(super.toString());
+        sb.append(sameLine);
+		sb.append("ParameterType: " + parameterType);
+
 		if(webParamAnnot != null) {
-			sb.append("\t @WebParam");
-			sb.append(newLine);
-			sb.append("\t" + webParamAnnot.toString());
+            sb.append(newLine);
+            sb.append("WebParam: ");
+			sb.append(webParamAnnot.toString());
 		}
-		sb.append(newLine);
+        
 		if(webServiceRefAnnot != null) {
-			sb.append("\t @WebServiceRef");
-			sb.append(newLine);
-			sb.append("\t" + webServiceRefAnnot.toString());
+            sb.append(newLine);
+            sb.append("WebServiceRef: ");
+			sb.append(webServiceRefAnnot.toString());
 		}
-		sb.append(newLine);
-		sb.append("***** END ParameterDescriptionComposite *****");
 		return sb.toString();
 	}
     
