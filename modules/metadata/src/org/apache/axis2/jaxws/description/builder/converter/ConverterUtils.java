@@ -5,6 +5,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.util.List;
 
 import javax.jws.HandlerChain;
@@ -187,17 +188,24 @@ public class ConverterUtils {
 			paramType = paramType + "<";
 			for(int i=0; i < genericTypes.length; i++) {
 				Type type = genericTypes[i];
-				if(type instanceof Class) {
-					if(i != genericTypes.length -1){
-						paramType = paramType + ((Class) type).getName() + ", ";
-					}
-					else {
-						paramType = paramType + ((Class) type).getName() + ">";
-					}
+				if (type instanceof Class) {
+                    paramType = paramType + ((Class) type).getName();
 				}
-				if(type instanceof ParameterizedType) {
-					paramType = getFullType((ParameterizedType)type, paramType) + ", ";
+                else if (type instanceof ParameterizedType) {
+					paramType = getFullType((ParameterizedType)type, paramType);
 				}
+                else if (type instanceof WildcardType) {
+                    paramType = paramType + "?";
+                }
+                
+                // Set string for more parameters OR close the generic if this is the last one.
+                if(i != genericTypes.length -1){
+                    paramType = paramType + ", ";
+                }
+                else {
+                    paramType = paramType + ">";
+                }
+
 			}
 		}
 		return paramType;

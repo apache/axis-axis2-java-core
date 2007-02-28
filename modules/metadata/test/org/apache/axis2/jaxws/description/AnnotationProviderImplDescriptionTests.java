@@ -19,6 +19,7 @@ package org.apache.axis2.jaxws.description;
 
 import javax.jws.WebService;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.Source;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
@@ -26,14 +27,24 @@ import javax.xml.ws.ServiceMode;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.WebServiceProvider;
 
+import org.apache.log4j.BasicConfigurator;
+
 import junit.framework.TestCase;
 
 public class AnnotationProviderImplDescriptionTests extends TestCase {
+    static {
+        // Note you will probably need to increase the java heap size, for example
+        // -Xmx512m.  This can be done by setting maven.junit.jvmargs in project.properties.
+        // To change the settings, edit the log4j.property file
+        // in the test-resources directory.
+        BasicConfigurator.configure();
+    }
+
     
     public void testBasicProvider() {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         ServiceDescription serviceDesc = 
-            DescriptionFactory.createServiceDescriptionFromServiceImpl(BasicProviderTestImpl.class, null);
+            DescriptionFactory.createServiceDescription(BasicProviderTestImpl.class);
         assertNotNull(serviceDesc);
         
         EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
@@ -56,7 +67,7 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
     public void testWebServiceProvider() {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         ServiceDescription serviceDesc = 
-            DescriptionFactory.createServiceDescriptionFromServiceImpl(WebServiceProviderTestImpl.class, null);
+            DescriptionFactory.createServiceDescription(WebServiceProviderTestImpl.class);
         assertNotNull(serviceDesc);
         
         EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
@@ -78,7 +89,7 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
     public void testDefaultServiceModeProvider() {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         ServiceDescription serviceDesc = 
-            DescriptionFactory.createServiceDescriptionFromServiceImpl(DefaultServiceModeProviderTestImpl.class, null);
+            DescriptionFactory.createServiceDescription(DefaultServiceModeProviderTestImpl.class);
         assertNotNull(serviceDesc);
         
         EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
@@ -89,13 +100,13 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         EndpointDescriptionJava testEndpointDesc = (EndpointDescriptionJava) endpointDesc[0];
         // Default ServiceMode is PAYLOAD per JAXWS p. 80
         assertEquals(Service.Mode.PAYLOAD, testEndpointDesc.getAnnoServiceModeValue());
-        assertEquals("", testEndpointDesc.getAnnoBindingTypeValue());
+        assertEquals("http://schemas.xmlsoap.org/wsdl/soap/http", testEndpointDesc.getAnnoBindingTypeValue());
     }
     
     public void testNoServiceModeProvider() {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         ServiceDescription serviceDesc = 
-            DescriptionFactory.createServiceDescriptionFromServiceImpl(NoServiceModeProviderTestImpl.class, null);
+            DescriptionFactory.createServiceDescription(NoServiceModeProviderTestImpl.class);
         assertNotNull(serviceDesc);
         
         EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
@@ -112,13 +123,14 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         try {
             ServiceDescription serviceDesc = 
-                DescriptionFactory.createServiceDescriptionFromServiceImpl(NoWebServiceProviderTestImpl.class, null);
+                DescriptionFactory.createServiceDescription(NoWebServiceProviderTestImpl.class);
             fail("Expected WebServiceException not caught");
         }
         catch (WebServiceException e) {
             // This is the expected successful test path
         }
         catch (Exception e) {
+            e.printStackTrace();
             fail ("Wrong exception caught.  Expected WebServiceException but caught " + e);
         }
     }
@@ -127,7 +139,7 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         try {
             ServiceDescription serviceDesc = 
-                DescriptionFactory.createServiceDescriptionFromServiceImpl(BothWebServiceAnnotationTestImpl.class, null);
+                DescriptionFactory.createServiceDescription(BothWebServiceAnnotationTestImpl.class);
             fail("Expected WebServiceException not caught");
         }
         catch (WebServiceException e) {
@@ -141,7 +153,7 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
     public void testServiceModeOnNonProvider() {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         ServiceDescription serviceDesc = 
-            DescriptionFactory.createServiceDescriptionFromServiceImpl(WebServiceSEITestImpl.class, null);
+            DescriptionFactory.createServiceDescription(WebServiceSEITestImpl.class);
         assertNotNull(serviceDesc);
         
         EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
@@ -162,6 +174,7 @@ public class AnnotationProviderImplDescriptionTests extends TestCase {
 @WebServiceProvider()
 @BindingType(value="http://www.w3.org/2003/05/soap/bindings/HTTP/")
 class BasicProviderTestImpl implements Provider<SOAPMessage> {
+    public BasicProviderTestImpl() {}
     public SOAPMessage invoke(SOAPMessage obj) {
         return null;
     }
@@ -174,8 +187,9 @@ class BasicProviderTestImpl implements Provider<SOAPMessage> {
 @WebServiceProvider(serviceName="ProviderService", portName="ProviderServicePort", 
         targetNamespace="http://namespace.test", wsdlLocation="http://wsdl.test")
 @BindingType(value="http://www.w3.org/2003/05/soap/bindings/HTTP/")
-class WebServiceProviderTestImpl implements Provider<SOAPMessage> {
-    public SOAPMessage invoke(SOAPMessage obj) {
+class WebServiceProviderTestImpl implements Provider<String> {
+    public WebServiceProviderTestImpl() {}
+    public String invoke(String obj) {
         return null;
     }
 }
@@ -187,8 +201,9 @@ class WebServiceProviderTestImpl implements Provider<SOAPMessage> {
 @ServiceMode()
 @WebServiceProvider()
 @BindingType()
-class DefaultServiceModeProviderTestImpl implements Provider<SOAPMessage> {
-    public SOAPMessage invoke(SOAPMessage obj) {
+class DefaultServiceModeProviderTestImpl implements Provider<String> {
+    public DefaultServiceModeProviderTestImpl() {}
+    public String invoke(String obj) {
         return null;
     }
 }
@@ -197,8 +212,9 @@ class DefaultServiceModeProviderTestImpl implements Provider<SOAPMessage> {
 // No ServiceMode and no BindingType Provider service implementation class
 // ===============================================
 @WebServiceProvider()
-class NoServiceModeProviderTestImpl implements Provider<SOAPMessage> {
-    public SOAPMessage invoke(SOAPMessage obj) {
+class NoServiceModeProviderTestImpl implements Provider<Source> {
+    public NoServiceModeProviderTestImpl() {}
+    public Source invoke(Source obj) {
         return null;
     }
 }
@@ -210,6 +226,7 @@ class NoServiceModeProviderTestImpl implements Provider<SOAPMessage> {
 @ServiceMode(value=Service.Mode.MESSAGE)
 @BindingType(value="http://www.w3.org/2003/05/soap/bindings/HTTP/")
 class NoWebServiceProviderTestImpl implements Provider<SOAPMessage> {
+    public NoWebServiceProviderTestImpl() {}
     public SOAPMessage invoke(SOAPMessage obj) {
         return null;
     }  
@@ -224,6 +241,7 @@ class NoWebServiceProviderTestImpl implements Provider<SOAPMessage> {
 @WebServiceProvider()
 @BindingType(value="http://www.w3.org/2003/05/soap/bindings/HTTP/")
 class BothWebServiceAnnotationTestImpl implements Provider<SOAPMessage> {
+    public BothWebServiceAnnotationTestImpl() {}
     public SOAPMessage invoke(SOAPMessage obj) {
         return null;
     }  

@@ -36,6 +36,7 @@ import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
+import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
 import org.apache.axis2.jaxws.description.validator.ServiceDescriptionValidator;
 import org.apache.axis2.jaxws.description.validator.ValidationFailures;
 import org.apache.commons.logging.Log;
@@ -44,7 +45,8 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Creates the JAX-WS metadata descritpion hierachy from some combinations of
  * WSDL, Java classes with annotations, and (in the future) deployment
- * descriptors.
+ * descriptors.  This is the implementation and is not intended to be a public API.  The API is:
+ * @see org.apache.axis2.jaxws.description.DescriptionFactory
  */
 public class DescriptionFactoryImpl {
     private static final Log log = LogFactory.getLog(DescriptionFactoryImpl.class);
@@ -55,6 +57,9 @@ public class DescriptionFactoryImpl {
     private DescriptionFactoryImpl() {
     }
 
+    /**
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescription(URL, QName, Class)
+     */
     public static ServiceDescription createServiceDescription(URL wsdlURL,
             QName serviceQName, Class serviceClass) {
         ServiceDescription serviceDesc = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
@@ -66,21 +71,52 @@ public class DescriptionFactoryImpl {
         return serviceDesc;
     }
 
-    // TODO: Taking an AxisService is only temporary; the AxisService should be
-    // created when creating the ServiceDesc
+    /**
+     * @deprecated
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescriptionFromServiceImpl(Class, AxisService)
+     */
     public static ServiceDescription createServiceDescriptionFromServiceImpl(
             Class serviceImplClass, AxisService axisService) {
         ServiceDescription serviceDesc = new ServiceDescriptionImpl(serviceImplClass, axisService);
         if (log.isDebugEnabled()) {
-            log.debug("ServiceDescription created with Class: " + serviceImplClass + "; AxisService: " + axisService);
+            log.debug("Deprecated method used!  ServiceDescription created with Class: " + serviceImplClass + "; AxisService: " + axisService);
             log.debug(serviceDesc.toString());
         }
         return serviceDesc;
     }
+    
+    /**
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescription(Class)
+     */
+    public static ServiceDescription createServiceDescription(Class serviceImplClass) {
+        ServiceDescription serviceDesc = null;
+        
+        if (serviceImplClass != null) {
+            JavaClassToDBCConverter converter = new JavaClassToDBCConverter(serviceImplClass);
+            HashMap<String, DescriptionBuilderComposite> dbcMap = converter.produceDBC();
+            List<ServiceDescription> serviceDescList =  createServiceDescriptionFromDBCMap(dbcMap);
+            if (serviceDescList != null && serviceDescList.size() > 0) {
+                serviceDesc = serviceDescList.get(0);
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceDescription created with class: " + serviceImplClass);
+                    log.debug(serviceDesc);
+                }
+            }
+            else {
+                if (log.isDebugEnabled()) {
+                    log.debug("ServiceDesciption was not created for class: " + serviceImplClass);
+                }
+                // TODO: NLS & RAS
+                throw ExceptionFactory.makeWebServiceException("A ServiceDescription was not created for " + serviceImplClass);
+            }
+        }
+        return serviceDesc;
+    }
 
-    // TODO: Determine whether this method is necessary...we may want to always
-    // build a
-    // ServiceDescription based on a particular impl class
+
+    /**
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescriptionFromDBCMap(HashMap)
+     */
     public static List<ServiceDescription> createServiceDescriptionFromDBCMap(
             HashMap<String, DescriptionBuilderComposite> dbcMap) {
 
@@ -116,6 +152,11 @@ public class DescriptionFactoryImpl {
                     throw ExceptionFactory.makeWebServiceException(msg);
                 }
             }
+            else {
+                if (log.isDebugEnabled()) {
+                    log.debug("DBC is not a service impl: " + serviceImplComposite.toString());
+                }
+            }
         }
 
         // TODO: Process all composites that are WebFaults...current thinking is
@@ -127,13 +168,7 @@ public class DescriptionFactoryImpl {
     }
 
     /**
-     * Update an existing ServiceDescription with an annotated SEI
-     * 
-     * @param serviceDescription
-     * @param seiClass
-     * @param portName
-     *            Can be null
-     * @return
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#updateEndpoint(ServiceDescription, Class, QName, org.apache.axis2.jaxws.description.DescriptionFactory.UpdateType)
      */
     public static EndpointDescription updateEndpoint(
             ServiceDescription serviceDescription, Class sei, QName portQName,
@@ -186,4 +221,5 @@ public class DescriptionFactoryImpl {
         }
         return false;
     }
+
 }

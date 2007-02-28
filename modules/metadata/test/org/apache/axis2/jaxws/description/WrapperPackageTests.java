@@ -23,12 +23,21 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
 
+import org.apache.log4j.BasicConfigurator;
+
 import junit.framework.TestCase;
 
 /**
  * Tests the request and response wrappers.
  */
 public class WrapperPackageTests extends TestCase {
+    static {
+        // Note you will probably need to increase the java heap size, for example
+        // -Xmx512m.  This can be done by setting maven.junit.jvmargs in project.properties.
+        // To change the settings, edit the log4j.property file
+        // in the test-resources directory.
+        BasicConfigurator.configure();
+    }
     
     public void testSEIPackageWrapper() {
         EndpointInterfaceDescription eiDesc = getEndpointInterfaceDesc(SEIPackageWrapper.class);
@@ -83,7 +92,7 @@ public class WrapperPackageTests extends TestCase {
     private EndpointInterfaceDescription getEndpointInterfaceDesc(Class implementationClass) {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         ServiceDescription serviceDesc = 
-            DescriptionFactory.createServiceDescriptionFromServiceImpl(implementationClass, null);
+            DescriptionFactory.createServiceDescription(implementationClass);
         assertNotNull(serviceDesc);
         
         EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();

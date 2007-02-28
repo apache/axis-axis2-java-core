@@ -1,5 +1,6 @@
 package org.apache.axis2.jaxws.description.builder.converter;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -13,6 +14,7 @@ import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebEndpoint;
 
+import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.RequestWrapperAnnot;
@@ -24,17 +26,19 @@ import org.apache.axis2.jaxws.description.builder.WebResultAnnot;
 public class JavaMethodsToMDCConverter {
 	
 	private Method[] methods;
-	
+	private Constructor[] constructors;
 	private String declaringClass;
 	
-	public JavaMethodsToMDCConverter(Method[] methods, String declaringClass) {
+	public JavaMethodsToMDCConverter(Method[] methods, Constructor[] constructors, String declaringClass) {
 		this.methods = methods;
+        this.constructors = constructors;
 		this.declaringClass = declaringClass;
 	}
 	
 	/**
 	 * This will drive the creation of a <code>MethodDescriptionComposite</code> 
-	 * for every Java Method in the methods array.
+	 * for every Java Method in the methods array and every Java Constructor in the
+     * constructors array. 
 	 * @return - <code>List</code>
 	 */
 	public List<MethodDescriptionComposite> convertMethods() {
@@ -49,6 +53,7 @@ public class JavaMethodsToMDCConverter {
 				mdc.setDeclaringClass(method.getDeclaringClass().getName());
 				attachHandlerChainAnnotation(mdc, method);
 				attachOnewayAnnotation(mdc, method);
+                attachSoapBindingAnnotation(mdc, method);
 				attachRequestWrapperAnnotation(mdc, method);
 				attachResponseWrapperAnnotation(mdc, method);
 				attachWebEndpointAnnotation(mdc, method);
@@ -65,6 +70,20 @@ public class JavaMethodsToMDCConverter {
 				mdcList.add(mdc);
 			}
 		}
+        
+        for (Constructor constructor : constructors) {
+            MethodDescriptionComposite mdc = new MethodDescriptionComposite();
+            mdc.setMethodName("<init>");
+            mdc.setDeclaringClass(constructor.getDeclaringClass().getName());
+            mdcList.add(mdc);
+            if(constructor.getGenericParameterTypes().length > 0) {
+                JavaParamToPDCConverter paramConverter = new JavaParamToPDCConverter(
+                        constructor.getGenericParameterTypes(), constructor.getParameterAnnotations());
+                List<ParameterDescriptionComposite> pdcList = paramConverter.
+                    convertParams();
+                ConverterUtils.attachParameterDescriptionComposites(pdcList, mdc);
+            }
+        }
 			
 		return mdcList;
 	}
@@ -105,6 +124,16 @@ public class JavaMethodsToMDCConverter {
 			method) {
 		ConverterUtils.attachHandlerChainAnnotation(mdc, method);
 	}
+
+    /**
+     * This method will be used to drive the setting of @SOAPBinding annotation
+     * data to the <code>MethodDescriptionComposite</code>
+     * @param composite - <code>MethodDescriptionComposite</code>
+     */
+    private void attachSoapBindingAnnotation(MethodDescriptionComposite mdc, Method method) {
+        ConverterUtils.attachSoapBindingAnnotation(mdc, method);
+    }
+    
 	
 	/**
 	 * This method will drive the attachment of @Oneway annotation data to 
@@ -122,7 +151,7 @@ public class JavaMethodsToMDCConverter {
 			mdc.setOneWayAnnot(false);
 		}
 	}
-	
+    
 	/**
 	 * This method will drive the attachment of @RequestWrapper annotation data to 
 	 * the <code>MethodDescriptionComposite</code>

@@ -335,10 +335,14 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         	
         	wsdlLocationParameter.setValue(wsdlComposite.getWsdlFileName());
     		wsdlDefParameter.setValue(getServiceDescriptionImpl().getGeneratedWsdlWrapper().getDefinition());
-        } else {
+        } else if (getServiceDescriptionImpl().getWSDLWrapper() != null){
 
         	wsdlLocationParameter.setValue(getAnnoWebServiceWSDLLocation());
             wsdlDefParameter.setValue(getServiceDescriptionImpl().getWSDLWrapper().getDefinition());
+        } else {
+            wsdlLocationParameter.setValue(null);
+            wsdlDefParameter.setValue(null);
+            
         }
         	
         try {
@@ -1134,11 +1138,11 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     
     public String getAnnoBindingTypeValue() {
         if (bindingTypeValue == null) {
-            if (getAnnoBindingType() != null) {
+            if (getAnnoBindingType() != null && !DescriptionUtils.isEmpty(getAnnoBindingType().value())) {
                 bindingTypeValue = getAnnoBindingType().value();
             }
             else {
-                // No BindingType annotation present; use default value
+                // No BindingType annotation present or value was empty; use default value
                 bindingTypeValue = BindingType_DEFAULT;
             }
         }
@@ -1442,12 +1446,20 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
             			throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: WSDLException thrown when attempting to instantiate WSDL4JWrapper ");
             		} 
             	} else {
-                	//TODO:Determine if we should always throw an exception on this, or at this point
+                	// REVIEW:Determine if we should always throw an exception on this, or at this point
                     //throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: Unable to find custom WSDL generator");
+                    if (log.isDebugEnabled()) {
+                        log.debug("The custom WSDL generator returned null, so no generated WSDL is available");
+                    }
+                    
             	}
             } else {
-            	//TODO:Determine if we should always throw an exception on this, or at this point
-                throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: Unable to find custom WSDL generator");
+            	// REVIEW: This used to throw an exception, but it seems we shouldn't require 
+                // a wsdl generator be provided.
+//                throw ExceptionFactory.makeWebServiceException("EndpointDescriptionImpl: Unable to find custom WSDL generator");
+                if (log.isDebugEnabled()) {
+                    log.debug("No custom WSDL generator was supplied, so WSDL can not be generated");
+                }
             }
     	}
     	return wsdlComposite;

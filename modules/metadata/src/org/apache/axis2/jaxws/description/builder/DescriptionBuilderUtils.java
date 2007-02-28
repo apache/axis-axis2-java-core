@@ -324,7 +324,8 @@ class DescriptionBuilderUtils {
 	        //does not extend Exception, so lets catch everything that extends Throwable
             //rather than just Exception.
             catch (Throwable ex) {
-                throw ExceptionFactory.makeWebServiceException("DescriptionBuilderUtils: Class not found for parameter: " +classToLoad);
+                throw ExceptionFactory.makeWebServiceException("DescriptionBuilderUtils: Class not found for parameter: " 
+                        + classToLoad + " using classloader: " + classLoader);
             }
         } 
         else {
@@ -335,7 +336,7 @@ class DescriptionBuilderUtils {
 	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
 	        //does not extend Exception
             catch (Throwable ex) {
-                throw ExceptionFactory.makeWebServiceException("DescriptionBuilderUtils: Class not found for parameter: " +classToLoad);
+                throw ExceptionFactory.makeWebServiceException("DescriptionBuilderUtils: Class not found using default classloader for parameter: " +classToLoad);
             }
         }
         return returnClass;

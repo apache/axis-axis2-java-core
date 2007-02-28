@@ -15,12 +15,21 @@ import org.apache.axis2.jaxws.description.builder.ParameterDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
 import org.apache.axis2.jaxws.description.builder.WebParamAnnot;
 import org.apache.axis2.jaxws.description.builder.WebServiceAnnot;
+import org.apache.log4j.BasicConfigurator;
 
 import junit.framework.TestCase;
 
 
 public class ReflectiveConverterTests extends TestCase {
-	private static DescriptionBuilderComposite implDBC;
+    static {
+        // Note you will probably need to increase the java heap size, for example
+        // -Xmx512m.  This can be done by setting maven.junit.jvmargs in project.properties.
+        // To change the settings, edit the log4j.property file
+        // in the test-resources directory.
+        BasicConfigurator.configure();
+    }
+
+    private static DescriptionBuilderComposite implDBC;
 	private static DescriptionBuilderComposite seiDBC;
 	
 	public void setUp() {
@@ -28,11 +37,9 @@ public class ReflectiveConverterTests extends TestCase {
 		HashMap<String, DescriptionBuilderComposite> dbcMap = converter.produceDBC();
 		assertNotNull(dbcMap);
 		implDBC = dbcMap.get(
-				"org.apache.axis2.jaxws.description.builder.converter." +
-				"ReflectiveConverterTests$SimpleServiceImpl");
+				"org.apache.axis2.jaxws.description.builder.converter.SimpleServiceImpl");
 		seiDBC = dbcMap.get(
-				"org.apache.axis2.jaxws.description.builder.converter." +
-				"ReflectiveConverterTests$SimpleService");
+				"org.apache.axis2.jaxws.description.builder.converter.SimpleService");
 	}
 	
 	public static void testCreateImplDBC() {
@@ -47,12 +54,15 @@ public class ReflectiveConverterTests extends TestCase {
 		List<MethodDescriptionComposite> mdcList = sortList(implDBC.getMethodDescriptionsList());
         sortList(mdcList);
         assertNotNull(mdcList);
-		assertEquals(mdcList.size(), 2);
+		assertEquals(mdcList.size(), 3);
 		MethodDescriptionComposite mdc = mdcList.get(0);
 		assertNotNull(mdc);
+        assertEquals("<init>", mdc.getMethodName());
+        mdc = mdcList.get(1);
+        assertNotNull(mdc);
 		assertEquals("invoke", mdc.getMethodName());
 		assertEquals("java.lang.String", mdc.getReturnType());
-		mdc = mdcList.get(1);
+		mdc = mdcList.get(2);
 		assertNotNull(mdc);
 		assertEquals("invoke2", mdc.getMethodName());
 		assertEquals("int", mdc.getReturnType());
@@ -62,15 +72,20 @@ public class ReflectiveConverterTests extends TestCase {
 		assertNotNull(implDBC);
 		List<MethodDescriptionComposite> mdcList = sortList(implDBC.getMethodDescriptionsList());
 		assertNotNull(mdcList);
-		assertEquals(mdcList.size(), 2);
+		assertEquals(mdcList.size(), 3);
 		MethodDescriptionComposite mdc = mdcList.get(0);
 		assertNotNull(mdc);
-		List<ParameterDescriptionComposite> pdcList = mdc.getParameterDescriptionCompositeList();
+        List<ParameterDescriptionComposite> pdcList = mdc.getParameterDescriptionCompositeList();
+        assertNotNull(pdcList);
+        assertEquals(0, pdcList.size());
+        mdc = mdcList.get(1);
+        assertNotNull(mdc);
+		pdcList = mdc.getParameterDescriptionCompositeList();
 		assertNotNull(pdcList);
 		assertEquals(pdcList.size(), 1);
 		ParameterDescriptionComposite pdc = pdcList.get(0);
 		assertEquals("java.util.List<java.lang.String>", pdc.getParameterType());
-	 	mdc = mdcList.get(1);
+	 	mdc = mdcList.get(2);
 	 	pdcList = mdc.getParameterDescriptionCompositeList();
 	 	assertNotNull(pdcList);
 	 	assertEquals(pdcList.size(), 2);
@@ -138,95 +153,47 @@ public class ReflectiveConverterTests extends TestCase {
 	public void testDBCHierarchy() {
 		JavaClassToDBCConverter converter = new JavaClassToDBCConverter(ChildClass.class);
 		HashMap<String, DescriptionBuilderComposite> dbcMap = converter.produceDBC();
-		DescriptionBuilderComposite dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter." +
-				"ReflectiveConverterTests$ChildClass");
+		DescriptionBuilderComposite dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter.ChildClass");
 		assertNotNull(dbc);
 		List<MethodDescriptionComposite> mdcList = sortList(dbc.getMethodDescriptionsList());
 		assertNotNull(mdcList);
+		assertEquals(mdcList.size(), 3);
+        assertEquals("<init>", mdcList.get(0).getMethodName());
+		assertEquals("doAbstract", mdcList.get(1).getMethodName());
+		assertEquals("extraMethod", mdcList.get(2).getMethodName());
+		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter.ParentClass");
+		assertNotNull(dbc);
+		mdcList = sortList(dbc.getMethodDescriptionsList());
+		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 2);
-		assertEquals("doAbstract", mdcList.get(0).getMethodName());
-		assertEquals("extraMethod", mdcList.get(1).getMethodName());
-		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter." +
-		"ReflectiveConverterTests$ParentClass");
-		assertNotNull(dbc);
-		mdcList = sortList(dbc.getMethodDescriptionsList());
-		assertNotNull(mdcList);
-		assertEquals(mdcList.size(), 1);
-		assertEquals("doParentAbstract", mdcList.get(0).getMethodName());
-		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter." +
-		"ReflectiveConverterTests$ServiceInterface");
+        assertEquals("<init>", mdcList.get(0).getMethodName());
+		assertEquals("doParentAbstract", mdcList.get(1).getMethodName());
+		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter.ServiceInterface");
 		assertNotNull(dbc);
 		mdcList = sortList(dbc.getMethodDescriptionsList());
 		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 1);
 		assertEquals("doAbstract", mdcList.get(0).getMethodName());
-		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter." +
-		"ReflectiveConverterTests$CommonService");
+		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter.CommonService");
 		assertNotNull(dbc);
 		mdcList = sortList(dbc.getMethodDescriptionsList());
 		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 1);
 		assertEquals("extraMethod", mdcList.get(0).getMethodName());
-		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter." +
-		"ReflectiveConverterTests$ParentServiceInterface");
+		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter.ParentServiceInterface");
 		assertNotNull(dbc);
 		mdcList = sortList(dbc.getMethodDescriptionsList());
 		assertNotNull(mdcList);
 		assertEquals(mdcList.size(), 1);
 		assertEquals("doParentAbstract", mdcList.get(0).getMethodName());
-		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter." +
-		"ReflectiveConverterTests$AbstractService");
+		dbc = dbcMap.get("org.apache.axis2.jaxws.description.builder.converter.AbstractService");
 		assertNotNull(dbc);
 		mdcList = sortList(dbc.getMethodDescriptionsList());
 		assertNotNull(mdcList);
-		assertEquals(mdcList.size(), 1);
-		assertEquals("someAbstractMethod", mdcList.get(0).getMethodName());
+		assertEquals(mdcList.size(), 2);
+        assertEquals("<init>", mdcList.get(0).getMethodName());
+		assertEquals("someAbstractMethod", mdcList.get(1).getMethodName());
 		
-	}
-
-	@WebService(name="SimpleServicePort")
-	public interface SimpleService {
-		@WebMethod(operationName="invoke")
-		public String invoke(@WebParam(name="echoString")List<String> arg1);
-		public int invoke2(int arg1, int arg2);
-	}
-	
-	@WebService(serviceName="SimpleService", endpointInterface="org.apache.axis2.jaxws." +
-			"description.builder.converter.ReflectiveConverterTests$SimpleService")
-	public class SimpleServiceImpl {
-		public String invoke(List<String> myParam) {
-			return myParam.get(0);
-		}
-		public int invoke2(int num1, int num2) {
-			return num1 + num2;
-		}
-	}
-	
-	@WebService(serviceName="InheritanceTestChild")
-	public class ChildClass extends ParentClass implements ServiceInterface, CommonService {
-		public void doAbstract(){};
-		public void extraMethod(){};
-	}
-	
-	@WebService(serviceName="InhertianceTestParent") 
-	public class ParentClass extends AbstractService implements ParentServiceInterface {
-		public void doParentAbstract(){};
-	}
-	
-	public interface ServiceInterface {
-		public void doAbstract();
-	}
-	
-	public interface CommonService {
-		public void extraMethod();
-	}
-	
-	public interface ParentServiceInterface {
-		public void doParentAbstract();
-	}
-	
-	public class AbstractService {
-		public void someAbstractMethod() {};
 	}
 
     private static List<MethodDescriptionComposite> sortList(List<MethodDescriptionComposite> mdc){
@@ -239,3 +206,51 @@ public class ReflectiveConverterTests extends TestCase {
         return mdc;
     }
 }
+@WebService(serviceName="SimpleService", endpointInterface="org.apache.axis2.jaxws." +
+"description.builder.converter.SimpleService")
+class SimpleServiceImpl {
+    public SimpleServiceImpl() { };
+    public String invoke(List<String> myParam) {
+        return myParam.get(0);
+    }
+    public int invoke2(int num1, int num2) {
+        return num1 + num2;
+    }
+}
+
+@WebService(name="SimpleServicePort")
+interface SimpleService {
+    @WebMethod(operationName="invoke")
+    public String invoke(@WebParam(name="echoString")List<String> arg1);
+    public int invoke2(int arg1, int arg2);
+}
+
+@WebService(serviceName="InheritanceTestChild")
+class ChildClass extends ParentClass implements ServiceInterface, CommonService {
+    public ChildClass() { }
+    public void doAbstract(){};
+    public void extraMethod(){};
+}
+
+@WebService(serviceName="InhertianceTestParent") 
+class ParentClass extends AbstractService implements ParentServiceInterface {
+    public ParentClass() { }
+    public void doParentAbstract(){};
+}
+
+interface ServiceInterface {
+    public void doAbstract();
+}
+
+interface CommonService {
+    public void extraMethod();
+}
+
+interface ParentServiceInterface {
+    public void doParentAbstract();
+}
+
+class AbstractService {
+    public void someAbstractMethod() {};
+}
+

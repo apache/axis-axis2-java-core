@@ -98,11 +98,13 @@ public class DescriptionFactory {
     /**
      * Create a full ServiceDescription hierachy on the SERVER side for EACH 
      * service implementation entry in the DescriptionBuilderComposite (DBC) map.  Note that the 
-     * associated SERVER side Axis description objects are also created.  
+     * associated SERVER side Axis description objects are also created.  To create a single
+     * ServiceDescription hierarchy for a single service implementation class, use the 
+     * factory method that takes a single class and returns a single ServiceDescription.  
      * 
      * A service implementation DBC entry is one that:
      * (1) Is a class and not an interface
-     * (2) Carries an @WebService or @WebServiceProvider annotation.
+     * (2) Carries a WebService or WebServiceProvider annotation.
      * 
      * A DBC represents the information found in the service implementation class.  There
      * will be other DBC entries in the map for classes and interfaces associated with the 
@@ -111,6 +113,9 @@ public class DescriptionFactory {
      * 
      *  Note that map may contain > 1 service implementation DBC.  A full ServiceDescriptionHierachy 
      *  will be created for each service implementation DBC entry.
+     *  
+     *  Note that each ServiceDescription will have exactly one EndpointDescription corresponding
+     *  to each service implementation.
      * 
      * @param dbcMap A HashMap keyed on class name with a value for the DBC for that classname
      * @return A List of ServiceDescriptions with the associated SERVER side hierachy created.
@@ -118,6 +123,24 @@ public class DescriptionFactory {
     public static List<ServiceDescription> createServiceDescriptionFromDBCMap (
     		HashMap<String, DescriptionBuilderComposite> dbcMap) {
     	return DescriptionFactoryImpl.createServiceDescriptionFromDBCMap(dbcMap);
+    }
+
+    /**
+     * Create a full ServiceDescription hierachy on the SERVER side for a single service
+     * implementation class.  To create process more than one service implementation at one time
+     * or to process them without causing the service implemenation classes to be loaded, use
+     * the factory method that takes a collection of DescriptionBuilderComposite objects and
+     * returns a collection of ServiceDescriptions.
+     *
+     *  Note that the ServiceDescription will have exactly one EndpointDescription corresponding
+     *  to the service implementation.
+     * 
+     * @param serviceImplClass A Web Service implementation class (i.e. one that carries an 
+     * WebService or WebServiceProvider annotation).
+     * @return A ServiceDescription with the associated SERVER side hierachy created.
+     */
+    public static ServiceDescription createServiceDescription(Class serviceImplClass) {
+        return DescriptionFactoryImpl.createServiceDescription(serviceImplClass);
     }
     /**
      * DO NOT USE THIS METHOD FOR PRODUCTION CODE.  It has been deprecated and is only used

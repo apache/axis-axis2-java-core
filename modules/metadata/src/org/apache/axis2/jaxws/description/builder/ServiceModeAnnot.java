@@ -70,7 +70,7 @@ public class ServiceModeAnnot implements javax.xml.ws.ServiceMode{
 		sb.append(newLine);
 		sb.append("@ServiceMode.value= " + value.toString());
 		sb.append(newLine);
-		return null;
+		return sb.toString();
 	}
 	
 }

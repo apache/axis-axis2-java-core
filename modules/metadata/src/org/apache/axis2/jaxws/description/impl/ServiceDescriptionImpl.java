@@ -704,7 +704,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
 					
 					//Verify that WebService annotation does not contain a name attribute
 					//(per JSR181 Sec. 3.1)
-					if (composite.getWebServiceAnnot().name() != null) {
+					if (!DescriptionUtils.isEmpty(composite.getWebServiceAnnot().name())) {
                         // TODO: RAS/NLS
                         throw ExceptionFactory.makeWebServiceException("Validation error: WebService.name must not be specified when the bean specifies an endpoint interface.  Implentation class: "  
                                 + composite.getClassName() + "; WebService.name: " + composite.getWebServiceAnnot().name());

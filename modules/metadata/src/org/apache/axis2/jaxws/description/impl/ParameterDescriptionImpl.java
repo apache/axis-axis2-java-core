@@ -26,6 +26,7 @@ import java.lang.reflect.Type;
 
 import javax.jws.WebParam;
 import javax.jws.soap.SOAPBinding;
+import javax.xml.ws.Holder;
 
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.OperationDescription;
@@ -198,11 +199,11 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
         // If this is a JAX-WS Holder<T> type, then we set the the class of the actual
         // parameter <T> in the constructor.  Otherwise, that is null.
         // Holder types are defined by JSR-224 JAX-WS 2.0, Sec 2.3.3, pg 16
-        if (parameterHolderActualType != null) {
-            return true;
+        if (paramDescComposite != null) {
+            return paramDescComposite.isHolderType();
         }
-        else {
-            return false;
+        else { 
+            return Holder.class.equals(getParameterType());
         }
     }
 

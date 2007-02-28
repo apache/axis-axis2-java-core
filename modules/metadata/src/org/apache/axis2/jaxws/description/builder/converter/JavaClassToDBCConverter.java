@@ -2,6 +2,9 @@ package org.apache.axis2.jaxws.description.builder.converter;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +21,7 @@ import javax.xml.ws.WebServiceRef;
 import javax.xml.ws.WebServiceRefs;
 
 import org.apache.axis2.jaxws.description.builder.*;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 public class JavaClassToDBCConverter {
 
@@ -32,9 +36,10 @@ public class JavaClassToDBCConverter {
 		classes = new ArrayList<Class>();
 		establishClassHierarchy(serviceClass);
 		establishInterfaceHierarchy(serviceClass.getInterfaces());
+        establishExceptionClasses(serviceClass);
 	}
 	
-	/**
+    /**
 	 * The only method we will expose to users of this class. It will 
 	 * trigger the creation of the <code>DescriptionBuilderComposite</code>
 	 * based on our service class. It will also handle the case of an impl
@@ -59,7 +64,9 @@ public class JavaClassToDBCConverter {
 					}
 				}
 				catch(ClassNotFoundException e) {
-					System.out.println("DUSTIN CLASS NOT FOUND");
+                    // TODO: (JLB) Make this an error log?
+					System.out.println("Class not found exception caught for class: " + seiClassName);
+                    e.printStackTrace();
 				}
 			}
 		}
@@ -88,8 +95,10 @@ public class JavaClassToDBCConverter {
 			ConverterUtils.attachFieldDescriptionComposites(composite, fdcList);
 		}
 		if(serviceClass.getMethods().length> 0) {
+            // Inherited methods and constructors for superclasses will be in a seperate DBC for
+            // the superclass.  We only need the ones actually declared in this class.
 			JavaMethodsToMDCConverter methodConverter = new JavaMethodsToMDCConverter(
-					serviceClass.getMethods(), serviceClass.getName());
+					serviceClass.getDeclaredMethods(), serviceClass.getDeclaredConstructors(), serviceClass.getName());
 			List<MethodDescriptionComposite> mdcList = methodConverter.convertMethods();
 			ConverterUtils.attachMethodDescriptionComposites(composite, mdcList);	
 		}
@@ -102,11 +111,11 @@ public class JavaClassToDBCConverter {
 	 * @param composite <code>DescriptionBuilderComposite</code>
 	 */
 	private void setInterfaces(DescriptionBuilderComposite composite) {
-		Class[] interfaces = serviceClass.getInterfaces();
+		Type[] interfaces = serviceClass.getGenericInterfaces();
 		List<String> interfaceList = interfaces.length > 0 ? new ArrayList<String>()
 				: null;
 		for(int i=0; i < interfaces.length; i++) {
-			interfaceList.add(interfaces[i].getName());
+			interfaceList.add(getNameFromType(interfaces[i]));
 		}
 		// We only want to set this list if we found interfaces b/c the
 		// DBC news up an interface list as part of its static initialization.
@@ -115,6 +124,18 @@ public class JavaClassToDBCConverter {
 			composite.setInterfacesList(interfaceList);
 		}
 	}
+
+    private String getNameFromType(Type type) {
+        String returnName = null;
+        if (type instanceof Class) {
+            returnName = ((Class) type).getName();
+        }
+        else if (type instanceof ParameterizedType) {
+            returnName = ((ParameterizedType) type).toString();
+        }
+        return returnName;
+    }
+
 	
 	/**
 	 * This method will drive the attachment of Type targetted annotations to the
@@ -152,7 +173,7 @@ public class JavaClassToDBCConverter {
 			wsAnnot.setPortName(webService.portName());
 			wsAnnot.setServiceName(webService.serviceName());
 			wsAnnot.setTargetNamespace(webService.targetNamespace());
-			wsAnnot.setWsdlLocation(wsAnnot.wsdlLocation());
+			wsAnnot.setWsdlLocation(webService.wsdlLocation());
 			composite.setWebServiceAnnot(wsAnnot);
 		}
 	}
@@ -304,4 +325,23 @@ public class JavaClassToDBCConverter {
 			}
 		}
 	}
+
+    /**
+     * Adds any checked exceptions (i.e. declared on a method via a throws clause)
+     * to the list of classes for which a DBC needs to be built.
+     * @param rootClass
+     */
+    private void establishExceptionClasses(Class rootClass) {
+        Method[] methods = rootClass.getMethods();
+        for (Method method : methods) {
+            Class[] exceptionClasses = method.getExceptionTypes();
+            if (exceptionClasses.length > 0) {
+                for (Class checkedException : exceptionClasses) {
+                    classes.add(checkedException);
+                }
+            }
+        }
+    }
+
+
 }

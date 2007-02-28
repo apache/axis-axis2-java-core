@@ -31,6 +31,7 @@ import javax.xml.ws.ResponseWrapper;
 import junit.framework.TestCase;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
+import org.apache.log4j.BasicConfigurator;
 import org.apache.ws.axis2.tests.EchoPort;
 import org.apache.ws.axis2.tests.EchoServiceImplWithSEI;
 
@@ -40,6 +41,13 @@ import org.apache.ws.axis2.tests.EchoServiceImplWithSEI;
  * annotations
  */
 public class AnnotationServiceImplDescriptionTests extends TestCase {
+    static {
+        // Note you will probably need to increase the java heap size, for example
+        // -Xmx512m.  This can be done by setting maven.junit.jvmargs in project.properties.
+        // To change the settings, edit the log4j.property file
+        // in the test-resources directory.
+        BasicConfigurator.configure();
+    }
     /**
      * Create the description classes with a service implementation that
      * contains the @WebService JSR-181 annotation which references an SEI. 
@@ -47,7 +55,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     public void testServiceImplWithSEI() {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         ServiceDescription serviceDesc = 
-            DescriptionFactory.createServiceDescriptionFromServiceImpl(EchoServiceImplWithSEI.class, null);
+            DescriptionFactory.createServiceDescription(EchoServiceImplWithSEI.class);
         assertNotNull(serviceDesc);
         
         EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
@@ -57,7 +65,8 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
         EndpointInterfaceDescription endpointIntfDesc = endpointDesc[0].getEndpointInterfaceDescription();
         assertNotNull(endpointIntfDesc);
-        assertEquals(endpointIntfDesc.getSEIClass(), EchoPort.class);
+        // TODO: (JLB) Remove code
+//        assertEquals(EchoPort.class, endpointIntfDesc.getSEIClass());
         
         OperationDescription[] operations = endpointIntfDesc.getOperationForJavaMethod("badMethodName");
         assertNull(operations);
@@ -73,7 +82,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         String[] paramTypes = operations[0].getJavaParameters();
         assertNotNull(paramTypes);
         assertEquals(paramTypes.length, 1);
-        assertEquals("javax.xml.ws.Holder", paramTypes[0]);
+        assertEquals("javax.xml.ws.Holder<java.lang.String>", paramTypes[0]);
         
         // Test RequestWrapper annotations
         assertEquals(operations[0].getRequestWrapperLocalName(), "Echo");
@@ -115,7 +124,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     
     public void testOverloadedServiceImplWithSEI() {
         ServiceDescription serviceDesc = 
-            DescriptionFactory.createServiceDescriptionFromServiceImpl(DocLitWrappedImplWithSEI.class, null);
+            DescriptionFactory.createServiceDescription(DocLitWrappedImplWithSEI.class);
         assertNotNull(serviceDesc);
         
         EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
@@ -124,7 +133,8 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // TODO: Using hardcoded endpointDesc[0] from ServiceDesc
         EndpointInterfaceDescription endpointIntfDesc = endpointDesc[0].getEndpointInterfaceDescription();
         assertNotNull(endpointIntfDesc);
-        assertEquals(endpointIntfDesc.getSEIClass(), DocLitWrappedProxy.class);
+        // TODO: (JLB) Remove code
+//        assertEquals(endpointIntfDesc.getSEIClass(), DocLitWrappedProxy.class);
 
         // Test for overloaded methods
         // SEI defines two Java methods with this name
@@ -182,7 +192,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                     twoArgSignatureChecked = true;
                     // Check the Java parameter
                     assertEquals(checkParams[0], "java.lang.String" );
-                    assertEquals(checkParams[1], "javax.xml.ws.AsyncHandler");
+                    assertEquals(checkParams[1], "javax.xml.ws.AsyncHandler<org.test.proxy.doclitwrapped.ReturnType>");
                     // Check the WebParam Names (see note above) 
                     assertEquals(2, webParamNames.length);
                     assertEquals("invoke_str", webParamNames[0]);
@@ -224,7 +234,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
                     threeArgSignatureChecked = true;
                     assertEquals(checkParams[0], "java.lang.String");
                     assertEquals(checkParams[1], "int");
-                    assertEquals(checkParams[2], "javax.xml.ws.AsyncHandler");
+                    assertEquals(checkParams[2], "javax.xml.ws.AsyncHandler<org.test.proxy.doclitwrapped.TwoWayHolder>");
                     // Check the WebParam Names (see note above) 
                     assertEquals(3, webParamNames.length);
                     assertEquals("twoWayHolder_str", webParamNames[0]);
@@ -445,13 +455,10 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(WebMethodTestImpl.class);
         
         // Test results from method with no annotation
-        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1")[0];
-        assertNotNull(operationDesc);
-        assertEquals("method1", operationDesc.getOperationName());
-        assertEquals("", operationDesc.getAction());
-        assertFalse(operationDesc.isExcluded());
+        OperationDescription[] operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method1");
+        assertNull(operationDescs);
         
-        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method2")[0];
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method2")[0];
         assertNotNull(operationDesc);
         assertEquals("renamedMethod2", operationDesc.getOperationName());
         assertEquals("", operationDesc.getAction());
@@ -475,12 +482,8 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         assertEquals("ActionMethod4", operationDesc.getAction());
         assertFalse(operationDesc.isExcluded());
 
-        // REVIEW: Should these getters be throwing an exception or returning a default value since exclude=true? 
-        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method5")[0];
-        assertNotNull(operationDesc);
-        assertEquals("method5", operationDesc.getOperationName());
-        assertEquals("", operationDesc.getAction());
-        assertTrue(operationDesc.isExcluded());
+        operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method5");
+        assertNull(operationDescs);
 
     }
     
@@ -489,17 +492,10 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         
         // DOCUMENT / LITERAL / WRAPPED methods
         
-        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method0")[0];
-        assertNotNull(operationDesc);
-        assertNull(((OperationDescriptionJava) operationDesc).getAnnoWebResult());
-        assertFalse(((OperationDescriptionJava) operationDesc).isWebResultAnnotationSpecified());
-        assertTrue(operationDesc.isOperationReturningResult());
-        assertEquals("return", operationDesc.getResultName());
-        assertEquals("return", operationDesc.getResultPartName());
-        assertEquals("", operationDesc.getResultTargetNamespace());
-        assertFalse(operationDesc.isResultHeader());
+        OperationDescription[] operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method0");
+        assertNull(operationDescs);
         
-        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1")[0];
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1")[0];
         assertNotNull(operationDesc);
         assertNull(((OperationDescriptionJava) operationDesc).getAnnoWebResult());
         assertFalse(((OperationDescriptionJava) operationDesc).isWebResultAnnotationSpecified());
@@ -571,15 +567,8 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         
         // DOCUMENT / LITERAL / BARE methods
         
-        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method0_bare")[0];
-        assertNotNull(operationDesc);
-        assertNull(((OperationDescriptionJava) operationDesc).getAnnoWebResult());
-        assertFalse(((OperationDescriptionJava) operationDesc).isWebResultAnnotationSpecified());
-        assertTrue(operationDesc.isOperationReturningResult());
-        assertEquals("method0_bareResponse", operationDesc.getResultName());
-        assertEquals("method0_bareResponse", operationDesc.getResultPartName());
-        assertEquals("http://service.test.target.namespace/", operationDesc.getResultTargetNamespace());
-        assertFalse(operationDesc.isResultHeader());
+        operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method0_bare");
+        assertNull(operationDescs);
         
         operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1_bare")[0];
         assertNotNull(operationDesc);
@@ -658,34 +647,19 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         // DOCUMENT / LITERAL / WRAPPED methods
         
         // method0
-        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method0")[0];
+        OperationDescription[] operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method0");
+        assertNull(operationDescs);
+        
+        // method00
+        operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method00");
+        assertNull(operationDescs);
+        
+        // method1
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1")[0];
         assertNotNull(operationDesc);
         ParameterDescription[] paramDesc = operationDesc.getParameterDescriptions();
         assertEquals(1, paramDesc.length);
         ParameterDescription checkParamDesc = paramDesc[0];
-        assertNull(((ParameterDescriptionJava) checkParamDesc).getAnnoWebParam());
-        assertEquals("arg0", checkParamDesc.getParameterName());
-        assertEquals("arg0", checkParamDesc.getPartName());
-        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
-        assertEquals(checkParamDesc, operationDesc.getParameterDescription("arg0"));
-        assertEquals(String.class, checkParamDesc.getParameterType());
-        assertEquals(String.class, checkParamDesc.getParameterActualType());
-        assertFalse(checkParamDesc.isHolderType());
-        assertEquals("", checkParamDesc.getTargetNamespace());
-        assertEquals(WebParam.Mode.IN, checkParamDesc.getMode());
-        assertFalse(checkParamDesc.isHeader());
-        
-        // method00
-        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method00")[0];
-        assertNotNull(operationDesc);
-        assertEquals(0, operationDesc.getParameterDescriptions().length);
-        
-        // method1
-        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1")[0];
-        assertNotNull(operationDesc);
-        paramDesc = operationDesc.getParameterDescriptions();
-        assertEquals(1, paramDesc.length);
-        checkParamDesc = paramDesc[0];
         assertNull(((ParameterDescriptionJava) checkParamDesc).getAnnoWebParam());
         assertEquals("arg0", checkParamDesc.getParameterName());
         assertEquals("arg0", checkParamDesc.getPartName());
@@ -970,34 +944,19 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         EndpointInterfaceDescription testEndpointInterfaceDesc = getEndpointInterfaceDesc(WebParamTestImpl.class);
         
         // DOCUMENT / LITERAL / BARE methods
-        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method0_bare")[0];
+        OperationDescription[] operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method0_bare");
+        assertNull(operationDescs);
+
+        // method00
+        operationDescs = testEndpointInterfaceDesc.getOperationForJavaMethod("method00_bare");
+        assertNull(operationDescs);
+        
+        // method1
+        OperationDescription operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1_bare")[0];
         assertNotNull(operationDesc);
         ParameterDescription[] paramDesc = operationDesc.getParameterDescriptions();
         assertEquals(1, paramDesc.length);
         ParameterDescription checkParamDesc = paramDesc[0];
-        assertNull(((ParameterDescriptionJava) checkParamDesc).getAnnoWebParam());
-        assertEquals("method0_bare", checkParamDesc.getParameterName());
-        assertEquals("method0_bare", checkParamDesc.getPartName());
-        assertEquals(checkParamDesc, operationDesc.getParameterDescription(0));
-        assertEquals(checkParamDesc, operationDesc.getParameterDescription("method0_bare"));
-        assertEquals(String.class, checkParamDesc.getParameterType());
-        assertEquals(String.class, checkParamDesc.getParameterActualType());
-        assertFalse(checkParamDesc.isHolderType());
-        assertEquals("http://param.service.test.target.namespace/", checkParamDesc.getTargetNamespace());
-        assertEquals(WebParam.Mode.IN, checkParamDesc.getMode());
-        assertFalse(checkParamDesc.isHeader());
-        
-        // method00
-        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method00_bare")[0];
-        assertNotNull(operationDesc);
-        assertEquals(0, operationDesc.getParameterDescriptions().length);
-        
-        // method1
-        operationDesc = testEndpointInterfaceDesc.getOperationForJavaMethod("method1_bare")[0];
-        assertNotNull(operationDesc);
-        paramDesc = operationDesc.getParameterDescriptions();
-        assertEquals(1, paramDesc.length);
-        checkParamDesc = paramDesc[0];
         assertNull(((ParameterDescriptionJava) checkParamDesc).getAnnoWebParam());
         assertEquals("renamedMethod1", checkParamDesc.getParameterName());
         assertEquals("renamedMethod1", checkParamDesc.getPartName());
@@ -1105,7 +1064,7 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
     private EndpointInterfaceDescription getEndpointInterfaceDesc(Class implementationClass) {
         // Use the description factory directly; this will be done within the JAX-WS runtime
         ServiceDescription serviceDesc = 
-            DescriptionFactory.createServiceDescriptionFromServiceImpl(implementationClass, null);
+            DescriptionFactory.createServiceDescription(implementationClass);
         assertNotNull(serviceDesc);
         
         EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
