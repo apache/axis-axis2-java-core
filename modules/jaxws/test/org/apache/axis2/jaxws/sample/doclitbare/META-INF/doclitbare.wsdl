@@ -143,7 +143,7 @@
 	
 	<wsdl:service name="BareDocLitService">
 		<wsdl:port binding="tns:DocLitBare" name="BareDocLitPort">
-			<soap:address location="http://localhost:1234/axis2/services/BareDocLitService" />
+			<soap:address location="http://localhost:8080/axis2/services/BareDocLitService" />
 		</wsdl:port>
 	</wsdl:service>
 	
