@@ -1368,7 +1368,8 @@
 
                         <!-- add axis2_bool_t s -->
                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
-                           text_value = (<xsl:value-of select="$attriName"/>)?"true":"false";
+                           <!--text_value = (<xsl:value-of select="$attriName"/>)?"true":"false";-->
+                           strcpy( text_value, (<xsl:value-of select="$attriName"/>)?"true":"false");
                            text_attri = axiom_attribute_create (env, "<xsl:value-of select="$propertyName"/>", text_value, ns1);
                            AXIOM_ELEMENT_ADD_ATTRIBUTE (parent_element, env, text_attri, parent);
                         </xsl:when>
@@ -1554,7 +1555,7 @@
 
                           <!-- add axis2_bool_t s -->
                         <xsl:when test="$nativePropertyType='axis2_bool_t'">
-                           text_value_<xsl:value-of select="$position"/> = (<xsl:value-of select="$attriName"/>)?"true":"false";
+                           strcpy( text_value_<xsl:value-of select="$position"/>, (<xsl:value-of select="$attriName"/>)?"true":"false" );
                            AXIS2_STREAM_WRITE(stream, env, start_input_str, start_input_str_len);
                            AXIS2_STREAM_WRITE(stream, env, text_value_<xsl:value-of select="$position"/>, axis2_strlen(text_value_<xsl:value-of select="$position"/>));
                            AXIS2_STREAM_WRITE(stream, env, end_input_str, end_input_str_len);
