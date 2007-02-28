@@ -137,16 +137,18 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                 log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("checkingrelatesto",
                     relatesTo));
             }
-            if ((relatesTo != null) && !"".equals(relatesTo)) {
+            if (relatesTo != null && !"".equals(relatesTo)) {
                 OperationContext operationContext =
                         msgctx.getConfigurationContext()
                                 .getOperationContext(relatesTo);
 
                 if (operationContext != null) {
                     if(operationContext.isComplete()){
-                        // If the dispatch happens because of the RelatesTo and the mep is complete
-                        // we should throw a more descriptive fault.
-                        throw new AxisFault(Messages.getMessage("duplicaterelatesto",relatesTo));
+                        if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
+                            log.debug(msgctx.getLogIDString()+" Operation context is marked as complete. Calling cleanup on it.");
+                        }
+                        operationContext.cleanup();
+                        return InvocationResponse.CONTINUE;
                     }
                     msgctx.setAxisOperation(operationContext.getAxisOperation());
                     msgctx.setOperationContext(operationContext);
