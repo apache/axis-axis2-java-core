@@ -98,19 +98,19 @@
         <wsdl:operation name="Operation1">
             <soap:operation soapAction="http://www.example.org/wsdltest/Operation1"/>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="http://axis2.org/test1"/>
             </wsdl:input>
             <wsdl:output>
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="http://axis2.org/test2"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="Operation2">
             <soap:operation soapAction="http://www.example.org/wsdltest/Operation2"/>
             <wsdl:input>
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="http://axis2.org/test1"/>
             </wsdl:input>
             <wsdl:output>
-                <soap:body use="literal"/>
+                <soap:body use="literal" namespace="http://axis2.org/test2"/>
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="Operation3">

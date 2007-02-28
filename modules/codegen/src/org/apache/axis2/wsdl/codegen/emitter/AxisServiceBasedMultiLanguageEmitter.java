@@ -2675,9 +2675,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             paramElement.appendChild(qNameElement);
         }
         if (partName!= null){
-            addAttribute(doc,"partname",
-                    JavaUtils.capitalizeFirstChar(partName),
-                    paramElement);
+            String javaName = null;
+            if (JavaUtils.isJavaKeyword(partName)){
+                javaName = JavaUtils.makeNonJavaKeyword(partName);
+            } else {
+                javaName = JavaUtils.capitalizeFirstChar(JavaUtils.xmlNameToJava(partName));
+            }
+            addAttribute(doc,"partname",javaName,paramElement);
         }
 
         if (isPrimitive) {
