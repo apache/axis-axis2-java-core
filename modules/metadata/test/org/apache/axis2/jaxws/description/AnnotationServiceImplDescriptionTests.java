@@ -61,6 +61,8 @@ public class AnnotationServiceImplDescriptionTests extends TestCase {
         EndpointDescription[] endpointDesc = serviceDesc.getEndpointDescriptions();
         assertNotNull(endpointDesc);
         assertEquals(endpointDesc.length, 1);
+        
+        assertNotNull(endpointDesc[0].getAxisService());
 
         // TODO: How will the JAX-WS dispatcher get the appropriate port (i.e. endpoint)?  Currently assumes [0]
         EndpointInterfaceDescription endpointIntfDesc = endpointDesc[0].getEndpointInterfaceDescription();
