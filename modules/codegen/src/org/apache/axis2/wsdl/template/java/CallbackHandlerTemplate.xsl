@@ -56,7 +56,7 @@
                 <xsl:when test="$mep='12'">
            /**
             * auto generated Axis2 call back method for <xsl:value-of select="@name"/> method
-            *
+            * override this method for handling normal response from <xsl:value-of select="@name"/> operation
             */
            public void receiveResult<xsl:value-of select="@name"/>(
                     <xsl:choose>
@@ -74,7 +74,7 @@
 
           /**
            * auto generated Axis2 Error handler
-           *
+           * override this method for handling error response from <xsl:value-of select="@name"/> operation
            */
             public void receiveError<xsl:value-of select="@name"/>(java.lang.Exception e) {
             }
