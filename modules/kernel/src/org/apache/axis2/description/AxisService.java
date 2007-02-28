@@ -911,34 +911,27 @@ public class AxisService extends AxisDescription {
 
     private void getWSDL(OutputStream out, String[] serviceURL,
             String servicePath) throws AxisFault {
-        if (this.wsdlFound) {
-        
-            // Retrieve WSDL using the same data retrieval path for GetMetadata request.
-            DataRetrievalRequest request = new DataRetrievalRequest();
-            request.putDialect(DRConstants.SPEC.DIALECT_TYPE_WSDL);
-            request.putOutputForm(OutputForm.INLINE_FORM);
+        // Retrieve WSDL using the same data retrieval path for GetMetadata request.
+        DataRetrievalRequest request = new DataRetrievalRequest();
+        request.putDialect(DRConstants.SPEC.DIALECT_TYPE_WSDL);
+        request.putOutputForm(OutputForm.INLINE_FORM);
                         
-            MessageContext context = new MessageContext();
-            context.setAxisService(this);
-            context.setTo(new EndpointReference(serviceURL[0]));
+        MessageContext context = new MessageContext();
+        context.setAxisService(this);
+        context.setTo(new EndpointReference(serviceURL[0]));
             
-            Data[] result = getData(request, context);
-            OMElement wsdlElement;
-            if (result != null && result[0] != null) {
-                wsdlElement = (OMElement) (result[0].getData());
-                try {
-                    wsdlElement.serialize(out);
-                    out.flush();
-                    out.close();
-                } catch (Exception e) {
-                    throw new AxisFault(e);
-                }
+        Data[] result = getData(request, context);
+        OMElement wsdlElement;
+        if (result != null && result[0] != null) {
+            wsdlElement = (OMElement) (result[0].getData());
+            try {
+                wsdlElement.serialize(out);
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                throw new AxisFault(e);
             }
-
-        } else {
-            printWSDLError(out);
         }
-
     }
 
     private void printWSDLError(OutputStream out) throws AxisFault {
@@ -993,20 +986,15 @@ public class AxisService extends AxisDescription {
     }
 
     private void getWSDL2(OutputStream out, String[] serviceURL) throws AxisFault {
-        if (this.wsdlFound) {
-            AxisService2WSDL2 axisService2WSDL2 = new AxisService2WSDL2(this, serviceURL);
-            try {
-                OMElement wsdlElement = axisService2WSDL2.generateOM();
-                wsdlElement.serialize(out);
-                out.flush();
-                out.close();
-            } catch (Exception e) {
-                throw new AxisFault(e);
-            }
-        } else {
-            printWSDLError(out);
+        AxisService2WSDL2 axisService2WSDL2 = new AxisService2WSDL2(this, serviceURL);
+        try {
+            OMElement wsdlElement = axisService2WSDL2.generateOM();
+            wsdlElement.serialize(out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            throw new AxisFault(e);
         }
-
     }
 
     /**
@@ -1519,7 +1507,7 @@ public class AxisService extends AxisDescription {
                                             String targetNamespace,
                                             String schemaNamespace,
                                             ClassLoader loader) throws AxisFault {
-         Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
+        Parameter parameter = new Parameter(Constants.SERVICE_CLASS, implClass);
         OMElement paraElement = Utils.getParameter(Constants.SERVICE_CLASS, implClass, false);
         parameter.setParameterElement(paraElement);
         AxisService axisService = new AxisService();

@@ -70,6 +70,9 @@ public class SchemaGenerator implements Java2WSDLConstants {
     private NamespaceGenerator nsGen = null;
 
     private String targetNamespace = null;
+    //to keep the list of operation which uses MR other than RPC MR
+    private ArrayList nonRpcMethods = new ArrayList();
+
 
     public NamespaceGenerator getNsGen() throws Exception {
         if ( nsGen == null ) {
@@ -220,7 +223,12 @@ public class SchemaGenerator implements Java2WSDLConstants {
                             parameterName = (parameterNames != null && parameterNames[j] != null) ? parameterNames[j] : getSimpleName(methodParameter);
                         }
                         JClass paraType = methodParameter.getType();
-                        generateSchemaForType(sequence, paraType,parameterName);
+                        if(nonRpcMethods.contains(getSimpleName(jMethod))){
+                            generateSchemaForType(sequence, null,getSimpleName(jMethod));
+                            break;
+                        } else {
+                            generateSchemaForType(sequence, paraType,parameterName);
+                        }
                     }
                     // for its return type
                     JClass returnType = jMethod.getReturnType();
@@ -230,16 +238,19 @@ public class SchemaGenerator implements Java2WSDLConstants {
                         sequence = new XmlSchemaSequence();
                         methodSchemaType.setParticle(sequence);
                         JAnnotation returnAnnon= jMethod.getAnnotation(AnnotationConstants.WEB_RESULT);
+                        String returnName ="return";
                         if(returnAnnon!=null){
-                            String returnName= returnAnnon.getValue(AnnotationConstants.NAME).asString();
+                            returnName= returnAnnon.getValue(AnnotationConstants.NAME).asString();
                             if(returnName!=null&&!"".equals(returnName)){
-                                generateSchemaForType(sequence, returnType, returnName);
-                            } else{
-                                generateSchemaForType(sequence, returnType, "return");
+                                returnName ="return";
                             }
-                        } else{
-                            generateSchemaForType(sequence, returnType, "return");
                         }
+                        if(nonRpcMethods.contains(getSimpleName(jMethod))){
+                            generateSchemaForType(sequence, null, returnName);
+                        } else {
+                            generateSchemaForType(sequence, returnType, returnName);
+                        }
+
                     }
                 }
             } else {
@@ -366,12 +377,20 @@ public class SchemaGenerator implements Java2WSDLConstants {
     }
 
     private QName generateSchemaForType(XmlSchemaSequence sequence, JClass type, String partName) throws Exception {
-        boolean isArrayType = type.isArrayType();
+
+        boolean isArrayType = false;
+        if(type!=null){
+            isArrayType = type.isArrayType();
+        }
         if (isArrayType) {
             type = type.getArrayComponentType();
         }
-
-        String classTypeName = getQualifiedName(type);
+        String classTypeName;
+        if(type==null){
+            classTypeName = "java.lang.Object";
+        } else {
+            classTypeName = getQualifiedName(type);
+        }
         if (isArrayType && "byte".equals(classTypeName)) {
             classTypeName = "base64Binary";
             isArrayType = false;
@@ -608,7 +627,9 @@ public class SchemaGenerator implements Java2WSDLConstants {
     protected String getQualifiedName(JPackage packagez){
         return packagez.getQualifiedName();
     }
-
-
-
+    public void setNonRpcMethods(ArrayList nonRpcMethods) {
+        if(nonRpcMethods!=null){
+            this.nonRpcMethods = nonRpcMethods;
+        }
+    }
 }

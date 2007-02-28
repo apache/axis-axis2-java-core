@@ -246,7 +246,8 @@ public class Utils {
      */
     public static void fillAxisService(AxisService axisService,
                                        AxisConfiguration axisConfig,
-                                       ArrayList excludeOperations) throws Exception {
+                                       ArrayList excludeOperations,
+                                       ArrayList nonRpcMethods) throws Exception {
         String serviceClass;
         Parameter implInfoParam = axisService.getParameter(Constants.SERVICE_CLASS);
         ClassLoader serviceClassLoader = axisService.getClassLoader();
@@ -278,11 +279,7 @@ public class Utils {
                 serviceClass = obj.getClass().getName();
             } else {
                 return;
-                //TODO : Need to fix this
-//                 throw new DeploymentException(
-//                            "ServiceClass or ServiceObjectSupplier implmentation Object could not be found");
             }
-
         }
         // adding name spaces
         NamespaceMap map = new NamespaceMap();
@@ -295,6 +292,7 @@ public class Utils {
                 serviceClass.trim(), axisService.getSchematargetNamespace(),
                 axisService.getSchematargetNamespacePrefix());
         schemaGenerator.setExcludeMethods(excludeOperations);
+        schemaGenerator.setNonRpcMethods(nonRpcMethods);
         if (!axisService.isElementFormDefault()) {
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
         }

@@ -306,20 +306,19 @@ public class ServiceBuilder extends DescriptionBuilder {
             if (objectSupplierValue != null) {
                 loadObjectSupplierClass(objectSupplierValue);
             }
+             // Set the default message receiver for the operations that were
+            // not listed in the services.xml
+            setDefaultMessageReceivers();
             if (!service.isUseUserWSDL()) {
                 // Generating schema for the service if the impl class is Java
                 if (!service.isWsdlFound()) {
                     //trying to generate WSDL for the service using JAM  and Java reflection
                     try {
                         if (generateWsdl(service)) {
-                            Utils.fillAxisService(service, axisConfig, excludeops);
+                            Utils.fillAxisService(service, axisConfig, excludeops,null);
                         } else {
                             ArrayList nonRpcOperations = getNonPRCMethods(service);
-                            for (int i = 0; i < excludeops.size(); i++) {
-                                String opName = (String) excludeops.get(i);
-                                nonRpcOperations.add(opName);
-                                Utils.fillAxisService(service, axisConfig, nonRpcOperations);
-                            }
+                            Utils.fillAxisService(service, axisConfig, excludeops, nonRpcOperations);
                         }
                     } catch (Exception e) {
                         throw new DeploymentException(
@@ -340,16 +339,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                 service.removeOperation(new QName(opName));
             }
 
-            // Set the default message receiver for the operations that were
-            // not listed in the services.xml
-            Iterator operations = service.getPublishedOperations().iterator();
-            while (operations.hasNext()) {
-                AxisOperation operation = (AxisOperation) operations.next();
-                if (operation.getMessageReceiver() == null) {
-                    operation.setMessageReceiver(loadDefaultMessageReceiver(
-                            operation.getMessageExchangePattern(), service));
-                }
-            }
+            // Need to call the same logic towice
+            setDefaultMessageReceivers();
             Iterator moduleConfigs = service_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
             processServiceModuleConfig(moduleConfigs, service, service);
             
@@ -368,6 +359,17 @@ public class ServiceBuilder extends DescriptionBuilder {
                             DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()), axisFault);
         }
         return service;
+    }
+
+    private void setDefaultMessageReceivers() {
+        Iterator operations = service.getPublishedOperations().iterator();
+        while (operations.hasNext()) {
+            AxisOperation operation = (AxisOperation) operations.next();
+            if (operation.getMessageReceiver() == null) {
+                operation.setMessageReceiver(loadDefaultMessageReceiver(
+                        operation.getMessageExchangePattern(), service));
+            }
+        }
     }
 
     private void loadObjectSupplierClass(String objectSupplierValue) throws AxisFault {

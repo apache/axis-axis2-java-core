@@ -106,8 +106,7 @@ public class DescriptionBuilder implements DeploymentConstants {
      * @param service :
      *                This can be null <code>AxisService</code>
      */
-    protected MessageReceiver loadDefaultMessageReceiver(String mepURL,
-                                                         AxisService service) {
+    protected MessageReceiver loadDefaultMessageReceiver(String mepURL,                                                        AxisService service) {
         MessageReceiver messageReceiver;
         if (mepURL == null) {
             mepURL = WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT;
@@ -116,7 +115,7 @@ public class DescriptionBuilder implements DeploymentConstants {
             messageReceiver = service.getMessageReceiver(mepURL);
             if (messageReceiver != null) {
                 return messageReceiver;
-        }
+            }
         }
         return axisConfig.getMessageReceiver(mepURL);
     }
@@ -248,7 +247,6 @@ public class DescriptionBuilder implements DeploymentConstants {
     /**
      * Processes the message builders specified in axis2.xml or services.xml.
      * 
-     * @param messageBuildersElement
      */
     protected HashMap processMessageFormatters(OMElement messageFormattersElement)
     throws DeploymentException {

@@ -264,50 +264,6 @@ public class AxisConfiguration extends AxisDescription {
         addServiceGroup(axisServiceGroup);
     }
 
-    /**
-     * This method will check whethere for a given service , can we ganerate
-     * valid wsdl or not. So if user drop a wsdl we print that out , else if
-     * all the operation uses RPC message receivers we will generate wsdl
-     *
-     * @param axisService
-     */
-    private void isWSDLEnable(AxisService axisService) {
-        if (!axisService.isWsdlFound()) {
-            Iterator operatins = axisService.getOperations();
-            if (operatins.hasNext()) {
-                while (operatins.hasNext()) {
-                    AxisOperation axisOperation = (AxisOperation) operatins
-                            .next();
-                    
-                    if (axisOperation.isControlOperation()) {
-                        continue;
-                    }
-                    
-                    if (axisOperation.getMessageReceiver() == null) {
-                        axisService.setWsdlFound(false);
-                        return;
-                    }
-                    String messageReceiverClass = axisOperation
-                            .getMessageReceiver().getClass().getName();
-                    if (!("org.apache.axis2.rpc.receivers.RPCMessageReceiver"
-                            .equals(messageReceiverClass)
-                            || "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver"
-                            .equals(messageReceiverClass)
-                            || "org.apache.axis2.rpc.receivers.RPCInOutAsyncMessageReceiver"
-                            .equals(messageReceiverClass)
-                            || "org.apache.axis2.jaxws.server.JAXWSMessageReceiver"
-                            .equals(messageReceiverClass))) {
-                        axisService.setWsdlFound(false);
-                        return;
-                    }
-                }
-                axisService.setWsdlFound(true);
-            } else {
-                axisService.setWsdlFound(false);
-            }
-        }
-    }
-
     public synchronized void addServiceGroup(AxisServiceGroup axisServiceGroup)
             throws AxisFault {
         notifyObservers(AxisEvent.SERVICE_DEPLOY, axisServiceGroup);
@@ -326,7 +282,6 @@ public class AxisConfiguration extends AxisDescription {
                 axisService
                         .setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
             }
-            isWSDLEnable(axisService);
         }
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
