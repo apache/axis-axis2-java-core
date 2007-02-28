@@ -41,6 +41,7 @@ import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
 import org.apache.axis2.wsdl.util.TypeTesterUtil;
 import org.apache.axis2.wsdl.util.XSLTIncludeResolver;
+import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
@@ -1144,6 +1145,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //force the mappings to be reconstructed
         axisService.setSchemaLocationsAdjusted(false);
         axisService.populateSchemaMappings();
+
+        // add these two attribute to use the user defined wsdl to use.
+        try {
+            axisService.addParameter(new Parameter("useOriginalwsdl","true"));
+            axisService.addParameter(new Parameter("modifyUserWSDLPortAddress","false"));
+        } catch (AxisFault axisFault) {
+            // there is no way to get this excpetion while in codegeneration
+        }
 
         //now get the schema list and write it out
         SchemaWriter schemaWriter = new SchemaWriter(
