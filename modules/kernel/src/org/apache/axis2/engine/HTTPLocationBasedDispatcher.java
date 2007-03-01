@@ -18,18 +18,15 @@
 package org.apache.axis2.engine;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisEndpoint;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.WSDL2Constants;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -51,34 +48,21 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
 
         AxisService axisService = messageContext.getAxisService();
         if (axisService != null) {
-            HttpServletRequest httpServletRequest = (HttpServletRequest) messageContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
-            if (httpServletRequest != null) {
-                String uri = httpServletRequest.getPathInfo();
-                String query;
-                if ((query = httpServletRequest.getQueryString()) != null) {
-                    uri = uri + Constants.METHOD_NAME_ESCAPE_CHARACTER + query;
-                }
+            String uri = messageContext.getTo().getAddress();
+            String httpLocation = parseRequestURL(uri);
 
-                String httpLocation = parseRequestURL(uri);
-
-                if (httpLocation != null) {
-                    AxisEndpoint axisEndpoint = (AxisEndpoint) messageContext
-                            .getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
-                    if (axisEndpoint != null) {
-                        Map httpLocationTable = (Map) axisEndpoint.getBinding()
-                                .getProperty(WSDL2Constants.HTTP_LOCATION_TABLE);
-                        if (httpLocationTable != null) {
-                            AxisOperation axisOperation =
-                                    getOperationFromHTTPLocation(httpLocation, httpLocationTable);
-                            return axisOperation;
-                        }
+            if (httpLocation != null) {
+                AxisEndpoint axisEndpoint = (AxisEndpoint) messageContext
+                        .getProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME);
+                if (axisEndpoint != null) {
+                    Map httpLocationTable = (Map) axisEndpoint.getBinding()
+                            .getProperty(WSDL2Constants.HTTP_LOCATION_TABLE);
+                    if (httpLocationTable != null) {
+                        return getOperationFromHTTPLocation(httpLocation, httpLocationTable);
                     }
-                } else {
-                    log.debug("Attempt to check for Operation using HTTP Location failed");
-                    return null;
                 }
             } else {
-                log.debug("HttpServletRequest in MessageContext is null");
+                log.debug("Attempt to check for Operation using HTTP Location failed");
                 return null;
             }
         }
