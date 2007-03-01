@@ -5,10 +5,13 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.ws.java2wsdl.AnnotationConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.jam.JAnnotation;
 import org.codehaus.jam.JClass;
 import org.codehaus.jam.JamClassIterator;
@@ -16,12 +19,14 @@ import org.codehaus.jam.JamService;
 import org.codehaus.jam.JamServiceFactory;
 import org.codehaus.jam.JamServiceParams;
 
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -43,6 +48,8 @@ import java.util.zip.ZipInputStream;
 *
 */
 public class POJODeployer implements Deployer {
+
+    private static Log log = LogFactory.getLog(POJODeployer.class);
 
     private ConfigurationContext configCtx;
 
@@ -95,7 +102,7 @@ public class POJODeployer implements Deployer {
                                         configCtx.getAxisConfiguration(),
                                         new ArrayList(),
                                         new ArrayList());
-
+                                setMessageReceivers(axisService);
                                 configCtx.getAxisConfiguration().addService(axisService);
                             } else {
                                 HashMap messageReciverMap = new HashMap();
@@ -187,6 +194,7 @@ public class POJODeployer implements Deployer {
                                         configCtx.getAxisConfiguration(),
                                         new ArrayList(),
                                         new ArrayList());
+                                setMessageReceivers(axisService);
                                 axisServiceList.add(axisService);
                             }
                         }
@@ -206,6 +214,38 @@ public class POJODeployer implements Deployer {
             if (threadClassLoader != null) {
                 Thread.currentThread().setContextClassLoader(threadClassLoader);
             }
+        }
+    }
+
+    public void setMessageReceivers(AxisService service) {
+        Iterator iterator = service.getOperations();
+        while(iterator.hasNext()){
+        AxisOperation operation = (AxisOperation) iterator.next();
+        String MEP = operation.getMessageExchangePattern();
+        if(MEP!=null){
+            try {
+                if(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
+                    || WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(MEP)){
+                    Class inOnlyMessageReceiver = Loader.loadClass(
+                            "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
+                    MessageReceiver messageReceiver =
+                            (MessageReceiver) inOnlyMessageReceiver.newInstance();
+                    operation.setMessageReceiver(messageReceiver);
+                }  else {
+                    Class inoutMessageReceiver = Loader.loadClass(
+                            "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
+                    MessageReceiver inOutmessageReceiver =
+                            (MessageReceiver) inoutMessageReceiver.newInstance();
+                    operation.setMessageReceiver(inOutmessageReceiver);
+                }
+            } catch (ClassNotFoundException e) {
+                log.error(e);
+            } catch (InstantiationException e) {
+                log.error(e);
+            } catch (IllegalAccessException e) {
+               log.error(e);
+            }
+        }
         }
     }
 
