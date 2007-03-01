@@ -37,6 +37,8 @@ public class URIResolverImpl implements URIResolver {
 	
 	private final String HTTP_PROTOCOL = "http";
 	
+	private final String HTTPS_PROTOCOL = "https";
+	
 	private final String FILE_PROTOCOL = "file";
 
     private ClassLoader classLoader;
@@ -168,10 +170,13 @@ public class URIResolverImpl implements URIResolver {
     	String importLocation = null;
     	URL url = null;
     	try {
-    		if(baseURL.getProtocol() != null && baseURL.getProtocol().equals(HTTP_PROTOCOL)) {
+    		// Allow for http or https
+    		if(baseURL.getProtocol() != null && (baseURL.getProtocol().equals(
+    				HTTP_PROTOCOL) || baseURL.getProtocol().equals(HTTPS_PROTOCOL))) {
         		url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(),
         				resolvedURI.toString());
         	}
+    		// Check for file
     		else if(baseURL.getProtocol()!= null && baseURL.getProtocol().equals(FILE_PROTOCOL)) {
         		url = new URL(baseURL.getProtocol(), baseURL.getHost(), resolvedURI.toString());
         	}
