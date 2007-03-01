@@ -136,7 +136,7 @@
 
         _serviceClient.getOptions().setTo(new org.apache.axis2.addressing.EndpointReference(
                 targetEndpoint));
-        <xsl:if test="$soapVersion='1.2'">
+        <xsl:if test="starts-with($soapVersion,'http://schemas.xmlsoap.org/wsdl/soap12/')">
             //Set the soap version
             _serviceClient.getOptions().setSoapVersionURI(org.apache.axiom.soap.SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         </xsl:if>
