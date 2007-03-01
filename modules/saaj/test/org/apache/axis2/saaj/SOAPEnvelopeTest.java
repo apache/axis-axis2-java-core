@@ -124,7 +124,7 @@ public class SOAPEnvelopeTest extends TestCase {
         MessageFactory mf = MessageFactory.newInstance();
         final ByteArrayInputStream baIS = new ByteArrayInputStream(XML_STRING.getBytes());
         final MimeHeaders mimeheaders = new MimeHeaders();
-        mimeheaders.addHeader("Content-Type", "multipart/related");
+        mimeheaders.addHeader("Content-Type", "text/xml");
         SOAPMessage smsg =
                 mf.createMessage(mimeheaders, baIS);
 

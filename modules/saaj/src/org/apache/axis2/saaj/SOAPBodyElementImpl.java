@@ -42,47 +42,38 @@ public class SOAPBodyElementImpl extends SOAPElementImpl implements SOAPBodyElem
     }
 
     public SOAPElement addAttribute(QName qname, String value) throws SOAPException {
-    	//TODO - check
     	return super.addAttribute(qname, value);
     }
 
     public SOAPElement addChildElement(QName qname) throws SOAPException {
-    	//TODO - check
     	return super.addChildElement(qname);
     }
 
     public QName createQName(String localName, String prefix) throws SOAPException {
-    	//TODO - check
     	return super.createQName(localName, prefix);
     }
 
     public Iterator getAllAttributesAsQNames() {
-    	//TODO - check
     	return super.getAllAttributesAsQNames();
     }
 
     public String getAttributeValue(QName qname) {
-    	//TODO - check
     	return super.getAttributeValue(qname);
     }
 
     public Iterator getChildElements(QName qname) {
-    	//TODO - check
     	return super.getChildElements(qname);
     }
 
     public QName getElementQName() {
-    	//TODO - check
     	return super.getElementQName();
     }
 
     public boolean removeAttribute(QName qname) {
-    	//TODO - check
     	return super.removeAttribute(qname);
     }
 
     public SOAPElement setElementQName(QName newName) throws SOAPException {
-    	//TODO - check
     	return super.setElementQName(newName);
     }
 }

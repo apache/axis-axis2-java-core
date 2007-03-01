@@ -405,7 +405,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      *        the SOAP 1.2 concept of Fault Reason.
      */
     public void addFaultReasonText(String text, Locale locale) throws SOAPException {
-        //TODO - check
     	if(locale == null){
     		throw new SOAPException("Received null for locale");
     	}
@@ -417,7 +416,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     		if(existingReasonText == null)
     		{
         		org.apache.axiom.soap.SOAPFactory soapFactory = null;
-        		//soapFactory = DOOMAbstractFactory.getSOAP12Factory();
         		soapFactory = (SOAP12Factory)this.element.getOMFactory();
             	if(this.fault.getReason() == null){
             		SOAPFaultReason soapFaultReason = soapFactory.createSOAPFaultReason(this.fault);
@@ -459,17 +457,16 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      */
     
     public void appendFaultSubcode(QName subcode) throws SOAPException {
-        //TODO - check
     	org.apache.axiom.soap.SOAPFactory soapFactory = null;
     	SOAPFaultSubCode soapFaultSubCode = null;
     	
     	if(subcode.getNamespaceURI() == null || subcode.getNamespaceURI().trim().length() == 0){
     		throw new SOAPException("Unqualified QName object : "+subcode);
     	}
-    	if(SOAPConstants.SOAP_1_1_PROTOCOL.equals(getSOAPVersion(this.element))){
+    	if(this.element.getOMFactory() instanceof SOAP11Factory){
     		throw new UnsupportedOperationException();    		
     	}
-    	else if(SOAPConstants.SOAP_1_2_PROTOCOL.equals(getSOAPVersion(this.element))){
+    	else if(this.element.getOMFactory() instanceof SOAP12Factory){
     		soapFactory = DOOMAbstractFactory.getSOAP12Factory();
     	}
     	
@@ -510,7 +507,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * <p/>
      */
     public QName getFaultCodeAsQName() {
-        //TODO - check
     	SOAPFaultCode soapFaultCode = this.fault.getCode();
     	if(soapFaultCode != null){
             String prefix = "";
@@ -740,7 +736,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
         if (factory instanceof SOAP11Factory) {
         	throw new UnsupportedOperationException();
         } else {
-        	//TODO : sumedha complete
         	fault.getCode().getSubCode().detach();
         }
     }
@@ -797,11 +792,11 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     		
     public void setFaultNode(String s) throws SOAPException {
     	org.apache.axiom.soap.SOAPFactory soapFactory = null;
-    	if(SOAPConstants.SOAP_1_1_PROTOCOL.equals(getSOAPVersion(this.element))){
+    	if(this.element.getOMFactory() instanceof SOAP11Factory){
     		throw new UnsupportedOperationException("message does not support " +
     				"the SOAP 1.2 concept of Fault Node");    		
     	}
-    	else if(SOAPConstants.SOAP_1_2_PROTOCOL.equals(getSOAPVersion(this.element))){
+    	else if(this.element.getOMFactory() instanceof SOAP12Factory){
     		soapFactory = DOOMAbstractFactory.getSOAP12Factory();
     	}
         SOAPFaultNode soapFaultNode = soapFactory.createSOAPFaultNode(this.fault);
@@ -820,11 +815,10 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      */
     public void setFaultRole(String uri) throws SOAPException {
     	org.apache.axiom.soap.SOAPFactory soapFactory = null;
-    	if(SOAPConstants.SOAP_1_1_PROTOCOL.equals(getSOAPVersion(this.element))){
+    	if(this.element.getOMFactory() instanceof SOAP11Factory){
     		throw new UnsupportedOperationException("message does not support the " +
     				"SOAP 1.2 concept of Fault Role");   		
-    	}
-    	else if(SOAPConstants.SOAP_1_2_PROTOCOL.equals(getSOAPVersion(this.element))){
+    	}else if(this.element.getOMFactory() instanceof SOAP12Factory){
     		soapFactory = DOOMAbstractFactory.getSOAP12Factory();
     	}
         SOAPFaultRole soapFaultRole = soapFactory.createSOAPFaultRole(this.fault);

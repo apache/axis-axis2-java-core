@@ -17,6 +17,7 @@ package org.apache.axis2.saaj;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -24,11 +25,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPElement;
@@ -40,7 +43,6 @@ import javax.xml.soap.SOAPPart;
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.llom.OMTextImpl;
@@ -54,8 +56,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 
 /**
  *
@@ -70,7 +71,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
     private ServiceClient serviceClient;
     private HashMap unaccessedAttachments = new HashMap();
 
-	private static final Log log = LogFactory.getLog(SOAPConnectionImpl.class);
+
 
     /**
      * Sends the given message to the specified endpoint and
@@ -90,7 +91,6 @@ public class SOAPConnectionImpl extends SOAPConnection {
      *                                      or this SOAPConnection is already closed
      */
     public SOAPMessage call(SOAPMessage request, Object endpoint) throws SOAPException {
-
         if (closed) {
             throw new SOAPException("SOAPConnection closed");
         }
@@ -100,7 +100,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
         try {
             url = (endpoint instanceof URL) ? (URL) endpoint : new URL(endpoint.toString());
         } catch (MalformedURLException e) {
-            throw new SOAPException(e);
+            throw new SOAPException(e.getMessage());
         }
 
         // initialize and set Options
@@ -156,10 +156,9 @@ public class SOAPConnectionImpl extends SOAPConnection {
             opClient.execute(true);
 
             MessageContext msgCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            //TODO: get attachments
             return getSOAPMessage(msgCtx.getEnvelope());
         } catch (AxisFault e) {
-            throw new SOAPException(e);
+            throw new SOAPException(e.getMessage());
         }
     }
 
@@ -171,57 +170,56 @@ public class SOAPConnectionImpl extends SOAPConnection {
      * @throws SOAPException If an exception occurs during this conversion
      */
     private SOAPMessage getSOAPMessage(org.apache.axiom.soap.SOAPEnvelope respOMSoapEnv)
-            throws SOAPException {
+    throws SOAPException {
 
-        // Create the basic SOAP Message
-        MessageFactory mf = MessageFactory.newInstance();
-        SOAPMessage response = mf.createMessage();
-        SOAPPart sPart = response.getSOAPPart();
-        javax.xml.soap.SOAPEnvelope env = sPart.getEnvelope();
-        SOAPBody body = env.getBody();
-        SOAPHeader header = env.getHeader();
+    	// Create the basic SOAP Message
+    	MessageFactory mf = MessageFactory.newInstance();
+    	SOAPMessage response = mf.createMessage();
+    	SOAPPart sPart = response.getSOAPPart();
+    	javax.xml.soap.SOAPEnvelope env = sPart.getEnvelope();
+    	SOAPBody body = env.getBody();
+    	SOAPHeader header = env.getHeader();
 
-        // Convert all header blocks
-		org.apache.axiom.soap.SOAPHeader header2 = respOMSoapEnv.getHeader();
-		if (header2 != null) {
-			for (Iterator hbIter = header2.examineAllHeaderBlocks(); hbIter.hasNext();) {
+    	// Convert all header blocks
+    	org.apache.axiom.soap.SOAPHeader header2 = respOMSoapEnv.getHeader();
+    	if (header2 != null) {
+    		for (Iterator hbIter = header2.examineAllHeaderBlocks(); hbIter.hasNext();) {
+    			// Converting a single OM SOAP HeaderBlock to a SAAJ SOAP
+    			// HeaderBlock
+    			org.apache.axiom.soap.SOAPHeaderBlock hb = (org.apache.axiom.soap.SOAPHeaderBlock) 
+    							hbIter.next();
+    			final QName hbQName = hb.getQName();
+    			final SOAPHeaderElement headerEle = header.addHeaderElement(env.createName(hbQName
+    					.getLocalPart(), hbQName.getPrefix(), hbQName.getNamespaceURI()));
+    			for (Iterator attribIter = hb.getAllAttributes(); attribIter.hasNext();) {
+    				OMAttribute attr = (OMAttribute) attribIter.next();
+    				final QName attrQName = attr.getQName();
+    				headerEle.addAttribute(env.createName(attrQName.getLocalPart(), attrQName
+    						.getPrefix(), attrQName.getNamespaceURI()), attr.getAttributeValue());
+    			}
+    			final String role = hb.getRole();
+    			if (role != null) {
+    				headerEle.setActor(role);
+    			}
+    			headerEle.setMustUnderstand(hb.getMustUnderstand());
 
-				// Converting a single OM SOAP HeaderBlock to a SAAJ SOAP
-				// HeaderBlock
-				org.apache.axiom.soap.SOAPHeaderBlock hb = (org.apache.axiom.soap.SOAPHeaderBlock) hbIter
-						.next();
-				final QName hbQName = hb.getQName();
-				final SOAPHeaderElement headerEle = header.addHeaderElement(env.createName(hbQName
-						.getLocalPart(), hbQName.getPrefix(), hbQName.getNamespaceURI()));
-				for (Iterator attribIter = hb.getAllAttributes(); attribIter.hasNext();) {
-					OMAttribute attr = (OMAttribute) attribIter.next();
-					final QName attrQName = attr.getQName();
-					headerEle.addAttribute(env.createName(attrQName.getLocalPart(), attrQName
-							.getPrefix(), attrQName.getNamespaceURI()), attr.getAttributeValue());
-				}
-				final String role = hb.getRole();
-				if (role != null) {
-					headerEle.setActor(role);
-				}
-				headerEle.setMustUnderstand(hb.getMustUnderstand());
+    			toSAAJElement(headerEle, hb, response);
+    		}
+    	}
 
-				toSAAJElement(headerEle, hb, response);
-			}
-		}
+    	// Convert the body
+    	toSAAJElement(body, respOMSoapEnv.getBody(), response);
+    	// if there are unrefferenced attachments, add that to response
+    	if(!unaccessedAttachments.isEmpty()){
+    		Collection attachments = unaccessedAttachments.values();
+    		Iterator attachementsIterator = attachments.iterator();
+    		while (attachementsIterator.hasNext()) {
+    			AttachmentPart  attachment = (AttachmentPart) attachementsIterator.next();
+    			response.addAttachmentPart(attachment);
+    		}
+    	}
 
-        // Convert the body
-        toSAAJElement(body, respOMSoapEnv.getBody(), response);
-        // if there are unrefferenced attachments, add that to response
-        if(!unaccessedAttachments.isEmpty()){
-        	Collection attachments = unaccessedAttachments.values();
-        	Iterator attachementsIterator = attachments.iterator();
-        	while (attachementsIterator.hasNext()) {
-				AttachmentPart  attachment = (AttachmentPart) attachementsIterator.next();
-				response.addAttachmentPart(attachment);
-			}
-        }
-
-        return response;
+    	return response;
     }
 
     /**
@@ -300,7 +298,7 @@ public class SOAPConnectionImpl extends SOAPConnection {
 
         final org.apache.axiom.soap.SOAPEnvelope omSOAPEnv =
                 SAAJUtil.toOMSOAPEnvelope(saajSOAPMsg.getSOAPPart().getDocumentElement());
-        System.err.println("#### req OM Soap Env=" + omSOAPEnv);
+
 
         Map attachmentMap = new HashMap();
         final Iterator attachments = saajSOAPMsg.getAttachments();
@@ -416,55 +414,80 @@ public class SOAPConnectionImpl extends SOAPConnection {
      * overrided SOAPConnection's get() method 
      */
 	
-	public SOAPMessage get(Object to) throws SOAPException {
+    public SOAPMessage get(Object to) throws SOAPException {
     	URL url = null;
-    	try 
-    	{
+    	try{
     		url = (to instanceof URL) ? (URL) to : new URL(to.toString());
-    		if(url != null){
-    			InputStream in = url.openStream();
-    			//TODO : setting null for mime headers
-    			// close the connection??
-    			SOAPMessage soapMessage = new SOAPMessageImpl(in,null);
-    			return soapMessage;
-    		}
-    		return null;
     	}catch (MalformedURLException e) {
     		throw new SOAPException(e);
+    	}
+
+    	int responseCode;
+    	boolean isFailure = false;
+    	HttpURLConnection httpCon = null;
+    	try {
+    		httpCon = (HttpURLConnection) url.openConnection();
+    		httpCon.setDoOutput(true);
+    		httpCon.setDoInput(true);
+    		httpCon.setUseCaches(false);
+    		httpCon.setRequestMethod("GET");
+    		HttpURLConnection.setFollowRedirects(true);
+
+    		httpCon.connect();
+    		responseCode = httpCon.getResponseCode();
+    		// 500 is allowed for SOAP faults
+    		if (responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+    			isFailure = true;
+    		} else if ((responseCode / 100) != 2) {
+    			throw new SOAPException("Error response: ("+responseCode 
+    					+ httpCon.getResponseMessage());
+    		}
     	}catch (IOException e) {
     		throw new SOAPException(e);
-    	}catch (OMException e){
-    		throw new SOAPException(e);
     	}
-    	
-	}
 
-    
+    	//Construct the soapmessage from http response
+    	SOAPMessage soapMessage = null;
+    	if (responseCode == HttpURLConnection.HTTP_OK) {
+    		try {
+    			//read http headers & load mimeheaders
+    			MimeHeaders mimeHeaders = new MimeHeaders();
+    			String key, value;
+    			// skip status line
+    			int i = 1;
+    			while (true) {
+    				key = httpCon.getHeaderFieldKey(i);
+    				value = httpCon.getHeaderField(i);
+    				if (key == null && value == null){
+    					break;
+    				}
 
-    
-    /* private void printOMSOAPEnvelope(final org.apache.axiom.soap.SOAPEnvelope omSOAPEnv) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            omSOAPEnv.serialize(baos);
-            log.info("---------------------------------------------------------------------------");
-            log.info(baos);
-            log.info("---------------------------------------------------------------------------");
-            System.err.println("---------------------------------------------------------------------------");
-            System.err.println(baos);
-            System.err.println("---------------------------------------------------------------------------");
-        } catch (XMLStreamException e) {
-            e.printStackTrace();
-        }
+    				if (key != null) {
+    					StringTokenizer values = new StringTokenizer(value, ",");
+    					while (values.hasMoreTokens()){
+    						mimeHeaders.addHeader(key, values.nextToken().trim());
+    					}
+    				}
+    				i++;
+    			}
+    			InputStream httpInputStream;
+    			if(isFailure){
+    				httpInputStream = httpCon.getErrorStream();
+    			}else{
+    				httpInputStream = httpCon.getInputStream();
+    			}
+
+    			soapMessage = new SOAPMessageImpl(httpInputStream,mimeHeaders);
+    			httpInputStream.close();
+    			httpCon.disconnect();
+
+    		} catch (SOAPException e) {
+    			throw e;
+    		} catch (Exception e) {
+    			throw new SOAPException(e.getMessage());
+    		}
+    	}
+    	return soapMessage;
     }
 
-    private String printSAAJSOAPMessage(final SOAPMessage msg) throws SOAPException, IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        msg.writeTo(baos);
-        String responseStr = baos.toString();
-
-        System.out.println("\n\n----------------------SAAJ Message-------------------------\n" +
-                           responseStr);
-        System.out.println("-------------------------------------------------------\n\n");
-        return responseStr;
-    }*/
 }

@@ -15,6 +15,8 @@
  */
 package org.apache.axis2.saaj;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -38,11 +40,8 @@ import org.apache.axiom.om.impl.dom.NodeImpl;
 import org.apache.axiom.om.impl.dom.TextImpl;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11HeaderBlockImpl;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
-import org.apache.axiom.soap.impl.dom.soap12.SOAP12HeaderBlockImpl;
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -386,21 +385,21 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         return returnList.iterator();
     }
 
+    
     public SOAPElement addAttribute(QName qname, String value) throws SOAPException {
-    	//TODO - check
         if (qname.getNamespaceURI() == null || qname.getNamespaceURI().trim().length() == 0) {
             element.setAttribute(qname.getLocalPart(), value);
         } else {
-            element.setAttributeNS(qname.getNamespaceURI(), qname.getPrefix() + ":" + qname.getLocalPart(), value);
+            element.setAttributeNS(qname.getNamespaceURI(), qname.getPrefix() + ":" + 
+            		qname.getLocalPart(), value);
         }
         return this;
-        
     }
 
     public SOAPElement addChildElement(QName qname) throws SOAPException {
-    	//TODO - check
         String prefix = qname.getPrefix();
-        return addChildElement(qname.getLocalPart(), "".equals(prefix) ? null : prefix  , qname.getNamespaceURI());
+        return addChildElement(qname.getLocalPart(), "".equals(prefix) ? 
+        		null : prefix  , qname.getNamespaceURI());
     }
 
     /**
@@ -422,17 +421,16 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     		throw new SOAPException("Invalid prefix");
     	}
     	QName qname = null;
-    	if(SOAPConstants.SOAP_1_1_PROTOCOL.equals(getSOAPVersion(this.element))){
+    	if(this.element.getOMFactory() instanceof SOAP11Factory){
     		qname = new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,localName,prefix);   		
     	}
-    	else if(SOAPConstants.SOAP_1_2_PROTOCOL.equals(getSOAPVersion(this.element))){
+    	else if(this.element.getOMFactory() instanceof SOAP12Factory){
     		qname = new QName(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,localName,prefix);
     	}
     	return qname;
     }
 
     public Iterator getAllAttributesAsQNames() {
-    	//TODO - check,test ok
     	final Iterator attribIter = element.getAllAttributes();
         Collection attributesAsQNames = new ArrayList();
         Attr attr;
@@ -447,7 +445,6 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     public String getAttributeValue(QName qname) {
-    	//TODO - check,test ok
         final OMAttribute attribute = element.getAttribute(qname);
         if (attribute == null) {
         	return null;
@@ -456,7 +453,6 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     public Iterator getChildElements(QName qname) {
-    	//TODO - check,test ok
         Iterator childIter = element.getChildrenWithName(qname);
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
@@ -466,12 +462,10 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     public QName getElementQName() {
-    	//TODO - check
         return element.getQName();
     }
 
     public boolean removeAttribute(QName qname) {
-    	//TODO - check
         org.apache.axiom.om.OMAttribute attr = element.getAttribute(qname);
         if (attr != null) {
         	element.removeAttribute(attr);
@@ -481,7 +475,6 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     public SOAPElement setElementQName(QName newName) throws SOAPException {
-        //TODO - check
     	String localName = this.element.getLocalName();
     	if(org.apache.axiom.soap.SOAPConstants.BODY_LOCAL_NAME.equals(localName)
     			|| org.apache.axiom.soap.SOAPConstants.HEADER_LOCAL_NAME.equals(localName)
@@ -540,11 +533,17 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      */
     public void setEncodingStyle(String encodingStyle) throws SOAPException {
     	if(this.element.getOMFactory() instanceof SOAP11Factory){
-        	if (!encodingStyle.equals(SOAPConstants.URI_NS_SOAP_ENCODING)) {
-            	throw new IllegalArgumentException("Invalid Encoding style : " + encodingStyle);
-            }else{
-            	((DocumentImpl) getOwnerDocument()).setCharsetEncoding(encodingStyle);
-            }
+    		try{
+    			URI uri = new URI(encodingStyle);
+	        	//if (!encodingStyle.equals(SOAPConstants.URI_NS_SOAP_ENCODING)) {
+	            //	throw new IllegalArgumentException("Invalid Encoding style : " + encodingStyle);
+	            //}else{
+	            ((DocumentImpl) getOwnerDocument()).setCharsetEncoding(encodingStyle);
+	            //}				
+			} catch (URISyntaxException e) {
+				throw new IllegalArgumentException("Invalid Encoding style : " 
+						+ encodingStyle+":"+e);
+			} 
     	}else if(this.element.getOMFactory() instanceof SOAP12Factory){
     		if(SOAPConstants.URI_NS_SOAP_1_2_ENCODING.equals(encodingStyle)){
     			throw new SOAPException("Illegal value : "+SOAPConstants.URI_NS_SOAP_1_2_ENCODING);
@@ -839,26 +838,4 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     public NamedNodeMap getAttributes() {
         return element.getAttributes();
     }
-    
-    /**
-     * @param rootElement
-     * @return SOAP version of the element using SOAPConstants.SOAP_1_1_PROTOCOL
-     * 		   or SOAPConstants.SOAP_1_2_PROTOCOL
-     */
-    //TODO : check 
-    protected String getSOAPVersion(ElementImpl rootElement){
-    	OMNamespace omNamespace = rootElement.getNamespace();
-        if(omNamespace.getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI) &&
-        		omNamespace.getPrefix().equals(SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX))
-        {
-        	return SOAPConstants.SOAP_1_1_PROTOCOL;
-        }
-        else if(omNamespace.getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI) &&
-        		omNamespace.getPrefix().equals(SOAP12Constants.SOAP_DEFAULT_NAMESPACE_PREFIX))
-        {
-        	return SOAPConstants.SOAP_1_2_PROTOCOL;
-        }
-    	return null;
-    }
-    
 }

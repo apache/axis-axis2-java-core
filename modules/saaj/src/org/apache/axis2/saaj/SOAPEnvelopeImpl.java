@@ -207,13 +207,10 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
     }
 
     public SOAPElement addTextNode(String text) throws SOAPException {
-
-        //TODO: Method implementation
         Node firstChild = element.getFirstChild();
         if (firstChild instanceof org.w3c.dom.Text) {
             ((org.w3c.dom.Text) firstChild).setData(text);
         } else {
-
             // Else this is a header
             TextImpl doomText = new TextImpl(text, this.element.getOMFactory());
             doomText.setNextOMSibling((NodeImpl) firstChild);
@@ -254,9 +251,7 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
 	 * SOAP 1.2 should not allow element to be added after body element
 	 */
 	public SOAPElement addChildElement(Name name) throws SOAPException {
-		//TODO : complete
         if(this.element.getOMFactory() instanceof SOAP12Factory) {
-        	//return super.addChildElement(name);
         	throw new SOAPException("Cannot add elements after body element");
         }else if(this.element.getOMFactory() instanceof SOAP11Factory){
         	//Let elements to be added any where.
@@ -264,7 +259,4 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
         }
 		return null;
 	}  
-    
-    
-	
 }

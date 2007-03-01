@@ -76,7 +76,8 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     /* (non-Javadoc)
     * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
     */
-    public SOAPElement addChildElement(String localName, String prefix, String uri) throws SOAPException {
+    public SOAPElement addChildElement(String localName, String prefix, String uri) 
+    throws SOAPException {
         OMNamespace ns = new NamespaceImpl(uri, prefix);
         SOAPHeaderBlock headerBlock = null;
         if (this.element.getOMFactory() instanceof SOAP11Factory) {
@@ -271,7 +272,8 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
     }
 
     public SOAPHeaderElement addHeaderElement(QName qname) throws SOAPException {
-        return (SOAPHeaderElement) addChildElement(qname.getLocalPart(), qname.getPrefix(), qname.getNamespaceURI());
+        return (SOAPHeaderElement) addChildElement(qname.getLocalPart(), qname.getPrefix()
+        		, qname.getNamespaceURI());
     }
 
     
@@ -325,15 +327,15 @@ public class SOAPHeaderImpl extends SOAPElementImpl implements SOAPHeader {
 				SOAP11HeaderBlockImpl supportedEnvelop = 
 					new SOAP11HeaderBlockImpl(Constants.ELEM_SUPPORTEDENVELOPE,
 							namespace,(SOAPFactory) this.element.getOMFactory());
-				supportedEnvelop.addAttribute(Constants.ATTR_QNAME, prefix+index+":"+Constants.ELEM_ENVELOPE, null);
+				supportedEnvelop.addAttribute(Constants.ATTR_QNAME, prefix+index+":"
+						+Constants.ELEM_ENVELOPE, null);
 		    	upgrade.addChild(supportedEnvelop);
-	        }
-	        else 
-	        {
+	        }else{
 				SOAP12HeaderBlockImpl supportedEnvelop = 
 					new SOAP12HeaderBlockImpl(Constants.ELEM_SUPPORTEDENVELOPE,
 							namespace,(SOAPFactory) this.element.getOMFactory());
-				supportedEnvelop.addAttribute(Constants.ATTR_QNAME, prefix+index+":"+Constants.ELEM_ENVELOPE, null);
+				supportedEnvelop.addAttribute(Constants.ATTR_QNAME, prefix+index+":"
+						+Constants.ELEM_ENVELOPE, null);
 		    	upgrade.addChild(supportedEnvelop);
 	        }
 		}

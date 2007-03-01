@@ -56,6 +56,4 @@ public class SAAJResult extends DOMResult {
         }
         return (javax.xml.soap.Node) node.getFirstChild();
     }
-
-    
 }

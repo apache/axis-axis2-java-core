@@ -35,6 +35,8 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
 import org.apache.axiom.om.OMOutputFormat;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.apache.axis2.transport.http.HTTPConstants;
 
 public class SOAPMessageImpl extends SOAPMessage {
@@ -48,27 +50,48 @@ public class SOAPMessageImpl extends SOAPMessage {
 
     public SOAPMessageImpl(SOAPEnvelopeImpl soapEnvelope) {
         String contentType = null;
+        
+        
         if (mimeHeaders != null) {
-            String contentTypes[] = mimeHeaders.getHeader("Content-Type");
+            String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.CONTENT_TYPE);
             contentType = (contentTypes != null) ? contentTypes[0] : null;
+        }else{
+        	this.mimeHeaders = new MimeHeadersEx();   
+        	if(soapEnvelope.getOMFactory() instanceof SOAP11Factory){
+        		contentType = HTTPConstants.MEDIA_TYPE_TEXT_XML;
+        		this.mimeHeaders.addHeader("content-type", contentType);
+        	}else if(soapEnvelope.getOMFactory() instanceof SOAP12Factory){
+        		contentType = HTTPConstants.MEDIA_TYPE_APPLICATION_SOAP_XML;
+        		this.mimeHeaders.addHeader("content-type", contentType);        		
+        	}
         }
 
         setCharsetEncoding(contentType);
         soapPart = new SOAPPartImpl(this, soapEnvelope);
-        this.mimeHeaders = new MimeHeadersEx();
     }
 
     public SOAPMessageImpl(InputStream inputstream,javax.xml.soap.MimeHeaders mimeHeaders) 
-    		throws SOAPException 
+    throws SOAPException 
     {
     	String contentType = null;
+    	String tmpContentType = "";
     	if (mimeHeaders != null) {
-    		String contentTypes[] = mimeHeaders.getHeader("Content-Type");
-    		contentType = (contentTypes != null) ? contentTypes[0] : null;
+    		String contentTypes[] = mimeHeaders.getHeader(HTTPConstants.CONTENT_TYPE);
+    		if(contentTypes != null && contentTypes.length > 0){
+    			tmpContentType = contentTypes[0];
+    			//tmpContentType can be like 'application/soap+xml; charset=UTF-8;'
+    			//Only the first part is important
+    			if(tmpContentType.indexOf(";") > -1){
+    				contentType = tmpContentType.substring(0, tmpContentType.indexOf(";"));    			
+    			}else{
+    				contentType = tmpContentType;
+    			}
+    		}
     	}
-
-    	setCharsetEncoding(contentType);
-    	if (contentType != null && contentType.indexOf("multipart/related;") == 0) {
+    	//Setting the whole content-type string to CharsetEncoding.
+    	//Is this correct?
+    	setCharsetEncoding(tmpContentType);
+    	if (contentType != null) {    		
     		soapPart = new SOAPPartImpl(this, inputstream, mimeHeaders);
     	} else {
     		soapPart = new SOAPPartImpl(this, inputstream);
@@ -196,7 +219,7 @@ public class SOAPMessageImpl extends SOAPMessage {
     public void addAttachmentPart(AttachmentPart attachmentPart) {
         if (attachmentPart != null) {
             attachmentParts.add(attachmentPart);
-            mimeHeaders.setHeader("Content-Type", "multipart/related");
+            mimeHeaders.setHeader(HTTPConstants.CONTENT_TYPE, "multipart/related");
         }
     }
 
@@ -379,8 +402,8 @@ public class SOAPMessageImpl extends SOAPMessage {
             	attachmentPart = (AttachmentPartImpl) iterator.next();
             	String[] contentIds = attachmentPart.getMimeHeader("Content-Id");
             	
-            	//References can be made via an href attribute as described in SOAP Messages with Attachments
-            	//or via a single Text child node containing a URI          	
+            	//References can be made via an href attribute as described in SOAP Messages 
+            	//with Attachments or via a single Text child node containing a URI          	
             	String reference = soapelement.getAttribute("href");
             	if(reference == null || reference.trim().length() == 0){
             		reference = soapelement.getValue();

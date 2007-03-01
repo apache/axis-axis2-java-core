@@ -204,8 +204,8 @@ public class SOAPFactoryTest extends TestCase {
     		assertNotNull(reason);
     		assertTrue(reason.contains("This is the fault reason."));
     		assertTrue(fc.equals(SOAPConstants.SOAP_RECEIVER_FAULT));
-    	} catch(UnsupportedOperationException e) {
-    		//Caught expected UnsupportedOperationException
+    	} catch(SOAPException e) {
+    		//Caught expected SOAPException
     	} catch(Exception e) {
     		fail("Exception: " + e);
     	}

@@ -15,18 +15,17 @@
  */
 package org.apache.axis2.saaj;
 
-import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
-import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
-import org.apache.axis2.saaj.util.IDGenerator;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPConstants;
 
-import java.io.IOException;
-import java.io.InputStream;
+import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
+import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 
 /**
  * <P>A factory for creating <CODE>SOAPMessage</CODE> objects.</P>
@@ -137,7 +136,8 @@ public class MessageFactoryImpl extends MessageFactory {
                     new SOAPEnvelopeImpl((org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)
                             new SOAP12Factory().getDefaultEnvelope());
         }else if(soapVersion.equals(SOAPConstants.DYNAMIC_SOAP_PROTOCOL)){
-        	throw new UnsupportedOperationException("createMessage() is not supported for DYNAMIC_SOAP_PROTOCOL");
+        	throw new UnsupportedOperationException("createMessage() is not supported for " +
+        			"DYNAMIC_SOAP_PROTOCOL");
         }else {
         	//SOAP 1.1
             soapEnvelope =

@@ -160,21 +160,10 @@ public abstract class SOAPFactory {
      * @throws SOAPException - if there is an error creating the specified SOAPFactory
      * @see <CODE>SAAJMetaFactory</CODE>
      */
-    public static SOAPFactory newInstance(String protocol) throws SOAPException {
-        try {
-        	if(SOAPConstants.DEFAULT_SOAP_PROTOCOL.equals(protocol) 
-        			|| SOAPConstants.SOAP_1_1_PROTOCOL.equals(protocol)
-        			|| SOAPConstants.SOAP_1_2_PROTOCOL.equals(protocol)){
-        		SAAJMetaFactory saajMetaFactory = SAAJMetaFactory.getInstance();
-        		return saajMetaFactory.newSOAPFactory(protocol);
-        	}else{
-        		throw new SOAPException("Unknown protocol :"+protocol);
-        	}
-        } catch (Exception exception) {
-            throw new SOAPException("Unable to create SOAP Factory: "
-                    + exception.getMessage());
-        }
+    public static SOAPFactory newInstance(String s) throws SOAPException {
+        return SAAJMetaFactory.getInstance().newSOAPFactory(s);
     }
+
 
     /**
      * Creates a SOAPElement object from an existing DOM Element. If the DOM Element that is

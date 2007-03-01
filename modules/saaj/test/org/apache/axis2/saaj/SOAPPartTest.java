@@ -16,6 +16,7 @@
 package org.apache.axis2.saaj;
 
 import java.io.File;
+import java.io.FileReader;
 import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -29,10 +30,15 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.dom.DOMSource;
 
 import junit.framework.TestCase;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMDocument;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -44,6 +50,15 @@ public class SOAPPartTest extends TestCase {
     public void testAddSource() {
         DOMSource domSource;
         try {
+        	/*
+            FileReader testFile = new FileReader(new File(System.getProperty("basedir",".")+"/test-resources" + File.separator + "soap-part.xml"));
+            StAXOMBuilder stAXOMBuilder =
+                    OMXMLBuilderFactory.createStAXOMBuilder(
+                            OMAbstractFactory.getSOAP11Factory(),
+                            XMLInputFactory.newInstance().createXMLStreamReader(
+                                    testFile));
+            */
+            
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             Document document = builder.parse(new File(System.getProperty("basedir",".")+"/test-resources" + File.separator + "soap-part.xml"));
             domSource = new DOMSource(document);

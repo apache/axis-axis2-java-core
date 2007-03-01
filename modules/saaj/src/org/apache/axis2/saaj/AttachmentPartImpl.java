@@ -16,15 +16,14 @@
 package org.apache.axis2.saaj;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
+import java.io.OutputStream;
+import java.io.PushbackInputStream;
 import java.util.Iterator;
 
 import javax.activation.DataHandler;
-import javax.activation.UnsupportedDataTypeException;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.MimeHeaders;
@@ -35,6 +34,7 @@ import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.DocumentImpl;
 import org.apache.axiom.om.impl.dom.TextImpl;
+import org.apache.axiom.om.util.Base64;
 import org.apache.axis2.saaj.util.SAAJDataSource;
 import org.apache.axis2.transport.http.HTTPConstants;
 
@@ -164,29 +164,24 @@ public class AttachmentPartImpl extends AttachmentPart {
         }
         try {
             String contentType = dataHandler.getContentType();
-           	if (contentType.equals("text/xml")) {
-           		StringReader stringReader = new StringReader((String)dataHandler.getContent());
-            	StreamSource streamSource = new StreamSource(stringReader);
+           	if (contentType.equals(HTTPConstants.MEDIA_TYPE_TEXT_XML) || contentType.equals(HTTPConstants.MEDIA_TYPE_APPLICATION_XML)) {
+            	StreamSource streamSource = new StreamSource();
    	        	streamSource.setInputStream(dataHandler.getInputStream());
             	return streamSource;
-            	
-                //For these content types underlying DataContentHandler surely does
-                //the conversion to appropriate java object and we will return that java object
-                //return dataHandler.getContent();
             }else if(contentType.equals("text/plain") ||
             			contentType.equals("text/html")){
             	return (String)dataHandler.getContent();
             }else {
                 try {
-                    return dataHandler.getContent();
-                } catch (UnsupportedDataTypeException e) {
+                	return dataHandler.getContent();
+                } catch (Exception e) {
                     //If the underlying DataContentHandler can't handle the object contents,
-                    //we will return an inputstream of raw bytes represneting the content data
+                    //we will return an inputstream of raw bytes representing the content data
                     return dataHandler.getDataSource().getInputStream();
                 }
             }
         } catch (IOException e) {
-            throw new SOAPException(e);
+            throw new SOAPException(e.getMessage());
         }
     }
 
@@ -221,7 +216,7 @@ public class AttachmentPartImpl extends AttachmentPart {
                         SAAJDataSource.MAX_MEMORY_DISK_CACHED,
                         contentType, true);
                 extractFilename(source);
-                dataHandler = new DataHandler(source);
+                this.dataHandler = new DataHandler(source);
                 contentObject = object;
             } catch (java.io.IOException io) {
                 throw new java.lang.IllegalArgumentException("Illegal Argument");
@@ -233,7 +228,7 @@ public class AttachmentPartImpl extends AttachmentPart {
                         SAAJDataSource.MIN_MEMORY_DISK_CACHED,
                         contentType, true);
                 extractFilename(source);
-                dataHandler = new DataHandler(source);
+                this.dataHandler = new DataHandler(source);
                 contentObject = null; // the stream has been consumed
             } catch (java.io.IOException io) {
                 throw new java.lang.IllegalArgumentException("Illegal Argument");
@@ -244,17 +239,17 @@ public class AttachmentPartImpl extends AttachmentPart {
                         SAAJDataSource.MAX_MEMORY_DISK_CACHED,
                         contentType, true);
                 extractFilename(source);
-                dataHandler = new DataHandler(source);
+                this.dataHandler = new DataHandler(source);
                 contentObject = null; // the stream has been consumed
             } catch (java.io.IOException io) {
                 throw new java.lang.IllegalArgumentException("Illegal Argument");
             }
         }else if (object instanceof BufferedImage) {
             try {
-                dataHandler = new DataHandler(object,contentType);
+            	this.dataHandler = new DataHandler(object,contentType);
                 contentObject = null; // the stream has been consumed
             } catch (Exception e) {
-            	throw new java.lang.IllegalArgumentException(e);
+            	throw new java.lang.IllegalArgumentException(e.getMessage());
             }
         }
         else if (object instanceof byte[]) {
@@ -266,10 +261,10 @@ public class AttachmentPartImpl extends AttachmentPart {
                         contentType, true);
                 extractFilename(source);
                 
-                dataHandler = new DataHandler(source);
+                this.dataHandler = new DataHandler(source);
                 contentObject = object;
             } catch (Exception e) {
-            	throw new java.lang.IllegalArgumentException(e);
+            	throw new java.lang.IllegalArgumentException(e.getMessage());
             }
         }
         else {
@@ -317,7 +312,7 @@ public class AttachmentPartImpl extends AttachmentPart {
         if (datahandler != null) {
             this.dataHandler = datahandler;
             setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, datahandler.getContentType());
-            omText = DOOMAbstractFactory.getOMFactory().createOMText(dataHandler, true);
+            omText = DOOMAbstractFactory.getOMFactory().createOMText(datahandler, true);
         } else {
             throw new IllegalArgumentException("Cannot set null DataHandler");
         }
@@ -514,8 +509,16 @@ public class AttachmentPartImpl extends AttachmentPart {
     		throw new SOAPException("Content is null");
     	}
     	try {
-    		if(isValidBase64Encoding(content)){
-    			setContent(content, contentType);		
+    		int size = content.available();
+    		PushbackInputStream pushbackInputStream;
+    		if(size > 0){
+    			pushbackInputStream = new PushbackInputStream(content,size);
+    		}else{
+    			pushbackInputStream = new PushbackInputStream(content);
+    		}
+    		
+    		if(isValidBase64Encoding(pushbackInputStream)){
+    			setContent(pushbackInputStream, contentType);		
     		}else{
     			throw new SOAPException("Not a valid Base64 encoding");
     		}
@@ -527,20 +530,26 @@ public class AttachmentPartImpl extends AttachmentPart {
     /*
      * check if the given InputStream contains valid Base64 Encoding
      */
-    private boolean isValidBase64Encoding (InputStream content) {
-    	//TODO need to add more checks
+    private boolean isValidBase64Encoding (PushbackInputStream pushbackInputStream) {
     	int size;
-		try {
-			size = content.available();
-	    	if (size%4 != 0){
-	    		//Length of Base64 encoded input string is not a multiple of 4
-	    		return false;
-	    	}else{
-	    		return true;
-	    	}
-		} catch (IOException e) {
-			return false;
-		}
+    	try {
+    		size = pushbackInputStream.available();
+    		if(size == 0){
+    			return true;
+    		}
+    		byte[] buffer = new byte[size];
+    		int read = pushbackInputStream.read(buffer, 0, size);
+    		
+    		OutputStream outputStream = new ByteArrayOutputStream();  		
+    		outputStream.write(buffer);
+    		String contentString = outputStream.toString();			
+    		outputStream.close();
+    		pushbackInputStream.unread(buffer,0,read);
+    		
+    		return Base64.isValidBase64Encoding(contentString);
+    	} catch (Exception e) {
+    		return false;
+    	}
     }
     
     /**
@@ -555,9 +564,7 @@ public class AttachmentPartImpl extends AttachmentPart {
      *         
      */
     public void setRawContent(InputStream content, String contentType) throws SOAPException {
-    	//TODO check
     	if(content == null){
-    		//throw new NullPointerException("content is null"); 
     		throw new SOAPException("content is null");
     	}
     	setContent(content, contentType);
@@ -630,8 +637,6 @@ public class AttachmentPartImpl extends AttachmentPart {
     }
 
     private void extractFilename(SAAJDataSource source) {
-
-        //check for there being a file
         if (source.getDiskCacheFile() != null) {
             String path = source.getDiskCacheFile().getAbsolutePath();
             setAttachmentFile(path);

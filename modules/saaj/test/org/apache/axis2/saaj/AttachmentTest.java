@@ -22,6 +22,13 @@ import javax.xml.transform.stream.StreamSource;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
+
 import com.sun.mail.util.BASE64EncoderStream;
 
 public class AttachmentTest extends TestCase {
@@ -304,36 +311,66 @@ public class AttachmentTest extends TestCase {
 			SOAPMessage msg = factory.createMessage();
 			AttachmentPart ap = msg.createAttachmentPart();
 
-			URL url = new URL("http://ws.apache.org/images/project-logo.jpg");
-			DataHandler dh = new DataHandler(url);
-			//Create InputStream from DataHandler's InputStream
-			InputStream is = dh.getInputStream();
+			String urlString = "http://ws.apache.org/images/project-logo.jpg";
+			if(isNetworkedResourceAvailable(urlString)){
+				URL url = new URL(urlString);
+				DataHandler dh = new DataHandler(url);
+				//Create InputStream from DataHandler's InputStream
+				InputStream is = dh.getInputStream();
 
-			//Setting Content via InputStream for image/jpeg mime type
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			OutputStream ret = new BASE64EncoderStream(bos);
-			int count;
-			byte buf[] = new byte[8192];
-			while ((count = is.read(buf, 0, 8192)) != -1) {
-				ret.write(buf, 0, count);
-			}
-			ret.flush();
-			buf = bos.toByteArray();
-			InputStream stream = new ByteArrayInputStream(buf);
-			ap.setBase64Content(stream,"image/jpeg");
-
-			//Getting Content.. should return InputStream object
-			InputStream r = ap.getBase64Content();
-			if(r != null) {
-				if(r instanceof InputStream){
-					//InputStream object was returned (ok)
-				}else {
-					fail("Unexpected object was returned");
+				//Setting Content via InputStream for image/jpeg mime type
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				OutputStream ret = new BASE64EncoderStream(bos);
+				int count;
+				byte buf[] = new byte[8192];
+				while ((count = is.read(buf, 0, 8192)) != -1) {
+					ret.write(buf, 0, count);
 				}
+				ret.flush();
+				buf = bos.toByteArray();
+				InputStream stream = new ByteArrayInputStream(buf);
+				ap.setBase64Content(stream,"image/jpeg");
+
+				//Getting Content.. should return InputStream object
+				InputStream r = ap.getBase64Content();
+				if(r != null) {
+					if(r instanceof InputStream){
+						//InputStream object was returned (ok)
+					}else {
+						fail("Unexpected object was returned");
+					}
+				}				
 			}
 		} catch(Exception e) {
 			fail("Exception: " + e);
 		}
+	}
+	
+	private boolean isNetworkedResourceAvailable(String url){
+		HttpClient client = new HttpClient();
+		GetMethod method = new GetMethod(url);
+
+		method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, 
+				new DefaultHttpMethodRetryHandler(3, false));
+
+		try {
+			int statusCode = client.executeMethod(method);
+			if (statusCode != HttpStatus.SC_OK) {
+				//System.err.println("Method failed: " + method.getStatusLine());
+				return false;
+			}
+			byte[] responseBody = method.getResponseBody();
+
+		} catch (HttpException e) {
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;	      
+		} finally {
+			method.releaseConnection();
+		} 		
+		return true;
 	}
 
 }
