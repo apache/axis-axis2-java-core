@@ -22,14 +22,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.Reader;
+import java.util.Iterator;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.namespace.QName;
 
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
@@ -41,16 +45,134 @@ import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPProcessingException;
+import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.util.MultipleEntryHashMap;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.ws.commons.schema.XmlSchemaElement;
+import org.apache.ws.commons.schema.XmlSchemaType;
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.commons.schema.XmlSchemaParticle;
+import org.apache.ws.commons.schema.XmlSchemaSequence;
 
 public class BuilderUtil {
     public static final int BOM_SIZE = 4;
+
+        public static SOAPEnvelope buildsoapMessage(MessageContext messageContext,
+                                                MultipleEntryHashMap requestParameterMap,
+                                                SOAPFactory soapFactory) throws AxisFault {
+
+        SOAPEnvelope soapEnvelope = soapFactory.getDefaultEnvelope();
+        SOAPBody body = soapEnvelope.getBody();
+        XmlSchemaElement xmlSchemaElement = null;
+        AxisOperation axisOperation = messageContext.getAxisOperation();
+            if (axisOperation != null) {
+                AxisMessage axisMessage =
+                        axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                xmlSchemaElement = axisMessage.getSchemaElement();
+            }
+
+        if (xmlSchemaElement == null) {
+            // if there is no schema its piece of cake !! add these to the soap body in any order you like.
+            // Note : if there are parameters in the path of the URL, there is no way this can add them
+            // to the message.
+            OMElement bodyFirstChild =
+                    soapFactory.createOMElement(messageContext.getAxisOperation().getName(), body);
+
+            // first add the parameters in the URL
+            if (requestParameterMap != null) {
+                Iterator requestParamMapIter = requestParameterMap.keySet().iterator();
+                while (requestParamMapIter.hasNext()) {
+                    String key = (String) requestParamMapIter.next();
+                    String value = (String) requestParameterMap.get(key);
+                    soapFactory.createOMElement(key, null, bodyFirstChild).setText(value);
+
+                }
+            }
+        } else {
+
+            // first get the target namespace from the schema and the wrapping element.
+            // create an OMElement out of those information. We are going to extract parameters from
+            // url, create OMElements and add them as children to this wrapping element.
+            String targetNamespace = xmlSchemaElement.getQName().getNamespaceURI();
+            QName bodyFirstChildQName;
+            if (targetNamespace != null && !"".equals(targetNamespace)) {
+                bodyFirstChildQName = new QName(targetNamespace, xmlSchemaElement.getName());
+            } else {
+                bodyFirstChildQName = new QName(xmlSchemaElement.getName());
+            }
+            OMElement bodyFirstChild = soapFactory.createOMElement(bodyFirstChildQName, body);
+
+            // Schema should adhere to the IRI style in this. So assume IRI style and dive in to
+            // schema
+            XmlSchemaType schemaType = xmlSchemaElement.getSchemaType();
+            if (schemaType instanceof XmlSchemaComplexType) {
+                XmlSchemaComplexType complexType = ((XmlSchemaComplexType) schemaType);
+                XmlSchemaParticle particle = complexType.getParticle();
+                if (particle instanceof XmlSchemaSequence) {
+                    XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) particle;
+                    Iterator iterator = xmlSchemaSequence.getItems().getIterator();
+
+                    // now we need to know some information from the binding operation.
+
+                    while (iterator.hasNext()) {
+                        XmlSchemaElement innerElement = (XmlSchemaElement) iterator.next();
+                        QName qName = innerElement.getQName();
+                        long minOccurs = innerElement.getMinOccurs();
+                        boolean nillable = innerElement.isNillable();
+                        String name =
+                                qName != null ? qName.getLocalPart() : innerElement.getName();
+                        String value;
+                        while ((value = (String) requestParameterMap.get(name)) != null) {
+
+                            OMNamespace ns = (qName == null ||
+                                    qName.getNamespaceURI() == null
+                                    || qName.getNamespaceURI().length() == 0) ?
+                                    null : soapFactory.createOMNamespace(
+                                    qName.getNamespaceURI(), null);
+                            if (value != null) {
+
+                                soapFactory.createOMElement(name, ns,
+                                                            bodyFirstChild).setText(value);
+                            } else {
+
+                                if (nillable) {
+
+                                    OMNamespace xsi = soapFactory.createOMNamespace(
+                                            Constants.URI_DEFAULT_SCHEMA_XSI,
+                                            Constants.NS_PREFIX_SCHEMA_XSI);
+                                    OMAttribute omAttribute =
+                                            soapFactory.createOMAttribute("nil", xsi, "true");
+                                    soapFactory.createOMElement(name, ns,
+                                                                bodyFirstChild)
+                                            .addAttribute(omAttribute);
+
+                                } else {
+                                    throw new AxisFault("Required element " + qName +
+                                            " defined in the schema can not be found in the request");
+                                }
+                            }
+                            minOccurs--;
+                        }
+                        if (minOccurs > 0) {
+                            throw new AxisFault("Required element " + qName +
+                                    " defined in the schema should appear atleast " +
+                                    innerElement.getMinOccurs() + "times");
+                        }
+                    }
+                }
+            }
+        }
+        return soapEnvelope;
+    }
     
     public static StAXBuilder getPOXBuilder(InputStream inStream, String charSetEnc) throws XMLStreamException {
         StAXBuilder builder;
@@ -334,9 +456,6 @@ public class BuilderUtil {
      * Creates an OMBuilder for a SOAP message. Default character set encording is used.
      * 
      * @param inStream InputStream for a SOAP message
-     * @param soapNamespaceURI Specifies which SOAP version to use, 
-     *              {@link SOAP11Constants#SOAP_11_CONTENT_TYPE} or 
-     *              {@link SOAP12Constants#SOAP_12_CONTENT_TYPE}
      * @return Handler to a OMBuilder implementation instance
      * @throws XMLStreamException
      */
@@ -350,9 +469,6 @@ public class BuilderUtil {
      * 
      * @param inStream InputStream for a SOAP message
      * @param charSetEnc Character set encoding to be used
-     * @param soapNamespaceURI Specifies which SOAP version to use, 
-     *              {@link SOAP11Constants#SOAP_11_CONTENT_TYPE} or 
-     *              {@link SOAP12Constants#SOAP_12_CONTENT_TYPE}
      * @return Handler to a OMBuilder implementation instance
      * @throws XMLStreamException
      */

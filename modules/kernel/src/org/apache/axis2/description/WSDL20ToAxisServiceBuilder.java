@@ -416,20 +416,23 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
 
         String soapVersion;
-        if ((soapVersion = soapBindingExtensions.getSoapVersion()) != null)
-
-        {
+        if ((soapVersion = soapBindingExtensions.getSoapVersion()) != null) {
             if (soapVersion.equals(WSDL2Constants.SOAP_VERSION_1_1)) {
                 // Might have to remove this as its a binding specific property
                 axisService.setSoapNsUri(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                 axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION,
-                        WSDL2Constants.SOAP_VERSION_1_1);
+                                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
             } else {
                 // Might have to remove this as its a binding specific property
                 axisService.setSoapNsUri(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                 axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION,
-                        WSDL2Constants.SOAP_VERSION_1_2);
+                                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
             }
+        } else {
+            // Set the default to soap 1.2
+            axisService.setSoapNsUri(WSDL20DefaultValueHolder.getDefaultValue(WSDL2Constants.ATTR_WSOAP_VERSION));
+            axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION,
+                                    WSDL20DefaultValueHolder.getDefaultValue(WSDL2Constants.ATTR_WSOAP_VERSION));
         }
 
         URI soapUnderlyingProtocol = soapBindingExtensions.getSoapUnderlyingProtocol();

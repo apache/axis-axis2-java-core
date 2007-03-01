@@ -19,15 +19,18 @@ package org.apache.axis2.transport.http;
 import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Handler.InvocationResponse;
+import org.apache.axis2.engine.Handler;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.server.OutputBuffer;
 import org.apache.axis2.transport.http.server.Worker;
+import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -41,10 +44,12 @@ import org.apache.http.entity.EntityTemplate;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicStatusLine;
+import org.apache.http.message.BasicHttpRequest;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +72,8 @@ public class HTTPWorker implements Worker {
         String uri = request.getRequestLine().getUri();
         String method = request.getRequestLine().getMethod();
         String soapAction = HttpUtils.getSoapAction(request);
+        OutputBuffer outbuffer;
+        InvocationResponse pi;
 
         if (method.equals(HTTPConstants.HEADER_GET)) {
             if (uri.equals("/favicon.ico")) {
@@ -177,69 +184,49 @@ public class HTTPWorker implements Worker {
                 }
             }
 
-            OutputBuffer outbuffer = new OutputBuffer();
-            msgContext.setProperty(MessageContext.TRANSPORT_OUT, outbuffer);
-            msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
+            outbuffer = copyCommonProperties(msgContext, request);
 
             // deal with GET request
-            boolean processed = HTTPTransportUtils.processHTTPGetRequest(
-                    msgContext,
-                    outbuffer.getOutputStream(),
-                    soapAction,
-                    uri,
-                    configurationContext,
-                    HTTPTransportReceiver.getGetRequestParameters(uri));
+            pi = RESTUtil.processURLRequest(msgContext, outbuffer.getOutputStream(), null);
 
-            if (processed) {
-                response.setEntity(outbuffer);
-            } else {
-                response.setStatusLine(new BasicStatusLine(ver, 200, "OK"));
-                String s = HTTPTransportReceiver.getServicesHTML(configurationContext);
-                StringEntity entity = new StringEntity(s);
-                entity.setContentType("text/html");
-                response.setEntity(entity);
-            }
+            handleResponse(pi, response, outbuffer, ver, configurationContext, msgContext);
 
         } else if (method.equals(HTTPConstants.HEADER_POST)) {
             // deal with POST request
 
-            OutputBuffer outbuffer = new OutputBuffer();
-            msgContext.setProperty(MessageContext.TRANSPORT_OUT, outbuffer);
-            msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
-            msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
-                                   new SimpleHTTPRequestResponseTransport());
-
+            outbuffer = copyCommonProperties(msgContext, request);
             HttpEntity inentity = ((HttpEntityEnclosingRequest) request).getEntity();
-            String contenttype = null;
-            if (inentity.getContentType() != null) {
-                contenttype = inentity.getContentType().getValue();
+            String contentType = processContentType(inentity, msgContext);
+            if (HTTPTransportUtils.isRESTRequest(contentType)) {
+                pi = RESTUtil.processXMLRequest(msgContext, inentity.getContent(),
+                                                outbuffer.getOutputStream(), contentType);
+            } else {
+                pi = HTTPTransportUtils.processHTTPPostRequest(msgContext, inentity.getContent(),
+                                                               outbuffer.getOutputStream(),
+                                                               contentType, soapAction, uri);
             }
-            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,contenttype);
-            InvocationResponse pi = HTTPTransportUtils.processHTTPPostRequest(
-                    msgContext,
-                    inentity.getContent(),
-                    outbuffer.getOutputStream(),
-                    contenttype,
-                    soapAction,
-                    uri);
 
-            Boolean holdResponse = (Boolean) msgContext.getProperty(RequestResponseTransport.HOLD_RESPONSE);
-            
-            if (pi.equals(InvocationResponse.SUSPEND) || (holdResponse != null && Boolean.TRUE.equals(holdResponse))) {
-                try {
-                ((RequestResponseTransport)msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL)).awaitResponse();
-              }
-                catch (InterruptedException e) {
-                throw new IOException("We were interrupted, so this may not function correctly:"+ e.getMessage());
-              }
-            }
-            
-            response.setEntity(outbuffer);
+
+
+
+        } else if(method.equals(HTTPConstants.HEADER_PUT)) {
+            outbuffer = copyCommonProperties(msgContext, request);
+            HttpEntity inentity = ((HttpEntityEnclosingRequest) request).getEntity();
+            String contentType = processContentType(inentity, msgContext);
+                pi = RESTUtil.processXMLRequest(msgContext, inentity.getContent(),
+                                                outbuffer.getOutputStream(), contentType);
+
+        } else if(method.equals(HTTPConstants.HEADER_DELETE)) {
+            outbuffer = copyCommonProperties(msgContext, request);
+
+
+                pi = RESTUtil.processURLRequest(msgContext, outbuffer.getOutputStream(), null);
 
         } else {
+
             throw new MethodNotSupportedException(method + " method not supported");
         }
-
+        handleResponse(pi, response, outbuffer, ver, configurationContext, msgContext);
         // Finalize response
         OperationContext operationContext = msgContext.getOperationContext();
         Object contextWritten = null;
@@ -260,7 +247,54 @@ public class HTTPWorker implements Worker {
             response.setStatusLine(new BasicStatusLine(ver, 202, "OK"));
         }
     }
-    
+
+    private void handleResponse(InvocationResponse pi, HttpResponse response,
+                                OutputBuffer outbuffer, HttpVersion ver,
+                                ConfigurationContext configurationContext, MessageContext msgContext)
+            throws IOException {
+        if (pi.equals(InvocationResponse.CONTINUE)) {
+            Boolean holdResponse = (Boolean) msgContext.getProperty(RequestResponseTransport.HOLD_RESPONSE);
+
+            if (pi.equals(InvocationResponse.SUSPEND) || (holdResponse != null && Boolean.TRUE.equals(holdResponse))) {
+                try {
+                ((RequestResponseTransport)msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL)).awaitResponse();
+              }
+                catch (InterruptedException e) {
+                throw new IOException("We were interrupted, so this may not function correctly:"+ e.getMessage());
+              }
+            }
+
+            response.setEntity(outbuffer);
+        } else {
+            response.setStatusLine(new BasicStatusLine(ver, 200, "OK"));
+            String s = HTTPTransportReceiver.getServicesHTML(configurationContext);
+            StringEntity entity = new StringEntity(s);
+            entity.setContentType(HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+            response.setEntity(entity);
+        }
+    }
+
+    private String processContentType(HttpEntity inentity, MessageContext msgContext) {
+        String contentType = null;
+        Header header = inentity.getContentType();
+        if (header != null) {
+            contentType = header.getValue();
+        }
+        msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,contentType);
+        return contentType;
+    }
+
+    private OutputBuffer copyCommonProperties(MessageContext msgContext, HttpRequest request) {
+        request.getRequestLine().getUri();
+        OutputBuffer outbuffer = new OutputBuffer();
+        msgContext.setProperty(MessageContext.TRANSPORT_OUT, outbuffer);
+        msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
+        msgContext.setTo(new EndpointReference(request.getRequestLine().getUri()));
+        msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
+                                   new SimpleHTTPRequestResponseTransport());
+        return outbuffer;
+    }
+
     public String getHostAddress(HttpRequest request) throws java.net.SocketException{
         try {
             Header hostHeader = request.getFirstHeader("host");

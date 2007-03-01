@@ -108,7 +108,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         MessageContext msgContext;
         OutputStream out = response.getOutputStream();
         String contentType = request.getContentType();
-        if (!isRESTRequest(contentType)) {
+        if (!HTTPTransportUtils.isRESTRequest(contentType)) {
             msgContext = createMessageContext(request, response);
             msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,contentType);
             try {
@@ -661,25 +661,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     }
 
     /**
-     * This will match for content types that will be regarded as REST in WSDL2.0.
-     * This contains,
-     * 1. application/xml
-     * 2. application/x-www-form-urlencoded
-     * 3. multipart/form-data
-     * <p/>
-     * If the request doesnot contain a content type; this will return true.
-     *
-     * @param contentType
-     * @return Boolean
-     */
-    private boolean isRESTRequest(String contentType) {
-        return ((contentType == null ||
-                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
-                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
-                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1));
-    }
-
-    /**
      * Transport session management.
      *
      * @param messageContext
@@ -771,7 +752,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         public void processXMLRequest() throws IOException, ServletException {
             try {
-                new RESTUtil(configContext).processPostRequest(messageContext, request, response);
+                RESTUtil.processXMLRequest(messageContext, request.getInputStream(), response.getOutputStream(), request.getContentType());
                 this.checkResponseWritten();
             } catch (AxisFault axisFault) {
                 processFault(axisFault);
@@ -783,7 +764,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         public void processURLRequest() throws IOException, ServletException {
             try {
-                new RESTUtil(configContext).processGetRequest(messageContext, request, response);
+                RESTUtil.processURLRequest(messageContext,response.getOutputStream(), request.getContentType());
                 this.checkResponseWritten();
             } catch (AxisFault axisFault) {
                 processFault(axisFault);

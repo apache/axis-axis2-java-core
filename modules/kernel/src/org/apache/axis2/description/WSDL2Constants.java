@@ -87,4 +87,10 @@ public interface WSDL2Constants {
     String MESSAGE_LABEL_OUT = "Out";
 
     String HTTP_LOCATION_TABLE = "HTTPLocationTable";
+
+    // This was taken from thye resolution of CR117 (WSDL 2.0 working group)
+    // http://www.w3.org/2002/ws/desc/5/cr-issues/issues.html?view=normal#CR117
+    // http://lists.w3.org/Archives/Public/www-ws-desc/2007Feb/0039.html
+    String LEGAL_CHARACTERS_IN_URL = "-._~!$&()*+,;=:@";
+    String TEMPLATE_ENCODE_ESCAPING_CHARACTER = "!";
 }

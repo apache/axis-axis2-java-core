@@ -95,10 +95,7 @@ public class TransportUtils {
      * 
      * @param msgContext
      * @param inStream
-     * @param soapNamespaceURI
-     * @param isMIME
      * @param contentType
-     * @param charSetEnc
      * @return the SOAPEnvelope
      * @throws AxisFault
      * @throws OMException
@@ -110,14 +107,7 @@ public class TransportUtils {
 			FactoryConfigurationError {
 		OMElement documentElement = null;
 		String charsetEncoding = null;
-		if (msgContext.isDoingREST()) {
-			//TODO KEITH :Do we need this anymore
-			String charSetEnc = (String) msgContext
-					.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
-			StAXBuilder builder = BuilderUtil.getPOXBuilder(inStream, charSetEnc);
-			documentElement = builder.getDocumentElement();
-			charsetEncoding = builder.getDocument().getCharsetEncoding();
-		} else if (contentType != null) {
+		if (contentType != null) {
 			String type;
 			int index = contentType.indexOf(';');
 			if (index > 0) {
@@ -131,14 +121,19 @@ public class TransportUtils {
 			}
 		}
 		if (documentElement == null) {
-			// FIXME making soap defualt for the moment..might effect the
+            if (msgContext.isDoingREST()) {
+                StAXBuilder builder = BuilderUtil.getPOXBuilder(inStream, charsetEncoding);
+                documentElement = builder.getDocumentElement();
+            } else {
+            // FIXME making soap defualt for the moment..might effect the
 			// performance
 			String charSetEnc = (String) msgContext
 					.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
 			StAXBuilder builder = BuilderUtil.getSOAPBuilder(inStream, charSetEnc);
 			documentElement = builder.getDocumentElement();
 			charsetEncoding = builder.getDocument().getCharsetEncoding();
-		}
+            }
+        }
 
 		SOAPEnvelope envelope;
 		// Check whether we have received a SOAPEnvelope or not
@@ -254,7 +249,7 @@ public class TransportUtils {
     
     /**
      * @param contentType The contentType of the incoming message.  It may be null
-     * @param defaultNamespace Usually set the version that is expected.  This a fallback if the contentType is unavailable or 
+     * @param defaultSOAPNamespace Usually set the version that is expected.  This a fallback if the contentType is unavailable or
      * does not match our expectations
      * @return null or the soap namespace.  A null indicates that the message will be interpretted as a non-SOAP (i.e. REST) message 
      */
@@ -291,7 +286,8 @@ public class TransportUtils {
          
          if (returnNS == null) {
              if (log.isDebugEnabled()) {
-                 log.debug("No content-type or \"type=\" parameter was found in the content-type header and no default was specified, thus defaulting to SOAP 1.1.");
+                 log.debug("No content-type or \"type=\" parameter was found in the content-type " +
+                         "header and no default was specified, thus defaulting to SOAP 1.1.");
              }
              returnNS = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
          }

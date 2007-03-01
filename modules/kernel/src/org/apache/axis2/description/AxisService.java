@@ -507,7 +507,7 @@ public class AxisService extends AxisDescription {
         Iterator axisMessageIter = axisOperation.getChildren();
 
         while (axisMessageIter.hasNext()) {
-            AxisMessage axisMessage = (AxisMessage) axisMessageIter.next();   
+            AxisMessage axisMessage = (AxisMessage) axisMessageIter.next();
             String messageName = axisMessage.getName();
             if (messageName != null && !messageName.equals(operationName)) {
                 mapActionToOperation(messageName, axisOperation);
@@ -2114,7 +2114,7 @@ public class AxisService extends AxisDescription {
      * 
      * @param dialect- an absolute URI represents the Dialect i.e. WSDL, Policy, Schema or
      *                 "ServiceLevel" for non-dialect service level data locator.
-     * @param classname - class name of the Data Locator configured to support data retrieval 
+     * @param dataLocatorClassName - class name of the Data Locator configured to support data retrieval 
      *                  for the specified dialect.
      */
     public void addDataLocatorClassNames(String dialect, String dataLocatorClassName) {

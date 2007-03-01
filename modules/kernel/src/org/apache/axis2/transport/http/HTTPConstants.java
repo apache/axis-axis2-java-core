@@ -233,6 +233,11 @@ public class HTTPConstants {
     public static final String HEADER_POST = "POST";
 
     /**
+     * Field HEADER_PUT
+     */
+    public static final String HEADER_PUT = "PUT";
+
+    /**
      * Field HEADER_LOCATION
      */
     public static final String HEADER_LOCATION = "Location";
@@ -246,6 +251,11 @@ public class HTTPConstants {
      * Field HEADER_GET
      */
     public static final String HEADER_GET = "GET";
+
+    /**
+     * Field HEADER_DELETE
+     */
+    public static final String HEADER_DELETE = "DELETE";
 
     /**
      * Field HEADER_EXPECT_100_Continue

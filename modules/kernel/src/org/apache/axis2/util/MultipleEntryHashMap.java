@@ -3,6 +3,7 @@ package org.apache.axis2.util;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -62,5 +63,10 @@ public class MultipleEntryHashMap {
         }
 
         return value;
+    }
+
+    public Set keySet() {
+
+        return table.keySet();
     }
 }

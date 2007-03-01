@@ -161,31 +161,31 @@ public class HTTPTransportUtils {
         return charSetEnc;
     }
 
-    public static boolean processHTTPGetRequest(MessageContext msgContext,
-                                                OutputStream out, String soapAction, String requestURI,
-                                                ConfigurationContext configurationContext, Map requestParameters)
-            throws AxisFault {
-        if ((soapAction != null) && soapAction.startsWith("\"") && soapAction.endsWith("\"")) {
-            soapAction = soapAction.substring(1, soapAction.length() - 1);
-        }
-
-        msgContext.setSoapAction(soapAction);
-        msgContext.setTo(new EndpointReference(requestURI));
-        msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-        msgContext.setServerSide(true);
-        SOAPEnvelope envelope = HTTPTransportUtils.createEnvelopeFromGetRequest(requestURI,
-                                                                                requestParameters, configurationContext);
-
-        if (envelope == null) {
-            return false;
-        } else {
-            msgContext.setDoingREST(true);
-            msgContext.setEnvelope(envelope);
-            AxisEngine engine = new AxisEngine(configurationContext);
-            engine.receive(msgContext);
-            return true;
-        }
-    }
+//    public static boolean processHTTPGetRequest(MessageContext msgContext,
+//                                                OutputStream out, String soapAction, String requestURI,
+//                                                ConfigurationContext configurationContext, Map requestParameters)
+//            throws AxisFault {
+//        if ((soapAction != null) && soapAction.startsWith("\"") && soapAction.endsWith("\"")) {
+//            soapAction = soapAction.substring(1, soapAction.length() - 1);
+//        }
+//
+//        msgContext.setSoapAction(soapAction);
+//        msgContext.setTo(new EndpointReference(requestURI));
+//        msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+//        msgContext.setServerSide(true);
+//        SOAPEnvelope envelope = HTTPTransportUtils.createEnvelopeFromGetRequest(requestURI,
+//                                                                                requestParameters, configurationContext);
+//
+//        if (envelope == null) {
+//            return false;
+//        } else {
+//            msgContext.setDoingREST(true);
+//            msgContext.setEnvelope(envelope);
+//            AxisEngine engine = new AxisEngine(configurationContext);
+//            engine.receive(msgContext);
+//            return true;
+//        }
+//    }
 
     private static final int VERSION_UNKNOWN = 0;
     private static final int VERSION_SOAP11 = 1;
@@ -199,16 +199,7 @@ public class HTTPTransportUtils {
         
         try {
 
-            Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
-            
-            if (headers != null) {
-                if (HTTPConstants.COMPRESSION_GZIP.equals(headers
-                        .get(HTTPConstants.HEADER_CONTENT_ENCODING))
-                        || HTTPConstants.COMPRESSION_GZIP.equals(headers
-                                .get(HTTPConstants.HEADER_CONTENT_ENCODING_LOWERCASE))) {
-                    in = new GZIPInputStream(in);
-                }
-            }
+            in = handleGZip(msgContext, in);
 
             // remove the starting and trailing " from the SOAP Action
             if ((soapActionHeader != null) && soapActionHeader.charAt(0) == '\"'
@@ -290,6 +281,21 @@ public class HTTPTransportUtils {
         }
     }
 
+    public static InputStream handleGZip(MessageContext msgContext, InputStream in)
+            throws IOException {
+        Map headers = (Map) msgContext.getProperty(MessageContext.TRANSPORT_HEADERS);
+
+        if (headers != null) {
+            if (HTTPConstants.COMPRESSION_GZIP
+                    .equals(headers.get(HTTPConstants.HEADER_CONTENT_ENCODING)) ||
+                    HTTPConstants.COMPRESSION_GZIP.equals(headers.get(
+                            HTTPConstants.HEADER_CONTENT_ENCODING_LOWERCASE))) {
+                in = new GZIPInputStream(in);
+            }
+        }
+        return in;
+    }
+
     private static void processContentTypeForAction(String contentType, MessageContext msgContext) {
         //Check for action header and set it in as soapAction in MessageContext
         int index = contentType.indexOf("action");
@@ -329,17 +335,25 @@ public class HTTPTransportUtils {
 
         return enableREST;
     }
-    
+
     /**
-     * Detect the REST using the WSDL 2.0 constants
+     * This will match for content types that will be regarded as REST in WSDL2.0.
+     * This contains,
+     * 1. application/xml
+     * 2. application/x-www-form-urlencoded
+     * 3. multipart/form-data
+     * <p/>
+     * If the request doesnot contain a content type; this will return true.
      *
      * @param contentType
-     * @return
+     * @return Boolean
      */
-    private static boolean isRESTRequest(String contentType) {
-        return ((contentType == null ||
-                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
+    public static boolean isRESTRequest(String contentType) {
+        if (contentType == null) {
+            return false;
+        }
+        return ( contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
                  contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
-                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1));
+                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1);
     }
 }

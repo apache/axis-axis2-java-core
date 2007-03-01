@@ -303,9 +303,12 @@ public class HTTPSender extends AbstractHTTPSender {
             processResponse(method, msgContext);
         } else if (method.getStatusCode() == HttpStatus.SC_ACCEPTED) {
         } else if (method.getStatusCode() == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-            Header contenttypeHheader =
+            Header contenttypeHeader =
                     method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
-            String value = contenttypeHheader.getValue();
+            String value = null;
+            if (contenttypeHeader != null) {
+                value = contenttypeHeader.getValue();
+            }
 
             if (value != null) {
 

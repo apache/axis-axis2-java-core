@@ -29,7 +29,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 
@@ -70,7 +69,9 @@ public class URLTemplatingUtil {
         for (int i = 0; i < localNames.length; i++) {
             String localName = localNames[i];
             try {
-                values[i] = URLEncoder.encode(getOMElementValue(localName, firstElement), "UTF-8");
+                values[i] = URIEncoderDecoder.quoteIllegal(
+                        getOMElementValue(localName, firstElement),
+                        WSDL2Constants.LEGAL_CHARACTERS_IN_URL);
             } catch (UnsupportedEncodingException e) {
                 throw new AxisFault("Unable to encode Query String");
             }
@@ -85,10 +86,10 @@ public class URLTemplatingUtil {
      * Appends Query parameters to the URL
      *
      * @param messageContext - The MessageContext of the request
-     * @param query          - Original query string
+     * @param url          - Original url string
      * @return String containing the appended query parameters
      */
-    private static String appendQueryParameters(MessageContext messageContext, String query) {
+    private static String appendQueryParameters(MessageContext messageContext, String url) {
 
         OMElement firstElement;
         String queryParameterSeparator = (String) messageContext
@@ -101,30 +102,32 @@ public class URLTemplatingUtil {
         }
 
         firstElement = messageContext.getEnvelope().getBody().getFirstElement();
-        ArrayList values = new ArrayList();
+        String params = "";
 
         if (firstElement != null) {
             Iterator iter = firstElement.getChildElements();
 
             while (iter.hasNext()) {
                 OMElement element = (OMElement) iter.next();
-                values.add(element.getLocalName() + "=" + element.getText());
+                params = params + element.getLocalName() + "=" + element.getText() +
+                        queryParameterSeparator;
             }
         }
 
-        if (values.size() > 0) {
+        if (!"".equals(params)) {
 
-            if (query.indexOf("?") == query.length() - 1) {
-                query = query + values.get(0);
+            int index = url.indexOf("?");
+            if (index == -1) {
+                url = url + "?" + params.substring(0,params.length()-1);
+            }
+            else if (index == url.length() - 1) {
+                url = url + params.substring(0,params.length()-1);
             } else {
-                query = query + "?" + values.get(0);
+                url = url + queryParameterSeparator + params.substring(0,params.length()-1);
             }
 
-            for (int i = 1; i < values.size(); i++) {
-                query = query + queryParameterSeparator + values.get(i);
-            }
         }
-        return query;
+        return url;
     }
 
     /**
