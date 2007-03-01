@@ -1,5 +1,6 @@
 package org.apache.axis2.description;
 
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class WSDL20DefaultValueHolder {
 
 
     static {
-        defaultValuesMap.put(WSDL2Constants.ATTR_WSOAP_VERSION, WSDL2Constants.SOAP_VERSION_1_2);
+        defaultValuesMap.put(WSDL2Constants.ATTR_WSOAP_VERSION, SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         defaultValuesMap.put(WSDL2Constants.ATTR_WSOAP_ACTION, "");
         defaultValuesMap.put(WHTTP_METHOD_WSDLX_SAFE, org.apache.axis2.Constants.Configuration.HTTP_METHOD_GET);
         defaultValuesMap.put(WHTTP_METHOD_WSDLX_SAFE, org.apache.axis2.Constants.Configuration.HTTP_METHOD_POST);
