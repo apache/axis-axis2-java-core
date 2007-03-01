@@ -62,6 +62,21 @@
             <artifactId>axis2-codegen</artifactId>
 			<version>${version}</version>
         </dependency>
+         <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb-codegen</artifactId>
+			<version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-java2wsdl</artifactId>
+			<version>${version}</version>
+        </dependency>
+                <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+			<version>${version}</version>
+        </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -208,7 +223,7 @@
                                 <delete dir="./target/dist"/>
                                 <mkdir dir="./target/dist"/>
 
-                                <unzip src="./target/dist-axis2-service-codege-plugin.zip"
+                                <unzip src="./target/axis2.eclipse.service.plugin-SNAPSHOT.jar"
                                        dest="./target/plugin/${service.plugin.version}"/>
 
                                 <!-- Copy to the same position with the filtering on-->
@@ -239,6 +254,15 @@
                                 <copy todir="./target/plugin/${service.plugin.version}">
                                     <fileset file="${service.resource.dir}/${plugin.project.file.name}" />
                                     <fileset file="${service.resource.dir}/${plugin.help.file.name}" />
+                                </copy>
+
+
+                                <!-- copy the classes to classes directory-->
+                                <mkdir dir="./target/plugin/${service.plugin.version}/classes" />
+                                <copy todir="./target/plugin/${service.plugin.version}/classes">
+                                                <fileset dir="./target/plugin/${service.plugin.version}" >
+		                                                <include name="**/org/**" />
+	                                            </fileset>
                                 </copy>
 
                                 <!--Zip the classes to a jar file -->

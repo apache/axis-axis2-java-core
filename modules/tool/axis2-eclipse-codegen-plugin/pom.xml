@@ -130,7 +130,8 @@
             <artifactId>commons-logging</artifactId>
             <version>1.1</version>
         </dependency>
-        <dependency>
+
+       <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-kernel</artifactId>
 			<version>${version}</version>
@@ -140,6 +141,22 @@
             <artifactId>axis2-codegen</artifactId>
 			<version>${version}</version>
         </dependency>
+         <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb-codegen</artifactId>
+			<version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-java2wsdl</artifactId>
+			<version>${version}</version>
+        </dependency>
+                <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+			<version>${version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>wstx-asl</artifactId>
@@ -228,7 +245,8 @@
                 </executions>
             </plugin>
 
-            <plugin>
+             <echo message="###############################################################################################"/>
+                                         <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.1</version>
@@ -289,7 +307,7 @@
                                 <filter token="woden.version" value="1.0-incubating-SNAPSHOT" />
 
 
-                                <unzip src="./target/dist-axis2-eclipse-codege-plugin.zip"
+                                <unzip src="./target/axis2.eclipse.codegen.plugin-SNAPSHOT.jar"
                                        dest="./target/plugin/${codegen.plugin.version}"/>
 
                                 <!-- Copy to the same position with the filtering on-->
@@ -316,11 +334,22 @@
                                 <copy todir="./target/plugin/${codegen.plugin.version}/${icons.dir.name}">
                                     <fileset dir="${codegen.resource.dir}/${icons.dir.name}" />
                                 </copy>
+
                                 <!-- copy the other project files-->
                                 <copy todir="./target/plugin/${codegen.plugin.version}">
                                     <fileset file="${codegen.resource.dir}/${plugin.project.file.name}" />
                                     <fileset file="${codegen.resource.dir}/${plugin.help.file.name}" />
                                 </copy>
+
+
+                                <!-- copy the classes to classes directory-->
+                                <mkdir dir="./target/plugin/${codegen.plugin.version}/classes" />
+                                <copy todir="./target/plugin/${codegen.plugin.version}/classes">
+                                                <fileset dir="./target/plugin/${codegen.plugin.version}" >
+		                                                <include name="**/org/**" />
+	                                            </fileset>
+                                </copy>
+
 
                                 <!--Zip the classes to a jar file-->
                                 <zip destfile="./target/plugin/${codegen.plugin.version}/${codegen.plugin.jar.name}"
