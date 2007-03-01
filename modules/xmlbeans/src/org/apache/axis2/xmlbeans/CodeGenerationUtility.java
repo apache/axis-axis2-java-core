@@ -574,7 +574,7 @@ public class CodeGenerationUtility {
             try {
                 for (int i = 0; i < schemas.length; i++) {
                     XmlSchema schema = schemas[i];
-                    if (schema.getSourceURI() != null && schema.getSourceURI().endsWith(systemId)) {
+                    if (schema.getSourceURI() != null && schema.getSourceURI().endsWith(systemId.replaceAll("\\\\","/"))) {
                         try {
                             return new InputSource(getSchemaAsReader(schemas[i]));
                         } catch (IOException e) {
