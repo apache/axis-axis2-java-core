@@ -142,6 +142,21 @@ public class DescriptionFactory {
     public static ServiceDescription createServiceDescription(Class serviceImplClass) {
         return DescriptionFactoryImpl.createServiceDescription(serviceImplClass);
     }
+
+    /**
+     * This provide very convenient way of creating an AxisService from an annotated 
+     * java class.
+     *
+     * @param serviceImplClass A Web Service implementation class (i.e. one that carries an
+     * WebService or WebServiceProvider annotation).
+     * @return An AxisService instance
+     */
+    public static  AxisService createAxisService(Class serviceImplClass){
+        ServiceDescription serviceDescription = createServiceDescription(serviceImplClass);
+        EndpointDescription[] edArray = serviceDescription.getEndpointDescriptions();
+        AxisService axisService = edArray[0].getAxisService();
+        return axisService;
+    }
     /**
      * DO NOT USE THIS METHOD FOR PRODUCTION CODE.  It has been deprecated and is only used
      * to drive some testing.  Note that the AxisService and associated Axis description objects

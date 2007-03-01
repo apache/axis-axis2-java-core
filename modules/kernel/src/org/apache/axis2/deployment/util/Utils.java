@@ -371,7 +371,34 @@ public class Utils {
                 pinfo.setOperationPhases(operation);
                 axisService.addOperation(operation);
             }
-            operation.setSoapAction("urn:" + opName);
+            if(operation.getInputAction()==null){
+                operation.setSoapAction("urn:" + opName);
+            }
+            String MEP = operation.getMessageExchangePattern();
+            if(MEP!=null){
+                try {
+                    if(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
+                        || WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(MEP)){
+                        Class inOnlyMessageReceiver = Loader.loadClass(
+                                "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
+                        MessageReceiver messageReceiver =
+                                (MessageReceiver) inOnlyMessageReceiver.newInstance();
+                        operation.setMessageReceiver(messageReceiver);
+                    }  else {
+                        Class inoutMessageReceiver = Loader.loadClass(
+                                "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
+                        MessageReceiver inOutmessageReceiver =
+                                (MessageReceiver) inoutMessageReceiver.newInstance();
+                        operation.setMessageReceiver(inOutmessageReceiver);
+                    }
+                } catch (ClassNotFoundException e) {
+                    log.error(e);
+                } catch (InstantiationException e) {
+                    log.error(e);
+                } catch (IllegalAccessException e) {
+                   log.error(e);
+                }
+            }
         }
     }
 

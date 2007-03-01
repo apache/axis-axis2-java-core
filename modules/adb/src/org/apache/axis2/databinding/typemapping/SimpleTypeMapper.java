@@ -36,6 +36,7 @@ public class SimpleTypeMapper {
     private static final String W_FLOAT = "java.lang.Float";
     private static final String W_CALENDAR = "java.util.Calendar";
     private static final String W_DATE = "java.util.Date";
+    private static final String W_DATA_HANDLER = "javax.activation.DataHandler";
     private static final String INT = "int";
     private static final String BOOLEAN = "boolean";
     private static final String BYTE = "byte";
@@ -133,7 +134,6 @@ public class SimpleTypeMapper {
     public static boolean isCollection(Class obj) {
         return java.util.Collection.class.isAssignableFrom(obj);
     }
-    
     public static boolean isSimpleType(String objClassName) {
         if (objClassName.equals(STRING)) {
             return true;

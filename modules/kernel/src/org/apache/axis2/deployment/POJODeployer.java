@@ -2,6 +2,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
+import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.MessageReceiver;
@@ -81,24 +82,20 @@ public class POJODeployer implements Deployer {
                              * nothing will happen) 2. In the next stage for all the methods
                              * messages and port types will be creteated
                              */
-                            boolean callJaxWs = false;
                             JAnnotation annotation = jclass.getAnnotation(AnnotationConstants.WEB_SERVICE);
                             if (annotation != null) {
-                                String wsdlLocation = annotation.getValue(AnnotationConstants.WSDL_LOCATION).asString();
-                                if (wsdlLocation != null && !"".equals(wsdlLocation)) {
-                                    callJaxWs = true;
-                                }
-                            }
-                            if (callJaxWs) {
                                 Class claxx = Class.forName(
                                         "org.apache.axis2.jaxws.description.DescriptionFactory");
                                 Method mthod = claxx.getMethod(
-                                        "createServiceDescriptionFromServiceImpl",
-                                        new Class[]{Class.class, AxisService.class});
+                                        "createAxisService",
+                                        new Class[]{Class.class});
                                 Class pojoClass = Loader.loadClass(classLoader, className);
-                                AxisService axisService = new AxisService(className);
-                                axisService.setName(className);
-                                mthod.invoke(claxx, new Object[]{pojoClass, axisService});
+                                AxisService axisService = (AxisService)mthod.invoke(claxx, new Object[]{pojoClass});
+                                Utils.fillAxisService(axisService,
+                                        configCtx.getAxisConfiguration(),
+                                        new ArrayList(),
+                                        new ArrayList());
+
                                 configCtx.getAxisConfiguration().addService(axisService);
                             } else {
                                 HashMap messageReciverMap = new HashMap();
@@ -177,46 +174,19 @@ public class POJODeployer implements Deployer {
                              * nothing will happen) 2. In the next stage for all the methods
                              * messages and port types will be creteated
                              */
-                            boolean callJaxWs = false;
                             JAnnotation annotation = jclass.getAnnotation(AnnotationConstants.WEB_SERVICE);
                             if (annotation != null) {
-                                String wsdlLocation = annotation.getValue(AnnotationConstants.WSDL_LOCATION).asString();
-                                if (wsdlLocation != null && !"".equals(wsdlLocation)) {
-                                    callJaxWs = true;
-                                }
-                            } else {
-                                continue;
-                            }
-                            if (callJaxWs) {
                                 Class claxx = Class.forName(
                                         "org.apache.axis2.jaxws.description.DescriptionFactory");
                                 Method mthod = claxx.getMethod(
-                                        "createServiceDescriptionFromServiceImpl",
-                                        new Class[]{Class.class, AxisService.class});
+                                        "createAxisService",
+                                        new Class[]{Class.class});
                                 Class pojoClass = Loader.loadClass(classLoader, className);
-                                AxisService axisService = new AxisService(className);
-                                axisService.setName(className);
-                                mthod.invoke(claxx, new Object[]{pojoClass, axisService});
-                                axisServiceList.add(axisService);
-                            } else {
-                                HashMap messageReciverMap = new HashMap();
-                                Class inOnlyMessageReceiver = Loader.loadClass(
-                                        "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
-                                MessageReceiver messageReceiver =
-                                        (MessageReceiver) inOnlyMessageReceiver.newInstance();
-                                messageReciverMap.put(
-                                        WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY,
-                                        messageReceiver);
-                                Class inoutMessageReceiver = Loader.loadClass(
-                                        "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
-                                MessageReceiver inOutmessageReceiver =
-                                        (MessageReceiver) inoutMessageReceiver.newInstance();
-                                messageReciverMap.put(
-                                        WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT,
-                                        inOutmessageReceiver);
-                                AxisService axisService = AxisService.createService(className,
+                                AxisService axisService = (AxisService)mthod.invoke(claxx, new Object[]{pojoClass});
+                                Utils.fillAxisService(axisService,
                                         configCtx.getAxisConfiguration(),
-                                        messageReciverMap, null, null, classLoader);
+                                        new ArrayList(),
+                                        new ArrayList());
                                 axisServiceList.add(axisService);
                             }
                         }
