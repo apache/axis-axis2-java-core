@@ -161,31 +161,31 @@ public class HTTPTransportUtils {
         return charSetEnc;
     }
 
-//    public static boolean processHTTPGetRequest(MessageContext msgContext,
-//                                                OutputStream out, String soapAction, String requestURI,
-//                                                ConfigurationContext configurationContext, Map requestParameters)
-//            throws AxisFault {
-//        if ((soapAction != null) && soapAction.startsWith("\"") && soapAction.endsWith("\"")) {
-//            soapAction = soapAction.substring(1, soapAction.length() - 1);
-//        }
-//
-//        msgContext.setSoapAction(soapAction);
-//        msgContext.setTo(new EndpointReference(requestURI));
-//        msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
-//        msgContext.setServerSide(true);
-//        SOAPEnvelope envelope = HTTPTransportUtils.createEnvelopeFromGetRequest(requestURI,
-//                                                                                requestParameters, configurationContext);
-//
-//        if (envelope == null) {
-//            return false;
-//        } else {
-//            msgContext.setDoingREST(true);
-//            msgContext.setEnvelope(envelope);
-//            AxisEngine engine = new AxisEngine(configurationContext);
-//            engine.receive(msgContext);
-//            return true;
-//        }
-//    }
+    public static boolean processHTTPGetRequest(MessageContext msgContext,
+                                                OutputStream out, String soapAction, String requestURI,
+                                                ConfigurationContext configurationContext, Map requestParameters)
+            throws AxisFault {
+        if ((soapAction != null) && soapAction.startsWith("\"") && soapAction.endsWith("\"")) {
+            soapAction = soapAction.substring(1, soapAction.length() - 1);
+        }
+
+        msgContext.setSoapAction(soapAction);
+        msgContext.setTo(new EndpointReference(requestURI));
+        msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
+        msgContext.setServerSide(true);
+        SOAPEnvelope envelope = HTTPTransportUtils.createEnvelopeFromGetRequest(requestURI,
+                                                                                requestParameters, configurationContext);
+
+        if (envelope == null) {
+            return false;
+        } else {
+            msgContext.setDoingREST(true);
+            msgContext.setEnvelope(envelope);
+            AxisEngine engine = new AxisEngine(configurationContext);
+            engine.receive(msgContext);
+            return true;
+        }
+    }
 
     private static final int VERSION_UNKNOWN = 0;
     private static final int VERSION_SOAP11 = 1;
