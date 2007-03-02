@@ -25,7 +25,6 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Handler.InvocationResponse;
-import org.apache.axis2.engine.Handler;
 import org.apache.axis2.transport.RequestResponseTransport;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.transport.http.server.OutputBuffer;
@@ -44,12 +43,10 @@ import org.apache.http.entity.EntityTemplate;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicStatusLine;
-import org.apache.http.message.BasicHttpRequest;
 import org.apache.ws.commons.schema.XmlSchema;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,6 +81,14 @@ public class HTTPWorker implements Worker {
             if (!uri.startsWith(contextPath)) {
                 response.setStatusLine(new BasicStatusLine(ver, 301, "Redirect"));
                 response.addHeader(new BasicHeader("Location", contextPath));
+                return;
+            }
+            if (uri.endsWith("axis2/services/")) {
+                response.setStatusLine(new BasicStatusLine(ver, 200, "OK"));
+                String s = HTTPTransportReceiver.getServicesHTML(configurationContext);
+                StringEntity entity = new StringEntity(s);
+                entity.setContentType("text/html");
+                response.setEntity(entity);
                 return;
             }
             if (uri.indexOf("?") < 0) {
@@ -265,12 +270,6 @@ public class HTTPWorker implements Worker {
             }
 
             response.setEntity(outbuffer);
-        } else {
-            response.setStatusLine(new BasicStatusLine(ver, 200, "OK"));
-            String s = HTTPTransportReceiver.getServicesHTML(configurationContext);
-            StringEntity entity = new StringEntity(s);
-            entity.setContentType(HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
-            response.setEntity(entity);
         }
     }
 
