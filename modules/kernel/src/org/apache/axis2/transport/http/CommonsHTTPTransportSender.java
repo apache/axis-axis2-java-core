@@ -273,7 +273,6 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         } else {
             messageFormatter.writeTo(msgContext, format, out, false);
         }
-
     }
 
     private void writeMessageWithCommons(MessageContext messageContext,

@@ -52,6 +52,7 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.TransportListener;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.threadpool.DefaultThreadFactory;
 import org.apache.commons.logging.Log;
@@ -325,43 +326,11 @@ public class SimpleMailListener implements Runnable, TransportListener {
                             msgContext.setTo(new EndpointReference(contentDescription));
                         }
 
-                        if (part.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE)
-                            > -1) {
-                            soapNamespaceURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-                            // set the soapAction if available
-                            int index = part.getContentType().indexOf("action");
-                            if (index > -1) {
-                                String transientString =
-                                        part.getContentType()
-                                                .substring(index, part.getContentType().length());
-                                int equal = transientString.indexOf("=");
-                                int firstSemiColon = transientString.indexOf(";");
-                                if (firstSemiColon > -1) {
-                                    soapAction =
-                                            transientString.substring(equal + 1, firstSemiColon);
-                                } else {
-                                    soapAction = transientString
-                                            .substring(equal + 1, transientString.length());
-                                }
-                                if ((soapAction != null) && soapAction.startsWith("\"")
-                                    && soapAction.endsWith("\"")) {
-                                    soapAction = soapAction
-                                            .substring(1, soapAction.length() - 1);
-                                }
-                                msgContext.setSoapAction(soapAction);
-
-                            }
-                        } else if (part.getContentType().indexOf(
-                                SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
-                            soapNamespaceURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-                        } else {
-                            log.warn(
-                                    "MailWorker found a message other than text/xml or application/soap+xml");
+                        if (part.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE)> -1) {
+                            TransportUtils.processContentTypeForAction(part.getContentType(),msgContext);
                         }
-
                         InputStream inputStream = part.getInputStream();
-                        StAXBuilder builder = BuilderUtil.getSOAPBuilder(inputStream, soapNamespaceURI);
-                        SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
+                        SOAPEnvelope envelope  = TransportUtils.createSOAPMessage(msgContext,inputStream, part.getContentType());
                         msgContext.setEnvelope(envelope);
                     }
                 }

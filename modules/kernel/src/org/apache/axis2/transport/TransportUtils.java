@@ -301,7 +301,28 @@ public class TransportUtils {
          
        }
 
-    
+   public static void processContentTypeForAction(String contentType, MessageContext msgContext) {
+       //Check for action header and set it in as soapAction in MessageContext
+       int index = contentType.indexOf("action");
+       if (index > -1) {
+           String transientString = contentType.substring(index, contentType.length());
+           int equal = transientString.indexOf("=");
+           int firstSemiColon = transientString.indexOf(";");
+           String soapAction; // This will contain "" in the string
+           if (firstSemiColon > -1) {
+               soapAction = transientString.substring(equal + 1, firstSemiColon);
+           } else {
+               soapAction = transientString.substring(equal + 1, transientString.length());
+           }
+           if ((soapAction != null) && soapAction.startsWith("\"")
+               && soapAction.endsWith("\"")) {
+               soapAction = soapAction
+                       .substring(1, soapAction.length() - 1);
+           }
+           msgContext.setSoapAction(soapAction);
+       }
+   }
+
     
     private static String getMessageFormatterProperty(MessageContext msgContext) {
         String messageFormatterProperty = null;

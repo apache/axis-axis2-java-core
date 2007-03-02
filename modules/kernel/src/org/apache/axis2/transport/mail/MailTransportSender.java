@@ -29,7 +29,9 @@ import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.TransportSender;
+import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
 import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.axis2.util.Utils;
@@ -248,27 +250,17 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
     }
 
     public void writeMimeMessage(MessageContext msgContext, OutputStream out) throws AxisFault {
-        SOAPEnvelope envelope = msgContext.getEnvelope();
-        OMElement outputMessage = envelope;
-
-        if ((envelope != null) && msgContext.isDoingREST()) {
-            outputMessage = envelope.getBody().getFirstElement();
-        }
-
-        if (outputMessage != null) {
-            try {
-                OMOutputFormat format = new OMOutputFormat();
-
-                format.setDoOptimize(msgContext.isDoingMTOM());
-                format.setCharSetEncoding(
-                        null); //Set to null so that the code will not fail on 7bit.
-                outputMessage.serializeAndConsume(out, format);
-                out.flush();
-            } catch (Exception e) {
-                throw new AxisFault(e);
-            }
-        } else {
-            throw new AxisFault(Messages.getMessage("outMessageNull"));
+        try {
+            OMOutputFormat format = new OMOutputFormat();
+            MessageFormatter messageFormatter = TransportUtils
+                .getMessageFormatter(msgContext);
+            format.setDoOptimize(msgContext.isDoingMTOM());
+            //Set to null so that the code will not fail on 7bit.
+            format.setCharSetEncoding(null);
+            messageFormatter.writeTo(msgContext, format, out, false);
+            out.flush();
+        } catch (Exception e) {
+            throw new AxisFault(e);
         }
     }
 

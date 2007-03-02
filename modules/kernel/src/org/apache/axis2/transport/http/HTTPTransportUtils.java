@@ -239,7 +239,7 @@ public class HTTPTransportUtils {
             if (contentType != null) {
 				if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
 					soapVersion = VERSION_SOAP12;
-					processContentTypeForAction(contentType, msgContext);
+					TransportUtils.processContentTypeForAction(contentType, msgContext);
 				} else if (contentType
 						.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
 					soapVersion = VERSION_SOAP11;
@@ -307,28 +307,6 @@ public class HTTPTransportUtils {
             }
         }
         return in;
-    }
-
-    private static void processContentTypeForAction(String contentType, MessageContext msgContext) {
-        //Check for action header and set it in as soapAction in MessageContext
-        int index = contentType.indexOf("action");
-        if (index > -1) {
-            String transientString = contentType.substring(index, contentType.length());
-            int equal = transientString.indexOf("=");
-            int firstSemiColon = transientString.indexOf(";");
-            String soapAction; // This will contain "" in the string
-            if (firstSemiColon > -1) {
-                soapAction = transientString.substring(equal + 1, firstSemiColon);
-            } else {
-                soapAction = transientString.substring(equal + 1, transientString.length());
-            }
-            if ((soapAction != null) && soapAction.startsWith("\"")
-                && soapAction.endsWith("\"")) {
-                soapAction = soapAction
-                        .substring(1, soapAction.length() - 1);
-            }
-            msgContext.setSoapAction(soapAction);
-        }
     }
 
     public static boolean isDoingREST(MessageContext msgContext) {
