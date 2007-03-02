@@ -101,9 +101,7 @@ public class JAXWSTest extends TestCase {
         TestSuite suite = new TestSuite();
         
         // Add each of the test suites
-        /*
         suite = DispatchTestSuite.addTestSuites(suite);
-        */
         suite.addTestSuite(SOAP12Dispatch.class);
         suite.addTestSuite(DispatchSoapActionTests.class);
         suite.addTestSuite(ProxySoapActionTests.class);
