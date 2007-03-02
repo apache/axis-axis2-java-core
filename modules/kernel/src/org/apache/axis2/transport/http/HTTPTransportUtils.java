@@ -161,6 +161,19 @@ public class HTTPTransportUtils {
         return charSetEnc;
     }
 
+    /**
+     *
+     * @param msgContext - The MessageContext of the Request Message
+     * @param out - The output stream of the response
+     * @param soapAction - SoapAction of the request
+     * @param requestURI - The URL that the request came to
+     * @param configurationContext - The Axis Configuration Context
+     * @param requestParameters - The parameters of the request message
+     * @return - boolean indication whether the operation was succesfull
+     * @throws AxisFault - Thrown in case a fault occurs
+     * @deprecated use RESTUtil.processURLRequest(MessageContext msgContext, OutputStream out, String contentType) instead
+     */
+
     public static boolean processHTTPGetRequest(MessageContext msgContext,
                                                 OutputStream out, String soapAction, String requestURI,
                                                 ConfigurationContext configurationContext, Map requestParameters)
