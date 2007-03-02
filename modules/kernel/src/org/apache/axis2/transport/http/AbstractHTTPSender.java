@@ -21,6 +21,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
@@ -204,24 +205,26 @@ public abstract class AbstractHTTPSender {
      * @param msgContext
      */
     protected void obtainHTTPHeaderInformation(HttpMethodBase method,
-                                               MessageContext msgContext) {
+                                               MessageContext msgContext) throws AxisFault {
            Map transportHeaders =  new CommonsTransportHeaders(method.getResponseHeaders());
         msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,transportHeaders);
         Header header =method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
 
         if (header != null) {
             HeaderElement[] headers = header.getElements();
-            OperationContext opContext = msgContext.getOperationContext();
+            MessageContext inMessageContext = msgContext.getOperationContext().getMessageContext(
+                    WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             
-            if (opContext != null) {
-                opContext.setProperty(Constants.Configuration.CONTENT_TYPE,
-                        header.getValue());
+            if (inMessageContext != null) {
+                inMessageContext.setProperty(Constants.Configuration.CONTENT_TYPE, header.getValue());
+
+
                 
             for (int i = 0; i < headers.length; i++) {
                 NameValuePair charsetEnc =headers[i].getParameterByName(
                         HTTPConstants.CHAR_SET_ENCODING);
                 if (charsetEnc != null) {
-                        opContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
+                        inMessageContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
                                 charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
                 }
             }

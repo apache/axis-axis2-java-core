@@ -70,23 +70,27 @@ public class XFormURLEncodedBuilder implements Builder {
         if (endpointReference == null) {
             throw new AxisFault("Cannot create DocumentElement without destination EPR");
         }
-        String address = messageContext.getTo().getAddress();
-        String query = "";
-        int index;
-        if ((index = address.indexOf("?")) > 0) {
-            query = address.substring(index + 1);
-        }
-        extractParametersFromRequest(parameterMap, query, queryParameterSeparator,
-                                     (String) messageContext.getProperty(
-                                             Constants.Configuration.CHARACTER_SET_ENCODING),
-                                     inputStream);
+
+        String requestURL = endpointReference.getAddress();
         try {
-            extractParametersUsingHttpLocation(templatedPath, parameterMap,
-                                               endpointReference.getAddress(),
+            requestURL = extractParametersUsingHttpLocation(templatedPath, parameterMap,
+                                               requestURL,
                                                queryParameterSeparator);
         } catch (UnsupportedEncodingException e) {
             throw new AxisFault(e);
         }
+
+        String query = requestURL;
+        int index;
+        if ((index = requestURL.indexOf("?")) > 0) {
+            query = requestURL.substring(index + 1);
+        }
+
+        extractParametersFromRequest(parameterMap, query, queryParameterSeparator,
+                                     (String) messageContext.getProperty(
+                                             Constants.Configuration.CHARACTER_SET_ENCODING),
+                                     inputStream);
+
 
 
         return BuilderUtil.buildsoapMessage(messageContext, parameterMap,
@@ -114,8 +118,11 @@ public class XFormURLEncodedBuilder implements Builder {
             String parts[] = queryString.split(queryParamSeparator);
             for (int i = 0; i < parts.length; i++) {
                 int separator = parts[i].indexOf("=");
-                parameterMap
-                        .put(parts[i].substring(0, separator), parts[i].substring(separator + 1));
+                if (separator > 0) {
+                    parameterMap
+                            .put(parts[i].substring(0, separator),
+                                 parts[i].substring(separator + 1));
+                }
             }
 
         }
@@ -166,7 +173,7 @@ public class XFormURLEncodedBuilder implements Builder {
      * @param templatedPath
      * @param parameterMap
      */
-    protected void extractParametersUsingHttpLocation(String templatedPath,
+    protected String extractParametersUsingHttpLocation(String templatedPath,
                                                       MultipleEntryHashMap parameterMap,
                                                       String requestURL,
                                                       String queryParameterSeparator)
@@ -220,7 +227,7 @@ public class XFormURLEncodedBuilder implements Builder {
                                                   requestURIBuffer.substring(
                                                           endIndexOfConstant));
                             }
-                            startIndex = requestURIBuffer.length();
+                            return "";
                         } else {
 
                             constantPart =
@@ -233,7 +240,10 @@ public class XFormURLEncodedBuilder implements Builder {
                                               requestURIBuffer.substring(
                                                       endIndexOfConstant, indexOfNextConstant));
 
-                            startIndex = requestURIBuffer.length();
+                            if (requestURIBuffer.length() > indexOfNextConstant + 1) {
+                                return requestURIBuffer.substring(indexOfNextConstant + 1);
+                            }
+                            return "";
                         }
                     } else {
 
@@ -253,8 +263,9 @@ public class XFormURLEncodedBuilder implements Builder {
                 }
 
             }
-
         }
+
+        return requestURL;
     }
 
     private void addParameterToMap(MultipleEntryHashMap parameterMap, String paramName,
