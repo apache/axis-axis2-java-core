@@ -395,7 +395,9 @@ public class SchemaGenerator implements Java2WSDLConstants {
             classTypeName = "base64Binary";
             isArrayType = false;
         }
-
+        if("javax.activation.DataHandler".equals(classTypeName)){
+            classTypeName = "base64Binary";
+        }
         QName schemaTypeName = typeTable.getSimpleSchemaTypeName(classTypeName);
         if (schemaTypeName == null) {
             schemaTypeName = generateSchema(type);

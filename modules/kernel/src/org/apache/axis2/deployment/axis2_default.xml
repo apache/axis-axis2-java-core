@@ -33,9 +33,6 @@
     <!--<parameter name="servicePath" locked="false">services</parameter>-->
     <!--<parameter name="restPath" locked="false">rest</parameter>-->
 
-    <!--Set the flag to true if you want to enable transport level session management-->
-    <parameter name="manageTransportSession" locked="false">false</parameter>
-
     <!-- Following parameter will completely disable REST handling in Axis2-->
     <parameter name="disableREST" locked="true">false</parameter>
 

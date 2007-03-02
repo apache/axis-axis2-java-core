@@ -1,8 +1,6 @@
 package org.apache.axis2.rpc.receivers;
 
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.*;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.Base64;
@@ -231,7 +229,19 @@ public class RPCUtil {
                                 service.isElementFormDefault(),
                                 service.getTypeTable());
                         envelope.getBody().addChild(bodyChild);
-                    } else {
+                    } else if (SimpleTypeMapper.isDataHandler(resObject.getClass())){
+                        OMElement resElemt =  fac.createOMElement(method.getName() + "Response" ,ns);
+                        OMText text = fac.createOMText(resObject,true);
+                        OMElement returnElement;
+                        if(service.isElementFormDefault()){
+                            returnElement=   fac.createOMElement(RETURN_WRAPPER ,ns);
+                        } else {
+                            returnElement=   fac.createOMElement(RETURN_WRAPPER ,null);
+                        }
+                        returnElement.addChild(text);
+                        resElemt.addChild(returnElement);
+                        envelope.getBody().addChild(resElemt);
+                    }  else {
                         if (service.isElementFormDefault()) {
                             RPCUtil.processResponse(fac, resObject, bodyContent, ns,
                                     envelope, method, service.isElementFormDefault(),

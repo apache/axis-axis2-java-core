@@ -594,6 +594,8 @@ public class BeanUtil {
                     }
                 } else if (SimpleTypeMapper.isCollection(classType)) {
                     return SimpleTypeMapper.getArrayList(omElement);
+                }else if(SimpleTypeMapper.isDataHandler(classType)){
+                    return SimpleTypeMapper.getDataHandler(omElement);
                 } else {
                     return BeanUtil.deserialize(classType, omElement, objectSupplier, null);
                 }

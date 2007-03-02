@@ -18,8 +18,14 @@
 package org.apache.axis2.databinding.typemapping;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMText;
+import org.apache.axiom.om.OMDataSource;
+import org.apache.axiom.attachments.utils.DataHandlerUtils;
 
 import javax.xml.namespace.QName;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -105,6 +111,20 @@ public class SimpleTypeMapper {
         return list;
     }
 
+    public static DataHandler getDataHandler(OMElement element) {
+        OMNode node =element.getFirstOMChild();
+        if (node instanceof OMText) {
+            OMText txt = (OMText) node;
+            if(txt.isOptimized()){
+                return (DataHandler) txt.getDataHandler();
+            } else {
+               return (DataHandler) DataHandlerUtils.getDataHandlerFromText(txt.getText(),null);  
+            }
+        }
+        return null;
+    }
+
+
     public static ArrayList getArrayList(OMElement element) {
         Iterator childitr = element.getChildren();
         ArrayList list = new ArrayList();
@@ -129,6 +149,9 @@ public class SimpleTypeMapper {
     public static boolean isSimpleType(Class obj) {
         String objClassName = obj.getName();
         return isSimpleType(objClassName);
+    }
+    public static boolean isDataHandler(Class obj){
+        return "javax.activation.DataHandler".equals(obj.getName());
     }
 
     public static boolean isCollection(Class obj) {
@@ -310,4 +333,5 @@ public class SimpleTypeMapper {
             return calendar;
         }
     }
+
 }
