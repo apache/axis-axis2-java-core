@@ -20,10 +20,12 @@ package org.apache.axis2.deployment;
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.builder.ApplicationXMLBuilder;
 import org.apache.axis2.builder.Builder;
 import org.apache.axis2.builder.MIMEBuilder;
 import org.apache.axis2.builder.MTOMBuilder;
 import org.apache.axis2.builder.SOAPBuilder;
+import org.apache.axis2.builder.XFormURLEncodedBuilder;
 import org.apache.axis2.dataretrieval.DRConstants;
 import org.apache.axis2.deployment.util.PhasesInfo;
 import org.apache.axis2.deployment.util.Utils;
@@ -173,6 +175,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
     			axisConfig.addMessageBuilder("application/soap+xml", new SOAPBuilder());
     			axisConfig.addMessageBuilder("text/xml", new SOAPBuilder());
     			axisConfig.addMessageBuilder("application/xop+xml", new MTOMBuilder());
+                axisConfig.addMessageBuilder("application/xml", new ApplicationXMLBuilder());
+                axisConfig.addMessageBuilder("application/x-www-form-urlencoded", new XFormURLEncodedBuilder());
 
             //process dataLocator configuration
             OMElement dataLocatorElement =
