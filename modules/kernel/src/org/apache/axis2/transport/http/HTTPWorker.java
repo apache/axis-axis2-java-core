@@ -194,8 +194,6 @@ public class HTTPWorker implements Worker {
             // deal with GET request
             pi = RESTUtil.processURLRequest(msgContext, outbuffer.getOutputStream(), null);
 
-            handleResponse(pi, response, outbuffer, ver, configurationContext, msgContext);
-
         } else if (method.equals(HTTPConstants.HEADER_POST)) {
             // deal with POST request
 
@@ -231,7 +229,7 @@ public class HTTPWorker implements Worker {
 
             throw new MethodNotSupportedException(method + " method not supported");
         }
-        handleResponse(pi, response, outbuffer, ver, configurationContext, msgContext);
+        handleResponse(pi, response, outbuffer, msgContext);
         // Finalize response
         OperationContext operationContext = msgContext.getOperationContext();
         Object contextWritten = null;
@@ -254,10 +252,8 @@ public class HTTPWorker implements Worker {
     }
 
     private void handleResponse(InvocationResponse pi, HttpResponse response,
-                                OutputBuffer outbuffer, HttpVersion ver,
-                                ConfigurationContext configurationContext, MessageContext msgContext)
+                                OutputBuffer outbuffer,MessageContext msgContext)
             throws IOException {
-        if (pi.equals(InvocationResponse.CONTINUE)) {
             Boolean holdResponse = (Boolean) msgContext.getProperty(RequestResponseTransport.HOLD_RESPONSE);
 
             if (pi.equals(InvocationResponse.SUSPEND) || (holdResponse != null && Boolean.TRUE.equals(holdResponse))) {
@@ -270,7 +266,6 @@ public class HTTPWorker implements Worker {
             }
 
             response.setEntity(outbuffer);
-        }
     }
 
     private String processContentType(HttpEntity inentity, MessageContext msgContext) {
