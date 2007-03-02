@@ -32,6 +32,7 @@ import javax.wsdl.Definition;
 import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -44,6 +45,7 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 //import org.apache.log4j.BasicConfigurator;
@@ -178,12 +180,9 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
            		OperationDescription operation = new OperationDescriptionImpl(mdc, this, axisOperation);
            	
             	if (axisOperation == null) {
-            		//This axisOperation does not already exist on the AxisService, so add it now
-            		
-                    // TODO: Do we need to worry about a null AxisOperation at this level?
-        
-            		axisService.addOperation(operation.getAxisOperation());
-            		
+            		// This axisOperation did not already exist on the AxisService, and so was created
+                    // with the OperationDescription, so we need to add the operation to the service
+                    ((OperationDescriptionImpl) operation).addToAxisService(axisService);
             	}
             	
         		if (log.isDebugEnabled())
@@ -204,9 +203,8 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         //          WebServiceRefAnnot (List) (JAXWS)
         //          BindingTypeAnnot (JAXWS Sec. 7.8 -- Used to set either the AS.endpoint, or AS.SoapNSUri)
         //          WebServiceContextAnnot (JAXWS via injection)
-        
-//        BasicConfigurator.resetConfiguration();
     }
+
 
     private static Method[] getSEIMethods(Class sei) {
         // Per JSR-181 all methods on the SEI are mapped to operations regardless

@@ -31,6 +31,7 @@ import java.util.concurrent.Future;
 
 import javax.jws.Oneway;
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebParam.Mode;
 import javax.jws.soap.SOAPBinding;
@@ -42,8 +43,11 @@ import javax.xml.ws.ResponseWrapper;
 import javax.xml.ws.WebFault;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.FaultDescription;
@@ -183,77 +187,131 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         
         webMethodAnnotation = methodComposite.getWebMethodAnnot();
 
-        this.axisOperation = axisOperation;
-        
-        //If an AxisOperation was already created for us by populateService then just use that onw
-        //Otherwise, build it up here
-        if (this.axisOperation == null) {
-        	
-        	try {
-        		if (isOneWay()) {               
-        			axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY);
-        		} else {
-        			axisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT);
-        		}
-        		//TODO: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
-        		//                                              ROBUST_IN_ONLY
-        		//      Determine how these MEP's should be handled, if at all
-        	} catch (Exception e) {
-        		AxisFault ex = new AxisFault("OperationDescriptionImpl:cons - unable to build AxisOperation ");
-        	}
-            
-        	if (axisOperation != null){
-        		
-        		axisOperation.setName(determineOperationQName(this.methodComposite));
-        		axisOperation.setSoapAction(this.getAction());
-        		
-        		
-        		//TODO: Determine other axisOperation values that may need to be set
-        		//      Currently, the following values are being set on AxisOperation in 
-        		//      ServiceBuilder.populateService which we are not setting:
-        		//          AxisOperation.setPolicyInclude()
-        		//          AxisOperation.setWsamappingList()
-        		//          AxisOperation.setOutputAction()
-        		//          AxisOperation.addFaultAction()
-        		//          AxisOperation.setFaultMessages()
-        		
-        		// TODO: The WSMToAxisServiceBuilder sets the message receiver, not sure why this is done
-        		//       since AxisService.addOperation does this as well by setting it to a default
-        		//       MessageReceiver...it appears that this code is also setting it to a default
-        		//       receiver..need to understand this
-        		
-        		/*
-        		 String messageReceiverClass = "org.apache.axis2.rpc.receivers.RPCMessageReceiver";
-        		 if(wsmOperation.isOneWay()){
-        		 messageReceiverClass = "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver";
-        		 }
-        		 try{
-        		 MessageReceiver msgReceiver = (MessageReceiver)Class.forName(messageReceiverClass).newInstance();
-        		 axisOperation.setMessageReceiver(msgReceiver);
-        		 
-        		 }catch(Exception e){
-        		 }
-        		 */
-        		
-        		//TODO: Need to process the other annotations that can exist, on the server side
-        		//      and at the method level.
-        		//      They are, as follows:       
-        		//          WebResultAnnot (181)
-        		//          HandlerChain
-        		//          SoapBinding (181)
-        		//          WebServiceRefAnnot (List) (JAXWS)
-        		//          WebServiceContextAnnot (JAXWS via injection)
-        		//          RequestWrapper (JAXWS)
-        		//          ResponseWrapper (JAXWS)	
-        	}
-        	
-        	this.axisOperation = axisOperation;
-        }
-        
 		parameterDescriptions = createParameterDescriptions();
 		faultDescriptions = createFaultDescriptions();
+
+        //If an AxisOperation was already created for us by populateService then just use that one
+        //Otherwise, create it
+        if (axisOperation != null) {
+            this.axisOperation = axisOperation;
+        }
+        else {
+            this.axisOperation = createAxisOperation();
+        }
     }
-    
+
+    /**
+     * Create an AxisOperation for this Operation.  Note that the ParameterDescriptions must
+     * be created before calling this method since, for a DOC/LIT/BARE (aka UNWRAPPED) message, the 
+     * ParamaterDescription is used to setup the AxisMessage correctly for use in SOAP Body-based
+     * dispatching on incoming DOC/LIT/BARE messages.
+     */
+    private AxisOperation createAxisOperation() {
+        AxisOperation newAxisOperation = null;	
+        try {
+            if (isOneWay()) {               
+                newAxisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY);
+            } else {
+                newAxisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT);
+            }
+            //TODO: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
+            //                                              ROBUST_IN_ONLY
+            //      Determine how these MEP's should be handled, if at all
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to build AxisOperation for OperationDescrition; caught exception.", e);
+            }
+            // TODO: NLS & RAS
+            throw ExceptionFactory.makeWebServiceException("Caught exception trying to create AxisOperation", e);
+        }
+        
+        newAxisOperation.setName(determineOperationQName(this.methodComposite));
+        newAxisOperation.setSoapAction(this.getAction());
+
+        //REVIEW: Determine if other axisOperation values may need to be set
+        //      Currently, the following values are being set on AxisOperation in 
+        //      ServiceBuilder.populateService which we are not setting:
+        //          AxisOperation.setPolicyInclude()
+        //          AxisOperation.setWsamappingList()
+        //          AxisOperation.setOutputAction()
+        //          AxisOperation.addFaultAction()
+        //          AxisOperation.setFaultMessages()
+        
+        // If this is a DOC/LIT/BARE operation, then set the QName of the input AxisMessage to the 
+        // part for the first IN or IN/OUT non-header parameter.  If there are no parameters, then don't set
+        // anything.  The AxisMessage name is used to do SOAP-body based routing of DOC/LIT/BARE
+        // incoming messages.
+        if (getSoapBindingStyle() == javax.jws.soap.SOAPBinding.Style.DOCUMENT
+            && getSoapBindingUse() == javax.jws.soap.SOAPBinding.Use.LITERAL
+            && getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle.BARE) {
+            ParameterDescription[] paramDescs = getParameterDescriptions();
+            if (paramDescs != null && paramDescs.length > 0) {
+                for (ParameterDescription paramDesc : paramDescs) {
+                    WebParam.Mode paramMode = paramDesc.getMode();
+                    if (!paramDesc.isHeader() 
+                            && (paramMode == WebParam.Mode.IN || paramMode == WebParam.Mode.INOUT)) {
+                        // We've found the first IN or INOUT non-header parameter, so set the AxisMessage
+                        // QName based on this parameter then break out of the loop.
+                        AxisMessage axisMessage = 
+                            newAxisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                        String partLocalName = paramDesc.getPartName();
+                        String partNamespace = paramDesc.getTargetNamespace();
+                        if (log.isDebugEnabled()) {
+                            log.debug("Setting up annotation based Doc/Lit/Bare operation: " + newAxisOperation.getName()
+                                    + "; axisMessage: " + axisMessage + "; partLocalName: " 
+                                    + partLocalName + "; partTNS: " + partNamespace);
+                        }
+                        if (axisMessage == null) {
+                            // TODO: RAS & NLS
+                            throw ExceptionFactory.makeWebServiceException("Could not setup Doc/Lit/Bare operation because input message is null");
+                        }
+                        else if (DescriptionUtils.isEmpty(partNamespace)) {
+                            // TODO: RAS & NLS
+                            throw ExceptionFactory.makeWebServiceException("Could not setup Doc/Lit/Bare operation because part namespace is empty");
+                        }
+                        else if (DescriptionUtils.isEmpty(partLocalName)) {
+                            // TODO: RAS & NLS
+                            throw ExceptionFactory.makeWebServiceException("Could not setup Doc/Lit/Bare operation because part local name is empty");
+                        }
+                        else {
+                            QName partQName = new QName(partNamespace, partLocalName);
+                            axisMessage.setElementQName(partQName);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return newAxisOperation;
+    }
+    /**
+     * Adds the AxisOperation corresponding to this OperationDescription to the AxisService
+     * if it isn't already there.
+     * It also addes the AxisOperation to any other routing mechanisms for that AxisService:
+     * - For Doc/Lit/Bare operations it is added to the MessageElementQNameToOperationMapping 
+     * @param axisService
+     */
+     void addToAxisService(AxisService axisService) {
+        AxisOperation newAxisOperation = getAxisOperation();
+        QName axisOpQName = newAxisOperation.getName();
+        if (axisService.getOperation(axisOpQName) == null) {
+            axisService.addOperation(newAxisOperation);
+            // For a Doc/Lit/Bare operation, we also need to add the element mapping
+            if (getSoapBindingStyle() == javax.jws.soap.SOAPBinding.Style.DOCUMENT
+                    && getSoapBindingUse() == javax.jws.soap.SOAPBinding.Use.LITERAL
+                    && getSoapBindingParameterStyle() == javax.jws.soap.SOAPBinding.ParameterStyle.BARE) {
+                AxisMessage axisMessage = 
+                    newAxisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                if (axisMessage != null) {
+                    QName elementQName = axisMessage.getElementQName();
+                    if (!DescriptionUtils.isEmpty(elementQName)) {
+                        axisService.addMessageElementQNameToOperationMapping(elementQName, newAxisOperation);
+                    }
+                }
+            }
+        }
+    }
+
     void setSEIMethod(Method method) {
         if (seiMethod != null) {
             // TODO: This is probably an error, but error processing logic is incorrect
