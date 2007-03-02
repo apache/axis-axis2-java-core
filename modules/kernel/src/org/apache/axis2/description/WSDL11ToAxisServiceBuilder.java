@@ -2,22 +2,16 @@ package org.apache.axis2.description;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import com.ibm.wsdl.util.xml.DOM2Writer;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.transport.http.util.RESTUtil;
+import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingHelper;
 import org.apache.axis2.addressing.wsdl.WSDL11ActionHelper;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.wsdl.SOAPHeaderMessage;
-import org.apache.axis2.wsdl.SoapAddress;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.*;
 import org.apache.axis2.wsdl.util.WSDL4JImportedWSDLHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,6 +44,9 @@ import javax.wsdl.Types;
 import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.UnknownExtensibilityElement;
+import javax.wsdl.extensions.http.HTTPBinding;
+import javax.wsdl.extensions.http.HTTPOperation;
+import javax.wsdl.extensions.http.HTTPAddress;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
@@ -73,6 +70,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -136,6 +134,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * Keeps a list of processable operations initiate to an empty list
      */
     private List wrappableOperations = new ArrayList();
+    // used to keep the binding type of the selected binding
+    private String bindingType;
 
     public static final String WRAPPED_OUTPUTNAME_SUFFIX = "Response";
 
@@ -148,6 +148,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     public static final String NAMESPACE_URI = "namespace";
 
     public static final String TRAGET_NAMESPACE = "targetNamespace";
+
+    public static final String BINDING_TYPE_SOAP = "soap";
+    public static final String BINDING_TYPE_HTTP = "http";
 
     /**
      * keep track of whether setup code related to the entire wsdl is complete.
@@ -324,8 +327,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     populateEndpoint(axisEndpoint, port, true);
                     axisService.setEndpointName(axisEndpoint.getName());
                     axisService.setBindingName(axisEndpoint.getBinding().getName().getLocalPart());
-                    SoapAddress soapAddress = (SoapAddress) axisEndpoint.getProperty(WSDL2Constants.ATTR_WSOAP_ADDRESS);
-                    axisService.setEndpointURL(soapAddress.getLocation());
+                    if (BINDING_TYPE_SOAP.equals(this.bindingType)){
+                        SoapAddress soapAddress = (SoapAddress) axisEndpoint.getProperty(WSDL2Constants.ATTR_WSOAP_ADDRESS);
+                        axisService.setEndpointURL(soapAddress.getLocation());
+                    } else if (BINDING_TYPE_HTTP.equals(this.bindingType)){
+                        HttpAddress httpAddress = (HttpAddress) axisEndpoint.getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
+                        axisService.setEndpointURL(httpAddress.getLocation());
+                    }
+
                 } else {
                     populateEndpoint(axisEndpoint, port, false);
                 }
@@ -411,6 +420,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         AxisBindingOperation axisBindingOperation;
         BindingOperation wsdl4jBindingOperation;
 
+        Map httpLocationMap = new TreeMap();
+        String httpLocation = null;
+
         PortType portType = wsdl4jDefinition.getPortType(wsdl4jBinding.getPortType().getQName());
 
         for (Iterator iterator = wsdl4jBidingOperations.iterator(); iterator.hasNext();) {
@@ -427,6 +439,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // process ExtensibilityElements of the wsdl4jBinding
             copyExtensibleElements(wsdl4jBindingOperation.getExtensibilityElements(),
                     wsdl4jDefinition, axisBindingOperation, BINDING_OPERATION);
+
+             httpLocation = (String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
+             if (httpLocation != null){
+                 httpLocationMap.put(RESTUtil.getConstantFromHTTPLocation(httpLocation),
+                         axisBindingOperation.getAxisOperation());
+             }
 
             BindingInput wsdl4jBindingInput = wsdl4jBindingOperation.getBindingInput();
 
@@ -498,8 +516,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     addQNameReference(faultMessage, wsdl4jFault.getMessage());
                 }
             }
+
             axisBinding.addChild(axisBindingOperation.getName(), axisBindingOperation);
         }
+        axisBinding.setProperty(WSDL2Constants.HTTP_LOCATION_TABLE,httpLocationMap);
     }
 
     /**
@@ -1124,8 +1144,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // list, in which case we'll generate a schema per porttype
         // //////////////////////////////////////////////////////////////////////
 
-        //find wrappable operations return only the operations in rpc style.
-        // i.e if the binding is any thing else than the soap it returns an empty list
+        // findwrappable operations return either the rpc soap operations or
+        // Http binding operations
 
         List wrappableBindingOperationsList = findWrappableBindingOperations(wsdl4jBinding);
 
@@ -1146,7 +1166,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      * @return null if there is no element
      */
     private Map createSchemaForPorttype(String namespaceURI,
-                                            List operationListToProcess, Map existingSchemaMap) {
+                                        List operationListToProcess,
+                                        Map existingSchemaMap) {
 
         // this map is used to keep the newly added schemas
         Map newSchemaMap = new HashMap();
@@ -1221,22 +1242,28 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             if (bindingInput != null) {
 
-                Iterator partsIterator;
-                // first see the body parts list
-                List bodyPartsList = getPartsListFromSoapBody(bindingInput.getExtensibilityElements());
-                if (bodyPartsList != null) {
-                    partsIterator = message.getOrderedParts(bodyPartsList).iterator();
-                } else {
-                    // then see the parameter order
-                    List parameterOrder = operation.getOperation().getParameterOrdering();
-                    if (parameterOrder != null) {
-                        partsIterator = message.getOrderedParts(parameterOrder).iterator();
+                Iterator partsIterator = null;
+                if(BINDING_TYPE_SOAP.equals(this.bindingType)){
+                   // first see the body parts list
+                    List bodyPartsList = getPartsListFromSoapBody(bindingInput.getExtensibilityElements());
+                    if (bodyPartsList != null) {
+                        partsIterator = message.getOrderedParts(bodyPartsList).iterator();
                     } else {
-                        // finally get the message part list
-                        partsIterator = message.getParts().values().iterator();
-                    }
+                        // then see the parameter order
+                        List parameterOrder = operation.getOperation().getParameterOrdering();
+                        if (parameterOrder != null) {
+                            partsIterator = message.getOrderedParts(parameterOrder).iterator();
+                        } else {
+                            // finally get the message part list
+                            partsIterator = message.getParts().values().iterator();
+                        }
 
+                    }
+                } else {
+                    // i.e http binding
+                    partsIterator = message.getParts().values().iterator();
                 }
+
 
                 namespaceImportsMap = new HashMap();
                 namespacePrefixMap = new HashMap();
@@ -1248,8 +1275,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         namespacePrefixMap);
 
                 elementDeclaration.appendChild(newComplexType);
-                String bodyNamespace = getNamespaceFromSoapBody(bindingInput.getExtensibilityElements());
-                String namespaceToUse = bodyNamespace != null? bodyNamespace: namespaceURI;
+                String namespaceToUse = namespaceURI;
+
+                if (BINDING_TYPE_SOAP.equals(this.bindingType)){
+                    String bodyNamespace = getNamespaceFromSoapBody(bindingInput.getExtensibilityElements());
+                    namespaceToUse = bodyNamespace != null? bodyNamespace: namespaceURI;
+                }
 
                 if (existingSchemaMap.containsKey(namespaceToUse)){
                     // i.e this namespace is already exists with the original wsdl schemas
@@ -1302,24 +1333,30 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             Message message = (Message) operationToOutputMessageMap.get(operation);
 
             if (bindingOutput != null) {
-                Iterator partsIterator;
-                // first see the body parts list
-                List bodyPartsList = getPartsListFromSoapBody(bindingOutput.getExtensibilityElements());
-                if (bodyPartsList != null) {
-                    bodyPartsList.add("result");
-                    partsIterator = message.getOrderedParts(bodyPartsList).iterator();
-                } else {
-                    // then see the parameter order
-                    List parameterOrder = operation.getOperation().getParameterOrdering();
-                    if (parameterOrder != null) {
-                        parameterOrder.add("result");
-                        partsIterator = message.getOrderedParts(parameterOrder).iterator();
+                Iterator partsIterator = null;
+                if (BINDING_TYPE_SOAP.equals(this.bindingType)){
+                    // first see the body parts list
+                    List bodyPartsList = getPartsListFromSoapBody(bindingOutput.getExtensibilityElements());
+                    if (bodyPartsList != null) {
+                        bodyPartsList.add("result");
+                        partsIterator = message.getOrderedParts(bodyPartsList).iterator();
                     } else {
-                        // finally get the message part list
-                        partsIterator = message.getParts().values().iterator();
-                    }
+                        // then see the parameter order
+                        List parameterOrder = operation.getOperation().getParameterOrdering();
+                        if (parameterOrder != null) {
+                            parameterOrder.add("result");
+                            partsIterator = message.getOrderedParts(parameterOrder).iterator();
+                        } else {
+                            // finally get the message part list
+                            partsIterator = message.getParts().values().iterator();
+                        }
 
+                    }
+                } else {
+                    // i.e if http binding
+                    partsIterator = message.getParts().values().iterator();
                 }
+
 
                 // we have to initialize the hash maps always since we add the elements onece we
                 // generate it
@@ -1333,8 +1370,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         namespacePrefixMap);
                 elementDeclaration.appendChild(newComplexType);
 
-                String bodyNamespace = getNamespaceFromSoapBody(bindingOutput.getExtensibilityElements());
-                String namespaceToUse = bodyNamespace != null? bodyNamespace: namespaceURI;
+                String namespaceToUse = namespaceURI;
+
+                if (BINDING_TYPE_SOAP.equals(this.bindingType)){
+                    String bodyNamespace = getNamespaceFromSoapBody(bindingOutput.getExtensibilityElements());
+                    namespaceToUse = bodyNamespace != null? bodyNamespace: namespaceURI;
+                }
 
                 if (existingSchemaMap.containsKey(namespaceToUse)){
                     // i.e this namespace is already exists with the original wsdl schemas
@@ -1758,6 +1799,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 if (description instanceof AxisEndpoint) {
                     ((AxisEndpoint) description).setProperty(WSDL2Constants.ATTR_WSOAP_ADDRESS, address);
                 }
+            } else if (wsdl4jExtensibilityElement instanceof HTTPAddress){
+                HTTPAddress httpAddress = (HTTPAddress) wsdl4jExtensibilityElement;
+                HttpAddress address = new HttpAddress();
+                address.setLocation(httpAddress.getLocationURI());
+                if (description instanceof AxisEndpoint) {
+                    ((AxisEndpoint) description).setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, address);
+                }
 
             } else if (wsdl4jExtensibilityElement instanceof Schema) {
                 Schema schema = (Schema) wsdl4jExtensibilityElement;
@@ -1796,6 +1844,21 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     axisBindingOperation.getAxisOperation().setSoapAction(soapAction);
                     axisService.mapActionToOperation(soapAction, axisBindingOperation.getAxisOperation());
                 }
+            } else if (wsdl4jExtensibilityElement instanceof HTTPOperation){
+                HTTPOperation httpOperation = (HTTPOperation) wsdl4jExtensibilityElement;
+                AxisBindingOperation axisBindingOperation = (AxisBindingOperation) description;
+
+                String httpLocation = httpOperation.getLocationURI();
+                if (httpLocation != null) {
+                    // change the template to make it same as WSDL 2 template
+                    httpLocation = httpLocation.replaceAll("\\(","{");
+                    httpLocation = httpLocation.replaceAll("\\)","}");
+                    axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocation);
+
+                }
+                axisBindingOperation.setProperty(WSDL2Constants.ATTR_WHTTP_INPUT_SERIALIZATION,
+                        HTTPConstants.MEDIA_TYPE_X_WWW_FORM);
+
 
             } else if (wsdl4jExtensibilityElement instanceof SOAP12Header) {
 
@@ -1923,6 +1986,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 String transportURI = soapBinding.getTransportURI();
                 axisBinding.setType(transportURI);
 
+            } else if (wsdl4jExtensibilityElement instanceof HTTPBinding){
+                HTTPBinding httpBinding = (HTTPBinding) wsdl4jExtensibilityElement;
+                AxisBinding axisBinding = (AxisBinding) description;
+                // set the binding style same as the wsd2 to process smoothly
+                axisBinding.setType(WSDL2Constants.URI_WSDL2_HTTP);
+                axisBinding.setProperty(WSDL2Constants.ATTR_WHTTP_METHOD, httpBinding.getVerb());
             }
         }
     }
@@ -1986,8 +2055,12 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // for a SOAP binding this can be only rpc or document
         // as per the WSDL spec (section 3.4) the default style is document
 
+        // now we have to handle the http bindings case as well
+        //
+
         boolean isRPC = false;
         boolean isSOAPBinding = false;
+        boolean isHttpBinding = false;
 
         List extElements = binding.getExtensibilityElements();
         for (int i = 0; i < extElements.size(); i++) {
@@ -1999,7 +2072,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     // set the global style to rpc
                     isRPC = true;
                 }
-
+                this.bindingType = BINDING_TYPE_SOAP;
                 break;
             } else if (extElements.get(i) instanceof SOAP12Binding) {
                 // we have a global SOAP binding!
@@ -2009,14 +2082,14 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     // set the global style to rpc
                     isRPC = true;
                 }
-
+                this.bindingType = BINDING_TYPE_SOAP;
                 break;
+            } else if (extElements.get(i) instanceof HTTPBinding) {
+                isHttpBinding = true;
+                this.bindingType = BINDING_TYPE_HTTP;
+            } else {
+                throw new WSDLProcessingException("Not supported binding type " + binding.getQName().getLocalPart());
             }
-        }
-
-        // if SOAPBinding is not present just return an empty list
-        if (!isSOAPBinding) {
-            return new ArrayList();
         }
 
         // go through every operation and get their styles.
@@ -2025,27 +2098,33 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // to the return list
         List returnList = new ArrayList();
 
-        BindingOperation bindingOp;
-        for (Iterator bindingOperationsIterator = binding
-                .getBindingOperations().iterator(); bindingOperationsIterator
-                .hasNext();) {
-            bindingOp = (BindingOperation) bindingOperationsIterator.next();
-            String style = getSOAPStyle(bindingOp);
-
-            if (style == null) {
-                // no style specified
-                // use the global style to determine whether to put this one or
-                // not
-                if (isRPC) {
-                    returnList.add(bindingOp);
+        if (isHttpBinding || isSOAPBinding){
+            BindingOperation bindingOp;
+            for (Iterator bindingOperationsIterator =
+                    binding.getBindingOperations().iterator(); bindingOperationsIterator.hasNext();) {
+                bindingOp = (BindingOperation) bindingOperationsIterator.next();
+                if (isSOAPBinding){
+                   String style = getSOAPStyle(bindingOp);
+                    if (style == null) {
+                        // no style specified
+                        // use the global style to determine whether to put this one or
+                        // not
+                        if (isRPC) {
+                            returnList.add(bindingOp);
+                        }
+                    } else if (RPC_STYLE.equals(style)) {
+                        // add to the list
+                        returnList.add(bindingOp);
+                    }
+                    // if not RPC we just leave it - default is doc
+                } else {
+                   // i.e an http binding then we have to add the operation any way
+                   returnList.add(bindingOp);
                 }
-            } else if (RPC_STYLE.equals(style)) {
-                // add to the list
-                returnList.add(bindingOp);
             }
-            // if not RPC we just leave it - default is doc
-
         }
+
+        // if the binding is not either soap or http binding then we return and empty list
 
         // set this to the global list
         wrappableOperations = returnList;

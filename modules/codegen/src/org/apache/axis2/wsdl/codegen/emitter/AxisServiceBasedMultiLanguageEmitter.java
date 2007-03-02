@@ -159,17 +159,17 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //populate the MEP -> suffix map
         mepToSuffixMap = new HashMap();
         mepToSuffixMap.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY,
-                           MESSAGE_RECEIVER_SUFFIX + "InOnly");
+                MESSAGE_RECEIVER_SUFFIX + "InOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY,
-                           MESSAGE_RECEIVER_SUFFIX + "InOnly");
+                MESSAGE_RECEIVER_SUFFIX + "InOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY,
-                           MESSAGE_RECEIVER_SUFFIX + "RobustInOnly");
+                MESSAGE_RECEIVER_SUFFIX + "RobustInOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY,
-                           MESSAGE_RECEIVER_SUFFIX + "RobustInOnly");
+                MESSAGE_RECEIVER_SUFFIX + "RobustInOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT,
-                           MESSAGE_RECEIVER_SUFFIX + "InOut");
+                MESSAGE_RECEIVER_SUFFIX + "InOut");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT,
-                           MESSAGE_RECEIVER_SUFFIX + "InOut");
+                MESSAGE_RECEIVER_SUFFIX + "InOut");
         //register the other types as necessary
     }
 
@@ -644,7 +644,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         doc.appendChild(rootElement);
 
         //////////////////////////////////////////////////////////
-//        System.out.println(DOM2Writer.nodeToString(rootElement));
+        System.out.println(DOM2Writer.nodeToString(rootElement));
         ////////////////////////////////////////////////////////////
         return doc;
     }
@@ -1148,8 +1148,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         // add these two attribute to use the user defined wsdl to use.
         try {
-            axisService.addParameter(new Parameter("useOriginalwsdl","true"));
-            axisService.addParameter(new Parameter("modifyUserWSDLPortAddress","false"));
+            axisService.addParameter(new Parameter("useOriginalwsdl", "true"));
+            axisService.addParameter(new Parameter("modifyUserWSDLPortAddress", "false"));
         } catch (AxisFault axisFault) {
             // there is no way to get this excpetion while in codegeneration
         }
@@ -1953,63 +1953,66 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 axisOperation.getName());
         if (property != null) {
             methodElement.appendChild(generateOptionParamComponent(doc,
-                   "org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR",
-                   "\"" + property + "\""));
+                    "org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR",
+                    "\"" + property + "\""));
         }
 
         String mep = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WSOAP_MEP,
-                                                              axisOperation.getName());
+                axisOperation.getName());
 
         String bindingType = axisBinding.getType();
 
         if (WSDL2Constants.URI_WSOAP_MEP.equalsIgnoreCase(mep)) {
             methodElement.appendChild(generateOptionParamComponent(doc,
-                       "org.apache.axis2.Constants.Configuration.ENABLE_REST",
-                       "true"));
+                    "org.apache.axis2.Constants.Configuration.ENABLE_REST",
+                    "true"));
             methodElement.appendChild(generateOptionParamComponent(doc,
-                       "org.apache.axis2.Constants.Configuration.HTTP_METHOD",
-                       "\"" +
-                               org.apache.axis2.Constants.Configuration
-                                       .HTTP_METHOD_GET +
-                               "\""));
+                    "org.apache.axis2.Constants.Configuration.HTTP_METHOD",
+                    "\"" +
+                            org.apache.axis2.Constants.Configuration
+                                    .HTTP_METHOD_GET +
+                            "\""));
             methodElement.appendChild(generateOptionParamComponent(doc,
-                       "org.apache.axis2.Constants.Configuration.CONTENT_TYPE",
-                       "\"" +
-                               org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
-                               "\""));
+                    "org.apache.axis2.Constants.Configuration.CONTENT_TYPE",
+                    "\"" +
+                            org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
+                            "\""));
+             methodElement.appendChild(generateOptionParamComponent(doc,
+                    "org.apache.axis2.Constants.Configuration.MESSAGE_TYPE",
+                    "\"" +
+                            org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM +
+                            "\""));
         } else if (bindingType != null && bindingType.equals(WSDL2Constants.URI_WSDL2_HTTP)) {
 
             methodElement.appendChild(generateOptionParamComponent(doc,
-                               "org.apache.axis2.Constants.Configuration.ENABLE_REST",
-                               "true"));
+                    "org.apache.axis2.Constants.Configuration.ENABLE_REST",
+                    "true"));
 
             property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_METHOD,
-                                                                axisOperation.getName());
+                    axisOperation.getName());
             if (property != null) {
                 methodElement.appendChild(generateOptionParamComponent(doc,
-                           "org.apache.axis2.Constants.Configuration.HTTP_METHOD",
-                           "\"" + property + "\""));
-            }
-
-            // If there is no WHTTP_METHOD defined then we better compute the default value which is get if the operation
-            // is wsdlx:safe or post otherwise
-            else if (!WSDL2Constants.URI_WSOAP_MEP.equalsIgnoreCase(mep)) {
+                        "org.apache.axis2.Constants.Configuration.HTTP_METHOD",
+                        "\"" + property + "\""));
+            } else if (!WSDL2Constants.URI_WSOAP_MEP.equalsIgnoreCase(mep)) {
+                // If there is no WHTTP_METHOD defined then we better compute the default value which is get if the operation
+                // is wsdlx:safe or post otherwise
                 Parameter safe = axisOperation.getParameter(WSDL2Constants.ATTR_WSDLX_SAFE);
                 if (safe != null) {
                     if (((Boolean) safe.getValue()).booleanValue()) {
                         methodElement.appendChild(generateOptionParamComponent(doc,
-                                       "org.apache.axis2.Constants.Configuration.HTTP_METHOD",
-                                       "\"" +
-                                               org.apache.axis2.Constants.Configuration
-                                                       .HTTP_METHOD_GET +
-                                               "\""));
+                                "org.apache.axis2.Constants.Configuration.HTTP_METHOD",
+                                "\"" +
+                                        org.apache.axis2.Constants.Configuration
+                                                .HTTP_METHOD_GET +
+                                        "\""));
                     } else {
                         methodElement.appendChild(generateOptionParamComponent(doc,
-                                   "org.apache.axis2.Constants.Configuration.HTTP_METHOD",
-                                   "\"" +
-                                           org.apache.axis2.Constants.Configuration
-                                                   .HTTP_METHOD_POST +
-                                           "\""));
+                                "org.apache.axis2.Constants.Configuration.HTTP_METHOD",
+                                "\"" +
+                                        org.apache.axis2.Constants.Configuration
+                                                .HTTP_METHOD_POST +
+                                        "\""));
                     }
                 }
             }
@@ -2019,17 +2022,17 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     axisOperation.getName());
             if (value != null) {
                 methodElement.appendChild(generateOptionParamComponent(doc,
-                       "org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED",
-                       "\"" + value.booleanValue() +
-                               "\""));
+                        "org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED",
+                        "\"" + value.booleanValue() +
+                                "\""));
             }
 
             property = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WHTTP_CODE,
-                                                                axisOperation.getName());
+                    axisOperation.getName());
             if (property != null) {
                 methodElement.appendChild(generateOptionParamComponent(doc,
-                       "org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_CODE",
-                       "\"" + property + "\""));
+                        "org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_CODE",
+                        "\"" + property + "\""));
             }
 
             property = (String) getBindingPropertyFromOperation(
@@ -2037,8 +2040,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     axisOperation.getName());
             if (property != null) {
                 methodElement.appendChild(generateOptionParamComponent(doc,
-                       "org.apache.axis2.Constants.Configuration.CONTENT_TYPE",
-                       "\"" + property + "\""));
+                        "org.apache.axis2.Constants.Configuration.CONTENT_TYPE",
+                        "\"" + property + "\""));
+                methodElement.appendChild(generateOptionParamComponent(doc,
+                        "org.apache.axis2.Constants.Configuration.MESSAGE_TYPE",
+                        "\"" + property + "\""));
             }
 
         }
@@ -2057,13 +2063,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         // Add a optionParam element which holds the value of transferCoding
         String transferCoding =
                 (String) getBindingPropertyFromMessage(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING,
-                                                       axisOperation.getName(),
-                                                       WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
+                        axisOperation.getName(),
+                        WSDLConstants.WSDL_MESSAGE_DIRECTION_IN);
         if (!"".equals(transferCoding)) {
             if ("gzip".equals(transferCoding) || "compress".equals(transferCoding)) {
                 methodElement.appendChild(generateOptionParamComponent(doc,
-                       "org.apache.axis2.transport.http.HTTPConstants.MC_GZIP_REQUEST",
-                       "true"));
+                        "org.apache.axis2.transport.http.HTTPConstants.MC_GZIP_REQUEST",
+                        "true"));
             }
         }
     }
@@ -2347,18 +2353,18 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             }
 
             List parameterElementList = getParameterElementList(doc, headerParameterQNameList,
-                                                                WSDLConstants.SOAP_HEADER);
+                    WSDLConstants.SOAP_HEADER);
             parameterElementList.addAll(getParameterElementListForHttpHeader(doc,
-                                             (ArrayList) getBindingPropertyFromMessage(
-                                                     WSDL2Constants.ATTR_WHTTP_HEADER,
-                                                     operation.getName(),
-                                                     WSDLConstants.WSDL_MESSAGE_DIRECTION_IN),
-                                             WSDLConstants.HTTP_HEADER));
+                    (ArrayList) getBindingPropertyFromMessage(
+                            WSDL2Constants.ATTR_WHTTP_HEADER,
+                            operation.getName(),
+                            WSDLConstants.WSDL_MESSAGE_DIRECTION_IN),
+                    WSDLConstants.HTTP_HEADER));
             parameterElementList.addAll(getParameterElementListForSOAPModules(doc,
-                                      (ArrayList) getBindingPropertyFromMessage(
-                                              WSDL2Constants.ATTR_WSOAP_MODULE,
-                                              operation.getName(),
-                                              WSDLConstants.WSDL_MESSAGE_DIRECTION_IN)));
+                    (ArrayList) getBindingPropertyFromMessage(
+                            WSDL2Constants.ATTR_WSOAP_MODULE,
+                            operation.getName(),
+                            WSDLConstants.WSDL_MESSAGE_DIRECTION_IN)));
 
             for (int i = 0; i < parameterElementList.size(); i++) {
                 inputElt.appendChild((Element) parameterElementList.get(i));
@@ -2424,13 +2430,13 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             }
 
             List outputElementList = getParameterElementList(doc, headerParameterQNameList,
-                                                             WSDLConstants.SOAP_HEADER);
+                    WSDLConstants.SOAP_HEADER);
             outputElementList.addAll(getParameterElementListForHttpHeader(doc,
-                                                                          (ArrayList) getBindingPropertyFromMessage(
-                                                                                  WSDL2Constants.ATTR_WHTTP_HEADER,
-                                                                                  operation.getName(),
-                                                                                  WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT),
-                                                                          WSDLConstants.HTTP_HEADER));
+                    (ArrayList) getBindingPropertyFromMessage(
+                            WSDL2Constants.ATTR_WHTTP_HEADER,
+                            operation.getName(),
+                            WSDLConstants.WSDL_MESSAGE_DIRECTION_OUT),
+                    WSDLConstants.HTTP_HEADER));
 
             for (int i = 0; i < outputElementList.size(); i++) {
                 outputElt.appendChild((Element) outputElementList.get(i));
@@ -2600,7 +2606,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                              String paramType,
                                              QName operationName,
                                              QName paramQName) {
-        return generateParamComponent(doc,paramName,paramType,operationName, paramQName, null,false,false);
+        return generateParamComponent(doc, paramName, paramType, operationName, paramQName, null, false, false);
     }
 
     /**
@@ -2616,7 +2622,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                              String paramName,
                                              String paramType,
                                              QName paramQName) {
-        return generateParamComponent(doc,paramName,paramType,null, paramQName, null,false,false);
+        return generateParamComponent(doc, paramName, paramType, null, paramQName, null, false, false);
     }
 
     /**
@@ -2677,20 +2683,20 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "opname", opName.getLocalPart(), paramElement);
         }
 
-        if (paramQName!=null){
+        if (paramQName != null) {
             Element qNameElement = doc.createElement("qname");
-            addAttribute(doc,"nsuri", paramQName.getNamespaceURI(), qNameElement);
-            addAttribute(doc,"localname", paramQName.getLocalPart(), qNameElement);
+            addAttribute(doc, "nsuri", paramQName.getNamespaceURI(), qNameElement);
+            addAttribute(doc, "localname", paramQName.getLocalPart(), qNameElement);
             paramElement.appendChild(qNameElement);
         }
-        if (partName!= null){
+        if (partName != null) {
             String javaName = null;
-            if (JavaUtils.isJavaKeyword(partName)){
+            if (JavaUtils.isJavaKeyword(partName)) {
                 javaName = JavaUtils.makeNonJavaKeyword(partName);
             } else {
                 javaName = JavaUtils.capitalizeFirstChar(JavaUtils.xmlNameToJava(partName));
             }
-            addAttribute(doc,"partname",javaName,paramElement);
+            addAttribute(doc, "partname", javaName, paramElement);
         }
 
         if (isPrimitive) {
@@ -2768,26 +2774,26 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             //parameters in the signatures
             // in out put params we only intersted if there is only one parameter
             // otherwise we can not unwrap it.
-            if (partsList.size() == 1){
+            if (partsList.size() == 1) {
                 QName qName = (QName) partsList.get(0);
                 paramElement.appendChild(generateParamComponent(doc,
-                    this.mapper.getParameterName(qName),
-                    this.mapper.getTypeMappingName(qName),
-                    operation.getName(),
-                    qName,
-                    qName.getLocalPart(),
-                    (this.mapper.getTypeMappingStatus(qName) != null),
-                    Constants.ARRAY_TYPE.equals(this.mapper.getTypeMappingStatus(qName)))
+                        this.mapper.getParameterName(qName),
+                        this.mapper.getTypeMappingName(qName),
+                        operation.getName(),
+                        qName,
+                        qName.getLocalPart(),
+                        (this.mapper.getTypeMappingStatus(qName) != null),
+                        Constants.ARRAY_TYPE.equals(this.mapper.getTypeMappingStatus(qName)))
                 );
             }
 
         }
 
         QName paramQName = outputMessage.getElementQName();
-        if (paramQName!=null){
+        if (paramQName != null) {
             Element qNameElement = doc.createElement("qname");
-            addAttribute(doc,"nsuri", paramQName.getNamespaceURI(), qNameElement);
-            addAttribute(doc,"localname", paramQName.getLocalPart(), qNameElement);
+            addAttribute(doc, "nsuri", paramQName.getNamespaceURI(), qNameElement);
+            addAttribute(doc, "localname", paramQName.getLocalPart(), qNameElement);
             paramElement.appendChild(qNameElement);
         }
 
@@ -2834,8 +2840,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
                 addAttribute(doc, "type", typeMappingStr, param);
                 addAttribute(doc, "location", location, param);
-                if (header.isMustUnderstand()){
-                   addAttribute(doc, "mustUnderstand","true", param); 
+                if (header.isMustUnderstand()) {
+                    addAttribute(doc, "mustUnderstand", "true", param);
                 }
                 parameterElementList.add(param);
             }
