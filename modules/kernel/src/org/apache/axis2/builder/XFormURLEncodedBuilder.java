@@ -44,10 +44,14 @@ public class XFormURLEncodedBuilder implements Builder {
                 (AxisBindingOperation) messageContext.getProperty(
                         Constants.AXIS_BINDING_OPERATION);
         String queryParameterSeparator = null;
+        String templatedPath = null;
         if (axisBindingOperation != null) {
-            queryParameterSeparator = (String) messageContext
+            queryParameterSeparator = (String) axisBindingOperation
                     .getProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
-        } else {
+            templatedPath =
+                (String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
+        }
+        if (queryParameterSeparator == null) {
             queryParameterSeparator =
                     WSDL20DefaultValueHolder.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR_DEFAULT;
         }
@@ -62,8 +66,6 @@ public class XFormURLEncodedBuilder implements Builder {
         } else {
             soapFactory = getSOAPFactory(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         }
-        String templatedPath =
-                (String) messageContext.getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
         EndpointReference endpointReference = messageContext.getTo();
         if (endpointReference == null) {
             throw new AxisFault("Cannot create DocumentElement without destination EPR");
@@ -100,7 +102,7 @@ public class XFormURLEncodedBuilder implements Builder {
 
         String queryString;
 
-        if (query != null) {
+        if (query != null && !"".equals(query)) {
 
             try {
                 queryString = URIEncoderDecoder.decode(query);
@@ -118,6 +120,7 @@ public class XFormURLEncodedBuilder implements Builder {
 
         }
 
+        if (inputStream != null) {
         try {
             InputStreamReader inputStreamReader =
                     new InputStreamReader(inputStream, charsetEncoding);
@@ -139,7 +142,7 @@ public class XFormURLEncodedBuilder implements Builder {
         } catch (IOException e) {
             throw new AxisFault(e);
         }
-
+        }
     }
 
     /**

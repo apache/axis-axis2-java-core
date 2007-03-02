@@ -49,7 +49,7 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
         AxisService axisService = messageContext.getAxisService();
         if (axisService != null) {
             String uri = messageContext.getTo().getAddress();
-            String httpLocation = parseRequestURL(uri);
+            String httpLocation = parseRequestURL(uri, messageContext.getConfigurationContext().getServiceContextPath());
 
             if (httpLocation != null) {
                 AxisEndpoint axisEndpoint = (AxisEndpoint) messageContext
@@ -83,22 +83,29 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
         init(new HandlerDescription(NAME));
     }
 
-    private String parseRequestURL (String path) {
+    private String parseRequestURL(String path, String servicePath) {
 
-            path = path.substring(1);
-            int index = path.indexOf("/");
-            String service = null;
+        int index = path.lastIndexOf(servicePath);
+        String service = null;
 
-            if (-1 != index) {
-                service =  path.substring(index);
-        } else {
-                int queryIndex = path.indexOf("?");
-                if (queryIndex != -1) {
-                    service = path.substring(queryIndex);
-                }
+        if (-1 != index) {
+            int serviceStart = index + servicePath.length();
+            if (path.length() > serviceStart + 1) {
+                service = path.substring(serviceStart + 1);
             }
-             return service;
-   }
+        }
+
+        index = service.indexOf("/");
+        if (-1 != index) {
+                service = service.substring(index);
+        } else {
+            int queryIndex = path.indexOf("?");
+            if (queryIndex != -1) {
+                service = service.substring(queryIndex);
+            }
+        }
+        return service;
+    }
 
     /**
      * Given the requestPath that the request came to his method returns the corresponding axisOperation
