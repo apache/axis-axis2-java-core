@@ -48,7 +48,7 @@ public class ServiceDeployer implements Deployer {
 
     //Will process the file and add that to axisConfig
 
-    public void deploy(DeploymentFileData deploymentFileData) {
+    public void deploy(DeploymentFileData deploymentFileData) throws DeploymentException {
         boolean explodedDir = deploymentFileData.getFile().isDirectory();
         ArchiveReader archiveReader;
         StringWriter errorWriter = new StringWriter();
@@ -92,6 +92,9 @@ public class ServiceDeployer implements Deployer {
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             de.printStackTrace(error_ptintWriter);
             serviceStatus = "Error:\n" + errorWriter.toString();
+
+            	throw de;
+            
         } catch (AxisFault axisFault) {
             log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
                     deploymentFileData.getName(),
@@ -100,6 +103,9 @@ public class ServiceDeployer implements Deployer {
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             axisFault.printStackTrace(error_ptintWriter);
             serviceStatus = "Error:\n" + errorWriter.toString();
+             
+            throw new DeploymentException(axisFault);
+            
         } catch (Exception e) {
             if (log.isInfoEnabled()) {
                 StringWriter sw = new StringWriter();
@@ -113,6 +119,9 @@ public class ServiceDeployer implements Deployer {
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             e.printStackTrace(error_ptintWriter);
             serviceStatus = "Error:\n" + errorWriter.toString();
+            
+            throw new DeploymentException(e);
+            
         } catch (Throwable t) {
             if (log.isInfoEnabled()) {
                 StringWriter sw = new StringWriter();
@@ -126,6 +135,9 @@ public class ServiceDeployer implements Deployer {
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             t.printStackTrace(error_ptintWriter);
             serviceStatus = "Error:\n" + errorWriter.toString();
+            
+            throw new DeploymentException(new Exception(t));
+            
         } finally {
             if (serviceStatus.startsWith("Error:")) {
                 axisConfig.getFaultyServices().put(deploymentFileData.getFile().getAbsolutePath(),
@@ -140,7 +152,7 @@ public class ServiceDeployer implements Deployer {
     public void setExtension(String extension) {
     }
 
-    public void unDeploy(String fileName) {
+    public void unDeploy(String fileName) throws DeploymentException {
         try {
             fileName = DeploymentEngine.getAxisServiceName(fileName);
             AxisServiceGroup serviceGroup = axisConfig.removeServiceGroup(fileName);
@@ -150,6 +162,8 @@ public class ServiceDeployer implements Deployer {
         } catch (AxisFault axisFault) {
             //May be a faulty service
             axisConfig.removeFaultyService(fileName);
+            
+            throw new DeploymentException(axisFault);
         }
     }
 }

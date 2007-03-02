@@ -59,7 +59,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class DeploymentEngine implements DeploymentConstants {
+public abstract class DeploymentEngine implements DeploymentConstants {
 
     private static final Log log = LogFactory.getLog(DeploymentEngine.class);
     protected boolean hotUpdate = true;    // to do hot update or not
@@ -542,12 +542,13 @@ public class DeploymentEngine implements DeploymentConstants {
         wsToUnDeploy.add(file);
     }
 
-    public void doDeploy() {
+    public void doDeploy() throws DeploymentException{
         if (wsToDeploy.size() > 0) {
             for (int i = 0; i < wsToDeploy.size(); i++) {
                 DeploymentFileData currentDeploymentFile = (DeploymentFileData) wsToDeploy.get(i);
                 String type = currentDeploymentFile.getType();
                 if (TYPE_SERVICE.equals(type)) {
+                	
                     serviceDeployer.deploy(currentDeploymentFile);
                 } else if (TYPE_MODULE.equals(type)) {
                     moduleDeployer.deploy(currentDeploymentFile);
@@ -620,7 +621,7 @@ public class DeploymentEngine implements DeploymentConstants {
         scheduler.schedule(new SchedulerTask(listener), new DeploymentIterator());
     }
 
-    public void unDeploy() {
+    public void unDeploy() throws DeploymentException {
         try {
             if (wsToUnDeploy.size() > 0) {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {
@@ -1029,4 +1030,8 @@ public class DeploymentEngine implements DeploymentConstants {
     public HashMap getDirectoryToExtensionMappingMap() {
         return directoryToExtensionMappingMap;
     }
+
+	public RepositoryListener getRepoListener() {
+		return repoListener;
+	}
 }

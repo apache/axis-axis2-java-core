@@ -17,13 +17,14 @@
 
 package org.apache.axis2.deployment.repository.util;
 
-import org.apache.axis2.deployment.DeploymentConstants;
-import org.apache.axis2.deployment.DeploymentEngine;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.axis2.deployment.DeploymentConstants;
+import org.apache.axis2.deployment.DeploymentEngine;
+import org.apache.axis2.deployment.DeploymentException;
 
 public class WSInfoList implements DeploymentConstants {
 
@@ -181,11 +182,13 @@ public class WSInfoList implements DeploymentConstants {
     /**
      *
      */
-    public void update() {
+    public void update() throws DeploymentException {
         synchronized (deployer) {
             checkForUndeployedServices();
-            deployer.unDeploy();
-            deployer.doDeploy();
+   	
+			deployer.unDeploy();
+			deployer.doDeploy();
+
         }
     }
 

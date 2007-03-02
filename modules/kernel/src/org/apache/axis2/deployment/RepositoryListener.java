@@ -17,16 +17,17 @@
 
 package org.apache.axis2.deployment;
 
-import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.deployment.repository.util.WSInfoList;
-import org.apache.axis2.util.Loader;
-
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+
+import org.apache.axis2.deployment.repository.util.DeploymentFileData;
+import org.apache.axis2.deployment.repository.util.WSInfoList;
+import org.apache.axis2.util.Loader;
 
 public class RepositoryListener implements DeploymentConstants {
 
@@ -142,7 +143,11 @@ public class RepositoryListener implements DeploymentConstants {
             cl = cl.getParent();
         }
 
-        deploymentEngine.doDeploy();
+        try {
+			deploymentEngine.doDeploy();
+		} catch (DeploymentException e) {
+			// no need to do anything here, it has already been logged at the DeploymentEngine call
+		}
     }
 
     /**
@@ -174,10 +179,15 @@ public class RepositoryListener implements DeploymentConstants {
     /**
      * Finds a list of services in the folder and adds to wsInfoList.
      */
-    public void checkServices() {
+    public void checkServices() { 
         findServicesInDirectory();
         loadOtherDirectories();
-        update();
+        
+        try {
+			update();
+		} catch (DeploymentException e) {
+				// no need to log anything here, it has been logged at DeploymentEngine
+		}
     }
 
     /**
@@ -188,7 +198,11 @@ public class RepositoryListener implements DeploymentConstants {
         wsInfoList.init();
         checkModules();
         directoryToExtensionMappingMap = deploymentEngine.getDirectoryToExtensionMappingMap();
-        deploymentEngine.doDeploy();
+        try {
+			deploymentEngine.doDeploy();
+		} catch (DeploymentException e) {
+			// no need to do anything here, it has already been logged
+		}
     }
 
     //This will load the files from the directories
@@ -260,13 +274,25 @@ public class RepositoryListener implements DeploymentConstants {
     public void startListener() {
         checkServices();
         loadOtherDirectories();
-        update();
+        
+        try {
+			update();
+		} catch (DeploymentException e) {
+			// no need to log the exception once again
+		}
     }
 
     /**
      * Updates WSInfoList object.
      */
-    public void update() {
+    public void update() throws DeploymentException {
         wsInfoList.update();
     }
+    
+    public void updateRemote() throws Exception {
+    	
+    	findServicesInDirectory();
+    	update();
+    }
+    
 }

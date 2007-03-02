@@ -30,8 +30,8 @@ public interface Deployer {
     void init(ConfigurationContext configCtx);
 
     //Will process the file and add that to axisConfig
-    void deploy(DeploymentFileData deploymentFileData);
+    void deploy(DeploymentFileData deploymentFileData) throws DeploymentException;
     void setDirectory(String directory);
     void setExtension(String extension);
-    void unDeploy(String fileName);
+    void unDeploy(String fileName) throws DeploymentException;
 }
