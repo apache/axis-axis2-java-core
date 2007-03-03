@@ -28,8 +28,8 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-
-import com.sun.mail.util.BASE64EncoderStream;
+import org.apache.axiom.attachments.utils.IOUtils;
+import org.apache.axiom.om.util.Base64;
 
 public class AttachmentTest extends TestCase {
 
@@ -318,15 +318,10 @@ public class AttachmentTest extends TestCase {
 				//Create InputStream from DataHandler's InputStream
 				InputStream is = dh.getInputStream();
 
+                byte buf[] = IOUtils.getStreamAsByteArray(is);
 				//Setting Content via InputStream for image/jpeg mime type
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
-				OutputStream ret = new BASE64EncoderStream(bos);
-				int count;
-				byte buf[] = new byte[8192];
-				while ((count = is.read(buf, 0, 8192)) != -1) {
-					ret.write(buf, 0, count);
-				}
-				ret.flush();
+                Base64.encode(buf, 0, buf.length, bos);
 				buf = bos.toByteArray();
 				InputStream stream = new ByteArrayInputStream(buf);
 				ap.setBase64Content(stream,"image/jpeg");
