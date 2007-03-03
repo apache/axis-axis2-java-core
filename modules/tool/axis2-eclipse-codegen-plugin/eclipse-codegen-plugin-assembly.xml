@@ -14,7 +14,7 @@
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
             <includes>
-                <include>javax.activation:activation:jar</include>
+                <include>org.apache.geronimo.specs:geronimo-activation_1.1_spec:jar</include>
                 <include>annogen:annogen:jar</include>
                 <include>org.apache.ws.commons.axiom:axiom-api:jar</include>
                 <include>org.apache.ws.commons.axiom:axiom-dom:jar</include>

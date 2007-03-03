@@ -85,7 +85,7 @@
               as the maven-release-plugin will not update this value.
         -->
 		<version>SNAPSHOT</version>
-		<activation.version>1.1</activation.version>
+		<activation.version>1.0-SNAPSHOT</activation.version>
 		<annogen.version>0.1.0</annogen.version>
 		<ant.version>1.6.5</ant.version>
 		<axiom.version>SNAPSHOT</axiom.version>
@@ -498,9 +498,9 @@
         <version>1.0.1</version>
       </dependency>
       <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
-        <version>1.4</version>
+		  <groupId>org.apache.geronimo.specs</groupId>
+		  <artifactId>geronimo-javamail_1.4_spec</artifactId>
+        <version>1.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
