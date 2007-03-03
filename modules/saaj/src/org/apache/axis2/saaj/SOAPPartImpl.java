@@ -35,6 +35,7 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -47,6 +48,8 @@ import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
@@ -66,6 +69,8 @@ import org.w3c.dom.Text;
 import org.w3c.dom.UserDataHandler;
 
 public class SOAPPartImpl extends SOAPPart {
+
+    private static final Log log = LogFactory.getLog(SOAPPartImpl.class);
 
     private Document document;
     private SOAPMessage soapMessage;
@@ -355,8 +360,12 @@ public class SOAPPartImpl extends SOAPPart {
             		(org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)soapEnvelope);
             envelope.element.build();
             this.document = envelope.getOwnerDocument();
-		} catch (Exception e) {
-			throw new SOAPException(e);
+        } catch (TransformerFactoryConfigurationError e) {
+            log.error(e);
+            throw new SOAPException(e);
+        } catch (Exception e) {
+            log.error(e);
+            throw new SOAPException(e);
 		}
     }
 
