@@ -37,5 +37,5 @@ import java.net.Socket;
 public interface HttpConnectionFactory {
 
     HttpServerConnection newConnection(Socket socket) throws IOException;
-    
+
 }

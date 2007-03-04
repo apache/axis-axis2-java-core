@@ -357,9 +357,10 @@ public class Phase implements Handler {
      */
     public final InvocationResponse invoke(MessageContext msgctx) throws AxisFault {
         if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-            log.debug(msgctx.getLogIDString()+" Checking pre-condition for Phase \"" + phaseName + "\"");
+            log.debug(msgctx.getLogIDString() + " Checking pre-condition for Phase \"" + phaseName +
+                    "\"");
         }
-        
+
         InvocationResponse pi = InvocationResponse.CONTINUE;
 
         int currentIndex = msgctx.getCurrentPhaseIndex();
@@ -369,19 +370,20 @@ public class Phase implements Handler {
         }
 
         if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-            log.debug(msgctx.getLogIDString()+" Invoking phase \"" + phaseName + "\"");
+            log.debug(msgctx.getLogIDString() + " Invoking phase \"" + phaseName + "\"");
         }
 
         while (currentIndex < handlers.size()) {
             Handler handler = (Handler) handlers.get(currentIndex);
 
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug(msgctx.getLogIDString()+" Invoking Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
+                log.debug(msgctx.getLogIDString() + " Invoking Handler '" + handler.getName() +
+                        "' in Phase '" + phaseName + "'");
             }
             pi = handler.invoke(msgctx);
 
             if (!pi.equals(InvocationResponse.CONTINUE)) {
-              return pi;
+                return pi;
             }
 
             currentIndex++;
@@ -389,7 +391,8 @@ public class Phase implements Handler {
         }
 
         if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-            log.debug(msgctx.getLogIDString()+" Checking post-conditions for phase \"" + phaseName + "\"");
+            log.debug(msgctx.getLogIDString() + " Checking post-conditions for phase \"" +
+                    phaseName + "\"");
         }
 
         msgctx.setCurrentPhaseIndex(0);
@@ -399,31 +402,33 @@ public class Phase implements Handler {
 
     public void flowComplete(MessageContext msgContext) {
         if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-        log.debug(msgContext.getLogIDString()+" Invoking flowComplete() in Phase \"" + phaseName + "\"");
-      }
-      
-      /*This will be non-zero if we failed during execution of one of the
-       *handlers in this phase*/
-      int currentHandlerIndex = msgContext.getCurrentPhaseIndex();
-        if (currentHandlerIndex == 0) {
-        currentHandlerIndex = handlers.size();
-        } else {
-        /*We need to set it to 0 so that any previous phases will execute all
-         * of their handlers.*/
-        msgContext.setCurrentPhaseIndex(0);
-      }
-      
-        for (; currentHandlerIndex > 0; currentHandlerIndex--) {
-        Handler handler = (Handler) handlers.get(currentHandlerIndex-1);
-        
-            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-          log.debug(msgContext.getLogIDString()+" Invoking flowComplete() for Handler '" + handler.getName() + "' in Phase '" + phaseName + "'");
+            log.debug(msgContext.getLogIDString() + " Invoking flowComplete() in Phase \"" +
+                    phaseName + "\"");
         }
-        
-        handler.flowComplete(msgContext);
-      }
+
+        /*This will be non-zero if we failed during execution of one of the
+     *handlers in this phase*/
+        int currentHandlerIndex = msgContext.getCurrentPhaseIndex();
+        if (currentHandlerIndex == 0) {
+            currentHandlerIndex = handlers.size();
+        } else {
+            /*We need to set it to 0 so that any previous phases will execute all
+         * of their handlers.*/
+            msgContext.setCurrentPhaseIndex(0);
+        }
+
+        for (; currentHandlerIndex > 0; currentHandlerIndex--) {
+            Handler handler = (Handler) handlers.get(currentHandlerIndex - 1);
+
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(msgContext.getLogIDString() + " Invoking flowComplete() for Handler '" +
+                        handler.getName() + "' in Phase '" + phaseName + "'");
+            }
+
+            handler.flowComplete(msgContext);
+        }
     }
-    
+
     public String toString() {
         return this.getPhaseName();
     }

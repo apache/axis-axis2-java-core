@@ -23,7 +23,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicInteger;
  * Creates threads with the given name prefix
  */
 public class DefaultThreadFactory implements ThreadFactory {
-                                 
+
     final ThreadGroup group;
     final AtomicInteger count;
     final String namePrefix;

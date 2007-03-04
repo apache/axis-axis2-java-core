@@ -64,7 +64,7 @@ public class PhaseHolder {
                 getPhase(phaseName).addHandler(handlerDesc);
             } else {
                 throw new PhaseException(Messages.getMessage(DeploymentErrorMsgs.INVALID_PHASE,
-                        phaseName, handlerDesc.getName()));
+                                                             phaseName, handlerDesc.getName()));
             }
         }
     }

@@ -42,11 +42,11 @@ public class MessageBundle {
     public final ProjectResourceBundle getResourceBundle() {
         if (!loaded) {
             _resourceBundle = ProjectResourceBundle.getBundle(projectName,
-                    packageName,
-                    resourceName,
-                    locale,
-                    classLoader,
-                    parent);
+                                                              packageName,
+                                                              resourceName,
+                                                              locale,
+                                                              classLoader,
+                                                              parent);
             loaded = true;
         }
         return _resourceBundle;
@@ -127,7 +127,8 @@ public class MessageBundle {
      * @param arg2 The argument to place in variable {2}
      * @return The message
      */
-    public String getMessage(String key, String arg0, String arg1, String arg2) throws MissingResourceException {
+    public String getMessage(String key, String arg0, String arg1, String arg2)
+            throws MissingResourceException {
         return getMessage(key, new String[]{arg0, arg1, arg2});
     }
 
@@ -146,7 +147,8 @@ public class MessageBundle {
      * @param arg3 The argument to place in variable {3}
      * @return The message
      */
-    public String getMessage(String key, String arg0, String arg1, String arg2, String arg3) throws MissingResourceException {
+    public String getMessage(String key, String arg0, String arg1, String arg2, String arg3)
+            throws MissingResourceException {
         return getMessage(key, new String[]{arg0, arg1, arg2, arg3});
     }
 
@@ -166,7 +168,8 @@ public class MessageBundle {
      * @param arg4 The argument to place in variable {4}
      * @return The message
      */
-    public String getMessage(String key, String arg0, String arg1, String arg2, String arg3, String arg4) throws MissingResourceException {
+    public String getMessage(String key, String arg0, String arg1, String arg2, String arg3,
+                             String arg4) throws MissingResourceException {
         return getMessage(key, new String[]{arg0, arg1, arg2, arg3, arg4});
     }
 
@@ -192,7 +195,7 @@ public class MessageBundle {
             throw new MissingResourceException("Cannot find resource key \"" + key +
                     "\" in base name " +
                     getResourceBundle().getResourceName(),
-                    getResourceBundle().getResourceName(), key);
+                                               getResourceBundle().getResourceName(), key);
         }
 
         return MessageFormat.format(msg, array);

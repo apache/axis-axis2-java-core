@@ -38,112 +38,118 @@ import java.util.Map;
  * is the part of the request uri past last /.
  */
 public class AbstractAgent {
-  protected static final String DEFAULT_INDEX_JSP = "index.jsp";
+    protected static final String DEFAULT_INDEX_JSP = "index.jsp";
 
-  private static final String METHOD_PREFIX = "process";
+    private static final String METHOD_PREFIX = "process";
     private static final Log log = LogFactory.getLog(AbstractAgent.class);
 
-  protected transient Map operationCache = new HashMap();
-  protected transient ConfigurationContext configContext;
+    protected transient Map operationCache = new HashMap();
+    protected transient ConfigurationContext configContext;
 
-  public AbstractAgent(ConfigurationContext aConfigContext) {
-    configContext = aConfigContext;
-    preloadMethods();
-  }
-
-  public void handle(HttpServletRequest httpServletRequest,
-                     HttpServletResponse httpServletResponse)
-    throws IOException, ServletException {
-
-
-    String requestURI = httpServletRequest.getRequestURI();
-
-    String operation;
-    int i = requestURI.lastIndexOf('/');
-    if (i < 0) {
-      processUnknown(httpServletRequest, httpServletResponse);
-      return;
-    } else if (i == requestURI.length() - 1) {
-      processIndex(httpServletRequest, httpServletResponse);
-      return;
-    } else {
-      operation = requestURI.substring(i + 1);
+    public AbstractAgent(ConfigurationContext aConfigContext) {
+        configContext = aConfigContext;
+        preloadMethods();
     }
 
-
-    Method method = (Method) operationCache.get(operation.toLowerCase());
-    if (method != null) {
-      try {
-        method.invoke(this, new Object[]{httpServletRequest, httpServletResponse});
-      } catch (Exception e) {
-        log.warn("Error dispatching request " + requestURI, e);
-        httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      }
-    } else {
-      processUnknown(httpServletRequest, httpServletResponse);
-    }
-  }
-
-  /**
-   * Callback method for index page. Forwards to {@link DEFAULT_INDEX_JSP} by default.
-   *
-   * @param httpServletRequest The incoming request.
-   * @param httpServletResponse The outgoing response.
-   */
-  protected void processIndex(HttpServletRequest httpServletRequest,
-                              HttpServletResponse httpServletResponse) throws IOException, ServletException {
-    renderView(DEFAULT_INDEX_JSP, httpServletRequest, httpServletResponse);
-  }
-
-  /**
-   * Callback method for unknown/unsupported requests. Returns HTTP Status 404 by default.
-   *
-   * @param httpServletRequest The incoming request.
-   * @param httpServletResponse The outgoing response.
-   */
-
-  protected void processUnknown(HttpServletRequest httpServletRequest,
-                                HttpServletResponse httpServletResponse) throws IOException, ServletException {
-    httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND, httpServletRequest.getRequestURI());
-  }
+    public void handle(HttpServletRequest httpServletRequest,
+                       HttpServletResponse httpServletResponse)
+            throws IOException, ServletException {
 
 
-  protected void renderView(String jspName,
-                            HttpServletRequest httpServletRequest,
-                            HttpServletResponse httpServletResponse) throws IOException, ServletException {
-    httpServletRequest.getRequestDispatcher(Constants.AXIS_WEB_CONTENT_ROOT + jspName).include(httpServletRequest, httpServletResponse);
+        String requestURI = httpServletRequest.getRequestURI();
 
-  }
-
-  private void preloadMethods() {
-    Class clazz = getClass();
-    while (clazz != null && !clazz.equals(Object.class)) {
-      examineMethods(clazz.getDeclaredMethods());
-      clazz = clazz.getSuperclass();
-    }
-  }
-
-  private void examineMethods(Method[] aDeclaredMethods) {
-    for (int i = 0; i < aDeclaredMethods.length; i++) {
-      Method method = aDeclaredMethods[i];
-
-      Class[] parameterTypes = method.getParameterTypes();
-      if (
-        (Modifier.isProtected(method.getModifiers()) || Modifier.isPublic(method.getModifiers())) &&
-        method.getName().startsWith(METHOD_PREFIX) &&
-        parameterTypes.length == 2 &&
-        parameterTypes[0].equals(HttpServletRequest.class) &&
-        parameterTypes[1].equals(HttpServletResponse.class)) {
-
-        String key = method.getName().substring(METHOD_PREFIX.length()).toLowerCase();
-
-        // ensure we don't overwrite existing method with superclass method
-        if (!operationCache.containsKey(key)) {
-          operationCache.put(key, method);
+        String operation;
+        int i = requestURI.lastIndexOf('/');
+        if (i < 0) {
+            processUnknown(httpServletRequest, httpServletResponse);
+            return;
+        } else if (i == requestURI.length() - 1) {
+            processIndex(httpServletRequest, httpServletResponse);
+            return;
+        } else {
+            operation = requestURI.substring(i + 1);
         }
-      }
+
+
+        Method method = (Method) operationCache.get(operation.toLowerCase());
+        if (method != null) {
+            try {
+                method.invoke(this, new Object[]{httpServletRequest, httpServletResponse});
+            } catch (Exception e) {
+                log.warn("Error dispatching request " + requestURI, e);
+                httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        } else {
+            processUnknown(httpServletRequest, httpServletResponse);
+        }
     }
-  }
+
+    /**
+     * Callback method for index page. Forwards to {@link DEFAULT_INDEX_JSP} by default.
+     *
+     * @param httpServletRequest  The incoming request.
+     * @param httpServletResponse The outgoing response.
+     */
+    protected void processIndex(HttpServletRequest httpServletRequest,
+                                HttpServletResponse httpServletResponse)
+            throws IOException, ServletException {
+        renderView(DEFAULT_INDEX_JSP, httpServletRequest, httpServletResponse);
+    }
+
+    /**
+     * Callback method for unknown/unsupported requests. Returns HTTP Status 404 by default.
+     *
+     * @param httpServletRequest  The incoming request.
+     * @param httpServletResponse The outgoing response.
+     */
+
+    protected void processUnknown(HttpServletRequest httpServletRequest,
+                                  HttpServletResponse httpServletResponse)
+            throws IOException, ServletException {
+        httpServletResponse
+                .sendError(HttpServletResponse.SC_NOT_FOUND, httpServletRequest.getRequestURI());
+    }
+
+
+    protected void renderView(String jspName,
+                              HttpServletRequest httpServletRequest,
+                              HttpServletResponse httpServletResponse)
+            throws IOException, ServletException {
+        httpServletRequest.getRequestDispatcher(Constants.AXIS_WEB_CONTENT_ROOT + jspName)
+                .include(httpServletRequest, httpServletResponse);
+
+    }
+
+    private void preloadMethods() {
+        Class clazz = getClass();
+        while (clazz != null && !clazz.equals(Object.class)) {
+            examineMethods(clazz.getDeclaredMethods());
+            clazz = clazz.getSuperclass();
+        }
+    }
+
+    private void examineMethods(Method[] aDeclaredMethods) {
+        for (int i = 0; i < aDeclaredMethods.length; i++) {
+            Method method = aDeclaredMethods[i];
+
+            Class[] parameterTypes = method.getParameterTypes();
+            if (
+                    (Modifier.isProtected(method.getModifiers()) ||
+                            Modifier.isPublic(method.getModifiers())) &&
+                            method.getName().startsWith(METHOD_PREFIX) &&
+                            parameterTypes.length == 2 &&
+                            parameterTypes[0].equals(HttpServletRequest.class) &&
+                            parameterTypes[1].equals(HttpServletResponse.class)) {
+
+                String key = method.getName().substring(METHOD_PREFIX.length()).toLowerCase();
+
+                // ensure we don't overwrite existing method with superclass method
+                if (!operationCache.containsKey(key)) {
+                    operationCache.put(key, method);
+                }
+            }
+        }
+    }
 
     protected void populateSessionInformation(HttpServletRequest req) {
         HashMap services = configContext.getAxisConfiguration().getServices();

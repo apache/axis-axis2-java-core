@@ -102,10 +102,11 @@ public class DeploymentFileData {
         return ((filename.endsWith(".jar")) | (filename.endsWith(".aar")));
     }
 
-    public static  String getFileExtension(String fileName){
+    public static String getFileExtension(String fileName) {
         int index = fileName.lastIndexOf('.');
         return fileName.substring(index);
     }
+
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
@@ -118,7 +119,7 @@ public class DeploymentFileData {
                 try {
                     if (!file.exists()) {
                         throw new AxisFault(Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND,
-                                file.getAbsolutePath()));
+                                                                file.getAbsolutePath()));
                     }
                     urlsToLoadFrom = new URL[]{file.toURL()};
                     classLoader = new DeploymentClassLoader(urlsToLoadFrom, parent, lock);

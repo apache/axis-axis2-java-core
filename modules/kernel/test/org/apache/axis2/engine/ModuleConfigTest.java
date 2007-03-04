@@ -36,13 +36,16 @@ import java.io.InputStream;
 public class ModuleConfigTest extends TestCase {
 
     AxisConfiguration ar;
-    String axis2xml = System.getProperty("basedir") + "/target/test-resources/deployment/moduleConfig/axis2.xml";
+    String axis2xml = System.getProperty("basedir") +
+            "/target/test-resources/deployment/moduleConfig/axis2.xml";
     String repo = System.getProperty("basedir") + "/target/test-resources/deployment/moduleConfig";
 
 
     public void testModuleConfigAtAxisConfig() {
         try {
-            ar = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, axis2xml).getAxisConfiguration();
+            ar = ConfigurationContextFactory
+                    .createConfigurationContextFromFileSystem(null, axis2xml)
+                    .getAxisConfiguration();
             ModuleConfiguration moduleConfiguration =
                     ar.getModuleConfig(new QName("testModule"));
             assertNotNull(moduleConfiguration);
@@ -62,7 +65,8 @@ public class ModuleConfigTest extends TestCase {
 
     public void testModuleConfigAtService() {
         try {
-            ConfigurationContext configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, axis2xml);
+            ConfigurationContext configurationContext = ConfigurationContextFactory
+                    .createConfigurationContextFromFileSystem(null, axis2xml);
             ar = configurationContext.getAxisConfiguration();
 
 
@@ -73,7 +77,8 @@ public class ModuleConfigTest extends TestCase {
             ServiceBuilder sbuilder = new ServiceBuilder(in, configurationContext, service);
             sbuilder.populateService(sbuilder.buildOM());
 
-            ModuleConfiguration moduleConfiguration = service.getModuleConfig(new QName("Servie_module"));
+            ModuleConfiguration moduleConfiguration =
+                    service.getModuleConfig(new QName("Servie_module"));
             assertNotNull(moduleConfiguration);
             Parameter para = moduleConfiguration.getParameter("Servie_module_para");
             assertNotNull(para);

@@ -58,7 +58,7 @@ public class MailWorker implements Runnable {
                 try {
                     if (msgContext != null) {
                         MessageContext faultContext =
-                            MessageContextBuilder.createFaultMessageContext(msgContext, e);
+                                MessageContextBuilder.createFaultMessageContext(msgContext, e);
                         engine.sendFault(faultContext);
                     }
                 } catch (Exception e1) {

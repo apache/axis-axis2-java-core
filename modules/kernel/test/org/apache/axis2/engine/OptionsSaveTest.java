@@ -17,32 +17,24 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
-
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
-import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.axiom.soap.SOAP12Constants;
 
 import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
 
-public class OptionsSaveTest extends TestCase
-{
+public class OptionsSaveTest extends TestCase {
 
     private transient QName serviceName = new QName("NullService");
     private transient QName operationName = new QName("DummyOp");
@@ -51,8 +43,7 @@ public class OptionsSaveTest extends TestCase
     private String testArg = null;
 
 
-    public OptionsSaveTest(String arg0)
-    {
+    public OptionsSaveTest(String arg0) {
         super(arg0);
         testArg = new String(arg0);
 
@@ -60,26 +51,23 @@ public class OptionsSaveTest extends TestCase
     }
 
 
-    protected void initAll()
-    {
+    protected void initAll() {
     }
 
 
-    protected void setUp() throws Exception 
-    {
+    protected void setUp() throws Exception {
         //org.apache.log4j.BasicConfigurator.configure();
     }
 
-    public void testSaveAndRestore() throws Exception 
-    {
-        File    theFile     = null;
-        String  theFilename = null;
-        boolean saved       = false;
-        boolean restored    = false;
-        boolean done        = false;
-        boolean comparesOk  = false;
+    public void testSaveAndRestore() throws Exception {
+        File theFile = null;
+        String theFilename = null;
+        boolean saved = false;
+        boolean restored = false;
+        boolean done = false;
+        boolean comparesOk = false;
 
-        AxisConfiguration axisConfiguration       = new AxisConfiguration();
+        AxisConfiguration axisConfiguration = new AxisConfiguration();
         ConfigurationContext configurationContext = new ConfigurationContext(axisConfiguration);
 
 
@@ -100,7 +88,7 @@ public class OptionsSaveTest extends TestCase
         options.setTo(new EndpointReference("http://ws.apache.org/axis2/to"));
         options.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
 
-        TransportOutDescription transportOut  = new TransportOutDescription(new QName("null"));
+        TransportOutDescription transportOut = new TransportOutDescription(new QName("null"));
         TransportOutDescription transportOut2 = new TransportOutDescription(new QName("happy"));
         TransportOutDescription transportOut3 = new TransportOutDescription(new QName("golucky"));
         transportOut.setSender(new CommonsHTTPTransportSender());
@@ -111,7 +99,7 @@ public class OptionsSaveTest extends TestCase
         axisConfiguration.addTransportOut(transportOut2);
         axisConfiguration.addTransportOut(transportOut);
 
-        TransportInDescription transportIn  = new TransportInDescription(new QName("null"));
+        TransportInDescription transportIn = new TransportInDescription(new QName("null"));
         TransportInDescription transportIn2 = new TransportInDescription(new QName("always"));
         TransportInDescription transportIn3 = new TransportInDescription(new QName("thebest"));
         transportIn.setReceiver(new SimpleHTTPServer());
@@ -137,29 +125,27 @@ public class OptionsSaveTest extends TestCase
 
         // TODO: setup a parent
 
-
         // ---------------------------------------------------------
         // setup a temporary file to use
         // ---------------------------------------------------------
-        try
-        {
-            theFile = File.createTempFile("optionsSave",null);
+        try {
+            theFile = File.createTempFile("optionsSave", null);
             theFilename = theFile.getName();
-            System.out.println("OptionsSaveTest:testSaveAndRestore(): temp file = ["+theFilename+"]");
+            System.out.println(
+                    "OptionsSaveTest:testSaveAndRestore(): temp file = [" + theFilename + "]");
         }
-        catch (Exception ex)
-        {
-            System.out.println("OptionsSaveTest:testSaveAndRestore(): error creating temp file = ["+ex.getMessage()+"]");
+        catch (Exception ex) {
+            System.out.println(
+                    "OptionsSaveTest:testSaveAndRestore(): error creating temp file = [" +
+                            ex.getMessage() + "]");
             theFile = null;
         }
 
-        if (theFile != null)
-        {
+        if (theFile != null) {
             // ---------------------------------------------------------
             // save to the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an output stream to a physical file
                 FileOutputStream outStream = new FileOutputStream(theFile);
 
@@ -179,21 +165,22 @@ public class OptionsSaveTest extends TestCase
                 outStream.close();
 
                 saved = true;
-                System.out.println("OptionsSaveTest:testSaveAndRestore(): ....save operation completed.....");
+                System.out.println(
+                        "OptionsSaveTest:testSaveAndRestore(): ....save operation completed.....");
 
                 long filesize = theFile.length();
-                System.out.println("OptionsSaveTest:testSaveAndRestore(): file size after save ["+filesize+"]   temp file = ["+theFilename+"]");
+                System.out.println("OptionsSaveTest:testSaveAndRestore(): file size after save [" +
+                        filesize + "]   temp file = [" + theFilename + "]");
             }
-            catch (Exception ex2)
-            {
-                if (saved != true)
-                {
-                    System.out.println("OptionsSaveTest:testSaveAndRestore(): error during save ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                if (saved != true) {
+                    System.out.println("OptionsSaveTest:testSaveAndRestore(): error during save [" +
+                            ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                     ex2.printStackTrace();
-                }
-                else
-                {
-                    System.out.println("OptionsSaveTest:testSaveAndRestore(): error during restore ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+                } else {
+                    System.out.println(
+                            "OptionsSaveTest:testSaveAndRestore(): error during restore [" +
+                                    ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                     ex2.printStackTrace();
                 }
             }
@@ -203,8 +190,7 @@ public class OptionsSaveTest extends TestCase
             // ---------------------------------------------------------
             // restore from the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an input stream to the file
                 FileInputStream inStream = new FileInputStream(theFile);
 
@@ -222,14 +208,16 @@ public class OptionsSaveTest extends TestCase
                 options_restored.activate(configurationContext);
 
                 restored = true;
-                System.out.println("OptionsSaveTest:testSaveAndRestore(): ....restored operation completed.....");
+                System.out.println(
+                        "OptionsSaveTest:testSaveAndRestore(): ....restored operation completed.....");
 
                 comparesOk = options_restored.isEquivalent(options);
-                System.out.println("OptionsSaveTest:testSaveAndRestore():   Options equivalency ["+comparesOk+"]");
+                System.out.println("OptionsSaveTest:testSaveAndRestore():   Options equivalency [" +
+                        comparesOk + "]");
             }
-            catch (Exception ex2)
-            {
-                System.out.println("OptionsSaveTest:testSaveAndRestore(): error during restore ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println("OptionsSaveTest:testSaveAndRestore(): error during restore [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -240,18 +228,15 @@ public class OptionsSaveTest extends TestCase
             // if the save/restore of the object succeeded,
             // then don't keep the temporary file around
             boolean removeTmpFile = saved && restored && comparesOk;
-            if (removeTmpFile)
-            {
-                try
-                {
+            if (removeTmpFile) {
+                try {
                     theFile.delete();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     // just absorb it
                 }
             }
-            
+
             // indicate that the temp file was created ok
             done = true;
         }
@@ -261,7 +246,6 @@ public class OptionsSaveTest extends TestCase
 
         System.out.println("OptionsSaveTest:testSaveAndRestore():  END ---------------");
     }
-
 
 
 }

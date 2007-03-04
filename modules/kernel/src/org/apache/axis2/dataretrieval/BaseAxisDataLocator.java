@@ -24,26 +24,26 @@ import java.util.ArrayList;
 
 /**
  * BaseAxisDataLocator implements common code and serves as a base class
- * for the supported default Axis2 dialect data locators.  
+ * for the supported default Axis2 dialect data locators.
  */
 
-public abstract class BaseAxisDataLocator  {
+public abstract class BaseAxisDataLocator {
     private static final Log log = LogFactory.getLog(BaseAxisDataLocator.class);
 
     protected ServiceData[] dataList = null;
-    private OutputForm outputform= OutputForm.INLINE_FORM;
-    
+    private OutputForm outputform = OutputForm.INLINE_FORM;
+
     /**
      * The default Axis2 Data locator getData API
-     *   Checks data information configured in ServiceData.xml for the supported
-     *   output forms: inline, url, EndpointReference.
+     * Checks data information configured in ServiceData.xml for the supported
+     * output forms: inline, url, EndpointReference.
      * <p/>
      * Note: Subclass that has its implementation of outInlineForm, outputLocationForm,
-     *       and outputReferenceForm logic must implement the getData API.
+     * and outputReferenceForm logic must implement the getData API.
      */
-    
+
     public Data[] getData(DataRetrievalRequest request,
-            MessageContext msgContext) throws DataRetrievalException {
+                          MessageContext msgContext) throws DataRetrievalException {
         log.trace("Default Base DataLocator getData starts");
 
         OutputForm outputform = (OutputForm) request.getOutputForm();
@@ -53,27 +53,29 @@ public abstract class BaseAxisDataLocator  {
         }
 
         Data[] output = null;
-                
+
         String outputFormString = outputform.getType();
-     
+
         if (outputform == OutputForm.INLINE_FORM) {
             output = outputInlineForm(msgContext, dataList);
         } else if (outputform == OutputForm.LOCATION_FORM) {
             output = outputLocationForm(dataList);
-            
+
         } else if (outputform == OutputForm.REFERENCE_FORM) {
             output = outputReferenceForm(msgContext, dataList);
-                    
+
         } else {
             output = outputInlineForm(msgContext, dataList);
-            
+
         }
-    
+
         if (output == null) {
-                log.info("Null data return! Data Locator does not know how to handle request for dialect= " + (String) request.getDialect()
-                    + " in the form of " + outputFormString);
+            log.info(
+                    "Null data return! Data Locator does not know how to handle request for dialect= " +
+                            (String) request.getDialect()
+                            + " in the form of " + outputFormString);
         }
-        
+
 
         log.trace("Default Base DataLocator getData ends");
 
@@ -84,7 +86,7 @@ public abstract class BaseAxisDataLocator  {
      * WSDL or a policy document
      */
     protected Data[] outputInlineForm(MessageContext msgContext,
-            ServiceData[] serviceData) throws DataRetrievalException {
+                                      ServiceData[] serviceData) throws DataRetrievalException {
         OMElement metaElement = null;
         ArrayList result = new ArrayList();
         if (serviceData != null) {
@@ -98,13 +100,13 @@ public abstract class BaseAxisDataLocator  {
 
             }
 
-    
+
         }
         return (Data[]) result.toArray(new Data[0]);
 
     }
 
-                                            
+
     protected Data[] outputLocationForm(ServiceData[] serviceData)
             throws DataRetrievalException {
 
@@ -115,14 +117,14 @@ public abstract class BaseAxisDataLocator  {
                 String urlValue = serviceData[i].getURL();
                 if (urlValue != null) {
                     result.add(new Data(urlValue, serviceData[i].getIdentifier()));
+                }
             }
-        }
         }
         return (Data[]) result.toArray(new Data[0]);
     }
 
     protected Data[] outputReferenceForm(MessageContext msgContext,
-            ServiceData[] serviceData) throws DataRetrievalException {
+                                         ServiceData[] serviceData) throws DataRetrievalException {
         OMElement epr = null;
         ArrayList result = new ArrayList();
         if (serviceData != null) {
@@ -131,19 +133,19 @@ public abstract class BaseAxisDataLocator  {
                 epr = serviceData[i].getEndpointReference();
                 if (epr != null) {
                     result.add(new Data((epr), serviceData[i].getIdentifier()));
+                }
             }
-        }
         }
         return (Data[]) result.toArray(new Data[0]);
     }
-    
+
 
     protected void setServiceData(ServiceData[] inServiceData) {
         this.dataList = inServiceData;
     }
 
-            
-    protected OutputForm getOutputForm(){
+
+    protected OutputForm getOutputForm() {
         return outputform;
     }
 

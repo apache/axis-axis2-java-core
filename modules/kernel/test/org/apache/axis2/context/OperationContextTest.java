@@ -16,6 +16,7 @@
 
 package org.apache.axis2.context;
 
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.RelatesTo;
@@ -26,7 +27,6 @@ import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axiom.om.util.UUIDGenerator;
 
 import javax.xml.namespace.QName;
 
@@ -43,16 +43,17 @@ public class OperationContextTest extends AbstractTestCase {
 
         AxisService axisService = new AxisService("TempSC");
         configContext.getAxisConfiguration().addService(axisService);
-        ServiceGroupContext sgc =ContextFactory.createServiceGroupContext(configContext,
-                (AxisServiceGroup) axisService.getParent())  ;
-        ServiceContext sessionContext = ContextFactory.createServiceContext(sgc,axisService);
+        ServiceGroupContext sgc = ContextFactory.createServiceGroupContext(configContext,
+                                                                           (AxisServiceGroup) axisService
+                                                                                   .getParent());
+        ServiceContext sessionContext = ContextFactory.createServiceContext(sgc, axisService);
         MessageContext messageContext1 = this.getBasicMessageContext();
 
         messageContext1.setMessageID(UUIDGenerator.getUUID());
         AxisOperation axisOperation = new InOutAxisOperation(new QName("test"));
         OperationContext operationContext1 = axisOperation
                 .findOperationContext(messageContext1, sessionContext);
-        axisOperation.registerOperationContext(messageContext1,operationContext1);
+        axisOperation.registerOperationContext(messageContext1, operationContext1);
 
         MessageContext messageContext2 = this.getBasicMessageContext();
         messageContext2.setMessageID(UUIDGenerator.getUUID());

@@ -127,7 +127,8 @@ public class ServiceClient {
         configureServiceClient(configContext, axisService);
     }
 
-    private void configureServiceClient(ConfigurationContext configContext, AxisService axisService) throws AxisFault {
+    private void configureServiceClient(ConfigurationContext configContext, AxisService axisService)
+            throws AxisFault {
         initializeTransports(configContext);
         // save the axisConfig and service
         this.axisConfig = this.configContext.getAxisConfiguration();
@@ -146,8 +147,8 @@ public class ServiceClient {
         }
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) this.axisService.getParent();
         ServiceGroupContext sgc = ContextFactory.createServiceGroupContext(this.configContext,
-                axisServiceGroup);
-        this.serviceContext = ContextFactory.createServiceContext(sgc,this.axisService);
+                                                                           axisServiceGroup);
+        this.serviceContext = ContextFactory.createServiceContext(sgc, this.axisService);
     }
 
 
@@ -185,7 +186,9 @@ public class ServiceClient {
     public ServiceClient(ConfigurationContext configContext, URL wsdlURL,
                          QName wsdlServiceName, String portName) throws AxisFault {
         configureServiceClient(configContext, AxisService.createClientSideAxisService(wsdlURL,
-                wsdlServiceName, portName, options));
+                                                                                      wsdlServiceName,
+                                                                                      portName,
+                                                                                      options));
     }
 
     private void initializeTransports(ConfigurationContext configContext) throws AxisFault {
@@ -231,7 +234,8 @@ public class ServiceClient {
         // shortcut client API. NOTE: We only add the ones we know we'll use
         // later in the convenience API; if you use
         // this constructor then you can't expect any magic!
-        AxisService axisService = new AxisService(ANON_SERVICE + this.hashCode() + System.currentTimeMillis());
+        AxisService axisService =
+                new AxisService(ANON_SERVICE + this.hashCode() + System.currentTimeMillis());
         RobustOutOnlyAxisOperation robustoutoonlyOperation = new RobustOutOnlyAxisOperation(
                 ANON_ROBUST_OUT_ONLY_OP);
         axisService.addOperation(robustoutoonlyOperation);
@@ -372,7 +376,8 @@ public class ServiceClient {
      */
     public void addStringHeader(QName headerName, String headerText) throws AxisFault {
         if (headerName.getNamespaceURI() == null || "".equals(headerName.getNamespaceURI())) {
-            throw new AxisFault("Failed to add string header , you have to have namespaceURI for the QName");
+            throw new AxisFault(
+                    "Failed to add string header , you have to have namespaceURI for the QName");
         }
         OMElement omElement = OMAbstractFactory.getOMFactory().createOMElement(
                 headerName, null);
@@ -689,7 +694,8 @@ public class ServiceClient {
         // if a configuration context was created for this client there'll also
         //  be a service group, so discard that
         if (!createConfigCtx) {
-            String serviceGroupName = ((AxisServiceGroup) axisService.getParent()).getServiceGroupName();
+            String serviceGroupName =
+                    ((AxisServiceGroup) axisService.getParent()).getServiceGroupName();
             AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
             AxisServiceGroup asg = axisConfiguration.getServiceGroup(serviceGroupName);
             if (asg != null) {
@@ -699,31 +705,32 @@ public class ServiceClient {
             configContext.terminate();
         }
     }
-    
+
     /**
      * Configure the ServiceClient to interact with the Web service described by
      * the specified AxisService object.
-     * 
+     *
      * @param axisService the AxisService that represents the new Web service.
-     * @throws AxisFault if an error occurs while configuring the ServiceClient. 
+     * @throws AxisFault if an error occurs while configuring the ServiceClient.
      */
-    public void setAxisService(AxisService axisService) throws AxisFault{
-        
+    public void setAxisService(AxisService axisService) throws AxisFault {
+
         if (axisService == null) {
             // AxisFault?
-            throw new IllegalArgumentException("AxisService is null");            
+            throw new IllegalArgumentException("AxisService is null");
         }
-        
+
         axisConfig.removeService(this.axisService.getName());
         this.axisService = axisService;
-        
+
         axisService.setClientSide(true);
         axisConfig.addService(axisService);
-        
+
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
-        ServiceGroupContext serviceGroupContext = ContextFactory.createServiceGroupContext(configContext,
-                axisServiceGroup);
+        ServiceGroupContext serviceGroupContext =
+                ContextFactory.createServiceGroupContext(configContext,
+                                                         axisServiceGroup);
         this.serviceContext = ContextFactory.createServiceContext(
-                serviceGroupContext,this.axisService);
+                serviceGroupContext, this.axisService);
     }
 }

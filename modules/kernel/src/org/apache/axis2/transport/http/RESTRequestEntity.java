@@ -122,7 +122,7 @@ public class RESTRequestEntity implements RequestEntity {
         // action header is not mandated in SOAP 1.2. So putting it, if available
         if (!msgCtxt.isSOAP11() && (soapActionString != null)
                 && !"".equals(soapActionString.trim()) && !"\"\"".equals(soapActionString.trim())) {
-            contentType =contentType + ";action=\"" + soapActionString + "\";";
+            contentType = contentType + ";action=\"" + soapActionString + "\";";
         }
         return contentType;
     }

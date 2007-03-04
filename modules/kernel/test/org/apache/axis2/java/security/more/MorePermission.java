@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2.java.security.more;
 
 import org.apache.axis2.java.security.AccessController;
@@ -26,37 +26,36 @@ import java.security.PrivilegedAction;
  */
 
 public class MorePermission implements Actor {
-    
-    private Actor  _actor;
+
+    private Actor _actor;
     private boolean _usingDoPrivilege;
 
     // Constructor
     public MorePermission(Actor a, boolean usingDoPrivilege) {
-    _actor = a;
-    _usingDoPrivilege = usingDoPrivilege;
+        _actor = a;
+        _usingDoPrivilege = usingDoPrivilege;
 
     }
 
     // Implementing Actor's takeAction method
     public void takeAction() {
-    try {
-        if (_usingDoPrivilege) {
-        // Use AccessController's doPrivilege
-        AccessController.doPrivileged(
-            new PrivilegedAction() {
-            public Object run() {
+        try {
+            if (_usingDoPrivilege) {
+                // Use AccessController's doPrivilege
+                AccessController.doPrivileged(
+                        new PrivilegedAction() {
+                            public Object run() {
+                                _actor.takeAction();
+                                return null;
+                            }
+                        });
+            } else {
+                // Use no AccessController's doPrivilege
                 _actor.takeAction();
-                return null;
-                }
-            });
+            }
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
         }
-        else {
-        // Use no AccessController's doPrivilege
-        _actor.takeAction();   
-        }
-    } catch (Exception e) {
-        e.printStackTrace(System.out);
     }
-    }    
 }
 

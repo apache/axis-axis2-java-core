@@ -42,7 +42,7 @@ import java.io.IOException;
 
 public class RequestSessionCookie implements HttpRequestInterceptor {
 
-    public void process(final HttpRequest request, final HttpContext context) 
+    public void process(final HttpRequest request, final HttpContext context)
             throws HttpException, IOException {
         if (request == null) {
             throw new IllegalArgumentException("HTTP request may not be null");
@@ -50,14 +50,14 @@ public class RequestSessionCookie implements HttpRequestInterceptor {
         if (context == null) {
             throw new IllegalArgumentException("HTTP context may not be null");
         }
-        
+
         String sessionCookie = null;
         Header[] headers = request.getHeaders(HTTPConstants.HEADER_COOKIE);
         for (int i = 0; i < headers.length; i++) {
             HeaderElement[] elements = headers[i].getElements();
             for (int e = 0; e < elements.length; e++) {
                 HeaderElement element = elements[e];
-                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())||
+                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName()) ||
                         Constants.SESSION_COOKIE_JSESSIONID.equalsIgnoreCase(element.getName())) {
                     sessionCookie = element.getValue();
                 }
@@ -65,5 +65,5 @@ public class RequestSessionCookie implements HttpRequestInterceptor {
         }
         context.setAttribute(HTTPConstants.COOKIE_STRING, sessionCookie);
     }
-    
+
 }

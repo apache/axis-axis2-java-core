@@ -62,12 +62,12 @@ public class JMSMessageReceiver implements MessageListener {
     /**
      * Create a new JMSMessage receiver
      *
-     * @param jmsConFac the JMS connection factory associated with
+     * @param jmsConFac  the JMS connection factory associated with
      * @param workerPool the worker thead pool to be used
-     * @param axisConf the Axis2 configuration
+     * @param axisConf   the Axis2 configuration
      */
     JMSMessageReceiver(JMSConnectionFactory jmsConFac,
-        Executor workerPool, ConfigurationContext axisConf) {
+                       Executor workerPool, ConfigurationContext axisConf) {
         this.jmsConFac = jmsConFac;
         this.workerPool = workerPool;
         this.axisConf = axisConf;
@@ -100,7 +100,7 @@ public class JMSMessageReceiver implements MessageListener {
         // directly create a new worker and delegate processing
         try {
             log.debug("Received JMS message to destination : " +
-                message.getJMSDestination());
+                    message.getJMSDestination());
         } catch (JMSException e) {
             e.printStackTrace();
         }
@@ -135,12 +135,12 @@ public class JMSMessageReceiver implements MessageListener {
             // hack to get around the crazy Active MQ dynamic queue and topic issues
             if (serviceName == null) {
                 String provider = (String) jmsConFac.getProperties().get(
-                    Context.INITIAL_CONTEXT_FACTORY);
+                        Context.INITIAL_CONTEXT_FACTORY);
                 if (provider.indexOf("activemq") != -1) {
                     serviceName = jmsConFac.getServiceNameForDestination(
-                        ((dest instanceof Queue ?
-                            JMSConstants.ACTIVEMQ_DYNAMIC_QUEUE :
-                            JMSConstants.ACTIVEMQ_DYNAMIC_TOPIC) + destinationName));
+                            ((dest instanceof Queue ?
+                                    JMSConstants.ACTIVEMQ_DYNAMIC_QUEUE :
+                                    JMSConstants.ACTIVEMQ_DYNAMIC_TOPIC) + destinationName));
                 }
             }
 
@@ -148,19 +148,20 @@ public class JMSMessageReceiver implements MessageListener {
             if (serviceName != null) {
                 // set to bypass dispatching and handover directly to this service
                 msgContext.setAxisService(
-                    axisConf.getAxisConfiguration().getService(serviceName));
+                        axisConf.getAxisConfiguration().getService(serviceName));
             }
 
             msgContext.setIncomingTransportName(Constants.TRANSPORT_JMS);
             msgContext.setTransportIn(
-                axisConf.getAxisConfiguration().getTransportIn(JMSConstants.JMS_QNAME));
+                    axisConf.getAxisConfiguration().getTransportIn(JMSConstants.JMS_QNAME));
 
             msgContext.setTransportOut(
-                axisConf.getAxisConfiguration().getTransportOut(JMSConstants.JMS_QNAME));
+                    axisConf.getAxisConfiguration().getTransportOut(JMSConstants.JMS_QNAME));
             // the reply is assumed to be on the JMSReplyTo destination, using
             // the same incoming connection factory
             msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,
-                 new JMSOutTransportInfo(jmsConFac.getConFactory(), message.getJMSReplyTo()));
+                                   new JMSOutTransportInfo(jmsConFac.getConFactory(),
+                                                           message.getJMSReplyTo()));
 
             msgContext.setServerSide(true);
             msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
@@ -171,7 +172,7 @@ public class JMSMessageReceiver implements MessageListener {
             }
 
             msgContext.setEnvelope(
-                JMSUtils.getSOAPEnvelope(message, msgContext, in));
+                    JMSUtils.getSOAPEnvelope(message, msgContext, in));
 
             return msgContext;
 
@@ -215,7 +216,7 @@ public class JMSMessageReceiver implements MessageListener {
                 }
             } catch (AxisFault af) {
                 log.error("JMS Worker [" + Thread.currentThread().getName() +
-                    "] Encountered an Axis Fault : " + af.getMessage(), af);
+                        "] Encountered an Axis Fault : " + af.getMessage(), af);
             }
         }
     }

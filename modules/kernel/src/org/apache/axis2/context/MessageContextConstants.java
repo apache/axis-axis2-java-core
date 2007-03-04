@@ -23,11 +23,11 @@ public interface MessageContextConstants {
      */
     public static final String TRANSPORT_URL = "TransportURL";
 
-    
+
     /**
      * @deprecated please use org.apache.axis2.transport.http.HTTPConstants.CHUNKED *
      */
-    public static final String CHUNKED="__CHUNKED__";
+    public static final String CHUNKED = "__CHUNKED__";
 
     /**
      * @deprecated please use org.apache.axis2.transport.http.HTTPConstants.HTTP_PROTOCOL_VERSION *

@@ -21,7 +21,12 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -30,7 +35,6 @@ import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
@@ -44,37 +48,34 @@ import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
-public class MessageContextSaveATest extends TestCase 
-{
+public class MessageContextSaveATest extends TestCase {
 
-    private QName serviceName   = new QName("TestService");
+    private QName serviceName = new QName("TestService");
     private QName operationName = new QName("Operation_1");
 
     private ConfigurationContext configurationContext = null;
-    private ServiceGroupContext  serviceGroupContext  = null;
-    private ServiceContext       serviceContext       = null;
-    private OperationContext     operationContext     = null;
+    private ServiceGroupContext serviceGroupContext = null;
+    private ServiceContext serviceContext = null;
+    private OperationContext operationContext = null;
 
-    private AxisConfiguration  axisConfiguration = null;
-    private AxisServiceGroup   axisServiceGroup  = null;
-    private AxisService        axisService       = null;
-    private AxisOperation      axisOperation     = null;
-    private AxisMessage        axisMessage       = null;
+    private AxisConfiguration axisConfiguration = null;
+    private AxisServiceGroup axisServiceGroup = null;
+    private AxisService axisService = null;
+    private AxisOperation axisOperation = null;
+    private AxisMessage axisMessage = null;
 
-    private TransportOutDescription transportOut  = null;
+    private TransportOutDescription transportOut = null;
     private TransportOutDescription transportOut2 = null;
     private TransportOutDescription transportOut3 = null;
-    private TransportInDescription  transportIn   = null;
-    private TransportInDescription  transportIn2  = null;
-    private TransportInDescription  transportIn3  = null;
+    private TransportInDescription transportIn = null;
+    private TransportInDescription transportIn2 = null;
+    private TransportInDescription transportIn3 = null;
 
     private Phase phase1 = null;
     private Phase phase2 = null;
@@ -84,7 +85,7 @@ public class MessageContextSaveATest extends TestCase
     private Phase phase6 = null;
     private Phase phase7 = null;
 
-    private MessageContext mc  = null;
+    private MessageContext mc = null;
     private MessageContext mc2 = null;
 
     private ArrayList executedHandlers = null;
@@ -92,19 +93,17 @@ public class MessageContextSaveATest extends TestCase
     private String testArg = null;
 
 
-
-    public MessageContextSaveATest(String arg0)
-    {
+    public MessageContextSaveATest(String arg0) {
         super(arg0);
         testArg = new String(arg0);
 
-        try
-        {
+        try {
             prepare();
         }
-        catch (Exception e)
-        {
-            System.out.println("MessageContextSaveATest:constructor:  error in setting up object graph ["+e.getClass().getName()+" : "+e.getMessage()+"]");
+        catch (Exception e) {
+            System.out.println(
+                    "MessageContextSaveATest:constructor:  error in setting up object graph [" +
+                            e.getClass().getName() + " : " + e.getMessage() + "]");
         }
     }
 
@@ -112,16 +111,17 @@ public class MessageContextSaveATest extends TestCase
     //
     // prepare the object hierarchy for testing
     //
-    private void prepare() throws Exception
-    {
+    private void prepare() throws Exception {
         //-----------------------------------------------------------------
 
         axisConfiguration = new AxisConfiguration();
 
         configurationContext = new ConfigurationContext(axisConfiguration);
 
-        configurationContext.getAxisConfiguration().addMessageReceiver("http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver()); 
-        configurationContext.getAxisConfiguration().addMessageReceiver("http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver()); 
+        configurationContext.getAxisConfiguration().addMessageReceiver(
+                "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
+        configurationContext.getAxisConfiguration().addMessageReceiver(
+                "http://www.w3.org/2004/08/wsdl/in-out", new RawXMLINOutMessageReceiver());
 
         DispatchPhase dispatchPhase = new DispatchPhase();
         dispatchPhase.setName("Dispatch");
@@ -160,13 +160,11 @@ public class MessageContextSaveATest extends TestCase
 
 
         axisOperation = new InOutAxisOperation(operationName);
-        axisOperation.setMessageReceiver(new MessageReceiver()
-                                         {
-                                             public void receive(MessageContext messageCtx)
-                                             {
+        axisOperation.setMessageReceiver(new MessageReceiver() {
+            public void receive(MessageContext messageCtx) {
 
-                                             }
-                                         });
+            }
+        });
 
         axisService.addOperation(axisOperation);
         axisService.mapActionToOperation(operationName.getLocalPart(), axisOperation);
@@ -176,17 +174,18 @@ public class MessageContextSaveATest extends TestCase
 
         //-----------------------------------------------------------------
 
-        serviceGroupContext =ContextFactory.createServiceGroupContext(configurationContext,
-                (AxisServiceGroup) axisService.getParent());
+        serviceGroupContext = ContextFactory.createServiceGroupContext(configurationContext,
+                                                                       (AxisServiceGroup) axisService
+                                                                               .getParent());
         serviceGroupContext.setId("ServiceGroupContextTest");
 
-        serviceContext = ContextFactory.createServiceContext(serviceGroupContext,axisService);
+        serviceContext = ContextFactory.createServiceContext(serviceGroupContext, axisService);
 
-        operationContext = serviceContext.createOperationContext(operationName); 
+        operationContext = serviceContext.createOperationContext(operationName);
 
         //-----------------------------------------------------------------
 
-        transportOut  = new TransportOutDescription(new QName("null"));
+        transportOut = new TransportOutDescription(new QName("null"));
         transportOut2 = new TransportOutDescription(new QName("happy"));
         transportOut3 = new TransportOutDescription(new QName("golucky"));
         transportOut.setSender(new CommonsHTTPTransportSender());
@@ -292,11 +291,11 @@ public class MessageContextSaveATest extends TestCase
         mc.setMessageID(UUIDGenerator.getUUID());
 
         //operationContext.addMessageContext(mc);  gets done via the register
-        axisOperation.registerOperationContext(mc,operationContext);
+        axisOperation.registerOperationContext(mc, operationContext);
         mc.setOperationContext(operationContext);
         mc.setServiceContext(serviceContext);
 
-        mc.setTo(new EndpointReference("axis2/services/NullService")); 
+        mc.setTo(new EndpointReference("axis2/services/NullService"));
         mc.setWSAAction("DummyOp");
 
         axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
@@ -308,26 +307,25 @@ public class MessageContextSaveATest extends TestCase
     }
 
 
-    protected void setUp() throws Exception 
-    {
+    protected void setUp() throws Exception {
         //org.apache.log4j.BasicConfigurator.configure();
     }
 
 
-    public void testReceive() throws Exception 
-    {
+    public void testReceive() throws Exception {
         AxisEngine engine = new AxisEngine(configurationContext);
 
-        System.out.println("MessageContextSaveATest:testReceive(): start - - engine.receive(mc) - - - - - - - - - - - - - - - -");
+        System.out.println(
+                "MessageContextSaveATest:testReceive(): start - - engine.receive(mc) - - - - - - - - - - - - - - - -");
         engine.receive(mc);
 
-        System.out.println("MessageContextSaveATest:testReceive(): resume - - engine.resume(mc) - - - - - - - - - - - - - - - -");
+        System.out.println(
+                "MessageContextSaveATest:testReceive(): resume - - engine.resume(mc) - - - - - - - - - - - - - - - -");
         engine.resume(mc);
 
         assertEquals(30, executedHandlers.size());
-        for (int i = 15; i < 30; i++)
-        {
-            assertEquals(((Integer)executedHandlers.get(i)).intValue(), i+1);
+        for (int i = 15; i < 30; i++) {
+            assertEquals(((Integer) executedHandlers.get(i)).intValue(), i + 1);
         }
 
         // get the phase lists and see if they match up
@@ -335,46 +333,30 @@ public class MessageContextSaveATest extends TestCase
         int it_count = 0;
 
         Iterator it = restoredPhases.iterator();
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             // we know everything at this level is a Phase.  
             // if you change it, you might get a ClassCastException 
-            Phase restored_phase = (Phase)it.next();
+            Phase restored_phase = (Phase) it.next();
 
             Phase original_phase = null;
 
             it_count++;
 
-            if (it_count == 1)
-            {
+            if (it_count == 1) {
                 original_phase = phase1;
-            }
-            else if (it_count == 2)
-            {
+            } else if (it_count == 2) {
                 original_phase = phase2;
-            }
-            else if (it_count == 3)
-            {
+            } else if (it_count == 3) {
                 original_phase = phase3;
-            }
-            else if (it_count == 4)
-            {
+            } else if (it_count == 4) {
                 original_phase = phase4;
-            }
-            else if (it_count == 5)
-            {
+            } else if (it_count == 5) {
                 original_phase = phase5;
-            }
-            else if (it_count == 6)
-            {
+            } else if (it_count == 6) {
                 original_phase = phase6;
-            }
-            else if (it_count == 7)
-            {
+            } else if (it_count == 7) {
                 original_phase = phase7;
-            }
-            else
-            {
+            } else {
                 // unexpected
                 assertTrue(false);
             }
@@ -383,17 +365,16 @@ public class MessageContextSaveATest extends TestCase
             assertTrue(isOk);
         }
 
-
         // -------------------------------------------------------------------
         // second resume to start the second pause
         // -------------------------------------------------------------------
-        System.out.println("MessageContextSaveATest:testReceive(): resume - - engine.resume(mc) - - - - - - - - - - - - - - - -");
+        System.out.println(
+                "MessageContextSaveATest:testReceive(): resume - - engine.resume(mc) - - - - - - - - - - - - - - - -");
         engine.resume(mc);
 
         assertEquals(35, executedHandlers.size());
-        for (int i = 31; i < 35; i++)
-        {
-            assertEquals(((Integer)executedHandlers.get(i)).intValue(), i+1);
+        for (int i = 31; i < 35; i++) {
+            assertEquals(((Integer) executedHandlers.get(i)).intValue(), i + 1);
         }
 
         // get the phase lists and see if they match up
@@ -401,46 +382,30 @@ public class MessageContextSaveATest extends TestCase
         it_count = 0;
 
         it = restoredPhases.iterator();
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             // we know everything at this level is a Phase.  
             // if you change it, you might get a ClassCastException 
-            Phase restored_phase = (Phase)it.next();
+            Phase restored_phase = (Phase) it.next();
 
             Phase original_phase = null;
 
             it_count++;
 
-            if (it_count == 1)
-            {
+            if (it_count == 1) {
                 original_phase = phase1;
-            }
-            else if (it_count == 2)
-            {
+            } else if (it_count == 2) {
                 original_phase = phase2;
-            }
-            else if (it_count == 3)
-            {
+            } else if (it_count == 3) {
                 original_phase = phase3;
-            }
-            else if (it_count == 4)
-            {
+            } else if (it_count == 4) {
                 original_phase = phase4;
-            }
-            else if (it_count == 5)
-            {
+            } else if (it_count == 5) {
                 original_phase = phase5;
-            }
-            else if (it_count == 6)
-            {
+            } else if (it_count == 6) {
                 original_phase = phase6;
-            }
-            else if (it_count == 7)
-            {
+            } else if (it_count == 7) {
                 original_phase = phase7;
-            }
-            else
-            {
+            } else {
                 // unexpected
                 assertTrue(false);
             }
@@ -451,21 +416,18 @@ public class MessageContextSaveATest extends TestCase
     }
 
 
-
     /**
      * Gets the ID associated with the handler object.
-     * 
-     * @param o      The handler object
+     *
+     * @param o The handler object
      * @return The ID associated with the handler,
      *         -1 otherwise
      */
-    private int getHandlerID(Object o)
-    {
+    private int getHandlerID(Object o) {
         int id = -1;
 
-        if (o instanceof TempHandler)
-        {
-            id = ((TempHandler)o).getHandlerID();
+        if (o instanceof TempHandler) {
+            id = ((TempHandler) o).getHandlerID();
         }
 
         return id;
@@ -474,45 +436,40 @@ public class MessageContextSaveATest extends TestCase
 
     /**
      * Check the handler objects to see if they are equivalent.
-     * 
-     * @param o1     The first handler
-     * @param o2     The second handler
+     *
+     * @param o1 The first handler
+     * @param o2 The second handler
      * @return TRUE if the handler objects are equivalent,
      *         FALSE otherwise
      */
-    private boolean compareHandlers(Object o1, Object o2)
-    {
-        if ((o1 == null) && (o2 == null))
-        {
+    private boolean compareHandlers(Object o1, Object o2) {
+        if ((o1 == null) && (o2 == null)) {
             return true;
         }
 
-        if ((o1 != null) && (o2 != null))
-        {
+        if ((o1 != null) && (o2 != null)) {
             String c1 = o1.getClass().getName();
             String c2 = o2.getClass().getName();
 
-            if (c1.equals(c2))
-            {
-                System.out.println("MessageContextSaveATest::compareHandlers:  class ["+c1+"] match ");
+            if (c1.equals(c2)) {
+                System.out.println(
+                        "MessageContextSaveATest::compareHandlers:  class [" + c1 + "] match ");
 
                 int id1 = getHandlerID(o1);
                 int id2 = getHandlerID(o2);
 
-                if (id1 == id2)
-                {
-                    System.out.println("MessageContextSaveATest::compareHandlers:  id ["+id1+"] match");
+                if (id1 == id2) {
+                    System.out.println(
+                            "MessageContextSaveATest::compareHandlers:  id [" + id1 + "] match");
                     return true;
-                }
-                else
-                {
-                    System.out.println("MessageContextSaveATest::compareHandlers:  id1 ["+id1+"] != id2 ["+id2+"] ");
+                } else {
+                    System.out.println("MessageContextSaveATest::compareHandlers:  id1 [" + id1 +
+                            "] != id2 [" + id2 + "] ");
                     return false;
                 }
-            }
-            else
-            {
-                System.out.println("MessageContextSaveATest::compareHandlers:  class1 ["+c1+"] != class2 ["+c2+"]   ");
+            } else {
+                System.out.println("MessageContextSaveATest::compareHandlers:  class1 [" + c1 +
+                        "] != class2 [" + c2 + "]   ");
                 return false;
             }
         }
@@ -523,27 +480,24 @@ public class MessageContextSaveATest extends TestCase
 
     /**
      * Compare two phases.
-     * 
-     * @param o1     The first phase object
-     * @param o2     The second phase object
+     *
+     * @param o1 The first phase object
+     * @param o2 The second phase object
      * @return TRUE if the phases are equivalent,
      *         FALSE otherwise
      */
-    private boolean comparePhases(Object o1, Object o2)
-    {
-        if ((o1 == null) && (o2 == null))
-        {
-            System.out.println("MessageContextSaveATest: comparePhases:  Phase1[] == Phase2[] - both null objects");
+    private boolean comparePhases(Object o1, Object o2) {
+        if ((o1 == null) && (o2 == null)) {
+            System.out.println(
+                    "MessageContextSaveATest: comparePhases:  Phase1[] == Phase2[] - both null objects");
             return true;
         }
 
-        if (  ((o1 != null) && (o2 != null))
-              && ((o1 instanceof Phase) && (o2 instanceof Phase))
-           )
-        {
+        if (((o1 != null) && (o2 != null))
+                && ((o1 instanceof Phase) && (o2 instanceof Phase))
+                ) {
 
-            try
-            {
+            try {
                 Phase p1 = (Phase) o1;
                 Phase p2 = (Phase) o2;
 
@@ -553,56 +507,51 @@ public class MessageContextSaveATest extends TestCase
                 ArrayList list1 = p1.getHandlers();
                 ArrayList list2 = p2.getHandlers();
 
-                if ((list1 == null) && (list2 == null))
-                {
-                    System.out.println("MessageContextSaveATest: comparePhases:  Phase1["+name1+"] == Phase2["+name2+"]");
+                if ((list1 == null) && (list2 == null)) {
+                    System.out.println("MessageContextSaveATest: comparePhases:  Phase1[" + name1 +
+                            "] == Phase2[" + name2 + "]");
                     return true;
                 }
 
-                if ((list1 != null) && (list2 != null))
-                {
+                if ((list1 != null) && (list2 != null)) {
                     int size1 = list1.size();
                     int size2 = list2.size();
 
-                    if (size1 != size2)
-                    {
-                        System.out.println("MessageContextSaveATest: comparePhases:  Phase1["+name1+"] != Phase2["+name2+"] - mismatched size of handler lists");
+                    if (size1 != size2) {
+                        System.out.println("MessageContextSaveATest: comparePhases:  Phase1[" +
+                                name1 + "] != Phase2[" + name2 +
+                                "] - mismatched size of handler lists");
                         return false;
                     }
 
-                    for (int j=0; j<size1; j++)
-                    {
+                    for (int j = 0; j < size1; j++) {
                         Object obj1 = list1.get(j);
                         Object obj2 = list2.get(j);
 
-                        if ((obj1 == null) && (obj2 == null))
-                        {
+                        if ((obj1 == null) && (obj2 == null)) {
                             // ok
-                        }
-                        else if ((obj1 != null) && (obj2 != null))
-                        {
+                        } else if ((obj1 != null) && (obj2 != null)) {
                             boolean check = false;
 
-                            if (obj1 instanceof Phase)
-                            {
+                            if (obj1 instanceof Phase) {
                                 check = comparePhases(obj1, obj2);
-                            }
-                            else
-                            {
+                            } else {
                                 // must be a handler
                                 check = compareHandlers(obj1, obj2);
                             }
 
-                            if (check == false)
-                            {
-                                System.out.println("MessageContextSaveATest: comparePhases:  Phase1["+name1+"] != Phase2["+name2+"] - mismatched handler lists");
+                            if (check == false) {
+                                System.out.println(
+                                        "MessageContextSaveATest: comparePhases:  Phase1[" + name1 +
+                                                "] != Phase2[" + name2 +
+                                                "] - mismatched handler lists");
                                 return false;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             // mismatch
-                            System.out.println("MessageContextSaveATest: comparePhases:  Phase1["+name1+"] != Phase2["+name2+"] - mismatched handler lists");
+                            System.out.println("MessageContextSaveATest: comparePhases:  Phase1[" +
+                                    name1 + "] != Phase2[" + name2 +
+                                    "] - mismatched handler lists");
                             return false;
                         }
                     }
@@ -610,13 +559,13 @@ public class MessageContextSaveATest extends TestCase
                     // if we got here, the comparison completed ok
                     // with a match
 
-                    System.out.println("MessageContextSaveATest: comparePhases:  Phase1["+name1+"] == Phase2["+name2+"] - matched handler lists");
+                    System.out.println("MessageContextSaveATest: comparePhases:  Phase1[" + name1 +
+                            "] == Phase2[" + name2 + "] - matched handler lists");
                     return true;
                 }
 
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 // some error
                 e.printStackTrace();
             }
@@ -626,31 +575,28 @@ public class MessageContextSaveATest extends TestCase
         return false;
     }
 
-    private void showMcMap(HashMap map)
-    {
-        if ((map != null) && (map.isEmpty() == false))
-        {
+    private void showMcMap(HashMap map) {
+        if ((map != null) && (map.isEmpty() == false)) {
             Iterator itList = map.keySet().iterator();
 
-            while (itList.hasNext())
-            {
+            while (itList.hasNext()) {
                 String key = (String) itList.next();
 
                 MessageContext value = (MessageContext) map.get(key);
                 String valueID = null;
 
-                if (value != null)
-                {
+                if (value != null) {
                     valueID = value.getMessageID();
 
-                    System.out.println("MessageContextSaveATest: showMcMap:  Message context   ID["+valueID+"]   Key Label ["+key+"]");
+                    System.out.println(
+                            "MessageContextSaveATest: showMcMap:  Message context   ID[" + valueID +
+                                    "]   Key Label [" + key + "]");
 
                 }
             }
-        }
-        else
-        {
-            System.out.println("MessageContextSaveATest: showMcMap:  No entries to display for message contexts table.");
+        } else {
+            System.out.println(
+                    "MessageContextSaveATest: showMcMap:  No entries to display for message contexts table.");
         }
     }
 
@@ -659,41 +605,36 @@ public class MessageContextSaveATest extends TestCase
     // through the engine to simulate what some WS-RM implementations 
     // need to do - make a simple message context for a RM ack or other
     // simple message
-    public void testSimpleMC() throws Exception 
-    {
+    public void testSimpleMC() throws Exception {
         String title = "MessageContextSaveATest:testSimpleMC(): ";
         System.out.println(title + "start - - - - - - - - - - - - - - - -");
 
-        MessageContext simpleMsg         = new MessageContext();
+        MessageContext simpleMsg = new MessageContext();
         MessageContext restoredSimpleMsg = null;
 
-        File   theFile     = null;
+        File theFile = null;
         String theFilename = null;
 
-        boolean pause                  = false;
-        boolean savedMessageContext    = false;
+        boolean pause = false;
+        boolean savedMessageContext = false;
         boolean restoredMessageContext = false;
-        boolean comparesOk             = false;
+        boolean comparesOk = false;
 
-        try
-        {
-            theFile = File.createTempFile("Simple",null);
+        try {
+            theFile = File.createTempFile("Simple", null);
             theFilename = theFile.getName();
-            System.out.println(title + "temp file = ["+theFilename+"]");
+            System.out.println(title + "temp file = [" + theFilename + "]");
         }
-        catch (Exception ex)
-        {
-            System.out.println(title + "error creating temp file = ["+ex.getMessage()+"]");
+        catch (Exception ex) {
+            System.out.println(title + "error creating temp file = [" + ex.getMessage() + "]");
             theFile = null;
         }
 
-        if (theFile != null)
-        {
+        if (theFile != null) {
             // ---------------------------------------------------------
             // save to the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an output stream to a physical file
                 FileOutputStream outStream = new FileOutputStream(theFile);
 
@@ -716,12 +657,13 @@ public class MessageContextSaveATest extends TestCase
                 System.out.println(title + "....saved message context.....");
 
                 long filesize = theFile.length();
-                System.out.println(title + "file size after save ["+filesize+"]   temp file = ["+theFilename+"]");
+                System.out.println(title + "file size after save [" + filesize +
+                        "]   temp file = [" + theFilename + "]");
 
             }
-            catch (Exception ex2)
-            {
-                System.out.println(title + "error with saving message context = ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println(title + "error with saving message context = [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -730,8 +672,7 @@ public class MessageContextSaveATest extends TestCase
             // ---------------------------------------------------------
             // restore from the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an input stream to the file
                 FileInputStream inStream = new FileInputStream(theFile);
 
@@ -754,37 +695,35 @@ public class MessageContextSaveATest extends TestCase
 
                 // compare to original execution chain
                 ArrayList restored_execChain = restoredSimpleMsg.getExecutionChain();
-                ArrayList orig_execChain     = simpleMsg.getExecutionChain();
+                ArrayList orig_execChain = simpleMsg.getExecutionChain();
 
-                comparesOk = ObjectStateUtils.isEquivalent(restored_execChain, orig_execChain, false);
-                System.out.println(title + "execution chain equivalency ["+comparesOk+"]");
+                comparesOk =
+                        ObjectStateUtils.isEquivalent(restored_execChain, orig_execChain, false);
+                System.out.println(title + "execution chain equivalency [" + comparesOk + "]");
                 assertTrue(comparesOk);
 
                 // check executed list
                 Iterator restored_executed_it = restoredSimpleMsg.getInboundExecutedPhases();
-                Iterator orig_executed_it     = simpleMsg.getInboundExecutedPhases();
-                if ((restored_executed_it != null) && (orig_executed_it != null))
-                {
-                    while (restored_executed_it.hasNext() && orig_executed_it.hasNext())
-                    {
+                Iterator orig_executed_it = simpleMsg.getInboundExecutedPhases();
+                if ((restored_executed_it != null) && (orig_executed_it != null)) {
+                    while (restored_executed_it.hasNext() && orig_executed_it.hasNext()) {
                         Object p1 = restored_executed_it.next();
                         Object p2 = orig_executed_it.next();
 
                         comparesOk = comparePhases(p1, p2);
-                        System.out.println(title + "executed phase list:  compare phases ["+comparesOk+"]");
+                        System.out.println(title + "executed phase list:  compare phases [" +
+                                comparesOk + "]");
                         assertTrue(comparesOk);
                     }
-                }
-                else
-                {
+                } else {
                     // problem with the executed lists
                     assertTrue(false);
                 }
 
             }
-            catch (Exception ex2)
-            {
-                System.out.println(title + "error with saving message context = ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println(title + "error with saving message context = [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -793,14 +732,11 @@ public class MessageContextSaveATest extends TestCase
             // if the save/restore of the message context succeeded,
             // then don't keep the temporary file around
             boolean removeTmpFile = savedMessageContext && restoredMessageContext && comparesOk;
-            if (removeTmpFile)
-            {
-                try
-                {
+            if (removeTmpFile) {
+                try {
                     theFile.delete();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     // just absorb it
                 }
             }
@@ -812,47 +748,42 @@ public class MessageContextSaveATest extends TestCase
 
     // this checks the save/restore of a message context that has
     // some properties set
-    public void testMcProperties() throws Exception 
-    {
+    public void testMcProperties() throws Exception {
         String title = "MessageContextSaveATest:testMcProperties(): ";
         System.out.println(title + "start - - - - - - - - - - - - - - - -");
 
-        MessageContext simpleMsg         = new MessageContext();
+        MessageContext simpleMsg = new MessageContext();
         MessageContext restoredSimpleMsg = null;
 
-        simpleMsg.setProperty("key1","value1");
-        simpleMsg.setProperty("key2",null);
-        simpleMsg.setProperty("key3",new Integer(3));
-        simpleMsg.setProperty("key4",new Long(4L));
+        simpleMsg.setProperty("key1", "value1");
+        simpleMsg.setProperty("key2", null);
+        simpleMsg.setProperty("key3", new Integer(3));
+        simpleMsg.setProperty("key4", new Long(4L));
 
 
-        File   theFile     = null;
+        File theFile = null;
         String theFilename = null;
 
-        boolean pause                  = false;
-        boolean savedMessageContext    = false;
+        boolean pause = false;
+        boolean savedMessageContext = false;
         boolean restoredMessageContext = false;
-        boolean comparesOk             = false;
+        boolean comparesOk = false;
 
-        try
-        {
-            theFile = File.createTempFile("McProps",null);
+        try {
+            theFile = File.createTempFile("McProps", null);
             theFilename = theFile.getName();
-            System.out.println(title + "temp file = ["+theFilename+"]");
+            System.out.println(title + "temp file = [" + theFilename + "]");
         }
-        catch (Exception ex)
-        {
-            System.out.println(title + "error creating temp file = ["+ex.getMessage()+"]");
+        catch (Exception ex) {
+            System.out.println(title + "error creating temp file = [" + ex.getMessage() + "]");
             theFile = null;
         }
 
-        if (theFile != null)
-        {
+        if (theFile != null) {
             // ---------------------------------------------------------
             // save to the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an output stream to a physical file
                 FileOutputStream outStream = new FileOutputStream(theFile);
 
@@ -875,12 +806,13 @@ public class MessageContextSaveATest extends TestCase
                 System.out.println(title + "....saved message context.....");
 
                 long filesize = theFile.length();
-                System.out.println(title + "file size after save ["+filesize+"]   temp file = ["+theFilename+"]");
+                System.out.println(title + "file size after save [" + filesize +
+                        "]   temp file = [" + theFilename + "]");
 
             }
-            catch (Exception ex2)
-            {
-                System.out.println(title + "error with saving message context = ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println(title + "error with saving message context = [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -889,8 +821,7 @@ public class MessageContextSaveATest extends TestCase
             // ---------------------------------------------------------
             // restore from the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an input stream to the file
                 FileInputStream inStream = new FileInputStream(theFile);
 
@@ -913,59 +844,55 @@ public class MessageContextSaveATest extends TestCase
 
                 // compare to original execution chain
                 ArrayList restored_execChain = restoredSimpleMsg.getExecutionChain();
-                ArrayList orig_execChain     = simpleMsg.getExecutionChain();
+                ArrayList orig_execChain = simpleMsg.getExecutionChain();
 
-                comparesOk = ObjectStateUtils.isEquivalent(restored_execChain, orig_execChain, false);
-                System.out.println(title + "execution chain equivalency ["+comparesOk+"]");
+                comparesOk =
+                        ObjectStateUtils.isEquivalent(restored_execChain, orig_execChain, false);
+                System.out.println(title + "execution chain equivalency [" + comparesOk + "]");
                 assertTrue(comparesOk);
 
                 // check executed list
                 Iterator restored_executed_it = restoredSimpleMsg.getInboundExecutedPhases();
-                Iterator orig_executed_it     = simpleMsg.getInboundExecutedPhases();
-                if ((restored_executed_it != null) && (orig_executed_it != null))
-                {
-                    while (restored_executed_it.hasNext() && orig_executed_it.hasNext())
-                    {
+                Iterator orig_executed_it = simpleMsg.getInboundExecutedPhases();
+                if ((restored_executed_it != null) && (orig_executed_it != null)) {
+                    while (restored_executed_it.hasNext() && orig_executed_it.hasNext()) {
                         Object p1 = restored_executed_it.next();
                         Object p2 = orig_executed_it.next();
 
                         comparesOk = comparePhases(p1, p2);
-                        System.out.println(title + "executed phase list:  compare phases ["+comparesOk+"]");
+                        System.out.println(title + "executed phase list:  compare phases [" +
+                                comparesOk + "]");
                         assertTrue(comparesOk);
                     }
-                }
-                else
-                {
+                } else {
                     // problem with the executed lists
                     assertTrue(false);
                 }
 
                 // check the properties
-                String  value1 = (String) restoredSimpleMsg.getProperty("key1");
-                Object  value2 = restoredSimpleMsg.getProperty("key2");
-                Integer value3 = (Integer) restoredSimpleMsg.getProperty("key3"); 
-                Long    value4 = (Long) restoredSimpleMsg.getProperty("key4"); 
+                String value1 = (String) restoredSimpleMsg.getProperty("key1");
+                Object value2 = restoredSimpleMsg.getProperty("key2");
+                Integer value3 = (Integer) restoredSimpleMsg.getProperty("key3");
+                Long value4 = (Long) restoredSimpleMsg.getProperty("key4");
 
                 assertEquals(value1, "value1");
                 assertNull(value2);
 
                 boolean isOk = false;
-                if ((value3 != null) && value3.equals(new Integer(3)))
-                {
+                if ((value3 != null) && value3.equals(new Integer(3))) {
                     isOk = true;
                 }
                 assertTrue(isOk);
 
-                if ((value4 != null) && value4.equals(new Long(4L)))
-                {
+                if ((value4 != null) && value4.equals(new Long(4L))) {
                     isOk = true;
                 }
                 assertTrue(isOk);
 
             }
-            catch (Exception ex2)
-            {
-                System.out.println(title + "error with restoring message context = ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println(title + "error with restoring message context = [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -974,14 +901,11 @@ public class MessageContextSaveATest extends TestCase
             // if the save/restore of the message context succeeded,
             // then don't keep the temporary file around
             boolean removeTmpFile = savedMessageContext && restoredMessageContext && comparesOk;
-            if (removeTmpFile)
-            {
-                try
-                {
+            if (removeTmpFile) {
+                try {
                     theFile.delete();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     // just absorb it
                 }
             }
@@ -991,8 +915,7 @@ public class MessageContextSaveATest extends TestCase
     }
 
 
-    public void testMapping() throws Exception 
-    {
+    public void testMapping() throws Exception {
 
         String title = "MessageContextSaveATest:testMapping(): ";
         System.out.println(title + "start - - - - - - - - - - - - - - - -");
@@ -1006,47 +929,43 @@ public class MessageContextSaveATest extends TestCase
         // look at the OperationContext messageContexts table
         HashMap mcMap1 = mc.getOperationContext().getMessageContexts();
 
-        if ((mcMap1 == null) || (mcMap1.isEmpty()))
-        {
-            mc.getAxisOperation().addMessageContext(mc,mc.getOperationContext());
+        if ((mcMap1 == null) || (mcMap1.isEmpty())) {
+            mc.getAxisOperation().addMessageContext(mc, mc.getOperationContext());
         }
         // update the table
         mcMap1 = mc.getOperationContext().getMessageContexts();
 
-        System.out.println(title + "- - - - - original message contexts table- - - - - - - - - - -");
+        System.out
+                .println(title + "- - - - - original message contexts table- - - - - - - - - - -");
         showMcMap(mcMap1);
 
         //---------------------------------------------------------------------
         // save and restore the message context
         //---------------------------------------------------------------------
 
-        File   theFile     = null;
+        File theFile = null;
         String theFilename = null;
 
-        boolean pause                  = false;
-        boolean savedMessageContext    = false;
+        boolean pause = false;
+        boolean savedMessageContext = false;
         boolean restoredMessageContext = false;
-        boolean comparesOk             = false;
+        boolean comparesOk = false;
 
-        try
-        {
-            theFile = File.createTempFile("McMappings",null);
+        try {
+            theFile = File.createTempFile("McMappings", null);
             theFilename = theFile.getName();
-            System.out.println(title + "temp file = ["+theFilename+"]");
+            System.out.println(title + "temp file = [" + theFilename + "]");
         }
-        catch (Exception ex)
-        {
-            System.out.println(title + "error creating temp file = ["+ex.getMessage()+"]");
+        catch (Exception ex) {
+            System.out.println(title + "error creating temp file = [" + ex.getMessage() + "]");
             theFile = null;
         }
 
-        if (theFile != null)
-        {
+        if (theFile != null) {
             // ---------------------------------------------------------
             // save to the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an output stream to a physical file
                 FileOutputStream outStream = new FileOutputStream(theFile);
 
@@ -1069,12 +988,13 @@ public class MessageContextSaveATest extends TestCase
                 System.out.println(title + "....saved message context.....");
 
                 long filesize = theFile.length();
-                System.out.println(title + "file size after save ["+filesize+"]   temp file = ["+theFilename+"]");
+                System.out.println(title + "file size after save [" + filesize +
+                        "]   temp file = [" + theFilename + "]");
 
             }
-            catch (Exception ex2)
-            {
-                System.out.println(title + "error with saving message context = ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println(title + "error with saving message context = [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -1083,8 +1003,7 @@ public class MessageContextSaveATest extends TestCase
             // ---------------------------------------------------------
             // restore from the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an input stream to the file
                 FileInputStream inStream = new FileInputStream(theFile);
 
@@ -1105,20 +1024,20 @@ public class MessageContextSaveATest extends TestCase
                 restoredMessageContext = true;
                 System.out.println(title + "....restored message context.....");
 
-
                 // get the table after the restore
-                HashMap mcMap2 = restoredMC.getOperationContext().getMessageContexts(); 
+                HashMap mcMap2 = restoredMC.getOperationContext().getMessageContexts();
 
-                System.out.println("MessageContextSaveATest:testMapping(): - - - - - restored message contexts table- - - - - - - - - - -");
+                System.out.println(
+                        "MessageContextSaveATest:testMapping(): - - - - - restored message contexts table- - - - - - - - - - -");
                 showMcMap(mcMap2);
 
                 boolean okMap = compareMCMaps(mcMap1, mcMap2);
                 assertTrue(okMap);
 
             }
-            catch (Exception ex2)
-            {
-                System.out.println(title + "error with restoring message context = ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println(title + "error with restoring message context = [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -1127,14 +1046,11 @@ public class MessageContextSaveATest extends TestCase
             // if the save/restore of the message context succeeded,
             // then don't keep the temporary file around
             boolean removeTmpFile = savedMessageContext && restoredMessageContext && comparesOk;
-            if (removeTmpFile)
-            {
-                try
-                {
+            if (removeTmpFile) {
+                try {
                     theFile.delete();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     // just absorb it
                 }
             }
@@ -1145,18 +1061,16 @@ public class MessageContextSaveATest extends TestCase
 
     }
 
-    private boolean compareMCMaps(HashMap m1, HashMap m2)
-    {
+    private boolean compareMCMaps(HashMap m1, HashMap m2) {
         String title = "MessageContextSaveATest:compareMCMaps(): ";
 
-        if ((m1 != null) && (m2 != null))
-        {
+        if ((m1 != null) && (m2 != null)) {
             int size1 = m1.size();
             int size2 = m2.size();
 
-            if (size1 != size2)
-            {
-                System.out.println(title + "MISMATCH:  map1 size ["+size1+"]  !=   map2 size ["+size2+"]");
+            if (size1 != size2) {
+                System.out.println(title + "MISMATCH:  map1 size [" + size1 +
+                        "]  !=   map2 size [" + size2 + "]");
                 return false;
             }
 
@@ -1166,39 +1080,33 @@ public class MessageContextSaveATest extends TestCase
             // check the keys, ordering is not important between the two maps
             Iterator it1 = m1.keySet().iterator();
 
-            while (it1.hasNext())
-            {
+            while (it1.hasNext()) {
                 String key1 = (String) it1.next();
                 MessageContext value1 = (MessageContext) m1.get(key1);
 
-                if (value1 != null)
-                {
+                if (value1 != null) {
                     id1 = value1.getMessageID();
 
                     MessageContext value2 = (MessageContext) m2.get(key1);
 
-                    if (value2 != null)
-                    {
+                    if (value2 != null) {
                         id2 = value2.getMessageID();
-                    }
-                    else
-                    {
+                    } else {
                         // mismatch
-                        System.out.println(title + "MISMATCH:  no message context in one of the tables for key ["+key1+"]");
+                        System.out.println(title +
+                                "MISMATCH:  no message context in one of the tables for key [" +
+                                key1 + "]");
                         return false;
                     }
 
-                    if ((id1 != null) && (id2 != null))
-                    {
-                        if ((id1.equals(id2)) == false)
-                        {
+                    if ((id1 != null) && (id2 != null)) {
+                        if ((id1.equals(id2)) == false) {
                             // mismatch
-                            System.out.println(title + "MISMATCH:  messageID_1 ["+id1+"]   !=    messageID_2 ["+id2+"]");
+                            System.out.println(title + "MISMATCH:  messageID_1 [" + id1 +
+                                    "]   !=    messageID_2 [" + id2 + "]");
                             return false;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         // null values, can't tell
                         System.out.println(title + "MISMATCH:  one or more null message IDs");
                         return false;
@@ -1206,13 +1114,9 @@ public class MessageContextSaveATest extends TestCase
                 }
             }
             return true;
-        }
-        else if ((m1 == null) && (m2 == null))
-        {
+        } else if ((m1 == null) && (m2 == null)) {
             return true;
-        }
-        else
-        {
+        } else {
             // mismatch
             System.out.println(title + "MISMATCH:  one of the tables is null");
             return false;
@@ -1220,50 +1124,42 @@ public class MessageContextSaveATest extends TestCase
     }
 
 
-    public class TempHandler extends AbstractHandler
-    {
+    public class TempHandler extends AbstractHandler {
         private Integer handlerID = null;
 
-        private File   theFile     = null;
+        private File theFile = null;
         private String theFilename = null;
 
-        private boolean pause                  = false;
-        private boolean savedMessageContext    = false;
+        private boolean pause = false;
+        private boolean savedMessageContext = false;
         private boolean restoredMessageContext = false;
-        private boolean comparesOk             = false;
+        private boolean comparesOk = false;
 
         //-----------------------------------------------------------------
         // constructors
         //-----------------------------------------------------------------
 
-        public TempHandler()
-        {
+        public TempHandler() {
             this.handlerID = new Integer(-5);
         }
 
-        public TempHandler(int index, boolean pause)
-        {
+        public TempHandler(int index, boolean pause) {
             this.handlerID = new Integer(index);
             this.pause = pause;
             init(new HandlerDescription(new String("handler" + index)));
         }
 
-        public TempHandler(int index)
-        {
+        public TempHandler(int index) {
             this.handlerID = new Integer(index);
             init(new HandlerDescription(new String("handler" + index)));
         }
-
-
 
         //-----------------------------------------------------------------
         // methods
         //-----------------------------------------------------------------
 
-        public int getHandlerID()
-        {
-            if (handlerID != null)
-            {
+        public int getHandlerID() {
+            if (handlerID != null) {
                 return handlerID.intValue();
             }
 
@@ -1271,38 +1167,33 @@ public class MessageContextSaveATest extends TestCase
         }
 
 
-        public InvocationResponse invoke(MessageContext msgContext) throws AxisFault
-        {
-            String title = "TempHandler["+getHandlerID()+"]:invoke(): ";
-            System.out.println(title + "pause = ["+pause+"]");
-            savedMessageContext    = false;
+        public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+            String title = "TempHandler[" + getHandlerID() + "]:invoke(): ";
+            System.out.println(title + "pause = [" + pause + "]");
+            savedMessageContext = false;
             restoredMessageContext = false;
 
-            if (pause)
-            {
+            if (pause) {
                 System.out.println(title + "msgContext.pause()");
                 msgContext.pause();
                 pause = false;
 
-                try
-                {
-                    theFile = File.createTempFile("mcSave",null);
+                try {
+                    theFile = File.createTempFile("mcSave", null);
                     theFilename = theFile.getName();
-                    System.out.println(title + "temp file = ["+theFilename+"]");
+                    System.out.println(title + "temp file = [" + theFilename + "]");
                 }
-                catch (Exception ex)
-                {
-                    System.out.println(title + "error creating temp file = ["+ex.getMessage()+"]");
+                catch (Exception ex) {
+                    System.out.println(
+                            title + "error creating temp file = [" + ex.getMessage() + "]");
                     theFile = null;
                 }
 
-                if (theFile != null)
-                {
+                if (theFile != null) {
                     // ---------------------------------------------------------
                     // save to the temporary file
                     // ---------------------------------------------------------
-                    try
-                    {
+                    try {
                         // setup an output stream to a physical file
                         FileOutputStream outStream = new FileOutputStream(theFile);
 
@@ -1325,12 +1216,13 @@ public class MessageContextSaveATest extends TestCase
                         System.out.println(title + "....saved message context.....");
 
                         long filesize = theFile.length();
-                        System.out.println(title + "file size after save ["+filesize+"]   temp file = ["+theFilename+"]");
+                        System.out.println(title + "file size after save [" + filesize +
+                                "]   temp file = [" + theFilename + "]");
 
                     }
-                    catch (Exception ex2)
-                    {
-                        System.out.println(title + "error with saving message context = ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+                    catch (Exception ex2) {
+                        System.out.println(title + "error with saving message context = [" +
+                                ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                         ex2.printStackTrace();
                     }
 
@@ -1339,8 +1231,7 @@ public class MessageContextSaveATest extends TestCase
                     // ---------------------------------------------------------
                     // restore from the temporary file
                     // ---------------------------------------------------------
-                    try
-                    {
+                    try {
                         // setup an input stream to the file
                         FileInputStream inStream = new FileInputStream(theFile);
 
@@ -1363,42 +1254,40 @@ public class MessageContextSaveATest extends TestCase
 
                         // compare to original execution chain
                         ArrayList restored_execChain = msgContext2.getExecutionChain();
-                        ArrayList orig_execChain     = msgContext.getExecutionChain();
+                        ArrayList orig_execChain = msgContext.getExecutionChain();
 
-                        comparesOk = ObjectStateUtils.isEquivalent(restored_execChain, orig_execChain, false);
-                        System.out.println(title + "execution chain equivalency ["+comparesOk+"]");
+                        comparesOk = ObjectStateUtils
+                                .isEquivalent(restored_execChain, orig_execChain, false);
+                        System.out.println(
+                                title + "execution chain equivalency [" + comparesOk + "]");
                         assertTrue(comparesOk);
 
                         // check executed list
                         Iterator restored_executed_it = msgContext2.getInboundExecutedPhases();
-                        Iterator orig_executed_it     = msgContext.getInboundExecutedPhases();
-                        if ((restored_executed_it != null) && (orig_executed_it != null))
-                        {
-                            while (restored_executed_it.hasNext() && orig_executed_it.hasNext())
-                            {
+                        Iterator orig_executed_it = msgContext.getInboundExecutedPhases();
+                        if ((restored_executed_it != null) && (orig_executed_it != null)) {
+                            while (restored_executed_it.hasNext() && orig_executed_it.hasNext()) {
                                 Object p1 = restored_executed_it.next();
                                 Object p2 = orig_executed_it.next();
 
                                 comparesOk = comparePhases(p1, p2);
-                                System.out.println(title + "executed phase list:  compare phases ["+comparesOk+"]");
+                                System.out.println(title +
+                                        "executed phase list:  compare phases [" + comparesOk +
+                                        "]");
                                 assertTrue(comparesOk);
                             }
-                        }
-                        else
-                        {
+                        } else {
                             // problem with the executed lists
                             assertTrue(false);
                         }
-
-
 
                         // now put the restored message context in the global
                         // variable for the test 
                         mc2 = msgContext2;
                     }
-                    catch (Exception ex2)
-                    {
-                        System.out.println(title + "error with saving message context = ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+                    catch (Exception ex2) {
+                        System.out.println(title + "error with saving message context = [" +
+                                ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                         ex2.printStackTrace();
                     }
 
@@ -1406,15 +1295,13 @@ public class MessageContextSaveATest extends TestCase
 
                     // if the save/restore of the message context succeeded,
                     // then don't keep the temporary file around
-                    boolean removeTmpFile = savedMessageContext && restoredMessageContext && comparesOk;
-                    if (removeTmpFile)
-                    {
-                        try
-                        {
+                    boolean removeTmpFile =
+                            savedMessageContext && restoredMessageContext && comparesOk;
+                    if (removeTmpFile) {
+                        try {
                             theFile.delete();
                         }
-                        catch (Exception e)
-                        {
+                        catch (Exception e) {
                             // just absorb it
                         }
                     }
@@ -1422,10 +1309,8 @@ public class MessageContextSaveATest extends TestCase
 
                 return InvocationResponse.SUSPEND;
 
-            }
-            else
-            {
-                System.out.println(title + "executedHandlers.add("+handlerID+")");
+            } else {
+                System.out.println(title + "executedHandlers.add(" + handlerID + ")");
                 executedHandlers.add(handlerID);
             }
 

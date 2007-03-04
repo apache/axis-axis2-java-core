@@ -22,18 +22,17 @@ package org.apache.axis2.util;
  * do most providers of the Common's logging API at the cost of runtime
  * flexibility.
  */
-public class LoggingControl
-{
-  /**
-   * If this flag is set to false then debug messages will not be logged,
-   * irrespective of the level set for the logger itself.  This can only
-   * be changed as the result of a JVM restart or a purge and reloading
-   * of this class.
-   * 
-   * Usage: if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())...
-   *        or
-   *        if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled())...
-   */
-  public static final boolean debugLoggingAllowed =
-    (System.getProperty("Axis2.prohibitDebugLogging") == null);
+public class LoggingControl {
+    /**
+     * If this flag is set to false then debug messages will not be logged,
+     * irrespective of the level set for the logger itself.  This can only
+     * be changed as the result of a JVM restart or a purge and reloading
+     * of this class.
+     * <p/>
+     * Usage: if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled())...
+     * or
+     * if (LoggingControl.debugLoggingAllowed && log.isTraceEnabled())...
+     */
+    public static final boolean debugLoggingAllowed =
+            (System.getProperty("Axis2.prohibitDebugLogging") == null);
 }

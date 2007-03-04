@@ -40,7 +40,7 @@ public class PrettyPrinter {
     public static void prettify(File file) {
         try {
             Loader.loadClass("org.apache.log4j.Priority");
-                    
+
             // Create an instance of the Jalopy bean
             Class clazz = Loader.loadClass("de.hunsicker.jalopy.Jalopy");
             Object prettifier = clazz.newInstance();
@@ -60,8 +60,8 @@ public class PrettyPrinter {
             Class clazz3 = Loader.loadClass("de.hunsicker.jalopy.storage.ConventionKeys");
             Field field = clazz3.getField("COMMENT_JAVADOC_PARSE");
             Object key = field.get(null);
-            
-            Method put = clazz2.getMethod("put", new Class[]{ key.getClass(), String.class});
+
+            Method put = clazz2.getMethod("put", new Class[]{key.getClass(), String.class});
             put.invoke(settings, new Object[]{key, "true"});
 
             // format and overwrite the given input file

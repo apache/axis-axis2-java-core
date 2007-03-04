@@ -22,8 +22,8 @@ package org.apache.axis2.dataretrieval;
  * easier for any future implementation schema specific data retrieval logic.
  */
 
-public class SchemaDataLocator  extends BaseAxisDataLocator  implements AxisDataLocator {
-    
+public class SchemaDataLocator extends BaseAxisDataLocator implements AxisDataLocator {
+
     protected SchemaDataLocator() {
 
     }
@@ -34,5 +34,5 @@ public class SchemaDataLocator  extends BaseAxisDataLocator  implements AxisData
     protected SchemaDataLocator(ServiceData[] data) {
         dataList = data;
     }
-    
+
 }

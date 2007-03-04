@@ -24,6 +24,7 @@ import java.net.URI;
 *
 *
 */
+
 public class WarFileBasedURIResolver extends DefaultURIResolver {
 
     protected static final Log log = LogFactory

@@ -41,7 +41,8 @@ public class Storage {
     }
 
     public ArrayList popUserMails(String user) {
-        ArrayList usrMailBox = new ArrayList();    // This will return a emty list when the user has no mails or no mail box.
+        ArrayList usrMailBox =
+                new ArrayList();    // This will return a emty list when the user has no mails or no mail box.
 
         if (users.containsKey(user)) {
             usrMailBox = (ArrayList) users.get(user);

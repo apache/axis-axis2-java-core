@@ -98,7 +98,7 @@ public class SessionContext extends AbstractContext implements Externalizable {
     }
 
     public void addServiceGroupContext(ServiceGroupContext serviceGroupContext) {
-        String  serviceGroupID = serviceGroupContext.getDescription().getServiceGroupName();
+        String serviceGroupID = serviceGroupContext.getDescription().getServiceGroupName();
         serviceGroupContextMap.put(serviceGroupID, serviceGroupContext);
     }
 
@@ -160,22 +160,21 @@ public class SessionContext extends AbstractContext implements Externalizable {
         Iterator serviceContecxtes = serviceGroupContext.getServiceContexts();
         while (serviceContecxtes.hasNext()) {
             ServiceContext serviceContext = (ServiceContext) serviceContecxtes.next();
-                DependencyManager.destroyServiceObject(serviceContext);
+            DependencyManager.destroyServiceObject(serviceContext);
         }
     }
 
-
     /* ===============================================================
-     * Externalizable support
-     * ===============================================================
-     */
+    * Externalizable support
+    * ===============================================================
+    */
 
     /**
      * Save the contents of this object.
      * <p/>
      * NOTE: Transient fields and static fields are not saved.
      *
-     * @param out    The stream to write the object contents to
+     * @param out The stream to write the object contents to
      * @throws IOException
      */
     public void writeExternal(ObjectOutput out) throws IOException {
@@ -208,7 +207,6 @@ public class SessionContext extends AbstractContext implements Externalizable {
 
         ObjectStateUtils.writeString(out, cookieID, "SessionContext.cookieID");
 
-
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
@@ -221,8 +219,6 @@ public class SessionContext extends AbstractContext implements Externalizable {
         }
 
         ObjectStateUtils.writeHashMap(out, tmpHashMap, "SessionContext.properties");
-
-
 
         //---------------------------------------------------------
         // "nested"
@@ -243,21 +239,22 @@ public class SessionContext extends AbstractContext implements Externalizable {
      * as it was written.  Some data will need to be validated when
      * resurrected.
      *
-     * @param in    The stream to read the object contents from
+     * @param in The stream to read the object contents from
      * @throws IOException
      * @throws ClassNotFoundException
      */
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         // trace point
         if (log.isTraceEnabled()) {
-            log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
+            log.trace(myClassName + ":readExternal():  BEGIN  bytes available in stream [" +
+                    in.available() + "]  ");
         }
 
         // serialization version ID
         long suid = in.readLong();
 
         // revision ID
-        int  revID = in.readInt();
+        int revID = in.readInt();
 
         // make sure the object data is in a version we can handle
         if (suid != serialVersionUID) {
@@ -269,7 +266,6 @@ public class SessionContext extends AbstractContext implements Externalizable {
             throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
         }
 
-
         //---------------------------------------------------------
         // various simple fields
         //---------------------------------------------------------
@@ -280,18 +276,16 @@ public class SessionContext extends AbstractContext implements Externalizable {
 
         cookieID = ObjectStateUtils.readString(in, "SessionContext.cookieID");
 
-
         //---------------------------------------------------------
         // properties
         //---------------------------------------------------------
 
-        HashMap tmpHashMap = ObjectStateUtils.readHashMap(in,"SessionContext.properties");
+        HashMap tmpHashMap = ObjectStateUtils.readHashMap(in, "SessionContext.properties");
 
         properties = new HashMap();
         if (tmpHashMap != null) {
             setProperties(tmpHashMap);
         }
-
 
         //---------------------------------------------------------
         // "nested"
@@ -317,6 +311,5 @@ public class SessionContext extends AbstractContext implements Externalizable {
         return null;
     }
 
-    
 
 }

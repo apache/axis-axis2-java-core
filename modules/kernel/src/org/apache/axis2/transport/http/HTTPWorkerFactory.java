@@ -37,9 +37,9 @@ public class HTTPWorkerFactory implements WorkerFactory {
     public HTTPWorkerFactory() {
         super();
     }
-    
+
     public Worker newWorker() {
         return new HTTPWorker();
     }
-    
+
 }

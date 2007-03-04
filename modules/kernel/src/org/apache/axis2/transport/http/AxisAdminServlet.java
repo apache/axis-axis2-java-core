@@ -30,13 +30,14 @@ import java.io.IOException;
  */
 public class AxisAdminServlet extends AxisServlet {
 
-  protected transient AdminAgent agent;
+    protected transient AdminAgent agent;
 
-  protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-    doGet(req, res);
-  }
+    protected void doPost(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException {
+        doGet(req, res);
+    }
 
-  protected void doGet(HttpServletRequest req,
+    protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
         try {
             req.getSession().setAttribute(Constants.SERVICE_PATH, configContext.getServicePath());

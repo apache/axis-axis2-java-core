@@ -42,7 +42,7 @@ import java.net.URL;
 public class HTTPSender extends AbstractHTTPSender {
 
 
-    public void send(MessageContext msgContext,URL url, String soapActionString)
+    public void send(MessageContext msgContext, URL url, String soapActionString)
             throws MalformedURLException, AxisFault, IOException {
 
         // execute the HtttpMethodBase - a connection manager can be given for

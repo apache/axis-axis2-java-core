@@ -35,29 +35,30 @@ import java.util.zip.GZIPOutputStream;
  * Axis2 message formatter object.
  */
 public class AxisRequestEntity implements RequestEntity {
-    
+
     private MessageFormatter messageFormatter;
-    
+
     private boolean chunked = false;
-    
+
     private MessageContext messageContext;
-    
+
     private byte[] bytes;
-    
+
     private boolean isAllowedRetry;
-    
+
     private OMOutputFormat format;
-    
+
     private String soapAction;
-    
+
     /**
      * Method calls to this request entity are delegated to the following Axis2
      * message formatter object.
-     * 
+     *
      * @param messageFormatter
      */
     public AxisRequestEntity(MessageFormatter messageFormatter,
-            MessageContext msgContext, OMOutputFormat format,String soapAction, boolean chunked,boolean isAllowedRetry) {
+                             MessageContext msgContext, OMOutputFormat format, String soapAction,
+                             boolean chunked, boolean isAllowedRetry) {
         this.messageFormatter = messageFormatter;
         this.messageContext = msgContext;
         this.chunked = chunked;
@@ -65,13 +66,13 @@ public class AxisRequestEntity implements RequestEntity {
         this.format = format;
         this.soapAction = soapAction;
     }
-    
+
     public boolean isRepeatable() {
         // All Axis2 request entity implementations were returning this true
         // So we return true as defualt
         return true;
     }
-    
+
     public void writeRequest(OutputStream outStream) throws IOException {
         Object gzip = messageContext.getOptions().getProperty(
                 HTTPConstants.MC_GZIP_REQUEST);
@@ -80,10 +81,10 @@ public class AxisRequestEntity implements RequestEntity {
         }
         try {
             if (chunked) {
-                messageFormatter.writeTo(messageContext,format,outStream, isAllowedRetry);
+                messageFormatter.writeTo(messageContext, format, outStream, isAllowedRetry);
             } else {
                 if (bytes == null) {
-                    bytes = messageFormatter.getBytes(messageContext,format);
+                    bytes = messageFormatter.getBytes(messageContext, format);
                 }
                 outStream.write(bytes);
             }
@@ -96,9 +97,9 @@ public class AxisRequestEntity implements RequestEntity {
         } catch (IOException e) {
             throw new AxisFault(e);
         }
-        
+
     }
-    
+
     public long getContentLength() {
         if (chunked) {
             return -1;
@@ -107,13 +108,13 @@ public class AxisRequestEntity implements RequestEntity {
             try {
                 bytes = messageFormatter.getBytes(messageContext, format);
             } catch (AxisFault e) {
-                    return -1;
+                return -1;
             }
         }
         return bytes.length;
     }
-    
+
     public String getContentType() {
-        return messageFormatter.getContentType(messageContext,format,soapAction);
+        return messageFormatter.getContentType(messageContext, format, soapAction);
     }
 }

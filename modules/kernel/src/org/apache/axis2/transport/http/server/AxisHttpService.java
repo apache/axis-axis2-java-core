@@ -64,8 +64,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * This class is an extension of the defaulf HTTP service responsible for 
- * maintaining and polulating the {@link MessageContext} for incoming Axis 
+ * This class is an extension of the defaulf HTTP service responsible for
+ * maintaining and polulating the {@link MessageContext} for incoming Axis
  * requests.
  */
 public class AxisHttpService extends HttpService {
@@ -76,7 +76,7 @@ public class AxisHttpService extends HttpService {
     private final ConfigurationContext configurationContext;
     private final SessionManager sessionManager;
     private final Worker worker;
-  
+
     public AxisHttpService(
             final HttpProcessor httpProcessor,
             final ConnectionReuseStrategy connStrategy,
@@ -103,7 +103,7 @@ public class AxisHttpService extends HttpService {
     }
 
     protected void doService(
-            final HttpRequest request, 
+            final HttpRequest request,
             final HttpResponse response,
             final HttpContext context) throws HttpException, IOException {
         RequestLine reqline = request.getRequestLine();
@@ -127,7 +127,7 @@ public class AxisHttpService extends HttpService {
             this.msgContext.setTransportIn(transportIn);
             this.msgContext.setTransportOut(transportOut);
             this.msgContext.setServerSide(true);
-            this.msgContext.setProperty(HTTPConstants.COOKIE_STRING,sessionKey);
+            this.msgContext.setProperty(HTTPConstants.COOKIE_STRING, sessionKey);
             this.msgContext.setProperty(Constants.Configuration.TRANSPORT_IN_URL, reqline.getUri());
 
             // set the transport Headers
@@ -149,10 +149,12 @@ public class AxisHttpService extends HttpService {
                 AxisEngine engine = new AxisEngine(this.configurationContext);
 
                 OutputBuffer outbuffer = new OutputBuffer();
-                this.msgContext.setProperty(MessageContext.TRANSPORT_OUT, outbuffer.getOutputStream());
+                this.msgContext
+                        .setProperty(MessageContext.TRANSPORT_OUT, outbuffer.getOutputStream());
                 this.msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
 
-                MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgContext, e);
+                MessageContext faultContext =
+                        MessageContextBuilder.createFaultMessageContext(msgContext, e);
                 // If the fault is not going along the back channel we should be 202ing
                 if (AddressingHelper.isFaultRedirected(this.msgContext)) {
                     response.setStatusLine(new BasicStatusLine(ver, 202, "Accepted"));
@@ -181,7 +183,7 @@ public class AxisHttpService extends HttpService {
 
     }
 
-    public void handleRequest(final HttpServerConnection conn, final HttpContext context) 
+    public void handleRequest(final HttpServerConnection conn, final HttpContext context)
             throws IOException, HttpException {
         if (conn instanceof HttpInetConnection) {
             HttpInetConnection inetconn = (HttpInetConnection) conn;

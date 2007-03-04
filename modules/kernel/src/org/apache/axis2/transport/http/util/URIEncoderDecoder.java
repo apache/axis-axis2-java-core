@@ -16,9 +16,9 @@
 
 package org.apache.axis2.transport.http.util;
 
-import java.net.URISyntaxException;
-import java.io.UnsupportedEncodingException;
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 
 public class URIEncoderDecoder {
 
@@ -28,19 +28,16 @@ public class URIEncoderDecoder {
 
     /**
      * Validate a string by checking if it contains any characters other than:
-     *
+     * <p/>
      * 1. letters ('a'..'z', 'A'..'Z') 2. numbers ('0'..'9') 3. characters in
      * the legalset parameter 4. others (Unicode characters that are not in
      * US-ASCII set, and are not ISO Control or are not ISO Space characters)
-     * <p>
+     * <p/>
      * called from URI.Helper.parseURI() to validate each component
-     * <p>
+     * <p/>
      *
-     * @param s
-     *            java.lang.String the string to be validated
-     * @param legal
-     *            java.lang.String the characters allowed in the String s
-     *
+     * @param s     java.lang.String the string to be validated
+     * @param legal java.lang.String the characters allowed in the String s
      */
     static void validate(String s, String legal) throws URISyntaxException {
         for (int i = 0; i < s.length();) {
@@ -53,7 +50,8 @@ public class URIEncoderDecoder {
                     int d1 = Character.digit(s.charAt(i + 1), 16);
                     int d2 = Character.digit(s.charAt(i + 2), 16);
                     if (d1 == -1 || d2 == -1) {
-                        throw new URISyntaxException(s, "Invalid % sequence " + s.substring(i, i + 3)
+                        throw new URISyntaxException(s,
+                                                     "Invalid % sequence " + s.substring(i, i + 3)
                                 , i);
                     }
 
@@ -88,20 +86,18 @@ public class URIEncoderDecoder {
      * All characters except letters ('a'..'z', 'A'..'Z') and numbers ('0'..'9')
      * and legal characters are converted into their hexidecimal value prepended
      * by '%'.
-     * <p>
+     * <p/>
      * For example: '#' -> %23
-     * <p>
+     * <p/>
      * Other characters, which are Unicode chars that are not US-ASCII, and are
      * not ISO Control or are not ISO Space chars, are preserved.
-     * <p>
+     * <p/>
      * Called from URI.quoteComponent() (for multiple argument constructors)
-     * <p>
+     * <p/>
      *
-     * @param s
-     *            java.lang.String the string to be converted
-     * @param legal
-     *            java.lang.String the characters allowed to be preserved in the
-     *            string s
+     * @param s     java.lang.String the string to be converted
+     * @param legal java.lang.String the characters allowed to be preserved in the
+     *              string s
      * @return java.lang.String the converted string
      */
     public static String quoteIllegal(String s, String legal)
@@ -114,10 +110,10 @@ public class URIEncoderDecoder {
                     || (ch >= '0' && ch <= '9')
                     || legal.indexOf(ch) > -1
                     || (ch > 127 && !Character.isSpaceChar(ch) && !Character
-                            .isISOControl(ch))) {
+                    .isISOControl(ch))) {
                 buf.append(ch);
             } else {
-                byte[] bytes = new String(new char[] { ch }).getBytes(encoding);
+                byte[] bytes = new String(new char[]{ch}).getBytes(encoding);
                 for (int j = 0; j < bytes.length; j++) {
                     buf.append('%');
                     buf.append(digits.charAt((bytes[j] & 0xf0) >> 4));
@@ -132,14 +128,13 @@ public class URIEncoderDecoder {
      * Other characters, which are Unicode chars that are not US-ASCII, and are
      * not ISO Control or are not ISO Space chars are not preserved. They are
      * converted into their hexidecimal value prepended by '%'.
-     * <p>
+     * <p/>
      * For example: Euro currency symbol -> "%E2%82%AC".
-     * <p>
+     * <p/>
      * Called from URI.toASCIIString()
-     * <p>
+     * <p/>
      *
-     * @param s
-     *            java.lang.String the string to be converted
+     * @param s java.lang.String the string to be converted
      * @return java.lang.String the converted string
      */
     static String encodeOthers(String s) throws UnsupportedEncodingException {
@@ -149,7 +144,7 @@ public class URIEncoderDecoder {
             if (ch <= 127) {
                 buf.append(ch);
             } else {
-                byte[] bytes = new String(new char[] { ch }).getBytes(encoding);
+                byte[] bytes = new String(new char[]{ch}).getBytes(encoding);
                 for (int j = 0; j < bytes.length; j++) {
                     buf.append('%');
                     buf.append(digits.charAt((bytes[j] & 0xf0) >> 4));
@@ -164,22 +159,21 @@ public class URIEncoderDecoder {
      * Decodes the string argument which is assumed to be encoded in the
      * <code>x-www-form-urlencoded</code> MIME content type using the UTF-8
      * encoding scheme.
-     * <p>
+     * <p/>
      * '%' and two following hex digit characters are converted to the
      * equivalent byte value. All other characters are passed through
      * unmodified.
-     *
-     * <p>
+     * <p/>
+     * <p/>
      * e.g. "A%20B%20C %24%25" -> "A B C $%"
-     * <p>
+     * <p/>
      * Called from URI.getXYZ() methods
-     * <p>
+     * <p/>
      *
-     * @param s
-     *            java.lang.String The encoded string.
+     * @param s java.lang.String The encoded string.
      * @return java.lang.String The decoded version.
      */
-   public static String decode(String s) throws UnsupportedEncodingException {
+    public static String decode(String s) throws UnsupportedEncodingException {
 
         StringBuffer result = new StringBuffer();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -194,8 +188,9 @@ public class URIEncoderDecoder {
                     int d1 = Character.digit(s.charAt(i + 1), 16);
                     int d2 = Character.digit(s.charAt(i + 2), 16);
                     if (d1 == -1 || d2 == -1) {
-                        throw new IllegalArgumentException("Invalid % sequence" +  s.substring(i, i + 3) + "at " +
-                                String.valueOf(i));
+                        throw new IllegalArgumentException(
+                                "Invalid % sequence" + s.substring(i, i + 3) + "at " +
+                                        String.valueOf(i));
                     }
                     out.write((byte) ((d1 << 4) + d2));
                     i += 3;

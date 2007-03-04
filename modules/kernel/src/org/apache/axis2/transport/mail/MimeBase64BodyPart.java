@@ -27,6 +27,6 @@ public class MimeBase64BodyPart extends MimeBodyPart {
 
     protected void updateHeaders() throws MessagingException {
         super.updateHeaders();
-        setHeader("Content-Transfer-Encoding","base64");
+        setHeader("Content-Transfer-Encoding", "base64");
     }
 }

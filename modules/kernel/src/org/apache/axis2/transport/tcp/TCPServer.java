@@ -107,7 +107,7 @@ public class TCPServer implements Runnable, TransportListener {
             }
 
             TCPServer tcpServer = new TCPServer(Integer.parseInt(args[1]),
-                    repository.getAbsolutePath());
+                                                repository.getAbsolutePath());
 
             System.out.println("[Axis2] Using the Repository " + repository.getAbsolutePath());
             System.out.println("[Axis2] Starting the TCP Server on port " + args[1]);
@@ -195,7 +195,8 @@ public class TCPServer implements Runnable, TransportListener {
         if (hostAddress != null) {
             if (serversocket != null) {
                 // todo this has to fix
-                return new EndpointReference[] {new EndpointReference(hostAddress + "/" + contextPath + serviceName)};
+                return new EndpointReference[]{
+                        new EndpointReference(hostAddress + "/" + contextPath + serviceName)};
             } else {
                 log.debug("Unable to generate EPR for the transport tcp");
                 return null;
@@ -210,8 +211,9 @@ public class TCPServer implements Runnable, TransportListener {
         }
         if (serversocket != null) {
             // todo this has to fix
-            return new EndpointReference[] {new EndpointReference("tcp://" + ip + ":" + (serversocket.getLocalPort())
-                    + "/" + contextPath + "/" + serviceName)};
+            return new EndpointReference[]{
+                    new EndpointReference("tcp://" + ip + ":" + (serversocket.getLocalPort())
+                            + "/" + contextPath + "/" + serviceName)};
         } else {
             log.debug("Unable to generate EPR for the transport tcp");
             return null;

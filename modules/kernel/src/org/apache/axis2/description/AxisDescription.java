@@ -59,7 +59,7 @@ public abstract class AxisDescription implements ParameterInclude,
 
         if (isParameterLocked(param.getName())) {
             throw new AxisFault(Messages.getMessage("paramterlockedbyparent",
-                    param.getName()));
+                                                    param.getName()));
         }
 
         parameterInclude.addParameter(param);
@@ -78,10 +78,10 @@ public abstract class AxisDescription implements ParameterInclude,
 
     public Parameter getParameter(String name) {
         Parameter parameter = parameterInclude.getParameter(name);
-        if(parameter!=null){
+        if (parameter != null) {
             return parameter;
         }
-        if(parent != null) {
+        if (parent != null) {
             return parent.getParameter(name);
         }
         return null;
@@ -159,14 +159,14 @@ public abstract class AxisDescription implements ParameterInclude,
      * policy of this AxisDescription instance. (4) If not throw an AxisFault to
      * notify the user. (5) Else notify each module about the new effective
      * policy.
-     * 
+     *
      * @param policy the new policy of this AxisDescription instance. The effective
-     *            policy is the merge of this argument with effective policy of
-     *            parent of this AxisDescription.
+     *               policy is the merge of this argument with effective policy of
+     *               parent of this AxisDescription.
      * @throws AxisFault if any module is unable to execute the effective policy of
-     *             this AxisDescription instance successfully or no module to
-     *             execute some portion (one or more PrimtiveAssertions ) of
-     *             that effective policy.
+     *                   this AxisDescription instance successfully or no module to
+     *                   execute some portion (one or more PrimtiveAssertions ) of
+     *                   that effective policy.
      */
     public void applyPolicy(Policy policy) throws AxisFault {
         AxisConfiguration configuration = getAxisConfiguration();
@@ -242,11 +242,11 @@ public abstract class AxisDescription implements ParameterInclude,
 
     /**
      * Applies the policies on the Description Hierarchy recursively.
-     * 
+     *
      * @throws AxisFault
      */
     public void applyPolicy() throws AxisFault {
-        
+
         if (this instanceof AxisMessage) {
             return;
         }
@@ -345,7 +345,7 @@ public abstract class AxisDescription implements ParameterInclude,
     }
 
     private void engageModulesToAxisDescription(List moduleList,
-            AxisDescription description) throws AxisFault {
+                                                AxisDescription description) throws AxisFault {
 
         AxisModule axisModule;
         Module module;
@@ -382,12 +382,12 @@ public abstract class AxisDescription implements ParameterInclude,
 
     /**
      * Engaging a module to different level
-     * 
+     *
      * @param axisModule
      * @param axisConfig
      */
     public abstract void engageModule(AxisModule axisModule,
-            AxisConfiguration axisConfig) throws AxisFault;
+                                      AxisConfiguration axisConfig) throws AxisFault;
 
     public abstract boolean isEngaged(QName axisModule);
 }

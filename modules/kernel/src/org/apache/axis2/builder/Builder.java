@@ -16,16 +16,17 @@
 
 package org.apache.axis2.builder;
 
-import java.io.InputStream;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 
+import java.io.InputStream;
+
 public interface Builder {
-    
+
     /**
      * @return Returns the document element.
      */
-    public OMElement processDocument(InputStream inputStream, String contentType, MessageContext messageContext) throws AxisFault;
+    public OMElement processDocument(InputStream inputStream, String contentType,
+                                     MessageContext messageContext) throws AxisFault;
 }

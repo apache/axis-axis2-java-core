@@ -34,20 +34,20 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Default hander for failures in connection listener IOProcessors.
- *  Supports configuration of number retries, delay per retry, and uptime interval considered a success (resets number retries to zero).
+ * Supports configuration of number retries, delay per retry, and uptime interval considered a success (resets number retries to zero).
  */
 public class DefaultConnectionListenerFailureHandler implements ConnectionListenerFailureHandler {
-    
+
     private static final Log LOG = LogFactory.getLog(DefaultConnectionListenerFailureHandler.class);
 
     protected int retryDelay;
     protected int successInterval;
     protected int maxRetries;
-    
+
     private long lastFailure;
     private long lastFirstFailure;
     private int numRetries;
-    
+
     /**
      * Create a new DefaultConnectionListenerFailureHandler with default settings.
      * retryDelay is 1 second, successInterval is 60 seconds, maxRetries is 10
@@ -59,11 +59,12 @@ public class DefaultConnectionListenerFailureHandler implements ConnectionListen
     /**
      * Create a new DefaultConnectionListenerFailureHandler
      *
-     * @param retryDelay millis to wait before retrying
+     * @param retryDelay      millis to wait before retrying
      * @param successInterval millis after which an initial or retry attempt will be deemed a success, resetting retry count to 0
-     * @param maxRetries maximum number of retries allowed without a success, after which the listener will terminate
+     * @param maxRetries      maximum number of retries allowed without a success, after which the listener will terminate
      */
-    public DefaultConnectionListenerFailureHandler(int retryDelay, int successInterval, int maxRetries) {
+    public DefaultConnectionListenerFailureHandler(int retryDelay, int successInterval,
+                                                   int maxRetries) {
         this.retryDelay = retryDelay;
         this.successInterval = successInterval;
         this.maxRetries = maxRetries;
@@ -77,7 +78,7 @@ public class DefaultConnectionListenerFailureHandler implements ConnectionListen
      */
     public boolean failed(IOProcessor connectionListener, Throwable cause) {
         long now = System.currentTimeMillis();
-        if (now > lastFailure+successInterval) {
+        if (now > lastFailure + successInterval) {
             numRetries = 0;
             lastFirstFailure = now;
         }
@@ -85,13 +86,17 @@ public class DefaultConnectionListenerFailureHandler implements ConnectionListen
         if (numRetries >= maxRetries) {
             notifyAbnormalTermination(
                     connectionListener,
-                    "Terminating connection listener " + connectionListener + " after " + numRetries + "retries in " + (now-lastFirstFailure)/1000 + " seconds.",
+                    "Terminating connection listener " + connectionListener + " after " +
+                            numRetries + "retries in " + (now - lastFirstFailure) / 1000 +
+                            " seconds.",
                     cause);
             return false;
         } else {
             numRetries++;
             if (LOG.isWarnEnabled()) {
-                LOG.warn("Attempt number " + numRetries + " of " + maxRetries + " to reestalish connection listener " + connectionListener + " due to failure ",
+                LOG.warn("Attempt number " + numRetries + " of " + maxRetries +
+                        " to reestalish connection listener " + connectionListener +
+                        " due to failure ",
                          cause);
             }
             return true;
@@ -102,8 +107,9 @@ public class DefaultConnectionListenerFailureHandler implements ConnectionListen
      * Default bevarior is to log the error.
      * May subclass and override this method to change behavior.
      */
-    public void notifyAbnormalTermination(IOProcessor connectionListener, String message, Throwable cause) {
+    public void notifyAbnormalTermination(IOProcessor connectionListener, String message,
+                                          Throwable cause) {
         LOG.error(message, cause);
     }
-    
+
 }

@@ -110,7 +110,7 @@ public class TransportHeaders implements Map {
 
     public Object get(Object key) {
         if (headerMap == null) {
-            return req.getHeader((String)key);
+            return req.getHeader((String) key);
         }
         return headerMap.get(key);
     }

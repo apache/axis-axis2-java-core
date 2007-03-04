@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 import java.util.List;
 
 public interface PolicyExtension {
-    public void addMethodsToStub(Document document, Element element, QName methodName, List assertions);
+    public void addMethodsToStub(Document document, Element element, QName methodName,
+                                 List assertions);
 
 }

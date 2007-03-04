@@ -23,25 +23,25 @@ public class Constants {
     public static final String AXIS2_NAMESPACE_URI =
             "http://ws.apache.org/namespaces/axis2";
     public static final String AXIS2_NAMESPACE_PREFIX = "axis2";
-    
+
     // Namespace Prefix Constants
     //////////////////////////////////////////////////////////////////////////
-    public static final String NS_PREFIX_SOAP_ENV   = "soapenv";
-    public static final String NS_PREFIX_SOAP_ENC   = "soapenc";
-    public static final String NS_PREFIX_SCHEMA_XSI = "xsi" ;
-    public static final String NS_PREFIX_SCHEMA_XSD = "xsd" ;
-    public static final String NS_PREFIX_WSDL       = "wsdl" ;
-    public static final String NS_PREFIX_WSDL_SOAP  = "wsdlsoap";
-    public static final String NS_PREFIX_XML        = "xml";
-    public static final String NS_PREFIX_XOP        = "xop";
+    public static final String NS_PREFIX_SOAP_ENV = "soapenv";
+    public static final String NS_PREFIX_SOAP_ENC = "soapenc";
+    public static final String NS_PREFIX_SCHEMA_XSI = "xsi";
+    public static final String NS_PREFIX_SCHEMA_XSD = "xsd";
+    public static final String NS_PREFIX_WSDL = "wsdl";
+    public static final String NS_PREFIX_WSDL_SOAP = "wsdlsoap";
+    public static final String NS_PREFIX_XML = "xml";
+    public static final String NS_PREFIX_XOP = "xop";
 
     //
     // SOAP-ENV Namespaces
     //
     public static final String URI_SOAP11_ENV =
-                                "http://schemas.xmlsoap.org/soap/envelope/" ;
+            "http://schemas.xmlsoap.org/soap/envelope/";
     public static final String URI_SOAP12_ENV =
-                                   "http://www.w3.org/2003/05/soap-envelope";
+            "http://www.w3.org/2003/05/soap-envelope";
 
     public static final String URI_LITERAL_ENC = "";
 
@@ -49,50 +49,50 @@ public class Constants {
     // SOAP-ENC Namespaces
     //
     public static final String URI_SOAP11_ENC =
-                                "http://schemas.xmlsoap.org/soap/encoding/" ;
+            "http://schemas.xmlsoap.org/soap/encoding/";
     public static final String URI_SOAP12_ENC =
-                                   "http://www.w3.org/2003/05/soap-encoding";
+            "http://www.w3.org/2003/05/soap-encoding";
     public static final String URI_SOAP12_NOENC =
-                     "http://www.w3.org/2003/05/soap-envelope/encoding/none";
+            "http://www.w3.org/2003/05/soap-envelope/encoding/none";
 
     // Misc SOAP Namespaces / URIs
     public static final String URI_SOAP11_NEXT_ACTOR =
-                                     "http://schemas.xmlsoap.org/soap/actor/next" ;
+            "http://schemas.xmlsoap.org/soap/actor/next";
     public static final String URI_SOAP12_NEXT_ROLE =
-                                     "http://www.w3.org/2003/05/soap-envelope/role/next";
+            "http://www.w3.org/2003/05/soap-envelope/role/next";
     /**
      * @deprecated use URI_SOAP12_NEXT_ROLE
      */
     public static final String URI_SOAP12_NEXT_ACTOR = URI_SOAP12_NEXT_ROLE;
 
     public static final String URI_SOAP12_RPC =
-                                     "http://www.w3.org/2003/05/soap-rpc";
+            "http://www.w3.org/2003/05/soap-rpc";
 
     public static final String URI_SOAP12_NONE_ROLE =
-                         "http://www.w3.org/2003/05/soap-envelope/role/none";
+            "http://www.w3.org/2003/05/soap-envelope/role/none";
     public static final String URI_SOAP12_ULTIMATE_ROLE =
-             "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver";
+            "http://www.w3.org/2003/05/soap-envelope/role/ultimateReceiver";
 
     public static final String URI_SOAP11_HTTP =
-                                     "http://schemas.xmlsoap.org/soap/http";
+            "http://schemas.xmlsoap.org/soap/http";
     public static final String URI_SOAP12_HTTP =
-                                    "http://www.w3.org/2003/05/http";
+            "http://www.w3.org/2003/05/http";
 
     public static final String NS_URI_XMLNS =
-                                       "http://www.w3.org/2000/xmlns/";
+            "http://www.w3.org/2000/xmlns/";
 
     public static final String NS_URI_XML =
-                                       "http://www.w3.org/XML/1998/namespace";
+            "http://www.w3.org/XML/1998/namespace";
 
     //
     // Schema XSD Namespaces
     //
     public static final String URI_1999_SCHEMA_XSD =
-                                          "http://www.w3.org/1999/XMLSchema";
+            "http://www.w3.org/1999/XMLSchema";
     public static final String URI_2000_SCHEMA_XSD =
-                                       "http://www.w3.org/2000/10/XMLSchema";
+            "http://www.w3.org/2000/10/XMLSchema";
     public static final String URI_2001_SCHEMA_XSD =
-                                          "http://www.w3.org/2001/XMLSchema";
+            "http://www.w3.org/2001/XMLSchema";
 
     public static final String URI_DEFAULT_SCHEMA_XSD = URI_2001_SCHEMA_XSD;
 
@@ -100,96 +100,96 @@ public class Constants {
     // Schema XSI Namespaces
     //
     public static final String URI_1999_SCHEMA_XSI =
-                                 "http://www.w3.org/1999/XMLSchema-instance";
+            "http://www.w3.org/1999/XMLSchema-instance";
     public static final String URI_2000_SCHEMA_XSI =
-                              "http://www.w3.org/2000/10/XMLSchema-instance";
+            "http://www.w3.org/2000/10/XMLSchema-instance";
     public static final String URI_2001_SCHEMA_XSI =
-                                 "http://www.w3.org/2001/XMLSchema-instance";
+            "http://www.w3.org/2001/XMLSchema-instance";
     public static final String URI_DEFAULT_SCHEMA_XSI = URI_2001_SCHEMA_XSI;
 
     public static final String URI_POLICY =
-                                "http://schemas.xmlsoap.org/ws/2004/09/policy";
+            "http://schemas.xmlsoap.org/ws/2004/09/policy";
     /**
      * WSDL Namespace.
      */
     public static final String NS_URI_WSDL11 =
-                                 "http://schemas.xmlsoap.org/wsdl/";
+            "http://schemas.xmlsoap.org/wsdl/";
 
     public static final String NS_URI_WSDL20 =
-                                 "http://www.w3.org/2004/03/wsdl";
+            "http://www.w3.org/2004/03/wsdl";
 
     //
     // WSDL extensions for SOAP in DIME
     // (http://gotdotnet.com/team/xml_wsspecs/dime/WSDL-Extension-for-DIME.htm)
     //
     public static final String URI_DIME_WSDL =
-                                 "http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/";
+            "http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/";
 
     public static final String URI_DIME_CONTENT =
-                                 "http://schemas.xmlsoap.org/ws/2002/04/content-type/";
+            "http://schemas.xmlsoap.org/ws/2002/04/content-type/";
 
-    public static final String URI_DIME_REFERENCE=
-                                 "http://schemas.xmlsoap.org/ws/2002/04/reference/";
+    public static final String URI_DIME_REFERENCE =
+            "http://schemas.xmlsoap.org/ws/2002/04/reference/";
 
-    public static final String URI_DIME_CLOSED_LAYOUT=
-                                 "http://schemas.xmlsoap.org/ws/2002/04/dime/closed-layout";
+    public static final String URI_DIME_CLOSED_LAYOUT =
+            "http://schemas.xmlsoap.org/ws/2002/04/dime/closed-layout";
 
-    public static final String URI_DIME_OPEN_LAYOUT=
-                                 "http://schemas.xmlsoap.org/ws/2002/04/dime/open-layout";
+    public static final String URI_DIME_OPEN_LAYOUT =
+            "http://schemas.xmlsoap.org/ws/2002/04/dime/open-layout";
 
     // XOP/MTOM
     public static final String URI_XOP_INCLUDE =
-                                 "http://www.w3.org/2004/08/xop/include";
-    public static final String ELEM_XOP_INCLUDE = "Include" ;
+            "http://www.w3.org/2004/08/xop/include";
+    public static final String ELEM_XOP_INCLUDE = "Include";
 
 
     //
     // WSDL SOAP Namespace
     //
     public static final String URI_WSDL11_SOAP =
-                                 "http://schemas.xmlsoap.org/wsdl/soap/";
+            "http://schemas.xmlsoap.org/wsdl/soap/";
     public static final String URI_WSDL12_SOAP =
-                                 "http://schemas.xmlsoap.org/wsdl/soap12/";
+            "http://schemas.xmlsoap.org/wsdl/soap12/";
 
-    public static final String ELEM_ENVELOPE = "Envelope" ;
-    public static final String ELEM_HEADER   = "Header" ;
-    public static final String ELEM_BODY     = "Body" ;
-    public static final String ELEM_FAULT    = "Fault" ;
+    public static final String ELEM_ENVELOPE = "Envelope";
+    public static final String ELEM_HEADER = "Header";
+    public static final String ELEM_BODY = "Body";
+    public static final String ELEM_FAULT = "Fault";
 
     public static final String ELEM_NOTUNDERSTOOD = "NotUnderstood";
-    public static final String ELEM_UPGRADE           = "Upgrade";
+    public static final String ELEM_UPGRADE = "Upgrade";
     public static final String ELEM_SUPPORTEDENVELOPE = "SupportedEnvelope";
 
-    public static final String ELEM_FAULT_CODE   = "faultcode" ;
-    public static final String ELEM_FAULT_STRING = "faultstring" ;
-    public static final String ELEM_FAULT_DETAIL = "detail" ;
-    public static final String ELEM_FAULT_ACTOR  = "faultactor" ;
+    public static final String ELEM_FAULT_CODE = "faultcode";
+    public static final String ELEM_FAULT_STRING = "faultstring";
+    public static final String ELEM_FAULT_DETAIL = "detail";
+    public static final String ELEM_FAULT_ACTOR = "faultactor";
 
-    public static final String ELEM_FAULT_CODE_SOAP12 = "Code" ;
-    public static final String ELEM_FAULT_VALUE_SOAP12 = "Value" ;
-    public static final String ELEM_FAULT_SUBCODE_SOAP12 = "Subcode" ;
-    public static final String ELEM_FAULT_REASON_SOAP12 = "Reason" ;
-    public static final String ELEM_FAULT_NODE_SOAP12 = "Node" ;
-    public static final String ELEM_FAULT_ROLE_SOAP12 = "Role" ;
-    public static final String ELEM_FAULT_DETAIL_SOAP12 = "Detail" ;
-    public static final String ELEM_TEXT_SOAP12 = "Text" ;
+    public static final String ELEM_FAULT_CODE_SOAP12 = "Code";
+    public static final String ELEM_FAULT_VALUE_SOAP12 = "Value";
+    public static final String ELEM_FAULT_SUBCODE_SOAP12 = "Subcode";
+    public static final String ELEM_FAULT_REASON_SOAP12 = "Reason";
+    public static final String ELEM_FAULT_NODE_SOAP12 = "Node";
+    public static final String ELEM_FAULT_ROLE_SOAP12 = "Role";
+    public static final String ELEM_FAULT_DETAIL_SOAP12 = "Detail";
+    public static final String ELEM_TEXT_SOAP12 = "Text";
 
-    public static final String ATTR_MUST_UNDERSTAND = "mustUnderstand" ;
-    public static final String ATTR_ENCODING_STYLE  = "encodingStyle" ;
-    public static final String ATTR_ACTOR           = "actor" ;
-    public static final String ATTR_ROLE            = "role" ;
-    public static final String ATTR_RELAY           = "relay" ;
-    public static final String ATTR_ROOT            = "root" ;
-    public static final String ATTR_ID              = "id" ;
-    public static final String ATTR_HREF            = "href" ;
-    public static final String ATTR_REF             = "ref" ;
-    public static final String ATTR_QNAME           = "qname";
-    public static final String ATTR_ARRAY_TYPE      = "arrayType";
-    public static final String ATTR_ITEM_TYPE       = "itemType";
-    public static final String ATTR_ARRAY_SIZE      = "arraySize";
-    public static final String ATTR_OFFSET          = "offset";
-    public static final String ATTR_POSITION        = "position";
-    public static final String ATTR_TYPE            = "type";
+    public static final String ATTR_MUST_UNDERSTAND = "mustUnderstand";
+    public static final String ATTR_ENCODING_STYLE = "encodingStyle";
+    public static final String ATTR_ACTOR = "actor";
+    public static final String ATTR_ROLE = "role";
+    public static final String ATTR_RELAY = "relay";
+    public static final String ATTR_ROOT = "root";
+    public static final String ATTR_ID = "id";
+    public static final String ATTR_HREF = "href";
+    public static final String ATTR_REF = "ref";
+    public static final String ATTR_QNAME = "qname";
+    public static final String ATTR_ARRAY_TYPE = "arrayType";
+    public static final String ATTR_ITEM_TYPE = "itemType";
+    public static final String ATTR_ARRAY_SIZE = "arraySize";
+    public static final String ATTR_OFFSET = "offset";
+    public static final String ATTR_POSITION = "position";
+    public static final String ATTR_TYPE = "type";
     public static final String ATTR_HANDLERINFOCHAIN = "handlerInfoChain";
 
     // Fault Codes
@@ -197,32 +197,32 @@ public class Constants {
     public static final String FAULT_CLIENT = "Client";
 
     public static final String FAULT_SERVER_GENERAL =
-                                                   "Server.generalException";
+            "Server.generalException";
 
     public static final String FAULT_SERVER_USER =
-                                                   "Server.userException";
+            "Server.userException";
 
     public static final QName FAULT_VERSIONMISMATCH =
-                                  new QName(URI_SOAP11_ENV, "VersionMismatch");
+            new QName(URI_SOAP11_ENV, "VersionMismatch");
 
     public static final QName FAULT_MUSTUNDERSTAND =
-                                  new QName(URI_SOAP11_ENV, "MustUnderstand");
+            new QName(URI_SOAP11_ENV, "MustUnderstand");
 
 
     public static final QName FAULT_SOAP12_MUSTUNDERSTAND =
-                                  new QName(URI_SOAP12_ENV, "MustUnderstand");
+            new QName(URI_SOAP12_ENV, "MustUnderstand");
 
     public static final QName FAULT_SOAP12_VERSIONMISMATCH =
-                                  new QName(URI_SOAP12_ENV, "VersionMismatch");
+            new QName(URI_SOAP12_ENV, "VersionMismatch");
 
     public static final QName FAULT_SOAP12_DATAENCODINGUNKNOWN =
-                                  new QName(URI_SOAP12_ENV, "DataEncodingUnknown");
+            new QName(URI_SOAP12_ENV, "DataEncodingUnknown");
 
     public static final QName FAULT_SOAP12_SENDER =
-                                  new QName(URI_SOAP12_ENV, "Sender");
+            new QName(URI_SOAP12_ENV, "Sender");
 
     public static final QName FAULT_SOAP12_RECEIVER =
-                                  new QName(URI_SOAP12_ENV, "Receiver");
+            new QName(URI_SOAP12_ENV, "Receiver");
 
     // SOAP 1.2 Fault subcodes
     public static final QName FAULT_SUBCODE_BADARGS =
@@ -233,33 +233,33 @@ public class Constants {
     // QNames
     //////////////////////////////////////////////////////////////////////////
     public static final QName QNAME_FAULTCODE =
-                                         new QName("", ELEM_FAULT_CODE);
+            new QName("", ELEM_FAULT_CODE);
     public static final QName QNAME_FAULTSTRING =
-                                       new QName("", ELEM_FAULT_STRING);
+            new QName("", ELEM_FAULT_STRING);
     public static final QName QNAME_FAULTACTOR =
-                                        new QName("", ELEM_FAULT_ACTOR);
+            new QName("", ELEM_FAULT_ACTOR);
     public static final QName QNAME_FAULTDETAILS =
-                                         new QName("", ELEM_FAULT_DETAIL);
+            new QName("", ELEM_FAULT_DETAIL);
 
     public static final QName QNAME_FAULTCODE_SOAP12 =
-                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_CODE_SOAP12);
+            new QName(URI_SOAP12_ENV, ELEM_FAULT_CODE_SOAP12);
     public static final QName QNAME_FAULTVALUE_SOAP12 =
-                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_VALUE_SOAP12);
+            new QName(URI_SOAP12_ENV, ELEM_FAULT_VALUE_SOAP12);
     public static final QName QNAME_FAULTSUBCODE_SOAP12 =
-                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_SUBCODE_SOAP12);
+            new QName(URI_SOAP12_ENV, ELEM_FAULT_SUBCODE_SOAP12);
     public static final QName QNAME_FAULTREASON_SOAP12 =
-                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_REASON_SOAP12);
+            new QName(URI_SOAP12_ENV, ELEM_FAULT_REASON_SOAP12);
     public static final QName QNAME_TEXT_SOAP12 =
-                                         new QName(URI_SOAP12_ENV, ELEM_TEXT_SOAP12);
+            new QName(URI_SOAP12_ENV, ELEM_TEXT_SOAP12);
 
     public static final QName QNAME_FAULTNODE_SOAP12 =
-                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_NODE_SOAP12);
+            new QName(URI_SOAP12_ENV, ELEM_FAULT_NODE_SOAP12);
     public static final QName QNAME_FAULTROLE_SOAP12 =
-                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_ROLE_SOAP12);
+            new QName(URI_SOAP12_ENV, ELEM_FAULT_ROLE_SOAP12);
     public static final QName QNAME_FAULTDETAIL_SOAP12 =
-                                         new QName(URI_SOAP12_ENV, ELEM_FAULT_DETAIL_SOAP12);
+            new QName(URI_SOAP12_ENV, ELEM_FAULT_DETAIL_SOAP12);
     public static final QName QNAME_NOTUNDERSTOOD =
-                                         new QName(URI_SOAP12_ENV, ELEM_NOTUNDERSTOOD);
+            new QName(URI_SOAP12_ENV, ELEM_NOTUNDERSTOOD);
 
     // Define qnames for the all of the XSD and SOAP-ENC encodings
     public static final QName XSD_STRING = new QName(URI_DEFAULT_SCHEMA_XSD, "string");
@@ -274,7 +274,8 @@ public class Constants {
     public static final QName XSD_DECIMAL = new QName(URI_DEFAULT_SCHEMA_XSD, "decimal");
     public static final QName XSD_BASE64 = new QName(URI_DEFAULT_SCHEMA_XSD, "base64Binary");
     public static final QName XSD_HEXBIN = new QName(URI_DEFAULT_SCHEMA_XSD, "hexBinary");
-    public static final QName XSD_ANYSIMPLETYPE = new QName(URI_DEFAULT_SCHEMA_XSD, "anySimpleType");
+    public static final QName XSD_ANYSIMPLETYPE =
+            new QName(URI_DEFAULT_SCHEMA_XSD, "anySimpleType");
     public static final QName XSD_ANYTYPE = new QName(URI_DEFAULT_SCHEMA_XSD, "anyType");
     public static final QName XSD_ANY = new QName(URI_DEFAULT_SCHEMA_XSD, "any");
     public static final QName AXIS2_NONE = new QName("http://org.apache.axis2", "none");
@@ -285,17 +286,22 @@ public class Constants {
     public static final QName XSD_TIMEINSTANT1999 = new QName(URI_1999_SCHEMA_XSD, "timeInstant");
     public static final QName XSD_TIMEINSTANT2000 = new QName(URI_2000_SCHEMA_XSD, "timeInstant");
 
-    public static final QName XSD_NORMALIZEDSTRING = new QName(URI_2001_SCHEMA_XSD, "normalizedString");
+    public static final QName XSD_NORMALIZEDSTRING =
+            new QName(URI_2001_SCHEMA_XSD, "normalizedString");
     public static final QName XSD_TOKEN = new QName(URI_2001_SCHEMA_XSD, "token");
 
     public static final QName XSD_UNSIGNEDLONG = new QName(URI_2001_SCHEMA_XSD, "unsignedLong");
     public static final QName XSD_UNSIGNEDINT = new QName(URI_2001_SCHEMA_XSD, "unsignedInt");
     public static final QName XSD_UNSIGNEDSHORT = new QName(URI_2001_SCHEMA_XSD, "unsignedShort");
     public static final QName XSD_UNSIGNEDBYTE = new QName(URI_2001_SCHEMA_XSD, "unsignedByte");
-    public static final QName XSD_POSITIVEINTEGER = new QName(URI_2001_SCHEMA_XSD, "positiveInteger");
-    public static final QName XSD_NEGATIVEINTEGER = new QName(URI_2001_SCHEMA_XSD, "negativeInteger");
-    public static final QName XSD_NONNEGATIVEINTEGER = new QName(URI_2001_SCHEMA_XSD, "nonNegativeInteger");
-    public static final QName XSD_NONPOSITIVEINTEGER = new QName(URI_2001_SCHEMA_XSD, "nonPositiveInteger");
+    public static final QName XSD_POSITIVEINTEGER =
+            new QName(URI_2001_SCHEMA_XSD, "positiveInteger");
+    public static final QName XSD_NEGATIVEINTEGER =
+            new QName(URI_2001_SCHEMA_XSD, "negativeInteger");
+    public static final QName XSD_NONNEGATIVEINTEGER =
+            new QName(URI_2001_SCHEMA_XSD, "nonNegativeInteger");
+    public static final QName XSD_NONPOSITIVEINTEGER =
+            new QName(URI_2001_SCHEMA_XSD, "nonPositiveInteger");
 
     public static final QName XSD_YEARMONTH = new QName(URI_2001_SCHEMA_XSD, "gYearMonth");
     public static final QName XSD_MONTHDAY = new QName(URI_2001_SCHEMA_XSD, "gMonthDay");
@@ -339,18 +345,21 @@ public class Constants {
     public static final QName SOAP_ARRAY_ATTRS12 = new QName(URI_SOAP12_ENC, "arrayAttributes");
     public static final QName SOAP_ARRAY12 = new QName(URI_SOAP12_ENC, "Array");
 
-    public static final QName QNAME_LITERAL_ITEM = new QName(URI_LITERAL_ENC,"item");
-    public static final QName QNAME_RPC_RESULT = new QName(URI_SOAP12_RPC,"result");
+    public static final QName QNAME_LITERAL_ITEM = new QName(URI_LITERAL_ENC, "item");
+    public static final QName QNAME_RPC_RESULT = new QName(URI_SOAP12_RPC, "result");
 
-    public static final String MIME_CT_APPLICATION_OCTETSTREAM     = "application/octet-stream";
-    public static final String MIME_CT_TEXT_PLAIN         = "text/plain";
-    public static final String MIME_CT_IMAGE_JPEG        = "image/jpeg";
-    public static final String MIME_CT_IMAGE_GIF        = "image/gif";
-    public static final String MIME_CT_TEXT_XML            = "text/xml";
-    public static final String MIME_CT_APPLICATION_XML        = "application/xml";
-    public static final String MIME_CT_MULTIPART_PREFIX        = "multipart/";
-    
-    public static final QName BASE_64_CONTENT_QNAME = new QName(URI_2001_SCHEMA_XSD, "base64Binary");
-    public static final QName XMIME_CONTENT_TYPE_QNAME = new QName("http://www.w3.org/2004/06/xmlmime", "contentType");
-    public static final String URI_SECURITYPOLICY = "http://schemas.xmlsoap.org/ws/2005/07/securitypolicy";
+    public static final String MIME_CT_APPLICATION_OCTETSTREAM = "application/octet-stream";
+    public static final String MIME_CT_TEXT_PLAIN = "text/plain";
+    public static final String MIME_CT_IMAGE_JPEG = "image/jpeg";
+    public static final String MIME_CT_IMAGE_GIF = "image/gif";
+    public static final String MIME_CT_TEXT_XML = "text/xml";
+    public static final String MIME_CT_APPLICATION_XML = "application/xml";
+    public static final String MIME_CT_MULTIPART_PREFIX = "multipart/";
+
+    public static final QName BASE_64_CONTENT_QNAME =
+            new QName(URI_2001_SCHEMA_XSD, "base64Binary");
+    public static final QName XMIME_CONTENT_TYPE_QNAME =
+            new QName("http://www.w3.org/2004/06/xmlmime", "contentType");
+    public static final String URI_SECURITYPOLICY =
+            "http://schemas.xmlsoap.org/ws/2005/07/securitypolicy";
 }

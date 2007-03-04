@@ -76,7 +76,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             OMElement config_element = buildOM();
 
             if (!TAG_AXISCONFIG.equals(config_element.getLocalName())) {
-                throw new DeploymentException(Messages.getMessage("badelementfound", TAG_AXISCONFIG, config_element.getLocalName()));
+                throw new DeploymentException(Messages.getMessage("badelementfound", TAG_AXISCONFIG,
+                                                                  config_element.getLocalName()));
             }
             // processing Parameters
             // Processing service level parameters
@@ -85,7 +86,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             processParameters(itr, axisConfig, axisConfig);
 
             // process MessageReceiver
-            OMElement messageReceiver = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVERS));
+            OMElement messageReceiver =
+                    config_element.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVERS));
             if (messageReceiver != null) {
                 HashMap mrs = processMessageReceivers(messageReceiver);
                 Iterator keys = mrs.keySet().iterator();
@@ -101,17 +103,20 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             processModuleRefs(moduleitr, axisConfig);
 
             // Processing Transport Senders
-            Iterator trs_senders = config_element.getChildrenWithName(new QName(TAG_TRANSPORT_SENDER));
+            Iterator trs_senders =
+                    config_element.getChildrenWithName(new QName(TAG_TRANSPORT_SENDER));
 
             processTransportSenders(trs_senders);
 
             // Processing Transport Receivers
-            Iterator trs_Reivers = config_element.getChildrenWithName(new QName(TAG_TRANSPORT_RECEIVER));
+            Iterator trs_Reivers =
+                    config_element.getChildrenWithName(new QName(TAG_TRANSPORT_RECEIVER));
 
             processTransportReceivers(trs_Reivers);
 
             // Process TargetResolvers
-            OMElement targetResolvers = config_element.getFirstChildWithName(new QName(TAG_TARGET_RESOLVERS));
+            OMElement targetResolvers =
+                    config_element.getFirstChildWithName(new QName(TAG_TARGET_RESOLVERS));
             processTargetResolvers(axisConfig, targetResolvers);
 
             // Process Observers
@@ -124,24 +129,27 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
             processPhaseOrders(phaseorders);
 
-            Iterator moduleConfigs = config_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
+            Iterator moduleConfigs =
+                    config_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 
             processModuleConfig(moduleConfigs, axisConfig, axisConfig);
 
             // processing <wsp:Policy> .. </..> elements
             Iterator policyElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI,
-                    TAG_POLICY));
+                                                                                   TAG_POLICY));
 
             if (policyElements != null && policyElements.hasNext()) {
-                processPolicyElements(PolicyInclude.AXIS_POLICY, policyElements, axisConfig.getPolicyInclude());
+                processPolicyElements(PolicyInclude.AXIS_POLICY, policyElements,
+                                      axisConfig.getPolicyInclude());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
             Iterator policyRefElements = config_element.getChildrenWithName(new QName(POLICY_NS_URI,
-                    TAG_POLICY_REF));
+                                                                                      TAG_POLICY_REF));
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
-                processPolicyRefElements(PolicyInclude.AXIS_POLICY, policyElements, axisConfig.getPolicyInclude());
+                processPolicyRefElements(PolicyInclude.AXIS_POLICY, policyElements,
+                                         axisConfig.getPolicyInclude());
             }
 
             //to process default module versions
@@ -150,23 +158,24 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             if (defaultModuleVerionElement != null) {
                 processDefaultModuleVersions(defaultModuleVerionElement);
             }
-            
+
             OMElement clusterElement = config_element
                     .getFirstChildWithName(new QName(TAG_CLUSTER));
             if (clusterElement != null) {
                 ClusterBuilder clusterBuilder = new ClusterBuilder(axisConfig);
                 clusterBuilder.buildCluster(clusterElement);
             }
-            
+
             /*
-             * Add Axis2 default builders if they are not overidden by the config
-             */
+            * Add Axis2 default builders if they are not overidden by the config
+            */
             axisConfig.addMessageBuilder("multipart/related", new MIMEBuilder());
             axisConfig.addMessageBuilder("application/soap+xml", new SOAPBuilder());
             axisConfig.addMessageBuilder("text/xml", new SOAPBuilder());
             axisConfig.addMessageBuilder("application/xop+xml", new MTOMBuilder());
             // process MessageBuilders
-            OMElement messageBuildersElement = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_BUILDERS));
+            OMElement messageBuildersElement =
+                    config_element.getFirstChildWithName(new QName(TAG_MESSAGE_BUILDERS));
             if (messageBuildersElement != null) {
                 HashMap builderSelector = processMessageBuilders(messageBuildersElement);
                 Iterator keys = builderSelector.keySet().iterator();
@@ -175,30 +184,34 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     axisConfig.addMessageBuilder(key, (Builder) builderSelector.get(key));
                 }
             }
-                axisConfig.addMessageBuilder("application/xml", new ApplicationXMLBuilder());
-                axisConfig.addMessageBuilder("application/x-www-form-urlencoded", new XFormURLEncodedBuilder());
+            axisConfig.addMessageBuilder("application/xml", new ApplicationXMLBuilder());
+            axisConfig.addMessageBuilder("application/x-www-form-urlencoded",
+                                         new XFormURLEncodedBuilder());
 
             //process dataLocator configuration
             OMElement dataLocatorElement =
-            config_element.getFirstChildWithName(new QName(DRConstants.DATA_LOCATOR_ELEMENT));
-            
+                    config_element
+                            .getFirstChildWithName(new QName(DRConstants.DATA_LOCATOR_ELEMENT));
+
             if (dataLocatorElement != null) {
                 processDataLocatorConfig(dataLocatorElement);
             }
-            
+
             // process MessageFormatters
-            OMElement messageFormattersElement = config_element.getFirstChildWithName(new QName(TAG_MESSAGE_FORMATTERS));
+            OMElement messageFormattersElement =
+                    config_element.getFirstChildWithName(new QName(TAG_MESSAGE_FORMATTERS));
             if (messageFormattersElement != null) {
                 HashMap messageFormatters = processMessageFormatters(messageFormattersElement);
                 Iterator keys = messageFormatters.keySet().iterator();
                 while (keys.hasNext()) {
                     String key = (String) keys.next();
-                    axisConfig.addMessageFormatter(key, (MessageFormatter) messageFormatters.get(key));
+                    axisConfig.addMessageFormatter(key,
+                                                   (MessageFormatter) messageFormatters.get(key));
                 }
             }
             //Processing deployers.
             Iterator deployerItr = config_element.getChildrenWithName(new QName(DEPLOYER));
-            if(deployerItr!=null){
+            if (deployerItr != null) {
                 processDeployers(deployerItr);
             }
         } catch (XMLStreamException e) {
@@ -211,7 +224,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             Iterator iterator = targetResolvers.getChildrenWithName(new QName(TAG_TARGET_RESOLVER));
             while (iterator.hasNext()) {
                 OMElement targetResolver = (OMElement) iterator.next();
-                OMAttribute classNameAttribute = targetResolver.getAttribute(new QName(TAG_CLASS_NAME));
+                OMAttribute classNameAttribute =
+                        targetResolver.getAttribute(new QName(TAG_CLASS_NAME));
                 String className = classNameAttribute.getAttributeValue();
                 try {
                     Class classInstance = Loader.loadClass(className);
@@ -219,7 +233,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     axisConfig.addTargetResolver(tr);
                 } catch (Exception e) {
                     if (log.isTraceEnabled()) {
-                        log.trace("processTargetResolvers: Exception thrown initialising TargetResolver: " + e.getMessage());
+                        log.trace(
+                                "processTargetResolvers: Exception thrown initialising TargetResolver: " +
+                                        e.getMessage());
                     }
                 }
             }
@@ -232,9 +248,9 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         while (deployerItr.hasNext()) {
             OMElement element = (OMElement) deployerItr.next();
             String directory = element.getAttributeValue(new QName(DIRECTORY));
-            if(directory!=null){
+            if (directory != null) {
                 String extension = element.getAttributeValue(new QName(EXTENSION));
-                if(extension!=null){
+                if (extension != null) {
                     try {
                         String deployerValue = element.getAttributeValue(new QName(TAG_CLASS_NAME));
                         Class deployerClass;
@@ -244,7 +260,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                         deployer.setDirectory(directory);
                         deployer.setExtension(extension);
                         directoryToExtensionMappingMap.put(directory, extension);
-                        extensioToDeployerMappingMap.put(extension,deployer);
+                        extensioToDeployerMappingMap.put(extension, deployer);
                     } catch (ClassNotFoundException e) {
                         log.error(e);
                     } catch (InstantiationException e) {
@@ -255,7 +271,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                 }
             }
         }
-        if(deploymentEngine!=null){
+        if (deploymentEngine != null) {
             deploymentEngine.setDirectoryToExtensionMappingMap(directoryToExtensionMappingMap);
             deploymentEngine.setExtensioToDeployerMappingMap(extensioToDeployerMappingMap);
         }
@@ -316,11 +332,12 @@ public class AxisConfigBuilder extends DescriptionBuilder {
 
                 Class observerclass;
                 try {
-                    observerclass = (Class) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedExceptionAction() {
-                        public Object run() throws ClassNotFoundException {
-                            return Loader.loadClass(clasName);
-                        }
-                    });
+                    observerclass = (Class) org.apache.axis2.java.security.AccessController
+                            .doPrivileged(new PrivilegedExceptionAction() {
+                                public Object run() throws ClassNotFoundException {
+                                    return Loader.loadClass(clasName);
+                                }
+                            });
                 } catch (PrivilegedActionException e) {
                     throw (ClassNotFoundException) e.getException();
                 }
@@ -410,7 +427,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
         }
     }
 
-    private void processDefaultModuleVersions(OMElement defaultVersions) throws DeploymentException {
+    private void processDefaultModuleVersions(OMElement defaultVersions)
+            throws DeploymentException {
         Iterator moduleVersions = defaultVersions.getChildrenWithName(new QName(TAG_MODULE));
         while (moduleVersions.hasNext()) {
             OMElement omElement = (OMElement) moduleVersions.next();
@@ -418,7 +436,8 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             if (name == null) {
                 throw new DeploymentException(Messages.getMessage("modulenamecannotnull"));
             }
-            String defaultVeriosn = omElement.getAttributeValue(new QName(ATTRIBUTE_DEFAULT_VERSION));
+            String defaultVeriosn =
+                    omElement.getAttributeValue(new QName(ATTRIBUTE_DEFAULT_VERSION));
             if (defaultVeriosn == null) {
                 throw new DeploymentException(Messages.getMessage("modulenamecannotnull"));
             }
@@ -537,7 +556,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             String className = serviceOverallDataLocatorclass
                     .getAttributeValue();
             axisConfig.addDataLocatorClassNames(DRConstants.GLOBAL_LEVEL,
-                    className);
+                                                className);
         }
         Iterator iterator = dataLocatorElement.getChildrenWithName(new QName(
                 DRConstants.DIALECT_LOCATOR_ELEMENT));
@@ -549,12 +568,12 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             OMAttribute dialectclass = locatorElement.getAttribute(new QName(
                     DRConstants.CLASS_ATTRIBUTE));
             axisConfig.addDataLocatorClassNames(dialect.getAttributeValue(),
-                    dialectclass.getAttributeValue());
+                                                dialectclass.getAttributeValue());
 
         }
     }
-    
-    
+
+
     private Phase getPhase(String className)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         if (className == null) {

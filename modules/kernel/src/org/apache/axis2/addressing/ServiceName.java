@@ -21,7 +21,7 @@ import javax.xml.namespace.QName;
 
 /**
  * @deprecated I don't think this class is used anywhere. Shout if this is not the case.
- * Class ServiceName
+ *             Class ServiceName
  */
 public class ServiceName {
 

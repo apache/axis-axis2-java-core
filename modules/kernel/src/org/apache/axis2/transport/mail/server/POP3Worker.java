@@ -35,7 +35,8 @@ import java.util.StringTokenizer;
 public class POP3Worker extends Thread {
     private static final Log log = LogFactory.getLog(POP3Worker.class);
     boolean doneProcess = false;
-    int numDeleted = 0;    // This is a small hack to get the deleting working with the ArrayList. To keep it simple.
+    int numDeleted =
+            0;    // This is a small hack to get the deleting working with the ArrayList. To keep it simple.
     ArrayList messages = new ArrayList();
     private Socket socket;
     private Storage st;
@@ -69,14 +70,17 @@ public class POP3Worker extends Thread {
                 printWriter.println(Constants.OK + "POP3 server signing off");
                 doneProcess = true;
             } else if (input.equals(Constants.STAT)) {
-                printWriter.println(Constants.OK + messages.size() + " 1");    // We take the maildrop size as one.
-            } else if (tokens.get(0).equals(Constants.LIST)) {                               // scan listing
+                printWriter.println(Constants.OK + messages.size() +
+                        " 1");    // We take the maildrop size as one.
+            } else if (tokens.get(0).equals(Constants.LIST))
+            {                               // scan listing
                 if (tokens.size() > 1) {
                     try {
                         int optArg = Integer.parseInt((String) tokens.get(1));
                         int messageArrayIndex = optArg - 1;
 
-                        if ((messageArrayIndex < messages.size()) && (messageArrayIndex >= 0)) {    // that is OK careful with numbering
+                        if ((messageArrayIndex < messages.size()) && (messageArrayIndex >= 0))
+                        {    // that is OK careful with numbering
                             printWriter.println(Constants.OK + messageArrayIndex + 1
                                     + " 120");    // Mail size of 120 is just some number.
                         } else {
@@ -95,7 +99,8 @@ public class POP3Worker extends Thread {
                     for (int i = 0; i < messages.size(); i++) {
                         int messageIndex = i + 1;
 
-                        printWriter.println(messageIndex + " 120");    // List out all the messages with a message size octet of 120
+                        printWriter.println(messageIndex +
+                                " 120");    // List out all the messages with a message size octet of 120
                     }
 
                     printWriter.println(".");
@@ -112,7 +117,8 @@ public class POP3Worker extends Thread {
 
                     m.writeTo(socket.getOutputStream());
 
-                    socket.getOutputStream().write(CR_LF_DOT_CR_LF);    // This is a bit of a hack to get it working. Have to find a bette way to handle this.
+                    socket.getOutputStream()
+                            .write(CR_LF_DOT_CR_LF);    // This is a bit of a hack to get it working. Have to find a bette way to handle this.
                     socket.getOutputStream().flush();
                 } catch (NumberFormatException e) {
                     printWriter.println(Constants.ERR);
@@ -125,7 +131,8 @@ public class POP3Worker extends Thread {
                 String smIndex = (String) tokens.get(1);
 
                 try {
-                    int mIndex = Integer.parseInt(smIndex) - 1 - numDeleted;    // When one mail is deleted the index of the other mails will reduce. Asumed that the delete will occure from bottom up.
+                    int mIndex = Integer.parseInt(smIndex) - 1 -
+                            numDeleted;    // When one mail is deleted the index of the other mails will reduce. Asumed that the delete will occure from bottom up.
 
                     if ((mIndex >= 0) && (mIndex < messages.size())) {
                         messages.remove(mIndex);

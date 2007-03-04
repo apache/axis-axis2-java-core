@@ -24,39 +24,39 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Axis 2 Data Locator responsibles for retrieving WSDL metadata. 
+ * Axis 2 Data Locator responsibles for retrieving WSDL metadata.
  */
 public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLocator {
     private static final Log log = LogFactory.getLog(WSDLDataLocator.class);
-    String serviceURL=null;
-    AxisService theService=null;
-    String request_Identifier=null;
-        
-    
-    protected WSDLDataLocator(){
-    
+    String serviceURL = null;
+    AxisService theService = null;
+    String request_Identifier = null;
+
+
+    protected WSDLDataLocator() {
+
     }
-    
+
     /**
-     * Constructor 
+     * Constructor
      *
-     * @param data an array of ServiceData instance defined in the 
+     * @param data an array of ServiceData instance defined in the
      *             ServiceData.xml for the WSDL dialect.
      */
-    protected WSDLDataLocator(ServiceData[] data){
+    protected WSDLDataLocator(ServiceData[] data) {
         dataList = data;
     }
-    
+
     /**
-     * getData API 
+     * getData API
      * Implement data retrieval logic for WSDL dialect
      */
     public Data[] getData(DataRetrievalRequest request,
-            MessageContext msgContext) throws DataRetrievalException {
+                          MessageContext msgContext) throws DataRetrievalException {
         log.trace("Default WSDL DataLocator getData starts");
 
         request_Identifier = (String) request.getIdentifier();
-    
+
         OutputForm outputform = (OutputForm) request.getOutputForm();
 
         if (outputform == null) { // not defined, defualt to inline
@@ -64,29 +64,31 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
         }
 
         Data[] output = null;
-                
+
         String outputFormString = outputform.getType();
-     
+
         if (outputform == OutputForm.INLINE_FORM) {
             output = outputInlineForm(msgContext, dataList);
         } else if (outputform == OutputForm.LOCATION_FORM) {
             output = outputLocationForm(dataList);
-            
+
         } else if (outputform == OutputForm.REFERENCE_FORM) {
             output = outputReferenceForm(msgContext, dataList);
-                    
+
         } else {
             output = outputInlineForm(msgContext, dataList);
-            
+
         }
-    
+
         if (output == null) {
             if (log.isTraceEnabled()) {
-                log.trace("Null data return! Data Locator does not know how to handle request for dialect= " + (String) request.getDialect()
-                    + " in the form of " + outputFormString);
+                log.trace(
+                        "Null data return! Data Locator does not know how to handle request for dialect= " +
+                                (String) request.getDialect()
+                                + " in the form of " + outputFormString);
             }
         }
-        
+
 
         log.trace("Default WSDL DataLocator getData ends");
 
@@ -101,35 +103,35 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
     protected Data[] outputInlineForm(MessageContext msgContext, ServiceData[] dataList)
             throws DataRetrievalException {
         Data[]  result = super.outputInlineForm(msgContext, dataList);
-        
+
         // Do not generate WSDL if Identifier was specified in the request as
         // (1) this is to support ?wsdl request; 
         // (2) Data for specified Identifier must be available to satisfy the GetMetadata request.
-        
-        if (result.length==0 && request_Identifier == null) {
-            log.trace("Default WSDL DataLocator attempt to generates WSDL.");        
-              
+
+        if (result.length == 0 && request_Identifier == null) {
+            log.trace("Default WSDL DataLocator attempt to generates WSDL.");
+
             if (msgContext != null) {
                 theService = msgContext.getAxisService();
                 serviceURL = msgContext.getTo().getAddress();
             } else {
                 throw new DataRetrievalException("MessageContext was not set!");
             }
-    
+
             AxisService2OM axisService2WOM;
             OMElement wsdlElement;
-            
+
             try {
                 String[] exposedEPRs = theService.getEPRs();
                 if (exposedEPRs == null) {
-                    exposedEPRs = new String[] {theService.getEndpointName()};
+                    exposedEPRs = new String[]{theService.getEndpointName()};
                 }
                 axisService2WOM = new AxisService2OM(theService,
-                        exposedEPRs, "document", "literal",
-                    "");
+                                                     exposedEPRs, "document", "literal",
+                                                     "");
                 wsdlElement = axisService2WOM.generateOM();
             }
-            catch (Exception e){
+            catch (Exception e) {
                 log.debug(e);
                 throw new DataRetrievalException(e);
             }
@@ -146,21 +148,21 @@ public class WSDLDataLocator extends BaseAxisDataLocator implements AxisDataLoca
 
     /*
      * 
-     */    
+     */
     protected Data[] outputLocationForm(ServiceData[] serviceData) throws DataRetrievalException {
-        Data[] result= super.outputLocationForm(serviceData);
-        
+        Data[] result = super.outputLocationForm(serviceData);
+
         // Do not generate URL if Identifier was specified in the request as
         // (1) Axis2 ?wsdl URL request is not supporting Identifier; 
         // (2) URL data for specified Identifier must be available to satisfy
         //     the GetMetadata request.
-    
-        if (result.length==0 && request_Identifier == null) {
-               result = new Data[1];
-               result[0] = new Data( serviceURL + "?wsdl", null);
+
+        if (result.length == 0 && request_Identifier == null) {
+            result = new Data[1];
+            result[0] = new Data(serviceURL + "?wsdl", null);
         }
         return result;
     }
-    
-    
+
+
 }

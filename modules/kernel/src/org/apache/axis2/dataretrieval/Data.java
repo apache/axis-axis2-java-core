@@ -20,38 +20,38 @@ package org.apache.axis2.dataretrieval;
  */
 
 public class Data {
-   Object data;
-   String identifier;
-       
-      
-   /**
-    * Constructor
+    Object data;
+    String identifier;
+
+
+    /**
+     * Constructor
      *
-    * @param in_data          instance of Object about the data
-    * @param in_identifier    identifier of the data instance.
-    */
-   public Data(Object in_data, String in_identifier){
-       super();
-       data = in_data;
-       identifier =in_identifier;
-   }
-   
-   /**
-    * Returns data
+     * @param in_data       instance of Object about the data
+     * @param in_identifier identifier of the data instance.
+     */
+    public Data(Object in_data, String in_identifier) {
+        super();
+        data = in_data;
+        identifier = in_identifier;
+    }
+
+    /**
+     * Returns data
      *
-    * @return data Object
-    */
-   
-   public Object getData(){
-       return data;
-   }
-   
-   /**
-    * Returns string representing identifier of this data object.
+     * @return data Object
+     */
+
+    public Object getData() {
+        return data;
+    }
+
+    /**
+     * Returns string representing identifier of this data object.
      *
-    * @return
-    */
-   public String getIdentifier(){
-       return identifier;
-   }
+     * @return
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
 }

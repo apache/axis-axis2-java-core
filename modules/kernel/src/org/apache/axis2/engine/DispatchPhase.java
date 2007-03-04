@@ -43,11 +43,11 @@ public class DispatchPhase extends Phase {
 
         if (msgContext.getAxisService() == null) {
             throw new AxisFault(Messages.getMessage("servicenotfoundforepr",
-                    ((toEPR != null) ? toEPR.getAddress() : "")));
+                                                    ((toEPR != null) ? toEPR.getAddress() : "")));
         } else if (msgContext.getAxisOperation() == null) {
             throw new AxisFault(Messages.getMessage("operationnotfoundforepr",
-                    ((toEPR != null) ? toEPR.getAddress()
-                            : ""), msgContext.getWSAAction()));
+                                                    ((toEPR != null) ? toEPR.getAddress()
+                                                            : ""), msgContext.getWSAAction()));
         }
 
         validateTransport(msgContext);
@@ -66,7 +66,7 @@ public class DispatchPhase extends Phase {
         if ((msgContext.getAxisService() == null) && (msgContext.getServiceContext() != null)) {
             msgContext.setAxisService(msgContext.getServiceContext().getAxisService());
         }
-        
+
         //TODO: The same thing should probably happen for a IN-OUT if addressing is enabled and the replyTo/faultTo are not anonymous 
         if (msgContext.getAxisOperation().getMessageExchangePattern()
                 .equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY)) {
@@ -77,7 +77,8 @@ public class DispatchPhase extends Phase {
                         .acknowledgeMessage(msgContext);
             }
         } else if (msgContext.getAxisOperation().getMessageExchangePattern()
-                .equals(WSDL20_2004_Constants.MEP_URI_IN_OUT)) {   // OR, if 2 way operation but the response is intended to not use the response channel of a 2-way transport
+                .equals(WSDL20_2004_Constants.MEP_URI_IN_OUT))
+        {   // OR, if 2 way operation but the response is intended to not use the response channel of a 2-way transport
             // then we don't need to keep the transport waiting.
             Object requestResponseTransport =
                     msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL);
@@ -117,6 +118,6 @@ public class DispatchPhase extends Phase {
         }
         EndpointReference toEPR = msgctx.getTo();
         throw new AxisFault(Messages.getMessage("servicenotfoundforepr",
-                ((toEPR != null) ? toEPR.getAddress() : "")));
+                                                ((toEPR != null) ? toEPR.getAddress() : "")));
     }
 }

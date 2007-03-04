@@ -36,7 +36,8 @@ public class ModuleDisengagementTest extends TestCase {
     QName opName = new QName("testOperation");
 
     protected void setUp() throws Exception {
-        String filename = System.getProperty("basedir")+"/test-resources/deployment/moduleDisEngegeRepo";
+        String filename =
+                System.getProperty("basedir") + "/test-resources/deployment/moduleDisEngegeRepo";
         er = ConfigurationContextFactory.
                 createConfigurationContextFromFileSystem(filename, null).getAxisConfiguration();
         AxisService testService = new AxisService();
@@ -156,7 +157,7 @@ public class ModuleDisengagementTest extends TestCase {
         assertEquals(0, userPhase.getHandlerCount());
     }
 
-     public void testServiceEnageOperationDisengag() throws AxisFault {
+    public void testServiceEnageOperationDisengag() throws AxisFault {
         AxisModule module = er.getModule(new QName("testModule"));
         assertNotNull(module);
         Phase predisptah;

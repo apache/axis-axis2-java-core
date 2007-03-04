@@ -43,7 +43,7 @@ import java.io.IOException;
 
 public class ResponseSessionCookie implements HttpResponseInterceptor {
 
-    public void process(final HttpResponse response, final HttpContext context) 
+    public void process(final HttpResponse response, final HttpContext context)
             throws HttpException, IOException {
         if (response == null) {
             throw new IllegalArgumentException("HTTP response may not be null");
@@ -51,14 +51,14 @@ public class ResponseSessionCookie implements HttpResponseInterceptor {
         if (context == null) {
             throw new IllegalArgumentException("HTTP context may not be null");
         }
-        
+
         String sessionCookie = null;
         MessageContext msgctx = (MessageContext) context.getAttribute(AxisParams.MESSAGE_CONTEXT);
         if (msgctx != null) {
             sessionCookie = (String) msgctx.getProperty(HTTPConstants.COOKIE_STRING);
         }
         if (sessionCookie == null) {
-          sessionCookie = (String) context.getAttribute(HTTPConstants.COOKIE_STRING);
+            sessionCookie = (String) context.getAttribute(HTTPConstants.COOKIE_STRING);
         }
         if (sessionCookie != null) {
             // Generate Netscape style cookie header
@@ -69,7 +69,7 @@ public class ResponseSessionCookie implements HttpResponseInterceptor {
             buffer1.append("=");
             buffer1.append(sessionCookie);
             response.addHeader(new BufferedHeader(buffer1));
-            
+
             // Generate RFC2965 cookie2 header
             CharArrayBuffer buffer2 = new CharArrayBuffer(sessionCookie.length() + 50);
             buffer2.append(HTTPConstants.HEADER_SET_COOKIE2);
@@ -88,5 +88,5 @@ public class ResponseSessionCookie implements HttpResponseInterceptor {
             response.addHeader(new BufferedHeader(buffer2));
         }
     }
-    
+
 }

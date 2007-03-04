@@ -35,7 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class LocalTransportSender extends AbstractHandler implements TransportSender {
-    
+
     private ByteArrayOutputStream out;
     private ByteArrayOutputStream response;
 
@@ -94,7 +94,7 @@ public class LocalTransportSender extends AbstractHandler implements TransportSe
         // not available
         if (msgContext.getOperationContext() != null) {
             msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,
-                    Constants.VALUE_TRUE);
+                                                         Constants.VALUE_TRUE);
         }
         return InvocationResponse.CONTINUE;
     }

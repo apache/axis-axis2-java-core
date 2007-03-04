@@ -388,7 +388,8 @@ public class Options implements Externalizable {
             RelatesTo relatesTo = (RelatesTo) relationships.get(i);
             String relationshipType = relatesTo.getRelationshipType();
             if (relationshipType.equals(AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE)
-                    || relationshipType.equals(AddressingConstants.Submission.WSA_DEFAULT_RELATIONSHIP_TYPE)) {
+                    || relationshipType
+                    .equals(AddressingConstants.Submission.WSA_DEFAULT_RELATIONSHIP_TYPE)) {
                 return relatesTo;
             }
         }
@@ -867,7 +868,7 @@ public class Options implements Externalizable {
 
         if (senderTransport == null) {
             throw new AxisFault(Messages.getMessage("unknownTransport",
-                    senderTransport));
+                                                    senderTransport));
         }
     }
 
@@ -1048,27 +1049,32 @@ public class Options implements Externalizable {
         out.writeBoolean(manageSession);
 
         // the following objects could be null
-        ObjectStateUtils.writeObject(out, isExceptionToBeThrownOnSOAPFault, logCorrelationIDString + ".isExceptionToBeThrownOnSOAPFault");
-        ObjectStateUtils.writeObject(out, useSeparateListener, logCorrelationIDString + ".useSeparateListener");
+        ObjectStateUtils.writeObject(out, isExceptionToBeThrownOnSOAPFault,
+                                     logCorrelationIDString + ".isExceptionToBeThrownOnSOAPFault");
+        ObjectStateUtils.writeObject(out, useSeparateListener,
+                                     logCorrelationIDString + ".useSeparateListener");
 
         //---------------------------------------------------------
         // various strings
         //---------------------------------------------------------
 
         // String soapVersionURI
-        ObjectStateUtils.writeString(out, soapVersionURI, logCorrelationIDString + ".soapVersionURI");
+        ObjectStateUtils
+                .writeString(out, soapVersionURI, logCorrelationIDString + ".soapVersionURI");
 
         // String action
         ObjectStateUtils.writeString(out, action, logCorrelationIDString + ".action");
 
         // String transportInProtocol
-        ObjectStateUtils.writeString(out, transportInProtocol, logCorrelationIDString + ".transportInProtocol");
+        ObjectStateUtils.writeString(out, transportInProtocol,
+                                     logCorrelationIDString + ".transportInProtocol");
 
         // String messageId
         ObjectStateUtils.writeString(out, messageId, logCorrelationIDString + ".messageId");
 
         // String object id
-        ObjectStateUtils.writeString(out, logCorrelationIDString, logCorrelationIDString + ".logCorrelationIDString");
+        ObjectStateUtils.writeString(out, logCorrelationIDString,
+                                     logCorrelationIDString + ".logCorrelationIDString");
 
         //---------------------------------------------------------
         // various objects
@@ -1140,7 +1146,8 @@ public class Options implements Externalizable {
         } else {
             metaTransportOut = null;
         }
-        ObjectStateUtils.writeObject(out, metaTransportOut, logCorrelationIDString + ".transportOut");
+        ObjectStateUtils
+                .writeObject(out, metaTransportOut, logCorrelationIDString + ".transportOut");
 
         //---------------------------------------------------------
         // collections and lists
@@ -1157,7 +1164,8 @@ public class Options implements Externalizable {
         ObjectStateUtils.writeArrayList(out, tmp, logCorrelationIDString + ".relationships");
 
         // ArrayList referenceParameters
-        ObjectStateUtils.writeArrayList(out, referenceParameters, logCorrelationIDString + ".referenceParameters");
+        ObjectStateUtils.writeArrayList(out, referenceParameters,
+                                        logCorrelationIDString + ".referenceParameters");
 
         //---------------------------------------------------------
         // properties
@@ -1252,7 +1260,8 @@ public class Options implements Externalizable {
         logCorrelationIDString = ObjectStateUtils.readString(in, "Options.logCorrelationIDString");
 
         // trace point
-        log.trace(myClassName + ":readExternal():  reading the input stream for  [" + logCorrelationIDString + "]");
+        log.trace(myClassName + ":readExternal():  reading the input stream for  [" +
+                logCorrelationIDString + "]");
 
         //---------------------------------------------------------
         // various objects
@@ -1278,12 +1287,14 @@ public class Options implements Externalizable {
         // TransportInDescription transportIn
         // is not usable until the meta data has been reconciled
         transportIn = null;
-        metaTransportIn = (MetaDataEntry) ObjectStateUtils.readObject(in, "Options.metaTransportIn");
+        metaTransportIn =
+                (MetaDataEntry) ObjectStateUtils.readObject(in, "Options.metaTransportIn");
 
         // TransportOutDescription transportOut
         // is not usable until the meta data has been reconciled
         transportOut = null;
-        metaTransportOut = (MetaDataEntry) ObjectStateUtils.readObject(in, "Options.metaTransportOut");
+        metaTransportOut =
+                (MetaDataEntry) ObjectStateUtils.readObject(in, "Options.metaTransportOut");
 
         //---------------------------------------------------------
         // collections and lists
@@ -1367,13 +1378,18 @@ public class Options implements Externalizable {
             }
             catch (Exception exin) {
                 // if a fault is thrown, log it and continue
-                log.trace(logCorrelationIDString + "activate():  exception caught when getting the TransportInDescription [" + qin.toString() + "]  from the AxisConfiguration [" + exin.getClass().getName() + " : " + exin.getMessage() + "]");
+                log.trace(logCorrelationIDString +
+                        "activate():  exception caught when getting the TransportInDescription [" +
+                        qin.toString() + "]  from the AxisConfiguration [" +
+                        exin.getClass().getName() + " : " + exin.getMessage() + "]");
             }
 
             if (tmpIn != null) {
                 transportIn = tmpIn;
             } else {
-                log.trace(logCorrelationIDString + "activate():  No TransportInDescription found for [" + qin.toString() + "]");
+                log.trace(logCorrelationIDString +
+                        "activate():  No TransportInDescription found for [" + qin.toString() +
+                        "]");
 
                 transportIn = null;
             }
@@ -1392,13 +1408,18 @@ public class Options implements Externalizable {
             }
             catch (Exception exout) {
                 // if a fault is thrown, log it and continue
-                log.trace(logCorrelationIDString + "activate():  exception caught when getting the TransportOutDescription [" + qout.toString() + "]  from the AxisConfiguration [" + exout.getClass().getName() + " : " + exout.getMessage() + "]");
+                log.trace(logCorrelationIDString +
+                        "activate():  exception caught when getting the TransportOutDescription [" +
+                        qout.toString() + "]  from the AxisConfiguration [" +
+                        exout.getClass().getName() + " : " + exout.getMessage() + "]");
             }
 
             if (tmpOut != null) {
                 transportOut = tmpOut;
             } else {
-                log.trace(logCorrelationIDString + "activate():  No TransportOutDescription found for [" + qout.toString() + "]");
+                log.trace(logCorrelationIDString +
+                        "activate():  No TransportOutDescription found for [" + qout.toString() +
+                        "]");
 
                 transportOut = null;
             }
@@ -1412,7 +1433,8 @@ public class Options implements Externalizable {
         if (metaListener != null) {
             // see if we can find an existing object
             String listenerClass = metaListener.getClassName();
-            log.trace(logCorrelationIDString + "activate():  TransportListener found for [" + listenerClass + "] ");
+            log.trace(logCorrelationIDString + "activate():  TransportListener found for [" +
+                    listenerClass + "] ");
         } else {
             listener = null;
 
@@ -1449,7 +1471,8 @@ public class Options implements Externalizable {
             return false;
         }
 
-        if (this.isExceptionToBeThrownOnSOAPFault.booleanValue() != obj.isExceptionToBeThrownOnSOAPFault()) {
+        if (this.isExceptionToBeThrownOnSOAPFault.booleanValue() !=
+                obj.isExceptionToBeThrownOnSOAPFault()) {
             return false;
         }
 
@@ -1620,7 +1643,8 @@ public class Options implements Externalizable {
      */
     private void checkActivateWarning(String methodname) {
         if (needsToBeReconciled) {
-            log.warn(getLogCorrelationIDString() + ":" + methodname + "(): ****WARNING**** " + myClassName + ".activate(configurationContext) needs to be invoked.");
+            log.warn(getLogCorrelationIDString() + ":" + methodname + "(): ****WARNING**** " +
+                    myClassName + ".activate(configurationContext) needs to be invoked.");
         }
     }
 }

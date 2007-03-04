@@ -19,7 +19,7 @@ package org.apache.axis2.util;
 import org.xml.sax.InputSource;
 
 public class DefaultEntityResolver implements org.xml.sax.EntityResolver {
-     public DefaultEntityResolver() {
+    public DefaultEntityResolver() {
     }
 
     public InputSource resolveEntity(String publicId, String systemId) {

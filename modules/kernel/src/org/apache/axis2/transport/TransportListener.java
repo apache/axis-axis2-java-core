@@ -30,7 +30,7 @@ import org.apache.axis2.description.TransportInDescription;
 public interface TransportListener {
 
     String PARAM_PORT = "port";
-    String HOST_ADDRESS="hostname";
+    String HOST_ADDRESS = "hostname";
 
     void init(ConfigurationContext axisConf, TransportInDescription transprtIn)
             throws AxisFault;

@@ -75,17 +75,20 @@ public class Utils {
     public static AxisService createSimpleService(QName serviceName, String className, QName opName)
             throws AxisFault {
         return createSimpleService(serviceName, new RawXMLINOutMessageReceiver(), className,
-                opName);
+                                   opName);
     }
 
-    public static AxisService createSimpleServiceforClient(QName serviceName, String className, QName opName)
+    public static AxisService createSimpleServiceforClient(QName serviceName, String className,
+                                                           QName opName)
             throws AxisFault {
-        return createSimpleServiceforClient(serviceName, new RawXMLINOutMessageReceiver(), className,
-                opName);
+        return createSimpleServiceforClient(serviceName, new RawXMLINOutMessageReceiver(),
+                                            className,
+                                            opName);
     }
 
     public static AxisService createSimpleService(QName serviceName,
-                                                  MessageReceiver messageReceiver, String className, QName opName)
+                                                  MessageReceiver messageReceiver, String className,
+                                                  QName opName)
             throws AxisFault {
         AxisService service = new AxisService(serviceName.getLocalPart());
 
@@ -97,7 +100,8 @@ public class Utils {
         axisOp.setMessageReceiver(messageReceiver);
         axisOp.setStyle(WSDLConstants.STYLE_RPC);
         service.addOperation(axisOp);
-        service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI + "/" + opName.getLocalPart(), axisOp);
+        service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI + "/" + opName.getLocalPart(),
+                                     axisOp);
 
         return service;
     }
@@ -132,19 +136,22 @@ public class Utils {
     private static ServiceContext fillServiceContextAndServiceGroupContext(AxisService axisService,
                                                                            ConfigurationContext configurationContext) {
         String serviceGroupContextId = UUIDGenerator.getUUID();
-        ServiceGroupContext serviceGroupContext = ContextFactory.createServiceGroupContext(configurationContext,
-                (AxisServiceGroup) axisService.getParent());
+        ServiceGroupContext serviceGroupContext =
+                ContextFactory.createServiceGroupContext(configurationContext,
+                                                         (AxisServiceGroup) axisService
+                                                                 .getParent());
 
         serviceGroupContext.setId(serviceGroupContextId);
         configurationContext.registerServiceGroupContextintoSoapSessionTable(serviceGroupContext);
         ServiceContext serviceContext = new ServiceContext(axisService, serviceGroupContext);
-        
-        ClusterManager clusterManager = configurationContext.getAxisConfiguration().getClusterManager();
-        if (clusterManager!=null) {
+
+        ClusterManager clusterManager =
+                configurationContext.getAxisConfiguration().getClusterManager();
+        if (clusterManager != null) {
             clusterManager.addContext(serviceGroupContext);
             clusterManager.addContext(serviceContext);
         }
-        
+
         return serviceContext;
     }
 
@@ -203,7 +210,8 @@ public class Utils {
         if (axis2xml.exists()) {
             axis2xmlString = axis2xml.getName();
         }
-        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(), axis2xmlString);
+        return ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(file.getAbsolutePath(), axis2xmlString);
     }
 
     public static String getParameterValue(Parameter param) {
@@ -282,7 +290,8 @@ public class Utils {
         return true;
     }
 
-    public static void calculateDefaultModuleVersion(HashMap modules, AxisConfiguration axisConfig) {
+    public static void calculateDefaultModuleVersion(HashMap modules,
+                                                     AxisConfiguration axisConfig) {
         Iterator allModules = modules.values().iterator();
         HashMap defaultModules = new HashMap();
         while (allModules.hasNext()) {
@@ -293,7 +302,8 @@ public class Utils {
             String currentDefaultVerison = (String) defaultModules.get(moduleNameString);
             if (currentDefaultVerison != null) {
                 // if the module version is null then , that will be ignore in this case
-                if (moduleVersionString != null && isLatest(moduleVersionString, currentDefaultVerison)) {
+                if (moduleVersionString != null &&
+                        isLatest(moduleVersionString, currentDefaultVerison)) {
                     defaultModules.put(moduleNameString, moduleVersionString);
                 }
             } else {
@@ -386,22 +396,24 @@ public class Utils {
      * and otherwise does a simple extract.
      * <p/>
      * MUST NOT be passed a MessageContext which does not contain a SOAPFault
-     * 
+     *
      * @param messageContext
      * @return
      */
-    public static AxisFault getInboundFaultFromMessageContext(MessageContext messageContext){
+    public static AxisFault getInboundFaultFromMessageContext(MessageContext messageContext) {
         // Get the fault if it's already been extracted by a handler
-        AxisFault result = (AxisFault)messageContext.getProperty(Constants.INBOUND_FAULT_OVERRIDE);
+        AxisFault result = (AxisFault) messageContext.getProperty(Constants.INBOUND_FAULT_OVERRIDE);
         // Else, extract it from the SOAPBody
-        if(result == null){
+        if (result == null) {
             SOAPEnvelope envelope = messageContext.getEnvelope();
-            if(envelope == null || envelope.getBody() ==null || envelope.getBody().getFault()==null){
+            if (envelope == null || envelope.getBody() == null ||
+                    envelope.getBody().getFault() == null) {
                 // Not going to be able to 
-                throw new IllegalArgumentException("The MessageContext does not have an associated SOAPFault.");
+                throw new IllegalArgumentException(
+                        "The MessageContext does not have an associated SOAPFault.");
             }
             SOAPFault soapFault = envelope.getBody().getFault();
-            
+
             // The AxisFault returned needs to have the MessageContext set on it so that 
             // other programming models can potentially handle the fault with an 
             // alternate deserialization.

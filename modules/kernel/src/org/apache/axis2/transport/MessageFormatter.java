@@ -32,14 +32,14 @@ import java.net.URL;
  * service.xml/axis2.xml for a per service based/engine wide configuration.
  * </p>
  * <p/>
- * <messageFormatters> 
- *         <messageFormatter contentType="application/soap+xml"
- *             class="org.apache.axis2.transport.http.SOAPMessageFormatter"/>
+ * <messageFormatters>
+ * <messageFormatter contentType="application/soap+xml"
+ * class="org.apache.axis2.transport.http.SOAPMessageFormatter"/>
  * </messageFormatters>
  * </p>
  */
 public interface MessageFormatter {
-    
+
     /**
      * @return a byte array of the message formatted according to the given
      *         message format.
@@ -53,13 +53,13 @@ public interface MessageFormatter {
      * <p/>
      * Preserve flag can be used to preserve the envelope for later use. This is
      * usefull when implementing authentication machnisms like NTLM.
-     * 
+     *
      * @param outputStream
-     * @param preserve :
-     *            do not consume the OM when this is set..
+     * @param preserve     :
+     *                     do not consume the OM when this is set..
      */
     public void writeTo(MessageContext messageContext, OMOutputFormat format,
-            OutputStream outputStream, boolean preserve) throws AxisFault;
+                        OutputStream outputStream, boolean preserve) throws AxisFault;
 
     /**
      * Different message formats can set their own content types
@@ -70,19 +70,19 @@ public interface MessageFormatter {
      * @param soapAction
      */
     public String getContentType(MessageContext messageContext, OMOutputFormat format,
-            String soapAction);
+                                 String soapAction);
 
     /**
      * Some message formats may want to alter the target url.
-     * 
+     *
      * @return the target URL
      */
     public URL getTargetAddress(MessageContext messageContext, OMOutputFormat format,
-            URL targetURL) throws AxisFault;
+                                URL targetURL) throws AxisFault;
 
     /**
      * @return this only if you want set a transport header for SOAP Action
      */
     public String formatSOAPAction(MessageContext messageContext, OMOutputFormat format,
-            String soapAction);
+                                   String soapAction);
 }

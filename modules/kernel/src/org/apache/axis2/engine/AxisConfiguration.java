@@ -115,9 +115,9 @@ public class AxisConfiguration extends AxisDescription {
     private ArrayList inPhasesUptoAndIncludingPostDispatch;
 
     private HashMap messageReceivers;
-    
+
     private HashMap messageBuilders;
-    
+
     private HashMap messageFormatters;
 
     private ClassLoader moduleClassLoader;
@@ -138,7 +138,7 @@ public class AxisConfiguration extends AxisDescription {
     private boolean start;
 
     private ArrayList targetResolvers;
-    
+
     private ClusterManager clusterManager;
 
     /**
@@ -158,50 +158,52 @@ public class AxisConfiguration extends AxisDescription {
         faultyModules = new Hashtable();
         observersList = new ArrayList();
         inPhasesUptoAndIncludingPostDispatch = new ArrayList();
-        systemClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedAction() {
-            public Object run() {
-                return Thread.currentThread().getContextClassLoader();
-            }
-        });
+        systemClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController
+                .doPrivileged(new PrivilegedAction() {
+                    public Object run() {
+                        return Thread.currentThread().getContextClassLoader();
+                    }
+                });
         serviceClassLoader = systemClassLoader;
         moduleClassLoader = systemClassLoader;
 
         this.phasesinfo = new PhasesInfo();
         targetResolvers = new ArrayList();
     }
-    
+
     public void addMessageReceiver(String mepURL,
-            MessageReceiver messageReceiver) {
+                                   MessageReceiver messageReceiver) {
         messageReceivers.put(mepURL, messageReceiver);
     }
-    
+
     /**
      * Register a messageBuilder implementation against a content type.
      * This is used by Axis2 to support different message formats.
+     *
      * @param contentType
      * @param messageBuilder
      */
     public void addMessageBuilder(String contentType,
-            Builder messageBuilder) {
+                                  Builder messageBuilder) {
         messageBuilders.put(contentType, messageBuilder);
     }
-    
+
     /**
      * Register a messageFormatter implementation against a content type.
-     * This is used by Axis2 to support serialization of messages to different 
+     * This is used by Axis2 to support serialization of messages to different
      * message formats. (Eg: JSON)
      *
      * @param contentType
      * @param messageFormatter
      */
     public void addMessageFormatter(String contentType,
-            MessageFormatter messageFormatter) {
+                                    MessageFormatter messageFormatter) {
         messageFormatters.put(contentType, messageFormatter);
     }
 
     /**
      * Method addModule.
-     * 
+     *
      * @param module
      * @throws AxisFault
      */
@@ -243,7 +245,7 @@ public class AxisConfiguration extends AxisDescription {
      */
     public void addModuleConfig(ModuleConfiguration moduleConfiguration) {
         moduleConfigmap.put(moduleConfiguration.getModuleName(),
-                moduleConfiguration);
+                            moduleConfiguration);
     }
 
     public void addObservers(AxisObserver axisObserver) {
@@ -306,7 +308,7 @@ public class AxisConfiguration extends AxisDescription {
             Map endpoints = axisService.getEndpoints();
             String serviceName = axisService.getName();
             allServices.put(serviceName, axisService);
-            if (endpoints != null ) {
+            if (endpoints != null) {
                 Iterator endpointNameIter = endpoints.keySet().iterator();
                 while (endpointNameIter.hasNext()) {
                     String endpointName = (String) endpointNameIter.next();
@@ -327,7 +329,7 @@ public class AxisConfiguration extends AxisDescription {
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) getChild(serviceGroupName);
         if (axisServiceGroup == null) {
             throw new AxisFault(Messages.getMessage("invalidservicegroupname",
-                    serviceGroupName));
+                                                    serviceGroupName));
         }
         Iterator services = axisServiceGroup.getServices();
         while (services.hasNext()) {
@@ -389,7 +391,7 @@ public class AxisConfiguration extends AxisDescription {
             engageModule(module);
         } else {
             throw new AxisFault(Messages.getMessage("modulenotavailble",
-                    moduleref.getLocalPart()));
+                                                    moduleref.getLocalPart()));
         }
     }
 
@@ -579,16 +581,16 @@ public class AxisConfiguration extends AxisDescription {
     public MessageReceiver getMessageReceiver(String mepURL) {
         return (MessageReceiver) messageReceivers.get(mepURL);
     }
-    
+
     /**
      * @param contentType
      * @return the configured message builder implementation class name against
      *         the given content type.
      */
     public Builder getMessageBuilder(String contentType) {
-        return (Builder)messageBuilders.get(contentType);
+        return (Builder) messageBuilders.get(contentType);
     }
-    
+
     /**
      * @param contentType
      * @return the configured message formatter implementation class name
@@ -836,7 +838,7 @@ public class AxisConfiguration extends AxisDescription {
                     + defualtModuleVersion));
         }
     }
-    
+
     public ClusterManager getClusterManager() {
         return clusterManager;
     }
@@ -853,7 +855,7 @@ public class AxisConfiguration extends AxisDescription {
         AxisService service = (AxisService) allServices.get(serviceName);
         if (service == null) {
             throw new AxisFault(Messages.getMessage("servicenamenotvalid",
-                    serviceName));
+                                                    serviceName));
         }
         service.setActive(false);
         notifyObservers(AxisEvent.SERVICE_STOP, service);
@@ -863,7 +865,7 @@ public class AxisConfiguration extends AxisDescription {
         AxisService service = (AxisService) allServices.get(serviceName);
         if (service == null) {
             throw new AxisFault(Messages.getMessage("servicenamenotvalid",
-                    serviceName));
+                                                    serviceName));
         }
         service.setActive(true);
         notifyObservers(AxisEvent.SERVICE_START, service);
@@ -926,7 +928,7 @@ public class AxisConfiguration extends AxisDescription {
      * resolveTarget is called
      */
     public TargetResolver getTargetResolverChain() {
-        if(targetResolvers.isEmpty()){
+        if (targetResolvers.isEmpty()) {
             return null;
         }
         return new TargetResolver() {
@@ -959,45 +961,44 @@ public class AxisConfiguration extends AxisDescription {
     public boolean isAssertionLocal(QName name) {
         return this.localPolicyAssertions.contains(name);
     }
-    
+
     /**
      * Allow to define/configure Data Locator for specified dialect at Axis 2 Configuration.
-     * 
-     * @param dialect- an absolute URI represents the format and version of data
-     * @param classname - class name of the Data Locator configured to support retrieval 
+     *
+     * @param dialect-  an absolute URI represents the format and version of data
+     * @param classname - class name of the Data Locator configured to support retrieval
      *                  for the specified dialect.
      */
     public void addDataLocatorClassNames(String dialect, String classname) {
         dataLocatorClassNames.put(dialect, classname);
     }
-   
+
     /**
-     * For internal used only! To store instance of DataLocator when it is first loaded. This allows to     
-     * re-use DataLocator after it is initially loaded. 
+     * For internal used only! To store instance of DataLocator when it is first loaded. This allows to
+     * re-use DataLocator after it is initially loaded.
      *
-     * @param dialect- an absolute URI represents the format and version of data
-     * @param dataLocator - specified an DataLocator instance  to support retrieval 
-     *                  of the specified dialect.
+     * @param dialect-    an absolute URI represents the format and version of data
+     * @param dataLocator - specified an DataLocator instance  to support retrieval
+     *                    of the specified dialect.
      */
     public void addDataLocator(String dialect, AxisDataLocator dataLocator) {
         dataLocators.put(dialect, dataLocator);
     }
-    
-     /**
+
+    /**
      * Return DataLocator instance for specified dialect.
      */
     public AxisDataLocator getDataLocator(String dialect) {
-        return (AxisDataLocator)dataLocators.get(dialect);
+        return (AxisDataLocator) dataLocators.get(dialect);
     }
-    
-    
+
+
     /**
      * Return classname of DataLocator configured for specified dialect.
      */
     public String getDataLocatorClassName(String dialect) {
         return (String) dataLocatorClassNames.get(dialect);
     }
-
 
 
     /**

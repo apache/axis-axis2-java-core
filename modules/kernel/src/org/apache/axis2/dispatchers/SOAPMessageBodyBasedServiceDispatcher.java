@@ -41,13 +41,14 @@ public class SOAPMessageBodyBasedServiceDispatcher extends AbstractServiceDispat
             if (ns != null) {
                 String filePart = ns.getNamespaceURI();
 
-                if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-                log.debug(messageContext.getLogIDString()+
-                        "Checking for Service using SOAP message body's first child's namespace : "
-                                + filePart);
+                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                    log.debug(messageContext.getLogIDString() +
+                            "Checking for Service using SOAP message body's first child's namespace : "
+                            + filePart);
                 }
                 String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
-                        messageContext.getConfigurationContext().getServiceContextPath());
+                                                                              messageContext
+                                                                                      .getConfigurationContext().getServiceContextPath());
 
                 if (values[0] != null) {
                     serviceName = values[0];

@@ -45,7 +45,8 @@ import javax.xml.namespace.QName;
  */
 public class InstanceDispatcher extends AbstractHandler {
     private static final QName SERVICE_GROUP_QNAME = new QName(Constants.AXIS2_NAMESPACE_URI,
-            Constants.SERVICE_GROUP_ID, Constants.AXIS2_NAMESPACE_PREFIX);
+                                                               Constants.SERVICE_GROUP_ID,
+                                                               Constants.AXIS2_NAMESPACE_PREFIX);
 
     /**
      * Post Condition : All the Contexts must be populated.
@@ -65,10 +66,10 @@ public class InstanceDispatcher extends AbstractHandler {
 
             return InvocationResponse.CONTINUE;
         }
-        if(Constants.SCOPE_TRANSPORT_SESSION.equals(scope)){
+        if (Constants.SCOPE_TRANSPORT_SESSION.equals(scope)) {
             fillContextsFromSessionContext(msgContext);
-        } else if(Constants.SCOPE_SOAP_SESSION.equals(scope)){
-             extractServiceGroupContextId(msgContext);
+        } else if (Constants.SCOPE_SOAP_SESSION.equals(scope)) {
+            extractServiceGroupContextId(msgContext);
         }
 
         AxisOperation axisOperation = msgContext.getAxisOperation();
@@ -92,7 +93,7 @@ public class InstanceDispatcher extends AbstractHandler {
             msgContext.setServiceGroupContext(serviceGroupContext);
             msgContext.setServiceGroupContextId(serviceGroupContext.getId());
         } else {    // 2. if null, create new opCtxt
-            operationContext =ContextFactory.createOperationContext(axisOperation,serviceContext);
+            operationContext = ContextFactory.createOperationContext(axisOperation, serviceContext);
 
             axisOperation.registerMessageContext(msgContext, operationContext);
             if (serviceContext != null) {
@@ -121,7 +122,7 @@ public class InstanceDispatcher extends AbstractHandler {
         if (sessionContext == null) {
             TransportListener listener = msgContext.getTransportIn().getReceiver();
             sessionContext = listener.getSessionContext(msgContext);
-            if(sessionContext==null){
+            if (sessionContext == null) {
                 createAndFillContexts(service, msgContext, sessionContext);
                 return;
             }
@@ -134,7 +135,7 @@ public class InstanceDispatcher extends AbstractHandler {
             msgContext.setServiceGroupContext(serviceGroupContext);
             // setting Service conetxt
             msgContext.setServiceContext(
-                    ContextFactory.createServiceContext(serviceGroupContext,service));
+                    ContextFactory.createServiceContext(serviceGroupContext, service));
         } else {
             createAndFillContexts(service, msgContext, sessionContext);
         }
@@ -147,17 +148,18 @@ public class InstanceDispatcher extends AbstractHandler {
     }
 
     private void createAndFillContexts(AxisService service,
-                                                     MessageContext msgContext,
-                                                     SessionContext sessionContext) throws AxisFault {
+                                       MessageContext msgContext,
+                                       SessionContext sessionContext) throws AxisFault {
         ServiceGroupContext serviceGroupContext;
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) service.getParent();
         serviceGroupContext = ContextFactory.createServiceGroupContext(
                 msgContext.getConfigurationContext(), axisServiceGroup);
 
         msgContext.setServiceGroupContext(serviceGroupContext);
-        ServiceContext serviceContext =ContextFactory.createServiceContext(serviceGroupContext,service);
+        ServiceContext serviceContext =
+                ContextFactory.createServiceContext(serviceGroupContext, service);
         msgContext.setServiceContext(serviceContext);
-        if(sessionContext!=null){
+        if (sessionContext != null) {
             sessionContext.addServiceContext(serviceContext);
             sessionContext.addServiceGroupContext(serviceGroupContext);
         }

@@ -47,7 +47,7 @@ public class OutOnlyAxisOperation extends AxisOperation {
     public OutOnlyAxisOperation() {
         super();
         //setup a temporary name
-        QName tmpName = new QName(this.getClass().getName()+"_"+UUIDGenerator.getUUID());
+        QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
         this.setName(tmpName);
         createMessage();
         setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_OUT_ONLY);
@@ -71,14 +71,15 @@ public class OutOnlyAxisOperation extends AxisOperation {
                                   OperationContext opContext) throws AxisFault {
         if (!opContext.isComplete()) {
             opContext.getMessageContexts().put(MESSAGE_LABEL_OUT_VALUE,
-                    msgContext);
+                                               msgContext);
             opContext.setComplete(true);
         } else {
             throw new AxisFault(Messages.getMessage("mepcompleted"));
         }
     }
 
-    public void addFaultMessageContext(MessageContext msgContext, OperationContext opContext) throws AxisFault {
+    public void addFaultMessageContext(MessageContext msgContext, OperationContext opContext)
+            throws AxisFault {
         HashMap mep = opContext.getMessageContexts();
         MessageContext faultMessageCtxt = (MessageContext) mep.get(MESSAGE_LABEL_FAULT_VALUE);
 
@@ -241,7 +242,7 @@ class OutOnlyAxisOperationClient extends OperationClient {
         // setting message ID if it null
 
         // create the operation context for myself
-        OperationContext oc = ContextFactory.createOperationContext(axisOp,sc);
+        OperationContext oc = ContextFactory.createOperationContext(axisOp, sc);
         oc.addMessageContext(mc);
         // ship it out
         AxisEngine engine = new AxisEngine(cc);

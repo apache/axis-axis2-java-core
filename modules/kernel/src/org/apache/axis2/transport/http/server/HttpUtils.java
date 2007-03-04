@@ -84,7 +84,7 @@ public class HttpUtils {
             }
         }
 
-        return address;                                                     
+        return address;
     }
 
     private static boolean isIP(String hostAddress) {

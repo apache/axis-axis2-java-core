@@ -19,5 +19,5 @@ package org.apache.axis2.util;
 /**
  * @deprecated
  */
-public class UUIDGenerator extends org.apache.axiom.om.util.UUIDGenerator{
+public class UUIDGenerator extends org.apache.axiom.om.util.UUIDGenerator {
 }

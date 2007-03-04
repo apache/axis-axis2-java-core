@@ -16,12 +16,6 @@
 
 package org.apache.axis2.builder;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
@@ -32,21 +26,28 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class MTOMBuilder implements Builder {
-    
-    public OMElement processDocument(InputStream inputStream, String contentType,MessageContext messageContext)
-    throws AxisFault {
+
+    public OMElement processDocument(InputStream inputStream, String contentType,
+                                     MessageContext messageContext)
+            throws AxisFault {
         XMLStreamReader streamReader;
         try {
             Attachments attachments = messageContext.getAttachmentMap();
             String charSetEncoding = (String) messageContext
-            .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
+                    .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING);
             streamReader = StAXUtils.createXMLStreamReader(BuilderUtil.getReader(inputStream,
-                    charSetEncoding));
+                                                                                 charSetEncoding));
             StAXBuilder builder = new MTOMStAXSOAPModelBuilder(streamReader,
-                    attachments);
+                                                               attachments);
             SOAPEnvelope envelope = (SOAPEnvelope) builder.getDocumentElement();
-            BuilderUtil.validateSOAPVersion(BuilderUtil.getEnvelopeNamespace(contentType), envelope);
+            BuilderUtil
+                    .validateSOAPVersion(BuilderUtil.getEnvelopeNamespace(contentType), envelope);
             BuilderUtil.validateCharSetEncoding(charSetEncoding, builder.getDocument()
                     .getCharsetEncoding(), envelope.getNamespace().getNamespaceURI());
             return envelope;

@@ -28,7 +28,7 @@ import org.apache.axis2.description.Parameter;
 public interface Handler {
 
     /**
-     * Since this might change the whole behavior of Axis2 handlers, and since this is still under discussion 
+     * Since this might change the whole behavior of Axis2 handlers, and since this is still under discussion
      * (http://marc.theaimsgroup.com/?l=axis-dev&m=114504084929285&w=2) implementation of this method is deferred.
      * Note : This method will not be automatically called, from Axis2 engine, until this is fully implemented.
      */
@@ -57,7 +57,7 @@ public interface Handler {
      *
      * @param msgContext the <code>MessageContext</code> to process with this
      *                   <code>Handler</code>.
-     * @return An InvocationResponse that indicates what 
+     * @return An InvocationResponse that indicates what
      *         the next step in the message processing should be.
      * @throws AxisFault if the handler encounters an error
      */
@@ -69,12 +69,12 @@ public interface Handler {
      * the message processing has completed.  During execution of the
      * flowComplete's, handlers are invoked in the opposite order that they
      * were invoked originally.
-     * 
+     *
      * @param msgContext the <code>MessageContext</code> to process with this
      *                   <code>Handler</code>.
      */
     public void flowComplete(MessageContext msgContext);
-    
+
     /**
      * Gets the HandlerDescription of a handler. This is used as an input to get phaseRule of a handler.
      *
@@ -96,7 +96,7 @@ public interface Handler {
      * @return Returns Parameter.
      */
     public Parameter getParameter(String name);
-    
+
     /**
      * This type encapsulates an enumeration of possible message processing
      * instruction values that may be returned by a handler/phase within the
@@ -104,36 +104,39 @@ public interface Handler {
      * the processing.
      */
     public class InvocationResponse {
-      public static InvocationResponse CONTINUE = new InvocationResponse(0, "InvocationResponse.CONTINUE");
-      public static InvocationResponse SUSPEND = new InvocationResponse(1, "InvocationResponse.SUSPEND");
-      public static InvocationResponse ABORT = new InvocationResponse(2, "InvocationResponse.ABORT");
+        public static InvocationResponse CONTINUE =
+                new InvocationResponse(0, "InvocationResponse.CONTINUE");
+        public static InvocationResponse SUSPEND =
+                new InvocationResponse(1, "InvocationResponse.SUSPEND");
+        public static InvocationResponse ABORT =
+                new InvocationResponse(2, "InvocationResponse.ABORT");
 
-      private int instructionID;
-      private String description;
-        
+        private int instructionID;
+        private String description;
+
         private InvocationResponse(int instructionID, String description) {
-        this.instructionID = instructionID;
-        this.description = description;
-      }
-        
-        public boolean equals(InvocationResponse instruction) {
-        return this.instructionID == instruction.instructionID;
-      }
-        
-        public int hashCode() {
-        return instructionID;
-      }
-      
-      public boolean equals(Object obj) {
-        if( !(obj instanceof InvocationResponse) ) {
-            return false;
+            this.instructionID = instructionID;
+            this.description = description;
         }
-        final InvocationResponse instance = (InvocationResponse)obj;
-        return (instructionID==instance.instructionID);
-      }
 
-      public String toString() {
-          return description;
-      }
+        public boolean equals(InvocationResponse instruction) {
+            return this.instructionID == instruction.instructionID;
+        }
+
+        public int hashCode() {
+            return instructionID;
+        }
+
+        public boolean equals(Object obj) {
+            if (!(obj instanceof InvocationResponse)) {
+                return false;
+            }
+            final InvocationResponse instance = (InvocationResponse) obj;
+            return (instructionID == instance.instructionID);
+        }
+
+        public String toString() {
+            return description;
+        }
     }
 }

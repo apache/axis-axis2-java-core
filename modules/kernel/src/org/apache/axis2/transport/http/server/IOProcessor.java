@@ -34,9 +34,9 @@ import java.io.IOException;
 public interface IOProcessor extends Runnable {
 
     void close() throws IOException;
-    
+
     boolean isDestroyed();
-    
+
     void destroy();
-    
+
 }

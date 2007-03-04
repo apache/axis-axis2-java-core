@@ -266,10 +266,11 @@ public class Utils {
                 // Find static getServiceObject() method, call it if there
                 Method method = serviceObjectMaker.
                         getMethod("getServiceObject",
-                                new Class[]{AxisService.class});
+                                  new Class[]{AxisService.class});
                 Object obj = null;
                 if (method != null) {
-                    obj = method.invoke(serviceObjectMaker.newInstance(), new Object[]{axisService});
+                    obj = method.invoke(serviceObjectMaker.newInstance(),
+                                        new Object[]{axisService});
                 }
                 if (obj == null) {
                     log.warn("ServiceObjectSupplier implmentation Object could not be found");
@@ -289,8 +290,9 @@ public class Utils {
                 Java2WSDLConstants.URI_2001_SCHEMA_XSD);
         axisService.setNameSpacesMap(map);
         SchemaGenerator schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                serviceClass.trim(), axisService.getSchematargetNamespace(),
-                axisService.getSchematargetNamespacePrefix());
+                                                              serviceClass.trim(),
+                                                              axisService.getSchematargetNamespace(),
+                                                              axisService.getSchematargetNamespacePrefix());
         schemaGenerator.setExcludeMethods(excludeOperations);
         schemaGenerator.setNonRpcMethods(nonRpcMethods);
         if (!axisService.isElementFormDefault()) {
@@ -314,9 +316,9 @@ public class Utils {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
-            JAnnotation methodAnnon= jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
-            if(methodAnnon!=null){
-                if(methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()){
+            JAnnotation methodAnnon = jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
+            if (methodAnnon != null) {
+                if (methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()) {
                     continue;
                 }
             }
@@ -338,7 +340,8 @@ public class Utils {
                     QName complexSchemaType = table.getComplexSchemaType(jmethod.getSimpleName());
                     inMessage.setElementQName(complexSchemaType);
                     if (complexSchemaType != null) {
-                        axisService.addMessageElementQNameToOperationMapping(complexSchemaType, operation);
+                        axisService.addMessageElementQNameToOperationMapping(complexSchemaType,
+                                                                             operation);
                     }
                 }
                 if (!jmethod.getReturnType().isVoidType()) {
@@ -348,14 +351,16 @@ public class Utils {
                             Java2WSDLConstants.RESPONSE);
                     outMessage.setElementQName(qNamefortheType);
                     if (qNamefortheType != null) {
-                        axisService.addMessageElementQNameToOperationMapping(qNamefortheType, operation);
+                        axisService.addMessageElementQNameToOperationMapping(qNamefortheType,
+                                                                             operation);
                     }
                     outMessage.setName(opName + Java2WSDLConstants.RESPONSE);
                 }
                 if (jmethod.getExceptionTypes().length > 0) {
                     AxisMessage faultMessage = new AxisMessage();
                     faultMessage.setName(jmethod.getSimpleName() + "Fault");
-                    faultMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName() + "Fault"));
+                    faultMessage.setElementQName(
+                            table.getComplexSchemaType(jmethod.getSimpleName() + "Fault"));
                     operation.setFaultMessages(faultMessage);
                 }
             } else {
@@ -371,7 +376,7 @@ public class Utils {
                 pinfo.setOperationPhases(operation);
                 axisService.addOperation(operation);
             }
-            if(operation.getInputAction()==null){
+            if (operation.getInputAction() == null) {
                 operation.setSoapAction("urn:" + opName);
             }
         }
@@ -394,7 +399,8 @@ public class Utils {
         if (jmethod.getExceptionTypes().length > 0) {
             AxisMessage faultMessage = new AxisMessage();
             faultMessage.setName(jmethod.getSimpleName() + "Fault");
-            faultMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName() + "Fault"));
+            faultMessage
+                    .setElementQName(table.getComplexSchemaType(jmethod.getSimpleName() + "Fault"));
             operation.setFaultMessages(faultMessage);
         }
         operation.setName(new QName(opName));
@@ -403,10 +409,10 @@ public class Utils {
             inMessage.setElementQName(table.getComplexSchemaType(jmethod.getSimpleName()));
             inMessage.setName(opName + Java2WSDLConstants.MESSAGE_SUFFIX);
         }
-        JAnnotation methodAnnon= jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
-        if(methodAnnon!=null){
-            String action=  methodAnnon.getValue(AnnotationConstants.ACTION).asString();
-            if(action!=null&&!"".equals(action)){
+        JAnnotation methodAnnon = jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
+        if (methodAnnon != null) {
+            String action = methodAnnon.getValue(AnnotationConstants.ACTION).asString();
+            if (action != null && !"".equals(action)) {
                 operation.setSoapAction(action);
             }
         }
@@ -466,10 +472,11 @@ public class Utils {
                     }
                     File inputFile = Utils.createTempFile(servicename, fin);
                     DeploymentFileData filedata = new DeploymentFileData(inputFile,
-                            DeploymentConstants.TYPE_SERVICE, false);
+                                                                         DeploymentConstants.TYPE_SERVICE,
+                                                                         false);
 
                     filedata.setClassLoader(false,
-                            moduleClassLoader);
+                                            moduleClassLoader);
                     HashMap wsdlservice = archiveReader.processWSDLs(filedata);
                     if (wsdlservice != null && wsdlservice.size() > 0) {
                         Iterator servicesitr = wsdlservice.values().iterator();
@@ -513,7 +520,7 @@ public class Utils {
             return uri;
         }
         int leadingSlashes = 0;
-        for (leadingSlashes = 0 ; leadingSlashes < uri.length()
+        for (leadingSlashes = 0; leadingSlashes < uri.length()
                 && uri.charAt(leadingSlashes) == '/'; ++leadingSlashes) {
         }
         boolean isDir = (uri.charAt(uri.length() - 1) == '/');
@@ -538,7 +545,7 @@ public class Utils {
         while (leadingSlashes-- > 0) {
             sb.append('/');
         }
-        for (Iterator it = clean.iterator() ; it.hasNext() ; ) {
+        for (Iterator it = clean.iterator(); it.hasNext();) {
             sb.append(it.next());
             if (it.hasNext()) {
                 sb.append('/');

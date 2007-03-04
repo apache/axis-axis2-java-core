@@ -25,8 +25,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.builder.Builder;
-import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.context.MessageContext;
 
 import javax.xml.stream.XMLStreamException;
@@ -54,8 +52,8 @@ public class ApplicationXMLBuilder implements Builder {
                 pushbackInputStream.unread(b);
                 StAXBuilder builder =
                         BuilderUtil.getPOXBuilder(pushbackInputStream,
-                                              (String) messageContext.getProperty(
-                                                      Constants.Configuration.CHARACTER_SET_ENCODING));
+                                                  (String) messageContext.getProperty(
+                                                          Constants.Configuration.CHARACTER_SET_ENCODING));
                 OMNodeEx documentElement = (OMNodeEx) builder.getDocumentElement();
                 documentElement.setParent(null);
                 SOAPBody body = soapEnvelope.getBody();

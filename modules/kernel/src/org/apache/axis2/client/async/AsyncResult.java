@@ -35,9 +35,9 @@ public class AsyncResult {
 
     /**
      * Constructor.
-     * 
+     *
      * @param result message context providing result information
-     * (<code>null</code> if no response)
+     *               (<code>null</code> if no response)
      */
     public AsyncResult(MessageContext result) {
         this.result = result;
@@ -45,7 +45,7 @@ public class AsyncResult {
 
     /**
      * Get the SOAP Envelope for the response message.
-     * 
+     *
      * @return Envelope (<code>null</code> if none)
      */
     public SOAPEnvelope getResponseEnvelope() {
@@ -58,7 +58,7 @@ public class AsyncResult {
 
     /**
      * Get the complete message context for the response.
-     * 
+     *
      * @return context (<code>null</code> if none)
      */
     public MessageContext getResponseMessageContext() {

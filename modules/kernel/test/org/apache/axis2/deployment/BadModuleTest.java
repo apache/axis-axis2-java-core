@@ -36,7 +36,7 @@ public class BadModuleTest extends AbstractTestCase {
             InputStream in = new FileInputStream(
                     getTestResourceFile("deployment/Badmodule.xml"));
             AxisConfiguration glabl = new AxisConfiguration();
-            AxisConfigBuilder builder =new AxisConfigBuilder(in, glabl,null);
+            AxisConfigBuilder builder = new AxisConfigBuilder(in, glabl, null);
             builder.populateConfig();
             fail(
                     "this must failed gracefully with DeploymentException or FileNotFoundException");

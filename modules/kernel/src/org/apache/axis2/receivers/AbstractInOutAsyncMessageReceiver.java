@@ -46,7 +46,8 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
                 AxisEngine engine =
                         new AxisEngine(messageCtx.getOperationContext().getServiceContext()
                                 .getConfigurationContext());
-                MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(messageCtx, fault);
+                MessageContext faultContext =
+                        MessageContextBuilder.createFaultMessageContext(messageCtx, fault);
 
                 engine.sendFault(faultContext);
             }
@@ -54,7 +55,8 @@ public abstract class AbstractInOutAsyncMessageReceiver extends AbstractMessageR
         Runnable theadedTask = new Runnable() {
             public void run() {
                 try {
-                    MessageContext newmsgCtx = MessageContextBuilder.createOutMessageContext(messageCtx);
+                    MessageContext newmsgCtx =
+                            MessageContextBuilder.createOutMessageContext(messageCtx);
                     newmsgCtx.getOperationContext().addMessageContext(newmsgCtx);
                     ThreadContextDescriptor tc = setThreadContext(messageCtx);
                     try {

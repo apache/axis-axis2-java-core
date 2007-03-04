@@ -36,7 +36,7 @@ import java.io.IOException;
 
 public interface Worker {
 
-    void service(HttpRequest request, HttpResponse response, MessageContext msgContext) 
-        throws HttpException, IOException;    
-    
+    void service(HttpRequest request, HttpResponse response, MessageContext msgContext)
+            throws HttpException, IOException;
+
 }

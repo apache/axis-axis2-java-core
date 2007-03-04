@@ -50,12 +50,13 @@ public class ContextHierarchyTest extends TestCase {
         ConfigurationContext configurationContext = new ConfigurationContext(
                 axisConfiguration);
         ServiceGroupContext serviceGroupContext = ContextFactory.createServiceGroupContext(
-                configurationContext,(AxisServiceGroup) axisService.getParent());
-        ServiceContext serviceContext = ContextFactory.createServiceContext(serviceGroupContext,axisService);
+                configurationContext, (AxisServiceGroup) axisService.getParent());
+        ServiceContext serviceContext =
+                ContextFactory.createServiceContext(serviceGroupContext, axisService);
         MessageContext msgctx = ContextFactory.createMessageContext(configurationContext);
         OperationContext opContext = axisOperation.findOperationContext(msgctx,
-                serviceContext);
-        axisOperation.registerOperationContext(msgctx,opContext);
+                                                                        serviceContext);
+        axisOperation.registerOperationContext(msgctx, opContext);
         msgctx.setServiceContext(serviceContext);
 
         // test the complte Hierarchy built

@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Class FlowImpl
  */
-public class Flow  {
+public class Flow {
 
     /**
      * Field list

@@ -52,7 +52,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
     public OMElement generateOM() throws Exception {
         OMFactory fac = OMAbstractFactory.getOMFactory();
         fac.createOMNamespace(WSDL_NAMESPACE,
-                DEFAULT_WSDL_NAMESPACE_PREFIX);
+                              DEFAULT_WSDL_NAMESPACE_PREFIX);
         OMElement description = fac.createOMElement(DESCRIPTION, null);
         Map nameSpaceMap = axisService.getNameSpacesMap();
         Iterator keys = nameSpaceMap.keySet().iterator();
@@ -71,11 +71,11 @@ public class AxisService2WSDL2 implements WSDL2Constants {
             prefix = DEFAULT_TARGET_NAMESPACE_PREFIX;
         }
         axisService.getNameSpacesMap().put(prefix,
-                axisService.getTargetNamespace());
+                                           axisService.getTargetNamespace());
         tns = description.declareNamespace(axisService.getTargetNamespace(), prefix);
 
         description.addAttribute("targetNamespace", axisService.getTargetNamespace(),
-                null);
+                                 null);
         //adding service document
         if (axisService.getServiceDescription() != null) {
             addDocumentation(description, fac, axisService.getServiceDescription());
@@ -94,7 +94,8 @@ public class AxisService2WSDL2 implements WSDL2Constants {
                 String schemaString = writer.toString();
 
                 if (!"".equals(schemaString)) {
-                    wsdlTypes.addChild(XMLUtils.toOM(new ByteArrayInputStream(schemaString.getBytes())));
+                    wsdlTypes.addChild(
+                            XMLUtils.toOM(new ByteArrayInputStream(schemaString.getBytes())));
                 }
             }
         }
@@ -142,7 +143,7 @@ public class AxisService2WSDL2 implements WSDL2Constants {
 
                 String operationName = axisOperation.getName().getLocalPart();
                 OMElement operation = fac.createOMElement(OPERATION_LOCAL_NAME,
-                        null);
+                                                          null);
                 interfaceElement.addChild(operation);
                 operation.addAttribute(ATTRIBUTE_NAME, operationName, null);
                 String MEP = axisOperation.getMessageExchangePattern();
@@ -159,8 +160,9 @@ public class AxisService2WSDL2 implements WSDL2Constants {
                             .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                     if (inaxisMessage != null) {
                         OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME,
-                                null);
-                        input.addAttribute(MESSAGE_LABEL, WSDLConstants.MESSAGE_LABEL_IN_VALUE, null);
+                                                              null);
+                        input.addAttribute(MESSAGE_LABEL, WSDLConstants.MESSAGE_LABEL_IN_VALUE,
+                                           null);
                         operation.addChild(input);
                         addMessageElementAtt(input, inaxisMessage);
                     }
@@ -176,9 +178,10 @@ public class AxisService2WSDL2 implements WSDL2Constants {
                             .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                     if (outAxisMessage != null) {
                         OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME,
-                                null);
+                                                               null);
                         operation.addChild(output);
-                        output.addAttribute(MESSAGE_LABEL, WSDLConstants.MESSAGE_LABEL_OUT_VALUE, null);
+                        output.addAttribute(MESSAGE_LABEL, WSDLConstants.MESSAGE_LABEL_OUT_VALUE,
+                                            null);
                         addMessageElementAtt(output, outAxisMessage);
                     }
                 }
@@ -205,15 +208,16 @@ public class AxisService2WSDL2 implements WSDL2Constants {
                 String direction = faultMessage.getDirection();
                 OMElement faultElement = null;
                 if (MESSAGE_LABEL_OUT.equalsIgnoreCase(direction)) {
-                  faultElement = fac.createOMElement(OUT_FAULT, null, operationElement);
-                }else if (MESSAGE_LABEL_IN.equalsIgnoreCase(direction)) {
-                  faultElement = fac.createOMElement(IN_FAULT, null, operationElement);
+                    faultElement = fac.createOMElement(OUT_FAULT, null, operationElement);
+                } else if (MESSAGE_LABEL_IN.equalsIgnoreCase(direction)) {
+                    faultElement = fac.createOMElement(IN_FAULT, null, operationElement);
                 } else {
                     return;
                 }
 
                 faultElement.addAttribute(MESSAGE_LABEL, direction, null);
-                faultElement.addAttribute(ATTRIBUTE_REF, elementQName.getPrefix() + ":" + elementQName.getLocalPart(), null);
+                faultElement.addAttribute(ATTRIBUTE_REF, elementQName.getPrefix() + ":" +
+                        elementQName.getLocalPart(), null);
 
             }
         }
@@ -229,8 +233,9 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         OMElement bindingElement = fac.createOMElement(BINDING_LOCAL_NAME, null);
         description.addChild(bindingElement);
         bindingElement.addAttribute("name", axisService.getName() + SOAP_BINDING_PREFIX, null);
-        bindingElement.addAttribute(INTERFACE_LOCAL_NAME, tns.getPrefix() + ":" + axisService.getName() +
-                INTERFACE_PREFIX, null);
+        bindingElement
+                .addAttribute(INTERFACE_LOCAL_NAME, tns.getPrefix() + ":" + axisService.getName() +
+                        INTERFACE_PREFIX, null);
         bindingElement.addAttribute("type", URI_WSDL2_SOAP, null);
         bindingElement.addAttribute("protocol", HTTP_PROTOCAL, wsoap);
 

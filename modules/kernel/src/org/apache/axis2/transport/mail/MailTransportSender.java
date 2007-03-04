@@ -17,9 +17,7 @@
 
 package org.apache.axis2.transport.mail;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -253,7 +251,7 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
         try {
             OMOutputFormat format = new OMOutputFormat();
             MessageFormatter messageFormatter = TransportUtils
-                .getMessageFormatter(msgContext);
+                    .getMessageFormatter(msgContext);
             format.setDoOptimize(msgContext.isDoingMTOM());
             //Set to null so that the code will not fail on 7bit.
             format.setCharSetEncoding(null);

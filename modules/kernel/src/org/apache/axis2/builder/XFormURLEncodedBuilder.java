@@ -49,7 +49,7 @@ public class XFormURLEncodedBuilder implements Builder {
             queryParameterSeparator = (String) axisBindingOperation
                     .getProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
             templatedPath =
-                (String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
+                    (String) axisBindingOperation.getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
         }
         if (queryParameterSeparator == null) {
             queryParameterSeparator =
@@ -74,8 +74,8 @@ public class XFormURLEncodedBuilder implements Builder {
         String requestURL = endpointReference.getAddress();
         try {
             requestURL = extractParametersUsingHttpLocation(templatedPath, parameterMap,
-                                               requestURL,
-                                               queryParameterSeparator);
+                                                            requestURL,
+                                                            queryParameterSeparator);
         } catch (UnsupportedEncodingException e) {
             throw new AxisFault(e);
         }
@@ -90,7 +90,6 @@ public class XFormURLEncodedBuilder implements Builder {
                                      (String) messageContext.getProperty(
                                              Constants.Configuration.CHARACTER_SET_ENCODING),
                                      inputStream);
-
 
 
         return BuilderUtil.buildsoapMessage(messageContext, parameterMap,
@@ -128,27 +127,27 @@ public class XFormURLEncodedBuilder implements Builder {
         }
 
         if (inputStream != null) {
-        try {
-            InputStreamReader inputStreamReader =
-                    new InputStreamReader(inputStream, charsetEncoding);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            while (true) {
-                String line = bufferedReader.readLine();
-                if (line != null) {
-                    String parts[] = line.split(
-                            WSDL20DefaultValueHolder.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR_DEFAULT);
-                    for (int i = 0; i < parts.length; i++) {
-                        int separator = parts[i].indexOf("=");
-                        parameterMap.put(parts[i].substring(0, separator),
-                                         parts[i].substring(separator + 1));
+            try {
+                InputStreamReader inputStreamReader =
+                        new InputStreamReader(inputStream, charsetEncoding);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                while (true) {
+                    String line = bufferedReader.readLine();
+                    if (line != null) {
+                        String parts[] = line.split(
+                                WSDL20DefaultValueHolder.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR_DEFAULT);
+                        for (int i = 0; i < parts.length; i++) {
+                            int separator = parts[i].indexOf("=");
+                            parameterMap.put(parts[i].substring(0, separator),
+                                             parts[i].substring(separator + 1));
+                        }
+                    } else {
+                        break;
                     }
-                } else {
-                    break;
                 }
+            } catch (IOException e) {
+                throw new AxisFault(e);
             }
-        } catch (IOException e) {
-            throw new AxisFault(e);
-        }
         }
     }
 
@@ -174,9 +173,9 @@ public class XFormURLEncodedBuilder implements Builder {
      * @param parameterMap
      */
     protected String extractParametersUsingHttpLocation(String templatedPath,
-                                                      MultipleEntryHashMap parameterMap,
-                                                      String requestURL,
-                                                      String queryParameterSeparator)
+                                                        MultipleEntryHashMap parameterMap,
+                                                        String requestURL,
+                                                        String queryParameterSeparator)
             throws AxisFault, UnsupportedEncodingException {
 
 

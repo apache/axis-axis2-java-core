@@ -17,17 +17,16 @@
 
 package org.apache.axis2.deployment;
 
+import org.apache.axis2.deployment.repository.util.DeploymentFileData;
+import org.apache.axis2.deployment.repository.util.WSInfoList;
+import org.apache.axis2.util.Loader;
+
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-
-import org.apache.axis2.deployment.repository.util.DeploymentFileData;
-import org.apache.axis2.deployment.repository.util.WSInfoList;
-import org.apache.axis2.util.Loader;
 
 public class RepositoryListener implements DeploymentConstants {
 
@@ -130,8 +129,10 @@ public class RepositoryListener implements DeploymentConstants {
                     if (path.length() >= 3 && path.charAt(0) == '/' && path.charAt(2) == ':') {
                         path = path.substring(1);
                     }
-                    java.io.File file = new java.io.File(URLDecoder.decode(urls[i].getPath()).replace('/',
-                            File.separatorChar).replace('|', ':'));
+                    java.io.File file =
+                            new java.io.File(URLDecoder.decode(urls[i].getPath()).replace('/',
+                                                                                          File.separatorChar).replace(
+                                    '|', ':'));
                     if (file.isFile()) {
                         if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                             //adding modules in the class path
@@ -144,10 +145,10 @@ public class RepositoryListener implements DeploymentConstants {
         }
 
         try {
-			deploymentEngine.doDeploy();
-		} catch (DeploymentException e) {
-			// no need to do anything here, it has already been logged at the DeploymentEngine call
-		}
+            deploymentEngine.doDeploy();
+        } catch (DeploymentException e) {
+            // no need to do anything here, it has already been logged at the DeploymentEngine call
+        }
     }
 
     /**
@@ -166,7 +167,8 @@ public class RepositoryListener implements DeploymentConstants {
             }
             if (location.startsWith("file")) {
                 java.io.File file = new java.io.File(URLDecoder.decode(url.getPath()).replace('/',
-                        File.separatorChar).replace('|', ':'));
+                                                                                              File.separatorChar).replace(
+                        '|', ':'));
                 return file.getAbsolutePath();
             } else {
                 return url.toString();
@@ -179,15 +181,15 @@ public class RepositoryListener implements DeploymentConstants {
     /**
      * Finds a list of services in the folder and adds to wsInfoList.
      */
-    public void checkServices() { 
+    public void checkServices() {
         findServicesInDirectory();
         loadOtherDirectories();
-        
+
         try {
-			update();
-		} catch (DeploymentException e) {
-				// no need to log anything here, it has been logged at DeploymentEngine
-		}
+            update();
+        } catch (DeploymentException e) {
+            // no need to log anything here, it has been logged at DeploymentEngine
+        }
     }
 
     /**
@@ -199,28 +201,28 @@ public class RepositoryListener implements DeploymentConstants {
         checkModules();
         directoryToExtensionMappingMap = deploymentEngine.getDirectoryToExtensionMappingMap();
         try {
-			deploymentEngine.doDeploy();
-		} catch (DeploymentException e) {
-			// no need to do anything here, it has already been logged
-		}
+            deploymentEngine.doDeploy();
+        } catch (DeploymentException e) {
+            // no need to do anything here, it has already been logged
+        }
     }
 
     //This will load the files from the directories
     // specified by axis2.xml (As <deployer>)
-    private void loadOtherDirectories(){
-       if(directoryToExtensionMappingMap.size()>0){
-          Iterator keys = directoryToExtensionMappingMap.keySet().iterator();
-           while (keys.hasNext()) {
-               String s = (String) keys.next();
-               findFileForGivenDirectory(s,(String)directoryToExtensionMappingMap.get(s));
-           }
-       }
+    private void loadOtherDirectories() {
+        if (directoryToExtensionMappingMap.size() > 0) {
+            Iterator keys = directoryToExtensionMappingMap.keySet().iterator();
+            while (keys.hasNext()) {
+                String s = (String) keys.next();
+                findFileForGivenDirectory(s, (String) directoryToExtensionMappingMap.get(s));
+            }
+        }
     }
 
-    private void findFileForGivenDirectory(String dir , String extension){
+    private void findFileForGivenDirectory(String dir, String extension) {
         try {
-            File fileTobeSearch = new File(deploymentEngine.getRepositoryDir(),dir);
-            if(fileTobeSearch.exists()){
+            File fileTobeSearch = new File(deploymentEngine.getRepositoryDir(), dir);
+            if (fileTobeSearch.exists()) {
                 File[] files = fileTobeSearch.listFiles();
                 if (files != null && files.length > 0) {
                     for (int i = 0; i < files.length; i++) {
@@ -228,9 +230,9 @@ public class RepositoryListener implements DeploymentConstants {
                         if (isSourceControlDir(file)) {
                             continue;
                         }
-                        if (!file.isDirectory()&&DeploymentFileData.getFileExtension(
+                        if (!file.isDirectory() && DeploymentFileData.getFileExtension(
                                 file.getName()).equals(extension)) {
-                            wsInfoList.addWSInfoItem(file,extension);
+                            wsInfoList.addWSInfoItem(file, extension);
                         }
                     }
                 }
@@ -274,12 +276,12 @@ public class RepositoryListener implements DeploymentConstants {
     public void startListener() {
         checkServices();
         loadOtherDirectories();
-        
+
         try {
-			update();
-		} catch (DeploymentException e) {
-			// no need to log the exception once again
-		}
+            update();
+        } catch (DeploymentException e) {
+            // no need to log the exception once again
+        }
     }
 
     /**
@@ -288,11 +290,11 @@ public class RepositoryListener implements DeploymentConstants {
     public void update() throws DeploymentException {
         wsInfoList.update();
     }
-    
+
     public void updateRemote() throws Exception {
-    	
-    	findServicesInDirectory();
-    	update();
+
+        findServicesInDirectory();
+        update();
     }
-    
+
 }

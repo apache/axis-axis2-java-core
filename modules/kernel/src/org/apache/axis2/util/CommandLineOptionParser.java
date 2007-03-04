@@ -74,7 +74,7 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
                     commandLineOption =
                             new CommandLineOption(optionType, optionBundle);
                     commandLineOptions.put(commandLineOption.getOptionType(),
-                            commandLineOption);
+                                           commandLineOption);
                     state = NEW_OPTION;
                     optionType = args[i];
                     optionBundle = null;
@@ -87,7 +87,7 @@ public class CommandLineOptionParser implements CommandLineOptionConstants {
                                     CommandLineOptionConstants.SOLE_INPUT,
                                     args);
                     commandLineOptions.put(commandLineOption.getOptionType(),
-                            commandLineOption);
+                                           commandLineOption);
                     return commandLineOptions;
 
                 } else if (NEW_OPTION == state) {

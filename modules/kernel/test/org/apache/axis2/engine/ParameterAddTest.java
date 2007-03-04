@@ -25,6 +25,7 @@ import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.Parameter;
 
 import javax.xml.namespace.QName;
+
 /**
  * To chcek locked is working corrcetly
  */
@@ -32,7 +33,8 @@ import javax.xml.namespace.QName;
 public class ParameterAddTest extends TestCase {
 
     private AxisConfiguration reg = new AxisConfiguration();
-    public void testAddParameterServiceLockedAtAxisConfig(){
+
+    public void testAddParameterServiceLockedAtAxisConfig() {
         try {
             Parameter para = new Parameter();
             para.setValue(null);
@@ -49,7 +51,7 @@ public class ParameterAddTest extends TestCase {
         }
     }
 
-     public void testAddParameterModuleLockedAtAxisConfig(){
+    public void testAddParameterModuleLockedAtAxisConfig() {
         try {
             Parameter para = new Parameter();
             para.setValue(null);
@@ -65,7 +67,7 @@ public class ParameterAddTest extends TestCase {
         }
     }
 
-     public void testAddParameterOperationlockedByAxisConfig(){
+    public void testAddParameterOperationlockedByAxisConfig() {
         try {
             Parameter para = new Parameter();
             para.setValue(null);
@@ -87,7 +89,7 @@ public class ParameterAddTest extends TestCase {
         }
     }
 
-     public void testAddParameterOperationLockebyService(){
+    public void testAddParameterOperationLockebyService() {
         try {
             Parameter para = new Parameter();
             para.setValue(null);

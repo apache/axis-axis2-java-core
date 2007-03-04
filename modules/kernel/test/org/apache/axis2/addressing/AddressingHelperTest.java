@@ -15,9 +15,8 @@
 */
 package org.apache.axis2.addressing;
 
-import org.apache.axis2.context.MessageContext;
-
 import junit.framework.TestCase;
+import org.apache.axis2.context.MessageContext;
 
 public class AddressingHelperTest extends TestCase {
 
@@ -25,17 +24,19 @@ public class AddressingHelperTest extends TestCase {
         MessageContext mc = new MessageContext();
         assertFalse(AddressingHelper.isReplyRedirected(mc));
     }
+
     public void testIsReplyRedirectedAnonReplyTo() {
         MessageContext mc = new MessageContext();
         mc.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
         assertFalse(AddressingHelper.isReplyRedirected(mc));
     }
+
     public void testIsReplyRedirectedNonAnonReplyTo() {
         MessageContext mc = new MessageContext();
         mc.setReplyTo(new EndpointReference("http://ws.apache.org/axis2"));
         assertTrue(AddressingHelper.isReplyRedirected(mc));
     }
-    
+
     public void testIsFaultRedirectedNoFaultToOrReplyTo() {
         MessageContext mc = new MessageContext();
         assertFalse(AddressingHelper.isFaultRedirected(mc));
@@ -46,7 +47,7 @@ public class AddressingHelperTest extends TestCase {
         mc.setFaultTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
         assertFalse(AddressingHelper.isFaultRedirected(mc));
     }
-    
+
     public void testIsFaultRedirectedNonAnonFaultTo() {
         MessageContext mc = new MessageContext();
         mc.setFaultTo(new EndpointReference("http://ws.apache.org/axis2"));

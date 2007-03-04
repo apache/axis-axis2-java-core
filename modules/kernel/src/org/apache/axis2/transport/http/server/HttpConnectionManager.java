@@ -34,7 +34,7 @@ import org.apache.http.HttpServerConnection;
 public interface HttpConnectionManager {
 
     void process(HttpServerConnection incoming);
-    
+
     void shutdown();
-    
+
 }

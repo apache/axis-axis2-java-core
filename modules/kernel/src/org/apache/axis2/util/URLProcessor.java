@@ -44,7 +44,7 @@ public class URLProcessor {
                 hostname = namespace.substring(namespace.indexOf(":") + 1);
 
                 // remove the leading /
-                while (hostname.startsWith("/")){
+                while (hostname.startsWith("/")) {
                     hostname = hostname.substring(1);
                 }
 

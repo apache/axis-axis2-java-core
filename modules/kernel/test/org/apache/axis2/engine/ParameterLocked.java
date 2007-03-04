@@ -37,7 +37,9 @@ public class ParameterLocked extends TestCase {
 
 
     protected void setUp() throws Exception {
-        ar = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, repo + "/axis2.xml").getAxisConfiguration();
+        ar = ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(null, repo + "/axis2.xml")
+                .getAxisConfiguration();
     }
 
     public void testOveride_Non_locked_Para_Service() {
@@ -128,7 +130,8 @@ public class ParameterLocked extends TestCase {
             assertNotNull(ar);
             AxisModule module = new AxisModule();
             module.setParent(ar);
-            InputStream in = new FileInputStream(repo + "/module_overide_global_non_locked_para.xml");
+            InputStream in =
+                    new FileInputStream(repo + "/module_overide_global_non_locked_para.xml");
             ModuleBuilder mbuilder = new ModuleBuilder(in, module, ar);
             mbuilder.populateModule();
         } catch (FileNotFoundException e) {

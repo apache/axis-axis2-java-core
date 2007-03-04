@@ -16,16 +16,11 @@
 
 package org.apache.axis2.deployment;
 
-import java.io.File;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.phaseresolver.PhaseException;
+
+import java.io.File;
 
 public class MessageFormatterDeploymentTest extends AbstractTestCase {
     /**
@@ -36,23 +31,30 @@ public class MessageFormatterDeploymentTest extends AbstractTestCase {
     }
 
     public void testBuilderSelection() throws AxisFault {
-        String repositoryName  =System.getProperty("basedir",".")+"/"+"target/test-resources/deployment";
+        String repositoryName =
+                System.getProperty("basedir", ".") + "/" + "target/test-resources/deployment";
         File repo = new File(repositoryName);
-        String xmlFile = System.getProperty("basedir",".")+"/"+"test-resources/deployment/messageFormatterTest/axis2.xml";
+        String xmlFile = System.getProperty("basedir", ".") + "/" +
+                "test-resources/deployment/messageFormatterTest/axis2.xml";
         File xml = new File(xmlFile);
-        FileSystemConfigurator fsc = new FileSystemConfigurator(repo.getAbsolutePath(), xml.getAbsolutePath());
+        FileSystemConfigurator fsc =
+                new FileSystemConfigurator(repo.getAbsolutePath(), xml.getAbsolutePath());
         AxisConfiguration axisConfig = fsc.getAxisConfiguration();
-        String className = axisConfig.getMessageFormatter("application/soap+xml").getClass().getName();
-        assertEquals("org.apache.axis2.transport.http.SOAPMessageFormatter",className);
+        String className =
+                axisConfig.getMessageFormatter("application/soap+xml").getClass().getName();
+        assertEquals("org.apache.axis2.transport.http.SOAPMessageFormatter", className);
     }
-    
-    public void testBuilderSelectionInvalidEntry() throws AxisFault{
-        String repositoryName  =System.getProperty("basedir",".")+"/"+"target/test-resources/deployment";
+
+    public void testBuilderSelectionInvalidEntry() throws AxisFault {
+        String repositoryName =
+                System.getProperty("basedir", ".") + "/" + "target/test-resources/deployment";
         File repo = new File(repositoryName);
-        String xmlFile = System.getProperty("basedir",".")+"/"+"test-resources/deployment/messageFormatterTest/bad-axis2.xml";
+        String xmlFile = System.getProperty("basedir", ".") + "/" +
+                "test-resources/deployment/messageFormatterTest/bad-axis2.xml";
         File xml = new File(xmlFile);
-        FileSystemConfigurator fsc = new FileSystemConfigurator(repo.getAbsolutePath(), xml.getAbsolutePath());
-        AxisFault testFault=null;
+        FileSystemConfigurator fsc =
+                new FileSystemConfigurator(repo.getAbsolutePath(), xml.getAbsolutePath());
+        AxisFault testFault = null;
         try {
             fsc.getAxisConfiguration();
         } catch (AxisFault e) {

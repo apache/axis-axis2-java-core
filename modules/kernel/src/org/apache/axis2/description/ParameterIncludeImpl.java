@@ -237,7 +237,8 @@ public class ParameterIncludeImpl implements ParameterInclude, Externalizable {
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         // trace point
         if (log.isTraceEnabled()) {
-            log.trace(myClassName + ":readExternal():  BEGIN  bytes available in stream [" + in.available() + "]  ");
+            log.trace(myClassName + ":readExternal():  BEGIN  bytes available in stream [" +
+                    in.available() + "]  ");
         }
 
         // serialization version ID
@@ -267,7 +268,8 @@ public class ParameterIncludeImpl implements ParameterInclude, Externalizable {
                 parameters.putAll(tmp);
             } else {
                 if (log.isTraceEnabled()) {
-                    log.trace(myClassName + ":readExternal():  WARNING: parameters doesnot have a defined HashMap ");
+                    log.trace(myClassName +
+                            ":readExternal():  WARNING: parameters doesnot have a defined HashMap ");
                 }
             }
         }

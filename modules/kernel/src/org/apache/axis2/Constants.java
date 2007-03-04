@@ -195,7 +195,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     public static final String RESPONSE_WRITTEN = "CONTENT_WRITTEN";
     //To have a floag if the replyTo is not annon one
     public static final String DIFFERENT_EPR = "DIFFERENT_EPR";
-    
+
     /**
      * This can be set in the MessageContext to give an response code the transport should use when sending it out.
      */
@@ -238,10 +238,10 @@ public class Constants extends org.apache.axis2.namespace.Constants {
     /**
      * Property name for inbound fault processor to set a fault on the message
      * context to be thrown by the client code in favour of a simple translation
-     * from SOAPFault to AxisFault 
+     * from SOAPFault to AxisFault
      */
     public static final String INBOUND_FAULT_OVERRIDE = "inboundFaultOverride";
-    
+
     public static interface Configuration {
         public static final String ENABLE_REST = "enableREST";
         public static final String ENABLE_REST_THROUGH_GET = "restThroughGet";
@@ -256,8 +256,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String MM7_COMPATIBLE = "MM7Compatible";
         public static final String MM7_INNER_BOUNDARY = "MM7InnerBoundary";
         public static final String MM7_PART_CID = "MM7PartCID";
-        
-        
+
+
         public static final String HTTP_METHOD_GET = "GET";
         public static final String HTTP_METHOD_DELETE = "DELETE";
         public static final String HTTP_METHOD_PUT = "PUT";
@@ -276,9 +276,11 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String URL_PARAMETER_LIST = "URLParameterList";
         public static final String URL_HTTP_LOCATION_PARAMS_LIST = "HTTPLocationParamsList";
 
-        public static final String SEND_STACKTRACE_DETAILS_WITH_FAULTS = "sendStacktraceDetailsWithFaults";
+        public static final String SEND_STACKTRACE_DETAILS_WITH_FAULTS =
+                "sendStacktraceDetailsWithFaults";
 
-        public static final String DRILL_DOWN_TO_ROOT_CAUSE_FOR_FAULT_REASON = "drillDownToRootCauseForFaultReason";
+        public static final String DRILL_DOWN_TO_ROOT_CAUSE_FOR_FAULT_REASON =
+                "drillDownToRootCauseForFaultReason";
 
         public static final String DISABLE_REST = "disableREST";
 
@@ -288,7 +290,8 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         /**
          * @deprecated please use org.apache.axis2.addressing.AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES
          */
-        public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";
+        public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES =
+                "disableAddressingForOutMessages";
 
         // if this property is set to Boolean.TRUE then the SOAPAction header, if present,
         // will NOT be set to the value of Options.getAction(). The empty value, "", will
@@ -306,13 +309,13 @@ public class Constants extends org.apache.axis2.namespace.Constants {
          * its own manner.
          */
         public static final String USE_CUSTOM_LISTENER = "UseCustomListener";
-        
+
         /**
-        * If this is set to a Boolean 'true' value, then OutIn operations will always be treated
-        * as async. This is useful for modules that layer async behaviour on top of sync channels.
-        */
+         * If this is set to a Boolean 'true' value, then OutIn operations will always be treated
+         * as async. This is useful for modules that layer async behaviour on top of sync channels.
+         */
         public static final String USE_ASYNC_OPERATIONS = "UseAsyncOperations";
-        
+
         /**
          * This is used to specify the message format which the message needs to be serializes.
          *

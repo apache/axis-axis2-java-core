@@ -64,16 +64,16 @@ public class ModuleBuilder extends DescriptionBuilder {
                 final Class fmoduleClass = moduleClass;
                 final AxisModule fmodule = module;
                 try {
-                    AccessController.doPrivileged( new PrivilegedExceptionAction() {
+                    AccessController.doPrivileged(new PrivilegedExceptionAction() {
                         public Object run() throws IllegalAccessException, InstantiationException {
                             Module new_module = (Module) fmoduleClass.newInstance();
                             fmodule.setModule(new_module);
                             return null;
                         }
-                    });      
+                    });
                 } catch (PrivilegedActionException e) {
                     throw e.getException();
-                }   
+                }
             }
         } catch (Exception e) {
             throw new DeploymentException(e.getMessage(), e);
@@ -118,17 +118,21 @@ public class ModuleBuilder extends DescriptionBuilder {
             // setting the PolicyInclude
 
             // processing <wsp:Policy> .. </..> elements
-            Iterator policyElements = moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+            Iterator policyElements =
+                    moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 
             if (policyElements != null && policyElements.hasNext()) {
-                processPolicyElements(PolicyInclude.AXIS_MODULE_POLICY, policyElements, module.getPolicyInclude());
+                processPolicyElements(PolicyInclude.AXIS_MODULE_POLICY, policyElements,
+                                      module.getPolicyInclude());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
-            Iterator policyRefElements = moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
+            Iterator policyRefElements =
+                    moduleElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
             if (policyRefElements != null && policyElements.hasNext()) {
-                processPolicyRefElements(PolicyInclude.AXIS_MODULE_POLICY, policyRefElements, module.getPolicyInclude());
+                processPolicyRefElements(PolicyInclude.AXIS_MODULE_POLICY, policyRefElements,
+                                         module.getPolicyInclude());
             }
 
             // processing Parameters
@@ -150,35 +154,39 @@ public class ModuleBuilder extends DescriptionBuilder {
                 module.setOutFlow(processFlow(outFlow, module));
             }
 
-            OMElement inFaultFlow = moduleElement.getFirstChildWithName(new QName(TAG_FLOW_IN_FAULT));
+            OMElement inFaultFlow =
+                    moduleElement.getFirstChildWithName(new QName(TAG_FLOW_IN_FAULT));
 
             if (inFaultFlow != null) {
                 module.setFaultInFlow(processFlow(inFaultFlow, module));
             }
 
-            OMElement outFaultFlow = moduleElement.getFirstChildWithName(new QName(TAG_FLOW_OUT_FAULT));
+            OMElement outFaultFlow =
+                    moduleElement.getFirstChildWithName(new QName(TAG_FLOW_OUT_FAULT));
 
             if (outFaultFlow != null) {
                 module.setFaultOutFlow(processFlow(outFaultFlow, module));
             }
 
-            OMElement supportedPolicyNamespaces = moduleElement.getFirstChildWithName(new QName(TAG_SUPPORTED_POLICY_NAMESPACES));
+            OMElement supportedPolicyNamespaces =
+                    moduleElement.getFirstChildWithName(new QName(TAG_SUPPORTED_POLICY_NAMESPACES));
 
             if (supportedPolicyNamespaces != null) {
-                module.setSupportedPolicyNamespaces(processSupportedPolicyNamespaces(supportedPolicyNamespaces));
+                module.setSupportedPolicyNamespaces(
+                        processSupportedPolicyNamespaces(supportedPolicyNamespaces));
             }
-            
-            
+
             /*
-             * Module description should contain a list of QName of the assertions that are local to the system.
-             * These assertions are not exposed to the outside.
-             */
-            OMElement localPolicyAssertionElement = moduleElement.getFirstChildWithName(new QName("local-policy-assertions"));
-            
+            * Module description should contain a list of QName of the assertions that are local to the system.
+            * These assertions are not exposed to the outside.
+            */
+            OMElement localPolicyAssertionElement =
+                    moduleElement.getFirstChildWithName(new QName("local-policy-assertions"));
+
             if (localPolicyAssertionElement != null) {
-                module.setLocalPolicyAssertions(getLocalPolicyAssertionNames(localPolicyAssertionElement));
+                module.setLocalPolicyAssertions(
+                        getLocalPolicyAssertionNames(localPolicyAssertionElement));
             }
-            
 
             // processing Operations
             Iterator op_itr = moduleElement.getChildrenWithName(new QName(TAG_OPERATION));
@@ -244,10 +252,11 @@ public class ModuleBuilder extends DescriptionBuilder {
 
             //To process wsamapping;
             processActionMappings(operation, op_descrip);
-            
+
             // setting the MEP of the operation
             // loading the message receivers
-            OMElement receiverElement = operation.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVER));
+            OMElement receiverElement =
+                    operation.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVER));
 
             if (receiverElement != null) {
                 MessageReceiver messageReceiver =

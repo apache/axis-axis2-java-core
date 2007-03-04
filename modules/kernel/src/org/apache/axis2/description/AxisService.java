@@ -98,18 +98,18 @@ import java.util.Set;
 public class AxisService extends AxisDescription {
 
     private Map endpointMap = new HashMap();
-    
+
     /*This is a map between the QName of the element of a message
-     *specified in the WSDL and an Operation.  It enables SOAP Body-based
-     *dispatching for doc-literal bindings.
-     */ 
+    *specified in the WSDL and an Operation.  It enables SOAP Body-based
+    *dispatching for doc-literal bindings.
+    */
     private Map messageElementQNameToOperationMap = new HashMap();
 
     private int nsCount = 0;
     private static final Log log = LogFactory.getLog(AxisService.class);
     private URL fileName;
 
-    // Maps httpLocations to corresponding operations. Used to dispatch rest messages.    
+    // Maps httpLocations to corresponding operations. Used to dispatch rest messages.
     private HashMap httpLocationDispatcherMap = null;
 
     private HashMap operationsAliasesMap = null;
@@ -227,8 +227,10 @@ public class AxisService extends AxisDescription {
     private HashMap dataLocators;
     private HashMap dataLocatorClassNames;
     private AxisDataLocatorImpl defaultDataLocator;
-    // Define search sequence for datalocator based on Data Locator types. 
-    LocatorType[] availableDataLocatorTypes = new LocatorType[]{LocatorType.SERVICE_DIALECT, LocatorType.SERVICE_LEVEL,LocatorType.GLOBAL_DIALECT, LocatorType.GLOBAL_LEVEL, LocatorType.DEFAULT_AXIS};
+    // Define search sequence for datalocator based on Data Locator types.
+    LocatorType[] availableDataLocatorTypes = new LocatorType[]{LocatorType.SERVICE_DIALECT,
+            LocatorType.SERVICE_LEVEL, LocatorType.GLOBAL_DIALECT, LocatorType.GLOBAL_LEVEL,
+            LocatorType.DEFAULT_AXIS};
 
     // name of the  binding used : use in codegeneration
     private String bindingName;
@@ -237,11 +239,11 @@ public class AxisService extends AxisDescription {
     private List operationsNameList;
 
     public AxisEndpoint getEndpoint(String key) {
-        return (AxisEndpoint)endpointMap.get(key);
+        return (AxisEndpoint) endpointMap.get(key);
     }
 
-    public void addEndpoint(String key,AxisEndpoint axisEndpoint) {
-        this.endpointMap.put(key,axisEndpoint);
+    public void addEndpoint(String key, AxisEndpoint axisEndpoint) {
+        this.endpointMap.put(key, axisEndpoint);
     }
 
     private boolean customWsld = false;
@@ -304,11 +306,12 @@ public class AxisService extends AxisDescription {
         moduleRefs = new ArrayList();
         engagedModules = new ArrayList();
         schemaList = new ArrayList();
-        serviceClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController.doPrivileged(new PrivilegedAction() {
-          public Object run() {
-            return Thread.currentThread().getContextClassLoader();
-          }
-        });
+        serviceClassLoader = (ClassLoader) org.apache.axis2.java.security.AccessController
+                .doPrivileged(new PrivilegedAction() {
+                    public Object run() {
+                        return Thread.currentThread().getContextClassLoader();
+                    }
+                });
         objectSupplier = new DefaultObjectSupplier();
         dataLocators = new HashMap();
         dataLocatorClassNames = new HashMap();
@@ -372,36 +375,52 @@ public class AxisService extends AxisDescription {
     public void addMessageReceiver(String mepURI, MessageReceiver messageReceiver) {
         if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mepURI) ||
                 WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(mepURI)) {
-            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY, messageReceiver);
-            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY, messageReceiver);
+            messageReceivers
+                    .put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY, messageReceiver);
+            messageReceivers
+                    .put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY, messageReceiver);
         } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(mepURI) ||
                 WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_ONLY.equals(mepURI)) {
-            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY, messageReceiver);
-            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_ONLY, messageReceiver);
+            messageReceivers
+                    .put(WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY, messageReceiver);
+            messageReceivers
+                    .put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_ONLY, messageReceiver);
         } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mepURI) ||
                 WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT.equals(mepURI)) {
-            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT, messageReceiver);
-            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT, messageReceiver);
+            messageReceivers
+                    .put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT, messageReceiver);
+            messageReceivers
+                    .put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT, messageReceiver);
         } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI) ||
                 WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
-            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT, messageReceiver);
-            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OPTIONAL_OUT, messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT,
+                                 messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OPTIONAL_OUT,
+                                 messageReceiver);
         } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mepURI) ||
                 WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_IN.equals(mepURI)) {
-            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN, messageReceiver);
-            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_IN, messageReceiver);
+            messageReceivers
+                    .put(WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN, messageReceiver);
+            messageReceivers
+                    .put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_IN, messageReceiver);
         } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI) ||
                 WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
-            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN, messageReceiver);
-            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_OPTIONAL_IN, messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN,
+                                 messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_OUT_OPTIONAL_IN,
+                                 messageReceiver);
         } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) ||
                 WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
-            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY, messageReceiver);
-            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_OUT_ONLY, messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY,
+                                 messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_OUT_ONLY,
+                                 messageReceiver);
         } else if (WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) ||
                 WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
-            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY, messageReceiver);
-            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY, messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY,
+                                 messageReceiver);
+            messageReceivers.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY,
+                                 messageReceiver);
         } else {
             messageReceivers.put(mepURI, messageReceiver);
         }
@@ -564,7 +583,8 @@ public class AxisService extends AxisDescription {
      */
     private AxisOperation copyOperation(AxisOperation axisOperation) throws AxisFault {
         AxisOperation operation =
-                AxisOperationFactory.getOperationDescription(axisOperation.getMessageExchangePattern());
+                AxisOperationFactory
+                        .getOperationDescription(axisOperation.getMessageExchangePattern());
 
         operation.setMessageReceiver(axisOperation.getMessageReceiver());
         operation.setName(axisOperation.getName());
@@ -586,7 +606,8 @@ public class AxisService extends AxisDescription {
         operation.setOutputAction(axisOperation.getOutputAction());
         String[] faultActionNames = axisOperation.getFaultActionNames();
         for (int i = 0; i < faultActionNames.length; i++) {
-            operation.addFaultAction(faultActionNames[i], axisOperation.getFaultAction(faultActionNames[i]));
+            operation.addFaultAction(faultActionNames[i],
+                                     axisOperation.getFaultAction(faultActionNames[i]));
         }
 
         return operation;
@@ -639,41 +660,44 @@ public class AxisService extends AxisDescription {
 
     /**
      * Maps an action (a SOAPAction or WSA action) to the given operation. This is used by
-     * dispatching (both SOAPAction- and WSAddressing- based dispatching) to figure out which 
+     * dispatching (both SOAPAction- and WSAddressing- based dispatching) to figure out which
      * operation a given message is for.  Some notes on restrictions of "action"
      * - A null or empty action will be ignored
      * - An action that is a duplicate and references an idential operation is allowed
      * - An acton that is a duplicate and references a different operation is NOT allowed.  In this
-     *   case, the action for the original operation is removed from the alias table, thus removing
-     *   the ability to route based on this action.  This is necessary to prevent mis-directing
-     *   incoming message to the wrong operation based on SOAPAction.
+     * case, the action for the original operation is removed from the alias table, thus removing
+     * the ability to route based on this action.  This is necessary to prevent mis-directing
+     * incoming message to the wrong operation based on SOAPAction.
      *
      * @param action        the action key
      * @param axisOperation the operation to map to
      */
     public void mapActionToOperation(String action, AxisOperation axisOperation) {
-        if(action == null || "".equals(action)){
-            if(log.isDebugEnabled()){
-                log.debug("mapActionToOperation: A null or empty action cannot be used to map to an operation.");
+        if (action == null || "".equals(action)) {
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "mapActionToOperation: A null or empty action cannot be used to map to an operation.");
             }
             return;
         }
-        if(log.isDebugEnabled()){
-            log.debug("mapActionToOperation: Mapping Action to Operation: action: " + action + "; operation: " + axisOperation);
+        if (log.isDebugEnabled()) {
+            log.debug("mapActionToOperation: Mapping Action to Operation: action: " + action +
+                    "; operation: " + axisOperation);
         }
 
-        // First check if this action has already been flagged as invalid because it is a duplicate. 
+        // First check if this action has already been flagged as invalid because it is a duplicate.
         if (invalidOperationsAliases.contains(action)) {
             // This SOAPAction has already been determined to be invalid; log a message
             // and do not add it to the operation alias map.
             if (log.isDebugEnabled()) {
-                log.debug("mapActionToOperation: The action: " + action + " can not be used for operation: " 
-                        + axisOperation + " with operation name: " + axisOperation.getName() 
+                log.debug("mapActionToOperation: The action: " + action +
+                        " can not be used for operation: "
+                        + axisOperation + " with operation name: " + axisOperation.getName()
                         + " because that SOAPAction is not unique for this service.");
             }
             return;
         }
-        
+
         // Check if the action is currently mapping to an operation.
         AxisOperation currentlyMappedOperation = getOperationByAction(action);
         if (currentlyMappedOperation != null) {
@@ -681,8 +705,11 @@ public class AxisService extends AxisDescription {
                 // This maps to the same operation, then it is already in the alias table, so
                 // just silently ignore this mapping request.
                 if (log.isDebugEnabled()) {
-                    log.debug("mapActionToOperation: This operation is already mapped to this action: " + action + "; AxisOperation: " 
-                            + currentlyMappedOperation + " named: " + currentlyMappedOperation.getName());
+                    log.debug(
+                            "mapActionToOperation: This operation is already mapped to this action: " +
+                                    action + "; AxisOperation: "
+                                    + currentlyMappedOperation + " named: " +
+                                    currentlyMappedOperation.getName());
                 }
             } else {
                 // This action is already mapped, but it is to a different operation.  Remove
@@ -690,11 +717,12 @@ public class AxisService extends AxisDescription {
                 operationsAliasesMap.remove(action);
                 invalidOperationsAliases.add(action);
                 if (log.isDebugEnabled()) {
-                    log.debug("mapActionToOperation: The action is already mapped to a different operation.  The mapping of the action to any operations will be removed.  Action: " 
-                            + action + "; original operation: " + currentlyMappedOperation 
-                            + " named " + currentlyMappedOperation.getName() 
-                            + "; new operation: " + axisOperation
-                            + " named " + axisOperation.getName());
+                    log.debug(
+                            "mapActionToOperation: The action is already mapped to a different operation.  The mapping of the action to any operations will be removed.  Action: "
+                                    + action + "; original operation: " + currentlyMappedOperation
+                                    + " named " + currentlyMappedOperation.getName()
+                                    + "; new operation: " + axisOperation
+                                    + " named " + axisOperation.getName());
                 }
             }
             return;
@@ -787,7 +815,7 @@ public class AxisService extends AxisDescription {
 
     private String[] getEPRs(String requestIP) {
         AxisConfiguration axisConfig = getAxisConfiguration();
-        if (axisConfig == null){
+        if (axisConfig == null) {
             return null;
         }
         ArrayList eprList = new ArrayList();
@@ -798,7 +826,8 @@ public class AxisService extends AxisDescription {
                 TransportListener listener = transportIn.getReceiver();
                 if (listener != null) {
                     try {
-                        EndpointReference[] eprsForService = listener.getEPRsForService(this.name, requestIP);
+                        EndpointReference[] eprsForService =
+                                listener.getEPRsForService(this.name, requestIP);
                         if (eprsForService != null) {
                             for (int i = 0; i < eprsForService.length; i++) {
                                 EndpointReference endpointReference = eprsForService[i];
@@ -823,7 +852,8 @@ public class AxisService extends AxisDescription {
                     TransportListener listener = transportIn.getReceiver();
                     if (listener != null) {
                         try {
-                            EndpointReference[] eprsForService = listener.getEPRsForService(this.name, requestIP);
+                            EndpointReference[] eprsForService =
+                                    listener.getEPRsForService(this.name, requestIP);
                             if (eprsForService != null) {
                                 for (int j = 0; j < eprsForService.length; j++) {
                                     EndpointReference endpointReference = eprsForService[j];
@@ -865,7 +895,7 @@ public class AxisService extends AxisDescription {
             if (wsld4jdefinition != null) {
                 try {
                     Definition definition = (Definition) wsld4jdefinition.getValue();
-                    if (isModifyUserWSDLPortAddress()){
+                    if (isModifyUserWSDLPortAddress()) {
                         setPortAddress(definition);
                     }
                     WSDLWriter writer = WSDLFactory.newInstance().newWSDLWriter();
@@ -884,10 +914,10 @@ public class AxisService extends AxisDescription {
     }
 
     private void setPortAddress(Definition definition) throws AxisFault {
-        setPortAddress(definition,null);
+        setPortAddress(definition, null);
     }
 
-    private void setPortAddress(Definition definition,String requestIP) throws AxisFault {
+    private void setPortAddress(Definition definition, String requestIP) throws AxisFault {
         Iterator serviceItr = definition.getServices().values().iterator();
         while (serviceItr.hasNext()) {
             Service serviceElement = (Service) serviceItr.next();
@@ -898,7 +928,7 @@ public class AxisService extends AxisDescription {
                 for (int i = 0; i < list.size(); i++) {
                     Object extensibilityEle = list.get(i);
                     if (extensibilityEle instanceof SOAPAddress) {
-                        if (requestIP==null) {
+                        if (requestIP == null) {
                             ((SOAPAddress) extensibilityEle).setLocationURI(getEPRs()[0]);
                         } else {
                             ((SOAPAddress) extensibilityEle).setLocationURI(getEPRs(requestIP)[0]);
@@ -910,16 +940,16 @@ public class AxisService extends AxisDescription {
     }
 
     private void getWSDL(OutputStream out, String[] serviceURL,
-            String servicePath) throws AxisFault {
+                         String servicePath) throws AxisFault {
         // Retrieve WSDL using the same data retrieval path for GetMetadata request.
         DataRetrievalRequest request = new DataRetrievalRequest();
         request.putDialect(DRConstants.SPEC.DIALECT_TYPE_WSDL);
         request.putOutputForm(OutputForm.INLINE_FORM);
-                        
+
         MessageContext context = new MessageContext();
         context.setAxisService(this);
         context.setTo(new EndpointReference(serviceURL[0]));
-            
+
         Data[] result = getData(request, context);
         OMElement wsdlElement;
         if (result != null && result[0] != null) {
@@ -1501,7 +1531,7 @@ public class AxisService extends AxisDescription {
      * @param schemaNamespace
      * @throws AxisFault
      */
-     public static AxisService createService(String implClass,
+    public static AxisService createService(String implClass,
                                             AxisConfiguration axisConfiguration,
                                             Map messageReceiverClassMap,
                                             String targetNamespace,
@@ -1544,8 +1574,8 @@ public class AxisService extends AxisDescription {
 
         try {
             schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                    implClass, schemaNamespace,
-                    axisService.getSchematargetNamespacePrefix());
+                                                  implClass, schemaNamespace,
+                                                  axisService.getSchematargetNamespacePrefix());
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
             axisService.setElementFormDefault(false);
             excludeOpeartion.add("init");
@@ -1573,9 +1603,9 @@ public class AxisService extends AxisDescription {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
-            JAnnotation methodAnnon= jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
-            if(methodAnnon!=null){
-                if(methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()){
+            JAnnotation methodAnnon = jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
+            if (methodAnnon != null) {
+                if (methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()) {
                     continue;
                 }
             }
@@ -1596,17 +1626,22 @@ public class AxisService extends AxisDescription {
                         mr = (MessageReceiver) obj;
                         operation.setMessageReceiver(mr);
                     } else {
-                        log.error("Object is not an instance of MessageReceiver, thus, default MessageReceiver has been set");
-                        mr = axisConfiguration.getMessageReceiver(operation.getMessageExchangePattern());
+                        log.error(
+                                "Object is not an instance of MessageReceiver, thus, default MessageReceiver has been set");
+                        mr = axisConfiguration
+                                .getMessageReceiver(operation.getMessageExchangePattern());
                         operation.setMessageReceiver(mr);
                     }
                 } else {
-                    log.error("Required MessageReceiver couldn't be found, thus, default MessageReceiver has been used");
-                    mr = axisConfiguration.getMessageReceiver(operation.getMessageExchangePattern());
+                    log.error(
+                            "Required MessageReceiver couldn't be found, thus, default MessageReceiver has been used");
+                    mr = axisConfiguration
+                            .getMessageReceiver(operation.getMessageExchangePattern());
                     operation.setMessageReceiver(mr);
                 }
             } else {
-                log.error("MessageRecevierClassMap couldn't be found, thus, default MessageReceiver has been used");
+                log.error(
+                        "MessageRecevierClassMap couldn't be found, thus, default MessageReceiver has been used");
                 mr = axisConfiguration.getMessageReceiver(operation.getMessageExchangePattern());
                 operation.setMessageReceiver(mr);
             }
@@ -1624,11 +1659,11 @@ public class AxisService extends AxisDescription {
                                             String targetNamespace,
                                             String schemaNamespace) throws AxisFault {
         return createService(implClass,
-                axisConfiguration,
-                messageReceiverClassMap,
-                targetNamespace,
-                schemaNamespace,
-                axisConfiguration.getServiceClassLoader());
+                             axisConfiguration,
+                             messageReceiverClassMap,
+                             targetNamespace,
+                             schemaNamespace,
+                             axisConfiguration.getServiceClassLoader());
 
 
     }
@@ -1687,8 +1722,8 @@ public class AxisService extends AxisDescription {
 
         try {
             schemaGenerator = new SchemaGenerator(serviceClassLoader,
-                    implClass, schemaNameSpace,
-                    axisService.getSchematargetNamespacePrefix());
+                                                  implClass, schemaNameSpace,
+                                                  axisService.getSchematargetNamespacePrefix());
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
             axisService.setElementFormDefault(false);
             excludeOpeartion.add("init");
@@ -1716,9 +1751,9 @@ public class AxisService extends AxisDescription {
 
         for (int i = 0; i < method.length; i++) {
             JMethod jmethod = method[i];
-            JAnnotation methodAnnon= jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
-            if(methodAnnon!=null){
-                if(methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()){
+            JAnnotation methodAnnon = jmethod.getAnnotation(AnnotationConstants.WEB_METHOD);
+            if (methodAnnon != null) {
+                if (methodAnnon.getValue(AnnotationConstants.EXCLUDE).asBoolean()) {
                     continue;
                 }
             }
@@ -1732,14 +1767,17 @@ public class AxisService extends AxisDescription {
 
             // loading message receivers
             try {
-                MessageReceiver messageReceiver = (MessageReceiver) messageReceiverClass.newInstance();
+                MessageReceiver messageReceiver =
+                        (MessageReceiver) messageReceiverClass.newInstance();
                 operation.setMessageReceiver(messageReceiver);
             } catch (IllegalAccessException e) {
-                throw new AxisFault("IllegalAccessException occurred during message receiver loading"
-                        + e.getMessage());
+                throw new AxisFault(
+                        "IllegalAccessException occurred during message receiver loading"
+                                + e.getMessage());
             } catch (InstantiationException e) {
-                throw new AxisFault("InstantiationException occurred during message receiver loading"
-                        + e.getMessage());
+                throw new AxisFault(
+                        "InstantiationException occurred during message receiver loading"
+                                + e.getMessage());
             }
             pinfo.setOperationPhases(operation);
             axisService.addOperation(operation);
@@ -1854,7 +1892,7 @@ public class AxisService extends AxisDescription {
                         //recursively call the same procedure
                         calcualteSchemaNames(Arrays.asList(
                                 new XmlSchema[]{s}),
-                                nameTable);
+                                             nameTable);
                     }
                 }
             }
@@ -1869,10 +1907,10 @@ public class AxisService extends AxisDescription {
      */
     private void insertIntoNameTable(Hashtable nameTable, XmlSchema s) {
         nameTable.put(s,
-                ("xsd" + count++)
-                        + (customSchemaNameSuffix != null ?
-                        customSchemaNameSuffix :
-                        ""));
+                      ("xsd" + count++)
+                              + (customSchemaNameSuffix != null ?
+                              customSchemaNameSuffix :
+                              ""));
     }
 
     /**
@@ -1898,7 +1936,8 @@ public class AxisService extends AxisDescription {
      * @param parentSchema
      * @param nameTable
      */
-    private void adjustSchemaName(XmlSchema parentSchema, Hashtable nameTable, Hashtable importedScheams) {
+    private void adjustSchemaName(XmlSchema parentSchema, Hashtable nameTable,
+                                  Hashtable importedScheams) {
         XmlSchemaObjectCollection includes = parentSchema.getIncludes();
         for (int j = 0; j < includes.getCount(); j++) {
             Object item = includes.getItem(j);
@@ -1918,7 +1957,8 @@ public class AxisService extends AxisDescription {
      * @param xmlSchemaExternal
      * @param nameTable
      */
-    private void adjustSchemaLocation(XmlSchema s, XmlSchemaExternal xmlSchemaExternal, Hashtable nameTable, Hashtable importedScheams) {
+    private void adjustSchemaLocation(XmlSchema s, XmlSchemaExternal xmlSchemaExternal,
+                                      Hashtable nameTable, Hashtable importedScheams) {
         if (s != null) {
             String schemaLocation = xmlSchemaExternal.getSchemaLocation();
             if (importedScheams.get(schemaLocation) != null) {
@@ -1993,8 +2033,8 @@ public class AxisService extends AxisDescription {
     }
 
     /**
-     * By default the port address in user WSDLs is modified, set 
-     * the following parameter to override this behaviour    
+     * By default the port address in user WSDLs is modified, set
+     * the following parameter to override this behaviour
      * <parameter name="modifyUserWSDLPortAddress">false</parameter>
      */
     public boolean isModifyUserWSDLPortAddress() {
@@ -2039,21 +2079,21 @@ public class AxisService extends AxisDescription {
     public void setTypeTable(TypeTable typeTable) {
         this.typeTable = typeTable;
     }
-    
-  
+
+
     /**
      * Find a data locator from the available data locators (both configured and default ones) to retrieve Metadata or data
-     * specified in the request. 
-     * 
-     * @param request an {@link DataRetrievalRequest} object
+     * specified in the request.
+     *
+     * @param request    an {@link DataRetrievalRequest} object
      * @param msgContext message context
-     * @return array of {@link Data} object for the request. 
-     * @throws AxisFault 
+     * @return array of {@link Data} object for the request.
+     * @throws AxisFault
      */
-    
+
     public Data[] getData(DataRetrievalRequest request,
-            MessageContext msgContext) throws AxisFault {
-        
+                          MessageContext msgContext) throws AxisFault {
+
         Data[] data = null;
         String dialect = request.getDialect();
         AxisDataLocator dataLocator = null;
@@ -2073,19 +2113,19 @@ public class AxisService extends AxisDescription {
         if (data == null) {
             if (nextDataLocatorIndex < totalLocators) {
                 data = bubbleupDataLocators(nextDataLocatorIndex, request,
-                        msgContext);
+                                            msgContext);
             }
 
         }
         return data;
     }
-   
+
     /*
-     * To search the next Data Locator from the available Data Locators that understood
-     * the data retrieval request.
-     */
+    * To search the next Data Locator from the available Data Locators that understood
+    * the data retrieval request.
+    */
     private Data[] bubbleupDataLocators(int nextIndex,
-            DataRetrievalRequest request, MessageContext msgContext)
+                                        DataRetrievalRequest request, MessageContext msgContext)
             throws AxisFault {
         Data[] data = null;
         if (nextIndex < availableDataLocatorTypes.length) {
@@ -2094,7 +2134,7 @@ public class AxisService extends AxisDescription {
             nextIndex++;
             if (dataLocator != null) {
                 data = dataLocator.getData(request, msgContext);
-                if (data==null){
+                if (data == null) {
                     data = bubbleupDataLocators(nextIndex, request, msgContext);
                 } else {
                     return data;
@@ -2103,71 +2143,72 @@ public class AxisService extends AxisDescription {
             } else {
                 data = bubbleupDataLocators(nextIndex, request, msgContext);
             }
-            
+
 
         }
         return data;
     }
-   
-     /**
+
+    /**
      * Save data Locator configured at service level for this Axis Service
-     * 
-     * @param dialect- an absolute URI represents the Dialect i.e. WSDL, Policy, Schema or
-     *                 "ServiceLevel" for non-dialect service level data locator.
-     * @param dataLocatorClassName - class name of the Data Locator configured to support data retrieval 
-     *                  for the specified dialect.
+     *
+     * @param dialect-             an absolute URI represents the Dialect i.e. WSDL, Policy, Schema or
+     *                             "ServiceLevel" for non-dialect service level data locator.
+     * @param dataLocatorClassName - class name of the Data Locator configured to support data retrieval
+     *                             for the specified dialect.
      */
     public void addDataLocatorClassNames(String dialect, String dataLocatorClassName) {
         dataLocatorClassNames.put(dialect, dataLocatorClassName);
     }
-   
-   
+
+
     /*
-     * Get data locator instance based on the LocatorType and dialect.
-     */
-    private AxisDataLocator getDataLocator(LocatorType locatorType, String dialect) throws AxisFault {
+    * Get data locator instance based on the LocatorType and dialect.
+    */
+    private AxisDataLocator getDataLocator(LocatorType locatorType, String dialect)
+            throws AxisFault {
         AxisDataLocator locator = null;
         if (locatorType == LocatorType.SERVICE_DIALECT) {
-             locator =  getServiceDataLocator( dialect);  
+            locator = getServiceDataLocator(dialect);
         } else if (locatorType == LocatorType.SERVICE_LEVEL) {
-               locator =  getServiceDataLocator( DRConstants.SERVICE_LEVEL); 
+            locator = getServiceDataLocator(DRConstants.SERVICE_LEVEL);
         } else if (locatorType == LocatorType.GLOBAL_DIALECT) {
-              locator =  getGlobalDataLocator( dialect);     
+            locator = getGlobalDataLocator(dialect);
         } else if (locatorType == LocatorType.GLOBAL_LEVEL) {
-             locator =  getGlobalDataLocator( DRConstants.GLOBAL_LEVEL);
+            locator = getGlobalDataLocator(DRConstants.GLOBAL_LEVEL);
         } else if (locatorType == LocatorType.DEFAULT_AXIS) {
-                locator =  getDefaultDataLocator();
+            locator = getDefaultDataLocator();
         } else {
-             locator =  getDefaultDataLocator();
+            locator = getDefaultDataLocator();
         }
-    
-      
+
+
         return locator;
     }
-          
+
     // Return default Axis2 Data Locator
     private AxisDataLocator getDefaultDataLocator() throws DataRetrievalException {
 
         if (defaultDataLocator == null) {
             defaultDataLocator = new AxisDataLocatorImpl(this);
         }
-        
+
         defaultDataLocator.loadServiceData();
-        
+
         return defaultDataLocator;
     }
-       
-    
+
+
     /*
-     * Checks if service level data locator configured for specified dialect.
-     * Returns an instance of the data locator if exists, and null otherwise.
-     */
+    * Checks if service level data locator configured for specified dialect.
+    * Returns an instance of the data locator if exists, and null otherwise.
+    */
     private AxisDataLocator getServiceDataLocator(String dialect)
             throws AxisFault {
         AxisDataLocator locator = null;
-        locator = (AxisDataLocator)dataLocators.get(dialect);
+        locator = (AxisDataLocator) dataLocators.get(dialect);
         if (locator == null) {
-            String className = (String)dataLocatorClassNames.get(dialect);
+            String className = (String) dataLocatorClassNames.get(dialect);
             if (className != null) {
                 locator = loadDataLocator(className);
                 dataLocators.put(dialect, locator);
@@ -2178,14 +2219,14 @@ public class AxisService extends AxisDescription {
         return locator;
 
     }
-      
+
     /*
-     * Checks if global level data locator configured for specified dialect.
-     * @param dialect- an absolute URI represents the Dialect i.e. WSDL, Policy, Schema or
-     *                 "GlobalLevel" for non-dialect Global level data locator.
-     * Returns an instance of the data locator if exists, and null otherwise.
-     */
-    
+    * Checks if global level data locator configured for specified dialect.
+    * @param dialect- an absolute URI represents the Dialect i.e. WSDL, Policy, Schema or
+    *                 "GlobalLevel" for non-dialect Global level data locator.
+    * Returns an instance of the data locator if exists, and null otherwise.
+    */
+
     public AxisDataLocator getGlobalDataLocator(String dialect)
             throws AxisFault {
         AxisConfiguration axisConfig = getAxisConfiguration();
@@ -2198,14 +2239,14 @@ public class AxisService extends AxisDescription {
                     locator = loadDataLocator(className);
                     axisConfig.addDataLocator(dialect, locator);
                 }
-            } 
+            }
         }
 
         return locator;
 
     }
-       
-    
+
+
     protected AxisDataLocator loadDataLocator(String className)
             throws AxisFault {
 
@@ -2233,16 +2274,17 @@ public class AxisService extends AxisDescription {
      * document/literal bare services to match the first child element of the
      * SOAP Body element to an operation.  (Routing for RPC and
      * document/literal wrapped services occurs via the operationsAliasesMap.)
-     *
+     * <p/>
      * From section 4.7.6 of the WS-I BP 1.1:
      * the "operation signature" is "the fully qualified name of the child
      * element of SOAP body of the SOAP input message described by an operation
      * in a WSDL binding," and thus this map must be from a QName to an
      * operation.
-     * 
-     * @param messageElementQNameToOperationMap The map from WSDL message
-     *                                          element QNames to
-     *                                          AxisOperations.
+     *
+     * @param messageElementQNameToOperationMap
+     *         The map from WSDL message
+     *         element QNames to
+     *         AxisOperations.
      */
     public void setMessageElementQNameToOperationMap(Map messageElementQNameToOperationMap) {
         this.messageElementQNameToOperationMap = messageElementQNameToOperationMap;
@@ -2251,26 +2293,27 @@ public class AxisService extends AxisDescription {
     /**
      * Look up an AxisOperation for this service based off of an element QName
      * from a WSDL message element.
-     * 
+     *
      * @param messageElementQName The QName to search for.
      * @return The AxisOperation registered to the QName or null if no match
      *         was found.
      * @see #setMessageElementQNameToOperationMap(Map)
      */
     public AxisOperation getOperationByMessageElementQName(QName messageElementQName) {
-            return (AxisOperation) messageElementQNameToOperationMap.get(messageElementQName);
+        return (AxisOperation) messageElementQNameToOperationMap.get(messageElementQName);
     }
 
     /**
      * Add an entry to the map between element QNames in WSDL messages and
      * AxisOperations for this service.
-     * 
+     *
      * @param messageElementQName The QName of the element on the input message
      *                            that maps to the given operation.
-     * @param operation The AxisOperation to be mapped to.
+     * @param operation           The AxisOperation to be mapped to.
      * @see #setMessageElementQNameToOperationMap(Map)
      */
-    public void addMessageElementQNameToOperationMapping(QName messageElementQName, AxisOperation operation) {
+    public void addMessageElementQNameToOperationMapping(QName messageElementQName,
+                                                         AxisOperation operation) {
         messageElementQNameToOperationMap.put(messageElementQName, operation);
     }
 

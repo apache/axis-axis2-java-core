@@ -21,9 +21,9 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOutAxisOperation;
@@ -72,11 +72,11 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         engineRegistry.addService(service);
         service.addOperation(axisOp);
 
-        mc= ContextFactory.createMessageContext(configContext);
+        mc = ContextFactory.createMessageContext(configContext);
         mc.setTransportIn(transportIn);
         mc.setTransportOut(transport);
 
-        OperationContext opCOntext = ContextFactory.createOperationContext(axisOp,null);
+        OperationContext opCOntext = ContextFactory.createOperationContext(axisOp, null);
 
         mc.setOperationContext(opCOntext);
         mc.setTransportOut(transport);

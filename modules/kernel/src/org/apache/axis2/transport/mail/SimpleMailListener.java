@@ -17,25 +17,10 @@
 
 package org.apache.axis2.transport.mail;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Properties;
-
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.URLName;
-import javax.mail.internet.MimeMessage;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.soap.SOAP11Constants;
+import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
+import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
+import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
+import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
@@ -58,10 +43,21 @@ import org.apache.axis2.util.threadpool.DefaultThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
-import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
-import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
-import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
+import javax.mail.Flags;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.URLName;
+import javax.mail.internet.MimeMessage;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Properties;
 
 /**
  * This is the implementation for Mail Listener in Axis2. It has the full capability
@@ -153,7 +149,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
         }
         if (password.length() == 0 || user.length() == 0 || host.length() == 0 ||
-            protocol.length() == 0) {
+                protocol.length() == 0) {
             throw new AxisFault(
                     "One or more of Password, User, Host and Protocol are null or empty");
         }
@@ -198,7 +194,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
             if (transportIn != null) {
                 sas.init(configurationContext, transportIn);
                 log.info("Starting the SimpleMailListener with repository "
-                         + new File(args[0]).getAbsolutePath());
+                        + new File(args[0]).getAbsolutePath());
                 sas.start();
             } else {
                 log.info(
@@ -326,11 +322,14 @@ public class SimpleMailListener implements Runnable, TransportListener {
                             msgContext.setTo(new EndpointReference(contentDescription));
                         }
 
-                        if (part.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE)> -1) {
-                            TransportUtils.processContentTypeForAction(part.getContentType(),msgContext);
+                        if (part.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >
+                                -1) {
+                            TransportUtils
+                                    .processContentTypeForAction(part.getContentType(), msgContext);
                         }
                         InputStream inputStream = part.getInputStream();
-                        SOAPEnvelope envelope  = TransportUtils.createSOAPMessage(msgContext,inputStream, part.getContentType());
+                        SOAPEnvelope envelope = TransportUtils
+                                .createSOAPMessage(msgContext, inputStream, part.getContentType());
                         msgContext.setEnvelope(envelope);
                     }
                 }
@@ -415,12 +414,12 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
         return new EndpointReference[]{new EndpointReference(Constants.TRANSPORT_MAIL + ":" +
-                                                             replyTo + "?" + configurationContext
+                replyTo + "?" + configurationContext
                 .getServiceContextPath() + "/" + serviceName)};
     }
 
 
     public SessionContext getSessionContext(MessageContext messageContext) {
-        return null;  
+        return null;
     }
 }

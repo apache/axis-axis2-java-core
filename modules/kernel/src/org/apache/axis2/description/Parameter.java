@@ -55,17 +55,16 @@ public class Parameter implements Externalizable {
     private static final long serialVersionUID = -6601664200673063531L;
 
     /**
-     * @serial Tracks the revision level of a class to identify changes to the 
+     * @serial Tracks the revision level of a class to identify changes to the
      * class definition that are compatible to serialization/externalization.
      * If a class definition changes, then the serialization/externalization
-     * of the class is affected. 
+     * of the class is affected.
      * Refer to the writeExternal() and readExternal() methods.
      */
     // supported revision levels, add a new level to manage compatible changes
     private static final int REVISION_1 = 1;
     // current revision level of this object
     private static final int revisionID = REVISION_1;
-
 
 
     /**
@@ -202,10 +201,10 @@ public class Parameter implements Externalizable {
     }
 
     public boolean equals(Object obj) {
-        if(this == obj){
+        if (this == obj) {
             return true;
         }
-        if(obj instanceof Parameter){
+        if (obj instanceof Parameter) {
             return ((Parameter) obj).name.equals(name);
         }
         return false;
@@ -215,31 +214,30 @@ public class Parameter implements Externalizable {
         return name.hashCode();
     }
 
-
     /* ===============================================================
-     * Externalizable support 
-     * ===============================================================
-     */
-    
+    * Externalizable support
+    * ===============================================================
+    */
+
 
     /**
      * Save the contents of this object.
      * <p/>
      * NOTE: Transient fields and static fields are not saved.
-     *       Also, objects that represent "static" data are
-     *       not saved, except for enough information to be
-     *       able to find matching objects when the message
-     *       context is re-constituted.
+     * Also, objects that represent "static" data are
+     * not saved, except for enough information to be
+     * able to find matching objects when the message
+     * context is re-constituted.
      *
-     * @param out    The stream to write the object contents to
+     * @param out The stream to write the object contents to
      * @throws IOException
      */
     public void writeExternal(ObjectOutput out) throws IOException {
         // write out contents of this object
 
         //---------------------------------------------------------
-        // in order to handle future changes to the message 
-        // context definition, be sure to maintain the 
+        // in order to handle future changes to the message
+        // context definition, be sure to maintain the
         // object level identifiers
         //---------------------------------------------------------
         // serialization version ID
@@ -256,7 +254,6 @@ public class Parameter implements Externalizable {
         out.writeBoolean(locked);
 
         ObjectStateUtils.writeString(out, name, "Parameter.name");
-
 
         //---------------------------------------------------------
         // object fields
@@ -275,7 +272,6 @@ public class Parameter implements Externalizable {
         // treat as an object, don't do UTF
         ObjectStateUtils.writeObject(out, tmp, "Parameter.parameterElement");
 
-
         // TODO: error handling if this can't be serialized
         ObjectStateUtils.writeObject(out, value, "Parameter.value");
 
@@ -286,24 +282,25 @@ public class Parameter implements Externalizable {
      * Restore the contents of the object that was previously saved.
      * <p/>
      * NOTE: The field data must read back in the same order and type
-     * as it was written.  Some data will need to be validated when 
+     * as it was written.  Some data will need to be validated when
      * resurrected.
      *
-     * @param in    The stream to read the object contents from 
+     * @param in The stream to read the object contents from
      * @throws IOException
      * @throws ClassNotFoundException
      */
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         // trace point
         if (log.isTraceEnabled()) {
-            log.trace(myClassName+":readExternal():  BEGIN  bytes available in stream ["+in.available()+"]  ");
+            log.trace(myClassName + ":readExternal():  BEGIN  bytes available in stream [" +
+                    in.available() + "]  ");
         }
 
         // serialization version ID
         long suid = in.readLong();
 
         // revision ID
-        int  revID = in.readInt();
+        int revID = in.readInt();
 
         // make sure the object data is in a version we can handle
         if (suid != serialVersionUID) {
@@ -324,7 +321,6 @@ public class Parameter implements Externalizable {
 
         name = ObjectStateUtils.readString(in, "Parameter.name");
 
-
         //---------------------------------------------------------
         // object fields
         //---------------------------------------------------------
@@ -344,7 +340,7 @@ public class Parameter implements Externalizable {
                 XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(bais);
 
                 // TODO: the StAXOMBuilder is an impl class - is there a better mechanism rather than an impl class ?
-                StAXOMBuilder builder = new StAXOMBuilder(OMAbstractFactory.getOMFactory(), parser);  
+                StAXOMBuilder builder = new StAXOMBuilder(OMAbstractFactory.getOMFactory(), parser);
 
                 OMElement docElement = builder.getDocumentElement();
 

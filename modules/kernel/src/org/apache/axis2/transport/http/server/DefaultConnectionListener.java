@@ -40,7 +40,7 @@ import java.net.Socket;
 public class DefaultConnectionListener implements IOProcessor {
 
     private static Log LOG = LogFactory.getLog(DefaultConnectionListener.class);
-    
+
     private volatile boolean destroyed = false;
 
     private final int port;
@@ -48,20 +48,22 @@ public class DefaultConnectionListener implements IOProcessor {
     private final HttpConnectionManager connmanager;
     private ServerSocket serversocket = null;
     private final ConnectionListenerFailureHandler failureHandler;
-    
+
     /**
      * Default constructor called by HttpFactory.  A custom HttpFactory subclass can call the other constructor to provide a custom ConnectionListenerErrorHandler
      */
-    public DefaultConnectionListener(int port, HttpConnectionFactory connfactory, HttpConnectionManager connmanager) throws IOException {
+    public DefaultConnectionListener(int port, HttpConnectionFactory connfactory,
+                                     HttpConnectionManager connmanager) throws IOException {
         this(port, connfactory, connmanager, new DefaultConnectionListenerFailureHandler());
     }
 
     /**
      * Use this constructor to provide a custom ConnectionListenerFailureHandler, e.g. by subclassing DefaultConnectionListenerFailureHandler
      */
-    public DefaultConnectionListener(int port, HttpConnectionFactory connfactory, HttpConnectionManager connmanager,
+    public DefaultConnectionListener(int port, HttpConnectionFactory connfactory,
+                                     HttpConnectionManager connmanager,
                                      ConnectionListenerFailureHandler failureHandler)
-    throws IOException {
+            throws IOException {
         super();
         if (connfactory == null) {
             throw new IllegalArgumentException("Connection factory may not be null");
@@ -82,7 +84,7 @@ public class DefaultConnectionListener implements IOProcessor {
         try {
             while (!Thread.interrupted()) {
                 try {
-                    if (serversocket == null || serversocket.isClosed()){
+                    if (serversocket == null || serversocket.isClosed()) {
                         serversocket = new ServerSocket(port);
                         serversocket.setReuseAddress(true);
                         if (LOG.isInfoEnabled()) {
@@ -92,7 +94,7 @@ public class DefaultConnectionListener implements IOProcessor {
                     LOG.debug("Waiting for incoming HTTP connection");
                     Socket socket = this.serversocket.accept();
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Incoming HTTP connection from " + 
+                        LOG.debug("Incoming HTTP connection from " +
                                 socket.getRemoteSocketAddress());
                     }
                     HttpServerConnection conn = this.connfactory.newConnection(socket);
@@ -103,20 +105,20 @@ public class DefaultConnectionListener implements IOProcessor {
                     }
                     if (!failureHandler.failed(this, ex)) {
                         break;
+                    }
                 }
-            }
             }
         } finally {
             destroy();
         }
     }
-    
+
     public void close() throws IOException {
-        if(this.serversocket != null){
+        if (this.serversocket != null) {
             this.serversocket.close();
         }
     }
-    
+
     public void destroy() {
         this.destroyed = true;
         try {
@@ -131,5 +133,5 @@ public class DefaultConnectionListener implements IOProcessor {
     public boolean isDestroyed() {
         return this.destroyed;
     }
-    
+
 }

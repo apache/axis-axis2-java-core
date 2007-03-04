@@ -21,14 +21,13 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.Utils;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HeaderElement;
@@ -92,7 +91,7 @@ public abstract class AbstractHTTPSender {
             } else {
                 throw new AxisFault(
                         "Parameter " + HTTPConstants.PROTOCOL_VERSION
-                        + " Can have values only HTTP/1.0 or HTTP/1.1");
+                                + " Can have values only HTTP/1.0 or HTTP/1.1");
             }
         }
     }
@@ -165,16 +164,16 @@ public abstract class AbstractHTTPSender {
 
             proxyHostName = proxyProperties.getProxyHostName();
             if (proxyHostName == null
-                || proxyHostName.length() == 0) {
+                    || proxyHostName.length() == 0) {
                 throw new AxisFault("Proxy Name is not valid");
             }
 
             if (proxyProperties.getUserName().equals(ANONYMOUS)
-                || proxyProperties.getPassWord().equals(ANONYMOUS)) {
+                    || proxyProperties.getPassWord().equals(ANONYMOUS)) {
                 proxyCred = new UsernamePasswordCredentials("", "");
             }
             if (!proxyProperties.getUserName().equals(ANONYMOUS) &&
-                !proxyProperties.getPassWord().equals(ANONYMOUS)) {
+                    !proxyProperties.getPassWord().equals(ANONYMOUS)) {
                 proxyCred = new UsernamePasswordCredentials(
                         proxyProperties.getUserName().trim(),
                         proxyProperties
@@ -182,8 +181,8 @@ public abstract class AbstractHTTPSender {
             }
             if (!proxyProperties.getDomain().equals(ANONYMOUS)) {
                 if (!proxyProperties.getUserName().equals(ANONYMOUS) &&
-                    !proxyProperties.getPassWord().equals(ANONYMOUS) &&
-                    !proxyProperties.getDomain().equals(ANONYMOUS)) {
+                        !proxyProperties.getPassWord().equals(ANONYMOUS) &&
+                        !proxyProperties.getDomain().equals(ANONYMOUS)) {
                     proxyCred = new NTCredentials(
                             proxyProperties.getUserName().trim(),
                             proxyProperties.getPassWord().trim(), proxyHostName,
@@ -206,28 +205,28 @@ public abstract class AbstractHTTPSender {
      */
     protected void obtainHTTPHeaderInformation(HttpMethodBase method,
                                                MessageContext msgContext) throws AxisFault {
-           Map transportHeaders =  new CommonsTransportHeaders(method.getResponseHeaders());
-        msgContext.setProperty(MessageContext.TRANSPORT_HEADERS,transportHeaders);
-        Header header =method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
+        Map transportHeaders = new CommonsTransportHeaders(method.getResponseHeaders());
+        msgContext.setProperty(MessageContext.TRANSPORT_HEADERS, transportHeaders);
+        Header header = method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE);
 
         if (header != null) {
             HeaderElement[] headers = header.getElements();
             MessageContext inMessageContext = msgContext.getOperationContext().getMessageContext(
                     WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-            
+
             if (inMessageContext != null) {
-                inMessageContext.setProperty(Constants.Configuration.CONTENT_TYPE, header.getValue());
+                inMessageContext
+                        .setProperty(Constants.Configuration.CONTENT_TYPE, header.getValue());
 
 
-                
-            for (int i = 0; i < headers.length; i++) {
-                NameValuePair charsetEnc =headers[i].getParameterByName(
-                        HTTPConstants.CHAR_SET_ENCODING);
-                if (charsetEnc != null) {
+                for (int i = 0; i < headers.length; i++) {
+                    NameValuePair charsetEnc = headers[i].getParameterByName(
+                            HTTPConstants.CHAR_SET_ENCODING);
+                    if (charsetEnc != null) {
                         inMessageContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                                charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
+                                                     charsetEnc.getValue());    // change to the value, which is text/xml or application/xml+soap
+                    }
                 }
-            }
             }
         }
 
@@ -238,7 +237,7 @@ public abstract class AbstractHTTPSender {
             HeaderElement[] elements = cookieHeaders[i].getElements();
             for (int e = 0; e < elements.length; e++) {
                 HeaderElement element = elements[e];
-                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())||
+                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName()) ||
                         Constants.SESSION_COOKIE_JSESSIONID.equalsIgnoreCase(element.getName())) {
                     sessionCookie = element.getValue();
                 }
@@ -250,7 +249,7 @@ public abstract class AbstractHTTPSender {
             HeaderElement[] elements = cookieHeaders[i].getElements();
             for (int e = 0; e < elements.length; e++) {
                 HeaderElement element = elements[e];
-                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName())||
+                if (Constants.SESSION_COOKIE.equalsIgnoreCase(element.getName()) ||
                         Constants.SESSION_COOKIE_JSESSIONID.equalsIgnoreCase(element.getName())) {
                     sessionCookie = element.getValue();
                 }
@@ -276,10 +275,10 @@ public abstract class AbstractHTTPSender {
         if (contentEncoding != null) {
             if (contentEncoding.getValue().
                     equalsIgnoreCase(HTTPConstants.COMPRESSION_GZIP)) {
-                in =new GZIPInputStream(in);
+                in = new GZIPInputStream(in);
             } else {
-                throw new AxisFault("HTTP :"+ "unsupported content-encoding of '"
-                                    + contentEncoding.getValue()+ "' found");
+                throw new AxisFault("HTTP :" + "unsupported content-encoding of '"
+                        + contentEncoding.getValue() + "' found");
             }
         }
 
@@ -301,7 +300,7 @@ public abstract class AbstractHTTPSender {
             throws AxisFault {
         boolean isHostProxy = isProxyListed(msgCtx);    // list the proxy
 
-        
+
         boolean isAuthenticationEnabled = isAuthenticationEnabled(msgCtx);
         int port = targetURL.getPort();
 
@@ -317,7 +316,7 @@ public abstract class AbstractHTTPSender {
             this.setAuthenticationInfo(client, msgCtx, config, targetURL);
         }
 
-            // proxy configuration
+        // proxy configuration
         if (!isHostProxy) {
             config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
         } else {
@@ -337,9 +336,9 @@ public abstract class AbstractHTTPSender {
     Apart from that user can change the priory or add a custom authentication scheme.
     */
     protected void setAuthenticationInfo(HttpClient agent,
-                                                       MessageContext msgCtx,
-                                                       HostConfiguration config,
-                                                       URL targetURL) throws AxisFault {
+                                         MessageContext msgCtx,
+                                         HostConfiguration config,
+                                         URL targetURL) throws AxisFault {
         config.setHost(targetURL.getHost(), targetURL.getPort(),
                        targetURL.getProtocol());
 

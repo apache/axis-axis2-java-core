@@ -19,20 +19,21 @@ package org.apache.axis2.dataretrieval;
 import org.apache.axis2.AxisFault;
 
 /**
- * Exception class for reporting Data Retrieval problems 
+ * Exception class for reporting Data Retrieval problems
  */
 
 public class DataRetrievalException extends AxisFault {
-     private static final long serialVersionUID = -374933082062124908L;
-     public DataRetrievalException(String message) {
-            super(message);
-        }
+    private static final long serialVersionUID = -374933082062124908L;
 
-        public DataRetrievalException(Throwable e) {
-            super(e);
-        }
+    public DataRetrievalException(String message) {
+        super(message);
+    }
 
-        public DataRetrievalException(String message, Throwable e) {
-            super(message, e);
-        }
+    public DataRetrievalException(Throwable e) {
+        super(e);
+    }
+
+    public DataRetrievalException(String message, Throwable e) {
+        super(message, e);
+    }
 }

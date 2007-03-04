@@ -39,7 +39,7 @@ import java.net.Socket;
 public class DefaultHttpConnectionFactory implements HttpConnectionFactory {
 
     final HttpParams params;
-    
+
     public DefaultHttpConnectionFactory(final HttpParams params) {
         super();
         if (params == null) {
@@ -47,14 +47,14 @@ public class DefaultHttpConnectionFactory implements HttpConnectionFactory {
         }
         this.params = params;
     }
-    
+
     public HttpServerConnection newConnection(final Socket socket)
             throws IOException {
         DefaultHttpServerConnection conn = new Axis2HttpServerConnection();
         conn.bind(socket, this.params);
         return conn;
     }
-    
+
     public class Axis2HttpServerConnection extends DefaultHttpServerConnection {
         public Axis2HttpServerConnection() {
             super();
@@ -72,10 +72,11 @@ public class DefaultHttpConnectionFactory implements HttpConnectionFactory {
         public String getRemoteHostName() {
             java.net.SocketAddress sa = socket.getRemoteSocketAddress();
             if (sa instanceof java.net.InetSocketAddress) {
-              return ((java.net.InetSocketAddress) sa).getHostName();
-          } else {
-              return sa.toString(); // fail-safe and fall back to something which one can use in place of the host name
-          }
+                return ((java.net.InetSocketAddress) sa).getHostName();
+            } else {
+                return sa
+                        .toString(); // fail-safe and fall back to something which one can use in place of the host name
+            }
         }
     }
 

@@ -19,7 +19,7 @@ package org.apache.axis2.description;
 */
 
 public interface WSDL2Constants {
-    
+
     String WSDL_NAMESPACE = "http://www.w3.org/2006/01/wsdl";
     String DEFAULT_WSDL_NAMESPACE_PREFIX = "wsdl2";
     String DESCRIPTION = "description";

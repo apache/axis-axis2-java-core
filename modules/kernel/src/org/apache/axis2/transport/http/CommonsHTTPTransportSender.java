@@ -81,7 +81,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
     }
 
     public void init(ConfigurationContext confContext,
-            TransportOutDescription transportOut) throws AxisFault {
+                     TransportOutDescription transportOut) throws AxisFault {
 
         // <parameter name="PROTOCOL" locked="false">HTTP/1.0</parameter> or
         // <parameter name="PROTOCOL" locked="false">HTTP/1.1</parameter> is
@@ -97,7 +97,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
 
                 if ((transferEncoding != null)
                         && HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED
-                                .equals(transferEncoding.getValue())) {
+                        .equals(transferEncoding.getValue())) {
                     chunked = true;
                 }
             } else if (HTTPConstants.HEADER_PROTOCOL_10.equals(version
@@ -156,21 +156,22 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             if (mimeBoundaryProperty != null) {
                 format.setMimeBoundary((String) mimeBoundaryProperty);
             }
-            
+
             TransportOutDescription transportOut = msgContext.getConfigurationContext().
-                                        getAxisConfiguration().getTransportOut(new QName (Constants.TRANSPORT_HTTP));
-            
+                    getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_HTTP));
+
             //if a parameter hs set been set, we will omit the SOAP action for SOAP 1.2 
-            if (transportOut!=null) {
+            if (transportOut != null) {
                 Parameter param = transportOut.getParameter(HTTPConstants.OMIT_SOAP_12_ACTION);
                 Object value = null;
                 if (param != null) {
                     value = param.getValue();
                 }
-                
-                if (value!=null && JavaUtils.isTrueExplicitly(value)) {
-                    if (msgContext.isSOAP11()!=true) {
-                        msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION, Boolean.TRUE);
+
+                if (value != null && JavaUtils.isTrueExplicitly(value)) {
+                    if (msgContext.isSOAP11() != true) {
+                        msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION,
+                                               Boolean.TRUE);
                     }
                 }
             }
@@ -223,8 +224,8 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
     }
 
     private void sendUsingOutputStream(MessageContext msgContext,
-            OMOutputFormat format) throws AxisFault, XMLStreamException {
-        
+                                       OMOutputFormat format) throws AxisFault, XMLStreamException {
+
         OutputStream out = (OutputStream) msgContext
                 .getProperty(MessageContext.TRANSPORT_OUT);
 
@@ -249,7 +250,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                     }
                 }
             }
-       }
+        }
 
         format.setAutoCloseWriter(true);
 
@@ -276,7 +277,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
     }
 
     private void writeMessageWithCommons(MessageContext messageContext,
-            EndpointReference toEPR, OMOutputFormat format)
+                                         EndpointReference toEPR, OMOutputFormat format)
             throws AxisFault {
         try {
             URL url = new URL(toEPR.getAddress());
@@ -328,7 +329,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 soapActionString = messageContext.getWSAAction();
                 if (messageContext.getAxisOperation() != null
                         && ((soapActionString == null) || (soapActionString
-                                .length() == 0))) {
+                        .length() == 0))) {
                     // last option is to get it from the axis operation
                     soapActionString = messageContext.getAxisOperation()
                             .getInputAction();
@@ -340,7 +341,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
         if (soapActionString == null && messageContext.isSOAP11()) {
             soapActionString = "\"\"";
         }
-        
+
         return soapActionString;
     }
 }

@@ -17,11 +17,11 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axis2.AbstractTestCase;
-import org.apache.axis2.util.Loader;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.util.Loader;
 
 import javax.xml.namespace.QName;
 
@@ -35,8 +35,9 @@ public class BuildERWithDeploymentTest extends AbstractTestCase {
 
     public void testDeployment() {
         try {
-            String filename = System.getProperty("basedir")+"/target/test-resources/deployment";
-            AxisConfiguration er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename,null)
+            String filename = System.getProperty("basedir") + "/target/test-resources/deployment";
+            AxisConfiguration er = ConfigurationContextFactory
+                    .createConfigurationContextFromFileSystem(filename, null)
                     .getAxisConfiguration();
 
             assertNotNull(er);

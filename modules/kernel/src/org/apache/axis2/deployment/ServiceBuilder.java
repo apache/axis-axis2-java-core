@@ -96,7 +96,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                     service.setServiceDescription(descriptionElement.getText());
                 }
             } else {
-                OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTRIBUTE_NAME));
+                OMAttribute serviceNameatt =
+                        service_element.getAttribute(new QName(ATTRIBUTE_NAME));
 
                 if (serviceNameatt != null) {
                     if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
@@ -123,7 +124,8 @@ public class ServiceBuilder extends DescriptionBuilder {
             }
 
             // Process WS-Addressing flag attribute
-            OMAttribute addressingRequiredatt = service_element.getAttribute(new QName(ATTRIBUTE_WSADDRESSING));
+            OMAttribute addressingRequiredatt =
+                    service_element.getAttribute(new QName(ATTRIBUTE_WSADDRESSING));
             if (addressingRequiredatt != null) {
                 String addressingRequiredString = addressingRequiredatt.getAttributeValue();
                 service.setWSAddressingFlag(addressingRequiredString);
@@ -190,7 +192,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                             String packageAttributeValue = packageAttribute.getAttributeValue();
                             if (namespaceAttributeValue != null && packageAttributeValue != null) {
                                 pkg2nsMap.put(packageAttributeValue.trim(),
-                                        namespaceAttributeValue.trim());
+                                              namespaceAttributeValue.trim());
                             } else {
                                 log.warn(
                                         "Either value of @namespce or @packagename not available. Thus, generated will be selected.");
@@ -251,7 +253,7 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
                 processPolicyRefElements(PolicyInclude.AXIS_SERVICE_POLICY,
-                        policyRefElements, service.getPolicyInclude());
+                                         policyRefElements, service.getPolicyInclude());
             }
 
             //processing service scope
@@ -306,7 +308,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             if (objectSupplierValue != null) {
                 loadObjectSupplierClass(objectSupplierValue);
             }
-             // Set the default message receiver for the operations that were
+            // Set the default message receiver for the operations that were
             // not listed in the services.xml
             setDefaultMessageReceivers();
             if (!service.isUseUserWSDL()) {
@@ -315,10 +317,11 @@ public class ServiceBuilder extends DescriptionBuilder {
                     //trying to generate WSDL for the service using JAM  and Java reflection
                     try {
                         if (generateWsdl(service)) {
-                            Utils.fillAxisService(service, axisConfig, excludeops,null);
+                            Utils.fillAxisService(service, axisConfig, excludeops, null);
                         } else {
                             ArrayList nonRpcOperations = getNonPRCMethods(service);
-                            Utils.fillAxisService(service, axisConfig, excludeops, nonRpcOperations);
+                            Utils.fillAxisService(service, axisConfig, excludeops,
+                                                  nonRpcOperations);
                         }
                     } catch (Exception e) {
                         throw new DeploymentException(
@@ -341,22 +344,25 @@ public class ServiceBuilder extends DescriptionBuilder {
 
             // Need to call the same logic towice
             setDefaultMessageReceivers();
-            Iterator moduleConfigs = service_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
+            Iterator moduleConfigs =
+                    service_element.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
             processServiceModuleConfig(moduleConfigs, service, service);
-            
+
             // Loading Data Locator(s) configured
             OMElement dataLocatorElement =
-                service_element.getFirstChildWithName(new QName(DRConstants.DATA_LOCATOR_ELEMENT));
+                    service_element
+                            .getFirstChildWithName(new QName(DRConstants.DATA_LOCATOR_ELEMENT));
             if (dataLocatorElement != null) {
                 processDataLocatorConfig(dataLocatorElement, service);
-             }         
-        
+            }
+
         } catch (XMLStreamException e) {
             throw new DeploymentException(e);
         } catch (AxisFault axisFault) {
             throw new DeploymentException(
                     Messages.getMessage(
-                            DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()), axisFault);
+                            DeploymentErrorMsgs.OPERATION_PROCESS_ERROR, axisFault.getMessage()),
+                    axisFault);
         }
         return service;
     }
@@ -412,7 +418,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                 String key = (String) keys.next();
                 if (qName.equals(service.getNameSpacesMap().get(key))) {
                     typeTable.addComplexSchema(packageName,
-                            new QName(qName, packageName, key));
+                                               new QName(qName, packageName, key));
                 }
             }
         }
@@ -424,7 +430,8 @@ public class ServiceBuilder extends DescriptionBuilder {
             try {
                 ClassLoader loader = service.getClassLoader();
                 Class serviceLifeCycleClassImpl = Loader.loadClass(loader, className);
-                ServiceLifeCycle serviceLifeCycle = (ServiceLifeCycle) serviceLifeCycleClassImpl.newInstance();
+                ServiceLifeCycle serviceLifeCycle =
+                        (ServiceLifeCycle) serviceLifeCycleClassImpl.newInstance();
                 serviceLifeCycle.startUp(configCtx, service);
                 service.setServiceLifeCycle(
                         serviceLifeCycle);
@@ -441,11 +448,11 @@ public class ServiceBuilder extends DescriptionBuilder {
             while (operatins.hasNext()) {
                 AxisOperation axisOperation = (AxisOperation) operatins
                         .next();
-                
+
                 if (axisOperation.isControlOperation()) {
                     continue;
                 }
-                
+
                 if (axisOperation.getMessageReceiver() == null) {
                     continue;
                 }
@@ -534,17 +541,21 @@ public class ServiceBuilder extends DescriptionBuilder {
             Iterator parameters = messageElement.getChildrenWithName(new QName(TAG_PARAMETER));
 
             // processing <wsp:Policy> .. </..> elements
-            Iterator policyElements = messageElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+            Iterator policyElements =
+                    messageElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 
             if (policyElements != null) {
-                processPolicyElements(PolicyInclude.AXIS_MESSAGE_POLICY, policyElements, message.getPolicyInclude());
+                processPolicyElements(PolicyInclude.AXIS_MESSAGE_POLICY, policyElements,
+                                      message.getPolicyInclude());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
-            Iterator policyRefElements = messageElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
+            Iterator policyRefElements =
+                    messageElement.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
             if (policyRefElements != null) {
-                processPolicyRefElements(PolicyInclude.AXIS_MESSAGE_POLICY, policyRefElements, message.getPolicyInclude());
+                processPolicyRefElements(PolicyInclude.AXIS_MESSAGE_POLICY, policyRefElements,
+                                         message.getPolicyInclude());
             }
 
             processParameters(parameters, message, operation);
@@ -666,17 +677,21 @@ public class ServiceBuilder extends DescriptionBuilder {
             // setting the PolicyInclude
 
             // processing <wsp:Policy> .. </..> elements
-            Iterator policyElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+            Iterator policyElements =
+                    operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
 
             if (policyElements != null && policyElements.hasNext()) {
-                processPolicyElements(PolicyInclude.AXIS_OPERATION_POLICY, policyElements, op_descrip.getPolicyInclude());
+                processPolicyElements(PolicyInclude.AXIS_OPERATION_POLICY, policyElements,
+                                      op_descrip.getPolicyInclude());
             }
 
             // processing <wsp:PolicyReference> .. </..> elements
-            Iterator policyRefElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
+            Iterator policyRefElements =
+                    operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
 
             if (policyRefElements != null && policyRefElements.hasNext()) {
-                processPolicyRefElements(PolicyInclude.AXIS_OPERATION_POLICY, policyRefElements, op_descrip.getPolicyInclude());
+                processPolicyRefElements(PolicyInclude.AXIS_OPERATION_POLICY, policyRefElements,
+                                         op_descrip.getPolicyInclude());
             }
 
             // Operation Parameters
@@ -686,11 +701,12 @@ public class ServiceBuilder extends DescriptionBuilder {
             processActionMappings(operation, op_descrip);
 
             // loading the message receivers
-            OMElement receiverElement = operation.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVER));
+            OMElement receiverElement =
+                    operation.getFirstChildWithName(new QName(TAG_MESSAGE_RECEIVER));
 
             if (receiverElement != null) {
                 MessageReceiver messageReceiver = loadMessageReceiver(service.getClassLoader(),
-                        receiverElement);
+                                                                      receiverElement);
 
                 op_descrip.setMessageReceiver(messageReceiver);
             } else {
@@ -748,26 +764,30 @@ public class ServiceBuilder extends DescriptionBuilder {
         }
     }
 
-    
-    
+
     /*
-     * process data locator configuration for data retrieval.
-     */
+    * process data locator configuration for data retrieval.
+    */
     private void processDataLocatorConfig(OMElement dataLocatorElement, AxisService service) {
-        OMAttribute serviceOverallDataLocatorclass = dataLocatorElement.getAttribute(new QName(DRConstants.CLASS_ATTRIBUTE));
-        if (serviceOverallDataLocatorclass != null){
+        OMAttribute serviceOverallDataLocatorclass =
+                dataLocatorElement.getAttribute(new QName(DRConstants.CLASS_ATTRIBUTE));
+        if (serviceOverallDataLocatorclass != null) {
             String className = serviceOverallDataLocatorclass.getAttributeValue();
             service.addDataLocatorClassNames(DRConstants.SERVICE_LEVEL, className);
         }
-        Iterator iterator = dataLocatorElement.getChildrenWithName(new QName(DRConstants.DIALECT_LOCATOR_ELEMENT));
-        
+        Iterator iterator = dataLocatorElement
+                .getChildrenWithName(new QName(DRConstants.DIALECT_LOCATOR_ELEMENT));
+
         while (iterator.hasNext()) {
             OMElement locatorElement = (OMElement) iterator.next();
-            OMAttribute dialect = locatorElement.getAttribute(new QName(DRConstants.DIALECT_ATTRIBUTE));
-            OMAttribute dialectclass = locatorElement.getAttribute(new QName(DRConstants.CLASS_ATTRIBUTE));
-            service.addDataLocatorClassNames(dialect.getAttributeValue(), dialectclass.getAttributeValue());
-            
-          }
+            OMAttribute dialect =
+                    locatorElement.getAttribute(new QName(DRConstants.DIALECT_ATTRIBUTE));
+            OMAttribute dialectclass =
+                    locatorElement.getAttribute(new QName(DRConstants.CLASS_ATTRIBUTE));
+            service.addDataLocatorClassNames(dialect.getAttributeValue(),
+                                             dialectclass.getAttributeValue());
+
+        }
 
     }
 }

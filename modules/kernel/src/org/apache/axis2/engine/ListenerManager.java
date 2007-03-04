@@ -74,7 +74,8 @@ public class ListenerManager {
                 Iterator itr_st = startedTransports.values().iterator();
                 while (itr_st.hasNext()) {
                     TransportListener transportListener = (TransportListener) itr_st.next();
-                    EndpointReference[] epRsForService = transportListener.getEPRsForService(serviceName, null);
+                    EndpointReference[] epRsForService =
+                            transportListener.getEPRsForService(serviceName, null);
                     if (epRsForService != null) {
                         return epRsForService[0];
                     }
@@ -121,7 +122,8 @@ public class ListenerManager {
             try {
                 TransportInDescription transportIn = (TransportInDescription) transportNames.next();
                 TransportListener listener = transportIn.getReceiver();
-                if (listener != null && startedTransports.get(transportIn.getName().getLocalPart()) == null) {
+                if (listener != null &&
+                        startedTransports.get(transportIn.getName().getLocalPart()) == null) {
                     listener.init(configctx, transportIn);
                     listener.start();
                     if (startedTransports.get(transportIn.getName().getLocalPart()) == null) {
@@ -196,7 +198,8 @@ public class ListenerManager {
      * @param started : whether transport Listener running or not
      * @throws AxisFault : will throw AxisFault if something goes wrong
      */
-    public synchronized void addListener(TransportInDescription trsIn, boolean started) throws AxisFault {
+    public synchronized void addListener(TransportInDescription trsIn, boolean started)
+            throws AxisFault {
         configctx.getAxisConfiguration().addTransportIn(trsIn);
         TransportListener transportListener = trsIn.getReceiver();
         if (transportListener != null) {

@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AxisEndpoint extends AxisDescription{
+public class AxisEndpoint extends AxisDescription {
 
     // The name of the endpoint
     private String name;
@@ -39,7 +39,7 @@ public class AxisEndpoint extends AxisDescription{
     private Map options;
 
     public AxisEndpoint() {
-            options = new HashMap();
+        options = new HashMap();
     }
 
     public void setProperty(String name, Object value) {

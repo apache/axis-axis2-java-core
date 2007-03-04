@@ -75,7 +75,7 @@ public class CommandLineOption implements CommandLineOptionConstants {
             return (String) optionValues.get(0);
         } else {
             return null;
-    }
+        }
     }
 
 

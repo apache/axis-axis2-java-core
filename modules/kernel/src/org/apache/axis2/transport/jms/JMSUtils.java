@@ -15,20 +15,6 @@
 */
 package org.apache.axis2.transport.jms;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.StringTokenizer;
-
-import javax.jms.BytesMessage;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.TextMessage;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -47,6 +33,19 @@ import org.apache.axis2.util.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.jms.BytesMessage;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.TextMessage;
+import javax.xml.stream.XMLStreamException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.StringTokenizer;
+
 public class JMSUtils {
 
     private static final Log log = LogFactory.getLog(JMSUtils.class);
@@ -64,7 +63,7 @@ public class JMSUtils {
 
         } else {
             List transports = service.getExposedTransports();
-            for (int i=0; i<transports.size(); i++) {
+            for (int i = 0; i < transports.size(); i++) {
                 if (Constants.TRANSPORT_JMS.equals(transports.get(i))) {
                     return true;
                 }
@@ -103,12 +102,12 @@ public class JMSUtils {
         Hashtable h = new Hashtable();
         int propPos = url.indexOf("?");
         if (propPos != -1) {
-            StringTokenizer st = new StringTokenizer(url.substring(propPos+1), "&");
+            StringTokenizer st = new StringTokenizer(url.substring(propPos + 1), "&");
             while (st.hasMoreTokens()) {
                 String token = st.nextToken();
                 int sep = token.indexOf("=");
                 if (sep != -1) {
-                    h.put(token.substring(0, sep), token.substring(sep+1));
+                    h.put(token.substring(0, sep), token.substring(sep + 1));
                 } else {
                     continue; // ignore, what else can we do?
                 }
@@ -121,11 +120,11 @@ public class JMSUtils {
      * Marks the given service as faulty with the given comment
      *
      * @param serviceName service name
-     * @param msg comment for being faulty
-     * @param axisCfg configuration context
+     * @param msg         comment for being faulty
+     * @param axisCfg     configuration context
      */
     public static void markServiceAsFaulty(String serviceName, String msg,
-                                           AxisConfiguration axisCfg ) {
+                                           AxisConfiguration axisCfg) {
         if (serviceName != null) {
             try {
                 AxisService service = axisCfg.getService(serviceName);
@@ -133,7 +132,7 @@ public class JMSUtils {
 
             } catch (AxisFault axisFault) {
                 log.warn("Error marking service : " + serviceName +
-                         " as faulty due to : " + msg, axisFault);
+                        " as faulty due to : " + msg, axisFault);
             }
         }
     }
@@ -164,17 +163,17 @@ public class JMSUtils {
                 String contentType = message.getStringProperty(JMSConstants.CONTENT_TYPE);
                 if (contentType != null) {
                     return
-                        new ByteArrayInputStream(
-                            txtMsg.getText().getBytes(
-                            BuilderUtil.getCharSetEncoding(contentType)));
+                            new ByteArrayInputStream(
+                                    txtMsg.getText().getBytes(
+                                            BuilderUtil.getCharSetEncoding(contentType)));
                 } else {
                     return
-                        new ByteArrayInputStream(txtMsg.getText().getBytes());
+                            new ByteArrayInputStream(txtMsg.getText().getBytes());
                 }
 
             } else {
                 handleException("Unsupported JMS message type : " +
-                                message.getClass().getName());
+                        message.getClass().getName());
             }
 
 
@@ -189,7 +188,7 @@ public class JMSUtils {
     /**
      * Get a String property from the JMS message
      *
-     * @param message JMS message
+     * @param message  JMS message
      * @param property property name
      * @return property value
      */
@@ -211,7 +210,7 @@ public class JMSUtils {
         OMOutputFormat format = new OMOutputFormat();
         String soapActionString = getSOAPAction(msgCtx);
         String charSetEnc = (String) msgCtx.getProperty(
-            Constants.Configuration.CHARACTER_SET_ENCODING);
+                Constants.Configuration.CHARACTER_SET_ENCODING);
 
         if (charSetEnc != null) {
             format.setCharSetEncoding(charSetEnc);
@@ -219,7 +218,7 @@ public class JMSUtils {
             OperationContext opctx = msgCtx.getOperationContext();
             if (opctx != null) {
                 charSetEnc = (String) opctx.getProperty(
-                    Constants.Configuration.CHARACTER_SET_ENCODING);
+                        Constants.Configuration.CHARACTER_SET_ENCODING);
             }
         }
 
@@ -240,7 +239,7 @@ public class JMSUtils {
 
         // action header is not mandated in SOAP 1.2. So putting it, if available
         if (!msgCtx.isSOAP11() && soapActionString != null &&
-            !"".equals(soapActionString.trim())) {
+                !"".equals(soapActionString.trim())) {
             contentType = contentType + ";action=\"" + soapActionString + "\";";
         }
 
@@ -261,8 +260,8 @@ public class JMSUtils {
         }
 
         Object disableSoapAction =
-            msgCtx.getOptions().getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
-        
+                msgCtx.getOptions().getProperty(Constants.Configuration.DISABLE_SOAP_ACTION);
+
         if (soapActionString == null || JavaUtils.isTrueExplicitly(disableSoapAction)) {
             soapActionString = "";
         }
@@ -291,16 +290,16 @@ public class JMSUtils {
      * Return a SOAPEnvelope created from the given JMS Message and Axis
      * MessageContext, and the InputStream into the message
      *
-     * @param message the JMS Message
+     * @param message    the JMS Message
      * @param msgContext the Axis MessageContext
-     * @param in the InputStream into the message
+     * @param in         the InputStream into the message
      * @return SOAPEnvelope for the message
      * @throws javax.xml.stream.XMLStreamException
      *
      */
     public static SOAPEnvelope getSOAPEnvelope(
-        Message message, MessageContext msgContext, InputStream in)
-        throws XMLStreamException {
+            Message message, MessageContext msgContext, InputStream in)
+            throws XMLStreamException {
 
         SOAPEnvelope envelope = null;
         StAXBuilder builder;
@@ -323,26 +322,26 @@ public class JMSUtils {
 
         String charEncOfMessage = builder.getCharsetEncoding();
         String charEncOfTransport = ((String) msgContext.getProperty(
-            Constants.Configuration.CHARACTER_SET_ENCODING));
+                Constants.Configuration.CHARACTER_SET_ENCODING));
 
         if (charEncOfMessage != null &&
-            !(charEncOfMessage.trim().length() == 0) &&
-            !charEncOfMessage.equalsIgnoreCase(charEncOfTransport)) {
+                !(charEncOfMessage.trim().length() == 0) &&
+                !charEncOfMessage.equalsIgnoreCase(charEncOfTransport)) {
 
             String faultCode;
 
             if (envelope.getNamespace() != null &&
-                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.
-                    equals(envelope.getNamespace().getNamespaceURI())) {
+                    SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.
+                            equals(envelope.getNamespace().getNamespaceURI())) {
                 faultCode = SOAP12Constants.FAULT_CODE_SENDER;
             } else {
                 faultCode = SOAP11Constants.FAULT_CODE_SENDER;
             }
 
             handleException(
-                "Character Set Encoding from transport information do not " +
-                "match with character set encoding in the received " +
-                "SOAP message");
+                    "Character Set Encoding from transport information do not " +
+                            "match with character set encoding in the received " +
+                            "SOAP message");
         }
         return envelope;
     }

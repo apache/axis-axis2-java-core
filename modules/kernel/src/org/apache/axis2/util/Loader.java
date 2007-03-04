@@ -57,7 +57,8 @@ public class Loader {
             // classloader that loaded this class.
             classLoader = getTCL();
             if (classLoader != null) {
-                log.debug("Trying to find [" + resource + "] using " + classLoader + " class loader.");
+                log.debug("Trying to find [" + resource + "] using " + classLoader +
+                        " class loader.");
                 url = classLoader.getResource(resource);
                 if (url != null) {
                     return url;
@@ -66,7 +67,7 @@ public class Loader {
         } catch (Throwable t) {
             log.warn("Caught Exception while in Loader.getResource. This may be innocuous.", t);
         }
-    
+
         // Last ditch attempt: get the resource from the class path. It
         // may be the case that clazz was loaded by the Extentsion class
         // loader which the parent of the system class loader. Hence the
@@ -74,7 +75,7 @@ public class Loader {
         log.debug("Trying to find [" + resource + "] using ClassLoader.getSystemResource().");
         return ClassLoader.getSystemResource(resource);
     }
-    
+
 
     /**
      * Gets the resource with the specified class loader.
@@ -84,7 +85,8 @@ public class Loader {
      * @return Returns URL.
      * @throws ClassNotFoundException
      */
-    static public URL getResource(ClassLoader loader, String resource) throws ClassNotFoundException {
+    static public URL getResource(ClassLoader loader, String resource)
+            throws ClassNotFoundException {
         URL url = null;
         try {
             if (loader != null) {
@@ -108,7 +110,7 @@ public class Loader {
      * @throws InvocationTargetException
      */
     static public ClassLoader getTCL() throws IllegalAccessException, InvocationTargetException {
-        return (ClassLoader)AccessController.doPrivileged(new PrivilegedAction() {
+        return (ClassLoader) AccessController.doPrivileged(new PrivilegedAction() {
             public Object run() {
                 return Thread.currentThread().getContextClassLoader();
             }
@@ -125,11 +127,11 @@ public class Loader {
      */
     static public Class loadClass(ClassLoader loader, String clazz) throws ClassNotFoundException {
         try {
-            if(loader != null) {
+            if (loader != null) {
                 Class c = loader.loadClass(clazz);
                 if (c != null) {
                     return c;
-            }
+                }
             }
         } catch (Throwable e) {
             log.debug(e);
@@ -149,13 +151,13 @@ public class Loader {
      */
     static public Class loadClass(String clazz) throws ClassNotFoundException {
         try {
-            ClassLoader tcl = getTCL();    
-            
-            if(tcl != null) {
+            ClassLoader tcl = getTCL();
+
+            if (tcl != null) {
                 Class c = tcl.loadClass(clazz);
                 if (c != null) {
                     return c;
-            }
+                }
             }
         } catch (Throwable e) {
             log.debug(e);

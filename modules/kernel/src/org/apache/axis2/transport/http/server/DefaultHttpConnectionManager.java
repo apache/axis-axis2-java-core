@@ -53,16 +53,16 @@ import java.util.List;
 public class DefaultHttpConnectionManager implements HttpConnectionManager {
 
     private static Log LOG = LogFactory.getLog(DefaultHttpConnectionManager.class);
-    
+
     private final ConfigurationContext configurationContext;
     private final Executor executor;
     private final WorkerFactory workerfactory;
     private final HttpParams params;
     private final List processors;
     private final SessionManager sessionManager;
-    
+
     private HttpFactory httpFactory = null;
-    
+
     public DefaultHttpConnectionManager(
             final ConfigurationContext configurationContext,
             final Executor executor,
@@ -88,12 +88,12 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         this.params = params;
         this.processors = new LinkedList();
     }
-    
+
     public DefaultHttpConnectionManager(
             final ConfigurationContext configurationContext,
             final Executor executor,
             final WorkerFactory workerfactory,
-            final HttpParams params, 
+            final HttpParams params,
             final HttpFactory httpFactory) {
         this(configurationContext, executor, workerfactory, params);
         this.httpFactory = httpFactory;
@@ -101,42 +101,42 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
 
 
     private synchronized void cleanup() {
-        for (Iterator i = this.processors.iterator(); i.hasNext(); ) {
+        for (Iterator i = this.processors.iterator(); i.hasNext();) {
             IOProcessor processor = (IOProcessor) i.next();
             if (processor.isDestroyed()) {
                 i.remove();
             }
         }
     }
-    
+
     private synchronized void addProcessor(final IOProcessor processor) {
         if (processor == null) {
             return;
         }
         this.processors.add(processor);
     }
-    
+
     private synchronized void removeProcessor(final IOProcessor processor) {
         if (processor == null) {
             return;
         }
         this.processors.remove(processor);
     }
-    
+
     public void process(final HttpServerConnection conn) {
         if (conn == null) {
             throw new IllegalArgumentException("HTTP connection may not be null");
         }
         // Evict destroyed processors
         cleanup();
-        
+
         // Assemble new Axis HTTP service
         HttpProcessor httpProcessor;
         ConnectionReuseStrategy connStrategy;
         HttpResponseFactory responseFactory;
-        
+
         if (httpFactory != null) {
-            httpProcessor = httpFactory.newHttpProcessor(); 
+            httpProcessor = httpFactory.newHttpProcessor();
             connStrategy = httpFactory.newConnStrategy();
             responseFactory = httpFactory.newResponseFactory();
         } else {
@@ -147,7 +147,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
             p.addInterceptor(new ResponseContent());
             p.addInterceptor(new ResponseConnControl());
             p.addInterceptor(new ResponseSessionCookie());
-            httpProcessor =  new LoggingProcessorDecorator(p);
+            httpProcessor = new LoggingProcessorDecorator(p);
             connStrategy = new DefaultConnectionReuseStrategy();
             responseFactory = new DefaultHttpResponseFactory();
         }
@@ -160,17 +160,17 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
                 this.sessionManager,
                 this.workerfactory.newWorker());
         httpService.setParams(this.params);
-        
+
         // Create I/O processor to execute HTTP service
         IOProcessorCallback callback = new IOProcessorCallback() {
-          
+
             public void completed(final IOProcessor processor) {
                 removeProcessor(processor);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(processor + " terminated");
                 }
             }
-            
+
         };
         IOProcessor processor = new HttpServiceProcessor(
                 httpService,
@@ -180,7 +180,7 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         addProcessor(processor);
         this.executor.execute(processor);
     }
-    
+
     public synchronized void shutdown() {
         for (int i = 0; i < this.processors.size(); i++) {
             IOProcessor processor = (IOProcessor) this.processors.get(i);
@@ -188,5 +188,5 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
         }
         this.processors.clear();
     }
-    
+
 }

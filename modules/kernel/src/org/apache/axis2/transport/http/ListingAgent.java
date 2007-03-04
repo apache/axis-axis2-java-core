@@ -74,7 +74,7 @@ public class ListingAgent extends AbstractAgent {
             if (trsIn == null) {
                 trsIn = new TransportInDescription(new QName(schema));
                 HTTPSListener httspReceiver = new HTTPSListener(port, schema);
-                httspReceiver.init(configContext,trsIn);
+                httspReceiver.init(configContext, trsIn);
                 trsIn.setReceiver(httspReceiver);
                 configContext.getListenerManager().addListener(trsIn, true);
             }
@@ -95,7 +95,7 @@ public class ListingAgent extends AbstractAgent {
             int seperatorIndex = ip.indexOf(":");
             int slashIndex = ip.indexOf("/");
             String portstr = ip.substring(seperatorIndex + 1,
-                    slashIndex);
+                                          slashIndex);
             try {
                 addTransportListner(httpServletRequest.getScheme(), Integer.parseInt(portstr));
             } catch (NumberFormatException e) {
@@ -104,7 +104,8 @@ public class ListingAgent extends AbstractAgent {
         }
         String query = httpServletRequest.getQueryString();
         if (query != null) {
-            if (query.indexOf("?wsdl2") > 0 || query.indexOf("?wsdl") > 0 || query.indexOf("?xsd") > 0) {
+            if (query.indexOf("?wsdl2") > 0 || query.indexOf("?wsdl") > 0 ||
+                    query.indexOf("?xsd") > 0) {
                 processListService(httpServletRequest, httpServletResponse);
             } else {
                 super.handle(httpServletRequest, httpServletResponse);
@@ -160,14 +161,14 @@ public class ListingAgent extends AbstractAgent {
 
         String filePart = req.getRequestURL().toString();
         String serviceName = filePart.substring(filePart.lastIndexOf("/") + 1,
-                filePart.length());
+                                                filePart.length());
         HashMap services = configContext.getAxisConfiguration().getServices();
         String query = req.getQueryString();
         int wsdl2 = query.indexOf("wsdl2");
         int wsdl = query.indexOf("wsdl");
         int xsd = query.indexOf("xsd");
         int policy = query.indexOf("policy");
-        
+
         if ((services != null) && !services.isEmpty()) {
             Object serviceObj = services.get(serviceName);
             if (serviceObj != null) {
@@ -176,7 +177,8 @@ public class ListingAgent extends AbstractAgent {
                     OutputStream out = res.getOutputStream();
                     res.setContentType("text/xml");
                     String ip = extractHostAndPort(filePart, isHttp);
-                    ((AxisService) serviceObj).printWSDL2(out, ip, configContext.getServiceContextPath());
+                    ((AxisService) serviceObj)
+                            .printWSDL2(out, ip, configContext.getServiceContextPath());
                     out.flush();
                     out.close();
                     return;
@@ -209,8 +211,9 @@ public class ListingAgent extends AbstractAgent {
                             out.flush();
                             out.close();
                         } else {
-                            InputStream in = axisService.getClassLoader().getResourceAsStream(DeploymentConstants.META_INF + "/" + xsds);
-                            if(in != null) {
+                            InputStream in = axisService.getClassLoader()
+                                    .getResourceAsStream(DeploymentConstants.META_INF + "/" + xsds);
+                            if (in != null) {
                                 out.write(IOUtils.getStreamAsByteArray(in));
                                 out.flush();
                                 out.close();
@@ -236,9 +239,9 @@ public class ListingAgent extends AbstractAgent {
                     }
                     return;
                 } else if (policy >= 0) {
-                    
+
                     OutputStream out = res.getOutputStream();
-                    
+
                     ExternalPolicySerializer serializer = new ExternalPolicySerializer();
                     serializer.setAssertionsToFilter(configContext
                             .getAxisConfiguration().getLocalPolicyAssertions());
@@ -282,7 +285,7 @@ public class ListingAgent extends AbstractAgent {
                         }
 
                     } else {
-                        
+
                         PolicyInclude policyInclude = ((AxisService) serviceObj).getPolicyInclude();
                         Policy effecPolicy = policyInclude.getEffectivePolicy();
 
@@ -313,13 +316,13 @@ public class ListingAgent extends AbstractAgent {
                             String outStr = "<b>No effective policy for "
                                     + serviceName + " servcie</b>";
                             out.write(outStr.getBytes());
-                        }                        
+                        }
                     }
-                  
+
                     return;
                 } else {
                     req.getSession().setAttribute(Constants.SINGLE_SERVICE,
-                            serviceObj);
+                                                  serviceObj);
                 }
             } else {
                 req.getSession().setAttribute(Constants.SINGLE_SERVICE, null);
@@ -335,17 +338,17 @@ public class ListingAgent extends AbstractAgent {
 
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
-                configContext.getAxisConfiguration().getFaultyServices());
+                                      configContext.getAxisConfiguration().getFaultyServices());
 
         renderView(LIST_MULTIPLE_SERVICE_JSP_NAME, req, res);
     }
-    
+
     private Policy findPolicy(String id, AxisDescription des) {
 
         List policyElements = des.getPolicyInclude().getPolicyElements();
         PolicyRegistry registry = des.getPolicyInclude().getPolicyRegistry();
 
-        Object policyComponent ;
+        Object policyComponent;
 
         Policy policy = registry.lookup(id);
 
@@ -405,13 +408,17 @@ public class ListingAgent extends AbstractAgent {
         public void stop() throws AxisFault {
         }
 
-        public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
-            return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port + "/" + axisConf.getServiceContextPath() + "/" + serviceName)};  //To change body of implemented methods use File | Settings | File Templates.
+        public EndpointReference[] getEPRsForService(String serviceName, String ip)
+                throws AxisFault {
+            return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port +
+                    "/" + axisConf.getServiceContextPath() + "/" +
+                    serviceName)};  //To change body of implemented methods use File | Settings | File Templates.
         }
 
         public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
             return getEPRsForService(serviceName, ip)[0];
         }
+
         public SessionContext getSessionContext(MessageContext messageContext) {
             HttpServletRequest req = (HttpServletRequest) messageContext.getProperty(
                     HTTPConstants.MC_HTTP_SERVLETREQUEST);
@@ -423,12 +430,12 @@ public class ListingAgent extends AbstractAgent {
                 sessionContext = new SessionContext(null);
                 sessionContext.setCookieID(sessionId);
                 req.getSession().setAttribute(Constants.SESSION_CONTEXT_PROPERTY,
-                        sessionContext);
+                                              sessionContext);
             }
             messageContext.setSessionContext(sessionContext);
             messageContext.setProperty(AxisServlet.SESSION_ID, sessionId);
             return sessionContext;
-    }
+        }
 
 
     }

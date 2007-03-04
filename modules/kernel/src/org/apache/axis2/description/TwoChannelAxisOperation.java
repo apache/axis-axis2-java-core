@@ -41,7 +41,7 @@ public abstract class TwoChannelAxisOperation extends AxisOperation {
     public TwoChannelAxisOperation() {
         super();
         //setup a temporary name
-        QName tmpName = new QName(this.getClass().getName()+"_"+UUIDGenerator.getUUID());
+        QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
         this.setName(tmpName);
         createMessages();
     }
@@ -70,16 +70,16 @@ public abstract class TwoChannelAxisOperation extends AxisOperation {
     }
 
     public void addMessage(AxisMessage message, String label) {
-           if (WSDLConstants.MESSAGE_LABEL_OUT_VALUE.equals(label)) {
-               addChild("outMessage", message);
-           } else if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
-               addChild("inMessage", message);
-           } else if (WSDLConstants.MESSAGE_LABEL_FAULT_VALUE.equals(label)) {
-               addChild("faultMessage", message);
-           } else {
-               throw new UnsupportedOperationException("Not yet implemented");
-           }
-       }
+        if (WSDLConstants.MESSAGE_LABEL_OUT_VALUE.equals(label)) {
+            addChild("outMessage", message);
+        } else if (WSDLConstants.MESSAGE_LABEL_IN_VALUE.equals(label)) {
+            addChild("inMessage", message);
+        } else if (WSDLConstants.MESSAGE_LABEL_FAULT_VALUE.equals(label)) {
+            addChild("faultMessage", message);
+        } else {
+            throw new UnsupportedOperationException("Not yet implemented");
+        }
+    }
 
 
     public AxisMessage getMessage(String label) {
@@ -92,7 +92,8 @@ public abstract class TwoChannelAxisOperation extends AxisOperation {
         }
     }
 
-    public void addFaultMessageContext(MessageContext msgContext, OperationContext opContext) throws AxisFault {
+    public void addFaultMessageContext(MessageContext msgContext, OperationContext opContext)
+            throws AxisFault {
         HashMap mep = opContext.getMessageContexts();
         MessageContext faultMessageCtxt = (MessageContext) mep.get(MESSAGE_LABEL_FAULT_VALUE);
 

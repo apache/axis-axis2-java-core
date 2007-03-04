@@ -45,24 +45,25 @@ import java.io.IOException;
 public class SimpleHttpServer {
 
     private static Log LOG = LogFactory.getLog(SimpleHttpServer.class);
-    
+
     private static final int SHUTDOWN_GRACE_PERIOD = 3000; // ms
-    
+
     private HttpFactory httpFactory;
     private final int port;
     private final HttpParams params;
     private final WorkerFactory workerFactory;
-    
+
     private IOProcessor listener = null;
     private ExecutorService listenerExecutor = null;
     private HttpConnectionManager connmanager = null;
     private HttpConnectionFactory connfactory = null;
     private ExecutorService requestExecutor = null;
 
-    public SimpleHttpServer(ConfigurationContext configurationContext, WorkerFactory workerFactory, int port) throws IOException {
+    public SimpleHttpServer(ConfigurationContext configurationContext, WorkerFactory workerFactory,
+                            int port) throws IOException {
         this(new HttpFactory(configurationContext, port, workerFactory), port);
     }
-    
+
     public SimpleHttpServer(HttpFactory httpFactory, int port) throws IOException {
         this.httpFactory = httpFactory;
         this.port = port;
@@ -73,12 +74,13 @@ public class SimpleHttpServer {
 
     public void init() throws IOException {
         requestExecutor = httpFactory.newRequestExecutor(port);
-        connmanager = httpFactory.newRequestConnectionManager(requestExecutor, workerFactory, params);
+        connmanager =
+                httpFactory.newRequestConnectionManager(requestExecutor, workerFactory, params);
         listenerExecutor = httpFactory.newListenerExecutor(port);
         connfactory = httpFactory.newRequestConnectionFactory(params);
         listener = httpFactory.newRequestConnectionListener(connfactory, connmanager, port);
     }
-    
+
     public void destroy() throws IOException, InterruptedException {
         // Attempt to terminate the listener nicely
         LOG.info("Shut down connection listener");
@@ -105,11 +107,11 @@ public class SimpleHttpServer {
         }
         LOG.info("HTTP protocol handler shut down");
     }
-    
+
     public void start() {
         this.listenerExecutor.execute(this.listener);
     }
-    
+
     public boolean isRunning() {
         return this.listenerExecutor != null && !this.listenerExecutor.isShutdown();
     }
@@ -117,5 +119,5 @@ public class SimpleHttpServer {
     public int getPort() {
         return this.port;
     }
-    
+
 }

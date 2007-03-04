@@ -32,8 +32,9 @@ public class ActionBasedOperationDispatcher extends AbstractOperationDispatcher 
             throws AxisFault {
         String action = messageContext.getSoapAction();
 
-        if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-        log.debug(messageContext.getLogIDString()+" Checking for Operation using Action : " + action);
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug(messageContext.getLogIDString() + " Checking for Operation using Action : " +
+                    action);
         }
         if (action != null) {
             AxisOperation op = service.getOperationBySOAPAction(action);
@@ -45,6 +46,7 @@ public class ActionBasedOperationDispatcher extends AbstractOperationDispatcher 
 
         return null;
     }
+
     public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }

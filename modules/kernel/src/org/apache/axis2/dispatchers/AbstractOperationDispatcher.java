@@ -53,13 +53,14 @@ public abstract class AbstractOperationDispatcher extends AbstractHandler {
      * @throws org.apache.axis2.AxisFault
      */
     public InvocationResponse invoke(MessageContext msgctx) throws AxisFault {
-         if ((msgctx.getAxisService() != null) && (msgctx.getAxisOperation() == null)) {
+        if ((msgctx.getAxisService() != null) && (msgctx.getAxisOperation() == null)) {
             AxisOperation axisOperation = findOperation(msgctx.getAxisService(), msgctx);
 
             if (axisOperation != null) {
                 if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                    log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("operationfound",
-                            axisOperation.getName().getLocalPart()));
+                    log.debug(msgctx.getLogIDString() + " " + Messages.getMessage("operationfound",
+                                                                                  axisOperation
+                                                                                          .getName().getLocalPart()));
                 }
 
                 msgctx.setAxisOperation(axisOperation);

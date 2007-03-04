@@ -30,23 +30,24 @@
 package org.apache.axis2.transport.http.server;
 
 public interface ConnectionListenerFailureHandler {
-    
+
     /**
      * The associated connection listener IOProcessor has failed
      *
      * @param connectionListener the associated connection listener
-     * @param cause cause of failure
+     * @param cause              cause of failure
      * @return true if the listener should attempt to re-establish itself, false if it should terminate.
      */
     public boolean failed(IOProcessor connectionListener, Throwable cause);
-    
+
     /**
      * The associated connection listener IOProcessor is terminating abnormally
      *
      * @param connectionListener the associated connection listener
-     * @param message explanation of termination
-     * @param cause last exception that is causing termination
+     * @param message            explanation of termination
+     * @param cause              last exception that is causing termination
      */
-    public void notifyAbnormalTermination(IOProcessor connectionListener, String message, Throwable cause);
-    
+    public void notifyAbnormalTermination(IOProcessor connectionListener, String message,
+                                          Throwable cause);
+
 }

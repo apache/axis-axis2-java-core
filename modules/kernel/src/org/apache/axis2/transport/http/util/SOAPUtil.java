@@ -33,7 +33,7 @@ import java.io.IOException;
 
 /**
  * @deprecated Since we are not using this class and this might lead to mis-use of this class, we will
- * removing this class in a future release.
+ *             removing this class in a future release.
  */
 public class SOAPUtil {
     private static final Log log = LogFactory.getLog(SOAPUtil.class);
@@ -53,13 +53,13 @@ public class SOAPUtil {
                                       HttpServletRequest request,
                                       HttpServletResponse response) throws AxisFault {
         try {
-            response.setHeader("Content-Type","text/html");
+            response.setHeader("Content-Type", "text/html");
 
-            if(server(msgContext) != null){
-                response.setHeader("Server",server(msgContext));
+            if (server(msgContext) != null) {
+                response.setHeader("Server", server(msgContext));
             }
             String soapAction = request.getHeader(HTTPConstants.HEADER_SOAP_ACTION);
-            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,request.getContentType());
+            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE, request.getContentType());
             HTTPTransportUtils.processHTTPPostRequest(msgContext,
                                                       request.getInputStream(),
                                                       response.getOutputStream(),
@@ -69,11 +69,12 @@ public class SOAPUtil {
 
             Object contextWritten = null;
             if (msgContext.getOperationContext() != null) {
-                contextWritten = msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
+                contextWritten =
+                        msgContext.getOperationContext().getProperty(Constants.RESPONSE_WRITTEN);
             }
 
             response.setContentType("text/xml; charset="
-                                    + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
+                    + msgContext.getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
             if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
                 Integer statusCode = (Integer) msgContext.getProperty(Constants.RESPONSE_CODE);
@@ -81,11 +82,12 @@ public class SOAPUtil {
                     response.setStatus(statusCode.intValue());
                 } else {
                     response.setStatus(HttpServletResponse.SC_ACCEPTED);
-            }
+                }
             }
 
             boolean closeReader = true;
-            Parameter parameter = msgContext.getConfigurationContext().getAxisConfiguration().getParameter("axis2.close.reader");
+            Parameter parameter = msgContext.getConfigurationContext().getAxisConfiguration()
+                    .getParameter("axis2.close.reader");
             if (parameter != null) {
                 closeReader = JavaUtils.isTrueExplicitly(parameter.getValue());
             }
@@ -106,8 +108,9 @@ public class SOAPUtil {
     }
 
     private String server(MessageContext messageContext) {
-        if (messageContext.getParameter(HTTPConstants.SERVER) != null){
-            OMElement userAgentElement = messageContext.getParameter(HTTPConstants.SERVER).getParameterElement();
+        if (messageContext.getParameter(HTTPConstants.SERVER) != null) {
+            OMElement userAgentElement =
+                    messageContext.getParameter(HTTPConstants.SERVER).getParameterElement();
             return userAgentElement.getText().trim();
 
         }

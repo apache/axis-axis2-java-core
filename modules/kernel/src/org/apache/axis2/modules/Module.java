@@ -52,26 +52,26 @@ public interface Module {
      * @throws AxisFault
      */
     void engageNotify(AxisDescription axisDescription) throws AxisFault;
-    
+
     /**
      * Evalute whether it can support the specified assertion and returns true if the assertion can
-     * be supported. 
-     *  
-     * @param assertion the assertion that the module must decide whether it can support or not. 
+     * be supported.
+     *
+     * @param assertion the assertion that the module must decide whether it can support or not.
      * @return true if the specified assertion can be supported by the module
      */
     public boolean canSupportAssertion(Assertion assertion);
-    
+
     /**
-     * Evaluates specified policy for the specified AxisDescription. It computes the configuration that 
+     * Evaluates specified policy for the specified AxisDescription. It computes the configuration that
      * is appropriate to support the policy and stores it the appropriate description.
-     * 
+     *
      * @param policy the policy that is applicable for the specified AxisDescription
-     * @throws AxisFault if anything goes wrong. 
+     * @throws AxisFault if anything goes wrong.
      */
     public void applyPolicy(Policy policy, AxisDescription axisDescription) throws AxisFault;
-    
-            
+
+
     // shutdown the module
     public void shutdown(ConfigurationContext configurationContext) throws AxisFault;
 }

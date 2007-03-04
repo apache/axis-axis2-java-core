@@ -27,8 +27,8 @@ public class MockFlow extends Flow {
             SpeakingHandler1 h1 = new SpeakingHandler1(
                     "Executing " + i + " inside " + message);
             Utils.addHandler(this,
-                    h1,
-                    PhaseMetadata.PHASE_POLICY_DETERMINATION);
+                             h1,
+                             PhaseMetadata.PHASE_POLICY_DETERMINATION);
         }
     }
 

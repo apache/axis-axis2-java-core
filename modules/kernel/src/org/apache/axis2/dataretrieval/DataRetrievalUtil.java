@@ -44,10 +44,10 @@ public class DataRetrievalUtil {
      * Loading xml file content and convert to OMElement.
      *
      * @param file - file path relative to the Service Repository
-     * @return OMElement format of the xml file content 
-     * @throws DataRetrievalException 
+     * @return OMElement format of the xml file content
+     * @throws DataRetrievalException
      */
-    
+
     public OMElement buildOM(ClassLoader classLoader, String file)
             throws DataRetrievalException {
         OMElement element = null;
@@ -67,7 +67,7 @@ public class DataRetrievalUtil {
      * Convert servicexmlStream to OMElement
      *
      * @param servicexmlStream InputStream contain xml content
-     * @return OMElement format of the xml content 
+     * @return OMElement format of the xml content
      * @throws XMLStreamException
      */
 
@@ -85,14 +85,14 @@ public class DataRetrievalUtil {
     }
 
     private static InputStream getInputStream(ClassLoader classLoader,
-            String file) throws XMLStreamException {
+                                              String file) throws XMLStreamException {
 
         InputStream servicexmlStream = classLoader.getResourceAsStream(file);
 
         if (servicexmlStream == null) {
             String message = "File does not exist in the Service Repository! File="
                     + file;
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug(message);
             }
             throw new XMLStreamException(message);

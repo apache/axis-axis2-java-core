@@ -16,16 +16,10 @@
 
 package org.apache.axis2.deployment;
 
-import java.io.File;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axis2.AbstractTestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.TransportOutDescription;
-import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.phaseresolver.PhaseException;
+
+import java.io.File;
 
 public class BuilderSelectorDeploymentTest extends AbstractTestCase {
     /**
@@ -47,14 +41,17 @@ public class BuilderSelectorDeploymentTest extends AbstractTestCase {
 //        className = axisConfig.getMessageBuilder("application/soap+xml").getClass().getName();
 //        assertEquals(className,"org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder");
     }
-    
-    public void testBuilderSelectionInvalidEntry() throws AxisFault{
-        String repositoryName  =System.getProperty("basedir",".")+"/"+"target/test-resources/deployment";
+
+    public void testBuilderSelectionInvalidEntry() throws AxisFault {
+        String repositoryName =
+                System.getProperty("basedir", ".") + "/" + "target/test-resources/deployment";
         File repo = new File(repositoryName);
-        String xmlFile = System.getProperty("basedir",".")+"/"+"test-resources/deployment/builderSelectorTest/bad-axis2.xml";
+        String xmlFile = System.getProperty("basedir", ".") + "/" +
+                "test-resources/deployment/builderSelectorTest/bad-axis2.xml";
         File xml = new File(xmlFile);
-        FileSystemConfigurator fsc = new FileSystemConfigurator(repo.getAbsolutePath(), xml.getAbsolutePath());
-        AxisFault testFault=null;
+        FileSystemConfigurator fsc =
+                new FileSystemConfigurator(repo.getAbsolutePath(), xml.getAbsolutePath());
+        AxisFault testFault = null;
         try {
             fsc.getAxisConfiguration();
         } catch (AxisFault e) {

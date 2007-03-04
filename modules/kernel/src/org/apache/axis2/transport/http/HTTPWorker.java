@@ -63,7 +63,8 @@ public class HTTPWorker implements Worker {
 
         ConfigurationContext configurationContext = msgContext.getConfigurationContext();
         final String servicePath = configurationContext.getServiceContextPath();
-        final String contextPath = (servicePath.startsWith("/") ? servicePath : "/" + servicePath) + "/";
+        final String contextPath =
+                (servicePath.startsWith("/") ? servicePath : "/" + servicePath) + "/";
 
         HttpVersion ver = request.getRequestLine().getHttpVersion();
         String uri = request.getRequestLine().getUri();
@@ -95,7 +96,8 @@ public class HTTPWorker implements Worker {
                 if (!uri.endsWith(contextPath)) {
                     String serviceName = uri.replaceAll(contextPath, "");
                     if (serviceName.indexOf("/") < 0) {
-                        String res = HTTPTransportReceiver.printServiceHTML(serviceName, configurationContext);
+                        String res = HTTPTransportReceiver
+                                .printServiceHTML(serviceName, configurationContext);
                         StringEntity entity = new StringEntity(res);
                         entity.setContentType("text/html");
                         response.setEntity(entity);
@@ -158,7 +160,8 @@ public class HTTPWorker implements Worker {
             }
             //cater for named xsds - check for the xsd name
             if (uri.indexOf("?xsd=") > 0) {
-                String serviceName = uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("?xsd="));
+                String serviceName =
+                        uri.substring(uri.lastIndexOf("/") + 1, uri.lastIndexOf("?xsd="));
                 String schemaName = uri.substring(uri.lastIndexOf("=") + 1);
 
                 HashMap services = configurationContext.getAxisConfiguration().getServices();
@@ -210,20 +213,18 @@ public class HTTPWorker implements Worker {
             }
 
 
-
-
-        } else if(method.equals(HTTPConstants.HEADER_PUT)) {
+        } else if (method.equals(HTTPConstants.HEADER_PUT)) {
             outbuffer = copyCommonProperties(msgContext, request);
             HttpEntity inentity = ((HttpEntityEnclosingRequest) request).getEntity();
             String contentType = processContentType(inentity, msgContext);
-                pi = RESTUtil.processXMLRequest(msgContext, inentity.getContent(),
-                                                outbuffer.getOutputStream(), contentType);
+            pi = RESTUtil.processXMLRequest(msgContext, inentity.getContent(),
+                                            outbuffer.getOutputStream(), contentType);
 
-        } else if(method.equals(HTTPConstants.HEADER_DELETE)) {
+        } else if (method.equals(HTTPConstants.HEADER_DELETE)) {
             outbuffer = copyCommonProperties(msgContext, request);
 
 
-                pi = RESTUtil.processURLRequest(msgContext, outbuffer.getOutputStream(), null);
+            pi = RESTUtil.processURLRequest(msgContext, outbuffer.getOutputStream(), null);
 
         } else {
 
@@ -252,20 +253,24 @@ public class HTTPWorker implements Worker {
     }
 
     private void handleResponse(InvocationResponse pi, HttpResponse response,
-                                OutputBuffer outbuffer,MessageContext msgContext)
+                                OutputBuffer outbuffer, MessageContext msgContext)
             throws IOException {
-            Boolean holdResponse = (Boolean) msgContext.getProperty(RequestResponseTransport.HOLD_RESPONSE);
+        Boolean holdResponse =
+                (Boolean) msgContext.getProperty(RequestResponseTransport.HOLD_RESPONSE);
 
-            if (pi.equals(InvocationResponse.SUSPEND) || (holdResponse != null && Boolean.TRUE.equals(holdResponse))) {
-                try {
-                ((RequestResponseTransport)msgContext.getProperty(RequestResponseTransport.TRANSPORT_CONTROL)).awaitResponse();
-              }
-                catch (InterruptedException e) {
-                throw new IOException("We were interrupted, so this may not function correctly:"+ e.getMessage());
-              }
+        if (pi.equals(InvocationResponse.SUSPEND) ||
+                (holdResponse != null && Boolean.TRUE.equals(holdResponse))) {
+            try {
+                ((RequestResponseTransport) msgContext
+                        .getProperty(RequestResponseTransport.TRANSPORT_CONTROL)).awaitResponse();
             }
+            catch (InterruptedException e) {
+                throw new IOException("We were interrupted, so this may not function correctly:" +
+                        e.getMessage());
+            }
+        }
 
-            response.setEntity(outbuffer);
+        response.setEntity(outbuffer);
     }
 
     private String processContentType(HttpEntity inentity, MessageContext msgContext) {
@@ -274,7 +279,7 @@ public class HTTPWorker implements Worker {
         if (header != null) {
             contentType = header.getValue();
         }
-        msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,contentType);
+        msgContext.setProperty(Constants.Configuration.CONTENT_TYPE, contentType);
         return contentType;
     }
 
@@ -285,46 +290,46 @@ public class HTTPWorker implements Worker {
         msgContext.setProperty(Constants.OUT_TRANSPORT_INFO, outbuffer);
         msgContext.setTo(new EndpointReference(request.getRequestLine().getUri()));
         msgContext.setProperty(RequestResponseTransport.TRANSPORT_CONTROL,
-                                   new SimpleHTTPRequestResponseTransport());
+                               new SimpleHTTPRequestResponseTransport());
         return outbuffer;
     }
 
-    public String getHostAddress(HttpRequest request) throws java.net.SocketException{
+    public String getHostAddress(HttpRequest request) throws java.net.SocketException {
         try {
             Header hostHeader = request.getFirstHeader("host");
-            if (hostHeader!=null){
+            if (hostHeader != null) {
                 String host = hostHeader.getValue();
-                return new URI("http://"+host).getHost();
+                return new URI("http://" + host).getHost();
             }
-        } catch (Exception e){
-            
+        } catch (Exception e) {
+
         }
         return HttpUtils.getIpAddress();
-    }    
+    }
 
     class SimpleHTTPRequestResponseTransport implements RequestResponseTransport {
-        
-      private CountDownLatch responseReadySignal = new CountDownLatch(1);
-      RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
-      
-        public void acknowledgeMessage(MessageContext msgContext) throws AxisFault {
-        //TODO: Once the core HTTP API allows us to return an ack before unwinding, then the should be fixed
-        signalResponseReady();
-      }
-      
-        public void awaitResponse() throws InterruptedException {
-          status = RequestResponseTransportStatus.WAITING;
-          responseReadySignal.await();
-      }
-      
-        public void signalResponseReady() {
-          status = RequestResponseTransportStatus.SIGNALLED;
-          responseReadySignal.countDown();
-      }
 
-      public RequestResponseTransportStatus getStatus() {
-        return status;
-      }
-      
+        private CountDownLatch responseReadySignal = new CountDownLatch(1);
+        RequestResponseTransportStatus status = RequestResponseTransportStatus.INITIAL;
+
+        public void acknowledgeMessage(MessageContext msgContext) throws AxisFault {
+            //TODO: Once the core HTTP API allows us to return an ack before unwinding, then the should be fixed
+            signalResponseReady();
+        }
+
+        public void awaitResponse() throws InterruptedException {
+            status = RequestResponseTransportStatus.WAITING;
+            responseReadySignal.await();
+        }
+
+        public void signalResponseReady() {
+            status = RequestResponseTransportStatus.SIGNALLED;
+            responseReadySignal.countDown();
+        }
+
+        public RequestResponseTransportStatus getStatus() {
+            return status;
+        }
+
     }
 }

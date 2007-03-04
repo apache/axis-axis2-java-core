@@ -31,7 +31,7 @@ public class PolicyInclude {
     public static final int ANON_POLICY = 100;
 
     public static final int AXIS_POLICY = 1;
-    
+
     public static final int AXIS_MODULE_POLICY = 2;
 
     public static final int AXIS_SERVICE_POLICY = 3;
@@ -65,19 +65,19 @@ public class PolicyInclude {
     private Policy policy = null;
 
     private Policy effectivePolicy = null;
-    
+
     private PolicyRegistry reg;
 
     private AxisDescription description;
-    
+
     private Hashtable wrapperElements = new Hashtable();
 
     public PolicyInclude() {
         reg = new PolicyRegistryImpl();
     }
-    
+
     public PolicyInclude(AxisDescription axisDescription) {
-        
+
         if (axisDescription.getParent() != null) {
             PolicyInclude parentPolicyInclude = axisDescription.getParent().getPolicyInclude();
             reg = new PolicyRegistryImpl(parentPolicyInclude.getPolicyRegistry());
@@ -90,18 +90,18 @@ public class PolicyInclude {
     public void setPolicyRegistry(PolicyRegistry reg) {
         this.reg = reg;
     }
-    
+
     public PolicyRegistry getPolicyRegistry() {
         return reg;
     }
 
     public void setPolicy(Policy policy) {
         wrapperElements.clear();
-        
+
         if (policy.getName() == null && policy.getId() == null) {
             policy.setId(UUIDGenerator.getUUID());
         }
-        
+
         Wrapper wrapper = new Wrapper(PolicyInclude.ANON_POLICY, policy);
         if (policy.getName() != null) {
             wrapperElements.put(policy.getName(), wrapper);
@@ -109,31 +109,31 @@ public class PolicyInclude {
             wrapperElements.put(policy.getId(), wrapper);
         }
     }
-    
+
     public void updatePolicy(Policy policy) {
         String key;
-        
+
         if ((key = policy.getName()) == null && (key = policy.getId()) == null) {
             // TODO throw more meaningful exception ..
-            throw new RuntimeException("policy doesn't have a name or an id ");            
+            throw new RuntimeException("policy doesn't have a name or an id ");
         }
-        
+
         Wrapper wrapper = (Wrapper) wrapperElements.get(key);
         wrapper.value = policy;
     }
-    
+
     public void setEffectivePolicy(Policy effectivePolicy) {
         this.effectivePolicy = effectivePolicy;
     }
-    
+
     public void setDescription(AxisDescription description) {
         this.description = description;
     }
-    
+
     public AxisDescription getDescription() {
         return description;
     }
-    
+
     private PolicyInclude getParent() {
 
         if (description != null && description.getParent() != null) {
@@ -163,38 +163,38 @@ public class PolicyInclude {
                 // TODO AxisFault?
                 throw new RuntimeException();
             }
-            
+
             result = (result == null) ? (Policy) p : (Policy) result.merge(p);
         }
-        
+
         this.policy = result;
     }
 
     private void calculateEffectivePolicy() {
-        Policy result ;
-        
+        Policy result;
+
         if (getParent() != null) {
             Policy parentPolicy = getParent().getEffectivePolicy();
-            
+
             if (parentPolicy == null) {
                 result = getPolicy();
-                
+
             } else {
-                
+
                 if (getPolicy() != null) {
                     result = (Policy) parentPolicy.merge(getPolicy());
-                    
+
                 } else {
                     result = parentPolicy;
                 }
             }
-            
+
         } else {
             result = getPolicy();
         }
         setEffectivePolicy(result);
     }
-    
+
     public Policy getPolicy() {
         calculatePolicy();
         return policy;
@@ -240,15 +240,15 @@ public class PolicyInclude {
     }
 
     public void addPolicyElement(int type, Policy policy) {
-        
+
         String key;
-        
+
         if ((key = policy.getName()) == null && (key = policy.getId()) == null) {
             policy.setId(UUIDGenerator.getUUID());
         }
-        
+
         key = (policy.getName() != null) ? policy.getName() : policy.getId();
-        
+
         Wrapper wrapper = new Wrapper(type, policy);
         wrapperElements.put(key, wrapper);
         reg.register(key, policy);
@@ -262,35 +262,35 @@ public class PolicyInclude {
     class Wrapper {
         private int type;
         private Object value;
-        
+
         Wrapper(int type, Object value) {
             setType(type);
             setValue(value);
         }
-        
+
         void setType(int type) {
             this.type = type;
         }
-        
+
         int getType() {
             return type;
         }
-        
+
         void setValue(Object value) {
             this.value = value;
         }
-        
+
         Object getValue() {
             return value;
         }
     }
-    
+
     public void removePolicyElement(String policyURI) {
         wrapperElements.remove(policyURI);
         reg.remove(policyURI);
     }
 
-    public void removeAllPolicyElements(){
+    public void removeAllPolicyElements() {
         wrapperElements.clear();
     }
 }

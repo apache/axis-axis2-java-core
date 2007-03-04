@@ -55,10 +55,11 @@ public class HTTPTransportUtils {
 
 
     public static SOAPEnvelope createEnvelopeFromGetRequest(String requestUrl,
-                                   Map map,ConfigurationContext configCtx) throws AxisFault {
+                                                            Map map, ConfigurationContext configCtx)
+            throws AxisFault {
         String[] values =
                 Utils.parseRequestURLForServiceAndOperation(requestUrl,
-                                                        configCtx.getServiceContextPath());
+                                                            configCtx.getServiceContextPath());
         if (values == null) {
             return new SOAP11Factory().getDefaultEnvelope();
         }
@@ -101,7 +102,7 @@ public class HTTPTransportUtils {
 //        if (msgContext.isDoingMTOM()) {
 //            return true;
 //        }
-        
+
         boolean enableMTOM = false;
         Parameter parameter = msgContext.getParameter(Constants.Configuration.ENABLE_MTOM);
         if (parameter != null) {
@@ -114,7 +115,7 @@ public class HTTPTransportUtils {
         }
         return enableMTOM;
     }
-    
+
     public static boolean doWriteSwA(MessageContext msgContext) {
         // check whether isDoingSWA is already true in the message context
 //        if (msgContext.isDoingSwA()) {
@@ -132,12 +133,12 @@ public class HTTPTransportUtils {
         }
         return enableSwA;
     }
-    
+
     /**
      * Utility method to query CharSetEncoding. First look in the
      * MessageContext. If it's not there look in the OpContext. Use the defualt,
      * if it's not given in either contexts.
-     * 
+     *
      * @param msgContext
      * @return CharSetEncoding
      */
@@ -162,21 +163,22 @@ public class HTTPTransportUtils {
     }
 
     /**
-     *
-     * @param msgContext - The MessageContext of the Request Message
-     * @param out - The output stream of the response
-     * @param soapAction - SoapAction of the request
-     * @param requestURI - The URL that the request came to
+     * @param msgContext           - The MessageContext of the Request Message
+     * @param out                  - The output stream of the response
+     * @param soapAction           - SoapAction of the request
+     * @param requestURI           - The URL that the request came to
      * @param configurationContext - The Axis Configuration Context
-     * @param requestParameters - The parameters of the request message
+     * @param requestParameters    - The parameters of the request message
      * @return - boolean indication whether the operation was succesfull
      * @throws AxisFault - Thrown in case a fault occurs
      * @deprecated use RESTUtil.processURLRequest(MessageContext msgContext, OutputStream out, String contentType) instead
      */
 
     public static boolean processHTTPGetRequest(MessageContext msgContext,
-                                                OutputStream out, String soapAction, String requestURI,
-                                                ConfigurationContext configurationContext, Map requestParameters)
+                                                OutputStream out, String soapAction,
+                                                String requestURI,
+                                                ConfigurationContext configurationContext,
+                                                Map requestParameters)
             throws AxisFault {
         if ((soapAction != null) && soapAction.startsWith("\"") && soapAction.endsWith("\"")) {
             soapAction = soapAction.substring(1, soapAction.length() - 1);
@@ -187,7 +189,8 @@ public class HTTPTransportUtils {
         msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
         msgContext.setServerSide(true);
         SOAPEnvelope envelope = HTTPTransportUtils.createEnvelopeFromGetRequest(requestURI,
-                                                                                requestParameters, configurationContext);
+                                                                                requestParameters,
+                                                                                configurationContext);
 
         if (envelope == null) {
             return false;
@@ -204,19 +207,22 @@ public class HTTPTransportUtils {
     private static final int VERSION_SOAP11 = 1;
     private static final int VERSION_SOAP12 = 2;
 
-    public static InvocationResponse processHTTPPostRequest(MessageContext msgContext, InputStream in,
-                                              OutputStream out, String contentType, String soapActionHeader, String requestURI)
+    public static InvocationResponse processHTTPPostRequest(MessageContext msgContext,
+                                                            InputStream in,
+                                                            OutputStream out, String contentType,
+                                                            String soapActionHeader,
+                                                            String requestURI)
             throws AxisFault {
         int soapVersion = VERSION_UNKNOWN;
         InvocationResponse pi = InvocationResponse.CONTINUE;
-        
+
         try {
 
             in = handleGZip(msgContext, in);
 
             // remove the starting and trailing " from the SOAP Action
             if ((soapActionHeader != null) && soapActionHeader.charAt(0) == '\"'
-                && soapActionHeader.endsWith("\"")) {
+                    && soapActionHeader.endsWith("\"")) {
                 soapActionHeader = soapActionHeader.substring(1, soapActionHeader.length() - 1);
             }
 
@@ -227,44 +233,44 @@ public class HTTPTransportUtils {
             msgContext.setServerSide(true);
 
             SOAPEnvelope envelope = null;
-            boolean isMIME=false;
+            boolean isMIME = false;
 
             // get the type of char encoding
             String charSetEnc = BuilderUtil.getCharSetEncoding(contentType);
-            if(charSetEnc == null){
+            if (charSetEnc == null) {
                 charSetEnc = MessageContext.DEFAULT_CHAR_SET_ENCODING;
             }
             msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING, charSetEnc);
 
             if (contentType != null) {
-				if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
-					soapVersion = VERSION_SOAP12;
-					TransportUtils.processContentTypeForAction(contentType, msgContext);
-				} else if (contentType
-						.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
-					soapVersion = VERSION_SOAP11;
-				} else if (isRESTRequest(contentType)) {
+                if (contentType.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) > -1) {
+                    soapVersion = VERSION_SOAP12;
+                    TransportUtils.processContentTypeForAction(contentType, msgContext);
+                } else if (contentType
+                        .indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
+                    soapVersion = VERSION_SOAP11;
+                } else if (isRESTRequest(contentType)) {
                     // If REST, construct a SOAP11 envelope to hold the rest message and
                     // indicate that this is a REST message.
-                    soapVersion = VERSION_SOAP11; 
+                    soapVersion = VERSION_SOAP11;
                     msgContext.setDoingREST(true);
                 }
-				if (soapVersion == VERSION_SOAP11) {
-					// TODO Keith : Do we need this anymore
-					// Deployment configuration parameter
-					Parameter enableREST = msgContext
-							.getParameter(Constants.Configuration.ENABLE_REST);
-					if ((soapActionHeader == null) && (enableREST != null)) {
-						if (Constants.VALUE_TRUE.equals(enableREST.getValue())) {
-							// If the content Type is text/xml (BTW which is the
-							// SOAP 1.1 Content type ) and the SOAP Action is
-							// absent it is rest !!
-							msgContext.setDoingREST(true);
-						}
-					}
-				}
-			}
-            envelope = TransportUtils.createSOAPMessage(msgContext,in,contentType);
+                if (soapVersion == VERSION_SOAP11) {
+                    // TODO Keith : Do we need this anymore
+                    // Deployment configuration parameter
+                    Parameter enableREST = msgContext
+                            .getParameter(Constants.Configuration.ENABLE_REST);
+                    if ((soapActionHeader == null) && (enableREST != null)) {
+                        if (Constants.VALUE_TRUE.equals(enableREST.getValue())) {
+                            // If the content Type is text/xml (BTW which is the
+                            // SOAP 1.1 Content type ) and the SOAP Action is
+                            // absent it is rest !!
+                            msgContext.setDoingREST(true);
+                        }
+                    }
+                }
+            }
+            envelope = TransportUtils.createSOAPMessage(msgContext, in, contentType);
             msgContext.setEnvelope(envelope);
             AxisEngine engine = new AxisEngine(msgContext.getConfigurationContext());
 
@@ -273,7 +279,7 @@ public class HTTPTransportUtils {
             } else {
                 pi = engine.receive(msgContext);
             }
-            
+
             return pi;
         } catch (SOAPProcessingException e) {
             throw new AxisFault(e);
@@ -343,8 +349,8 @@ public class HTTPTransportUtils {
         if (contentType == null) {
             return false;
         }
-        return ( contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
-                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
-                 contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1);
+        return (contentType.indexOf(HTTPConstants.MEDIA_TYPE_APPLICATION_XML) > -1 ||
+                contentType.indexOf(HTTPConstants.MEDIA_TYPE_X_WWW_FORM) > -1 ||
+                contentType.indexOf(HTTPConstants.MEDIA_TYPE_MULTIPART_FORM_DATA) > -1);
     }
 }

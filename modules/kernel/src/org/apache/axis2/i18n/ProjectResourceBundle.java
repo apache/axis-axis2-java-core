@@ -147,10 +147,10 @@ public class ProjectResourceBundle extends ResourceBundle {
                                                   Locale locale)
             throws MissingResourceException {
         return getBundle(projectName,
-                caller,
-                resourceName,
-                locale,
-                null);
+                         caller,
+                         resourceName,
+                         locale,
+                         null);
     }
 
     /**
@@ -199,11 +199,11 @@ public class ProjectResourceBundle extends ResourceBundle {
                                                   ResourceBundle extendsBundle)
             throws MissingResourceException {
         return getBundle(projectName,
-                getPackage(caller.getClass().getName()),
-                resourceName,
-                locale,
-                caller.getClass().getClassLoader(),
-                extendsBundle);
+                         getPackage(caller.getClass().getName()),
+                         resourceName,
+                         locale,
+                         caller.getClass().getClassLoader(),
+                         extendsBundle);
     }
 
     /**
@@ -211,8 +211,8 @@ public class ProjectResourceBundle extends ResourceBundle {
      *
      * @param projectName   The name of the project to which the class belongs.
      *                      It must be a proper prefix of the caller's package.
-     * @param packageName  The package name to further construct
-     *                     the basename.
+     * @param packageName   The package name to further construct
+     *                      the basename.
      * @param resourceName  The name of the resource without the
      *                      ".properties" extension
      * @param locale        The locale
@@ -256,7 +256,7 @@ public class ProjectResourceBundle extends ResourceBundle {
         if (bundle == null) {
             throw new MissingResourceException("Cannot find resource '" +
                     packageName + '.' + resourceName + "'",
-                    resourceName, "");
+                                               resourceName, "");
         }
 
         return bundle;
@@ -330,7 +330,6 @@ public class ProjectResourceBundle extends ResourceBundle {
 //    public static void clearCache() {
 //        bundleCache.clear();
 //    }
-
     public String toString() {
         return resourceName;
     }
@@ -396,14 +395,15 @@ public class ProjectResourceBundle extends ResourceBundle {
 
         String getCacheKey(String packageName) {
             String loaderName = (_loader == null) ? "" : (":" + _loader.hashCode());
-            return packageName + "." + _resourceName + ":" + _locale + ":" + defaultLocale + loaderName;
+            return packageName + "." + _resourceName + ":" + _locale + ":" + defaultLocale +
+                    loaderName;
         }
 
         ResourceBundle loadBundle(String packageName) {
             try {
                 return ResourceBundle.getBundle(packageName + '.' + _resourceName,
-                        _locale,
-                        _loader);
+                                                _locale,
+                                                _loader);
             } catch (MissingResourceException e) {
                 // Deliberately surpressing print stack.. just the string for info.
                 log.debug("loadBundle: Ignoring MissingResourceException: " + e.getMessage());
@@ -427,25 +427,25 @@ public class ProjectResourceBundle extends ResourceBundle {
             if (_projectName == null || _projectName.length() == 0) {
                 log.debug("Project name not specified");
                 throw new MissingResourceException("Project name not specified",
-                        "", "");
+                                                   "", "");
             }
 
             if (packageName == null || packageName.length() == 0) {
                 log.debug("Package name not specified");
                 throw new MissingResourceException("Package not specified",
-                        packageName, "");
+                                                   packageName, "");
             }
             packageName = packageName.intern();
-    
+
             /* Ensure that project is a proper prefix of class.
-             * Terminate project name with '.' to ensure proper match.
-             */
+            * Terminate project name with '.' to ensure proper match.
+            */
             if (!packageName.equals(_projectName) && !packageName.startsWith(_projectName + '.')) {
                 log.debug("Project not a prefix of Package");
                 throw new MissingResourceException("Project '" + _projectName
                         + "' must be a prefix of Package '"
                         + packageName + "'",
-                        packageName + '.' + _resourceName, "");
+                                                   packageName + '.' + _resourceName, "");
             }
 
             return packageName;

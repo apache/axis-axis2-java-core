@@ -33,7 +33,8 @@ public class SameServiceAddingTest extends TestCase {
     AxisConfiguration ar;
 
     public void testServiceGroup() throws AxisFault {
-        ar = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null).getAxisConfiguration();
+        ar = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null)
+                .getAxisConfiguration();
         AxisServiceGroup axisServiceGroup1 = new AxisServiceGroup();
         axisServiceGroup1.setServiceGroupName("ServiceGroup1");
         AxisService service1 = new AxisService();

@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 public interface WSDLConstants {
 
     String WSDL_1_1_STYLE = "style";
-    
+
     String STYLE_RPC = "rpc";
     String STYLE_DOC = "document";
     String STYLE_MSG = "msg";
@@ -54,7 +54,6 @@ public interface WSDLConstants {
     public static final String SOAP_HEADER = "soap_header";
 
     public static final String HTTP_HEADER = "http_header";
-
 
 
     /**
@@ -138,9 +137,8 @@ public interface WSDLConstants {
     public static final int MEP_CONSTANT_IN_OUT = 12;
     public static final int MEP_CONSTANT_IN_OPTIONAL_OUT = 13;
     int MEP_CONSTANT_OUT_OPTIONAL_IN = 17;
-        int MEP_CONSTANT_INVALID = -1;
+    int MEP_CONSTANT_INVALID = -1;
     int MEP_CONSTANT_ROBUST_OUT_ONLY = 15;
-
 
 
     public static interface WSDL20_2006Constants {
@@ -169,7 +167,7 @@ public interface WSDLConstants {
         public String NMTOKEN_ELEMENT = "#element";
 
     }
-    
+
     public static interface WSDL20_2004_Constants {
 
         public String MEP_URI_IN_ONLY = "http://www.w3.org/2004/08/wsdl/in-only";

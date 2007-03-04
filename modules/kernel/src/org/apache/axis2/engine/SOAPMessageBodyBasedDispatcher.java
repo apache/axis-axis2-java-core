@@ -46,17 +46,17 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
 
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
-        QName operationName ;
-        
+        QName operationName;
+
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
 
         if (bodyFirstChild == null) {
             return null;
         } else {
-            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-            log.debug(messageContext.getLogIDString()+
-                    " Checking for Operation using SOAP message body's first child's local name : "
-                            + bodyFirstChild.getLocalName());
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(messageContext.getLogIDString() +
+                        " Checking for Operation using SOAP message body's first child's local name : "
+                        + bodyFirstChild.getLocalName());
             }
             operationName = new QName(bodyFirstChild.getLocalName());
         }
@@ -66,7 +66,7 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
         if (axisOperation == null) {
             axisOperation = service.getOperationByMessageElementQName(bodyFirstChild.getQName());
         }
-        
+
         return axisOperation;
     }
 
@@ -75,8 +75,8 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
      * @see org.apache.axis2.engine.AbstractDispatcher#findService(org.apache.axis2.context.MessageContext)
      */
     public AxisService findService(MessageContext messageContext) throws AxisFault {
-        String serviceName ;
-        
+        String serviceName;
+
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
 
         if (bodyFirstChild != null) {
@@ -85,14 +85,15 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
             if (ns != null) {
                 String filePart = ns.getNamespaceURI();
 
-                if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-                log.debug(messageContext.getLogIDString()+
-                        " Checking for Service using SOAP message body's first child's namespace : "
-                                + filePart);
+                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                    log.debug(messageContext.getLogIDString() +
+                            " Checking for Service using SOAP message body's first child's namespace : "
+                            + filePart);
                 }
-                ConfigurationContext configurationContext = messageContext.getConfigurationContext();
+                ConfigurationContext configurationContext =
+                        messageContext.getConfigurationContext();
                 String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
-                        configurationContext.getServiceContextPath());
+                                                                              configurationContext.getServiceContextPath());
 
                 if (values[0] != null) {
                     serviceName = values[0];

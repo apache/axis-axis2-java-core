@@ -46,18 +46,23 @@ public class RequestURIBasedOperationDispatcher extends AbstractOperationDispatc
         if (toEPR != null) {
             String filePart = toEPR.getAddress();
             String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
-                    messageContext.getConfigurationContext().getServiceContextPath());
+                                                                          messageContext
+                                                                                  .getConfigurationContext().getServiceContextPath());
 
             if ((values.length >= 2) && (values[1] != null)) {
                 QName operationName = new QName(values[1]);
-                log.debug(messageContext.getLogIDString()+" Checking for Operation using QName(target endpoint URI fragment) : " + operationName);
+                log.debug(messageContext.getLogIDString() +
+                        " Checking for Operation using QName(target endpoint URI fragment) : " +
+                        operationName);
                 return service.getOperation(operationName);
             } else {
-                log.debug(messageContext.getLogIDString()+" Attempted to check for Operation using target endpoint URI, but the operation fragment was missing");
+                log.debug(messageContext.getLogIDString() +
+                        " Attempted to check for Operation using target endpoint URI, but the operation fragment was missing");
                 return null;
             }
         } else {
-            log.debug(messageContext.getLogIDString()+" Attempted to check for Operation using null target endpoint URI");
+            log.debug(messageContext.getLogIDString() +
+                    " Attempted to check for Operation using null target endpoint URI");
             return null;
         }
     }

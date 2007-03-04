@@ -23,7 +23,6 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.InputStream;
 
@@ -34,7 +33,7 @@ public class TCPTransportTest extends TestCase {
 
     public void testTransportSender() throws AxisFault {
     }
-    
+
     public SOAPEnvelope createSOAPEnvelope(InputStream in) throws AxisFault {
         try {
             XMLStreamReader xmlreader =

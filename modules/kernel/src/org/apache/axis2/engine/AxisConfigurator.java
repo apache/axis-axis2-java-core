@@ -36,7 +36,7 @@ public interface AxisConfigurator {
 
     /**
      * Engages the global modules specified in the configuration
-     * 
+     *
      * @throws AxisFault
      */
     void engageGlobalModules() throws AxisFault;

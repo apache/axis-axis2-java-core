@@ -43,7 +43,8 @@ public class AddressingHelper {
         EndpointReference replyTo = messageContext.getReplyTo();
         if (replyTo == null) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug(messageContext.getLogIDString()+" isReplyRedirected: ReplyTo is null. Returning false");
+                log.debug(messageContext.getLogIDString() +
+                        " isReplyRedirected: ReplyTo is null. Returning false");
             }
             return false;
         } else {
@@ -63,7 +64,8 @@ public class AddressingHelper {
         EndpointReference faultTo = messageContext.getFaultTo();
         if (faultTo == null) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug(messageContext.getLogIDString()+" isReplyRedirected: FaultTo is null. Returning isReplyRedirected");
+                log.debug(messageContext.getLogIDString() +
+                        " isReplyRedirected: FaultTo is null. Returning isReplyRedirected");
             }
             return isReplyRedirected(messageContext);
         } else {
@@ -77,20 +79,24 @@ public class AddressingHelper {
      *
      * @return true if the fault should be sent to the FaultTo
      */
-    public static boolean shouldSendFaultToFaultTo(MessageContext messageContext){
+    public static boolean shouldSendFaultToFaultTo(MessageContext messageContext) {
         // there are some information  that the fault thrower wants to pass to the fault path.
         // Means that the fault is a ws-addressing one hence use the ws-addressing fault action.
-        Object faultInfoForHeaders = messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+        Object faultInfoForHeaders =
+                messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         // if the exception is due to a problem in the faultTo header itself, we can not use those
         // fault informatio to send the error. Try to send using replyTo, leave it to transport
         boolean doNotSendFaultUsingFaultTo = false;
         if (faultInfoForHeaders != null) {
-            String problemHeaderName = (String) ((Map) faultInfoForHeaders).get(AddressingConstants.Final.FAULT_HEADER_PROB_HEADER_QNAME);
-            doNotSendFaultUsingFaultTo = (problemHeaderName != null && (AddressingConstants.WSA_DEFAULT_PREFIX + ":" + AddressingConstants.WSA_FAULT_TO).equals(problemHeaderName));
+            String problemHeaderName = (String) ((Map) faultInfoForHeaders)
+                    .get(AddressingConstants.Final.FAULT_HEADER_PROB_HEADER_QNAME);
+            doNotSendFaultUsingFaultTo = (problemHeaderName != null && (AddressingConstants
+                    .WSA_DEFAULT_PREFIX + ":" + AddressingConstants.WSA_FAULT_TO)
+                    .equals(problemHeaderName));
         }
         return !doNotSendFaultUsingFaultTo;
     }
-    
+
     /**
      * Extract the parameter representing the Anonymous flag from the AxisOperation
      * and return the String value. Return the default of "optional" if not specified.
@@ -100,7 +106,8 @@ public class AddressingHelper {
     public static String getAnonymousParameterValue(AxisOperation axisOperation) {
         String value = "";
         if (axisOperation != null) {
-            value = Utils.getParameterValue(axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME));
+            value = Utils.getParameterValue(
+                    axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME));
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug("getAnonymousParameterValue: value: '" + value + "'");
             }
@@ -128,7 +135,8 @@ public class AddressingHelper {
             return;
         }
 
-        Parameter param = axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME);
+        Parameter param =
+                axisOperation.getParameter(AddressingConstants.WSAW_ANONYMOUS_PARAMETER_NAME);
         // If an existing parameter exists
         if (param != null) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
@@ -137,7 +145,8 @@ public class AddressingHelper {
             // and is not locked
             if (!param.isLocked()) {
                 if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                    log.debug("setAnonymousParameterValue: Parameter not locked. Setting value: " + value);
+                    log.debug("setAnonymousParameterValue: Parameter not locked. Setting value: " +
+                            value);
                 }
                 // set the value
                 param.setValue(value);
@@ -162,7 +171,8 @@ public class AddressingHelper {
                 // of the same name already exists and this should be dealt with by the outer
                 // if statement.
                 if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                    log.debug("setAnonymousParameterValue: addParameter failed: " + af.getMessage());
+                    log.debug(
+                            "setAnonymousParameterValue: addParameter failed: " + af.getMessage());
                 }
             }
         }

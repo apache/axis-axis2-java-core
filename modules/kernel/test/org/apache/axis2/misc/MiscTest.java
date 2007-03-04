@@ -30,8 +30,6 @@ public class MiscTest extends AbstractTestCase {
         super(testName);
     }
 
-    
-
 
     public void testAxisFault() {
         Exception e = new InvocationTargetException(new Exception());

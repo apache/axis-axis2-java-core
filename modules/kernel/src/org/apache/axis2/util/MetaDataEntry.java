@@ -25,8 +25,8 @@ import java.util.ArrayList;
 
 
 /**
- * An internal class for holding a set of information 
- * about an object.  
+ * An internal class for holding a set of information
+ * about an object.
  */
 public class MetaDataEntry implements Externalizable {
     // serialization identifier
@@ -85,7 +85,7 @@ public class MetaDataEntry implements Externalizable {
 
     /**
      * Get the class name
-     * 
+     *
      * @return the class name string
      */
     public String getClassName() {
@@ -95,8 +95,8 @@ public class MetaDataEntry implements Externalizable {
 
     /**
      * Set the class name
-     * 
-     * @param c      the class name string
+     *
+     * @param c the class name string
      */
     public void setClassName(String c) {
         className = c;
@@ -105,7 +105,7 @@ public class MetaDataEntry implements Externalizable {
 
     /**
      * Get the QName
-     * 
+     *
      * @return the QName based on the qnameAsString value
      */
     public QName getQName() {
@@ -120,7 +120,7 @@ public class MetaDataEntry implements Externalizable {
     /**
      * Set the QName
      *
-     * @param q      the QName
+     * @param q the QName
      */
     public void setQName(QName q) {
         if (q != null) {
@@ -133,7 +133,7 @@ public class MetaDataEntry implements Externalizable {
     /**
      * Set the QName
      *
-     * @param n      the QName as a string
+     * @param n the QName as a string
      */
     public void setQName(String n) {
         qnameAsString = n;
@@ -142,7 +142,7 @@ public class MetaDataEntry implements Externalizable {
 
     /**
      * Get the QName as a string
-     * 
+     *
      * @return the QName as a string
      */
     public String getQNameAsString() {
@@ -153,8 +153,8 @@ public class MetaDataEntry implements Externalizable {
     /**
      * This is a convenience method.
      * Returns the string that is used as a name.
-     * 
-     * @return the name 
+     *
+     * @return the name
      */
     public String getName() {
         return qnameAsString;
@@ -163,7 +163,7 @@ public class MetaDataEntry implements Externalizable {
 
     /**
      * Get the additional name associated with the object
-     * 
+     *
      * @return the additional name string
      */
     public String getExtraName() {
@@ -173,8 +173,8 @@ public class MetaDataEntry implements Externalizable {
 
     /**
      * Set the additional name associated with the object
-     * 
-     * @param c      the extra name string
+     *
+     * @param c the extra name string
      */
     public void setExtraName(String e) {
         extraName = e;
@@ -183,7 +183,7 @@ public class MetaDataEntry implements Externalizable {
 
     /**
      * Indicates whether the list is empty or not
-     * 
+     *
      * @return false for a non-empty list, true for an empty list
      */
     public boolean isListEmpty() {
@@ -197,7 +197,7 @@ public class MetaDataEntry implements Externalizable {
 
     /**
      * Get the list
-     * 
+     *
      * @return the array list
      */
     public ArrayList getList() {
@@ -207,8 +207,8 @@ public class MetaDataEntry implements Externalizable {
 
     /**
      * Set the list
-     * 
-     * @param L      the ArrayList of MetaDataEntry objects
+     *
+     * @param L the ArrayList of MetaDataEntry objects
      */
     public void setList(ArrayList L) {
         list = L;
@@ -216,8 +216,8 @@ public class MetaDataEntry implements Externalizable {
 
     /**
      * Add to the list
-     * 
-     * @param e      the MetaDataEntry object to add to the list
+     *
+     * @param e the MetaDataEntry object to add to the list
      */
     public void addToList(MetaDataEntry e) {
         if (list == null) {
@@ -234,17 +234,15 @@ public class MetaDataEntry implements Externalizable {
     }
 
 
-
-
-    // message strings 
-    private static final String UNSUPPORTED_SUID  = "Serialization version ID is not supported.";
+    // message strings
+    private static final String UNSUPPORTED_SUID = "Serialization version ID is not supported.";
     private static final String UNSUPPORTED_REVID = "Revision ID is not supported.";
 
 
     /**
      * Save the contents of this object
      *
-     * @param out    The stream to write the object contents to
+     * @param out The stream to write the object contents to
      * @throws IOException
      */
     public void writeExternal(ObjectOutput out) throws IOException {
@@ -273,13 +271,13 @@ public class MetaDataEntry implements Externalizable {
 
 
     /**
-     * Restore the contents of the object that was 
-     * previously saved. 
+     * Restore the contents of the object that was
+     * previously saved.
      * <p/>
      * NOTE: The field data must read back in the same order and type
      * as it was written.
      *
-     * @param in    The stream to read the object contents from 
+     * @param in The stream to read the object contents from
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -289,7 +287,7 @@ public class MetaDataEntry implements Externalizable {
         long suid = in.readLong();
 
         // revision ID
-        int  revID = in.readInt();
+        int revID = in.readInt();
 
         // make sure the object data is in a version we can handle
         if (suid != serialVersionUID) {
@@ -300,7 +298,6 @@ public class MetaDataEntry implements Externalizable {
         if (revID != REVISION_1) {
             throw new ClassNotFoundException(UNSUPPORTED_REVID);
         }
-
 
         //---------------------------------------------------------
         // various simple fields

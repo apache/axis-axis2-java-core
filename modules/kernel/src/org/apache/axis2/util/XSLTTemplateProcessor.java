@@ -61,7 +61,7 @@ public class XSLTTemplateProcessor {
     /**
      * Parses an XML stream with an XSL stream
      *
-     * @param out       Stream to write the output
+     * @param out         Stream to write the output
      * @param doc
      * @param transformer
      * @throws TransformerFactoryConfigurationError
@@ -77,7 +77,6 @@ public class XSLTTemplateProcessor {
         transformer.transform(xmlSource, result);
 
     }
-
 
 
     /**
@@ -131,19 +130,19 @@ public class XSLTTemplateProcessor {
             throws TransformerFactoryConfigurationError, TransformerException {
         Source xsltSource = new StreamSource(xsltStream);
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        if(pretty) {
+        if (pretty) {
             try {
                 transformerFactory.setAttribute("indent-number", new Integer(2));
             } catch (Exception e) {
             }
         }
-        if (customResolver!=null){
-             transformerFactory.setURIResolver(customResolver);
+        if (customResolver != null) {
+            transformerFactory.setURIResolver(customResolver);
         }
-       
+
         Transformer transformer = transformerFactory
                 .newTransformer(xsltSource);
-        if(pretty) {
+        if (pretty) {
             try {
                 transformer.setOutputProperty("{http://xml.apache.org/xalan}indent-amount", "2");
             } catch (Exception e) {

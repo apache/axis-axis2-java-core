@@ -55,10 +55,11 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
 
             processParameters(itr, axisServiceGroup, axisServiceGroup.getParent());
 
-            Iterator moduleConfigs = serviceElement.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
+            Iterator moduleConfigs =
+                    serviceElement.getChildrenWithName(new QName(TAG_MODULE_CONFIG));
 
             processServiceModuleConfig(moduleConfigs, axisServiceGroup.getParent(),
-                    axisServiceGroup);
+                                       axisServiceGroup);
 
             // processing service-wide modules which required to engage globally
             Iterator moduleRefs = serviceElement.getChildrenWithName(new QName(TAG_MODULE));

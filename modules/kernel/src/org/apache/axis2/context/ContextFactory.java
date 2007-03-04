@@ -22,6 +22,7 @@ import org.apache.axis2.description.AxisServiceGroup;
 *
 *
 */
+
 public class ContextFactory {
 
     public static MessageContext createMessageContext(
@@ -41,8 +42,9 @@ public class ContextFactory {
                                                       AxisService service) throws AxisFault {
         return serviceGroupContext.getServiceContext(service);
     }
+
     public static OperationContext createOperationContext(AxisOperation axisOperation,
-                                                          ServiceContext serviceContext){
-        return new OperationContext(axisOperation,serviceContext);
+                                                          ServiceContext serviceContext) {
+        return new OperationContext(axisOperation, serviceContext);
     }
 }

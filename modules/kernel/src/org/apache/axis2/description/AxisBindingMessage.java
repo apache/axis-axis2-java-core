@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AxisBindingMessage extends AxisDescription{
+public class AxisBindingMessage extends AxisDescription {
 
     private String name;
 

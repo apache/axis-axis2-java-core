@@ -29,7 +29,7 @@ public class InOutAxisOperation extends TwoChannelAxisOperation {
     public InOutAxisOperation() {
         super();
         //setup a temporary name
-        QName tmpName = new QName(this.getClass().getName()+"_"+UUIDGenerator.getUUID());
+        QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
         this.setName(tmpName);
     }
 

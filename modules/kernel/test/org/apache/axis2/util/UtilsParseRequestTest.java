@@ -30,39 +30,40 @@ public class UtilsParseRequestTest extends AbstractTestCase {
     public void testfailure() throws Exception {
         fail("here");
     }
+
     public void testService() throws Exception {
         assertParsesTo("http://localhost:8081/services/System",
-                "System");
+                       "System");
     }
 
     public void testServiceCalledServices() throws Exception {
         assertParsesTo("http://localhost:8081/services/services",
-                "services");
+                       "services");
     }
 
     public void testServiceWithQuery() throws Exception {
         assertParsesTo("http://localhost:8081/services/System?system=ecb2f",
-                "System");
+                       "System");
     }
 
     public void testServiceWithDoubleQuery() throws Exception {
         assertParsesTo("http://localhost:8081/services/System?system=ecb2f?job=3",
-                "System");
+                       "System");
     }
 
     public void testOperation() throws Exception {
         assertParsesTo("http://localhost:8081/services/System/operation",
-                "System", "operation");
+                       "System", "operation");
     }
 
     public void testOperationWithQuery() throws Exception {
         assertParsesTo("http://localhost:8081/services/System/operation?system=ecb2f",
-                "System","operation");
+                       "System", "operation");
     }
 
     public void testOperationServiceCalledServices() throws Exception {
         assertParsesTo("http://localhost:8081/services/services/operation",
-                "services","operation");
+                       "services", "operation");
     }
 
     private void assertParsesTo(String path, String service) {
@@ -71,7 +72,7 @@ public class UtilsParseRequestTest extends AbstractTestCase {
 
     private void assertParsesTo(String path, String service, String operation) {
         String[] strings = Utils.parseRequestURLForServiceAndOperation(path, "/axis2/services");
-        assertEquals(service,strings[0]);
+        assertEquals(service, strings[0]);
         assertEquals(operation, strings[1]);
     }
 

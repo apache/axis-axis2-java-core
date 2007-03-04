@@ -43,7 +43,7 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
             throws AxisFault {
         String action = messageContext.getSoapAction();
 
-        if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
             log.debug(messageContext.getLogIDString() +
                     " Checking for Operation using SOAPAction : " + action);
         }
@@ -75,8 +75,9 @@ public class SOAPActionBasedDispatcher extends AbstractDispatcher {
      * @see org.apache.axis2.engine.AbstractDispatcher#findService(org.apache.axis2.context.MessageContext)
      */
     public AxisService findService(MessageContext messageContext) throws AxisFault {
-        if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-        log.debug(messageContext.getLogIDString()+" Checking for Service using SOAPAction is a TODO item");
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug(messageContext.getLogIDString() +
+                    " Checking for Service using SOAPAction is a TODO item");
         }
         return null;
     }

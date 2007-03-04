@@ -39,7 +39,7 @@ public class SpeakingHandler extends AbstractHandler implements Handler {
     public InvocationResponse invoke(MessageContext msgContext) throws
             AxisFault {
         log.info("I am " + message + " Handler Running :)");
-        return InvocationResponse.CONTINUE;        
+        return InvocationResponse.CONTINUE;
     }
 
     public void revoke(MessageContext msgContext) {

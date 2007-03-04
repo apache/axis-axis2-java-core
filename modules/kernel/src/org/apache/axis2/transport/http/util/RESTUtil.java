@@ -68,9 +68,9 @@ public class RESTUtil {
             throw new AxisFault(e);
         } catch (IOException e) {
             throw new AxisFault(e);
-        } finally{
+        } finally {
             msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
-                                               HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+                                   HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
         }
         return invokeAxisEngine(msgContext);
     }
@@ -109,9 +109,9 @@ public class RESTUtil {
         }
         catch (IOException e) {
             throw new AxisFault(e);
-        } finally{
+        } finally {
             msgContext.setProperty(Constants.Configuration.MESSAGE_TYPE,
-                                               HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
+                                   HTTPConstants.MEDIA_TYPE_APPLICATION_XML);
         }
         return invokeAxisEngine(msgContext);
     }

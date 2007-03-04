@@ -18,27 +18,28 @@ package org.apache.axis2.dataretrieval;
 import org.apache.axis2.context.MessageContext;
 
 /**
- * <p>AxisDataLocator interface defines getData API for retrieving data particularly 
- * metadata like WSDL, Policy, Schema. Web Service engines that have different methods in 
+ * <p>AxisDataLocator interface defines getData API for retrieving data particularly
+ * metadata like WSDL, Policy, Schema. Web Service engines that have different methods in
  * storing metadata or different types of data to retrieve may code their version of
  * Data Locator(s)by implementing the AxisDataLocator interface. Axis 2 support
- * Data Locator plugin by configuring in Axis2.xml or services.xml. </p>  
+ * Data Locator plugin by configuring in Axis2.xml or services.xml. </p>
  */
 
 public interface AxisDataLocator {
-    
+
 
     /**
      * Retrieves and returns data based on the specified request.
-     * 
+     *
      * @param request    The {@link DataRetrievalRequest} allow to specify parameters
-     *            about the request, and additional information to process the
-     *            request.
+     *                   about the request, and additional information to process the
+     *                   request.
      * @param msgContext The {@link MessageContext} from the original request.
      * @return {@link Data}[] for the request.
      * @throws DataRetrievalException
      */
-    
-    public Data[] getData(DataRetrievalRequest request, MessageContext msgContext) throws DataRetrievalException;
-    
+
+    public Data[] getData(DataRetrievalRequest request, MessageContext msgContext)
+            throws DataRetrievalException;
+
 }

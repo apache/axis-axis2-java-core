@@ -104,7 +104,7 @@ public class RB {
      * @param caller The calling object. This is used to get the package name
      *               to further construct the basename as well as to get the proper ClassLoader
      * @param name   The name of the property file without the ".properties" extension
-     * @param locale  The locale
+     * @param locale The locale
      */
     public RB(Object caller, String name, Locale locale) throws MissingResourceException {
         ClassLoader cl = null;
@@ -214,7 +214,8 @@ public class RB {
      * @param arg2 The argument to place in variable {1}
      * @return The message
      */
-    public String getString(String key, Object arg0, Object arg1, Object arg2) throws MissingResourceException {
+    public String getString(String key, Object arg0, Object arg1, Object arg2)
+            throws MissingResourceException {
         Object[] o = new Object[3];
         o[0] = arg0;
         o[1] = arg1;
@@ -243,7 +244,7 @@ public class RB {
         if (msg == null) {
             throw new MissingResourceException("Cannot find resource key \"" + key +
                     "\" in base name " + basePropertyFileName,
-                    basePropertyFileName, key);
+                                               basePropertyFileName, key);
         }
 
         msg = MessageFormat.format(msg, array);
@@ -307,8 +308,9 @@ public class RB {
             if (country != null) {
 
                 if (variant != null) {
-                    props = merge(props, loadProperties(basename + "_" + language + "_" + country + "_" + variant +
-                            PROPERTY_EXT, loader));
+                    props = merge(props, loadProperties(
+                            basename + "_" + language + "_" + country + "_" + variant +
+                                    PROPERTY_EXT, loader));
                 }
                 props = merge(props, loadProperties(basename + "_" + language + "_" + country +
                         PROPERTY_EXT, loader));
@@ -462,7 +464,8 @@ public class RB {
      * @param arg3   The argument to place in variable {3}
      * @return The formatted message
      */
-    public static String getString(Object caller, String key, Object arg0, Object arg1, Object arg2, Object arg3)
+    public static String getString(Object caller, String key, Object arg0, Object arg1, Object arg2,
+                                   Object arg3)
             throws MissingResourceException {
         Object[] o = new Object[4];
         o[0] = arg0;
@@ -485,7 +488,8 @@ public class RB {
      * @param arg4   The argument to place in variable {4}
      * @return Returns the formatted message.
      */
-    public static String getString(Object caller, String key, Object arg0, Object arg1, Object arg2, Object arg3, Object arg4)
+    public static String getString(Object caller, String key, Object arg0, Object arg1, Object arg2,
+                                   Object arg3, Object arg4)
             throws MissingResourceException {
         Object[] o = new Object[5];
         o[0] = arg0;
@@ -502,7 +506,7 @@ public class RB {
      *
      * @param caller The calling object, used to get the package name and class loader
      * @param key    The resource key
-     * @param args  An array of objects to place in corresponding variables
+     * @param args   An array of objects to place in corresponding variables
      * @return Returns the formatted message.
      */
     public static String getString(Object caller, String key, Object[] args)
@@ -550,7 +554,8 @@ public class RB {
      * @param arg1   The argument to place in variable {1}
      * @return The formatted message
      */
-    public static String getString(Object caller, Locale locale, String key, Object arg0, Object arg1)
+    public static String getString(Object caller, Locale locale, String key, Object arg0,
+                                   Object arg1)
             throws MissingResourceException {
         Object[] o = new Object[2];
         o[0] = arg0;
@@ -569,7 +574,8 @@ public class RB {
      * @param arg2   The argument to place in variable {2}
      * @return The formatted message
      */
-    public static String getString(Object caller, Locale locale, String key, Object arg0, Object arg1, Object arg2)
+    public static String getString(Object caller, Locale locale, String key, Object arg0,
+                                   Object arg1, Object arg2)
             throws MissingResourceException {
         Object[] o = new Object[3];
         o[0] = arg0;
@@ -590,7 +596,8 @@ public class RB {
      * @param arg3   The argument to place in variable {3}
      * @return The formatted message
      */
-    public static String getString(Object caller, Locale locale, String key, Object arg0, Object arg1, Object arg2, Object arg3)
+    public static String getString(Object caller, Locale locale, String key, Object arg0,
+                                   Object arg1, Object arg2, Object arg3)
             throws MissingResourceException {
         Object[] o = new Object[4];
         o[0] = arg0;
@@ -612,7 +619,8 @@ public class RB {
      * @param arg3   The argument to place in variable {3}
      * @return Returns the formatted message.
      */
-    public static String getString(Object caller, Locale locale, String key, Object arg0, Object arg1, Object arg2, Object arg3, Object arg4)
+    public static String getString(Object caller, Locale locale, String key, Object arg0,
+                                   Object arg1, Object arg2, Object arg3, Object arg4)
             throws MissingResourceException {
         Object[] o = new Object[5];
         o[0] = arg0;
@@ -629,7 +637,7 @@ public class RB {
      * @param caller The calling object, used to get the package name and class loader
      * @param locale The locale
      * @param key    The resource key
-     * @param args  An array of objects to place in corresponding variables
+     * @param args   An array of objects to place in corresponding variables
      * @return Returns the formatted message.
      */
     public static String getString(Object caller, Locale locale, String key, Object[] args)
@@ -652,7 +660,7 @@ public class RB {
                 curClass = (Class) caller;
             } else {
                 curClass = caller.getClass();
-        }
+            }
         }
 
         while (msg == null) {

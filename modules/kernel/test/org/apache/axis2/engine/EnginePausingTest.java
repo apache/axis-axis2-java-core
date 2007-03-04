@@ -23,9 +23,17 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ContextFactory;
-import org.apache.axis2.description.*;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.AxisBinding;
+import org.apache.axis2.description.AxisBindingOperation;
+import org.apache.axis2.description.AxisEndpoint;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
@@ -103,7 +111,7 @@ public class EnginePausingTest extends TestCase {
             }
         });
         service.addOperation(axisOp);
-        
+
         AxisEndpoint endpoint = new AxisEndpoint();
         endpoint.setName("NullService");
 
@@ -115,7 +123,7 @@ public class EnginePausingTest extends TestCase {
         endpoint.setBinding(binding);
         service.addEndpoint(endpoint.getName(), endpoint);
         service.setEndpointName(endpoint.getName());
-        
+
         service.mapActionToOperation(operationName.getLocalPart(), axisOp);
 
         mc = ContextFactory.createMessageContext(configConetxt);
@@ -181,14 +189,14 @@ public class EnginePausingTest extends TestCase {
         assertEquals(14, executedHandlers.size());
         for (int i = 0; i < 14; i++) {
             assertEquals(((Integer) executedHandlers.get(i)).intValue(),
-                    i + 1);
+                         i + 1);
         }
         engine.resume(mc);
 
         assertEquals(27, executedHandlers.size());
         for (int i = 15; i < 27; i++) {
             assertEquals(((Integer) executedHandlers.get(i)).intValue(),
-                    i + 1);
+                         i + 1);
         }
 
     }

@@ -79,7 +79,8 @@ public class JMSConstants {
     /**
      * The name of the element which wraps non SOAP/XML content into a SOAP envelope
      */
-    public static final QName DEFAULT_WRAPPER = new QName(Constants.AXIS2_NAMESPACE_URI, "jmsMessage");
+    public static final QName DEFAULT_WRAPPER =
+            new QName(Constants.AXIS2_NAMESPACE_URI, "jmsMessage");
 
     /**
      * The local (Axis2) JMS connection factory name of the default connection

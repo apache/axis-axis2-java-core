@@ -100,7 +100,7 @@ public class ArchiveReader implements DeploymentConstants {
             return serviceList;
         } else if (TAG_SERVICE_GROUP.equals(elementName)) {
             ServiceGroupBuilder groupBuilder = new ServiceGroupBuilder(rootElement, wsdlServices,
-                    configCtx);
+                                                                       configCtx);
             return groupBuilder.populateServiceGroup(axisServiceGroup);
         }
         throw new AxisFault("Invalid services.xml found");
@@ -135,7 +135,8 @@ public class ArchiveReader implements DeploymentConstants {
                     if (entry.getName().equalsIgnoreCase(SERVICES_XML)) {
                         axisServiceGroup.setServiceGroupName(
                                 DescriptionBuilder.getShortFileName(currentFile.getName()));
-                        return buildServiceGroup(zin, currentFile, axisServiceGroup, wsdls, configCtx);
+                        return buildServiceGroup(zin, currentFile, axisServiceGroup, wsdls,
+                                                 configCtx);
                     }
                 }
                 throw new DeploymentException(
@@ -172,10 +173,12 @@ public class ArchiveReader implements DeploymentConstants {
                     return buildServiceGroup(in, currentFile, axisServiceGroup, wsdls, configCtx);
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(
-                            Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND, e.getMessage()));
+                            Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND,
+                                                e.getMessage()));
                 } catch (XMLStreamException e) {
                     throw new DeploymentException(
-                            Messages.getMessage(DeploymentErrorMsgs.XML_STREAM_EXCEPTION, e.getMessage()));
+                            Messages.getMessage(DeploymentErrorMsgs.XML_STREAM_EXCEPTION,
+                                                e.getMessage()));
                 } finally {
                     if (in != null) {
                         try {
@@ -199,8 +202,10 @@ public class ArchiveReader implements DeploymentConstants {
      * @return Returns AxisService.
      * @throws DeploymentException
      */
-    private AxisService processWSDLFile(WSDLToAxisServiceBuilder axisServiceBuilder, File serviceArchiveFile,
-                                        boolean isArchive, InputStream in, String baseURI) throws DeploymentException {
+    private AxisService processWSDLFile(WSDLToAxisServiceBuilder axisServiceBuilder,
+                                        File serviceArchiveFile,
+                                        boolean isArchive, InputStream in, String baseURI)
+            throws DeploymentException {
         try {
 
             if (serviceArchiveFile != null && isArchive) {
@@ -213,7 +218,8 @@ public class ArchiveReader implements DeploymentConstants {
                 } else if (axisServiceBuilder instanceof WSDL20ToAxisServiceBuilder) {
                     // trying to use the jar scheme as the base URI. I think this can be used to handle
                     // wsdl 1.1 as well without using a custome URI resolver. Need to look at it later.
-                    axisServiceBuilder.setBaseUri("jar:file:/"+ serviceArchiveFile.getAbsolutePath() + "!/" + baseURI);
+                    axisServiceBuilder.setBaseUri(
+                            "jar:file:/" + serviceArchiveFile.getAbsolutePath() + "!/" + baseURI);
                 }
             } else {
                 if (serviceArchiveFile != null) {
@@ -224,7 +230,7 @@ public class ArchiveReader implements DeploymentConstants {
             return axisServiceBuilder.populateService();
         } catch (AxisFault axisFault) {
             log.info("Trouble processing wsdl file :" + axisFault.getMessage());
-            if(log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug(axisFault);
             }
             return null;
@@ -252,7 +258,8 @@ public class ArchiveReader implements DeploymentConstants {
                     if (!metaInfFolder.exists()) {
                         throw new DeploymentException(
                                 Messages.getMessage(
-                                        DeploymentErrorMsgs.META_INF_MISSING, serviceFile.getName()));
+                                        DeploymentErrorMsgs.META_INF_MISSING,
+                                        serviceFile.getName()));
                     }
                 }
 
@@ -299,21 +306,29 @@ public class ArchiveReader implements DeploymentConstants {
                         // lets check the namespace of the root element and decide. But since we are
                         // using axiom (dude, you are becoming handy here :)), we will not build the
                         // whole thing.
-                        OMNamespace documentElementNS = ((OMElement)XMLUtils.toOM(in)).getNamespace();
+                        OMNamespace documentElementNS =
+                                ((OMElement) XMLUtils.toOM(in)).getNamespace();
                         if (documentElementNS != null) {
                             WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
-                            if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getNamespaceURI())) {
+                            if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI
+                                    .equals(documentElementNS.getNamespaceURI())) {
                                 // we have a WSDL 2.0 document here.
-                                wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(new ByteArrayInputStream(out.toByteArray()), null, null);
+                                wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(
+                                        new ByteArrayInputStream(out.toByteArray()), null, null);
                                 wsdlToAxisServiceBuilder.setBaseUri(entryName);
                             } else if (Constants.NS_URI_WSDL11.
                                     equals(documentElementNS.getNamespaceURI())) {
-                                wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(new ByteArrayInputStream(out.toByteArray()), null, null);
+                                wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(
+                                        new ByteArrayInputStream(out.toByteArray()), null, null);
                             } else {
                                 new DeploymentException(Messages.getMessage("invalidWSDLFound"));
                             }
-                            AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, serviceFile, true, new ByteArrayInputStream(out.toByteArray()), entry.getName());
-                            if(service != null) {
+                            AxisService service = processWSDLFile(wsdlToAxisServiceBuilder,
+                                                                  serviceFile, true,
+                                                                  new ByteArrayInputStream(
+                                                                          out.toByteArray()),
+                                                                  entry.getName());
+                            if (service != null) {
                                 servicesMap.put(service.getName(), service);
                             }
                         }
@@ -340,8 +355,8 @@ public class ArchiveReader implements DeploymentConstants {
         return servicesMap;
     }
 
-    public AxisService getAxisServiceFromWsdl(InputStream in ,
-                                               ClassLoader loader, String wsdlUrl) throws Exception{
+    public AxisService getAxisServiceFromWsdl(InputStream in,
+                                              ClassLoader loader, String wsdlUrl) throws Exception {
 //         ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 
         // now the question is which version of WSDL file this archive contains.
@@ -351,13 +366,17 @@ public class ArchiveReader implements DeploymentConstants {
         OMElement element = (OMElement) XMLUtils.toOM(in);
         OMNamespace documentElementNS = element.getNamespace();
         if (documentElementNS != null) {
-            WSDL11ToAxisServiceBuilder wsdlToAxisServiceBuilder ;
+            WSDL11ToAxisServiceBuilder wsdlToAxisServiceBuilder;
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             element.serialize(out);
             if (Constants.NS_URI_WSDL11.
                     equals(documentElementNS.getNamespaceURI())) {
-                wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(new ByteArrayInputStream(out.toByteArray()), null, null);
-                wsdlToAxisServiceBuilder.setCustomWSLD4JResolver(new WarBasedWSDLLocator(wsdlUrl,loader,new ByteArrayInputStream(out.toByteArray())));
+                wsdlToAxisServiceBuilder = new WSDL11ToAxisServiceBuilder(
+                        new ByteArrayInputStream(out.toByteArray()), null, null);
+                wsdlToAxisServiceBuilder.setCustomWSLD4JResolver(new WarBasedWSDLLocator(wsdlUrl,
+                                                                                         loader,
+                                                                                         new ByteArrayInputStream(
+                                                                                                 out.toByteArray())));
                 wsdlToAxisServiceBuilder.setCustomResolver(
                         new WarFileBasedURIResolver(loader));
                 return wsdlToAxisServiceBuilder.populateService();
@@ -368,7 +387,8 @@ public class ArchiveReader implements DeploymentConstants {
         return null;
     }
 
-    public void processFilesInFolder(File folder, HashMap servicesMap) throws FileNotFoundException, XMLStreamException, DeploymentException {
+    public void processFilesInFolder(File folder, HashMap servicesMap)
+            throws FileNotFoundException, XMLStreamException, DeploymentException {
         File files[] = folder.listFiles();
         for (int i = 0; i < files.length; i++) {
             File file1 = files[i];
@@ -380,10 +400,11 @@ public class ArchiveReader implements DeploymentConstants {
                 // lets check the namespace of the root element and decide. But since we are
                 // using axiom (dude, you are becoming handy here :)), we will not build the
                 // whole thing.
-                OMNamespace documentElementNS = ((OMElement)XMLUtils.toOM(in)).getNamespace();
+                OMNamespace documentElementNS = ((OMElement) XMLUtils.toOM(in)).getNamespace();
                 if (documentElementNS != null) {
                     WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
-                    if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI.equals(documentElementNS.getNamespaceURI())) {
+                    if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI
+                            .equals(documentElementNS.getNamespaceURI())) {
                         // we have a WSDL 2.0 document here.
                         in2 = new FileInputStream(file1);
                         wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(in2, null, null);
@@ -396,7 +417,8 @@ public class ArchiveReader implements DeploymentConstants {
                     }
 
                     FileInputStream in3 = new FileInputStream(file1);
-                    AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, file1, false, in2, file1.toURI().toString());
+                    AxisService service = processWSDLFile(wsdlToAxisServiceBuilder, file1, false,
+                                                          in2, file1.toURI().toString());
                     try {
                         if (in2 != null) {
                             in2.close();
@@ -405,7 +427,7 @@ public class ArchiveReader implements DeploymentConstants {
                     } catch (IOException e) {
                         log.info(e);
                     }
-                    if(service != null) {
+                    if (service != null) {
                         servicesMap.put(service.getName(), service);
                     }
                 }
@@ -451,7 +473,8 @@ public class ArchiveReader implements DeploymentConstants {
                 if (!moduleXMLFound) {
                     throw new DeploymentException(
                             Messages.getMessage(
-                                    DeploymentErrorMsgs.MODULE_XML_MISSING, deploymentFile.getAbsolutePath()));
+                                    DeploymentErrorMsgs.MODULE_XML_MISSING,
+                                    deploymentFile.getAbsolutePath()));
                 }
             } catch (Exception e) {
                 throw new DeploymentException(e);
@@ -459,7 +482,9 @@ public class ArchiveReader implements DeploymentConstants {
         } else {
             File file = new File(deploymentFile.getAbsolutePath(), MODULE_XML);
 
-            if (file.exists() || (file = new File(deploymentFile.getAbsolutePath(), MODULE_XML.toLowerCase())).exists()) {
+            if (file.exists() ||
+                    (file = new File(deploymentFile.getAbsolutePath(), MODULE_XML.toLowerCase()))
+                            .exists()) {
                 InputStream in = null;
                 try {
                     in = new FileInputStream(file);
@@ -472,7 +497,8 @@ public class ArchiveReader implements DeploymentConstants {
                     builder.populateModule();
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(
-                            Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND, e.getMessage()));
+                            Messages.getMessage(DeploymentErrorMsgs.FILE_NOT_FOUND,
+                                                e.getMessage()));
                 } finally {
                     if (in != null) {
                         try {
@@ -485,7 +511,8 @@ public class ArchiveReader implements DeploymentConstants {
             } else {
                 throw new DeploymentException(
                         Messages.getMessage(
-                                DeploymentErrorMsgs.MODULE_XML_MISSING, deploymentFile.getAbsolutePath()));
+                                DeploymentErrorMsgs.MODULE_XML_MISSING,
+                                deploymentFile.getAbsolutePath()));
             }
         }
     }

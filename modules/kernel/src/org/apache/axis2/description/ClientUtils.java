@@ -36,7 +36,8 @@ public class ClientUtils {
 
     public static synchronized TransportOutDescription inferOutTransport(AxisConfiguration ac,
                                                                          EndpointReference epr,
-                                                                         MessageContext msgctx) throws AxisFault {
+                                                                         MessageContext msgctx)
+            throws AxisFault {
         String transportURI = (String) msgctx.getProperty(Constants.Configuration.TRANSPORT_URL);
         if (transportURI != null && !"".equals(transportURI)) {
             int index = transportURI.indexOf(':');
@@ -74,7 +75,8 @@ public class ClientUtils {
 
     public static synchronized TransportInDescription inferInTransport(AxisConfiguration ac,
                                                                        Options options,
-                                                                       MessageContext msgCtxt) throws AxisFault {
+                                                                       MessageContext msgCtxt)
+            throws AxisFault {
         String listenerTransportProtocol = options.getTransportInProtocol();
         if (listenerTransportProtocol == null) {
             EndpointReference replyTo = msgCtxt.getReplyTo();
@@ -102,7 +104,7 @@ public class ClientUtils {
                     // TODO : User should not be mandated to give an IN transport. If it is not given, we should
                     // ask from the ListenerManager to give any available transport for this client.
                     throw new AxisFault(Messages.getMessage("unknownTransport",
-                            listenerTransportProtocol));
+                                                            listenerTransportProtocol));
                 }
                 if (!listenerManager.isListenerRunning(transportIn.getName().getLocalPart())) {
                     listenerManager.addListener(transportIn, false);

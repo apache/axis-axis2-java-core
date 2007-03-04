@@ -41,8 +41,8 @@ public interface DeploymentConstants {
     String TAG_PARAMETER = "parameter";
     String TAG_MAPPING = "mapping";
     String TAG_PACKAGE_NAME = "packageName";
-    String TAG_QNAME= "qName";
-    String TAG_PACKAGE2QNAME= "packageMapping";
+    String TAG_QNAME = "qName";
+    String TAG_PACKAGE2QNAME = "packageMapping";
     String TAG_MODULE = "module";
     String TAG_MODULE_CONFIG = "moduleConfig";
     String TAG_MESSAGE = "message";
@@ -69,11 +69,13 @@ public interface DeploymentConstants {
     String TAG_TRANSPORT = "transport";
     String TAG_MEP = "mep";
     String TAG_DEFAULT_MODULE_VERSION = "defaultModuleVersions";
-    String TAG_CLUSTER = "cluster"; 
-    String TAG_MESSAGE_BUILDERS = "messageBuilders"; //used to add pluggable support for diffrent wire formats
+    String TAG_CLUSTER = "cluster";
+    String TAG_MESSAGE_BUILDERS =
+            "messageBuilders"; //used to add pluggable support for diffrent wire formats
     String TAG_MESSAGE_BUILDER = "messageBuilder";
     String TAG_CONTENT_TYPE = "contentType";
-    String TAG_MESSAGE_FORMATTERS = "messageFormatters"; //used to add pluggable support for diffrent wire formats
+    String TAG_MESSAGE_FORMATTERS =
+            "messageFormatters"; //used to add pluggable support for diffrent wire formats
     String TAG_MESSAGE_FORMATTER = "messageFormatter";
 
     String TAG_FLOW_IN = "InFlow";         // inflow start tag
@@ -95,8 +97,8 @@ public interface DeploymentConstants {
     String TAG_NAMESPACES = "namespaces";
 
     //Deployer related cons
-    String DIRECTORY ="directory";
-    String EXTENSION ="extension";
+    String DIRECTORY = "directory";
+    String EXTENSION = "extension";
     String DEPLOYER = "deployer";
 
     // for parameters

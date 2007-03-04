@@ -17,11 +17,9 @@
 package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.ObjectStateUtils;
 
-import javax.xml.namespace.QName;
 import java.io.Externalizable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,70 +29,63 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-public class ObjectSaveTest extends TestCase
-{
+public class ObjectSaveTest extends TestCase {
     private String testArg = null;
 
     // simple constructor needed for nested class Externalizable interface
-    public ObjectSaveTest()
-    {
+    public ObjectSaveTest() {
     }
 
-    public ObjectSaveTest(String arg0)
-    {
+    public ObjectSaveTest(String arg0) {
         super(arg0);
         testArg = new String(arg0);
     }
 
 
-    protected void setUp() throws Exception 
-    {
+    protected void setUp() throws Exception {
         //org.apache.log4j.BasicConfigurator.configure();
     }
 
 
-    public void testObjectSerializable() throws Exception 
-    {
-        File    theFile     = null;
-        String  theFilename = null;
-        boolean saved       = false;
-        boolean restored    = false;
-        boolean done        = false;
+    public void testObjectSerializable() throws Exception {
+        File theFile = null;
+        String theFilename = null;
+        boolean saved = false;
+        boolean restored = false;
+        boolean done = false;
 
         System.out.println("ObjectSaveTest:testObjectSerializable():  BEGIN ---------------");
 
         // ---------------------------------------------------------
         // setup an object to use
         // ---------------------------------------------------------
-        MetaDataEntry obj = new MetaDataEntry("object_1","object_1");
+        MetaDataEntry obj = new MetaDataEntry("object_1", "object_1");
 
         // ---------------------------------------------------------
         // setup a temporary file to use
         // ---------------------------------------------------------
-        try
-        {
-            theFile = File.createTempFile("objectTest",null);
+        try {
+            theFile = File.createTempFile("objectTest", null);
             theFilename = theFile.getName();
-            System.out.println("ObjectSaveTest:testObjectSerializable(): temp file = ["+theFilename+"]");
+            System.out.println(
+                    "ObjectSaveTest:testObjectSerializable(): temp file = [" + theFilename + "]");
         }
-        catch (Exception ex)
-        {
-            System.out.println("ObjectSaveTest:testObjectSerializable(): error creating temp file = ["+ex.getMessage()+"]");
+        catch (Exception ex) {
+            System.out.println(
+                    "ObjectSaveTest:testObjectSerializable(): error creating temp file = [" +
+                            ex.getMessage() + "]");
             theFile = null;
         }
 
-        if (theFile != null)
-        {
+        if (theFile != null) {
             // ---------------------------------------------------------
             // save to the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an output stream to a physical file
                 FileOutputStream outStream = new FileOutputStream(theFile);
 
@@ -114,14 +105,17 @@ public class ObjectSaveTest extends TestCase
                 outStream.close();
 
                 saved = true;
-                System.out.println("ObjectSaveTest:testObjectSerializable(): ....save operation completed.....");
+                System.out.println(
+                        "ObjectSaveTest:testObjectSerializable(): ....save operation completed.....");
 
                 long filesize = theFile.length();
-                System.out.println("ObjectSaveTest:testObjectSerializable(): file size after save ["+filesize+"]   temp file = ["+theFilename+"]");
+                System.out.println(
+                        "ObjectSaveTest:testObjectSerializable(): file size after save [" +
+                                filesize + "]   temp file = [" + theFilename + "]");
             }
-            catch (Exception ex2)
-            {
-                System.out.println("ObjectSaveTest:testObjectSerializable(): error during save ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println("ObjectSaveTest:testObjectSerializable(): error during save [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -130,8 +124,7 @@ public class ObjectSaveTest extends TestCase
             // ---------------------------------------------------------
             // restore from the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an input stream to the file
                 FileInputStream inStream = new FileInputStream(theFile);
 
@@ -142,17 +135,20 @@ public class ObjectSaveTest extends TestCase
                 // try to restore the options
                 System.out.println("ObjectSaveTest:testObjectSerializable(): restoring .....");
                 restored = false;
-                MetaDataEntry restored_obj = (MetaDataEntry) ObjectStateUtils.readObject(inObjStream, "testObject:serializable");
+                MetaDataEntry restored_obj = (MetaDataEntry) ObjectStateUtils
+                        .readObject(inObjStream, "testObject:serializable");
                 inObjStream.close();
                 inStream.close();
 
                 restored = true;
-                System.out.println("ObjectSaveTest:testObjectSerializable(): ....restored operation completed.....");
+                System.out.println(
+                        "ObjectSaveTest:testObjectSerializable(): ....restored operation completed.....");
 
             }
-            catch (Exception ex2)
-            {
-                System.out.println("ObjectSaveTest:testObjectSerializable(): error during restore ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println(
+                        "ObjectSaveTest:testObjectSerializable(): error during restore [" +
+                                ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -161,14 +157,11 @@ public class ObjectSaveTest extends TestCase
             // if the save/restore of the object succeeded,
             // then don't keep the temporary file around
             boolean removeTmpFile = saved && restored;
-            if (removeTmpFile)
-            {
-                try
-                {
+            if (removeTmpFile) {
+                try {
                     theFile.delete();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     // just absorb it
                 }
             }
@@ -184,45 +177,42 @@ public class ObjectSaveTest extends TestCase
     }
 
 
-    public void testObjectNotSerializable() throws Exception 
-    {
-        File    theFile              = null;
-        String  theFilename          = null;
-        boolean saved                = false;
-        boolean restored             = false;
-        boolean expected_exception   = false;
-        boolean done                 = false;
+    public void testObjectNotSerializable() throws Exception {
+        File theFile = null;
+        String theFilename = null;
+        boolean saved = false;
+        boolean restored = false;
+        boolean expected_exception = false;
+        boolean done = false;
 
         System.out.println("ObjectSaveTest:testObjectNotSerializable():  BEGIN ---------------");
 
         // ---------------------------------------------------------
         // setup an object to use
         // ---------------------------------------------------------
-        NotSerializableObject obj = new NotSerializableObject("nso_1"); 
-
+        NotSerializableObject obj = new NotSerializableObject("nso_1");
 
         // ---------------------------------------------------------
         // setup a temporary file to use
         // ---------------------------------------------------------
-        try
-        {
-            theFile = File.createTempFile("objectTest",null);
+        try {
+            theFile = File.createTempFile("objectTest", null);
             theFilename = theFile.getName();
-            System.out.println("ObjectSaveTest:testObjectNotSerializable(): temp file = ["+theFilename+"]");
+            System.out.println("ObjectSaveTest:testObjectNotSerializable(): temp file = [" +
+                    theFilename + "]");
         }
-        catch (Exception ex)
-        {
-            System.out.println("ObjectSaveTest:testObjectNotSerializable(): error creating temp file = ["+ex.getMessage()+"]");
+        catch (Exception ex) {
+            System.out.println(
+                    "ObjectSaveTest:testObjectNotSerializable(): error creating temp file = [" +
+                            ex.getMessage() + "]");
             theFile = null;
         }
 
-        if (theFile != null)
-        {
+        if (theFile != null) {
             // ---------------------------------------------------------
             // save to the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an output stream to a physical file
                 FileOutputStream outStream = new FileOutputStream(theFile);
 
@@ -242,31 +232,29 @@ public class ObjectSaveTest extends TestCase
                 outStream.close();
 
                 saved = true;
-                System.out.println("ObjectSaveTest:testObjectNotSerializable(): ....save operation completed.....");
+                System.out.println(
+                        "ObjectSaveTest:testObjectNotSerializable(): ....save operation completed.....");
 
                 long filesize = theFile.length();
-                System.out.println("ObjectSaveTest:testObjectNotSerializable(): file size after save ["+filesize+"]   temp file = ["+theFilename+"]");
+                System.out.println(
+                        "ObjectSaveTest:testObjectNotSerializable(): file size after save [" +
+                                filesize + "]   temp file = [" + theFilename + "]");
             }
-            catch (Exception ex2)
-            {
+            catch (Exception ex2) {
                 // expect an error here 
                 // ObjectStateUtils catches the NotSerializableException and logs it
-                if (ex2 instanceof NotSerializableException)
-                {
+                if (ex2 instanceof NotSerializableException) {
                     expected_exception = true;
-                }
-                else
-                {
-                    System.out.println("ObjectSaveTest:testObjectNotSerializable():  save ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+                } else {
+                    System.out.println("ObjectSaveTest:testObjectNotSerializable():  save [" +
+                            ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 }
             }
-
 
             // ---------------------------------------------------------
             // restore from the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an input stream to the file
                 FileInputStream inStream = new FileInputStream(theFile);
 
@@ -277,17 +265,20 @@ public class ObjectSaveTest extends TestCase
                 // try to restore the options
                 System.out.println("ObjectSaveTest:testObjectSerializable(): restoring .....");
                 restored = false;
-                Object restored_obj = ObjectStateUtils.readObject(inObjStream, "testObject:NotSerializable");
+                Object restored_obj =
+                        ObjectStateUtils.readObject(inObjStream, "testObject:NotSerializable");
                 inObjStream.close();
                 inStream.close();
 
                 restored = true;
-                System.out.println("ObjectSaveTest:testObjectNotSerializable(): ....restored operation completed.....");
+                System.out.println(
+                        "ObjectSaveTest:testObjectNotSerializable(): ....restored operation completed.....");
 
             }
-            catch (Exception ex)
-            {
-                System.out.println("ObjectSaveTest:testObjectNotSerializable(): error during restore ["+ex.getClass().getName()+" : "+ex.getMessage()+"]");
+            catch (Exception ex) {
+                System.out.println(
+                        "ObjectSaveTest:testObjectNotSerializable(): error during restore [" +
+                                ex.getClass().getName() + " : " + ex.getMessage() + "]");
                 ex.printStackTrace();
             }
 
@@ -296,14 +287,11 @@ public class ObjectSaveTest extends TestCase
             // if the save/restore of the object succeeded,
             // then don't keep the temporary file around
             boolean removeTmpFile = saved && restored;
-            if (removeTmpFile)
-            {
-                try
-                {
+            if (removeTmpFile) {
+                try {
                     theFile.delete();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     // just absorb it
                 }
             }
@@ -315,14 +303,13 @@ public class ObjectSaveTest extends TestCase
     }
 
 
-    public void testArrayList() throws Exception 
-    {
-        File    theFile     = null;
-        String  theFilename = null;
-        boolean saved       = false;
-        boolean restored    = false;
-        boolean done        = false;
-        boolean comparesOK  = false;
+    public void testArrayList() throws Exception {
+        File theFile = null;
+        String theFilename = null;
+        boolean saved = false;
+        boolean restored = false;
+        boolean done = false;
+        boolean comparesOK = false;
 
         System.out.println("ObjectSaveTest:testArrayList():  BEGIN ---------------");
 
@@ -346,25 +333,22 @@ public class ObjectSaveTest extends TestCase
         // ---------------------------------------------------------
         // setup a temporary file to use
         // ---------------------------------------------------------
-        try
-        {
-            theFile = File.createTempFile("arraylistTest",null);
+        try {
+            theFile = File.createTempFile("arraylistTest", null);
             theFilename = theFile.getName();
-            System.out.println("ObjectSaveTest:testArrayList(): temp file = ["+theFilename+"]");
+            System.out.println("ObjectSaveTest:testArrayList(): temp file = [" + theFilename + "]");
         }
-        catch (Exception ex)
-        {
-            System.out.println("ObjectSaveTest:testArrayList(): error creating temp file = ["+ex.getMessage()+"]");
+        catch (Exception ex) {
+            System.out.println("ObjectSaveTest:testArrayList(): error creating temp file = [" +
+                    ex.getMessage() + "]");
             theFile = null;
         }
 
-        if (theFile != null)
-        {
+        if (theFile != null) {
             // ---------------------------------------------------------
             // save to the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an output stream to a physical file
                 FileOutputStream outStream = new FileOutputStream(theFile);
 
@@ -384,14 +368,16 @@ public class ObjectSaveTest extends TestCase
                 outStream.close();
 
                 saved = true;
-                System.out.println("ObjectSaveTest:testArrayList(): ....save operation completed.....");
+                System.out.println(
+                        "ObjectSaveTest:testArrayList(): ....save operation completed.....");
 
                 long filesize = theFile.length();
-                System.out.println("ObjectSaveTest:testArrayList(): file size after save ["+filesize+"]   temp file = ["+theFilename+"]");
+                System.out.println("ObjectSaveTest:testArrayList(): file size after save [" +
+                        filesize + "]   temp file = [" + theFilename + "]");
             }
-            catch (Exception ex2)
-            {
-                System.out.println("ObjectSaveTest:testArrayList(): error during save ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println("ObjectSaveTest:testArrayList(): error during save [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -402,8 +388,7 @@ public class ObjectSaveTest extends TestCase
             // ---------------------------------------------------------
             ArrayList restored_obj = null;
 
-            try
-            {
+            try {
                 // setup an input stream to the file
                 FileInputStream inStream = new FileInputStream(theFile);
 
@@ -419,37 +404,33 @@ public class ObjectSaveTest extends TestCase
                 inStream.close();
 
                 restored = true;
-                System.out.println("ObjectSaveTest:testArrayList(): ....restored operation completed.....");
+                System.out.println(
+                        "ObjectSaveTest:testArrayList(): ....restored operation completed.....");
 
             }
-            catch (Exception ex2)
-            {
-                System.out.println("ObjectSaveTest:testArrayList(): error during restore ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println("ObjectSaveTest:testArrayList(): error during restore [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
             // if the save/restore of the object succeeded,
             // then don't keep the temporary file around
             boolean removeTmpFile = saved && restored;
-            if (removeTmpFile)
-            {
-                try
-                {
+            if (removeTmpFile) {
+                try {
                     theFile.delete();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     // just absorb it
                 }
             }
 
             assertTrue(restored);
 
-            if (restored_obj != null)
-            {
+            if (restored_obj != null) {
                 int restored_size = restored_obj.size();
-                if (restored_size == (initial_size-1))
-                {
+                if (restored_size == (initial_size - 1)) {
                     comparesOK = true;
                 }
             }
@@ -457,7 +438,7 @@ public class ObjectSaveTest extends TestCase
             // TODO: check for exact entries
 
             assertTrue(comparesOK);
-            
+
             // indicate that the temp file was created ok
             done = true;
         }
@@ -469,14 +450,13 @@ public class ObjectSaveTest extends TestCase
     }
 
 
-    public void testHashMap() throws Exception 
-    {
-        File    theFile     = null;
-        String  theFilename = null;
-        boolean saved       = false;
-        boolean restored    = false;
-        boolean done        = false;
-        boolean comparesOK  = false;
+    public void testHashMap() throws Exception {
+        File theFile = null;
+        String theFilename = null;
+        boolean saved = false;
+        boolean restored = false;
+        boolean done = false;
+        boolean comparesOK = false;
 
         System.out.println("ObjectSaveTest:testHashMap():  BEGIN ---------------");
 
@@ -494,7 +474,7 @@ public class ObjectSaveTest extends TestCase
         obj.put(new String("key8"), new Integer(5));
         obj.put(new String("key9"), new Integer(6));
         obj.put(new NotSerializableObject("TestForHashMapKey"), new Integer(7));
-        obj.put(new String("key10"),new Integer(8));
+        obj.put(new String("key10"), new Integer(8));
 
 
         int initial_size = obj.size();
@@ -502,25 +482,22 @@ public class ObjectSaveTest extends TestCase
         // ---------------------------------------------------------
         // setup a temporary file to use
         // ---------------------------------------------------------
-        try
-        {
-            theFile = File.createTempFile("hashmapTest",null);
+        try {
+            theFile = File.createTempFile("hashmapTest", null);
             theFilename = theFile.getName();
-            System.out.println("ObjectSaveTest:testHashMap(): temp file = ["+theFilename+"]");
+            System.out.println("ObjectSaveTest:testHashMap(): temp file = [" + theFilename + "]");
         }
-        catch (Exception ex)
-        {
-            System.out.println("ObjectSaveTest:testHashMap(): error creating temp file = ["+ex.getMessage()+"]");
+        catch (Exception ex) {
+            System.out.println("ObjectSaveTest:testHashMap(): error creating temp file = [" +
+                    ex.getMessage() + "]");
             theFile = null;
         }
 
-        if (theFile != null)
-        {
+        if (theFile != null) {
             // ---------------------------------------------------------
             // save to the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an output stream to a physical file
                 FileOutputStream outStream = new FileOutputStream(theFile);
 
@@ -540,14 +517,16 @@ public class ObjectSaveTest extends TestCase
                 outStream.close();
 
                 saved = true;
-                System.out.println("ObjectSaveTest:testHashMap(): ....save operation completed.....");
+                System.out
+                        .println("ObjectSaveTest:testHashMap(): ....save operation completed.....");
 
                 long filesize = theFile.length();
-                System.out.println("ObjectSaveTest:testHashMap(): file size after save ["+filesize+"]   temp file = ["+theFilename+"]");
+                System.out.println("ObjectSaveTest:testHashMap(): file size after save [" +
+                        filesize + "]   temp file = [" + theFilename + "]");
             }
-            catch (Exception ex2)
-            {
-                System.out.println("ObjectSaveTest:testHashMap(): error during save ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println("ObjectSaveTest:testHashMap(): error during save [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -558,8 +537,7 @@ public class ObjectSaveTest extends TestCase
             // ---------------------------------------------------------
             HashMap restored_obj = null;
 
-            try
-            {
+            try {
                 // setup an input stream to the file
                 FileInputStream inStream = new FileInputStream(theFile);
 
@@ -575,37 +553,33 @@ public class ObjectSaveTest extends TestCase
                 inStream.close();
 
                 restored = true;
-                System.out.println("ObjectSaveTest:testHashMap(): ....restored operation completed.....");
+                System.out.println(
+                        "ObjectSaveTest:testHashMap(): ....restored operation completed.....");
 
             }
-            catch (Exception ex2)
-            {
-                System.out.println("ObjectSaveTest:testHashMap(): error during restore ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println("ObjectSaveTest:testHashMap(): error during restore [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
             // if the save/restore of the object succeeded,
             // then don't keep the temporary file around
             boolean removeTmpFile = saved && restored;
-            if (removeTmpFile)
-            {
-                try
-                {
+            if (removeTmpFile) {
+                try {
                     theFile.delete();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     // just absorb it
                 }
             }
 
             assertTrue(restored);
 
-            if (restored_obj != null)
-            {
+            if (restored_obj != null) {
                 int restored_size = restored_obj.size();
-                if (restored_size == (initial_size-3))
-                {
+                if (restored_size == (initial_size - 3)) {
                     // there are entries in the map that are not serializable
                     comparesOK = true;
                 }
@@ -614,7 +588,7 @@ public class ObjectSaveTest extends TestCase
             // TODO: check for exact entries
 
             assertTrue(comparesOK);
-            
+
             // indicate that the temp file was created ok
             done = true;
         }
@@ -626,14 +600,13 @@ public class ObjectSaveTest extends TestCase
     }
 
 
-    public void testLinkedList() throws Exception 
-    {
-        File    theFile     = null;
-        String  theFilename = null;
-        boolean saved       = false;
-        boolean restored    = false;
-        boolean done        = false;
-        boolean comparesOK  = false;
+    public void testLinkedList() throws Exception {
+        File theFile = null;
+        String theFilename = null;
+        boolean saved = false;
+        boolean restored = false;
+        boolean done = false;
+        boolean comparesOK = false;
 
         System.out.println("ObjectSaveTest:testLinkedList():  BEGIN ---------------");
 
@@ -657,25 +630,23 @@ public class ObjectSaveTest extends TestCase
         // ---------------------------------------------------------
         // setup a temporary file to use
         // ---------------------------------------------------------
-        try
-        {
-            theFile = File.createTempFile("linkedlistTest",null);
+        try {
+            theFile = File.createTempFile("linkedlistTest", null);
             theFilename = theFile.getName();
-            System.out.println("ObjectSaveTest:testLinkedList(): temp file = ["+theFilename+"]");
+            System.out
+                    .println("ObjectSaveTest:testLinkedList(): temp file = [" + theFilename + "]");
         }
-        catch (Exception ex)
-        {
-            System.out.println("ObjectSaveTest:testLinkedList(): error creating temp file = ["+ex.getMessage()+"]");
+        catch (Exception ex) {
+            System.out.println("ObjectSaveTest:testLinkedList(): error creating temp file = [" +
+                    ex.getMessage() + "]");
             theFile = null;
         }
 
-        if (theFile != null)
-        {
+        if (theFile != null) {
             // ---------------------------------------------------------
             // save to the temporary file
             // ---------------------------------------------------------
-            try
-            {
+            try {
                 // setup an output stream to a physical file
                 FileOutputStream outStream = new FileOutputStream(theFile);
 
@@ -695,14 +666,16 @@ public class ObjectSaveTest extends TestCase
                 outStream.close();
 
                 saved = true;
-                System.out.println("ObjectSaveTest:testLinkedList(): ....save operation completed.....");
+                System.out.println(
+                        "ObjectSaveTest:testLinkedList(): ....save operation completed.....");
 
                 long filesize = theFile.length();
-                System.out.println("ObjectSaveTest:testLinkedList(): file size after save ["+filesize+"]   temp file = ["+theFilename+"]");
+                System.out.println("ObjectSaveTest:testLinkedList(): file size after save [" +
+                        filesize + "]   temp file = [" + theFilename + "]");
             }
-            catch (Exception ex2)
-            {
-                System.out.println("ObjectSaveTest:testLinkedList(): error during save ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println("ObjectSaveTest:testLinkedList(): error during save [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
@@ -713,8 +686,7 @@ public class ObjectSaveTest extends TestCase
             // ---------------------------------------------------------
             LinkedList restored_obj = null;
 
-            try
-            {
+            try {
                 // setup an input stream to the file
                 FileInputStream inStream = new FileInputStream(theFile);
 
@@ -725,42 +697,39 @@ public class ObjectSaveTest extends TestCase
                 // try to restore the options
                 System.out.println("ObjectSaveTest:testLinkedList(): restoring .....");
                 restored = false;
-                restored_obj = ObjectStateUtils.readLinkedList(inObjStream, "testObject:LinkedList");
+                restored_obj =
+                        ObjectStateUtils.readLinkedList(inObjStream, "testObject:LinkedList");
                 inObjStream.close();
                 inStream.close();
 
                 restored = true;
-                System.out.println("ObjectSaveTest:testLinkedList(): ....restored operation completed.....");
+                System.out.println(
+                        "ObjectSaveTest:testLinkedList(): ....restored operation completed.....");
 
             }
-            catch (Exception ex2)
-            {
-                System.out.println("ObjectSaveTest:testLinkedList(): error during restore ["+ex2.getClass().getName()+" : "+ex2.getMessage()+"]");
+            catch (Exception ex2) {
+                System.out.println("ObjectSaveTest:testLinkedList(): error during restore [" +
+                        ex2.getClass().getName() + " : " + ex2.getMessage() + "]");
                 ex2.printStackTrace();
             }
 
             // if the save/restore of the object succeeded,
             // then don't keep the temporary file around
             boolean removeTmpFile = saved && restored;
-            if (removeTmpFile)
-            {
-                try
-                {
+            if (removeTmpFile) {
+                try {
                     theFile.delete();
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     // just absorb it
                 }
             }
 
             assertTrue(restored);
 
-            if (restored_obj != null)
-            {
+            if (restored_obj != null) {
                 int restored_size = restored_obj.size();
-                if (restored_size == (initial_size-1))
-                {
+                if (restored_size == (initial_size - 1)) {
                     comparesOK = true;
                 }
             }
@@ -768,7 +737,7 @@ public class ObjectSaveTest extends TestCase
             // TODO: check for exact entries
 
             assertTrue(comparesOK);
-            
+
             // indicate that the temp file was created ok
             done = true;
         }
@@ -780,10 +749,7 @@ public class ObjectSaveTest extends TestCase
     }
 
 
-
-
-    public class NotSerializableObject implements Externalizable
-    {
+    public class NotSerializableObject implements Externalizable {
         private String label = "TestObject";
         private String ID = null;
 
@@ -791,34 +757,29 @@ public class ObjectSaveTest extends TestCase
         private PrintStream ps = System.out;
 
         // default constructor needed for Externalizable interface
-        public NotSerializableObject()
-        {
+        public NotSerializableObject() {
         }
 
-        public NotSerializableObject(String identifier)
-        {
+        public NotSerializableObject(String identifier) {
             ID = identifier;
             ps = System.out;
         }
-        
-        public void setID(String s)
-        {
+
+        public void setID(String s) {
             ID = s;
         }
 
-        public String getID()
-        {
+        public String getID() {
             return ID;
         }
 
-        public void writeExternal(java.io.ObjectOutput out) throws IOException
-        {
+        public void writeExternal(java.io.ObjectOutput out) throws IOException {
             throw new NotSerializableException("Test Object is not serializable");
         }
 
 
-        public void readExternal(java.io.ObjectInput in) throws IOException, ClassNotFoundException
-        {
+        public void readExternal(java.io.ObjectInput in)
+                throws IOException, ClassNotFoundException {
             throw new IOException("Test object is not serializable");
         }
 

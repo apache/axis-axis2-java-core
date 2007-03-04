@@ -51,7 +51,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -69,11 +68,11 @@ import java.util.Stack;
 public class XMLUtils {
     public static final String charEncoding = "ISO-8859-1";
     private static final String saxParserFactoryProperty =
-        "javax.xml.parsers.SAXParserFactory";
+            "javax.xml.parsers.SAXParserFactory";
 
     private static DocumentBuilderFactory dbf = getDOMFactory();
-    private static SAXParserFactory       saxFactory;
-    private static Stack                  saxParsers = new Stack();
+    private static SAXParserFactory saxFactory;
+    private static Stack saxParsers = new Stack();
 
     private static String empty = "";
     private static ByteArrayInputStream bais = new ByteArrayInputStream(empty.getBytes());
@@ -83,7 +82,7 @@ public class XMLUtils {
         initSAXFactory(null, true, false);
     }
 
-    /** 
+    /**
      * Initializes the SAX parser factory.
      *
      * @param factoryClassName The (optional) class name of the desired
@@ -93,16 +92,16 @@ public class XMLUtils {
      *                         unless this property is already set.
      *                         If <code>null</code>, leaves current setting
      *                         alone.
-     * @param namespaceAware true if we want a namespace-aware parser
-     * @param validating true if we want a validating parser
+     * @param namespaceAware   true if we want a namespace-aware parser
+     * @param validating       true if we want a validating parser
      */
     public static void initSAXFactory(String factoryClassName,
                                       boolean namespaceAware,
                                       boolean validating) {
         if (factoryClassName != null) {
             try {
-                saxFactory = (SAXParserFactory)Loader.loadClass(factoryClassName).
-                    newInstance();
+                saxFactory = (SAXParserFactory) Loader.loadClass(factoryClassName).
+                        newInstance();
                 /*
                  * Set the system property only if it is not already set to
                  * avoid corrupting environments in which Axis is embedded.
@@ -115,7 +114,7 @@ public class XMLUtils {
                 //log.error(Messages.getMessage("exception00"), e);
                 saxFactory = null;
             }
-       } else {
+        } else {
             saxFactory = SAXParserFactory.newInstance();
         }
         saxFactory.setNamespaceAware(namespaceAware);
@@ -131,16 +130,16 @@ public class XMLUtils {
             dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
         }
-        catch( Exception e ) {
+        catch (Exception e) {
             //log.error(Messages.getMessage("exception00"), e );
             dbf = null;
         }
-        return( dbf );
+        return (dbf);
     }
-    
-    private static boolean tryReset= true;
 
-    /** 
+    private static boolean tryReset = true;
+
+    /**
      * Returns a SAX parser for reuse.
      *
      * @param parser A SAX parser that is available for reuse
@@ -151,17 +150,17 @@ public class XMLUtils {
         }
 
         //Free up possible ref. held by past contenthandler.
-        try{
-            XMLReader xmlReader= parser.getXMLReader();
-            if(null != xmlReader){
-                synchronized (XMLUtils.class ) {
+        try {
+            XMLReader xmlReader = parser.getXMLReader();
+            if (null != xmlReader) {
+                synchronized (XMLUtils.class) {
                     saxParsers.push(parser);
                 }
             } else {
-                tryReset= false;
+                tryReset = false;
             }
         } catch (org.xml.sax.SAXException e) {
-            tryReset= false;
+            tryReset = false;
         }
     }
 
@@ -171,7 +170,7 @@ public class XMLUtils {
      * @return Returns Document.
      * @throws ParserConfigurationException if construction problems occur
      */
-    public static Document newDocument() 
+    public static Document newDocument()
             throws ParserConfigurationException {
         synchronized (dbf) {
             return dbf.newDocumentBuilder().newDocument();
@@ -183,8 +182,8 @@ public class XMLUtils {
      *
      * @return Returns Document.
      * @throws ParserConfigurationException if construction problems occur
-     * @throws SAXException if the document has xml sax problems
-     * @throws IOException if i/o exceptions occur
+     * @throws SAXException                 if the document has xml sax problems
+     * @throws IOException                  if i/o exceptions occur
      */
     public static Document newDocument(InputSource inp)
             throws ParserConfigurationException, SAXException, IOException {
@@ -193,8 +192,8 @@ public class XMLUtils {
             db = dbf.newDocumentBuilder();
         }
         db.setEntityResolver(new DefaultEntityResolver());
-        db.setErrorHandler( new ParserErrorHandler() );
-        return( db.parse( inp ) );
+        db.setErrorHandler(new ParserErrorHandler());
+        return (db.parse(inp));
     }
 
     /**
@@ -202,63 +201,62 @@ public class XMLUtils {
      *
      * @return Returns Document.
      * @throws ParserConfigurationException if construction problems occur
-     * @throws SAXException if the document has xml sax problems
-     * @throws IOException if i/o exceptions occur
+     * @throws SAXException                 if the document has xml sax problems
+     * @throws IOException                  if i/o exceptions occur
      */
-    public static Document newDocument(InputStream inp) 
+    public static Document newDocument(InputStream inp)
             throws ParserConfigurationException, SAXException, IOException {
         return XMLUtils.newDocument(new InputSource(inp));
-    } 
+    }
 
     /**
      * Gets a new Document read from the indicated uri
      *
      * @return Returns Document.
      * @throws ParserConfigurationException if construction problems occur
-     * @throws SAXException if the document has xml sax problems
-     * @throws IOException if i/o exceptions occur
+     * @throws SAXException                 if the document has xml sax problems
+     * @throws IOException                  if i/o exceptions occur
      */
-    public static Document newDocument(String uri) 
+    public static Document newDocument(String uri)
             throws ParserConfigurationException, SAXException, IOException {
         // call the authenticated version as there might be 
         // username/password info embeded in the uri.
         return XMLUtils.newDocument(uri, null, null);
     }
-    
+
     /**
      * Creates a new document from the given URI. Uses the username and password
      * if the URI requires authentication.
      *
-     * @param uri the resource to get
+     * @param uri      the resource to get
      * @param username basic auth username
      * @param password basic auth password
      * @throws ParserConfigurationException if construction problems occur
-     * @throws SAXException if the document has xml sax problems
-     * @throws IOException if i/o exceptions occur
-     */ 
+     * @throws SAXException                 if the document has xml sax problems
+     * @throws IOException                  if i/o exceptions occur
+     */
     public static Document newDocument(String uri, String username, String password)
             throws ParserConfigurationException, SAXException, IOException {
-         InputSource ins = XMLUtils.getInputSourceFromURI(uri, username, password);
-         Document doc = XMLUtils.newDocument(ins);
-         // Close the Stream
-         if (ins.getByteStream() != null) {
-             ins.getByteStream().close();
-         } else if (ins.getCharacterStream() != null) {
-             ins.getCharacterStream().close();
-         }
-         return doc;
-     }
-
+        InputSource ins = XMLUtils.getInputSourceFromURI(uri, username, password);
+        Document doc = XMLUtils.newDocument(ins);
+        // Close the Stream
+        if (ins.getByteStream() != null) {
+            ins.getByteStream().close();
+        } else if (ins.getCharacterStream() != null) {
+            ins.getCharacterStream().close();
+        }
+        return doc;
+    }
 
 
     public static String getPrefix(String uri, Node e) {
         while (e != null && (e.getNodeType() == Element.ELEMENT_NODE)) {
             NamedNodeMap attrs = e.getAttributes();
             for (int n = 0; n < attrs.getLength(); n++) {
-                Attr a = (Attr)attrs.item(n);
+                Attr a = (Attr) attrs.item(n);
                 String name;
                 if ((name = a.getName()).startsWith("xmlns:") &&
-                    a.getNodeValue().equals(uri)) {
+                        a.getNodeValue().equals(uri)) {
                     return name.substring(6);
                 }
             }
@@ -270,7 +268,7 @@ public class XMLUtils {
     public static String getNamespace(String prefix, Node e) {
         while (e != null && (e.getNodeType() == Node.ELEMENT_NODE)) {
             Attr attr =
-                ((Element)e).getAttributeNodeNS(Constants.NS_URI_XMLNS, prefix);
+                    ((Element) e).getAttributeNodeNS(Constants.NS_URI_XMLNS, prefix);
             if (attr != null) {
                 return attr.getValue();
             }
@@ -318,41 +316,41 @@ public class XMLUtils {
                 prefix = "ns" + i;
             }
             e.setAttributeNS(Constants.NS_URI_XMLNS,
-                        "xmlns:" + prefix, uri);
+                             "xmlns:" + prefix, uri);
         }
         return prefix + ":" + qname.getLocalPart();
     }
 
-  /**
-   * Concatinates all the text and cdata node children of this elem and returns
-   * the resulting text.
-   * (by Matt Duftler)
-   *
-   * @param parentEl the element whose cdata/text node values are to
-   *                 be combined.
-   * @return Returns the concatinated string.
-   */
-  public static String getChildCharacterData (Element parentEl) {
-    if (parentEl == null) {
-      return null;
-    }
-    Node          tempNode = parentEl.getFirstChild();
-    StringBuffer  strBuf   = new StringBuffer();
-    CharacterData charData;
+    /**
+     * Concatinates all the text and cdata node children of this elem and returns
+     * the resulting text.
+     * (by Matt Duftler)
+     *
+     * @param parentEl the element whose cdata/text node values are to
+     *                 be combined.
+     * @return Returns the concatinated string.
+     */
+    public static String getChildCharacterData(Element parentEl) {
+        if (parentEl == null) {
+            return null;
+        }
+        Node tempNode = parentEl.getFirstChild();
+        StringBuffer strBuf = new StringBuffer();
+        CharacterData charData;
 
-    while (tempNode != null) {
-      switch (tempNode.getNodeType()) {
-        case Node.TEXT_NODE :
+        while (tempNode != null) {
+            switch (tempNode.getNodeType()) {
+                case Node.TEXT_NODE :
                 case Node.CDATA_SECTION_NODE:
                     charData = (CharacterData) tempNode;
-                                       strBuf.append(charData.getData());
-                                       break;
-      }
-      tempNode = tempNode.getNextSibling();
+                    strBuf.append(charData.getData());
+                    break;
+            }
+            tempNode = tempNode.getNextSibling();
+        }
+        return strBuf.toString();
     }
-    return strBuf.toString();
-  }
-    
+
     public static class ParserErrorHandler implements ErrorHandler {
         /**
          * Returns a string describing parse exception details
@@ -363,8 +361,8 @@ public class XMLUtils {
                 systemId = "null";
             }
             return "URI=" + systemId +
-                " Line=" + spe.getLineNumber() +
-                ": " + spe.getMessage();
+                    " Line=" + spe.getLineNumber() +
+                    ": " + spe.getMessage();
         }
 
         // The following methods are standard SAX ErrorHandler methods.
@@ -372,7 +370,7 @@ public class XMLUtils {
 
         public void warning(SAXParseException spe) throws SAXException {
         }
-        
+
         public void error(SAXParseException spe) throws SAXException {
             String message = "Error: " + getParseExceptionInfo(spe);
             throw new SAXException(message);
@@ -387,7 +385,7 @@ public class XMLUtils {
 
     /**
      * Utility to get the bytes uri.
-     * Does NOT handle authenticated URLs, 
+     * Does NOT handle authenticated URLs,
      * use getInputSourceFromURI(uri, username, password)
      *
      * @param uri the resource to get
@@ -406,11 +404,11 @@ public class XMLUtils {
      * <p/>
      * If no username is provided, creates an InputSource from the uri
      * and lets the InputSource go fetch the contents.
-     * 
-     * @param uri the resource to get
+     *
+     * @param uri      the resource to get
      * @param username basic auth username
      * @param password basic auth password
-     */ 
+     */
     private static InputSource getInputSourceFromURI(String uri,
                                                      String username,
                                                      String password)
@@ -423,12 +421,12 @@ public class XMLUtils {
             // let InputSource deal with it
             return new InputSource(uri);
         }
-        
+
         // if no authentication, just let InputSource deal with it
         if (username == null && wsdlurl.getUserInfo() == null) {
             return new InputSource(uri);
         }
-        
+
         // if this is not an HTTP{S} url, let InputSource deal with it
         if (!wsdlurl.getProtocol().startsWith("http")) {
             return new InputSource(uri);
@@ -457,13 +455,13 @@ public class XMLUtils {
         } else if (username != null) {
             auth = (password == null) ? username : username + ":" + password;
         }
-        
+
         if (auth != null) {
             uconn.setRequestProperty("Authorization",
-                                     "Basic " + 
-                                     base64encode(auth.getBytes(charEncoding)));
+                                     "Basic " +
+                                             base64encode(auth.getBytes(charEncoding)));
         }
-        
+
         uconn.connect();
 
         return new InputSource(uconn.getInputStream());
@@ -476,29 +474,29 @@ public class XMLUtils {
     public static InputSource getEmptyInputSource() {
         return new InputSource(bais);
     }
-    
+
     /**
      * Finds a Node with a given QNameb.
-     * 
+     *
      * @param node parent node
      * @param name QName of the child we need to find
      * @return Returns child node.
-     */ 
-    public static Node findNode(Node node, QName name){
-        if(name.getNamespaceURI().equals(node.getNamespaceURI()) && 
+     */
+    public static Node findNode(Node node, QName name) {
+        if (name.getNamespaceURI().equals(node.getNamespaceURI()) &&
                 name.getLocalPart().equals(node.getLocalName())) {
             return node;
         }
         NodeList children = node.getChildNodes();
-        for(int i=0;i<children.getLength();i++){
+        for (int i = 0; i < children.getLength(); i++) {
             Node ret = findNode(children.item(i), name);
             if (ret != null) {
                 return ret;
-        }
+            }
         }
         return null;
     }
-    
+
     /**
      * Converts a given DOM Element to an OMElement.
      *
@@ -509,7 +507,7 @@ public class XMLUtils {
     public static OMElement toOM(Element element) throws Exception {
 
         Source source = new DOMSource(element);
-         
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Result result = new StreamResult(baos);
 
@@ -525,7 +523,7 @@ public class XMLUtils {
 
         return builder.getDocumentElement();
     }
-    
+
 
     /**
      * Converts a given OMElement to a DOM Element.
@@ -535,13 +533,13 @@ public class XMLUtils {
      * @throws Exception
      */
     public static Element toDOM(OMElement element) throws Exception {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            element.serialize(baos);
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-    
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            return factory.newDocumentBuilder().parse(bais).getDocumentElement();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        element.serialize(baos);
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        return factory.newDocumentBuilder().parse(bais).getDocumentElement();
     }
 
 

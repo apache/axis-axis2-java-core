@@ -31,6 +31,7 @@ import java.net.MalformedURLException;
 *
 *
 */
+
 public class ModuleDeployer implements Deployer {
 
     private static final Log log = LogFactory.getLog(ModuleDeployer.class);
@@ -57,37 +58,37 @@ public class ModuleDeployer implements Deployer {
         boolean explodedDir = deploymentFileData.getFile().isDirectory();
         try {
             deploymentFileData.setClassLoader(explodedDir,
-                    axisConfig.getModuleClassLoader());
+                                              axisConfig.getModuleClassLoader());
             AxisModule metaData = new AxisModule();
             metaData.setModuleClassLoader(deploymentFileData.getClassLoader());
             metaData.setParent(axisConfig);
             archiveReader.readModuleArchive(deploymentFileData, metaData, explodedDir,
-                    axisConfig);
+                                            axisConfig);
             metaData.setFileName(deploymentFileData.getFile().toURL());
             DeploymentEngine.addNewModule(metaData, axisConfig);
             log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_MODULE,
-                    metaData.getName().getLocalPart()));
+                                         metaData.getName().getLocalPart()));
         } catch (DeploymentException e) {
             log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
-                    deploymentFileData.getName(),
-                    e.getMessage()),
-                    e);
+                                          deploymentFileData.getName(),
+                                          e.getMessage()),
+                      e);
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             e.printStackTrace(error_ptintWriter);
             moduleStatus = "Error:\n" + errorWriter.toString();
         } catch (AxisFault axisFault) {
             log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
-                    deploymentFileData.getName(),
-                    axisFault.getMessage()),
-                    axisFault);
+                                          deploymentFileData.getName(),
+                                          axisFault.getMessage()),
+                      axisFault);
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             axisFault.printStackTrace(error_ptintWriter);
             moduleStatus = "Error:\n" + errorWriter.toString();
         } catch (MalformedURLException e) {
             log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
-                    deploymentFileData.getName(),
-                    e.getMessage()),
-                    e);
+                                          deploymentFileData.getName(),
+                                          e.getMessage()),
+                      e);
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             e.printStackTrace(error_ptintWriter);
             moduleStatus = "Error:\n" + errorWriter.toString();
@@ -97,9 +98,9 @@ public class ModuleDeployer implements Deployer {
                 PrintWriter pw = new PrintWriter(sw);
                 t.printStackTrace(pw);
                 log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_MODULE,
-                        deploymentFileData.getName(),
-                        t.getMessage()),
-                        t);
+                                              deploymentFileData.getName(),
+                                              t.getMessage()),
+                          t);
             }
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             t.printStackTrace(error_ptintWriter);

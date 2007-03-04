@@ -85,8 +85,8 @@ public class SOAPHeaderMessage {
     public void setNamespaceURI(String namespaceURI) {
         this.namespaceURI = namespaceURI;
     }
-    
-     public boolean isRequired() {
+
+    public boolean isRequired() {
         return required;
     }
 

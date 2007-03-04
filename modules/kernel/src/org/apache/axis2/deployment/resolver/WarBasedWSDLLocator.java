@@ -26,8 +26,9 @@ import java.net.URI;
 *
 *
 */
+
 public class WarBasedWSDLLocator extends DefaultURIResolver implements WSDLLocator {
-     protected static final Log log = LogFactory
+    protected static final Log log = LogFactory
             .getLog(WarBasedWSDLLocator.class);
 
     private InputStream baseInputStream;
@@ -35,7 +36,8 @@ public class WarBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
     private String baseURI;
     private ClassLoader classLoader;
 
-    public WarBasedWSDLLocator(String baseURI, ClassLoader classLoader, InputStream baseInputStream) {
+    public WarBasedWSDLLocator(String baseURI, ClassLoader classLoader,
+                               InputStream baseInputStream) {
         this.baseURI = baseURI;
         this.baseInputStream = baseInputStream;
         this.classLoader = classLoader;

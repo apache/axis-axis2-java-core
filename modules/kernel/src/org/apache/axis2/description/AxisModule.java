@@ -71,7 +71,7 @@ public class AxisModule implements ParameterInclude {
     private String moduleDescription;
 
     private String[] supportedPolicyNames;
-    
+
     private QName[] localPolicyAssertions;
 
     /**
@@ -255,7 +255,7 @@ public class AxisModule implements ParameterInclude {
     }
 
     public PolicyInclude getPolicyInclude() {
-        if(policyInclude == null) {
+        if (policyInclude == null) {
             policyInclude = new PolicyInclude();
         }
         return policyInclude;
@@ -276,11 +276,11 @@ public class AxisModule implements ParameterInclude {
     public void setSupportedPolicyNamespaces(String[] supportedPolicyNamespaces) {
         this.supportedPolicyNames = supportedPolicyNamespaces;
     }
-    
+
     public QName[] getLocalPolicyAssertions() {
         return localPolicyAssertions;
     }
-    
+
     public void setLocalPolicyAssertions(QName[] localPolicyAssertions) {
         this.localPolicyAssertions = localPolicyAssertions;
     }

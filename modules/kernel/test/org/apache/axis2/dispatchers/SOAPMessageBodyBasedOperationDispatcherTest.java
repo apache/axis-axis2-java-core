@@ -20,8 +20,8 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
@@ -50,11 +50,13 @@ public class SOAPMessageBodyBasedOperationDispatcherTest extends TestCase {
 
         SOAPEnvelope se = OMAbstractFactory.getSOAP11Factory().createSOAPEnvelope();
         SOAPBody sb = OMAbstractFactory.getSOAP11Factory().createSOAPBody(se);
-        sb.addChild(OMAbstractFactory.getSOAP11Factory().createOMElement("operation2", "http://test", "pfx"));
+        sb.addChild(OMAbstractFactory.getSOAP11Factory().createOMElement("operation2",
+                                                                         "http://test", "pfx"));
         messageContext.setEnvelope(se);
 
 
-        SOAPMessageBodyBasedOperationDispatcher ruisd = new SOAPMessageBodyBasedOperationDispatcher();
+        SOAPMessageBodyBasedOperationDispatcher ruisd =
+                new SOAPMessageBodyBasedOperationDispatcher();
         ruisd.invoke(messageContext);
 
         assertEquals(operation2, messageContext.getAxisOperation());

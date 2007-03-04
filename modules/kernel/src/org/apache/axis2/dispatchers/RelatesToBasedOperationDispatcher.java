@@ -31,23 +31,28 @@ public class RelatesToBasedOperationDispatcher extends AbstractOperationDispatch
     public static final String NAME = "RelatesToBasedOperationDispatcher";
     private static final Log log = LogFactory.getLog(RelatesToBasedOperationDispatcher.class);
 
-    public AxisOperation findOperation(AxisService service, MessageContext messageContext) throws AxisFault {
+    public AxisOperation findOperation(AxisService service, MessageContext messageContext)
+            throws AxisFault {
         RelatesTo relatesTo = messageContext.getRelatesTo();
-        if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-            log.debug(messageContext.getLogIDString()+" Checking for OperationContext using RelatesTo : " + relatesTo);
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug(messageContext.getLogIDString() +
+                    " Checking for OperationContext using RelatesTo : " + relatesTo);
         }
-        if((relatesTo!=null) && (relatesTo.getValue()!=null)){
+        if ((relatesTo != null) && (relatesTo.getValue() != null)) {
             ConfigurationContext configurationContext = messageContext.getConfigurationContext();
-            OperationContext operationContext = configurationContext.getOperationContext(relatesTo.getValue());
-            if(operationContext != null){
-                if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-                    log.debug(messageContext.getLogIDString()+" Found OperationContext: " + operationContext);
+            OperationContext operationContext =
+                    configurationContext.getOperationContext(relatesTo.getValue());
+            if (operationContext != null) {
+                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                    log.debug(messageContext.getLogIDString() + " Found OperationContext: " +
+                            operationContext);
                 }
                 return operationContext.getAxisOperation();
             }
         }
         return null;
     }
+
     public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }

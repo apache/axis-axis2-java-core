@@ -17,7 +17,6 @@
 package org.apache.axis2.modules;
 
 
-
 public interface ModulePolicyExtension {
 
     public PolicyExtension getPolicyExtension();

@@ -35,33 +35,33 @@ import java.util.Map.Entry;
  */
 public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
     protected static final Log log =
-        LogFactory.getLog(WSDL11ToAllAxisServicesBuilder.class);
+            LogFactory.getLog(WSDL11ToAllAxisServicesBuilder.class);
 
     public static final String WSDL_SERVICE_QNAME = "WSDL_SERVICE_QNAME";
 
     public static final String WSDL_PORT = "WSDL_PORT";
 
     private ArrayList axisServices = null;
-    
+
     /**
-     * Class constructor.  
+     * Class constructor.
      *
-     * @param in  - Contains the wsdl 1.1 file
+     * @param in - Contains the wsdl 1.1 file
      */
     public WSDL11ToAllAxisServicesBuilder(InputStream in) {
         super(in);
         axisServices = new ArrayList();   // create an empty ArrayList
     }
-    
+
     /**
      * Public method to access the wsdl 1.1 file and create a List of AxisService objects.
      * For each port on each service in the wsdl, an AxisService object is created and
      * added to the List.  The name of the AxisService is changed from the service name
-     * to the port name, since port names are unique to the wsdl.  
+     * to the port name, since port names are unique to the wsdl.
      *
      * @return A List containing one AxisService object for each port in the wsdl file.
-     * The name of the AxisService is modified from the service name to the port name.
-     * @throws AxisFault 
+     *         The name of the AxisService is modified from the service name to the port name.
+     * @throws AxisFault
      */
     public List populateAllServices() throws AxisFault {
         try {
@@ -70,8 +70,8 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
             }
 
             setup();  // setup contains code with gathers non-service specific info
-                      // from the WSDL.  This only needs to be done once per WSDL.
-            if (wsdl4jDefinition == null) {  
+            // from the WSDL.  This only needs to be done once per WSDL.
+            if (wsdl4jDefinition == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Exit: populateAllServices.  wsdl definition is null!");
                 }
@@ -105,7 +105,7 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
                         Parameter portParameter = new Parameter();
                         portParameter.setName(WSDL_PORT);
                         portParameter.setValue(port);
-                        retAxisService.addParameter(portParameter);                        
+                        retAxisService.addParameter(portParameter);
                         // since this AxisService really represents the wsdl
                         // port, change the name
                         // from wsdl service name to port name.
@@ -115,7 +115,7 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
                     } // end if axisService was returned
                 } // end for all ports of a service
             } // end for all services in the wsdl
-            
+
             if (log.isDebugEnabled()) {
                 log.debug("Exit: populateAllServices.");
             }
@@ -124,7 +124,8 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
             throw e;  // just rethrow any AxisFaults
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.debug("populateAllServices caught Exception.  Converting to AxisFault. " + e.toString());
+                log.debug("populateAllServices caught Exception.  Converting to AxisFault. " +
+                        e.toString());
             }
             throw new AxisFault(e);
         }

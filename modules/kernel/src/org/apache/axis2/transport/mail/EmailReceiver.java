@@ -51,7 +51,7 @@ public class EmailReceiver {
     public void connect() throws AxisFault {
         try {
 
-            Session session = Session.getInstance(pop3Properties,null);
+            Session session = Session.getInstance(pop3Properties, null);
             store = session.getStore(urlName);
 
             store.connect();

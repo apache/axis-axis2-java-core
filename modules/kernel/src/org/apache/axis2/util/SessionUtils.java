@@ -26,7 +26,7 @@ public class SessionUtils {
 
     /**
      * Walk through the list of services and use the minimum of the scopes as the scope for the whole service group
-     * 
+     *
      * @param axisServiceGroup
      * @return scope for the service group
      */
@@ -45,7 +45,7 @@ public class SessionUtils {
 
     /**
      * convert scope into a numerical value
-     * 
+     *
      * @param scope
      * @return integer
      */
@@ -65,7 +65,7 @@ public class SessionUtils {
 
     /**
      * Get the actual scope string given the numerical value
-     * 
+     *
      * @param scope
      * @return string
      */

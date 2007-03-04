@@ -83,9 +83,9 @@ public abstract class WSDLToAxisServiceBuilder {
 
     // keeping whether builder is used in codegen or not
     protected boolean isCodegen;
-    
-    protected WSDLToAxisServiceBuilder(){
-        
+
+    protected WSDLToAxisServiceBuilder() {
+
     }
 
     public WSDLToAxisServiceBuilder(InputStream in, QName serviceName) {

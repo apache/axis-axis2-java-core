@@ -194,26 +194,27 @@ public abstract class Stub {
 
     protected void addPropertyToOperationClient(OperationClient operationClient,
                                                 String propertyKey,
-                                                Object propertyValue){
-        operationClient.getOptions().setProperty(propertyKey,propertyValue);
+                                                Object propertyValue) {
+        operationClient.getOptions().setProperty(propertyKey, propertyValue);
     }
 
     protected void addPropertyToOperationClient(OperationClient operationClient,
                                                 String propertyKey,
-                                                boolean value){
-       addPropertyToOperationClient(operationClient,propertyKey,new Boolean(value));
+                                                boolean value) {
+        addPropertyToOperationClient(operationClient, propertyKey, new Boolean(value));
     }
 
     protected void addPropertyToOperationClient(OperationClient operationClient,
                                                 String propertyKey,
-                                                int value){
-       addPropertyToOperationClient(operationClient,propertyKey,new Integer(value));
+                                                int value) {
+        addPropertyToOperationClient(operationClient, propertyKey, new Integer(value));
     }
 
-    protected void setMustUnderstand(OMElement headerElement, OMNamespace omNamespace){
+    protected void setMustUnderstand(OMElement headerElement, OMNamespace omNamespace) {
         OMFactory omFactory = OMAbstractFactory.getOMFactory();
         OMAttribute mustUnderstandAttribute =
-                omFactory.createOMAttribute(SOAP12Constants.ATTR_MUSTUNDERSTAND,omNamespace, "true");
+                omFactory.createOMAttribute(SOAP12Constants.ATTR_MUSTUNDERSTAND, omNamespace,
+                                            "true");
         headerElement.addAttribute(mustUnderstandAttribute);
     }
 

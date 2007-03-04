@@ -120,13 +120,14 @@ public class HttpTransportProperties {
             this.userName = userName;
         }
     }
+
     /*
     This class is responsible for holding all the necessary information needed for NTML, Digest
     and Basic Authentication. Authentication itself is handled by httpclient. User doesn't need to
     warry about what authentication mechanism it uses. Axis2 uses httpclinet's default authentication
     patterns.
     */
-    public static class Authenticator{
+    public static class Authenticator {
         /*host that needed to be authenticated with*/
         private String host;
         /*port of the host that needed to be authenticated with*/
@@ -214,20 +215,23 @@ public class HttpTransportProperties {
         public List getAuthSchemes() {
             return this.authSchemes;
         }
-        public void setAllowedRetry(boolean allowedRetry){
+
+        public void setAllowedRetry(boolean allowedRetry) {
             this.allowedRetry = allowedRetry;
         }
+
         public boolean isAllowedRetry() {
-            return  this.allowedRetry;
+            return this.allowedRetry;
         }
     }
-    public static class MailProperties{
+
+    public static class MailProperties {
         final Properties mailProperties = new Properties();
 
         private String password;
 
         public void addProperty(String key, String value) {
-            mailProperties.put(key,value);
+            mailProperties.put(key, value);
         }
 
         public void deleteProperty(String key) {

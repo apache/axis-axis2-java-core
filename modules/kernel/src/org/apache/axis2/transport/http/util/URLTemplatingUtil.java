@@ -28,7 +28,6 @@ import javax.xml.namespace.QName;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Iterator;
 
 
@@ -86,7 +85,7 @@ public class URLTemplatingUtil {
      * Appends Query parameters to the URL
      *
      * @param messageContext - The MessageContext of the request
-     * @param url          - Original url string
+     * @param url            - Original url string
      * @return String containing the appended query parameters
      */
     private static String appendQueryParameters(MessageContext messageContext, String url) {
@@ -118,12 +117,11 @@ public class URLTemplatingUtil {
 
             int index = url.indexOf("?");
             if (index == -1) {
-                url = url + "?" + params.substring(0,params.length()-1);
-            }
-            else if (index == url.length() - 1) {
-                url = url + params.substring(0,params.length()-1);
+                url = url + "?" + params.substring(0, params.length() - 1);
+            } else if (index == url.length() - 1) {
+                url = url + params.substring(0, params.length() - 1);
             } else {
-                url = url + queryParameterSeparator + params.substring(0,params.length()-1);
+                url = url + queryParameterSeparator + params.substring(0, params.length() - 1);
             }
 
         }

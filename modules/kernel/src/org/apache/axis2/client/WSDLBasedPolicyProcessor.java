@@ -109,7 +109,7 @@ public class WSDLBasedPolicyProcessor {
                  * list.
                  */
                 List modulesToEngage;
-               
+
                 for (Iterator namespaces = namespaceList.iterator(); iterator
                         .hasNext();) {
                     String namespace = (String) namespaces.next();
@@ -126,27 +126,26 @@ public class WSDLBasedPolicyProcessor {
                                         + namespace + "type assertions");
                         // TODO: Log this ..
                         continue;
-                        
+
                     } else {
                         engageModulesToAxisDescription(modulesToEngage, op);
                     }
                 }
-                
 
                 /*
-                 * We only pick the first policy alternative. Other policy
-                 * alternatives are ignored.
-                 */
+                * We only pick the first policy alternative. Other policy
+                * alternatives are ignored.
+                */
                 break;
             }
         }
     }
 
     /**
-     * Engages the list of Modules to the specified AxisDescription. 
+     * Engages the list of Modules to the specified AxisDescription.
      */
     private void engageModulesToAxisDescription(List modulesToEngage,
-            AxisDescription axisDescription) throws AxisFault {
+                                                AxisDescription axisDescription) throws AxisFault {
         AxisModule axisModule;
         QName moduleName;
 

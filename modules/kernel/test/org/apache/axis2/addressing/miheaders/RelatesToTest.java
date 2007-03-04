@@ -47,8 +47,8 @@ public class RelatesToTest extends TestCase {
         String newAddress = "www.newRelation.org";
         relatesTo.setValue(newAddress);
         assertEquals("RelatesTo address has not been get/set properly",
-                relatesTo.getValue(),
-                newAddress);
+                     relatesTo.getValue(),
+                     newAddress);
 
     }
 
@@ -63,8 +63,8 @@ public class RelatesToTest extends TestCase {
         String newRelationshipType = "AnyOtherType";
         relatesTo.setRelationshipType(newRelationshipType);
         assertEquals("RelatesTo address has not been get/set properly",
-                relatesTo.getRelationshipType(),
-                newRelationshipType);
+                     relatesTo.getRelationshipType(),
+                     newRelationshipType);
     }
 
     public void testSingleArgumentConstructor() {

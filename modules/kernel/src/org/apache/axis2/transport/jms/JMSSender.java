@@ -63,24 +63,24 @@ public class JMSSender extends AbstractHandler implements TransportSender {
 
         // is there a transport url? which may be different from the WS-A To..
         targetAddress = (String) msgContext.getProperty(
-            Constants.Configuration.TRANSPORT_URL);
+                Constants.Configuration.TRANSPORT_URL);
 
         if (targetAddress != null) {
-            transportInfo = new JMSOutTransportInfo(targetAddress);            
+            transportInfo = new JMSOutTransportInfo(targetAddress);
         } else if (targetAddress == null && msgContext.getTo() != null &&
-            !msgContext.getTo().hasAnonymousAddress()) {
+                !msgContext.getTo().hasAnonymousAddress()) {
             targetAddress = msgContext.getTo().getAddress();
-            
+
             if (!msgContext.getTo().hasNoneAddress()) {
                 transportInfo = new JMSOutTransportInfo(targetAddress);
             } else {
                 //Don't send the message.
-              return InvocationResponse.CONTINUE;        
+                return InvocationResponse.CONTINUE;
             }
         } else if (msgContext.isServerSide()) {
             // get the jms ReplyTo
             transportInfo = (JMSOutTransportInfo)
-                msgContext.getProperty(Constants.OUT_TRANSPORT_INFO);                
+                    msgContext.getProperty(Constants.OUT_TRANSPORT_INFO);
         }
 
         // should we wait and listen for a response?
@@ -130,14 +130,14 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             }
 
             try {
-                log.debug("[" + (msgContext.isServerSide()?"Server" : "Client") +
-                    "]Sending message to destination : " + dest);
+                log.debug("[" + (msgContext.isServerSide() ? "Server" : "Client") +
+                        "]Sending message to destination : " + dest);
                 producer.send(message);
                 producer.close();
 
             } catch (JMSException e) {
                 handleException("Error sending JMS message to destination : " +
-                    dest.toString(), e);
+                        dest.toString(), e);
             }
 
             if (waitForResponse) {
@@ -152,21 +152,21 @@ public class JMSSender extends AbstractHandler implements TransportSender {
                     }
 
                     log.debug("Waiting for a maximum of " + timeout +
-                        "ms for a response message to destination : " + replyDest);
+                            "ms for a response message to destination : " + replyDest);
                     con.start();
                     Message reply = consumer.receive(timeout);
 
                     if (reply != null) {
                         msgContext.setProperty(MessageContext.TRANSPORT_IN,
-                            JMSUtils.getInputStream(reply));
+                                               JMSUtils.getInputStream(reply));
                     } else {
                         log.warn("Did not receive a JMS response within " +
-                            timeout + " ms to destination : " + dest);
+                                timeout + " ms to destination : " + dest);
                     }
 
                 } catch (JMSException e) {
                     handleException("Error reading response from temporary " +
-                        "queue : " + replyDest, e);
+                            "queue : " + replyDest, e);
                 }
             }
         } catch (JMSException e) {
@@ -180,7 +180,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
                 } // ignore
             }
         }
-        return InvocationResponse.CONTINUE;        
+        return InvocationResponse.CONTINUE;
     }
 
     public void cleanup(MessageContext msgContext) throws AxisFault {
@@ -188,7 +188,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
     }
 
     public void init(ConfigurationContext confContext,
-        TransportOutDescription transportOut) throws AxisFault {
+                     TransportOutDescription transportOut) throws AxisFault {
         // do nothing
     }
 
@@ -201,12 +201,12 @@ public class JMSSender extends AbstractHandler implements TransportSender {
      * session
      *
      * @param msgContext the MessageContext
-     * @param session the JMS session
+     * @param session    the JMS session
      * @return a JMS message from the context and session
      * @throws JMSException on exception
      */
     private Message createJMSMessage(MessageContext msgContext, Session session)
-        throws JMSException {
+            throws JMSException {
 
         Message message = null;
         String msgType = getProperty(msgContext, JMSConstants.JMS_MESSAGE_TYPE);
@@ -223,7 +223,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             OMOutputFormat format = new OMOutputFormat();
             format.setCharSetEncoding(
-                 getProperty(msgContext, Constants.Configuration.CHARACTER_SET_ENCODING));
+                    getProperty(msgContext, Constants.Configuration.CHARACTER_SET_ENCODING));
             format.setDoOptimize(msgContext.isDoingMTOM());
             try {
                 msgElement.serializeAndConsume(baos, format);

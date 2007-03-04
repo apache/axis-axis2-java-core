@@ -34,10 +34,10 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URL;
 
-public class SOAPMessageFormatter implements MessageFormatter{
+public class SOAPMessageFormatter implements MessageFormatter {
 
     public void writeTo(MessageContext msgCtxt, OMOutputFormat format,
-            OutputStream out, boolean preserve) throws AxisFault {
+                        OutputStream out, boolean preserve) throws AxisFault {
         OMElement element = msgCtxt.getEnvelope();
         try {
             if (!(format.isOptimized()) & format.isDoingSWA()) {
@@ -47,7 +47,7 @@ public class SOAPMessageFormatter implements MessageFormatter{
                 } else {
                     element.serializeAndConsume(bufferedSOAPBody, format);
                 }
-                writeSwAMessage(msgCtxt,bufferedSOAPBody,out,format);
+                writeSwAMessage(msgCtxt, bufferedSOAPBody, out, format);
             } else {
                 if (preserve) {
                     element.serialize(out, format);
@@ -72,7 +72,7 @@ public class SOAPMessageFormatter implements MessageFormatter{
                 if (format.isDoingSWA()) {
                     StringWriter bufferedSOAPBody = new StringWriter();
                     element.serializeAndConsume(bufferedSOAPBody, format2);
-                    writeSwAMessage(msgCtxt,bufferedSOAPBody,bytesOut,format);
+                    writeSwAMessage(msgCtxt, bufferedSOAPBody, bytesOut, format);
                 } else {
                     element.serializeAndConsume(bytesOut, format2);
                 }
@@ -89,7 +89,7 @@ public class SOAPMessageFormatter implements MessageFormatter{
     }
 
     public String getContentType(MessageContext msgCtxt, OMOutputFormat format,
-            String soapActionString) {
+                                 String soapActionString) {
         String encoding = format.getCharSetEncoding();
         String contentType = format.getContentType();
         if (encoding != null) {
@@ -107,7 +107,7 @@ public class SOAPMessageFormatter implements MessageFormatter{
     }
 
     public String formatSOAPAction(MessageContext msgCtxt, OMOutputFormat format,
-            String soapActionString) {
+                                   String soapActionString) {
         // if SOAP 1.2 we attach the soap action to the content-type
         // No need to set it as a header.
         if (msgCtxt.isSOAP11()) {
@@ -115,7 +115,7 @@ public class SOAPMessageFormatter implements MessageFormatter{
                 return "\"\"";
             } else {
                 if (soapActionString != null
-                        && !soapActionString.startsWith("\"")) { 
+                        && !soapActionString.startsWith("\"")) {
                     // SOAPAction string must be a quoted string
                     soapActionString = "\"" + soapActionString + "\"";
                 }
@@ -126,17 +126,17 @@ public class SOAPMessageFormatter implements MessageFormatter{
     }
 
     public URL getTargetAddress(MessageContext msgCtxt, OMOutputFormat format,
-            URL targetURL) throws AxisFault{
+                                URL targetURL) throws AxisFault {
 
         // Check whether there is a template in the URL, if so we have to replace then with data
         // values and create a new target URL.
-        targetURL = URLTemplatingUtil.getTemplatedURL(targetURL,msgCtxt,false);
+        targetURL = URLTemplatingUtil.getTemplatedURL(targetURL, msgCtxt, false);
         return targetURL;
     }
-    
+
     private void writeSwAMessage(MessageContext msgCtxt,
-            StringWriter bufferedSOAPBody, OutputStream outputStream,
-            OMOutputFormat format) {
+                                 StringWriter bufferedSOAPBody, OutputStream outputStream,
+                                 OMOutputFormat format) {
         Object property = msgCtxt
                 .getProperty(Constants.Configuration.MM7_COMPATIBLE);
         boolean MM7CompatMode = false;
@@ -145,7 +145,8 @@ public class SOAPMessageFormatter implements MessageFormatter{
         }
         if (!MM7CompatMode) {
             MIMEOutputUtils.writeSOAPWithAttachmentsMessage(bufferedSOAPBody,
-                    outputStream, msgCtxt.getAttachmentMap(), format);
+                                                            outputStream,
+                                                            msgCtxt.getAttachmentMap(), format);
         } else {
             String innerBoundary;
             String partCID;
@@ -166,8 +167,9 @@ public class SOAPMessageFormatter implements MessageFormatter{
                         + UUIDGenerator.getUUID().replace(':', '_');
             }
             MIMEOutputUtils.writeMM7Message(bufferedSOAPBody, outputStream,
-                    msgCtxt.getAttachmentMap(), format, partCID, innerBoundary);
+                                            msgCtxt.getAttachmentMap(), format, partCID,
+                                            innerBoundary);
         }
     }
-    
+
 }

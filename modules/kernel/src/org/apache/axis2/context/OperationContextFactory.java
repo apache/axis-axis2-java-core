@@ -30,12 +30,15 @@ public class OperationContextFactory implements WSDLConstants {
     public static OperationContext createOperationContext(int mepURI, AxisOperation axisOp,
                                                           ServiceContext serviceContext)
             throws AxisFault {
-        if ((WSDLConstants.MEP_CONSTANT_IN_OUT == mepURI) || (WSDLConstants.MEP_CONSTANT_IN_ONLY == mepURI)
+        if ((WSDLConstants.MEP_CONSTANT_IN_OUT == mepURI) ||
+                (WSDLConstants.MEP_CONSTANT_IN_ONLY == mepURI)
                 || (WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT == mepURI)
-                || (WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == mepURI) || (WSDLConstants.MEP_CONSTANT_OUT_ONLY == mepURI)
-                || (WSDLConstants.MEP_CONSTANT_OUT_IN == mepURI) || (WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI)
+                || (WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY == mepURI) ||
+                (WSDLConstants.MEP_CONSTANT_OUT_ONLY == mepURI)
+                || (WSDLConstants.MEP_CONSTANT_OUT_IN == mepURI) ||
+                (WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN == mepURI)
                 || (WSDLConstants.MEP_CONSTANT_ROBUST_OUT_ONLY == mepURI)) {
-            return ContextFactory.createOperationContext(axisOp,serviceContext);
+            return ContextFactory.createOperationContext(axisOp, serviceContext);
         } else {
             throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));
         }

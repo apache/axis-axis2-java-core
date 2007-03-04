@@ -45,12 +45,12 @@ public class CallbackReceiver implements MessageReceiver {
     }
 
     public Callback lookupCallback(String msgID) {
-      return (Callback)callbackStore.get(msgID);
+        return (Callback) callbackStore.get(msgID);
     }
 
     public void receive(MessageContext messageCtx) throws AxisFault {
         RelatesTo relatesTO = messageCtx.getOptions().getRelatesTo();
-        if(relatesTO == null){
+        if (relatesTO == null) {
             throw new AxisFault("Cannot identify correct Callback object. RelatesTo is null");
         }
         String messageID = relatesTO.getValue();

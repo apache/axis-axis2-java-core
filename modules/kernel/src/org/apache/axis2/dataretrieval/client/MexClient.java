@@ -22,13 +22,13 @@ public class MexClient extends ServiceClient {
     }
 
     public MexClient(ConfigurationContext configContext,
-            Definition wsdl4jDefinition, QName wsdlServiceName, String portName)
+                     Definition wsdl4jDefinition, QName wsdlServiceName, String portName)
             throws AxisFault {
         super(configContext, wsdl4jDefinition, wsdlServiceName, portName);
     }
 
     public MexClient(ConfigurationContext configContext, URL wsdlURL,
-            QName wsdlServiceName, String portName) throws AxisFault {
+                     QName wsdlServiceName, String portName) throws AxisFault {
         super(configContext, wsdlURL, wsdlServiceName, portName);
     }
 
@@ -39,23 +39,23 @@ public class MexClient extends ServiceClient {
      * Builds OMElement that makes up of SOAP body.
      */
     public OMElement setupGetMetadataRequest(String dialect,
-            String identifier) throws AxisFault {
-        
+                                             String identifier) throws AxisFault {
+
         // Attempt to engage MEX module
-    /*    try{
-           super.engageModule(new QName("metadataExchange"));
-        }
-        catch (Exception e){
-          throw new AxisFault ("Unable to proceed with GetMetadata Request!", e);      
-        } */
-        
+        /*    try{
+          super.engageModule(new QName("metadataExchange"));
+       }
+       catch (Exception e){
+         throw new AxisFault ("Unable to proceed with GetMetadata Request!", e);
+       } */
+
         OMFactory fac = OMAbstractFactory.getOMFactory();
 
         OMNamespace omNs = fac.createOMNamespace(
                 DRConstants.SPEC.NS_URI, DRConstants.SPEC.NS_PREFIX);
 
         OMElement method = fac.createOMElement(DRConstants.SPEC.GET_METADATA,
-                omNs);
+                                               omNs);
         if (dialect != null) {
             OMElement dialect_Elem = fac.createOMElement(
                     DRConstants.SPEC.DIALET, omNs);

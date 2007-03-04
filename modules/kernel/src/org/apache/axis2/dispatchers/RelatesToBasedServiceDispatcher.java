@@ -32,22 +32,25 @@ public class RelatesToBasedServiceDispatcher extends AbstractServiceDispatcher {
 
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         RelatesTo relatesTo = messageContext.getRelatesTo();
-        if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-            log.debug(messageContext.getLogIDString()+" Checking for OperationContext using RelatesTo : " + relatesTo);
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug(messageContext.getLogIDString() +
+                    " Checking for OperationContext using RelatesTo : " + relatesTo);
         }
-        if((relatesTo!=null) && (relatesTo.getValue()!=null)){
+        if ((relatesTo != null) && (relatesTo.getValue() != null)) {
             ConfigurationContext configurationContext = messageContext.getConfigurationContext();
-            OperationContext operationContext = configurationContext.getOperationContext(relatesTo.getValue());
-            if(operationContext != null){
-                if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-                    log.debug(messageContext.getLogIDString()+" Found OperationContext: " + operationContext);
+            OperationContext operationContext =
+                    configurationContext.getOperationContext(relatesTo.getValue());
+            if (operationContext != null) {
+                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                    log.debug(messageContext.getLogIDString() + " Found OperationContext: " +
+                            operationContext);
                 }
                 return operationContext.getServiceContext().getAxisService();
             }
         }
         return null;
     }
-    
+
     public void initDispatcher() {
         init(new HandlerDescription(NAME));
     }

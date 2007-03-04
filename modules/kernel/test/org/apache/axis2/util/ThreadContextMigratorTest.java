@@ -16,84 +16,84 @@
 
 package org.apache.axis2.util;
 
+import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ContextFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisConfiguration;
 
-import junit.framework.TestCase;
+public class ThreadContextMigratorTest extends TestCase {
+    private static String TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID
+            = "Test-ThreadContextMigrator-List";
+    private MessageContext messageContext;
 
-public class ThreadContextMigratorTest extends TestCase
-{
-  private static String TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID
-                         = "Test-ThreadContextMigrator-List";
-  private MessageContext messageContext;
-  
-  public void setUp()
-  {
-    messageContext = ContextFactory.createMessageContext(
+    public void setUp() {
+        messageContext = ContextFactory.createMessageContext(
                 new ConfigurationContext(new AxisConfiguration()));
-  }
-  
-  public void testEmptyMigratorStructure()
-  throws Exception
-  {
-    ThreadContextMigratorUtil.performMigrationToThread(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
-    ThreadContextMigratorUtil.performMigrationToContext(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
-    ThreadContextMigratorUtil.performThreadCleanup(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
-    ThreadContextMigratorUtil.performContextCleanup(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
-  }
-  
-  public void testMigration()
-  throws Exception
-  {
-    TestMigrator testMigrator1 = new TestMigrator();
-    TestMigrator testMigrator2 = new TestMigrator();
-    ThreadContextMigratorUtil.addThreadContextMigrator(messageContext.getConfigurationContext(), TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, testMigrator1);
-    ThreadContextMigratorUtil.addThreadContextMigrator(messageContext.getConfigurationContext(), TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, testMigrator2);
-    ThreadContextMigratorUtil.performMigrationToThread(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
-    assertTrue(testMigrator1.migratedToThread);
-    assertTrue(testMigrator2.migratedToThread);
-    ThreadContextMigratorUtil.performMigrationToContext(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
-    assertTrue(testMigrator1.migratedToContext);
-    assertTrue(testMigrator2.migratedToContext);
-    ThreadContextMigratorUtil.performThreadCleanup(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
-    assertTrue(testMigrator1.cleanedThread);
-    assertTrue(testMigrator2.cleanedThread);
-    ThreadContextMigratorUtil.performContextCleanup(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
-    assertTrue(testMigrator1.cleanedContext);
-    assertTrue(testMigrator2.cleanedContext);
-  }
-  
-  class TestMigrator implements ThreadContextMigrator
-  {
-    boolean migratedToThread;
-    boolean cleanedThread;
-    boolean migratedToContext;
-    boolean cleanedContext;
-    
-    public void migrateContextToThread(MessageContext messageContext) throws AxisFault
-    {
-      migratedToThread = true;
     }
 
-    public void cleanupThread(MessageContext messageContext)
-    {
-      cleanedThread = true;
+    public void testEmptyMigratorStructure()
+            throws Exception {
+        ThreadContextMigratorUtil
+                .performMigrationToThread(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
+        ThreadContextMigratorUtil
+                .performMigrationToContext(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
+        ThreadContextMigratorUtil
+                .performThreadCleanup(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
+        ThreadContextMigratorUtil
+                .performContextCleanup(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
     }
 
-    public void migrateThreadToContext(MessageContext messageContext) throws AxisFault
-    {
-      migratedToContext = true;
+    public void testMigration()
+            throws Exception {
+        TestMigrator testMigrator1 = new TestMigrator();
+        TestMigrator testMigrator2 = new TestMigrator();
+        ThreadContextMigratorUtil.addThreadContextMigrator(messageContext.getConfigurationContext(),
+                                                           TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID,
+                                                           testMigrator1);
+        ThreadContextMigratorUtil.addThreadContextMigrator(messageContext.getConfigurationContext(),
+                                                           TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID,
+                                                           testMigrator2);
+        ThreadContextMigratorUtil
+                .performMigrationToThread(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
+        assertTrue(testMigrator1.migratedToThread);
+        assertTrue(testMigrator2.migratedToThread);
+        ThreadContextMigratorUtil
+                .performMigrationToContext(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
+        assertTrue(testMigrator1.migratedToContext);
+        assertTrue(testMigrator2.migratedToContext);
+        ThreadContextMigratorUtil
+                .performThreadCleanup(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
+        assertTrue(testMigrator1.cleanedThread);
+        assertTrue(testMigrator2.cleanedThread);
+        ThreadContextMigratorUtil
+                .performContextCleanup(TEST_THREAD_CONTEXT_MIGRATOR_LIST_ID, messageContext);
+        assertTrue(testMigrator1.cleanedContext);
+        assertTrue(testMigrator2.cleanedContext);
     }
 
-    public void cleanupContext(MessageContext messageContext)
-    {
-      cleanedContext = true;
+    class TestMigrator implements ThreadContextMigrator {
+        boolean migratedToThread;
+        boolean cleanedThread;
+        boolean migratedToContext;
+        boolean cleanedContext;
+
+        public void migrateContextToThread(MessageContext messageContext) throws AxisFault {
+            migratedToThread = true;
+        }
+
+        public void cleanupThread(MessageContext messageContext) {
+            cleanedThread = true;
+        }
+
+        public void migrateThreadToContext(MessageContext messageContext) throws AxisFault {
+            migratedToContext = true;
+        }
+
+        public void cleanupContext(MessageContext messageContext) {
+            cleanedContext = true;
+        }
+
     }
-    
-  }
 }

@@ -124,7 +124,7 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
         //we don't care about this either
         return lastImportLocation.toString();
     }
-    
+
     public void close() {
         //TODO: FIXME:    
     }

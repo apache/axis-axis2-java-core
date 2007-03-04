@@ -18,8 +18,8 @@ package org.apache.axis2.deployment;
 
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.phaseresolver.PhaseException;
 
@@ -32,9 +32,10 @@ public class DeploymentTotalTest extends TestCase {
             DeploymentException,
             AxisFault,
             XMLStreamException {
-        String filename = System.getProperty("basedir")+"/target/test-resources/deployment";
-        er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
-                        .getAxisConfiguration();
+        String filename = System.getProperty("basedir") + "/target/test-resources/deployment";
+        er = ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
+                .getAxisConfiguration();
 
         // OK, no exceptions.  Now make sure we read the correct file...
         Parameter param = er.getParameter("FavoriteColor");

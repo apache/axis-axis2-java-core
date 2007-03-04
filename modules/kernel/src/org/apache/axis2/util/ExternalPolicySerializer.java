@@ -38,11 +38,11 @@ public class ExternalPolicySerializer {
     public void setAssertionsToFilter(List assertions2Filter) {
         this.assertions2Filter = assertions2Filter;
     }
-    
+
     public List getAssertionsToFilter() {
         return assertions2Filter;
     }
-    
+
 
     public void serialize(Policy policy, OutputStream os) {
 
@@ -68,7 +68,7 @@ public class ExternalPolicySerializer {
             // write <wsp:Policy tag
 
             writer.writeStartElement(prefix, Constants.ELEM_POLICY,
-                    Constants.URI_POLICY_NS);
+                                     Constants.URI_POLICY_NS);
             // write xmlns:wsp=".."
             writer.writeNamespace(prefix, Constants.URI_POLICY_NS);
 
@@ -85,19 +85,20 @@ public class ExternalPolicySerializer {
             }
 
             writer.writeStartElement(Constants.ATTR_WSP,
-                    Constants.ELEM_EXACTLYONE, Constants.URI_POLICY_NS);
+                                     Constants.ELEM_EXACTLYONE, Constants.URI_POLICY_NS);
             // write <wsp:ExactlyOne>
 
             List assertionList;
 
             for (Iterator iterator = policy.getAlternatives(); iterator
                     .hasNext();) {
-               
+
                 assertionList = (List) iterator.next();
-                
+
                 // write <wsp:All>
-                writer.writeStartElement(Constants.ATTR_WSP, Constants.ELEM_ALL, Constants.URI_POLICY_NS);
-                
+                writer.writeStartElement(Constants.ATTR_WSP, Constants.ELEM_ALL,
+                                         Constants.URI_POLICY_NS);
+
                 Assertion assertion;
 
                 for (Iterator assertions = assertionList.iterator(); assertions
@@ -109,20 +110,20 @@ public class ExternalPolicySerializer {
                     }
                     assertion.serialize(writer);
                 }
-                
+
                 // write </wsp:All>
                 writer.writeEndElement();
             }
-            
+
             // write </wsp:ExactlyOne>
             writer.writeEndElement();
             // write </wsp:Policy>
             writer.writeEndElement();
-            
+
             writer.flush();
 
         } catch (Exception ex) {
-            
+
             throw new RuntimeException(ex);
 
         }

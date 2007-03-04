@@ -49,7 +49,8 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
         AxisService axisService = messageContext.getAxisService();
         if (axisService != null) {
             String uri = messageContext.getTo().getAddress();
-            String httpLocation = parseRequestURL(uri, messageContext.getConfigurationContext().getServiceContextPath());
+            String httpLocation = parseRequestURL(uri, messageContext
+                    .getConfigurationContext().getServiceContextPath());
 
             if (httpLocation != null) {
                 AxisEndpoint axisEndpoint = (AxisEndpoint) messageContext
@@ -97,7 +98,7 @@ public class HTTPLocationBasedDispatcher extends AbstractDispatcher {
 
         index = service.indexOf("/");
         if (-1 != index) {
-                service = service.substring(index);
+            service = service.substring(index);
         } else {
             int queryIndex = path.indexOf("?");
             if (queryIndex != -1) {

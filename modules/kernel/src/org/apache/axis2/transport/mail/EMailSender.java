@@ -139,7 +139,7 @@ public class EMailSender {
                 .addHeader("Content-Description", "\"" + mailToInfo.getContentDescription() + "\"");
 
         String contentType = format.getContentType() != null ? format.getContentType() :
-                             Constants.DEFAULT_CONTENT_TYPE;
+                Constants.DEFAULT_CONTENT_TYPE;
         if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
             if (messageContext.getSoapAction() != null) {
                 messageBodyPart.setHeader(Constants.HEADER_SOAP_ACTION,
@@ -151,7 +151,8 @@ public class EMailSender {
             if (messageContext.getSoapAction() != null) {
                 messageBodyPart.setHeader("Content-Type",
                                           contentType + "; charset=" + format.getCharSetEncoding() +
-                                          " ; action=\"" + messageContext.getSoapAction() + "\"");
+                                                  " ; action=\"" + messageContext.getSoapAction() +
+                                                  "\"");
             }
         } else {
             messageBodyPart.setHeader("Content-Type",

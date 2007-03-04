@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AxisBinding extends AxisDescription{
+public class AxisBinding extends AxisDescription {
 
     private QName name;
 
@@ -36,11 +36,11 @@ public class AxisBinding extends AxisDescription{
     private Map faults;
 
     public AxisBindingMessage getFault(String name) {
-        return (AxisBindingMessage)faults.get(name);
+        return (AxisBindingMessage) faults.get(name);
     }
 
     public void addFault(AxisBindingMessage fault) {
-        this.faults.put(fault.getName(),fault);
+        this.faults.put(fault.getName(), fault);
     }
 
     public AxisBinding() {

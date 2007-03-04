@@ -51,10 +51,10 @@ public class RelatesTo implements Externalizable {
     private static final long serialVersionUID = -1120384315333414960L;
 
     /**
-     * @serial Tracks the revision level of a class to identify changes to the 
+     * @serial Tracks the revision level of a class to identify changes to the
      * class definition that are compatible to serialization/externalization.
      * If a class definition changes, then the serialization/externalization
-     * of the class is affected. 
+     * of the class is affected.
      * Refer to the writeExternal() and readExternal() methods.
      */
     // supported revision levels, add a new level to manage compatible changes
@@ -62,7 +62,6 @@ public class RelatesTo implements Externalizable {
     // current revision level of this object
     private static final int revisionID = REVISION_1;
 
-    
 
     /**
      * Field relationshipType
@@ -75,7 +74,7 @@ public class RelatesTo implements Externalizable {
     private String value;
 
     private ArrayList extensibilityAttributes = null;
-    
+
     /**
      * Constructor RelatesTo
      */
@@ -107,9 +106,9 @@ public class RelatesTo implements Externalizable {
      * the default value {@link AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE}
      */
     public String getRelationshipType() {
-        return (relationshipType != null && !"".equals(relationshipType)?
-                    relationshipType :
-                    AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE);
+        return (relationshipType != null && !"".equals(relationshipType) ?
+                relationshipType :
+                AddressingConstants.Final.WSA_DEFAULT_RELATIONSHIP_TYPE);
     }
 
     /**
@@ -136,7 +135,7 @@ public class RelatesTo implements Externalizable {
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     public ArrayList getExtensibilityAttributes() {
         return extensibilityAttributes;
     }
@@ -144,28 +143,27 @@ public class RelatesTo implements Externalizable {
     public void setExtensibilityAttributes(ArrayList extensibilityAttributes) {
         this.extensibilityAttributes = extensibilityAttributes;
     }
-    
+
     /*
-     *  (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+    *  (non-Javadoc)
+    * @see java.lang.Object#toString()
+    */
     public String toString() {
         return "Identifier: " + value
-             + ", Relationship type: " + relationshipType;
+                + ", Relationship type: " + relationshipType;
     }
 
-
     /* ===============================================================
-     * Externalizable support 
-     * ===============================================================
-     */
-    
+    * Externalizable support
+    * ===============================================================
+    */
+
     /**
      * Save the contents of this object.
      * <p/>
      * NOTE: Transient fields and static fields are not saved.
      *
-     * @param out    The stream to write the object contents to
+     * @param out The stream to write the object contents to
      * @throws IOException
      */
     public void writeExternal(ObjectOutput out) throws IOException {
@@ -203,20 +201,21 @@ public class RelatesTo implements Externalizable {
         // collections and lists
         //---------------------------------------------------------
 
-        ObjectStateUtils.writeArrayList(out, extensibilityAttributes, "RelatesTo.extensibilityAttributes");
+        ObjectStateUtils
+                .writeArrayList(out, extensibilityAttributes, "RelatesTo.extensibilityAttributes");
 
     }
 
 
     /**
-     * Restore the contents of the object that was 
-     * previously saved. 
+     * Restore the contents of the object that was
+     * previously saved.
      * <p/>
      * NOTE: The field data must read back in the same order and type
-     * as it was written.  Some data will need to be validated when 
+     * as it was written.  Some data will need to be validated when
      * resurrected.
      *
-     * @param in    The stream to read the object contents from 
+     * @param in The stream to read the object contents from
      * @throws IOException
      * @throws ClassNotFoundException
      */
@@ -225,7 +224,7 @@ public class RelatesTo implements Externalizable {
         long suid = in.readLong();
 
         // revision ID
-        int  revID = in.readInt();
+        int revID = in.readInt();
 
         // make sure the object data is in a version we can handle
         if (suid != serialVersionUID) {
@@ -237,13 +236,12 @@ public class RelatesTo implements Externalizable {
             throw new ClassNotFoundException(ObjectStateUtils.UNSUPPORTED_REVID);
         }
 
-
         //---------------------------------------------------------
         // various strings
         //---------------------------------------------------------
 
         // String relationshipType
-        relationshipType = ObjectStateUtils.readString(in,"RelatesTo.relationshipType");
+        relationshipType = ObjectStateUtils.readString(in, "RelatesTo.relationshipType");
 
         // String value
         value = ObjectStateUtils.readString(in, "RelatesTo.value");

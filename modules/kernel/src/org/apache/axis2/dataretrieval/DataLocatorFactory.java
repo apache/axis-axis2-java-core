@@ -22,41 +22,42 @@ package org.apache.axis2.dataretrieval;
  */
 
 public class DataLocatorFactory {
-  private static org.apache.axis2.dataretrieval.WSDLDataLocator wsdlDataLocator = null;
-  private static org.apache.axis2.dataretrieval.PolicyDataLocator policyDataLocator = null;
-  private static org.apache.axis2.dataretrieval.SchemaDataLocator schemaDataLocator = null;
-     
-  /*
-   * Return instance of default Data Locator for the dialect.
-   */
-  protected static AxisDataLocator createDataLocator(String dialect) {
-      return (createDataLocator(dialect, null));
-  }
-  
-  protected static AxisDataLocator createDataLocator(String dialect, ServiceData[] serviceDataArray) {
-      AxisDataLocator dataLocator = null;
-      if (dialect.equals(DRConstants.SPEC.DIALECT_TYPE_WSDL)){
-          dataLocator = getWsdlDataLocator(serviceDataArray); 
-          
+    private static org.apache.axis2.dataretrieval.WSDLDataLocator wsdlDataLocator = null;
+    private static org.apache.axis2.dataretrieval.PolicyDataLocator policyDataLocator = null;
+    private static org.apache.axis2.dataretrieval.SchemaDataLocator schemaDataLocator = null;
+
+    /*
+    * Return instance of default Data Locator for the dialect.
+    */
+    protected static AxisDataLocator createDataLocator(String dialect) {
+        return (createDataLocator(dialect, null));
+    }
+
+    protected static AxisDataLocator createDataLocator(String dialect,
+                                                       ServiceData[] serviceDataArray) {
+        AxisDataLocator dataLocator = null;
+        if (dialect.equals(DRConstants.SPEC.DIALECT_TYPE_WSDL)) {
+            dataLocator = getWsdlDataLocator(serviceDataArray);
+
         } else if (dialect.trim().equals(DRConstants.SPEC.DIALECT_TYPE_POLICY)) {
             if (policyDataLocator == null) {
-              dataLocator = new PolicyDataLocator(serviceDataArray);
+                dataLocator = new PolicyDataLocator(serviceDataArray);
             } else {
-              dataLocator = policyDataLocator;
-      }
+                dataLocator = policyDataLocator;
+            }
         } else if (dialect.equals(DRConstants.SPEC.DIALECT_TYPE_SCHEMA)) {
             if (schemaDataLocator == null) {
-              dataLocator = new SchemaDataLocator(serviceDataArray);
+                dataLocator = new SchemaDataLocator(serviceDataArray);
             } else {
-              dataLocator = schemaDataLocator;
-      }
+                dataLocator = schemaDataLocator;
+            }
         } else {
-          dataLocator = null;
-      }
-      return dataLocator;
-  }
-  
-  protected static AxisDataLocator getWsdlDataLocator(ServiceData[] serviceDataArray) {
+            dataLocator = null;
+        }
+        return dataLocator;
+    }
+
+    protected static AxisDataLocator getWsdlDataLocator(ServiceData[] serviceDataArray) {
 
         if (wsdlDataLocator == null) {
             wsdlDataLocator = new org.apache.axis2.dataretrieval.WSDLDataLocator(serviceDataArray);
@@ -65,7 +66,6 @@ public class DataLocatorFactory {
         }
         return wsdlDataLocator;
     }
-  
-  
-  
+
+
 }

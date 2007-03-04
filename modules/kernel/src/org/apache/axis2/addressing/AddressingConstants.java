@@ -47,7 +47,7 @@ public interface AddressingConstants {
     // ====================== WSDL Binding Constants ========================
     public static final String USING_ADDRESSING = "UsingAddressing";
     public static final String ANONYMOUS = "Anonymous";
-    
+
     // ====================== Addressing Requirement Levels ==================
     // These are used to represent the requirement level on WS-Addressing indicated
     // in a services.xml or a WSDL file.
@@ -56,21 +56,23 @@ public interface AddressingConstants {
     public static final String ADDRESSING_UNSPECIFIED = "unspecified";
     // ADDRESSING_OPTIONAL is the equivalent of <wsaw:UsingAddressing required="false" />
     // in a WSDL file
-    public static final String ADDRESSING_OPTIONAL    = "optional";
+    public static final String ADDRESSING_OPTIONAL = "optional";
     // ADDRESSING_REQUIRED is the equivalent of <wsaw:UsingAddressing required="true" />
     // in a WSDL file
-    public static final String ADDRESSING_REQUIRED    = "required";
+    public static final String ADDRESSING_REQUIRED = "required";
 
     // If this property is set, addressing headers will be replaced from the information in the
     // message context.  
     public static final String REPLACE_ADDRESSING_HEADERS = "ReplaceAddressingHeaders";
-    
+
     // this property once set to Boolean.TRUE will make the messages to skip Addressing Handler.
     // So you will not see Addressing Headers in the OUT path.
-    public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES = "disableAddressingForOutMessages";
-    
-    public static final String ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS = "addMustUnderstandToAddressingHeaders";
-    
+    public static final String DISABLE_ADDRESSING_FOR_OUT_MESSAGES =
+            "disableAddressingForOutMessages";
+
+    public static final String ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS =
+            "addMustUnderstandToAddressingHeaders";
+
     /**
      * A property pointing to an ArrayList of OMAttribute objects representing any attributes
      * of the wsa:Action header.
@@ -81,13 +83,13 @@ public interface AddressingConstants {
      * of the wsa:MessageID header.
      */
     public static final String MESSAGEID_ATTRIBUTES = "messageidAttributes";
-    
+
     /**
      * When set to Boolean.TRUE this will cause the addressing out handler to output all
      * populated addressing headers in a message, including any optional ones.
      */
     public static final String INCLUDE_OPTIONAL_HEADERS = "includeOptionalHeaders";
-    
+
     /**
      * This property, if set to Boolean.TRUE, will mean that the addressing handler allows partially
      * ws-addressed messages to be sent even if they are then invalid rather than throwing a fault.
@@ -95,14 +97,16 @@ public interface AddressingConstants {
      * It is not clear how necessary this property is and it may be removed before the next release if
      * it is not seen to be necessary - davidillsley@apache.org
      */
-    public static final String DISABLE_OUTBOUND_ADDRESSING_VALIDATION = "disableAddressingOutboundValidation";
+    public static final String DISABLE_OUTBOUND_ADDRESSING_VALIDATION =
+            "disableAddressingOutboundValidation";
 
     public static final String WSAW_ANONYMOUS_PARAMETER_NAME = "wsawAnonymous";
-    
+
     // ======================== Common Faults ==============================
     public static final String FAULT_ACTION_NOT_SUPPORTED = "ActionNotSupported";
-    public static final String FAULT_ACTION_NOT_SUPPORTED_REASON = "The [action] cannot be processed at the receiver.";
-    
+    public static final String FAULT_ACTION_NOT_SUPPORTED_REASON =
+            "The [action] cannot be processed at the receiver.";
+
     public interface Final {
 
         // ====================== Addressing 1.0 Final Version Constants ====================
@@ -139,16 +143,22 @@ public interface AddressingConstants {
         public static final String FAULT_HEADER_PROB_HEADER = "ProblemHeader";
         public static final String FAULT_HEADER_DETAIL = "FaultDetail";
         public static final String FAULT_INVALID_HEADER = "InvalidAddressingHeader";
-        public static final String FAULT_INVALID_HEADER_REASON = "A header representing a Message Addressing Property is not valid and the message cannot be processed";
-        public static final String FAULT_ADDRESSING_HEADER_REQUIRED = "MessageAddressingHeaderRequired";
-        public static final String FAULT_ADDRESSING_HEADER_REQUIRED_REASON = "A required header representing a Message Addressing Property is not present";
+        public static final String FAULT_INVALID_HEADER_REASON =
+                "A header representing a Message Addressing Property is not valid and the message cannot be processed";
+        public static final String FAULT_ADDRESSING_HEADER_REQUIRED =
+                "MessageAddressingHeaderRequired";
+        public static final String FAULT_ADDRESSING_HEADER_REQUIRED_REASON =
+                "A required header representing a Message Addressing Property is not present";
         public static final String FAULT_INVALID_CARDINALITY = "InvalidCardinality";
-        public static final String FAULT_ONLY_ANONYMOUS_ADDRESS_SUPPORTED = "OnlyAnonymousAddressSupported";
-        public static final String FAULT_ONLY_NON_ANONYMOUS_ADDRESS_SUPPORTED = "OnlyNonAnonymousAddressSupported";
+        public static final String FAULT_ONLY_ANONYMOUS_ADDRESS_SUPPORTED =
+                "OnlyAnonymousAddressSupported";
+        public static final String FAULT_ONLY_NON_ANONYMOUS_ADDRESS_SUPPORTED =
+                "OnlyNonAnonymousAddressSupported";
         public static final String FAULT_PROBLEM_ACTION_NAME = "ProblemAction";
 
-        public static final QName WSAW_USING_ADDRESSING = new QName(WSAW_NAMESPACE,USING_ADDRESSING);
-        public static final QName WSAW_ANONYMOUS = new QName(WSAW_NAMESPACE,USING_ADDRESSING);
+        public static final QName WSAW_USING_ADDRESSING =
+                new QName(WSAW_NAMESPACE, USING_ADDRESSING);
+        public static final QName WSAW_ANONYMOUS = new QName(WSAW_NAMESPACE, USING_ADDRESSING);
     }
 
 
@@ -168,13 +178,17 @@ public interface AddressingConstants {
         public static final String EPR_REFERENCE_PROPERTIES = "ReferenceProperties";
         public static final String WSA_FAULT_ACTION =
                 "http://schemas.xmlsoap.org/ws/2004/08/addressing/fault";
-        
+
         // fault information
         public static final String FAULT_INVALID_HEADER = "InvalidMessageInformationHeader";
-        public static final String FAULT_INVALID_HEADER_REASON = "A message information header is not valid and the message cannot be processed. The validity failure can be either structural or semantic, e.g. a [destination] that is not a URI or a [relationship] to a [message id] that was never issued.";
-        public static final String FAULT_ADDRESSING_HEADER_REQUIRED = "MessageInformationHeaderRequired";
-        public static final String FAULT_ADDRESSING_HEADER_REQUIRED_REASON = "A required message information header, To, MessageID, or Action, is not present.";
+        public static final String FAULT_INVALID_HEADER_REASON =
+                "A message information header is not valid and the message cannot be processed. The validity failure can be either structural or semantic, e.g. a [destination] that is not a URI or a [relationship] to a [message id] that was never issued.";
+        public static final String FAULT_ADDRESSING_HEADER_REQUIRED =
+                "MessageInformationHeaderRequired";
+        public static final String FAULT_ADDRESSING_HEADER_REQUIRED_REASON =
+                "A required message information header, To, MessageID, or Action, is not present.";
 
-        public static final QName WSAW_USING_ADDRESSING = new QName(WSA_NAMESPACE,USING_ADDRESSING);
+        public static final QName WSAW_USING_ADDRESSING =
+                new QName(WSA_NAMESPACE, USING_ADDRESSING);
     }
 }

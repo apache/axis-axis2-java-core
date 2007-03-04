@@ -23,7 +23,7 @@ import javax.xml.namespace.QName;
 
 /**
  * This represents the service data for a dialect and identifier if specified.
- * Basically, the Data element defined in the ServiceData.xml packaged in 
+ * Basically, the Data element defined in the ServiceData.xml packaged in
  * a Web Service's achieve file.
  */
 
@@ -37,8 +37,8 @@ public class ServiceData {
     String fileName;
 
     /**
-     * Constructor 
-     * 
+     * Constructor
+     *
      * @param in_data an Data element in the ServiceData.
      */
 
@@ -76,8 +76,7 @@ public class ServiceData {
         return data;
     }
 
-    
-    
+
     // Get URL from data Element
     protected String getURL() {
 
@@ -90,14 +89,14 @@ public class ServiceData {
 
         return urlValue;
     }
-    
+
     // Get ENDPOINT_REFERENCE from Data Element
     protected OMElement getEndpointReference() {
         OMElement epr = data.getFirstChildWithName(new QName(
                 DRConstants.SERVICE_DATA.ENDPOINT_REFERENCE));
         return epr;
     }
-    
+
     // Load the file content of the file specified in the file attribute
     // in the data element.
     protected OMElement getFileContent(ClassLoader classloader)

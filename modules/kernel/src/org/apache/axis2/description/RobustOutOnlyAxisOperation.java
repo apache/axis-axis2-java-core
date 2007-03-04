@@ -37,7 +37,7 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
     public RobustOutOnlyAxisOperation() {
         super();
         //setup a temporary name
-        QName tmpName = new QName(this.getClass().getName()+"_"+UUIDGenerator.getUUID());
+        QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
         this.setName(tmpName);
         setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY);
     }
@@ -53,7 +53,8 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
 
     class RobustOutOnlyOperationClient extends OutInAxisOperationClient {
 
-        public RobustOutOnlyOperationClient(OutInAxisOperation axisOp, ServiceContext sc, Options options) {
+        public RobustOutOnlyOperationClient(OutInAxisOperation axisOp, ServiceContext sc,
+                                            Options options) {
             super(axisOp, sc, options);
         }
 
@@ -84,7 +85,8 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
             responseMessageContext.setTransportIn(msgctx.getTransportIn());
             responseMessageContext.setTransportOut(msgctx.getTransportOut());
             responseMessageContext.setProperty(MessageContext.TRANSPORT_HEADERS,
-                    msgctx.getProperty(MessageContext.TRANSPORT_HEADERS));
+                                               msgctx.getProperty(
+                                                       MessageContext.TRANSPORT_HEADERS));
 
             SOAPEnvelope envelope = responseMessageContext.getEnvelope();
             if (envelope == null) {

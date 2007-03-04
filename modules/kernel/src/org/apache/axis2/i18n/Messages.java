@@ -45,7 +45,7 @@ public class Messages {
     static {
         MessageBundle defaultMessageBundle =
                 new MessageBundle(projectName, packageName, resourceName,
-                        locale, classLoader, parent);
+                                  locale, classLoader, parent);
         addMessageBundle(DEFAULT_MESSAGE_BUNDLE_KEY, defaultMessageBundle);
     }
 
@@ -140,7 +140,8 @@ public class Messages {
      * @param arg4 The argument to place in variable {4}
      * @return The formatted message
      */
-    public static String getMessage(String key, String arg0, String arg1, String arg2, String arg3, String arg4)
+    public static String getMessage(String key, String arg0, String arg1, String arg2, String arg3,
+                                    String arg4)
             throws MissingResourceException {
         MessageBundle messageBundle = getMessageBundle(DEFAULT_MESSAGE_BUNDLE_KEY);
         return messageBundle.getMessage(key, arg0, arg1, arg2, arg3, arg4);
@@ -216,7 +217,8 @@ public class Messages {
      * @param arg1             The argument to place in variable {1}
      * @return The formatted message
      */
-    public static String getMessageFromBundle(String messageBundleKey, String key, String arg0, String arg1)
+    public static String getMessageFromBundle(String messageBundleKey, String key, String arg0,
+                                              String arg1)
             throws MissingResourceException, Exception {
         MessageBundle messageBundle = getMessageBundle(messageBundleKey);
         if (messageBundle == null) {
@@ -236,7 +238,8 @@ public class Messages {
      * @param arg2             The argument to place in variable {2}
      * @return The formatted message
      */
-    public static String getMessageFromBundle(String messageBundleKey, String key, String arg0, String arg1, String arg2)
+    public static String getMessageFromBundle(String messageBundleKey, String key, String arg0,
+                                              String arg1, String arg2)
             throws MissingResourceException, Exception {
         MessageBundle messageBundle = getMessageBundle(messageBundleKey);
         if (messageBundle == null) {
@@ -257,7 +260,8 @@ public class Messages {
      * @param arg3             The argument to place in variable {3}
      * @return The formatted message
      */
-    public static String getMessageFromBundle(String messageBundleKey, String key, String arg0, String arg1, String arg2, String arg3)
+    public static String getMessageFromBundle(String messageBundleKey, String key, String arg0,
+                                              String arg1, String arg2, String arg3)
             throws MissingResourceException, Exception {
         MessageBundle messageBundle = getMessageBundle(messageBundleKey);
         if (messageBundle == null) {
@@ -279,7 +283,8 @@ public class Messages {
      * @param arg4             The argument to place in variable {4}
      * @return The formatted message
      */
-    public static String getMessageFromBundle(String messageBundleKey, String key, String arg0, String arg1, String arg2, String arg3, String arg4)
+    public static String getMessageFromBundle(String messageBundleKey, String key, String arg0,
+                                              String arg1, String arg2, String arg3, String arg4)
             throws MissingResourceException, Exception {
         MessageBundle messageBundle = getMessageBundle(messageBundleKey);
         if (messageBundle == null) {

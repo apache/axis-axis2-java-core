@@ -3,15 +3,15 @@ package org.apache.axis2.deployment;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 import org.apache.axis2.deployment.util.Utils;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.ws.java2wsdl.AnnotationConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.java2wsdl.AnnotationConstants;
 import org.codehaus.jam.JAnnotation;
 import org.codehaus.jam.JClass;
 import org.codehaus.jam.JamClassIterator;
@@ -19,7 +19,6 @@ import org.codehaus.jam.JamService;
 import org.codehaus.jam.JamServiceFactory;
 import org.codehaus.jam.JamServiceParams;
 
-import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
@@ -47,6 +46,7 @@ import java.util.zip.ZipInputStream;
 *
 *
 */
+
 public class POJODeployer implements Deployer {
 
     private static Log log = LogFactory.getLog(POJODeployer.class);
@@ -67,8 +67,11 @@ public class POJODeployer implements Deployer {
                 File file = deploymentFileData.getFile();
                 if (file != null) {
                     File parentFile = file.getParentFile();
-                    DeploymentClassLoader classLoader = new DeploymentClassLoader(new URL[]{parentFile.toURL()},
-                            configCtx.getAxisConfiguration().getSystemClassLoader(), true);
+                    DeploymentClassLoader classLoader =
+                            new DeploymentClassLoader(new URL[]{parentFile.toURL()},
+                                                      configCtx
+                                                              .getAxisConfiguration().getSystemClassLoader(),
+                                                      true);
                     Thread.currentThread().setContextClassLoader(classLoader);
                     String className = file.getName();
                     className = className.replaceAll(".class", "");
@@ -89,7 +92,8 @@ public class POJODeployer implements Deployer {
                              * nothing will happen) 2. In the next stage for all the methods
                              * messages and port types will be creteated
                              */
-                            JAnnotation annotation = jclass.getAnnotation(AnnotationConstants.WEB_SERVICE);
+                            JAnnotation annotation =
+                                    jclass.getAnnotation(AnnotationConstants.WEB_SERVICE);
                             if (annotation != null) {
                                 Class claxx = Class.forName(
                                         "org.apache.axis2.jaxws.description.DescriptionFactory");
@@ -97,11 +101,12 @@ public class POJODeployer implements Deployer {
                                         "createAxisService",
                                         new Class[]{Class.class});
                                 Class pojoClass = Loader.loadClass(classLoader, className);
-                                AxisService axisService = (AxisService)mthod.invoke(claxx, new Object[]{pojoClass});
+                                AxisService axisService =
+                                        (AxisService) mthod.invoke(claxx, new Object[]{pojoClass});
                                 Utils.fillAxisService(axisService,
-                                        configCtx.getAxisConfiguration(),
-                                        new ArrayList(),
-                                        new ArrayList());
+                                                      configCtx.getAxisConfiguration(),
+                                                      new ArrayList(),
+                                                      new ArrayList());
                                 setMessageReceivers(axisService);
                                 configCtx.getAxisConfiguration().addService(axisService);
                             } else {
@@ -121,8 +126,10 @@ public class POJODeployer implements Deployer {
                                         WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT,
                                         inOutmessageReceiver);
                                 AxisService axisService = AxisService.createService(className,
-                                        configCtx.getAxisConfiguration(),
-                                        messageReciverMap, null, null, classLoader);
+                                                                                    configCtx.getAxisConfiguration(),
+                                                                                    messageReciverMap,
+                                                                                    null, null,
+                                                                                    classLoader);
                                 configCtx.getAxisConfiguration().addService(axisService);
                             }
                         }
@@ -159,7 +166,8 @@ public class POJODeployer implements Deployer {
                 ArrayList axisServiceList = new ArrayList();
                 for (int i = 0; i < classList.size(); i++) {
                     String className = (String) classList.get(i);
-                    DeploymentClassLoader classLoader = new DeploymentClassLoader(new URL[]{deploymentFileData.getFile().toURL()},
+                    DeploymentClassLoader classLoader = new DeploymentClassLoader(
+                            new URL[]{deploymentFileData.getFile().toURL()},
                             configCtx.getAxisConfiguration().getSystemClassLoader(), true);
                     Thread.currentThread().setContextClassLoader(classLoader);
                     className = className.replaceAll(".class", "");
@@ -181,7 +189,8 @@ public class POJODeployer implements Deployer {
                              * nothing will happen) 2. In the next stage for all the methods
                              * messages and port types will be creteated
                              */
-                            JAnnotation annotation = jclass.getAnnotation(AnnotationConstants.WEB_SERVICE);
+                            JAnnotation annotation =
+                                    jclass.getAnnotation(AnnotationConstants.WEB_SERVICE);
                             if (annotation != null) {
                                 Class claxx = Class.forName(
                                         "org.apache.axis2.jaxws.description.DescriptionFactory");
@@ -189,11 +198,12 @@ public class POJODeployer implements Deployer {
                                         "createAxisService",
                                         new Class[]{Class.class});
                                 Class pojoClass = Loader.loadClass(classLoader, className);
-                                AxisService axisService = (AxisService)mthod.invoke(claxx, new Object[]{pojoClass});
+                                AxisService axisService =
+                                        (AxisService) mthod.invoke(claxx, new Object[]{pojoClass});
                                 Utils.fillAxisService(axisService,
-                                        configCtx.getAxisConfiguration(),
-                                        new ArrayList(),
-                                        new ArrayList());
+                                                      configCtx.getAxisConfiguration(),
+                                                      new ArrayList(),
+                                                      new ArrayList());
                                 setMessageReceivers(axisService);
                                 axisServiceList.add(axisService);
                             }
@@ -219,33 +229,33 @@ public class POJODeployer implements Deployer {
 
     public void setMessageReceivers(AxisService service) {
         Iterator iterator = service.getOperations();
-        while(iterator.hasNext()){
-        AxisOperation operation = (AxisOperation) iterator.next();
-        String MEP = operation.getMessageExchangePattern();
-        if(MEP!=null){
-            try {
-                if(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
-                    || WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(MEP)){
-                    Class inOnlyMessageReceiver = Loader.loadClass(
-                            "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
-                    MessageReceiver messageReceiver =
-                            (MessageReceiver) inOnlyMessageReceiver.newInstance();
-                    operation.setMessageReceiver(messageReceiver);
-                }  else {
-                    Class inoutMessageReceiver = Loader.loadClass(
-                            "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
-                    MessageReceiver inOutmessageReceiver =
-                            (MessageReceiver) inoutMessageReceiver.newInstance();
-                    operation.setMessageReceiver(inOutmessageReceiver);
+        while (iterator.hasNext()) {
+            AxisOperation operation = (AxisOperation) iterator.next();
+            String MEP = operation.getMessageExchangePattern();
+            if (MEP != null) {
+                try {
+                    if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
+                            || WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(MEP)) {
+                        Class inOnlyMessageReceiver = Loader.loadClass(
+                                "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
+                        MessageReceiver messageReceiver =
+                                (MessageReceiver) inOnlyMessageReceiver.newInstance();
+                        operation.setMessageReceiver(messageReceiver);
+                    } else {
+                        Class inoutMessageReceiver = Loader.loadClass(
+                                "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
+                        MessageReceiver inOutmessageReceiver =
+                                (MessageReceiver) inoutMessageReceiver.newInstance();
+                        operation.setMessageReceiver(inOutmessageReceiver);
+                    }
+                } catch (ClassNotFoundException e) {
+                    log.error(e);
+                } catch (InstantiationException e) {
+                    log.error(e);
+                } catch (IllegalAccessException e) {
+                    log.error(e);
                 }
-            } catch (ClassNotFoundException e) {
-                log.error(e);
-            } catch (InstantiationException e) {
-                log.error(e);
-            } catch (IllegalAccessException e) {
-               log.error(e);
             }
-        }
         }
     }
 

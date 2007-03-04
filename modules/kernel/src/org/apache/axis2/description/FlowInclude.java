@@ -20,7 +20,7 @@ package org.apache.axis2.description;
 /**
  * Class FlowIncludeImpl
  */
-public class FlowInclude  {
+public class FlowInclude {
 
     /**
      * Field fault

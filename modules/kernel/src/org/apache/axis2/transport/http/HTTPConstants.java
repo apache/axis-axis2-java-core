@@ -388,12 +388,12 @@ public class HTTPConstants {
     public static final byte SENDER[] = "400".getBytes();
     public static final String PROXY = "PROXY";
     public static final String AUTHENTICATE = "_NTLM_DIGEST_BASIC_AUTHENTICATION_";
-    
+
     /**
      * @deprecated
      */
     public static final String MTOM_RECEIVED_CONTENT_TYPE = "MTOM_RECEIVED";
-    
+
     /**
      * Field ISE[]
      */
@@ -446,8 +446,9 @@ public class HTTPConstants {
 
     public static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
     public static final String HEADER_CONTENT_ENCODING = "Content-Encoding";
-    public static final String HEADER_CONTENT_ENCODING_LOWERCASE = HEADER_CONTENT_ENCODING.toLowerCase();
-    
+    public static final String HEADER_CONTENT_ENCODING_LOWERCASE =
+            HEADER_CONTENT_ENCODING.toLowerCase();
+
 
     public static final String COMPRESSION_GZIP = "gzip";
 
@@ -464,9 +465,9 @@ public class HTTPConstants {
      */
     public static final String MC_GZIP_REQUEST = "transport.http.gzipRequest";
 
-     /* by default the HTTP response body is not compressed. set this message
-     * context property to true to have the response body gzip compressed.
-     */
+    /* by default the HTTP response body is not compressed. set this message
+    * context property to true to have the response body gzip compressed.
+    */
     public static final String MC_GZIP_RESPONSE = "gzipResponse";
 
     /**
@@ -474,19 +475,20 @@ public class HTTPConstants {
      * up by the sender while sending the request
      */
     public static final String HTTP_HEADERS = "HTTP_HEADERS";
-    public static final String CHUNKED="__CHUNKED__";
+    public static final String CHUNKED = "__CHUNKED__";
     public static final String HTTP_PROTOCOL_VERSION = "__HTTP_PROTOCOL_VERSION__";
     //to set and get the property from service context
     public static final String COOKIE_STRING = "Cookie";
     public static final String HTTP_METHOD_GET = "GET";
     public static final String HTTP_METHOD_POST = "POST";
-    
+
     /**
      * @deprecated Please use Constants.Configuration.CONTENT_TYPE
      */
     public static final String CONTENT_TYPE = "Content-Type";
 
     public static final String OMIT_SOAP_12_ACTION = "OmitSOAP12Action";
+
     /**
      * Method getBytes.
      *

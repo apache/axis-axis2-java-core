@@ -74,10 +74,11 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
 
 
             if (serviceTCCL.equals(Constants.TCCL_COMPOSITE)) {
-                Thread.currentThread().setContextClassLoader(new MultiParentClassLoader(new URL[]{}, new ClassLoader[]{
-                        msgContext.getAxisService().getClassLoader(),
-                        contextClassLoader,
-                }));
+                Thread.currentThread().setContextClassLoader(
+                        new MultiParentClassLoader(new URL[]{}, new ClassLoader[]{
+                                msgContext.getAxisService().getClassLoader(),
+                                contextClassLoader,
+                        }));
             } else if (serviceTCCL.equals(Constants.TCCL_SERVICE)) {
                 Thread.currentThread().setContextClassLoader(
                         msgContext.getAxisService().getClassLoader()
@@ -116,10 +117,10 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
                 // Find static getServiceObject() method, call it if there   
                 Method method = serviceObjectMaker.
                         getMethod("getServiceObject",
-                                new Class[]{AxisService.class});
+                                  new Class[]{AxisService.class});
                 if (method != null) {
                     return method.invoke(serviceObjectMaker.newInstance(), new Object[]{service});
-            }
+                }
             }
 
             Parameter implInfoParam = service.getParameter(Constants.SERVICE_CLASS);
@@ -130,7 +131,8 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
 
                 return implClass.newInstance();
             } else {
-                throw new AxisFault(Messages.getMessage("paramIsNotSpecified", "SERVICE_OBJECT_SUPPLIER"));
+                throw new AxisFault(
+                        Messages.getMessage("paramIsNotSpecified", "SERVICE_OBJECT_SUPPLIER"));
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
@@ -166,7 +168,7 @@ public abstract class AbstractMessageReceiver implements MessageReceiver {
             serviceimpl = makeNewServiceObject(msgContext);
             //Service initialization
             DependencyManager.initServiceClass(serviceimpl,
-                    msgContext.getServiceContext());
+                                               msgContext.getServiceContext());
             serviceContext.setProperty(ServiceContext.SERVICE_OBJECT, serviceimpl);
             return serviceimpl;
         }

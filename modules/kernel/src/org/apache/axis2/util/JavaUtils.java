@@ -30,20 +30,20 @@ public class JavaUtils {
      * http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#229308
      * Note that false, true, and null are not strictly keywords; they are literal values,
      * but for the purposes of this array, they can be treated as literals.
-     *    ****** PLEASE KEEP THIS LIST SORTED IN ASCENDING ORDER ******
+     * ****** PLEASE KEEP THIS LIST SORTED IN ASCENDING ORDER ******
      */
     static final String keywords[] =
             {
-                    "abstract",  "assert",       "boolean",    "break",      "byte",      "case",
-                    "catch",     "char",         "class",      "const",     "continue",
-                    "default",   "do",           "double",     "else",      "extends",
-                    "false",     "final",        "finally",    "float",     "for",
-                    "goto",      "if",           "implements", "import",    "instanceof",
-                    "int",       "interface",    "long",       "native",    "new",
-                    "null",      "package",      "private",    "protected", "public",
-                    "return",    "short",        "static",     "strictfp",  "super",
-                    "switch",    "synchronized", "this",       "throw",     "throws",
-                    "transient", "true",         "try",        "void",      "volatile",
+                    "abstract", "assert", "boolean", "break", "byte", "case",
+                    "catch", "char", "class", "const", "continue",
+                    "default", "do", "double", "else", "extends",
+                    "false", "final", "finally", "float", "for",
+                    "goto", "if", "implements", "import", "instanceof",
+                    "int", "interface", "long", "native", "new",
+                    "null", "package", "private", "protected", "public",
+                    "return", "short", "static", "strictfp", "super",
+                    "switch", "synchronized", "this", "throw", "throws",
+                    "transient", "true", "try", "void", "volatile",
                     "while"
             };
 
@@ -77,7 +77,7 @@ public class JavaUtils {
      */
     public static boolean isJavaKeyword(String keyword) {
         // None of the java keywords have uppercase characters
-        if(hasUpperCase(keyword)) {
+        if (hasUpperCase(keyword)) {
             return false;
         }
         return (Arrays.binarySearch(keywords, keyword, englishCollator) >= 0);
@@ -85,7 +85,7 @@ public class JavaUtils {
 
     /**
      * Check if the word has any uppercase letters
-     * 
+     *
      * @param word
      * @return
      */
@@ -106,8 +106,8 @@ public class JavaUtils {
      * Turns a java keyword string into a non-Java keyword string.  (Right now
      * this simply means appending an underscore.)
      */
-    public static String makeNonJavaKeyword(String keyword){
-        return  keywordPrefix + keyword;
+    public static String makeNonJavaKeyword(String keyword) {
+        return keywordPrefix + keyword;
     }
 
     public static String xmlNameToJava(String name) {
@@ -215,11 +215,11 @@ public class JavaUtils {
      * @return java identifier
      */
 
-    public static String xmlNameToJavaIdentifier(String name){
+    public static String xmlNameToJavaIdentifier(String name) {
         String javaName = xmlNameToJava(name);
         // convert the first letter to lowercase
-        if ((javaName != null) && (javaName.length() > 0)){
-            javaName = javaName.substring(0,1).toLowerCase() + javaName.substring(1);
+        if ((javaName != null) && (javaName.length() > 0)) {
+            javaName = javaName.substring(0, 1).toLowerCase() + javaName.substring(1);
         }
 
         return javaName;
@@ -227,7 +227,7 @@ public class JavaUtils {
 
     /**
      * Tests the String 'value':
-     *   return 'false' if its 'false', '0', or 'no' - else 'true'
+     * return 'false' if its 'false', '0', or 'no' - else 'true'
      * <p/>
      * Follow in 'C' tradition of boolean values:
      * false is specific (0), everything else is true;
@@ -238,62 +238,62 @@ public class JavaUtils {
 
     /**
      * Tests the String 'value':
-     *   return 'true' if its 'true', '1', or 'yes' - else 'false'
+     * return 'true' if its 'true', '1', or 'yes' - else 'false'
      */
     public static final boolean isTrueExplicitly(String value) {
-        return value != null  &&
-               (value.equalsIgnoreCase("true")  ||
-                value.equals("1")  ||
-                value.equalsIgnoreCase("yes"));
+        return value != null &&
+                (value.equalsIgnoreCase("true") ||
+                        value.equals("1") ||
+                        value.equalsIgnoreCase("yes"));
     }
 
     /**
      * Tests the Object 'value':
-     *   if its null, return default.
-     *   if its a Boolean, return booleanValue()
-     *   if its an Integer,  return 'false' if its '0' else 'true'
-     *   if its a String, return isTrueExplicitly((String)value).
-     *   All other types return 'true'
+     * if its null, return default.
+     * if its a Boolean, return booleanValue()
+     * if its an Integer,  return 'false' if its '0' else 'true'
+     * if its a String, return isTrueExplicitly((String)value).
+     * All other types return 'true'
      */
     public static final boolean isTrueExplicitly(Object value, boolean defaultVal) {
         if (value == null) {
             return defaultVal;
         }
-        if ( value instanceof Boolean ) {
-            return ((Boolean)value).booleanValue();
+        if (value instanceof Boolean) {
+            return ((Boolean) value).booleanValue();
         }
-        if ( value instanceof Integer ) {
-            return ((Integer)value).intValue() != 0;
+        if (value instanceof Integer) {
+            return ((Integer) value).intValue() != 0;
         }
-        if ( value instanceof String ) {
-            return isTrueExplicitly( (String)value );
+        if (value instanceof String) {
+            return isTrueExplicitly((String) value);
         }
         return true;
     }
-    
+
     public static final boolean isTrueExplicitly(Object value) {
         return isTrueExplicitly(value, false);
     }
 
     /**
      * Tests the Object 'value':
-     *   if its null, return default.
-     *   if its a Boolean, return booleanValue()
-     *   if its an Integer,  return 'false' if its '0' else 'true'
-     *   if its a String, return 'false' if its 'false', 'no', or '0' - else 'true'
-     *   All other types return 'true'
+     * if its null, return default.
+     * if its a Boolean, return booleanValue()
+     * if its an Integer,  return 'false' if its '0' else 'true'
+     * if its a String, return 'false' if its 'false', 'no', or '0' - else 'true'
+     * All other types return 'true'
      */
     public static final boolean isTrue(Object value, boolean defaultVal) {
         return !isFalseExplicitly(value, !defaultVal);
     }
-    
+
     public static final boolean isTrue(Object value) {
         return isTrue(value, false);
     }
-    
+
     /**
      * Tests the String 'value':
-     *   return 'true' if its 'false', '0', or 'no' - else 'false'
+     * return 'true' if its 'false', '0', or 'no' - else 'false'
      * <p/>
      * Follow in 'C' tradition of boolean values:
      * false is specific (0), everything else is true;
@@ -304,55 +304,55 @@ public class JavaUtils {
 
     /**
      * Tests the String 'value':
-     *   return 'true' if its null, 'false', '0', or 'no' - else 'false'
+     * return 'true' if its null, 'false', '0', or 'no' - else 'false'
      */
     public static final boolean isFalseExplicitly(String value) {
-        return value == null  ||
-               value.equalsIgnoreCase("false")  ||
-               value.equals("0")  ||
-               value.equalsIgnoreCase("no");
+        return value == null ||
+                value.equalsIgnoreCase("false") ||
+                value.equals("0") ||
+                value.equalsIgnoreCase("no");
     }
-    
+
     /**
      * Tests the Object 'value':
-     *   if its null, return default.
-     *   if its a Boolean, return !booleanValue()
-     *   if its an Integer,  return 'true' if its '0' else 'false'
-     *   if its a String, return isFalseExplicitly((String)value).
-     *   All other types return 'false'
+     * if its null, return default.
+     * if its a Boolean, return !booleanValue()
+     * if its an Integer,  return 'true' if its '0' else 'false'
+     * if its a String, return isFalseExplicitly((String)value).
+     * All other types return 'false'
      */
     public static final boolean isFalseExplicitly(Object value, boolean defaultVal) {
         if (value == null) {
             return defaultVal;
         }
-        if ( value instanceof Boolean ) {
-            return !((Boolean)value).booleanValue();
+        if (value instanceof Boolean) {
+            return !((Boolean) value).booleanValue();
         }
-        if ( value instanceof Integer ) {
-            return ((Integer)value).intValue() == 0;
+        if (value instanceof Integer) {
+            return ((Integer) value).intValue() == 0;
         }
-        if ( value instanceof String ) {
-            return isFalseExplicitly( (String)value );
+        if (value instanceof String) {
+            return isFalseExplicitly((String) value);
         }
         return false;
     }
-    
+
     public static final boolean isFalseExplicitly(Object value) {
         return isFalseExplicitly(value, true);
     }
 
     /**
      * Tests the Object 'value':
-     *   if its null, return default.
-     *   if its a Boolean, return booleanValue()
-     *   if its an Integer,  return 'false' if its '0' else 'true'
-     *   if its a String, return 'false' if its 'false', 'no', or '0' - else 'true'
-     *   All other types return 'true'
+     * if its null, return default.
+     * if its a Boolean, return booleanValue()
+     * if its an Integer,  return 'false' if its '0' else 'true'
+     * if its a String, return 'false' if its 'false', 'no', or '0' - else 'true'
+     * All other types return 'true'
      */
     public static final boolean isFalse(Object value, boolean defaultVal) {
         return isFalseExplicitly(value, defaultVal);
     }
-    
+
     public static final boolean isFalse(Object value) {
         return isFalse(value, true);
     }
@@ -448,7 +448,7 @@ public class JavaUtils {
         } else if (primitive == char.class) {
             return java.lang.Character.class;
         }
-        
+
         return null;
     }
 
@@ -462,7 +462,7 @@ public class JavaUtils {
      *         character
      */
     public static int indexOfIgnoreCase(final String string,
-            final String search) {
+                                        final String search) {
         int index = -1;
         final int stringLength = string.length();
         final int testLength = search.length();
@@ -481,7 +481,7 @@ public class JavaUtils {
                             break;
                         }
                     }
-                    if( -1 != index ){
+                    if (-1 != index) {
                         break;
                     }
                 }

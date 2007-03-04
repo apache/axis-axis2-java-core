@@ -34,20 +34,20 @@ import java.util.List;
  */
 public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
     protected static final Log log =
-        LogFactory.getLog(WSDL20ToAllAxisServicesBuilder.class);
+            LogFactory.getLog(WSDL20ToAllAxisServicesBuilder.class);
 
     private ArrayList axisServices = null;
-    
+
     /**
-     * Class constructor.  
+     * Class constructor.
      *
-     * @param in  - Contains the wsdl 2.0 file
+     * @param in - Contains the wsdl 2.0 file
      */
     public WSDL20ToAllAxisServicesBuilder(InputStream in) {
         super(in, null, null);
         axisServices = new ArrayList();   // create an empty ArrayList
     }
-    
+
     /**
      * Public method to access the wsdl 2.0 file and create a List of AxisService objects.
      * For each endpoint on each service in the wsdl, an AxisService object is created and
@@ -55,12 +55,12 @@ public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
      * to the the following: <service name>#<endpoint name>.  Note that the endpoint name
      * is not unique to a wsdl 2.0 file.  Multiple services in the file may have endpoints
      * with the same name.  Therefore the name of the AxisService needs to be a combination
-     * of service/endpoint name to be unique to the wsdl.  
+     * of service/endpoint name to be unique to the wsdl.
      *
      * @return A List containing one AxisService object for each port in the wsdl file.
-     * The name of the AxisService is modified to uniquely represent the service/endpoint
-     * pair.  The format of the name is "<wsdl service name>#<wsdl endpoint name>"
-     * @throws AxisFault 
+     *         The name of the AxisService is modified to uniquely represent the service/endpoint
+     *         pair.  The format of the name is "<wsdl service name>#<wsdl endpoint name>"
+     * @throws AxisFault
      */
     public List populateAllServices() throws AxisFault {
         try {
@@ -68,8 +68,8 @@ public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
                 log.debug("Entry: populateAllServices");
             }
             setup();  // setup contains code with gathers non-service specific info
-                      // from the WSDL.  This only needs to be done once per WSDL.
-            if (description == null) {  
+            // from the WSDL.  This only needs to be done once per WSDL.
+            if (description == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Exit: populateAllServices.  wsdl description is null!");
                 }
@@ -93,7 +93,8 @@ public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
                         // port, change the name
                         // from wsdl service name to port name.
                         // TODO: mangle name?
-                        retAxisService.setName(retAxisService.getName() + "$" + interfaceName); // TODO: mangle name????
+                        retAxisService.setName(retAxisService.getName() + "$" +
+                                interfaceName); // TODO: mangle name????
                         axisServices.add(retAxisService);
                     } // end if axisService was returned
                 } // end for all ports of a service
@@ -106,7 +107,8 @@ public class WSDL20ToAllAxisServicesBuilder extends WSDL20ToAxisServiceBuilder {
             throw e;  // just rethrow any AxisFaults
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.debug("populateAllServices caught Exception.  Converting to AxisFault. " + e.toString());
+                log.debug("populateAllServices caught Exception.  Converting to AxisFault. " +
+                        e.toString());
             }
             throw new AxisFault(e);
         }

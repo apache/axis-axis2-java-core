@@ -23,12 +23,12 @@ public class AxisEvent {
      * An Axis event is sent to registered listeners whenever anything significant
      * happens to <code>AxisConfiguration</code>.
      */
-    public static final int SERVICE_DEPLOY    = 1;
-    public static final int SERVICE_REMOVE    = 0;
-    public static final int SERVICE_STOP      = 2;
-    public static final int SERVICE_START     = 3;
-    public static final int MODULE_DEPLOY     = 4;
-    public static final int MODULE_REMOVE     = 5;
+    public static final int SERVICE_DEPLOY = 1;
+    public static final int SERVICE_REMOVE = 0;
+    public static final int SERVICE_STOP = 2;
+    public static final int SERVICE_START = 3;
+    public static final int MODULE_DEPLOY = 4;
+    public static final int MODULE_REMOVE = 5;
     private int EVENT_TYPE;
 
     public AxisEvent(int EVENT_TYPE) {

@@ -17,43 +17,36 @@
  */
 package org.apache.axis2.description;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.Iterator;
-import java.util.List;
-
+import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
-import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
-import org.apache.axis2.description.WSDL20ToAllAxisServicesBuilder;
 import org.apache.axis2.engine.ListenerManager;
 
-import junit.framework.TestCase;
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
  * Tests the WSDL11ToAllServicesBuilder class.
- *
  */
 public class WSDLToAllServicesBuilderTest extends TestCase {
     private static final String[] expectedService11 = {
-        "EchoServicePortOne",
-        "EchoServicePortTwo", 
-        "EchoServicePortThree"};
+            "EchoServicePortOne",
+            "EchoServicePortTwo",
+            "EchoServicePortThree"};
     private static final String[] expectedService20 = {
-        "echoService1$echoServiceSOAPBinding_http", 
-        "echoService1$echoServiceEndpoint2SOAPBinding_http", 
-        "echoService2$echoServiceSOAPBinding_http"};
+            "echoService1$echoServiceSOAPBinding_http",
+            "echoService1$echoServiceEndpoint2SOAPBinding_http",
+            "echoService2$echoServiceSOAPBinding_http"};
     private ConfigurationContext configContext;
     ListenerManager lm;
 
     protected void setUp() throws Exception {
-        configContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
+        configContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
         lm = new ListenerManager();
         lm.init(configContext);
         lm.start();
@@ -64,7 +57,7 @@ public class WSDLToAllServicesBuilderTest extends TestCase {
     }
 
     private void checkResults(List axisServices, String expectedService[]) {
-        
+
         Iterator asi = axisServices.iterator();
         int i = 0;
         while (asi.hasNext() && i < expectedService.length) {
@@ -72,12 +65,12 @@ public class WSDLToAllServicesBuilderTest extends TestCase {
             System.out.println("AxisService : " + as.getName());
             assertEquals("Unexpected service name in AxisService List: expected "
                     + expectedService[i] + " but found " + as.getName() + ".",
-                    as.getName(),
-                    expectedService[i]);
+                         as.getName(),
+                         expectedService[i]);
             i++;
         }
     }
-    
+
     public void testWSDL11toAllAxisServices() throws Exception {
         File testResourceFile = new File("target/test-classes/wsdl/EchoServiceWsdl11.wsdl");
         File outLocation = new File("target/test-resources");
@@ -119,7 +112,6 @@ public class WSDLToAllServicesBuilderTest extends TestCase {
 
         }
     }
-
 
 
 }

@@ -49,7 +49,7 @@ public class ClusterBuilder extends DescriptionBuilder {
      */
     public void buildCluster(OMElement clusterElement)
             throws DeploymentException {
-        
+
         String className = clusterElement.getAttribute(
                 new QName(TAG_CLASS_NAME)).getAttributeValue();
         ClusterManager clusterManager;
@@ -59,11 +59,11 @@ public class ClusterBuilder extends DescriptionBuilder {
             axisConfig.setClusterManager(clusterManager);
             return;
         } catch (ClassNotFoundException e) {
-            throw new DeploymentException (Messages.getMessage("clusterImplNotFound"));
+            throw new DeploymentException(Messages.getMessage("clusterImplNotFound"));
         } catch (InstantiationException e) {
-            throw new DeploymentException (Messages.getMessage("cannotLoadClusterImpl"));
+            throw new DeploymentException(Messages.getMessage("cannotLoadClusterImpl"));
         } catch (IllegalAccessException e) {
-            throw new DeploymentException (e);
+            throw new DeploymentException(e);
         }
 
     }

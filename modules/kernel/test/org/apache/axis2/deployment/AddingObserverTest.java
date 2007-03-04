@@ -26,8 +26,11 @@ public class AddingObserverTest extends TestCase {
 
     public void testAddingObservs() throws Exception {
         try {
-            String filename = System.getProperty("basedir")+"/test-resources/deployment/ConfigWithObservers";
-            er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml").getAxisConfiguration();
+            String filename = System.getProperty("basedir") +
+                    "/test-resources/deployment/ConfigWithObservers";
+            er = ConfigurationContextFactory
+                    .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
+                    .getAxisConfiguration();
             assertNotNull(er);
         } catch (DeploymentException e) {
             throw new DeploymentException(e);

@@ -71,14 +71,15 @@ public class ConfigurationContext extends AbstractContext {
         super(null);
         this.axisConfiguration = axisConfiguration;
         initConfigContextTimeout(axisConfiguration);
-        
+
         if (axisConfiguration.getClusterManager() != null) {
             initCluster();
-    }
+        }
     }
 
     private void initConfigContextTimeout(AxisConfiguration axisConfiguration) {
-        Parameter parameter = axisConfiguration.getParameter(Constants.Configuration.CONFIG_CONTEXT_TIMOUT_INTERVAL);
+        Parameter parameter = axisConfiguration
+                .getParameter(Constants.Configuration.CONFIG_CONTEXT_TIMOUT_INTERVAL);
         if (parameter != null) {
             Object value = parameter.getValue();
             if (value != null && value instanceof String) {
@@ -91,7 +92,7 @@ public class ConfigurationContext extends AbstractContext {
         ClusterManager clusterManager = axisConfiguration.getClusterManager();
         clusterManager.init(this);
     }
-    
+
     protected void finalize() throws Throwable {
         super.finalize();
     }
@@ -123,27 +124,30 @@ public class ConfigurationContext extends AbstractContext {
         if (serviceContext == null) {
             String scope = axisService.getScope();
             if (Constants.SCOPE_APPLICATION.equals(scope)) {
-                String serviceGroupName = ((AxisServiceGroup) axisService.getParent()).getServiceGroupName();
-                serviceGroupContext = (ServiceGroupContext) applicationSessionServiceGroupContextTable.get(
-                        serviceGroupName);
+                String serviceGroupName =
+                        ((AxisServiceGroup) axisService.getParent()).getServiceGroupName();
+                serviceGroupContext =
+                        (ServiceGroupContext) applicationSessionServiceGroupContextTable.get(
+                                serviceGroupName);
                 if (serviceGroupContext == null) {
                     AxisServiceGroup axisServiceGroup = messageContext.getAxisServiceGroup();
                     if (axisServiceGroup == null) {
                         axisServiceGroup = (AxisServiceGroup) axisService.getParent();
                         messageContext.setAxisServiceGroup(axisServiceGroup);
                     }
-                    serviceGroupContext =ContextFactory.createServiceGroupContext(
-                            messageContext.getConfigurationContext(),axisServiceGroup);
-                    applicationSessionServiceGroupContextTable.put(serviceGroupName, serviceGroupContext);
-                    
+                    serviceGroupContext = ContextFactory.createServiceGroupContext(
+                            messageContext.getConfigurationContext(), axisServiceGroup);
+                    applicationSessionServiceGroupContextTable
+                            .put(serviceGroupName, serviceGroupContext);
+
                     ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
-                    if (clusterManager!=null) {
+                    if (clusterManager != null) {
                         clusterManager.addContext(serviceGroupContext);
                     }
                 }
                 messageContext.setServiceGroupContext(serviceGroupContext);
                 messageContext.setServiceContext(ContextFactory.createServiceContext(
-                        serviceGroupContext,axisService));
+                        serviceGroupContext, axisService));
             } else if (Constants.SCOPE_SOAP_SESSION.equals(scope)) {
                 String serviceGroupContextId = messageContext.getServiceGroupContextId();
                 if (serviceGroupContextId != null) {
@@ -155,33 +159,37 @@ public class ConfigurationContext extends AbstractContext {
                     }
                 } else {
                     AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
-                    serviceGroupContext = ContextFactory.createServiceGroupContext(this,axisServiceGroup);
-                    serviceContext = ContextFactory.createServiceContext(serviceGroupContext,axisService);
+                    serviceGroupContext =
+                            ContextFactory.createServiceGroupContext(this, axisServiceGroup);
+                    serviceContext =
+                            ContextFactory.createServiceContext(serviceGroupContext, axisService);
                     // set the serviceGroupContextID
                     serviceGroupContextId = UUIDGenerator.getUUID();
                     serviceGroupContext.setId(serviceGroupContextId);
 
                     ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
-                    if (clusterManager!=null) {
+                    if (clusterManager != null) {
                         clusterManager.addContext(serviceGroupContext);
                     }
-                    
+
                     messageContext.setServiceGroupContextId(serviceGroupContextId);
                     registerServiceGroupContextintoSoapSessionTable(serviceGroupContext);
                 }
                 messageContext.setServiceGroupContext(serviceGroupContext);
                 messageContext.setServiceContext(
-                        ContextFactory.createServiceContext(serviceGroupContext,axisService));
+                        ContextFactory.createServiceContext(serviceGroupContext, axisService));
             } else if (Constants.SCOPE_REQUEST.equals(scope)) {
                 AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
-                serviceGroupContext =ContextFactory.createServiceGroupContext(this,axisServiceGroup);
+                serviceGroupContext =
+                        ContextFactory.createServiceGroupContext(this, axisServiceGroup);
                 messageContext.setServiceGroupContext(serviceGroupContext);
-                serviceContext = ContextFactory.createServiceContext(serviceGroupContext,axisService);
+                serviceContext =
+                        ContextFactory.createServiceContext(serviceGroupContext, axisService);
                 messageContext.setServiceContext(serviceContext);
                 messageContext.getOperationContext().setParent(serviceContext);
             }
         }
-        if(messageContext.getOperationContext() != null) {
+        if (messageContext.getOperationContext() != null) {
             messageContext.getOperationContext().setParent(serviceContext);
         }
     }
@@ -218,7 +226,8 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-    public void registerServiceGroupContextintoSoapSessionTable(ServiceGroupContext serviceGroupContext) {
+    public void registerServiceGroupContextintoSoapSessionTable(
+            ServiceGroupContext serviceGroupContext) {
         String id = serviceGroupContext.getId();
         serviceGroupContextMap.put(id, serviceGroupContext);
         serviceGroupContext.touch();
@@ -227,7 +236,8 @@ public class ConfigurationContext extends AbstractContext {
         cleanupServiceGroupContexts();
     }
 
-    public void addServiceGroupContextintoApplicatoionScopeTable(ServiceGroupContext serviceGroupContext) {
+    public void addServiceGroupContextintoApplicatoionScopeTable(
+            ServiceGroupContext serviceGroupContext) {
         if (applicationSessionServiceGroupContextTable == null) {
             applicationSessionServiceGroupContextTable = new Hashtable();
         }
@@ -256,7 +266,8 @@ public class ConfigurationContext extends AbstractContext {
         return opCtx;
     }
 
-    public OperationContext findOperationContext(String operationName, String serviceName, String serviceGroupName) {
+    public OperationContext findOperationContext(String operationName, String serviceName,
+                                                 String serviceGroupName) {
         if (operationName == null) {
             return null;
         }
@@ -284,7 +295,8 @@ public class ConfigurationContext extends AbstractContext {
                     valueServiceName = value.getServiceName();
                     valueServiceGroupName = value.getServiceGroupName();
 
-                    if ((valueOperationName != null) && (valueOperationName.equals(operationName))) {
+                    if ((valueOperationName != null) && (valueOperationName.equals(operationName)))
+                    {
                         if ((valueServiceName != null) && (valueServiceName.equals(serviceName))) {
                             if ((valueServiceGroupName != null) && (serviceGroupName != null)
                                     && (valueServiceGroupName.equals(serviceGroupName))) {
@@ -303,7 +315,7 @@ public class ConfigurationContext extends AbstractContext {
             }
         }
 
-        // if we got here, we did not find an operation context 
+        // if we got here, we did not find an operation context
         // that fits the criteria
         return null;
     }
@@ -322,8 +334,9 @@ public class ConfigurationContext extends AbstractContext {
         return null;
     }
 
-    public ServiceGroupContext getServiceGroupContextFromSoapSessionTable(String serviceGroupContextId,
-                                                                          MessageContext msgContext) {
+    public ServiceGroupContext getServiceGroupContextFromSoapSessionTable(
+            String serviceGroupContextId,
+            MessageContext msgContext) {
         ServiceGroupContext serviceGroupContext =
                 (ServiceGroupContext) serviceGroupContextMap.get(serviceGroupContextId);
 
@@ -445,7 +458,8 @@ public class ConfigurationContext extends AbstractContext {
     public void cleanupContexts() {
         if ((applicationSessionServiceGroupContextTable != null) &&
                 (applicationSessionServiceGroupContextTable.size() > 0)) {
-            Iterator applicationScopeSgs = applicationSessionServiceGroupContextTable.values().iterator();
+            Iterator applicationScopeSgs =
+                    applicationSessionServiceGroupContextTable.values().iterator();
             while (applicationScopeSgs.hasNext()) {
                 ServiceGroupContext serviceGroupContext =
                         (ServiceGroupContext) applicationScopeSgs.next();
@@ -456,7 +470,8 @@ public class ConfigurationContext extends AbstractContext {
         if ((serviceGroupContextMap != null) && (serviceGroupContextMap.size() > 0)) {
             Iterator sopaSessionSgs = serviceGroupContextMap.values().iterator();
             while (sopaSessionSgs.hasNext()) {
-                ServiceGroupContext serviceGroupContext = (ServiceGroupContext) sopaSessionSgs.next();
+                ServiceGroupContext serviceGroupContext =
+                        (ServiceGroupContext) sopaSessionSgs.next();
                 cleanupServiceContexts(serviceGroupContext);
             }
             serviceGroupContextMap.clear();
@@ -554,17 +569,17 @@ public class ConfigurationContext extends AbstractContext {
         return serviceGroupContextTimoutInterval;
     }
 
-    public void removeServiceGroupContext(AxisServiceGroup serviceGroup){
-        if(serviceGroup!=null){
-            Object obj =applicationSessionServiceGroupContextTable.get(
+    public void removeServiceGroupContext(AxisServiceGroup serviceGroup) {
+        if (serviceGroup != null) {
+            Object obj = applicationSessionServiceGroupContextTable.get(
                     serviceGroup.getServiceGroupName());
-            if(obj==null){
+            if (obj == null) {
                 ArrayList toBeRemovedList = new ArrayList();
                 Iterator serviceGroupContexts = serviceGroupContextMap.values().iterator();
                 while (serviceGroupContexts.hasNext()) {
                     ServiceGroupContext serviceGroupContext =
                             (ServiceGroupContext) serviceGroupContexts.next();
-                    if(serviceGroupContext.getDescription().equals(serviceGroup)){
+                    if (serviceGroupContext.getDescription().equals(serviceGroup)) {
                         toBeRemovedList.add(serviceGroupContext.getId());
                     }
                 }
@@ -580,6 +595,6 @@ public class ConfigurationContext extends AbstractContext {
     public ConfigurationContext getRootContext() {
         return this;
     }
-    
-    
+
+
 }

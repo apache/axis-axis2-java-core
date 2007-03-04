@@ -53,26 +53,26 @@ import java.util.Map;
  * defined in the Axis2 configuration.
  * <p/>
  * e.g.
- *   <transportReceiver name="jms" class="org.apache.axis2.transport.jms.JMSListener">
- *       <parameter name="myTopicConnectionFactory" locked="false">
- *           <parameter name="java.naming.factory.initial" locked="false">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
- *           <parameter name="java.naming.provider.url" locked="false">tcp://localhost:61616</parameter>
- *           <parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false">TopicConnectionFactory</parameter>
- *           <parameter name="transport.jms.Destination" locked="false">myTopicOne, myTopicTwo</parameter>
- *       </parameter>
- *       <parameter name="myQueueConnectionFactory" locked="false">
- *           <parameter name="java.naming.factory.initial" locked="false">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
- *           <parameter name="java.naming.provider.url" locked="false">tcp://localhost:61616</parameter>
- *           <parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false">QueueConnectionFactory</parameter>
- *           <parameter name="transport.jms.Destination" locked="false">myQueueOne, myQueueTwo</parameter>
- *       </parameter>
- *       <parameter name="default" locked="false">
- *           <parameter name="java.naming.factory.initial" locked="false">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
- *           <parameter name="java.naming.provider.url" locked="false">tcp://localhost:61616</parameter>
- *           <parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false">ConnectionFactory</parameter>
- *           <parameter name="transport.jms.Destination" locked="false">myDestinationOne, myDestinationTwo</parameter>
- *       </parameter>
- *   </transportReceiver>
+ * <transportReceiver name="jms" class="org.apache.axis2.transport.jms.JMSListener">
+ * <parameter name="myTopicConnectionFactory" locked="false">
+ * <parameter name="java.naming.factory.initial" locked="false">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
+ * <parameter name="java.naming.provider.url" locked="false">tcp://localhost:61616</parameter>
+ * <parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false">TopicConnectionFactory</parameter>
+ * <parameter name="transport.jms.Destination" locked="false">myTopicOne, myTopicTwo</parameter>
+ * </parameter>
+ * <parameter name="myQueueConnectionFactory" locked="false">
+ * <parameter name="java.naming.factory.initial" locked="false">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
+ * <parameter name="java.naming.provider.url" locked="false">tcp://localhost:61616</parameter>
+ * <parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false">QueueConnectionFactory</parameter>
+ * <parameter name="transport.jms.Destination" locked="false">myQueueOne, myQueueTwo</parameter>
+ * </parameter>
+ * <parameter name="default" locked="false">
+ * <parameter name="java.naming.factory.initial" locked="false">org.apache.activemq.jndi.ActiveMQInitialContextFactory</parameter>
+ * <parameter name="java.naming.provider.url" locked="false">tcp://localhost:61616</parameter>
+ * <parameter name="transport.jms.ConnectionFactoryJNDIName" locked="false">ConnectionFactory</parameter>
+ * <parameter name="transport.jms.Destination" locked="false">myDestinationOne, myDestinationTwo</parameter>
+ * </parameter>
+ * </transportReceiver>
  */
 public class JMSConnectionFactory {
 
@@ -118,7 +118,7 @@ public class JMSConnectionFactory {
     /**
      * Create a JMSConnectionFactory for the given Axis2 name and JNDI name
      *
-     * @param name the local Axis2 name of the connection factory
+     * @param name     the local Axis2 name of the connection factory
      * @param jndiName the JNDI name of the actual connection factory used
      */
     JMSConnectionFactory(String name, String jndiName) {
@@ -173,7 +173,7 @@ public class JMSConnectionFactory {
      * Add a listen destination on this connection factory on behalf of the given service
      *
      * @param destinationJndi destination JNDI name
-     * @param serviceName the service to which it belongs
+     * @param serviceName     the service to which it belongs
      */
     public void addDestination(String destinationJndi, String serviceName) {
         destinations.put(destinationJndi, serviceName);
@@ -261,13 +261,13 @@ public class JMSConnectionFactory {
 
         if (conFactory == null || context == null) {
             handleException(
-                "Connection factory must be 'connected' before listening");
+                    "Connection factory must be 'connected' before listening");
         } else {
             try {
                 connection = conFactory.createConnection();
             } catch (JMSException e) {
                 handleException("Error creating a JMS connection using the " +
-                    "factory : " + jndiName, e);
+                        "factory : " + jndiName, e);
             }
         }
 
@@ -299,16 +299,16 @@ public class JMSConnectionFactory {
 
         } catch (NameNotFoundException e) {
             log.warn("Cannot find destination : " + destinationJndi +
-                " Creating a Queue with this name");
+                    " Creating a Queue with this name");
             destination = session.createQueue(destinationJndi);
 
         } catch (NamingException e) {
             log.warn("Error looking up destination : " + destinationJndi, e);
             // mark service as faulty
             JMSUtils.markServiceAsFaulty(
-                (String) destinations.get(destinationJndi),
-                "Error looking up JMS destination : " + destinationJndi,
-                this.msgRcvr.getAxisConf().getAxisConfiguration());
+                    (String) destinations.get(destinationJndi),
+                    "Error looking up JMS destination : " + destinationJndi,
+                    this.msgRcvr.getAxisConf().getAxisConfiguration());
         }
 
         MessageConsumer consumer = session.createConsumer(destination);

@@ -38,13 +38,16 @@ public class RequestURIBasedServiceDispatcher extends AbstractServiceDispatcher 
         EndpointReference toEPR = messageContext.getTo();
 
         if (toEPR != null) {
-            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-                log.debug(messageContext.getLogIDString()+" Checking for Service using target endpoint address : " + toEPR.getAddress());
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(messageContext.getLogIDString() +
+                        " Checking for Service using target endpoint address : " +
+                        toEPR.getAddress());
             }
             String filePart = toEPR.getAddress();
             //REVIEW: (nagy) Parsing the RequestURI will also give us the operationName if present, so we could conceivably store it in the MessageContext, but doing so and retrieving it is probably no faster than simply reparsing the URI
             String[] values = Utils.parseRequestURLForServiceAndOperation(filePart,
-                    messageContext.getConfigurationContext().getServiceContextPath());
+                                                                          messageContext
+                                                                                  .getConfigurationContext().getServiceContextPath());
 
             if ((values.length >= 1) && (values[0] != null)) {
                 AxisConfiguration registry =
@@ -52,14 +55,16 @@ public class RequestURIBasedServiceDispatcher extends AbstractServiceDispatcher 
 
                 return registry.getService(values[0]);
             } else {
-                if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-                    log.debug(messageContext.getLogIDString()+" Attempted to check for Service using target endpoint URI, but the service fragment was missing");
+                if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                    log.debug(messageContext.getLogIDString() +
+                            " Attempted to check for Service using target endpoint URI, but the service fragment was missing");
                 }
                 return null;
             }
         } else {
-            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-                log.debug(messageContext.getLogIDString()+" Attempted to check for Service using null target endpoint URI");
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(messageContext.getLogIDString() +
+                        " Attempted to check for Service using null target endpoint URI");
             }
             return null;
         }

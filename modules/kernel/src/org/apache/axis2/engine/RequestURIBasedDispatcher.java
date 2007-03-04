@@ -48,7 +48,7 @@ public class RequestURIBasedDispatcher extends AbstractDispatcher {
             throws AxisFault {
         // This Dispatcher does not need to resolve the operation, as that is handled
         // by the RequestURIOperationDispatcher.
-                return null;
+        return null;
     }
 
     /*

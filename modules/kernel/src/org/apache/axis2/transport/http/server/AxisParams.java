@@ -28,12 +28,12 @@
 package org.apache.axis2.transport.http.server;
 
 public class AxisParams {
-    
+
     private AxisParams() {
     }
 
     public static final String LISTENER_PORT = "axis.listener.port";
-    
+
     public static final String MESSAGE_CONTEXT = "axis.message.context";
-    
+
 }

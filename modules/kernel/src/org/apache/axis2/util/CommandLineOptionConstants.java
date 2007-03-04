@@ -18,7 +18,7 @@ package org.apache.axis2.util;
 
 public interface CommandLineOptionConstants {
 
-    interface WSDL2JavaConstants{
+    interface WSDL2JavaConstants {
 
         //short option constants
         String WSDL_LOCATION_URI_OPTION = "uri";
@@ -84,7 +84,7 @@ public interface CommandLineOptionConstants {
 
     }
 
-    interface Java2WSDLConstants{
+    interface Java2WSDLConstants {
         String OUTPUT_LOCATION_OPTION = "o";
         String OUTPUT_FILENAME_OPTION = "of";
         String CLASSNAME_OPTION = "cn";
@@ -110,7 +110,6 @@ public interface CommandLineOptionConstants {
     }
 
     public static final String SOLE_INPUT = "SOLE_INPUT";
-
 
 
 }

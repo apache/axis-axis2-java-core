@@ -62,12 +62,13 @@ public class MailServer {
             Thread.sleep(2000);
         } catch (InterruptedException e1) {
             log.error(e1);
-        } 
+        }
     }
 
     public MailServer(String dir, int popPort, int smtpPort) throws AxisFault {
         try {
-            configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(dir, null);
+            configurationContext =
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(dir, null);
         } catch (Exception e) {
             log.error(e);
         }

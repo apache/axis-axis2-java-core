@@ -6,8 +6,6 @@ import org.apache.axis2.engine.Handler;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.namespace.QName;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -40,7 +38,7 @@ public class Handler3 extends AbstractHandler implements Handler {
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         log.info("I am " + message + " Handler Running :)");
-        return InvocationResponse.CONTINUE;        
+        return InvocationResponse.CONTINUE;
     }
 
     public void revoke(MessageContext msgContext) {

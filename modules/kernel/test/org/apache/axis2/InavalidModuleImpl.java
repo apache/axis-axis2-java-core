@@ -41,6 +41,6 @@ public class InavalidModuleImpl implements Module {
     public boolean canSupportAssertion(Assertion assertion) {
         return true;
     }
-    
-    
+
+
 }

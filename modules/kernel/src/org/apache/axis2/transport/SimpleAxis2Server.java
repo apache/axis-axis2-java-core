@@ -37,7 +37,7 @@ public class SimpleAxis2Server {
     int port = -1;
 
     public static int DEFAULT_PORT = 8080;
-    
+
 
     /**
      * @param args
@@ -55,12 +55,12 @@ public class SimpleAxis2Server {
                         .equalsIgnoreCase(optionType));
             }
         });
-        
+
         if ((invalidOptionsList.size() > 0) || (args.length > 4)) {
             printUsage();
             return;
         }
-        
+
         Map optionsMap = optionsParser.getAllOptions();
 
         CommandLineOption repoOption = (CommandLineOption) optionsMap
@@ -80,22 +80,23 @@ public class SimpleAxis2Server {
                     .println("[SimpleAxisServer] Using the Axis2 Configuration File"
                             + new File(confLocation).getAbsolutePath());
         }
-        
+
         try {
             ConfigurationContext configctx = ConfigurationContextFactory
                     .createConfigurationContextFromFileSystem(repoLocation,
-                            confLocation);
-            ListenerManager listenerManager =  new ListenerManager();
-                listenerManager.init(configctx);
+                                                              confLocation);
+            ListenerManager listenerManager = new ListenerManager();
+            listenerManager.init(configctx);
             listenerManager.start();
             log.info("[SimpleAxisServer] Started");
         } catch (Throwable t) {
             log.fatal("[SimpleAxisServer] Shutting down. Error starting SimpleAxisServer", t);
         }
     }
-    
+
     public static void printUsage() {
-        System.out.println("Usage: SimpleAxisServer -repo <repository>  -conf <axis2 configuration file>");
+        System.out.println(
+                "Usage: SimpleAxisServer -repo <repository>  -conf <axis2 configuration file>");
         System.out.println();
         System.exit(1);
     }

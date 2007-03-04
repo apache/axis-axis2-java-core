@@ -44,13 +44,13 @@ public class OutputBuffer implements OutTransportInfo, HttpEntity {
     private final ByteArrayBuffer buffer;
     private String contentType;
     private boolean chunked;
-    
+
     public OutputBuffer(int initialCapacity) {
         super();
         this.buffer = new ByteArrayBuffer(initialCapacity);
         this.contentType = "text/xml";
     }
-    
+
     public OutputBuffer() {
         this(1024);
     }
@@ -105,7 +105,7 @@ public class OutputBuffer implements OutTransportInfo, HttpEntity {
     public String toString() {
         return new String(this.buffer.buffer(), 0, this.buffer.length());
     }
-    
+
     private static class BufferOutputStream extends OutputStream {
 
         private final ByteArrayBuffer buffer;
@@ -115,7 +115,7 @@ public class OutputBuffer implements OutTransportInfo, HttpEntity {
             super();
             this.buffer = buffer;
         }
-        
+
         public void close() throws IOException {
             this.closed = true;
         }
@@ -125,7 +125,7 @@ public class OutputBuffer implements OutTransportInfo, HttpEntity {
                 throw new IllegalStateException("Stream closed");
             }
         }
-        
+
         public void write(byte[] b, int off, int len) throws IOException {
             ensureNotClosed();
             if (b == null) {
@@ -146,7 +146,7 @@ public class OutputBuffer implements OutTransportInfo, HttpEntity {
             ensureNotClosed();
             this.buffer.append(b);
         }
-                
+
     }
-    
+
 }

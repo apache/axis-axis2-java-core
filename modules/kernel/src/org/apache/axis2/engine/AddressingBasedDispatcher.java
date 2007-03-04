@@ -51,9 +51,10 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
     // TODO this logic needed to be improved, as the Dispatching is almost guaranteed to fail
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
-        if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-        log.debug(messageContext.getLogIDString()+" "+Messages.getMessage("checkingoperation",
-                messageContext.getWSAAction()));
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug(
+                    messageContext.getLogIDString() + " " + Messages.getMessage("checkingoperation",
+                                                                                messageContext.getWSAAction()));
         }
         String action = messageContext.getWSAAction();
 
@@ -75,19 +76,21 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
             }
 
             String address = toEPR.getAddress();
-            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-            log.debug(messageContext.getLogIDString()+" "+Messages.getMessage("checkingserviceforepr", address));
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(messageContext.getLogIDString() + " " +
+                        Messages.getMessage("checkingserviceforepr", address));
             }
             QName serviceName;
             ConfigurationContext configurationContext = messageContext.getConfigurationContext();
             String[] values = Utils.parseRequestURLForServiceAndOperation(address,
-                    configurationContext.getServiceContextPath());
+                                                                          configurationContext.getServiceContextPath());
             if (values == null) {
                 return null;
             }
 
-            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-            log.debug(messageContext.getLogIDString()+" "+Messages.getMessage("checkingserviceforepr", values[0]));
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(messageContext.getLogIDString() + " " +
+                        Messages.getMessage("checkingserviceforepr", values[0]));
             }
             if (values[0] != null) {
                 serviceName = new QName(values[0]);
@@ -133,9 +136,9 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         if (msgctx.getRelatesTo() != null) {
             String relatesTo = msgctx.getRelatesTo().getValue();
 
-            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-                log.debug(msgctx.getLogIDString()+" "+Messages.getMessage("checkingrelatesto",
-                    relatesTo));
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(msgctx.getLogIDString() + " " + Messages.getMessage("checkingrelatesto",
+                                                                              relatesTo));
             }
             if (relatesTo != null && !"".equals(relatesTo)) {
                 OperationContext operationContext =
@@ -143,9 +146,10 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                                 .getOperationContext(relatesTo);
 
                 if (operationContext != null) {
-                    if(operationContext.isComplete()){
-                        if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-                            log.debug(msgctx.getLogIDString()+" Operation context is marked as complete. Calling cleanup on it.");
+                    if (operationContext.isComplete()) {
+                        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                            log.debug(msgctx.getLogIDString() +
+                                    " Operation context is marked as complete. Calling cleanup on it.");
                         }
                         operationContext.cleanup();
                         return InvocationResponse.CONTINUE;
@@ -158,9 +162,11 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
                     msgctx.getAxisOperation().registerMessageContext(msgctx, operationContext);
                     msgctx.setServiceGroupContextId(
                             ((ServiceGroupContext) msgctx.getServiceContext().getParent()).getId());
-                    
-                    if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-                        log.debug(msgctx.getLogIDString()+" Dispatched successfully on the RelatesTo. operation="+operationContext.getAxisOperation());
+
+                    if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                        log.debug(msgctx.getLogIDString() +
+                                " Dispatched successfully on the RelatesTo. operation=" +
+                                operationContext.getAxisOperation());
                     }
                     return InvocationResponse.CONTINUE;
                 }

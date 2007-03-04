@@ -38,7 +38,7 @@ public class InOnlyAxisOperation extends AxisOperation {
     public InOnlyAxisOperation() {
         super();
         //setup a temporary name
-        QName tmpName = new QName(this.getClass().getName()+"_"+UUIDGenerator.getUUID());
+        QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
         this.setName(tmpName);
         createMessage();
         setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_IN_ONLY);
@@ -69,7 +69,8 @@ public class InOnlyAxisOperation extends AxisOperation {
         }
     }
 
-    public void addFaultMessageContext(MessageContext msgContext, OperationContext opContext) throws AxisFault {
+    public void addFaultMessageContext(MessageContext msgContext, OperationContext opContext)
+            throws AxisFault {
         HashMap mep = opContext.getMessageContexts();
         MessageContext faultMessageCtxt = (MessageContext) mep.get(MESSAGE_LABEL_FAULT_VALUE);
         if (faultMessageCtxt != null) {

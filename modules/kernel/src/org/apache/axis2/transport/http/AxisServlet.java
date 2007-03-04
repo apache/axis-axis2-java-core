@@ -110,7 +110,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         String contentType = request.getContentType();
         if (!HTTPTransportUtils.isRESTRequest(contentType)) {
             msgContext = createMessageContext(request, response);
-            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE,contentType);
+            msgContext.setProperty(Constants.Configuration.CONTENT_TYPE, contentType);
             try {
                 // adding ServletContext into msgContext;
                 InvocationResponse pi = HTTPTransportUtils.
@@ -125,7 +125,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                         (Boolean) msgContext.getProperty(RequestResponseTransport.HOLD_RESPONSE);
 
                 if (pi.equals(InvocationResponse.SUSPEND) ||
-                    (holdResponse != null && Boolean.TRUE.equals(holdResponse))) {
+                        (holdResponse != null && Boolean.TRUE.equals(holdResponse))) {
                     ((RequestResponseTransport) msgContext
                             .getProperty(RequestResponseTransport.TRANSPORT_CONTROL))
                             .awaitResponse();
@@ -139,7 +139,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 }
 
                 response.setContentType("text/xml; charset="
-                                        + msgContext
+                        + msgContext
                         .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
                 if ((contextWritten == null) || !Constants.VALUE_TRUE.equals(contextWritten)) {
@@ -219,12 +219,12 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         // 2. list services requests
         // 3. REST requests.
         if ((query != null) && (query.indexOf("wsdl2") >= 0 ||
-                                query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0 ||
-                                query.indexOf("policy") >= 0)) {
+                query.indexOf("wsdl") >= 0 || query.indexOf("xsd") >= 0 ||
+                query.indexOf("policy") >= 0)) {
             // handling meta data exchange stuff
             agent.processListService(request, response);
         } else if (requestURI.endsWith(LIST_SERVICES_SUFIX) ||
-                   requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) {
+                requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) {
             // handling list services request
             try {
                 agent.handle(request, response);
@@ -291,7 +291,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
     protected void disableRESTErrorMessage(HttpServletResponse response) throws IOException {
         PrintWriter writer = new PrintWriter(response.getOutputStream());
         writer.println("<html><body><h2>Please enable REST support in WEB-INF/conf/axis2.xml " +
-                       "and WEB-INF/web.xml</h2></body></html>");
+                "and WEB-INF/web.xml</h2></body></html>");
         writer.flush();
         response.setStatus(HttpServletResponse.SC_ACCEPTED);
 
@@ -378,7 +378,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
             if (valueElement != null) {
                 if (valueElement.getText().trim().indexOf(SOAP12Constants.FAULT_CODE_SENDER) >
-                    -1 && !msgContext.isDoingREST()) {
+                        -1 && !msgContext.isDoingREST()) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 }
             }
@@ -555,15 +555,15 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
 
         EndpointReference soapEndpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
-                                                               configContext
-                                                                       .getServiceContextPath() +
-                                                                                                "/" +
-                                                                                                serviceName);
+                configContext
+                        .getServiceContextPath() +
+                "/" +
+                serviceName);
 
         if (!disableREST) {
             EndpointReference restEndpoint =
                     new EndpointReference("http://" + ip + ":" + port + '/' +
-                                          configContext.getRESTContextPath() + "/" + serviceName);
+                            configContext.getRESTContextPath() + "/" + serviceName);
             return new EndpointReference[]{soapEndpoint, restEndpoint};
         } else {
             return new EndpointReference[]{soapEndpoint};
@@ -696,7 +696,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         public void acknowledgeMessage(MessageContext msgContext) throws AxisFault {
             log.debug("Acking one-way request");
             response.setContentType("text/xml; charset="
-                                    + msgContext
+                    + msgContext
                     .getProperty(Constants.Configuration.CHARACTER_SET_ENCODING));
 
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -739,7 +739,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         HttpServletResponse response;
 
         public ProcessRESTRequest(String httpMethodString, HttpServletRequest request,
-                           HttpServletResponse response)
+                                  HttpServletResponse response)
                 throws IOException {
             this.request = request;
             this.response = response;
@@ -752,7 +752,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         public void processXMLRequest() throws IOException, ServletException {
             try {
-                RESTUtil.processXMLRequest(messageContext, request.getInputStream(), response.getOutputStream(), request.getContentType());
+                RESTUtil.processXMLRequest(messageContext, request.getInputStream(),
+                                           response.getOutputStream(), request.getContentType());
                 this.checkResponseWritten();
             } catch (AxisFault axisFault) {
                 processFault(axisFault);
@@ -764,7 +765,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
 
         public void processURLRequest() throws IOException, ServletException {
             try {
-                RESTUtil.processURLRequest(messageContext,response.getOutputStream(), request.getContentType());
+                RESTUtil.processURLRequest(messageContext, response.getOutputStream(),
+                                           request.getContentType());
                 this.checkResponseWritten();
             } catch (AxisFault axisFault) {
                 processFault(axisFault);

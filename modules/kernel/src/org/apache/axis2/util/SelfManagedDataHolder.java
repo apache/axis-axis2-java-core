@@ -35,7 +35,8 @@ public class SelfManagedDataHolder implements Externalizable {
     public SelfManagedDataHolder(String classname, String id, byte[] data) throws Exception {
         if ((classname == null)
                 || (id == null)) {
-            throw new Exception("Argument cannot be null: classname = " + classname + ", id = " + id);
+            throw new Exception(
+                    "Argument cannot be null: classname = " + classname + ", id = " + id);
         }
         this.classname = classname;
         this.id = id;
@@ -44,13 +45,13 @@ public class SelfManagedDataHolder implements Externalizable {
         this.data = new byte[data.length];
         for (int i = 0; i < data.length; i++) {
             this.data[i] = data[i];
-    }
+        }
     }
 
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        classname = (String)in.readUTF();
-        id = (String)in.readUTF();
+        classname = (String) in.readUTF();
+        id = (String) in.readUTF();
         int datalength = in.readInt();
         data = new byte[datalength];
         in.read(data);

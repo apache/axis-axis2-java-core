@@ -51,18 +51,18 @@ public class ComplexPart extends PartBase {
     /**
      * Constructor.
      *
-     * @param name The name of the part
-     * @param value the string to post
+     * @param name    The name of the part
+     * @param value   the string to post
      * @param charset the charset to be used to encode the string, if <code>null</code>
-     * the {@link #DEFAULT_CHARSET default} is used
+     *                the {@link #DEFAULT_CHARSET default} is used
      */
     public ComplexPart(String name, String value, String charset) {
 
         super(
-            name,
-            DEFAULT_CONTENT_TYPE,
-            charset == null ? DEFAULT_CHARSET : charset,
-            DEFAULT_TRANSFER_ENCODING
+                name,
+                DEFAULT_CONTENT_TYPE,
+                charset == null ? DEFAULT_CHARSET : charset,
+                DEFAULT_TRANSFER_ENCODING
         );
         if (value == null) {
             throw new IllegalArgumentException("Value may not be null");
@@ -77,7 +77,7 @@ public class ComplexPart extends PartBase {
     /**
      * Constructor.
      *
-     * @param name The name of the part
+     * @param name  The name of the part
      * @param value the string to post
      */
     public ComplexPart(String name, String value) {

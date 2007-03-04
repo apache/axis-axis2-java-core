@@ -70,7 +70,8 @@ public class AdminAgent extends AbstractAgent {
     private static final String LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME = "globalModules.jsp";
     private static final String LIST_AVAILABLE_MODULES_JSP_NAME = "listModules.jsp";
     private static final String ENGAGING_MODULE_TO_SERVICE_JSP_NAME = "engagingtoaservice.jsp";
-    private static final String ENGAGING_MODULE_TO_SERVICE_GROUP_JSP_NAME = "EngageToServiceGroup.jsp";
+    private static final String ENGAGING_MODULE_TO_SERVICE_GROUP_JSP_NAME =
+            "EngageToServiceGroup.jsp";
     private static final String ENGAGING_MODULE_GLOBALLY_JSP_NAME = "engagingglobally.jsp";
     public static final String ADMIN_JSP_NAME = "admin.jsp";
     private static final String VIEW_GLOBAL_HANDLERS_JSP_NAME = "ViewGlobalHandlers.jsp";
@@ -85,7 +86,8 @@ public class AdminAgent extends AbstractAgent {
         super(aConfigContext);
         try {
             if (configContext.getAxisConfiguration().getRepository() != null) {
-                File repoDir = new File(configContext.getAxisConfiguration().getRepository().getFile());
+                File repoDir =
+                        new File(configContext.getAxisConfiguration().getRepository().getFile());
                 serviceDir = new File(repoDir, "services");
                 if (!serviceDir.exists()) {
                     serviceDir.mkdirs();
@@ -98,7 +100,8 @@ public class AdminAgent extends AbstractAgent {
         }
     }
 
-    public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+    public void handle(HttpServletRequest httpServletRequest,
+                       HttpServletResponse httpServletResponse)
             throws IOException, ServletException {
 
         // We forward to login page if axis2 security is enabled
@@ -111,18 +114,19 @@ public class AdminAgent extends AbstractAgent {
         }
     }
 
-    protected void processIndex(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void processIndex(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
         renderView(ADMIN_JSP_NAME, req, res);
     }
 
     // supported web operations
 
     protected void processUpload(HttpServletRequest req, HttpServletResponse res)
-    throws IOException, ServletException {
+            throws IOException, ServletException {
         String hasHotDeployment =
-            (String) configContext.getAxisConfiguration().getParameterValue("hotdeployment");
+                (String) configContext.getAxisConfiguration().getParameterValue("hotdeployment");
         String hasHotUpdate =
-            (String) configContext.getAxisConfiguration().getParameterValue("hotupdate");
+                (String) configContext.getAxisConfiguration().getParameterValue("hotupdate");
         req.setAttribute("hotDeployment", (hasHotDeployment.equals("true")) ? "enabled"
                 : "disabled");
         req.setAttribute("hotUpdate", (hasHotUpdate.equals("true")) ? "enabled" : "disabled");
@@ -133,7 +137,7 @@ public class AdminAgent extends AbstractAgent {
 
             try {
                 //Create a factory for disk-based file items
-                  FileItemFactory factory = new DiskFileItemFactory();
+                FileItemFactory factory = new DiskFileItemFactory();
                 //Create a new file upload handler
                 ServletFileUpload upload = new ServletFileUpload(factory);
                 List items = upload.parseRequest(req);
@@ -151,15 +155,15 @@ public class AdminAgent extends AbstractAgent {
                             req.setAttribute("cause", "Unsupported file type " + fileExtesion);
                         } else {
 
-                            String fileNameOnly ;
+                            String fileNameOnly;
                             if (fileName.indexOf("\\") < 0) {
                                 fileNameOnly =
-                                    fileName.substring(fileName.lastIndexOf("/") + 1, fileName
-                                            .length());
+                                        fileName.substring(fileName.lastIndexOf("/") + 1, fileName
+                                                .length());
                             } else {
                                 fileNameOnly =
-                                    fileName.substring(fileName.lastIndexOf("\\") + 1, fileName
-                                            .length());
+                                        fileName.substring(fileName.lastIndexOf("\\") + 1, fileName
+                                                .length());
                             }
 
                             File uploadedFile = new File(serviceDir, fileNameOnly);
@@ -206,7 +210,7 @@ public class AdminAgent extends AbstractAgent {
     }
 
     protected void processEditServicePara(HttpServletRequest req, HttpServletResponse res)
-    throws IOException, ServletException {
+            throws IOException, ServletException {
         String serviceName = req.getParameter("axisService");
         if (req.getParameter("changePara") != null) {
             AxisService service = configContext.getAxisConfiguration().getService(serviceName);
@@ -237,22 +241,24 @@ public class AdminAgent extends AbstractAgent {
             req.getSession().removeAttribute(Constants.SERVICE);
         } else {
             AxisService serviceTemp =
-                configContext.getAxisConfiguration().getServiceForActivation(serviceName);
+                    configContext.getAxisConfiguration().getServiceForActivation(serviceName);
             if (serviceTemp.isActive()) {
 
                 if (serviceName != null) {
                     req.getSession().setAttribute(Constants.SERVICE,
-                            configContext.getAxisConfiguration().getService(serviceName));
+                                                  configContext.getAxisConfiguration().getService(
+                                                          serviceName));
                 }
             } else {
                 req.setAttribute("status", "Service " + serviceName + " is not an active service" +
-                ". \n Only parameters of active services can be edited.");
+                        ". \n Only parameters of active services can be edited.");
             }
         }
         renderView(SERVICE_PARA_EDIT_JSP_NAME, req, res);
     }
 
-    protected void processEngagingGlobally(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void processEngagingGlobally(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
         HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
@@ -265,7 +271,7 @@ public class AdminAgent extends AbstractAgent {
             try {
                 configContext.getAxisConfiguration().engageModule(new QName(moduleName));
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                        moduleName + " module engaged globally successfully");
+                                              moduleName + " module engaged globally successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
@@ -311,8 +317,9 @@ public class AdminAgent extends AbstractAgent {
                         configContext.getAxisConfiguration().getModule(new QName(moduleName)),
                         configContext.getAxisConfiguration());
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                        moduleName
-                                + " module engaged to the operation successfully");
+                                              moduleName
+                                                      +
+                                                      " module engaged to the operation successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
@@ -344,8 +351,9 @@ public class AdminAgent extends AbstractAgent {
                         configContext.getAxisConfiguration().getModule(new QName(moduleName)),
                         configContext.getAxisConfiguration());
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                        moduleName
-                                + " module engaged to the service successfully");
+                                              moduleName
+                                                      +
+                                                      " module engaged to the service successfully");
             } catch (AxisFault axisFault) {
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS, axisFault.getMessage());
             }
@@ -379,8 +387,9 @@ public class AdminAgent extends AbstractAgent {
                     configContext.getAxisConfiguration().getModule(new QName(moduleName)),
                     configContext.getAxisConfiguration());
             req.getSession().setAttribute(Constants.ENGAGE_STATUS,
-                    moduleName
-                            + " module engaged to the service group successfully");
+                                          moduleName
+                                                  +
+                                                  " module engaged to the service group successfully");
         }
 
         req.getSession().setAttribute("axisService", null);
@@ -388,7 +397,8 @@ public class AdminAgent extends AbstractAgent {
     }
 
 
-    protected void processLogout(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void processLogout(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
         req.getSession().invalidate();
         renderView("index.jsp", req, res);
     }
@@ -408,13 +418,15 @@ public class AdminAgent extends AbstractAgent {
         renderView(SELECT_SERVICE_JSP_NAME, req, res);
     }
 
-    protected void processActivateService(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void processActivateService(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
         if (req.getParameter("submit") != null) {
             String serviceName = req.getParameter("axisService");
             String turnon = req.getParameter("turnon");
             if (serviceName != null) {
                 if (turnon != null) {
-                    AxisService service = configContext.getAxisConfiguration().getServiceForActivation(serviceName);
+                    AxisService service = configContext.getAxisConfiguration()
+                            .getServiceForActivation(serviceName);
                     service.setActive(true);
                 }
             }
@@ -423,13 +435,15 @@ public class AdminAgent extends AbstractAgent {
         renderView(ACTIVATE_SERVICE_JSP_NAME, req, res);
     }
 
-    protected void processDeactivateService(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void processDeactivateService(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
         if (req.getParameter("submit") != null) {
             String serviceName = req.getParameter("axisService");
             String turnoff = req.getParameter("turnoff");
             if (serviceName != null) {
                 if (turnoff != null) {
-                    AxisService service = configContext.getAxisConfiguration().getService(serviceName);
+                    AxisService service =
+                            configContext.getAxisConfiguration().getService(serviceName);
                     service.setActive(false);
                 }
                 populateSessionInformation(req);
@@ -445,7 +459,7 @@ public class AdminAgent extends AbstractAgent {
     protected void processViewGlobalHandlers(HttpServletRequest req, HttpServletResponse res)
             throws IOException, ServletException {
         req.getSession().setAttribute(Constants.GLOBAL_HANDLERS,
-                configContext.getAxisConfiguration());
+                                      configContext.getAxisConfiguration());
 
         renderView(VIEW_GLOBAL_HANDLERS_JSP_NAME, req, res);
     }
@@ -456,14 +470,15 @@ public class AdminAgent extends AbstractAgent {
 
         if (service != null) {
             req.getSession().setAttribute(Constants.SERVICE_HANDLERS,
-                    configContext.getAxisConfiguration().getService(service));
+                                          configContext.getAxisConfiguration().getService(service));
         }
 
         renderView(VIEW_SERVICE_HANDLERS_JSP_NAME, req, res);
     }
 
 
-    protected void processListPhases(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void processListPhases(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
         PhasesInfo info = configContext.getAxisConfiguration().getPhasesInfo();
         req.getSession().setAttribute(Constants.PHASE_LIST, info);
         renderView(LIST_PHASES_JSP_NAME, req, res);
@@ -482,7 +497,7 @@ public class AdminAgent extends AbstractAgent {
             throws IOException, ServletException {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.ERROR_SERVICE_MAP,
-                configContext.getAxisConfiguration().getFaultyServices());
+                                      configContext.getAxisConfiguration().getFaultyServices());
 
         renderView(LIST_SERVICES_JSP_NAME, req, res);
     }
@@ -499,7 +514,8 @@ public class AdminAgent extends AbstractAgent {
     }
 
 
-    protected void processListContexts(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void processListContexts(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
         req.getSession().setAttribute(Constants.CONFIG_CONTEXT, configContext);
         renderView("ViewContexts.jsp", req, res);
     }
@@ -513,18 +529,19 @@ public class AdminAgent extends AbstractAgent {
         renderView(LIST_GLOABLLY_ENGAGED_MODULES_JSP_NAME, req, res);
     }
 
-    protected void processListModules(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void processListModules(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
         HashMap modules = configContext.getAxisConfiguration().getModules();
 
         req.getSession().setAttribute(Constants.MODULE_MAP, modules);
         req.getSession().setAttribute(Constants.ERROR_MODULE_MAP,
-                configContext.getAxisConfiguration().getFaultyModules());
+                                      configContext.getAxisConfiguration().getFaultyModules());
 
         renderView(LIST_AVAILABLE_MODULES_JSP_NAME, req, res);
     }
 
-    protected void processdisengageModule(HttpServletRequest req, HttpServletResponse res) 
-                                                        throws IOException, ServletException {
+    protected void processdisengageModule(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
         String type = req.getParameter("type");
         String serviceName = req.getParameter("serviceName");
         String moduleName = req.getParameter("module");
@@ -532,30 +549,35 @@ public class AdminAgent extends AbstractAgent {
         AxisService service = axisConfiguration.getService(serviceName);
         AxisModule module = axisConfiguration.getModule(new QName(moduleName));
         if (type.equals("operation")) {
-            if (service.isEngaged(module.getName()) || axisConfiguration.isEngaged(module.getName())) {
-                req.getSession().setAttribute("status", "Can not disengage module " + moduleName + 
+            if (service.isEngaged(module.getName()) ||
+                    axisConfiguration.isEngaged(module.getName())) {
+                req.getSession().setAttribute("status", "Can not disengage module " + moduleName +
                         ". This module is engaged at a higher level.");
             } else {
                 String opName = req.getParameter("operation");
                 AxisOperation op = service.getOperation(new QName(opName));
                 op.disengageModule(module);
-                req.getSession().setAttribute("status", "Module " + moduleName + " was disengaged from " +
-                        "operation " + opName + " in service " + serviceName + ".");
+                req.getSession()
+                        .setAttribute("status", "Module " + moduleName + " was disengaged from " +
+                                "operation " + opName + " in service " + serviceName + ".");
             }
         } else {
             if (axisConfiguration.isEngaged(module.getName())) {
-                req.getSession().setAttribute("status", "Can not disengage module " + moduleName + ". " +
-                        "This module is engaged at a higher level.");
+                req.getSession()
+                        .setAttribute("status", "Can not disengage module " + moduleName + ". " +
+                                "This module is engaged at a higher level.");
             } else {
                 service.disengageModule(axisConfiguration.getModule(new QName(moduleName)));
-                req.getSession().setAttribute("status", "Module " + moduleName + " was disengaged from" +
-                        " service " + serviceName + ".");
+                req.getSession()
+                        .setAttribute("status", "Module " + moduleName + " was disengaged from" +
+                                " service " + serviceName + ".");
             }
         }
         renderView("disengage.jsp", req, res);
     }
 
-    protected void processSelectService(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void processSelectService(HttpServletRequest req, HttpServletResponse res)
+            throws IOException, ServletException {
         populateSessionInformation(req);
         req.getSession().setAttribute(Constants.SELECT_SERVICE_TYPE, "VIEW");
 
@@ -572,7 +594,8 @@ public class AdminAgent extends AbstractAgent {
 
     private boolean axisSecurityEnabled
             () {
-        Parameter parameter = configContext.getAxisConfiguration().getParameter(Constants.ADMIN_SECURITY_DISABLED);
+        Parameter parameter = configContext.getAxisConfiguration()
+                .getParameter(Constants.ADMIN_SECURITY_DISABLED);
         return parameter == null || !"true".equals(parameter.getValue());
     }
 

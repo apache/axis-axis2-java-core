@@ -77,7 +77,8 @@ public class ConfigurationContextFactory {
         return configContext;
     }
 
-    private static void initApplicationScopeServices(ConfigurationContext configCtx) throws AxisFault {
+    private static void initApplicationScopeServices(ConfigurationContext configCtx)
+            throws AxisFault {
         Iterator serviceGroups = configCtx.getAxisConfiguration().getServiceGroups();
         while (serviceGroups.hasNext()) {
             AxisServiceGroup axisServiceGroup = (AxisServiceGroup) serviceGroups.next();
@@ -241,7 +242,8 @@ public class ConfigurationContextFactory {
                 try {
                     sender.init(configContext, transportOut);
                 } catch (AxisFault axisFault) {
-                    log.info(Messages.getMessage("transportiniterror", transportOut.getName().getLocalPart()));
+                    log.info(Messages.getMessage("transportiniterror",
+                                                 transportOut.getName().getLocalPart()));
                 }
             }
         }

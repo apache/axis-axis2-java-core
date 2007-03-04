@@ -45,7 +45,8 @@ public class URLBasedAxisConfigurator extends DeploymentEngine implements AxisCo
         try {
             if (axis2xml == null) {
                 ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                axis2xmlStream = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+                axis2xmlStream =
+                        cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
             } else {
                 axis2xmlStream = axis2xml.openStream();
             }

@@ -39,15 +39,16 @@ import org.apache.http.protocol.HttpProcessor;
 import java.io.IOException;
 
 /**
- * This class wraps an arbitrary {@link HttpProcessor} and extends it with 
+ * This class wraps an arbitrary {@link HttpProcessor} and extends it with
  * an additional request / response debugging service
  */
 public class LoggingProcessorDecorator implements HttpProcessor {
-    
-    private static final Log HEADERLOG = LogFactory.getLog("org.apache.axis2.transport.http.server.wire");
-    
+
+    private static final Log HEADERLOG =
+            LogFactory.getLog("org.apache.axis2.transport.http.server.wire");
+
     final private HttpProcessor httpProcessor;
-    
+
     public LoggingProcessorDecorator(final HttpProcessor httpProcessor) {
         super();
         if (httpProcessor == null) {
@@ -56,7 +57,7 @@ public class LoggingProcessorDecorator implements HttpProcessor {
         this.httpProcessor = httpProcessor;
     }
 
-    public void process(final HttpRequest request, final HttpContext context) 
+    public void process(final HttpRequest request, final HttpContext context)
             throws HttpException, IOException {
         this.httpProcessor.process(request, context);
         if (HEADERLOG.isDebugEnabled()) {
@@ -68,7 +69,7 @@ public class LoggingProcessorDecorator implements HttpProcessor {
         }
     }
 
-    public void process(final HttpResponse response, final HttpContext context) 
+    public void process(final HttpResponse response, final HttpContext context)
             throws HttpException, IOException {
         this.httpProcessor.process(response, context);
         if (HEADERLOG.isDebugEnabled()) {

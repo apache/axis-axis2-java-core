@@ -142,7 +142,7 @@ public class AddingHandlerToEachPhaseTest extends AbstractTestCase {
             Phase phase = (Phase) inPhase.get(i);
             ArrayList hnadles = phase.getHandlers();
             Handler handler = (Handler) hnadles.get(0);
-            assertEquals("",handler.getHandlerDesc().getRules().getAfter());
+            assertEquals("", handler.getHandlerDesc().getRules().getAfter());
         }
     }
 }

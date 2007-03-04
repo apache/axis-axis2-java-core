@@ -31,7 +31,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -128,39 +127,40 @@ public class EndpointReference implements Serializable {
         this.address = address;
     }
 
-    public ArrayList getAddressAttributes(){
+    public ArrayList getAddressAttributes() {
         return addressAttributes;
     }
-    
-    public void setAddressAttributes(ArrayList al){
+
+    public void setAddressAttributes(ArrayList al) {
         addressAttributes = al;
     }
-    
-    public ArrayList getMetadataAttributes(){
+
+    public ArrayList getMetadataAttributes() {
         return metaDataAttributes;
     }
-    
-    public void setMetadataAttributes(ArrayList al){
+
+    public void setMetadataAttributes(ArrayList al) {
         metaDataAttributes = al;
     }
-    
+
     /**
      * hasAnonymousAddress
      *
      * @return true if address is 'Anonymous URI'
      */
-    public boolean hasAnonymousAddress(){
-        boolean result  = (AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(address) ||
-                           AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(address) ||
-                           
-                           //The following is added to give WS-RM anonymous a semantics to indicate
-                           //that any response messages should be sent synchronously, using the
-                           //transports back channel, as opposed to asynchronously. No other
-                           //semantics normally associated with WS-Addressing anonymous values should
-                           //be assumed, by it's presence here.
-                           (address != null && address.startsWith("http://docs.oasis-open.org/ws-rx/wsmc/200702/anonymous?id=")));
-        if(log.isTraceEnabled()){
-            log.trace("hasAnonymousAddress: "+address+" is Anonymous: "+result);
+    public boolean hasAnonymousAddress() {
+        boolean result = (AddressingConstants.Final.WSA_ANONYMOUS_URL.equals(address) ||
+                AddressingConstants.Submission.WSA_ANONYMOUS_URL.equals(address) ||
+
+                //The following is added to give WS-RM anonymous a semantics to indicate
+                //that any response messages should be sent synchronously, using the
+                //transports back channel, as opposed to asynchronously. No other
+                //semantics normally associated with WS-Addressing anonymous values should
+                //be assumed, by it's presence here.
+                (address != null && address.startsWith(
+                        "http://docs.oasis-open.org/ws-rx/wsmc/200702/anonymous?id=")));
+        if (log.isTraceEnabled()) {
+            log.trace("hasAnonymousAddress: " + address + " is Anonymous: " + result);
         }
         return result;
     }
@@ -273,10 +273,10 @@ public class EndpointReference implements Serializable {
     public String toString() {
         StringBuffer buffer = new StringBuffer("Address: " + address);
 
-        if(addressAttributes != null){
+        if (addressAttributes != null) {
             buffer.append(", Address Attributes: ").append(addressAttributes);
         }
-        
+
         if (metaData != null) {
             buffer.append(", Metadata: ").append(metaData);
         }
@@ -312,9 +312,10 @@ public class EndpointReference implements Serializable {
             OMAttribute attribute = (OMAttribute) allAddrAttributes.next();
             addressAttributes.add(attribute);
         }
-        
-        
-        OMElement refParamElement = eprOMElement.getFirstChildWithName(new QName(AddressingConstants.EPR_REFERENCE_PARAMETERS));
+
+
+        OMElement refParamElement = eprOMElement
+                .getFirstChildWithName(new QName(AddressingConstants.EPR_REFERENCE_PARAMETERS));
 
         if (refParamElement != null) {
             Iterator refParams = refParamElement.getChildElements();
@@ -325,7 +326,8 @@ public class EndpointReference implements Serializable {
         }
 
 
-        OMElement metaDataElement = eprOMElement.getFirstChildWithName(new QName(AddressingConstants.Final.WSA_METADATA));
+        OMElement metaDataElement = eprOMElement
+                .getFirstChildWithName(new QName(AddressingConstants.Final.WSA_METADATA));
         if (metaDataElement != null) {
             Iterator children = metaDataElement.getChildren();
             while (children.hasNext()) {
@@ -370,7 +372,8 @@ public class EndpointReference implements Serializable {
         if (prefix != null) {
             OMNamespace wrapNs = fac.createOMNamespace(nsurl, prefix);
             OMElement epr = fac.createOMElement(localName, wrapNs);
-            OMNamespace wsaNS = fac.createOMNamespace(AddressingConstants.Final.WSA_NAMESPACE, AddressingConstants.WSA_DEFAULT_PREFIX);
+            OMNamespace wsaNS = fac.createOMNamespace(AddressingConstants.Final.WSA_NAMESPACE,
+                                                      AddressingConstants.WSA_DEFAULT_PREFIX);
             OMElement addressE = fac.createOMElement(AddressingConstants.EPR_ADDRESS, wsaNS, epr);
             addressE.setText(address);
 
@@ -381,9 +384,10 @@ public class EndpointReference implements Serializable {
                     addressE.addAttribute(omAttributes);
                 }
             }
-            
+
             if (this.metaData != null) {
-                OMElement metadataE = fac.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, epr);
+                OMElement metadataE =
+                        fac.createOMElement(AddressingConstants.Final.WSA_METADATA, wsaNS, epr);
                 Iterator metadata = this.metaData.iterator();
                 while (metadata.hasNext()) {
                     metadataE.addChild((OMNode) metadata.next());
@@ -391,7 +395,8 @@ public class EndpointReference implements Serializable {
             }
 
             if (this.referenceParameters != null) {
-                OMElement refParameterElement = fac.createOMElement(AddressingConstants.EPR_REFERENCE_PARAMETERS, wsaNS, epr);
+                OMElement refParameterElement = fac.createOMElement(
+                        AddressingConstants.EPR_REFERENCE_PARAMETERS, wsaNS, epr);
                 Iterator refParms = referenceParameters.values().iterator();
                 while (refParms.hasNext()) {
                     refParameterElement.addChild((OMNode) refParms.next());
@@ -421,19 +426,19 @@ public class EndpointReference implements Serializable {
     }
 
     /**
-     * Compares key parts of the state from the current instance of 
-     * this class with the specified instance to see if they are 
-     * equivalent. 
+     * Compares key parts of the state from the current instance of
+     * this class with the specified instance to see if they are
+     * equivalent.
      * <p/>
      * This differs from the java.lang.Object.equals() method in
-     * that the equals() method generally looks at both the 
+     * that the equals() method generally looks at both the
      * object identity (location in memory) and the object state
      * (data).
      * <p/>
-     * 
-     * @param epr  The object to compare with
+     *
+     * @param epr The object to compare with
      * @return TRUE if this object is equivalent with the specified object
-     *              that is, key fields match
+     *         that is, key fields match
      *         FALSE, otherwise
      */
     public boolean isEquivalent(EndpointReference epr) {
@@ -462,18 +467,17 @@ public class EndpointReference implements Serializable {
             return false;
         }
 
-
-        // TODO: is a strict test ok to use? 
+        // TODO: is a strict test ok to use?
 
         ArrayList eprMetaData = epr.getMetaData();
 
         if ((this.metaData != null) && (eprMetaData != null)) {
             if (!this.metaData.equals(eprMetaData)) {
                 // This is a strict test
-                // Returns true if and only if the specified object 
-                // is also a list, both lists have the same size, and 
+                // Returns true if and only if the specified object
+                // is also a list, both lists have the same size, and
                 // all corresponding pairs of elements in the two lists
-                // are equal, ie, two lists are defined to be equal if 
+                // are equal, ie, two lists are defined to be equal if
                 // they contain the same elements in the same order.
 
                 return false;
@@ -491,10 +495,10 @@ public class EndpointReference implements Serializable {
         if ((this.extensibleElements != null) && (eprExtensibleElements != null)) {
             if (!this.extensibleElements.equals(eprExtensibleElements)) {
                 // This is a strict test
-                // Returns true if and only if the specified object 
-                // is also a list, both lists have the same size, and 
+                // Returns true if and only if the specified object
+                // is also a list, both lists have the same size, and
                 // all corresponding pairs of elements in the two lists
-                // are equal, ie, two lists are defined to be equal if 
+                // are equal, ie, two lists are defined to be equal if
                 // they contain the same elements in the same order.
 
                 return false;
@@ -512,10 +516,10 @@ public class EndpointReference implements Serializable {
         if ((this.attributes != null) && (eprAttributes != null)) {
             if (!this.attributes.equals(eprAttributes)) {
                 // This is a strict test
-                // Returns true if and only if the specified object 
-                // is also a list, both lists have the same size, and 
+                // Returns true if and only if the specified object
+                // is also a list, both lists have the same size, and
                 // all corresponding pairs of elements in the two lists
-                // are equal, ie, two lists are defined to be equal if 
+                // are equal, ie, two lists are defined to be equal if
                 // they contain the same elements in the same order.
 
                 return false;
@@ -531,10 +535,9 @@ public class EndpointReference implements Serializable {
 
         return true;
     }
-    
 
     //REVIEW: The following code is rather heavyweight, because we have to build the OM tree -- it would probably be better to have two serialization/deserialization paths and therefore, for trivial EPRs, store a smaller amount of info
-    
+
     /**
      * Write the EPR to the specified OutputStream.  Because of potential
      * OMElements/Attributes, we need to actually serialize the OM structures
@@ -542,39 +545,41 @@ public class EndpointReference implements Serializable {
      */
     private void writeObject(java.io.ObjectOutputStream out)
             throws IOException {
-      OMElement om = EndpointReferenceHelper.toOM(OMAbstractFactory.getOMFactory(), this, new QName("urn:axis2","omepr","ser"), AddressingConstants.Final.WSA_NAMESPACE);
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      
+        OMElement om = EndpointReferenceHelper.toOM(OMAbstractFactory.getOMFactory(), this,
+                                                    new QName("urn:axis2", "omepr", "ser"),
+                                                    AddressingConstants.Final.WSA_NAMESPACE);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
         try {
-        om.serialize(baos);
-      }
+            om.serialize(baos);
+        }
         catch (javax.xml.stream.XMLStreamException e) {
-        throw (IOException)(new IOException("Unable to serialize the EPR")).initCause(e);
-      }
-      out.writeInt(baos.size());
-      out.write(baos.toByteArray());
+            throw (IOException) (new IOException("Unable to serialize the EPR")).initCause(e);
+        }
+        out.writeInt(baos.size());
+        out.write(baos.toByteArray());
     }
-      
+
     /**
      * Read the EPR to the specified InputStream.
      */
     private void readObject(java.io.ObjectInputStream in)
             throws IOException, ClassNotFoundException {
-      int numBytes = in.readInt();
-      
-      byte[] serBytes = new byte[numBytes];
-      
-      in.read(serBytes, 0, numBytes);
-      ByteArrayInputStream bais = new ByteArrayInputStream(serBytes);
+        int numBytes = in.readInt();
+
+        byte[] serBytes = new byte[numBytes];
+
+        in.read(serBytes, 0, numBytes);
+        ByteArrayInputStream bais = new ByteArrayInputStream(serBytes);
         try {
-        XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(bais);
-        StAXOMBuilder builder = new StAXOMBuilder(xmlReader);
-        OMElement om = builder.getDocumentElement();
-        
-        EndpointReferenceHelper.fromOM(this, om, AddressingConstants.Final.WSA_NAMESPACE);
-      }
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(bais);
+            StAXOMBuilder builder = new StAXOMBuilder(xmlReader);
+            OMElement om = builder.getDocumentElement();
+
+            EndpointReferenceHelper.fromOM(this, om, AddressingConstants.Final.WSA_NAMESPACE);
+        }
         catch (javax.xml.stream.XMLStreamException e) {
-        throw (IOException)(new IOException("Unable to deserialize the EPR")).initCause(e);
-      }
+            throw (IOException) (new IOException("Unable to deserialize the EPR")).initCause(e);
+        }
     }
 }

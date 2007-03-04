@@ -116,19 +116,22 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                 if (axis2Stream == null) {
                     // both the axis2.xml.path and axis2.xml.url init parameters were not present
                     // try to find the default /WEB-INF/conf/axis2.xml
-                    axis2Stream = config.getServletContext().getResourceAsStream("/WEB-INF/conf/axis2.xml");
+                    axis2Stream = config.getServletContext()
+                            .getResourceAsStream("/WEB-INF/conf/axis2.xml");
                     log.debug("trying to load axis2.xml from module: /WEB-INF/conf/axis2.xml");
                 }
             } // try
             catch (Exception e) {
                 log.error(e, e);
-                log.warn("Using default configuration: " + DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+                log.warn("Using default configuration: " + DeploymentConstants
+                        .AXIS2_CONFIGURATION_RESOURCE);
                 // not there, use default configuration from class path resource.
             } // catch
 
             if (axis2Stream == null) {
                 ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                axis2Stream = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+                axis2Stream =
+                        cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
             }
             axisConfig = populateAxisConfiguration(axis2Stream);
 
@@ -287,13 +290,15 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
                 HashMap wsdlServices = new HashMap();
                 ArchiveReader archiveReader = new ArchiveReader();
                 String path = config.getServletContext().getRealPath("/WEB-INF");
-                if(path != null){
-                    archiveReader.processFilesInFolder(new File(path),wsdlServices);
+                if (path != null) {
+                    archiveReader.processFilesInFolder(new File(path), wsdlServices);
                 }
                 AxisServiceGroup serviceGroup = DeploymentEngine.buildServiceGroup(servicexml,
-                        Thread.currentThread().getContextClassLoader(),
-                        "annonServiceGroup", configContext,
-                        archiveReader, wsdlServices);
+                                                                                   Thread.currentThread().getContextClassLoader(),
+                                                                                   "annonServiceGroup",
+                                                                                   configContext,
+                                                                                   archiveReader,
+                                                                                   wsdlServices);
                 axisConfig.addServiceGroup(serviceGroup);
             }
         } catch (AxisFault axisFault) {
@@ -309,7 +314,7 @@ public class WarBasedAxisConfigurator extends DeploymentEngine implements AxisCo
         super.setConfigContext(configContext);
         // setting ServletContext into configctx
         configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
-                config.getServletContext());
+                                  config.getServletContext());
         // setting ServletContext into configctx
         configContext.setProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT,
                                   config.getServletContext());

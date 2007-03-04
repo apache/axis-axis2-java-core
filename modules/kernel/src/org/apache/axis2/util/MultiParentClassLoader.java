@@ -73,8 +73,10 @@ public class MultiParentClassLoader extends URLClassLoader {
         this(urls, new ClassLoader[]{parent});
     }
 
-    public MultiParentClassLoader(URL[] urls, ClassLoader parent, boolean inverseClassLoading, String[] hiddenClasses, String[] nonOverridableClasses) {
-        this(urls, new ClassLoader[]{parent}, inverseClassLoading, hiddenClasses, nonOverridableClasses);
+    public MultiParentClassLoader(URL[] urls, ClassLoader parent, boolean inverseClassLoading,
+                                  String[] hiddenClasses, String[] nonOverridableClasses) {
+        this(urls, new ClassLoader[]{parent}, inverseClassLoading, hiddenClasses,
+             nonOverridableClasses);
     }
 
     /**
@@ -105,11 +107,15 @@ public class MultiParentClassLoader extends URLClassLoader {
         nonOverridableResources = new String[0];
     }
 
-    public MultiParentClassLoader(URL[] urls, ClassLoader[] parents, boolean inverseClassLoading, Collection hiddenClasses, Collection nonOverridableClasses) {
-        this(urls, parents, inverseClassLoading, (String[]) hiddenClasses.toArray(new String[hiddenClasses.size()]), (String[]) nonOverridableClasses.toArray(new String[nonOverridableClasses.size()]));
+    public MultiParentClassLoader(URL[] urls, ClassLoader[] parents, boolean inverseClassLoading,
+                                  Collection hiddenClasses, Collection nonOverridableClasses) {
+        this(urls, parents, inverseClassLoading,
+             (String[]) hiddenClasses.toArray(new String[hiddenClasses.size()]),
+             (String[]) nonOverridableClasses.toArray(new String[nonOverridableClasses.size()]));
     }
 
-    public MultiParentClassLoader(URL[] urls, ClassLoader[] parents, boolean inverseClassLoading, String[] hiddenClasses, String[] nonOverridableClasses) {
+    public MultiParentClassLoader(URL[] urls, ClassLoader[] parents, boolean inverseClassLoading,
+                                  String[] hiddenClasses, String[] nonOverridableClasses) {
         super(urls);
         this.parents = copyParents(parents);
         this.inverseClassLoading = inverseClassLoading;
@@ -136,7 +142,8 @@ public class MultiParentClassLoader extends URLClassLoader {
      * @param parents the parents of this class loader
      * @param factory the URLStreamHandlerFactory used to access the urls
      */
-    public MultiParentClassLoader(URL[] urls, ClassLoader[] parents, URLStreamHandlerFactory factory) {
+    public MultiParentClassLoader(URL[] urls, ClassLoader[] parents,
+                                  URLStreamHandlerFactory factory) {
         super(urls, null, factory);
         this.parents = copyParents(parents);
         inverseClassLoading = false;
@@ -172,7 +179,8 @@ public class MultiParentClassLoader extends URLClassLoader {
         super.addURL(url);
     }
 
-    protected synchronized Class loadClass(String name, boolean resolve) throws ClassNotFoundException {
+    protected synchronized Class loadClass(String name, boolean resolve)
+            throws ClassNotFoundException {
         //
         // Check if class is in the loaded classes cache
         //
@@ -353,7 +361,7 @@ public class MultiParentClassLoader extends URLClassLoader {
     }
 
     public void destroy() {
-        synchronized(this) {
+        synchronized (this) {
             if (destroyed) {
                 return;
             }

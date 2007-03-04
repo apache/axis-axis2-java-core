@@ -50,7 +50,7 @@ import org.apache.axis2.context.MessageContext;
  * cleanupContext(req)
  * migrateContextToThread(rsp)
  * Note: there is no corresponding cleanupThread(rsp); one of the inbound
- *       cases would need to handle this
+ * cases would need to handle this
  * <p/>
  * If a fault occurs during execution of one of the migrators, it will be
  * treated like any other service fault (i.e. like what will happen if we can't
@@ -58,56 +58,56 @@ import org.apache.axis2.context.MessageContext;
  * <p/>
  * The cleanup* methods can be expected to be invoked after any exeception
  * that occurs within the scope of the migration that would cause that scope
- * to be left so that the thread and/or context may be cleaned up properly. 
+ * to be left so that the thread and/or context may be cleaned up properly.
  */
 public interface ThreadContextMigrator {
-  /**
-   * This method will be invoked when the processing of the message is
-   * guaranteed to be on the thread of execution that will be used in
-   * user space.  It will be invoked for incoming messages.
-   * Implementations of this interface can use the information found in the
-   * MessageContext to determine whether a request or response is being
-   * processed.
-   * (e.g. MessageContext.getAxisOperation().getMessageExchangePattern())
-   * 
-   * @param messageContext
-   * @throws AxisFault
-   */
-  void migrateContextToThread(MessageContext messageContext) throws AxisFault;
+    /**
+     * This method will be invoked when the processing of the message is
+     * guaranteed to be on the thread of execution that will be used in
+     * user space.  It will be invoked for incoming messages.
+     * Implementations of this interface can use the information found in the
+     * MessageContext to determine whether a request or response is being
+     * processed.
+     * (e.g. MessageContext.getAxisOperation().getMessageExchangePattern())
+     *
+     * @param messageContext
+     * @throws AxisFault
+     */
+    void migrateContextToThread(MessageContext messageContext) throws AxisFault;
 
-  /**
-   * This method will be invoked when the processing of the message is
-   * guaranteed to still be on the thread of execution that was used in user
-   * space, after all processing has completed (i.e. when the particular
-   * processing of a message is unwinding.)  It provides a mechanism which can
-   * be used to clean up the TLS.
-   *   
-   * @param messageContext
-   */
-  void cleanupThread(MessageContext messageContext);
+    /**
+     * This method will be invoked when the processing of the message is
+     * guaranteed to still be on the thread of execution that was used in user
+     * space, after all processing has completed (i.e. when the particular
+     * processing of a message is unwinding.)  It provides a mechanism which can
+     * be used to clean up the TLS.
+     *
+     * @param messageContext
+     */
+    void cleanupThread(MessageContext messageContext);
 
-  /**
-   * This method will be invoked when the processing of the message is
-   * guaranteed to still be on the thread of execution that was used in
-   * user space.  It will be invoked for both outgoing messages.
-   * Implementations of this interface can use the information found in the
-   * MessageContext to determine whether a request or response is being
-   * processed.
-   * (e.g. MessageContext.getAxisOperation().getMessageExchangePattern())
-   * 
-   * @param messageContext
-   * @throws AxisFault
-   */
-  void migrateThreadToContext(MessageContext messageContext) throws AxisFault;
-  
-  /**
-   * This method will be invoked when the processing of the message is
-   * guaranteed to be on the thread of execution that will be used in user
-   * space, after all processing has completed (i.e. when the particular
-   * processing of a message is unwinding.)  It provides a mechanism which can
-   * be used to clean up the MessageContext or restore TLS.
-   *   
-   * @param messageContext
-   */
-  void cleanupContext(MessageContext messageContext);
+    /**
+     * This method will be invoked when the processing of the message is
+     * guaranteed to still be on the thread of execution that was used in
+     * user space.  It will be invoked for both outgoing messages.
+     * Implementations of this interface can use the information found in the
+     * MessageContext to determine whether a request or response is being
+     * processed.
+     * (e.g. MessageContext.getAxisOperation().getMessageExchangePattern())
+     *
+     * @param messageContext
+     * @throws AxisFault
+     */
+    void migrateThreadToContext(MessageContext messageContext) throws AxisFault;
+
+    /**
+     * This method will be invoked when the processing of the message is
+     * guaranteed to be on the thread of execution that will be used in user
+     * space, after all processing has completed (i.e. when the particular
+     * processing of a message is unwinding.)  It provides a mechanism which can
+     * be used to clean up the MessageContext or restore TLS.
+     *
+     * @param messageContext
+     */
+    void cleanupContext(MessageContext messageContext);
 }

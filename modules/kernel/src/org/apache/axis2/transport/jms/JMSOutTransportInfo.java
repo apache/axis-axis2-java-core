@@ -43,7 +43,7 @@ public class JMSOutTransportInfo implements OutTransportInfo {
      * Creates an instance using the given connection factory and destination
      *
      * @param connectionFactory the connection factory
-     * @param dest the destination
+     * @param dest              the destination
      */
     JMSOutTransportInfo(ConnectionFactory connectionFactory, Destination dest) {
         this.connectionFactory = connectionFactory;
@@ -58,7 +58,7 @@ public class JMSOutTransportInfo implements OutTransportInfo {
     JMSOutTransportInfo(String url) {
         if (!url.startsWith(JMSConstants.JMS_PREFIX)) {
             handleException("Invalid JMS URL : " + url +
-                " Must begin with the prefix " + JMSConstants.JMS_PREFIX);
+                    " Must begin with the prefix " + JMSConstants.JMS_PREFIX);
         } else {
             Context context = null;
             Hashtable props = JMSUtils.getProperties(url);
@@ -77,7 +77,7 @@ public class JMSOutTransportInfo implements OutTransportInfo {
      * Get the referenced ConnectionFactory using the properties from the context
      *
      * @param context the context to use for lookup
-     * @param props the properties which contains the JNDI name of the factory
+     * @param props   the properties which contains the JNDI name of the factory
      * @return the connection factory
      */
     private ConnectionFactory getConnectionFactory(Context context, Hashtable props) {
@@ -88,7 +88,7 @@ public class JMSOutTransportInfo implements OutTransportInfo {
                 return (ConnectionFactory) context.lookup(conFacJndiName);
             } else {
                 throw new NamingException(
-                    "JMS Connection Factory JNDI name cannot be determined from url");
+                        "JMS Connection Factory JNDI name cannot be determined from url");
             }
         } catch (NamingException e) {
             handleException("Cannot get JMS Connection factory with props : " + props, e);
@@ -100,7 +100,7 @@ public class JMSOutTransportInfo implements OutTransportInfo {
      * Get the JMS destination specified by the given URL from the context
      *
      * @param context the Context to lookup
-     * @param url URL
+     * @param url     URL
      * @return the JMS destination, or null if it does not exist
      */
     private Destination getDestination(Context context, String url) {
@@ -110,11 +110,11 @@ public class JMSOutTransportInfo implements OutTransportInfo {
 
         } catch (NameNotFoundException e) {
             log.warn("Cannot get or lookup JMS destination : " + destinationName +
-                " from url : " + url + " : " + e.getMessage());
+                    " from url : " + url + " : " + e.getMessage());
 
         } catch (NamingException e) {
             handleException("Cannot get JMS destination : " + destinationName +
-                " from url : " + url, e);
+                    " from url : " + url, e);
         }
         return null;
     }

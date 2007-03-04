@@ -32,7 +32,7 @@ import java.util.Map;
 public abstract class AbstractContext {
 
     /**
-     * Property used to indicate copying of properties is needed by context. 
+     * Property used to indicate copying of properties is needed by context.
      */
     public static final String COPY_PROPERTIES = "CopyProperties";
 
@@ -40,12 +40,12 @@ public abstract class AbstractContext {
 
     protected transient AbstractContext parent;
     protected transient Map properties;
-    
+
     protected AbstractContext(AbstractContext parent) {
         this.parent = parent;
     }
 
-    protected AbstractContext(){
+    protected AbstractContext() {
     }
 
     /**
@@ -109,7 +109,7 @@ public abstract class AbstractContext {
         }
     }
 
-    /**                         
+    /**
      * This will do a copy of the given properties to the current properties
      * table.
      *
@@ -169,25 +169,25 @@ public abstract class AbstractContext {
     public void setLastTouchedTime(long t) {
         lastTouchedTime = t;
     }
-    
-    public void flush () throws AxisFault {
-        
+
+    public void flush() throws AxisFault {
+
         ConfigurationContext configContext = getRootContext();
-        if (configContext==null) {
-            throw new AxisFault (Messages.getMessage("cannotFlushRootNull"));
+        if (configContext == null) {
+            throw new AxisFault(Messages.getMessage("cannotFlushRootNull"));
         }
-        
+
         AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
         ClusterManager clusterManager = axisConfiguration.getClusterManager();
-        
+
         //Calling the ClusterManager probably to replicate the updated state of the context.
-        if (clusterManager!=null && clusterManager.isContextClusterable (this)) {
+        if (clusterManager != null && clusterManager.isContextClusterable(this)) {
             clusterManager.updateState(this);
         }
-        
+
         //Other logic needed for flushing the contexts
     }
-    
-    public abstract ConfigurationContext getRootContext ();
-    
+
+    public abstract ConfigurationContext getRootContext();
+
 }

@@ -50,7 +50,8 @@ public class DependencyManager {
             // We can not call classToLoad.getDeclaredMethed() , since there
             //  can be insatnce where mutiple services extends using one class
             // just for init and other reflection methods
-            Method method = classToLoad.getMethod(SERVICE_INIT_METHOD, new Class[]{ServiceContext.class});
+            Method method =
+                    classToLoad.getMethod(SERVICE_INIT_METHOD, new Class[]{ServiceContext.class});
             if (method != null) {
                 method.invoke(obj, new Object[]{serviceContext});
             }
@@ -79,7 +80,7 @@ public class DependencyManager {
         while (serviceItr.hasNext()) {
             AxisService axisService = (AxisService) serviceItr.next();
             ServiceContext serviceContext = ContextFactory.createServiceContext(
-                    serviceGroupContext,axisService);
+                    serviceGroupContext, axisService);
             AxisService service = serviceContext.getAxisService();
             ClassLoader classLoader = service.getClassLoader();
             Parameter implInfoParam = service.getParameter(Constants.SERVICE_CLASS);

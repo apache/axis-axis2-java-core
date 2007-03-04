@@ -24,10 +24,11 @@ import java.lang.reflect.Method;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
- *   An XML pretty printer based on jtidy (http://sourceforge.net/projects/jtidy)
- *   The Jtidy jar needs to be in classpath for this to work and can be found at
- *   http://sourceforge.net/project/showfiles.php?group_id=13153
+ * An XML pretty printer based on jtidy (http://sourceforge.net/projects/jtidy)
+ * The Jtidy jar needs to be in classpath for this to work and can be found at
+ * http://sourceforge.net/project/showfiles.php?group_id=13153
  */
 public class XMLPrettyPrinter {
 
@@ -41,7 +42,7 @@ public class XMLPrettyPrinter {
      * @param file
      */
     public static void prettify(File file) {
-        try{
+        try {
             // Create an instance of the Jalopy bean
             Class clazz = Loader.loadClass("org.w3c.tidy.Tidy");
             Object prettifier = clazz.newInstance();
@@ -51,14 +52,14 @@ public class XMLPrettyPrinter {
                     "setXmlTags",
                     new Class[]{boolean.class});
             setXmlInFlagMethod.invoke(prettifier,
-                    new Object[]{Boolean.TRUE});
+                                      new Object[]{Boolean.TRUE});
 
             //set the output to be xml
             Method setXmlOutFlagMethod = clazz.getMethod(
                     "setXmlOut",
                     new Class[]{boolean.class});
             setXmlOutFlagMethod.invoke(prettifier,
-                    new Object[]{Boolean.TRUE});
+                                       new Object[]{Boolean.TRUE});
 
             //create the input stream
             InputStream input = new FileInputStream(file);
@@ -87,7 +88,7 @@ public class XMLPrettyPrinter {
             //delete the original
             file.delete();
 
-            if (!tempFile.renameTo(new File(existingFileName))){
+            if (!tempFile.renameTo(new File(existingFileName))) {
                 throw new Exception("File renaming failed!" + existingFileName);
             }
             log.debug("Pretty printed file : " + file);

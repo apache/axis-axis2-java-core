@@ -18,28 +18,28 @@ package org.apache.axis2.dataretrieval;
 
 /**
  * Defines Data Locator types as described below:
- * DEFAULT_AXIS - Default Axis2 data locator 
+ * DEFAULT_AXIS - Default Axis2 data locator
  * GLOBAL_LEVEL - Global level data locator i.e.,plug-in data locator registered
- *                using <dataLocator> element in axis2.xml.
- * GLOBAL_DIALECT - Global level dialect specfic data locator i.e.,plug-in 
- *                  data locator registered using <dialectLocator> element in axis2.xml.
+ * using <dataLocator> element in axis2.xml.
+ * GLOBAL_DIALECT - Global level dialect specfic data locator i.e.,plug-in
+ * data locator registered using <dialectLocator> element in axis2.xml.
  * SERVICE_LEVEL - Service level data locator i.e. plug-in data locator registered
- *                using <dataLocator> element in services.xml.
+ * using <dataLocator> element in services.xml.
  * SERVICE_DIALECT - Service level dialect specific data locator i.e. plug-in data locator registered
- *                using <dialectLocator> element in services.xml.
+ * using <dialectLocator> element in services.xml.
  */
 
 public class LocatorType {
     int type;
-    public final static LocatorType  DEFAULT_AXIS = new LocatorType(0);
-    public final static LocatorType  GLOBAL_LEVEL = new LocatorType(1);
-    public final static LocatorType  GLOBAL_DIALECT = new LocatorType(2);
-    public final static LocatorType  SERVICE_LEVEL = new LocatorType(3);
-    public final static LocatorType  SERVICE_DIALECT = new LocatorType(4);
-    
+    public final static LocatorType DEFAULT_AXIS = new LocatorType(0);
+    public final static LocatorType GLOBAL_LEVEL = new LocatorType(1);
+    public final static LocatorType GLOBAL_DIALECT = new LocatorType(2);
+    public final static LocatorType SERVICE_LEVEL = new LocatorType(3);
+    public final static LocatorType SERVICE_DIALECT = new LocatorType(4);
 
-    protected LocatorType (int intype) {
-        this.type= intype;
+
+    protected LocatorType(int intype) {
+        this.type = intype;
     }
 
     public int getType() {

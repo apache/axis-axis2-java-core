@@ -28,9 +28,9 @@ public class MessagesConstants {
 
     public static final ResourceBundle rootBundle =
             ProjectResourceBundle.getBundle(projectName,
-                    rootPackageName,
-                    resourceName,
-                    locale,
-                    MessagesConstants.class.getClassLoader(),
-                    null);
+                                            rootPackageName,
+                                            resourceName,
+                                            locale,
+                                            MessagesConstants.class.getClassLoader(),
+                                            null);
 }

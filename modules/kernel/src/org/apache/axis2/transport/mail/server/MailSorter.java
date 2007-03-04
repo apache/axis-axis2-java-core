@@ -16,14 +16,6 @@
 
 package org.apache.axis2.transport.mail.server;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -39,6 +31,13 @@ import org.apache.axis2.transport.mail.Constants;
 import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.xml.namespace.QName;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 
 /**
  * This class will be used to sort the messages into normal messages and mails
@@ -76,15 +75,17 @@ public class MailSorter {
         // create and initialize a message context
         try {
             msgContext = ContextFactory.createMessageContext(confContext);
-            msgContext.setTransportIn(confContext.getAxisConfiguration().getTransportIn(new QName(org.apache.axis2.Constants.TRANSPORT_MAIL)));
-            msgContext.setTransportOut(confContext.getAxisConfiguration().getTransportOut(new QName(org.apache.axis2.Constants.TRANSPORT_MAIL)));
+            msgContext.setTransportIn(confContext.getAxisConfiguration().getTransportIn(
+                    new QName(org.apache.axis2.Constants.TRANSPORT_MAIL)));
+            msgContext.setTransportOut(confContext.getAxisConfiguration().getTransportOut(
+                    new QName(org.apache.axis2.Constants.TRANSPORT_MAIL)));
 
             msgContext.setServerSide(true);
             msgContext.setProperty(Constants.CONTENT_TYPE, mimeMessage.getContentType());
             msgContext.setProperty(org.apache.axis2.Constants.Configuration.CHARACTER_SET_ENCODING,
-                    mimeMessage.getEncoding());
+                                   mimeMessage.getEncoding());
             String soapAction = getMailHeader(Constants.HEADER_SOAP_ACTION, mimeMessage);
-            if (soapAction == null){
+            if (soapAction == null) {
                 soapAction = mimeMessage.getSubject();
             }
 
@@ -138,7 +139,8 @@ public class MailSorter {
         } catch (Exception e) {
             try {
                 if (msgContext != null) {
-                    MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgContext, e);
+                    MessageContext faultContext =
+                            MessageContextBuilder.createFaultMessageContext(msgContext, e);
 
                     engine.sendFault(faultContext);
                 }

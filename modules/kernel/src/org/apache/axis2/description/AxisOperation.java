@@ -94,7 +94,7 @@ public abstract class AxisOperation extends AxisDescription
         moduleConfigmap = new HashMap();
         faultMessages = new ArrayList();
         //setup a temporary name
-        QName tmpName = new QName(this.getClass().getName()+"_"+UUIDGenerator.getUUID());
+        QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
         this.setName(tmpName);
     }
 
@@ -120,7 +120,8 @@ public abstract class AxisOperation extends AxisDescription
     public abstract void addMessageContext(MessageContext msgContext, OperationContext opContext)
             throws AxisFault;
 
-    public abstract void addFaultMessageContext(MessageContext msgContext, OperationContext opContext)
+    public abstract void addFaultMessageContext(MessageContext msgContext,
+                                                OperationContext opContext)
             throws AxisFault;
 
     public void addModule(QName moduleName) {
@@ -154,7 +155,8 @@ public abstract class AxisOperation extends AxisDescription
         }
     }
 
-    private ArrayList engageModuleToOperation(AxisModule moduleref, AxisConfiguration axisConfig) throws AxisFault {
+    private ArrayList engageModuleToOperation(AxisModule moduleref, AxisConfiguration axisConfig)
+            throws AxisFault {
         if (moduleref == null) {
             return null;
         }
@@ -270,7 +272,8 @@ public abstract class AxisOperation extends AxisDescription
      */
     private AxisOperation copyOperation(AxisOperation axisOperation) throws AxisFault {
         AxisOperation operation =
-                AxisOperationFactory.getOperationDescription(axisOperation.getMessageExchangePattern());
+                AxisOperationFactory
+                        .getOperationDescription(axisOperation.getMessageExchangePattern());
 
         operation.setMessageReceiver(axisOperation.getMessageReceiver());
         operation.setName(axisOperation.getName());
@@ -287,7 +290,8 @@ public abstract class AxisOperation extends AxisDescription
         operation.setOutputAction(axisOperation.getOutputAction());
         String[] faultActionNames = axisOperation.getFaultActionNames();
         for (int i = 0; i < faultActionNames.length; i++) {
-            operation.addFaultAction(faultActionNames[i], axisOperation.getFaultAction(faultActionNames[i]));
+            operation.addFaultAction(faultActionNames[i],
+                                     axisOperation.getFaultAction(faultActionNames[i]));
         }
         operation.setRemainingPhasesInFlow(axisOperation.getRemainingPhasesInFlow());
         operation.setPhasesInFaultFlow(axisOperation.getPhasesInFaultFlow());
@@ -323,7 +327,9 @@ public abstract class AxisOperation extends AxisDescription
                     configContext.getOperationContext(msgContext.getRelatesTo().getValue());
 
             if (null == operationContext && log.isDebugEnabled()) {
-                log.debug(msgContext.getLogIDString()+" Cannot correlate inbound message RelatesTo value [" + msgContext.getRelatesTo() + "] to in-progree MEP");
+                log.debug(msgContext.getLogIDString() +
+                        " Cannot correlate inbound message RelatesTo value [" +
+                        msgContext.getRelatesTo() + "] to in-progree MEP");
             }
         }
 
@@ -360,7 +366,7 @@ public abstract class AxisOperation extends AxisDescription
 
             // Its a new incoming message so get the factory to create a new
             // one
-            operationContext = ContextFactory.createOperationContext(this,serviceContext);
+            operationContext = ContextFactory.createOperationContext(this, serviceContext);
         } else {
 
             // So this message is part of an ongoing MEP
@@ -371,7 +377,8 @@ public abstract class AxisOperation extends AxisDescription
 
             if (null == operationContext) {
                 throw new AxisFault(Messages.getMessage("cannotCorrelateMsg",
-                        this.name.toString(), msgContext.getRelatesTo().getValue()));
+                                                        this.name.toString(),
+                                                        msgContext.getRelatesTo().getValue()));
             }
         }
         return operationContext;
@@ -382,7 +389,7 @@ public abstract class AxisOperation extends AxisDescription
             throws AxisFault {
         msgContext.setAxisOperation(this);
         msgContext.getConfigurationContext().registerOperationContext(msgContext.getMessageID(),
-                operationContext);
+                                                                      operationContext);
         operationContext.addMessageContext(msgContext);
         msgContext.setOperationContext(operationContext);
         if (operationContext.isComplete()) {
@@ -551,7 +558,8 @@ public abstract class AxisOperation extends AxisDescription
      * 
      */
     public OperationClient createClient(ServiceContext sc, Options options) {
-        throw new UnsupportedOperationException(Messages.getMessage("mepnotyetimplemented", mepURI));
+        throw new UnsupportedOperationException(
+                Messages.getMessage("mepnotyetimplemented", mepURI));
     }
 
     public Object getKey() {
@@ -571,7 +579,7 @@ public abstract class AxisOperation extends AxisDescription
     }
 
     public String getInputAction() {
-        return  soapAction;
+        return soapAction;
     }
 
     public String getOutputAction() {

@@ -77,7 +77,8 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
                 File configFile = new File(axis2xml);
                 if (!configFile.exists()) {
                     log.info("Error in file (axis2.xml) creation inside FileSystemConfigurator");
-                    throw new AxisFault("Error in file (axis2.xml) creation inside FileSystemConfigurator");
+                    throw new AxisFault(
+                            "Error in file (axis2.xml) creation inside FileSystemConfigurator");
                 }
             }
         }
@@ -98,7 +99,8 @@ public class FileSystemConfigurator extends DeploymentEngine implements AxisConf
                 axis2xmlSream = new FileInputStream(axis2xml);
             } else {
                 ClassLoader cl = Thread.currentThread().getContextClassLoader();
-                axis2xmlSream = cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
+                axis2xmlSream =
+                        cl.getResourceAsStream(DeploymentConstants.AXIS2_CONFIGURATION_RESOURCE);
             }
             axisConfig = populateAxisConfiguration(axis2xmlSream);
         } catch (FileNotFoundException e) {

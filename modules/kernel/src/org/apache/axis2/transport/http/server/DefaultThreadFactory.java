@@ -36,7 +36,7 @@ public class DefaultThreadFactory implements ThreadFactory {
     final ThreadGroup group;
     final AtomicInteger count;
     final String namePrefix;
-    
+
     public DefaultThreadFactory(final ThreadGroup group, final String namePrefix) {
         super();
         this.count = new AtomicInteger(1);
@@ -54,5 +54,5 @@ public class DefaultThreadFactory implements ThreadFactory {
         t.setPriority(Thread.NORM_PRIORITY);
         return t;
     }
-        
+
 }

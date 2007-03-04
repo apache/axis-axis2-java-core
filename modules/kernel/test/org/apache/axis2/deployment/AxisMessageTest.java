@@ -29,8 +29,10 @@ import javax.xml.namespace.QName;
 public class AxisMessageTest extends TestCase {
 
     public void testAxisMessage() throws Exception {
-        String filename = System.getProperty("basedir")+"/test-resources/deployment/AxisMessageTestRepo";
-        AxisConfiguration er = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
+        String filename =
+                System.getProperty("basedir") + "/test-resources/deployment/AxisMessageTestRepo";
+        AxisConfiguration er = ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
                 .getAxisConfiguration();
 
         assertNotNull(er);

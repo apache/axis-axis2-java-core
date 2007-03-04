@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2.java.security.interf;
 
 /**
@@ -21,6 +21,6 @@ package org.apache.axis2.java.security.interf;
  */
 
 public interface Actor {
-   public void takeAction();
+    public void takeAction();
 }
 

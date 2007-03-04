@@ -13,21 +13,20 @@
 */
 package org.apache.axis2.dispatchers;
 
+import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 
-import junit.framework.TestCase;
-
 public class RequestURIBasedServiceDispatcherTest extends TestCase {
 
-    public void testFindService() throws AxisFault{
-        MessageContext messageContext ;
+    public void testFindService() throws AxisFault {
+        MessageContext messageContext;
         AxisService as1 = new AxisService("Service1");
         AxisService as2 = new AxisService("Service2");
 
@@ -37,11 +36,12 @@ public class RequestURIBasedServiceDispatcherTest extends TestCase {
         ac.addService(as2);
         messageContext = ContextFactory.createMessageContext(cc);
 
-        messageContext.setTo(new EndpointReference("http://127.0.0.1:8080/axis2/services/Service2"));
-        
+        messageContext
+                .setTo(new EndpointReference("http://127.0.0.1:8080/axis2/services/Service2"));
+
         RequestURIBasedServiceDispatcher ruisd = new RequestURIBasedServiceDispatcher();
         ruisd.invoke(messageContext);
-        
+
         assertEquals(as2, messageContext.getAxisService());
     }
 

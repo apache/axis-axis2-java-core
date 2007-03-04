@@ -38,10 +38,10 @@ public class SOAPMessageBodyBasedOperationDispatcher extends AbstractOperationDi
         if (bodyFirstChild == null) {
             return null;
         } else {
-            if(LoggingControl.debugLoggingAllowed && log.isDebugEnabled()){
-            log.debug(messageContext.getLogIDString()+
-                    " Checking for Operation using SOAP message body's first child's local name : "
-                            + bodyFirstChild.getLocalName());
+            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+                log.debug(messageContext.getLogIDString() +
+                        " Checking for Operation using SOAP message body's first child's local name : "
+                        + bodyFirstChild.getLocalName());
             }
             operationName = new QName(bodyFirstChild.getLocalName());
         }

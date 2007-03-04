@@ -83,7 +83,8 @@ public class SimpleHTTPServer implements TransportListener {
         this.httpFactory = httpFactory;
         this.configurationContext = httpFactory.getConfigurationContext();
         this.port = httpFactory.getPort();
-        TransportInDescription httpDescription = new TransportInDescription(new QName(Constants.TRANSPORT_HTTP));
+        TransportInDescription httpDescription =
+                new TransportInDescription(new QName(Constants.TRANSPORT_HTTP));
         httpDescription.setReceiver(this);
         httpFactory.getListenerManager().addListener(httpDescription, true);
         sessionManager = new SessionManager();
@@ -141,9 +142,9 @@ public class SimpleHTTPServer implements TransportListener {
         if (paramPort != null) {
             port = Integer.parseInt(paramPort);
         }
-        
+
         boolean startAllTransports = "all".equals(optionsParser.isValueSet('t'));
-        String repository= optionsParser.isValueSet('r');
+        String repository = optionsParser.isValueSet('r');
         if (repository == null) {
             args = optionsParser.getRemainingArgs();
             if (args != null && args[0] != null && args[0] != "") {
@@ -158,7 +159,8 @@ public class SimpleHTTPServer implements TransportListener {
                 + new File(repository).getAbsolutePath());
         System.out.println("[SimpleHTTPServer] Listening on port " + port);
         try {
-            ConfigurationContext configctx = ConfigurationContextFactory.createConfigurationContextFromFileSystem(repository, null);
+            ConfigurationContext configctx = ConfigurationContextFactory
+                    .createConfigurationContextFromFileSystem(repository, null);
             SimpleHTTPServer receiver = new SimpleHTTPServer(configctx, port);
             Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
             receiver.start();
@@ -175,12 +177,12 @@ public class SimpleHTTPServer implements TransportListener {
             // should all transports be started? specified as "-t all"
             if (startAllTransports) {
                 Iterator iter = configctx.getAxisConfiguration().
-                    getTransportsIn().keySet().iterator();
+                        getTransportsIn().keySet().iterator();
                 while (iter.hasNext()) {
                     QName trp = (QName) iter.next();
                     if (!new QName(Constants.TRANSPORT_HTTP).equals(trp)) {
                         trsIn = (TransportInDescription)
-                            configctx.getAxisConfiguration().getTransportsIn().get(trp);
+                                configctx.getAxisConfiguration().getTransportsIn().get(trp);
                         listenerManager.addListener(trsIn, false);
                     }
                 }
@@ -198,7 +200,8 @@ public class SimpleHTTPServer implements TransportListener {
         System.out.println(" Opts: -? this message");
         System.out.println();
         System.out.println("       -p port :to listen on (default is 8080)");
-        System.out.println("       -t all  :to start all transports defined in the axis2 configuration");
+        System.out.println(
+                "       -t all  :to start all transports defined in the axis2 configuration");
         System.exit(1);
     }
 
@@ -248,7 +251,8 @@ public class SimpleHTTPServer implements TransportListener {
         //if host address is present
         if (hostAddress != null) {
             if (embedded != null) {
-                return new EndpointReference[] {new EndpointReference(hostAddress + "/" + configurationContext.getServiceContextPath() + "/" + serviceName)};
+                return new EndpointReference[]{new EndpointReference(hostAddress + "/" +
+                        configurationContext.getServiceContextPath() + "/" + serviceName)};
             } else {
                 throw new AxisFault("Unable to generate EPR for the transport : http");
             }
@@ -268,7 +272,7 @@ public class SimpleHTTPServer implements TransportListener {
             }
         }
         if (embedded != null) {
-            return new EndpointReference[] {new EndpointReference("http://" + localAddress + ":" +
+            return new EndpointReference[]{new EndpointReference("http://" + localAddress + ":" +
                     (embedded.getPort())
                     + "/" + configurationContext.getServiceContextPath() + "/" + serviceName)};
         } else {

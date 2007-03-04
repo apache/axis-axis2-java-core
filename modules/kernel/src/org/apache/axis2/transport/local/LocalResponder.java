@@ -90,7 +90,7 @@ public class LocalResponder extends AbstractHandler implements TransportSender {
         // not available
         if (msgContext.getOperationContext() != null) {
             msgContext.getOperationContext().setProperty(Constants.RESPONSE_WRITTEN,
-                    Constants.VALUE_TRUE);
+                                                         Constants.VALUE_TRUE);
         }
         return InvocationResponse.CONTINUE;
     }

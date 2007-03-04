@@ -92,7 +92,7 @@ public class TCPWorker implements Runnable {
                 }
             } else {
                 throw new AxisFault(Messages.getMessage("unknownTransport",
-                        Constants.TRANSPORT_TCP));
+                                                        Constants.TRANSPORT_TCP));
             }
         } catch (Throwable e) {
             try {
@@ -101,7 +101,8 @@ public class TCPWorker implements Runnable {
                 if (msgContext != null) {
                     msgContext.setProperty(MessageContext.TRANSPORT_OUT, socket.getOutputStream());
 
-                    MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgContext, e);
+                    MessageContext faultContext =
+                            MessageContextBuilder.createFaultMessageContext(msgContext, e);
 
                     engine.sendFault(faultContext);
                 }

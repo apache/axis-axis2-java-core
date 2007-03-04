@@ -29,11 +29,11 @@ public class WSDLUtil {
      * @param mep
      */
     public static boolean isInputPresentForMEP(String mep) {
-        return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mep)||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mep)||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mep)||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mep)||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mep)||
+        return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mep) ||
+                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mep) ||
+                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mep) ||
+                WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mep) ||
+                WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mep) ||
                 WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mep);
     }
 
@@ -43,7 +43,7 @@ public class WSDLUtil {
      * @param MEP
      */
     public static boolean isOutputPresentForMEP(String MEP) {
-        return  WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+        return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
                 WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(MEP) ||
                 WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(MEP) ||
                 WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(MEP) ||
@@ -52,7 +52,7 @@ public class WSDLUtil {
     }
 
     /**
-     *  part names are not unique across messages. Hence
+     * part names are not unique across messages. Hence
      * we need some way of making the part name a unique
      * one (due to the fact that the type mapper
      * is a global list of types).
@@ -69,8 +69,8 @@ public class WSDLUtil {
      */
     public static QName getPartQName(String opName,
                                      String suffix,
-                                     String partName){
-        return new QName(opName+suffix,partName);
+                                     String partName) {
+        return new QName(opName + suffix, partName);
     }
 
 }

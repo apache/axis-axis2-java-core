@@ -105,7 +105,8 @@ public class HTTPTransportReceiver {
 
                 Iterator iterator = axisService.getOperations();
 
-                temp += "<h3><a href=\"" + axisService.getName() + "?wsdl\">" + axisService.getName() + "</a></h3>";
+                temp += "<h3><a href=\"" + axisService.getName() + "?wsdl\">" +
+                        axisService.getName() + "</a></h3>";
 
                 if (iterator.hasNext()) {
                     temp += "Available operations <ul>";
@@ -155,7 +156,8 @@ public class HTTPTransportReceiver {
             Iterator iterator = axisService.getOperations();
             temp += "<h3>" + axisService.getName() + "</h3>";
             temp += "<a href=\"" + axisService.getName() + "?wsdl\">wsdl</a> <br/> ";
-            temp += "<i>Service Description :  " + axisService.getServiceDescription() + "</i><br/><br/>";
+            temp += "<i>Service Description :  " + axisService.getServiceDescription() +
+                    "</i><br/><br/>";
             if (iterator.hasNext()) {
                 temp += "Available operations <ul>";
                 for (; iterator.hasNext();) {
@@ -171,7 +173,8 @@ public class HTTPTransportReceiver {
         }
         catch (AxisFault axisFault) {
             temp = "<html><head><title>Service has a fualt</title></head>" + "<body>"
-                    + "<hr><h2><font color=\"blue\">" + axisFault.getMessage() + "</font></h2></body></html>";
+                    + "<hr><h2><font color=\"blue\">" + axisFault.getMessage() +
+                    "</font></h2></body></html>";
         }
         return temp;
     }

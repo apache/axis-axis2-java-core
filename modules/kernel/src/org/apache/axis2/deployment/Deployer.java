@@ -20,6 +20,7 @@ import org.apache.axis2.deployment.repository.util.DeploymentFileData;
 *
 *
 */
+
 /**
  * This interface is used to provide the custom deployment mechanism , where you
  * can write your owm Deployer to process a particular type and make that to
@@ -31,7 +32,10 @@ public interface Deployer {
 
     //Will process the file and add that to axisConfig
     void deploy(DeploymentFileData deploymentFileData) throws DeploymentException;
+
     void setDirectory(String directory);
+
     void setExtension(String extension);
+
     void unDeploy(String fileName) throws DeploymentException;
 }

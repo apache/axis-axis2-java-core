@@ -42,12 +42,12 @@ import java.util.Map;
 public class SessionManager {
 
     private final Map sessionmap;
-    
+
     public SessionManager() {
         super();
         this.sessionmap = new HashMap();
     }
-    
+
     public synchronized SessionContext getSessionContext(String sessionKey) {
         SessionContext sessionContext = null;
         if (sessionKey != null && sessionKey.length() != 0) {
@@ -66,7 +66,7 @@ public class SessionManager {
 
     private void cleanupServiceGroupContexts() {
         long currentTime = System.currentTimeMillis();
-        for (Iterator it = this.sessionmap.keySet().iterator(); it.hasNext(); ) {
+        for (Iterator it = this.sessionmap.keySet().iterator(); it.hasNext();) {
             String cookieID = (String) it.next();
             SessionContext sessionContext = (SessionContext) this.sessionmap.get(cookieID);
             if ((currentTime - sessionContext.getLastTouchedTime()) >
@@ -75,7 +75,8 @@ public class SessionManager {
                 Iterator serviceGroupContext = sessionContext.getServiceGroupContext();
                 if (serviceGroupContext != null) {
                     while (serviceGroupContext.hasNext()) {
-                        ServiceGroupContext groupContext = (ServiceGroupContext) serviceGroupContext.next();
+                        ServiceGroupContext groupContext =
+                                (ServiceGroupContext) serviceGroupContext.next();
                         cleanupServiceContexts(groupContext);
                     }
                 }
@@ -84,10 +85,10 @@ public class SessionManager {
     }
 
     private void cleanupServiceContexts(final ServiceGroupContext serviceGroupContext) {
-        for (Iterator it = serviceGroupContext.getServiceContexts(); it.hasNext(); ) {
+        for (Iterator it = serviceGroupContext.getServiceContexts(); it.hasNext();) {
             ServiceContext serviceContext = (ServiceContext) it.next();
             DependencyManager.destroyServiceObject(serviceContext);
         }
     }
-    
+
 }

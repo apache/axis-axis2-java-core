@@ -19,8 +19,8 @@ package org.apache.axis2.phaserule;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.HandlerDescription;
 import org.apache.axis2.description.PhaseRule;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -42,7 +42,7 @@ public class InvalidPhaseLastRuleTest extends TestCase {
             phases.add(p2);
 
             MessageContext msg = ContextFactory.createMessageContext(
-                new ConfigurationContext(new AxisConfiguration()));
+                    new ConfigurationContext(new AxisConfiguration()));
 
             PhaseHolder ph = new PhaseHolder(phases);
             HandlerDescription hm = new HandlerDescription();

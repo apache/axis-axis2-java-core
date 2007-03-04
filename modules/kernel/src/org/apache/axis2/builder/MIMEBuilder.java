@@ -16,10 +16,6 @@
 
 package org.apache.axis2.builder;
 
-import java.io.InputStream;
-
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.MTOMConstants;
@@ -27,32 +23,40 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 
+import javax.xml.stream.XMLStreamReader;
+import java.io.InputStream;
+
 public class MIMEBuilder implements Builder {
-    
-    public OMElement processDocument(InputStream inputStream, String contentType, MessageContext msgContext)
-    throws AxisFault {
+
+    public OMElement processDocument(InputStream inputStream, String contentType,
+                                     MessageContext msgContext)
+            throws AxisFault {
         XMLStreamReader streamReader;
-        Attachments attachments = BuilderUtil.createAttachmentsMap(msgContext, inputStream, contentType);
-        String charSetEncoding = BuilderUtil.getCharSetEncoding(attachments.getSOAPPartContentType());
-        
+        Attachments attachments =
+                BuilderUtil.createAttachmentsMap(msgContext, inputStream, contentType);
+        String charSetEncoding =
+                BuilderUtil.getCharSetEncoding(attachments.getSOAPPartContentType());
+
         if ((charSetEncoding == null)
                 || "null".equalsIgnoreCase(charSetEncoding)) {
             charSetEncoding = MessageContext.UTF_8;
         }
         msgContext.setProperty(Constants.Configuration.CHARACTER_SET_ENCODING,
-                charSetEncoding);
-        
+                               charSetEncoding);
+
         //  Put a reference to Attachments Map in to the message context For
         // backword compatibility with Axis2 1.0 
         msgContext.setProperty(MTOMConstants.ATTACHMENTS, attachments);
-        
+
         // Setting the Attachments map to new SwA API
         msgContext.setAttachmentMap(attachments);
-        
+
 //      if (isSOAP) {
-        Builder builder = BuilderUtil.getBuilderFromSelector(attachments.getAttachmentSpecType(),msgContext);
-        OMElement element = builder.processDocument(attachments.getSOAPPartInputStream(),contentType,msgContext);
-        
+        Builder builder =
+                BuilderUtil.getBuilderFromSelector(attachments.getAttachmentSpecType(), msgContext);
+        OMElement element = builder.processDocument(attachments.getSOAPPartInputStream(),
+                                                    contentType, msgContext);
+
 //      }
 //      // To handle REST XOP case
 //      else {
@@ -70,8 +74,8 @@ public class MIMEBuilder implements Builder {
 //      builder = new StAXOMBuilder(streamReader);
 //      }
 //      }
-        
+
         return element;
     }
-    
+
 }

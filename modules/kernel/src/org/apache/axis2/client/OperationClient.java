@@ -70,7 +70,7 @@ public abstract class OperationClient {
         this.sc = sc;
         this.options = new Options(options);
         this.completed = false;
-        this.oc = ContextFactory.createOperationContext(axisOp,this.sc);
+        this.oc = ContextFactory.createOperationContext(axisOp, this.sc);
     }
 
     /**
@@ -233,7 +233,8 @@ public abstract class OperationClient {
         }
     }
 
-    protected void prepareMessageContext(ConfigurationContext cc, MessageContext mc) throws AxisFault {
+    protected void prepareMessageContext(ConfigurationContext cc, MessageContext mc)
+            throws AxisFault {
         // set options on the message context
         if (mc.getSoapAction() == null || "".equals(mc.getSoapAction())) {
             mc.setSoapAction(options.getAction());

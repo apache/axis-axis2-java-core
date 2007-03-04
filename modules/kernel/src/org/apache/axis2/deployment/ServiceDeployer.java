@@ -35,6 +35,7 @@ import java.util.Iterator;
 *
 *
 */
+
 public class ServiceDeployer implements Deployer {
     private static final Log log = LogFactory.getLog(ServiceDeployer.class);
     private AxisConfiguration axisConfig;
@@ -56,7 +57,7 @@ public class ServiceDeployer implements Deployer {
         String serviceStatus = "";
         try {
             deploymentFileData.setClassLoader(explodedDir,
-                    axisConfig.getServiceClassLoader());
+                                              axisConfig.getServiceClassLoader());
             HashMap wsdlservice = archiveReader.processWSDLs(deploymentFileData);
             if (wsdlservice != null && wsdlservice.size() > 0) {
                 Iterator services = wsdlservice.values().iterator();
@@ -77,35 +78,35 @@ public class ServiceDeployer implements Deployer {
                     sericeGroup, explodedDir, wsdlservice,
                     configCtx);
             DeploymentEngine.addServiceGroup(sericeGroup,
-                    serviceList,
-                    deploymentFileData.getFile().toURL(),
-                    deploymentFileData,
-                    axisConfig);
+                                             serviceList,
+                                             deploymentFileData.getFile().toURL(),
+                                             deploymentFileData,
+                                             axisConfig);
             log.info(Messages.getMessage(DeploymentErrorMsgs.DEPLOYING_WS,
-                    deploymentFileData.getName()));
+                                         deploymentFileData.getName()));
         } catch (DeploymentException de) {
             de.printStackTrace();
             log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
-                    deploymentFileData.getName(),
-                    de.getMessage()),
-                    de);
+                                          deploymentFileData.getName(),
+                                          de.getMessage()),
+                      de);
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             de.printStackTrace(error_ptintWriter);
             serviceStatus = "Error:\n" + errorWriter.toString();
 
-            	throw de;
-            
+            throw de;
+
         } catch (AxisFault axisFault) {
             log.error(Messages.getMessage(DeploymentErrorMsgs.INVALID_SERVICE,
-                    deploymentFileData.getName(),
-                    axisFault.getMessage()),
-                    axisFault);
+                                          deploymentFileData.getName(),
+                                          axisFault.getMessage()),
+                      axisFault);
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             axisFault.printStackTrace(error_ptintWriter);
             serviceStatus = "Error:\n" + errorWriter.toString();
-             
+
             throw new DeploymentException(axisFault);
-            
+
         } catch (Exception e) {
             if (log.isInfoEnabled()) {
                 StringWriter sw = new StringWriter();
@@ -119,9 +120,9 @@ public class ServiceDeployer implements Deployer {
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             e.printStackTrace(error_ptintWriter);
             serviceStatus = "Error:\n" + errorWriter.toString();
-            
+
             throw new DeploymentException(e);
-            
+
         } catch (Throwable t) {
             if (log.isInfoEnabled()) {
                 StringWriter sw = new StringWriter();
@@ -135,13 +136,13 @@ public class ServiceDeployer implements Deployer {
             PrintWriter error_ptintWriter = new PrintWriter(errorWriter);
             t.printStackTrace(error_ptintWriter);
             serviceStatus = "Error:\n" + errorWriter.toString();
-            
+
             throw new DeploymentException(new Exception(t));
-            
+
         } finally {
             if (serviceStatus.startsWith("Error:")) {
                 axisConfig.getFaultyServices().put(deploymentFileData.getFile().getAbsolutePath(),
-                        serviceStatus);
+                                                   serviceStatus);
             }
         }
     }
@@ -158,11 +159,11 @@ public class ServiceDeployer implements Deployer {
             AxisServiceGroup serviceGroup = axisConfig.removeServiceGroup(fileName);
             configCtx.removeServiceGroupContext(serviceGroup);
             log.info(Messages.getMessage(DeploymentErrorMsgs.SERVICE_REMOVED,
-                    fileName));
+                                         fileName));
         } catch (AxisFault axisFault) {
             //May be a faulty service
             axisConfig.removeFaultyService(fileName);
-            
+
             throw new DeploymentException(axisFault);
         }
     }

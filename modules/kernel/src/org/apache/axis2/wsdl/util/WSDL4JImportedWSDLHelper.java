@@ -58,7 +58,8 @@ public class WSDL4JImportedWSDLHelper {
             Object prefix;
 
 
-            for (Iterator prefix_iterator = imported_def_namespaces.keySet().iterator(); prefix_iterator.hasNext();) {
+            for (Iterator prefix_iterator = imported_def_namespaces.keySet().iterator();
+                 prefix_iterator.hasNext();) {
                 prefix = prefix_iterator.next();
 
                 if (!def_namespaces.containsKey(prefix)) {

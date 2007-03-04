@@ -31,11 +31,12 @@ public class SystemPhasesremovedTest extends TestCase {
     public void testPhaseOrderchage() {
         try {
             String filename = "./test-resources/deployment/SystemPhaseRemove";
-            er =ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename,filename + "/axis2.xml")
+            er = ConfigurationContextFactory
+                    .createConfigurationContextFromFileSystem(filename, filename + "/axis2.xml")
                     .getAxisConfiguration();
             fail(
                     "this must failed gracefully with DeploymentException \"Invalid System predefined " +
-                    "inphases , phase order does not\" +\n support\\n recheck axis2.xml\"");
+                            "inphases , phase order does not\" +\n support\\n recheck axis2.xml\"");
         } catch (AxisFault e) {
             log.info(e.getCause());
         }

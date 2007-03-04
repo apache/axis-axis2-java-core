@@ -13,42 +13,40 @@
 */
 package org.apache.axis2.dispatchers;
 
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-
+import junit.framework.TestCase;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
 
-import junit.framework.TestCase;
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
 
 public class ActionBasedOperationDispatchTest extends TestCase {
 
-    public void testFindOperation() throws Exception{
+    public void testFindOperation() throws Exception {
         MessageContext messageContext = new MessageContext();
         AxisService as = new AxisService("Service1");
         messageContext.setAxisService(as);
-        
+
         AxisOperation operation1 = new InOnlyAxisOperation(new QName("operation1"));
         ArrayList op1actions = new ArrayList();
         op1actions.add("urn:org.apache.axis2.dispatchers.test:operation1");
         operation1.setWsamappingList(op1actions);
-        
+
         AxisOperation operation2 = new InOnlyAxisOperation(new QName("operation2"));
         ArrayList op2actions = new ArrayList();
         op2actions.add("urn:org.apache.axis2.dispatchers.test:operation2");
         operation2.setWsamappingList(op2actions);
-        
+
         as.addOperation(operation1);
         as.addOperation(operation2);
-        
+
         as.mapActionToOperation("urn:org.apache.axis2.dispatchers.test:operation1", operation1);
         as.mapActionToOperation("urn:org.apache.axis2.dispatchers.test:operation2", operation2);
-        
+
         messageContext.setWSAAction("urn:org.apache.axis2.dispatchers.test:operation2");
-        
+
         ActionBasedOperationDispatcher abod = new ActionBasedOperationDispatcher();
         abod.invoke(messageContext);
         assertEquals(operation2, messageContext.getAxisOperation());

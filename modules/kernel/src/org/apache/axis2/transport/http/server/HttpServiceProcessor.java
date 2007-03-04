@@ -44,21 +44,21 @@ import java.net.SocketTimeoutException;
 
 /**
  * I/O processor intended to process requests and fill in responses.
- * 
+ *
  * @author Chuck Williams
  */
 public class HttpServiceProcessor implements IOProcessor {
 
     private static final Log LOG = LogFactory.getLog(HttpServiceProcessor.class);
-    
+
     private volatile boolean terminated;
-    
+
     private final HttpService httpservice;
     private final HttpServerConnection conn;
     private final IOProcessorCallback callback;
-    
+
     public HttpServiceProcessor(
-            final HttpService httpservice, 
+            final HttpService httpservice,
             final HttpServerConnection conn,
             final IOProcessorCallback callback) {
         super();
@@ -67,7 +67,7 @@ public class HttpServiceProcessor implements IOProcessor {
         this.callback = callback;
         this.terminated = false;
     }
-    
+
     public void run() {
         LOG.debug("New connection thread");
         HttpContext context = new HttpExecutionContext(null);

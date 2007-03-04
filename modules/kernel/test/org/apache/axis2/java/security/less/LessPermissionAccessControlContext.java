@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package org.apache.axis2.java.security.less;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.java.security.interf.Actor;
 
-import java.security.PrivilegedAction;
 import java.security.AccessControlContext;
-
+import java.security.PrivilegedAction;
 
 
 /**
@@ -32,34 +31,33 @@ public class LessPermissionAccessControlContext implements Actor {
 
     private Actor _actor;
     private boolean _usingDoPrivilege;
-    
+
     // Construtor
     public LessPermissionAccessControlContext(Actor a, boolean usingDoPrivilege) {
-    _actor = a;
-    _usingDoPrivilege = usingDoPrivilege;
+        _actor = a;
+        _usingDoPrivilege = usingDoPrivilege;
     }
-    
+
     // Implement Actor's takeAction method
     public void takeAction() {
-       try {
-        if (_usingDoPrivilege) {
-        final AccessControlContext acc = AccessController.getContext();
-        // Demostrate the usage of AccessController.doPrivileged(PrivilegeAction action, AccessContext ctx)
-        AccessController.doPrivileged(
-            new PrivilegedAction() {
-            public Object run() {
+        try {
+            if (_usingDoPrivilege) {
+                final AccessControlContext acc = AccessController.getContext();
+                // Demostrate the usage of AccessController.doPrivileged(PrivilegeAction action, AccessContext ctx)
+                AccessController.doPrivileged(
+                        new PrivilegedAction() {
+                            public Object run() {
+                                _actor.takeAction();
+                                return null;
+                            }
+                        }, acc);
+            } else {
+                // Use no doPrivileged
                 _actor.takeAction();
-                return null;
             }
-        }, acc);       
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
         }
-        else {  
-        // Use no doPrivileged
-        _actor.takeAction();
-        }
-    } catch (Exception e) {
-        e.printStackTrace(System.out);
-    }
     }
 }
 

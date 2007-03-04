@@ -47,7 +47,7 @@ public class OutInAxisOperation extends TwoChannelAxisOperation {
     public OutInAxisOperation() {
         super();
         //setup a temporary name
-        QName tmpName = new QName(this.getClass().getName()+"_"+UUIDGenerator.getUUID());
+        QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
         this.setName(tmpName);
         setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_OUT_IN);
     }
@@ -100,7 +100,7 @@ public class OutInAxisOperation extends TwoChannelAxisOperation {
 class OutInAxisOperationClient extends OperationClient {
 
     private static Log log = LogFactory.getLog(OutInAxisOperationClient.class);
-    
+
     OutInAxisOperationClient(OutInAxisOperation axisOp, ServiceContext sc,
                              Options options) {
         super(axisOp, sc, options);
@@ -184,23 +184,26 @@ class OutInAxisOperationClient extends OperationClient {
          * async calls alone.
          */
         boolean useAsync = false;
-        if(!options.isUseSeparateListener()) {
-            Boolean useAsyncOption = (Boolean) mc.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
+        if (!options.isUseSeparateListener()) {
+            Boolean useAsyncOption =
+                    (Boolean) mc.getProperty(Constants.Configuration.USE_ASYNC_OPERATIONS);
             if (useAsyncOption != null) {
                 useAsync = useAsyncOption.booleanValue();
             }
         }
-        
+
         if (useAsync || options.isUseSeparateListener()) {
             if (log.isDebugEnabled()) {
-                log.debug("useAsync=" + useAsync + ", seperateListener=" + options.isUseSeparateListener());
+                log.debug("useAsync=" + useAsync + ", seperateListener=" +
+                        options.isUseSeparateListener());
             }
             /**
              * We are following the async path. If the user hasn't set a callback object then we must
              * block until the whole MEP is complete, as they have no other way to get their reply message.
              */
             CallbackReceiver callbackReceiver = null;
-            if(axisOp.getMessageReceiver() != null && axisOp.getMessageReceiver() instanceof CallbackReceiver) {
+            if (axisOp.getMessageReceiver() != null &&
+                    axisOp.getMessageReceiver() instanceof CallbackReceiver) {
                 callbackReceiver = (CallbackReceiver) axisOp.getMessageReceiver();
             } else {
                 if (log.isDebugEnabled()) {
@@ -209,9 +212,9 @@ class OutInAxisOperationClient extends OperationClient {
                 callbackReceiver = new CallbackReceiver();
                 axisOp.setMessageReceiver(callbackReceiver);
             }
-            
+
             SyncCallBack internalCallback = null;
-            if(callback != null) {
+            if (callback != null) {
                 callbackReceiver.addCallback(mc.getMessageID(), callback);
             } else {
                 if (log.isDebugEnabled()) {
@@ -220,41 +223,44 @@ class OutInAxisOperationClient extends OperationClient {
                 internalCallback = new SyncCallBack();
                 callbackReceiver.addCallback(mc.getMessageID(), internalCallback);
             }
-            
+
             /**
              * If USE_CUSTOM_LISTENER is set to 'true' the replyTo value will not be replaced and Axis2 will not
              * start its internal listner. Some other enntity (e.g. a module) should take care of obtaining the 
              * response message.
              */
-            Boolean useCustomListener = (Boolean) options.getProperty(Constants.Configuration.USE_CUSTOM_LISTENER);
+            Boolean useCustomListener =
+                    (Boolean) options.getProperty(Constants.Configuration.USE_CUSTOM_LISTENER);
             if (useAsync) {
                 useCustomListener = Boolean.TRUE;
             }
-            if (useCustomListener==null || !useCustomListener.booleanValue()) {
+            if (useCustomListener == null || !useCustomListener.booleanValue()) {
 
-                EndpointReference replyToFromTransport = mc.getConfigurationContext().getListenerManager().
-                getEPRforService(sc.getAxisService().getName(), axisOp.getName().getLocalPart(), mc
-                        .getTransportIn().getName()
-                        .getLocalPart());
-                
+                EndpointReference replyToFromTransport =
+                        mc.getConfigurationContext().getListenerManager().
+                                getEPRforService(sc.getAxisService().getName(),
+                                                 axisOp.getName().getLocalPart(), mc
+                                        .getTransportIn().getName()
+                                        .getLocalPart());
+
                 if (mc.getReplyTo() == null) {
                     mc.setReplyTo(replyToFromTransport);
                 } else {
                     mc.getReplyTo().setAddress(replyToFromTransport.getAddress());
                 }
             }
-            
+
             //if we don't do this , this guy will wait till it gets HTTP 202 in the HTTP case
             mc.setProperty(MessageContext.TRANSPORT_NON_BLOCKING, Boolean.TRUE);
             AxisEngine engine = new AxisEngine(cc);
             mc.getConfigurationContext().registerOperationContext(mc.getMessageID(), oc);
             engine.send(mc);
-            
-            if(internalCallback != null) {
+
+            if (internalCallback != null) {
                 long timeout = options.getTimeOutInMilliSeconds();
                 long waitTime = timeout;
                 long startTime = System.currentTimeMillis();
-    
+
                 synchronized (internalCallback) {
                     while (! internalCallback.isComplete() && waitTime >= 0) {
                         try {
@@ -280,14 +286,14 @@ class OutInAxisOperationClient extends OperationClient {
                         throw new AxisFault(Messages.getMessage("responseTimeOut"));
                     } else {
                         throw new AxisFault(Messages.getMessage("callBackCompletedWithError"));
+                    }
                 }
-            }
             }
         } else {
             if (block) {
                 // Send the SOAP Message and receive a response
-              send(mc);
-              completed = true;
+                send(mc);
+                completed = true;
             } else {
                 sc.getConfigurationContext().getThreadPool().execute(
                         new NonBlockingInvocationWorker(callback, mc));
@@ -303,7 +309,7 @@ class OutInAxisOperationClient extends OperationClient {
      */
     protected MessageContext send(MessageContext msgctx) throws AxisFault {
 
-       AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
+        AxisEngine engine = new AxisEngine(msgctx.getConfigurationContext());
 
         // create the responseMessageContext
 
@@ -349,7 +355,7 @@ class OutInAxisOperationClient extends OperationClient {
              * createSOAPMessage take care of figuring out what the SOAP namespace is.
              */
             SOAPEnvelope resenvelope = TransportUtils.createSOAPMessage(responseMessageContext);
-             if (resenvelope != null) {
+            if (resenvelope != null) {
                 responseMessageContext.setEnvelope(resenvelope);
             } else {
                 throw new AxisFault(Messages
@@ -420,7 +426,7 @@ class OutInAxisOperationClient extends OperationClient {
             }
         }
     }
-    
+
     /**
      * This class acts as a callback that allows users to wait on the result.
      */
