@@ -26,6 +26,12 @@ import javax.xml.soap.Name;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPFaultElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.Detail;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.axiom.om.OMAttribute;
@@ -532,25 +538,20 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
      *         SOAPException - if setting the encodingStyle is invalid for this SOAPElement.
      */
     public void setEncodingStyle(String encodingStyle) throws SOAPException {
-    	if(this.element.getOMFactory() instanceof SOAP11Factory){
-    		try{
-    			URI uri = new URI(encodingStyle);
-	        	//if (!encodingStyle.equals(SOAPConstants.URI_NS_SOAP_ENCODING)) {
-	            //	throw new IllegalArgumentException("Invalid Encoding style : " + encodingStyle);
-	            //}else{
-	            ((DocumentImpl) getOwnerDocument()).setCharsetEncoding(encodingStyle);
-	            //}				
-			} catch (URISyntaxException e) {
-				throw new IllegalArgumentException("Invalid Encoding style : " 
-						+ encodingStyle+":"+e);
-			} 
-    	}else if(this.element.getOMFactory() instanceof SOAP12Factory){
-    		if(SOAPConstants.URI_NS_SOAP_1_2_ENCODING.equals(encodingStyle)){
-    			throw new SOAPException("Illegal value : "+SOAPConstants.URI_NS_SOAP_1_2_ENCODING);
-    		}else{
-    			((DocumentImpl) getOwnerDocument()).setCharsetEncoding(encodingStyle);
-    		}
-    	}
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+            try {
+                URI uri = new URI(encodingStyle);
+                ((DocumentImpl) getOwnerDocument()).setCharsetEncoding(encodingStyle);
+            } catch (URISyntaxException e) {
+                throw new IllegalArgumentException("Invalid Encoding style : "
+                        + encodingStyle + ":" + e);
+            }
+        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+            if (this instanceof SOAPHeader || this instanceof SOAPBody || this instanceof SOAPFault ||
+                    this instanceof SOAPFaultElement || this instanceof SOAPEnvelope || this instanceof Detail) {
+                throw new SOAPException("EncodingStyle attribute cannot appear in : " + this);
+            }
+        }
     }
 
     /* (non-Javadoc)

@@ -221,17 +221,6 @@ public class SOAPEnvelopeImpl extends SOAPElementImpl implements javax.xml.soap.
         return this;
     }
 
-    /**
-     * Override SOAPElementImpl.setEncodingStyle
-     */
-	public void setEncodingStyle(String encodingStyle) throws SOAPException {
-        if(this.element.getOMFactory() instanceof SOAP12Factory) {
-    		throw new SOAPException("SOAP1.2 does not allow encodingStyle to be set on Envelope");
-        }else{
-        	super.setEncodingStyle(encodingStyle);
-        }
-	}
-    
 	/**
 	 * Override SOAPElement.addAttribute
 	 * SOAP1.2 should not allow encodingStyle attribute to be set on Envelop
