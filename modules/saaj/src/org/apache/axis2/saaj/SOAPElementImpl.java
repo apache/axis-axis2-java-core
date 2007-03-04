@@ -541,6 +541,11 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         if (this.element.getOMFactory() instanceof SOAP11Factory) {
             try {
                 URI uri = new URI(encodingStyle);
+                if(!(this instanceof SOAPEnvelope)){
+                    if (!encodingStyle.equals(SOAPConstants.URI_NS_SOAP_ENCODING)) {
+                        throw new IllegalArgumentException("Invalid Encoding style : " + encodingStyle);
+                    }
+                }
                 ((DocumentImpl) getOwnerDocument()).setCharsetEncoding(encodingStyle);
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException("Invalid Encoding style : "
