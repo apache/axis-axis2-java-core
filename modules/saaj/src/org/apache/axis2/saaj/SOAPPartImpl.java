@@ -38,8 +38,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.axiom.attachments.Attachments;
+import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -337,13 +339,18 @@ public class SOAPPartImpl extends SOAPPart {
         this.source = source;
 		try {
 	        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	        Result result = new StreamResult(baos);
 
-	        Transformer xformer = TransformerFactory.newInstance().newTransformer();
-	        xformer.transform(source, result);
-	        ByteArrayInputStream is = new ByteArrayInputStream(baos.toByteArray());
-	        
-			XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            InputStream is;
+            if (source instanceof StreamSource) {
+                is = ((StreamSource) source).getInputStream();
+            } else {
+                Result result = new StreamResult(baos);
+                Transformer xformer = TransformerFactory.newInstance().newTransformer();
+                xformer.transform(source, result);
+                is = new ByteArrayInputStream(baos.toByteArray());
+            }
+
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 			XMLStreamReader reader = inputFactory.createXMLStreamReader(is);
 			
 			StAXSOAPModelBuilder builder1 = null;
