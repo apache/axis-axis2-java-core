@@ -475,7 +475,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 axisBindingInMessage.setAxisMessage(axisInMessage);
                 axisBindingInMessage.setDirection(axisInMessage.getDirection());
-
+                
                 axisBindingOperation
                         .addChild(axisBindingInMessage.getDirection(), axisBindingInMessage);
             }
@@ -2132,9 +2132,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             } else if (extElements.get(i) instanceof HTTPBinding) {
                 isHttpBinding = true;
                 this.bindingType = BINDING_TYPE_HTTP;
-            } else {
-                throw new WSDLProcessingException(
-                        "Not supported binding type " + binding.getQName().getLocalPart());
+            
             }
         }
 
