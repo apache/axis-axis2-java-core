@@ -371,6 +371,15 @@
         <attainGoal name="download-libs"/>
     </goal>
 
+    <goal name="refresh-libs">
+        <attainGoal name="download-libs"/>
+        <ant:copy toDir="target/temp/war/lib" flatten="true">
+            <ant:fileset dir="modules/">
+                <include name="**/target/axis2-*-${pom.currentVersion}.jar"/>
+            </ant:fileset>
+        </ant:copy>
+    </goal>
+
     <goal name="download-libs">
         <macros:copy-deps copyToDir="target/lib" mods="*"/>
     </goal>
