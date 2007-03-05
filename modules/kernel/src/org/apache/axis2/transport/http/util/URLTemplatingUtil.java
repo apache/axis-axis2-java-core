@@ -88,8 +88,9 @@ public class URLTemplatingUtil {
      * @param url            - Original url string
      * @return String containing the appended query parameters
      */
-    private static String appendQueryParameters(MessageContext messageContext, String url) {
+    public static URL appendQueryParameters(MessageContext messageContext, URL url) throws AxisFault {
 
+        String urlString = url.toString();
         OMElement firstElement;
         String queryParameterSeparator = (String) messageContext
                 .getProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
@@ -115,17 +116,23 @@ public class URLTemplatingUtil {
 
         if (!"".equals(params)) {
 
-            int index = url.indexOf("?");
+            int index = urlString.indexOf("?");
             if (index == -1) {
-                url = url + "?" + params.substring(0, params.length() - 1);
-            } else if (index == url.length() - 1) {
-                url = url + params.substring(0, params.length() - 1);
+                urlString = urlString + "?" + params.substring(0,params.length()-1);
+            }
+            else if (index == urlString.length() - 1) {
+                urlString = urlString + params.substring(0,params.length()-1);
+
             } else {
-                url = url + queryParameterSeparator + params.substring(0, params.length() - 1);
+                urlString = urlString + queryParameterSeparator + params.substring(0,params.length()-1);
             }
 
         }
-        return url;
+        try {
+            return new URL(urlString);
+        } catch (MalformedURLException e) {
+            throw new AxisFault("Unable to append query parameters to URL");
+        }
     }
 
     /**
@@ -185,35 +192,4 @@ public class URLTemplatingUtil {
         return targetURL;
     }
 
-    /**
-     * Methos used to append parameters to URL. First checks whether the parameters should be
-     * appended to the URL based on the WSDL 2.0 property whttp:ignoreUncited
-     *
-     * @param messageContext - The MessageContext of the request
-     * @param targetURL      - The original URL
-     * @return returns an URL with the query parameters appended to it
-     * @throws AxisFault - Thrown in case an exception occurs
-     */
-    public static URL appendParametersToURL(MessageContext messageContext, URL targetURL)
-            throws AxisFault {
-
-        String url = targetURL.toString();
-        String ignoreUncited =
-                (String) messageContext.getProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED);
-
-        if (ignoreUncited == null || !JavaUtils.isTrueExplicitly(ignoreUncited)) {
-            url = appendQueryParameters(messageContext, url);
-            try {
-                targetURL = new URL(url);
-            } catch (MalformedURLException e) {
-                throw new AxisFault("Unable to create target URL from template");
-            }
-        } else if (Constants.Configuration.HTTP_METHOD_GET
-                .equalsIgnoreCase((String) messageContext.getProperty(
-                        Constants.Configuration.HTTP_METHOD))) {
-            messageContext.getEnvelope().getBody().getFirstElement().detach();
-        }
-
-        return targetURL;
-    }
 }

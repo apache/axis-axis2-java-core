@@ -312,10 +312,7 @@ public class HTTPSender extends AbstractHTTPSender {
 
             if (value != null) {
 
-                if ((value.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) >= 0)
-                        || (value.indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >= 0)) {
-                    processResponse(method, msgContext);
-                }
+                processResponse(method, msgContext);
             }
         } else {
             throw new AxisFault(Messages.getMessage("transportError",

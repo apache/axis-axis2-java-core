@@ -18,6 +18,9 @@ package org.apache.axis2.transport.http;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.transport.MessageFormatter;
 import org.apache.axis2.transport.http.util.URLTemplatingUtil;
@@ -90,7 +93,18 @@ public class XFormURLEncodedFormatter implements MessageFormatter {
         // Check whether there is a template in the URL, if so we have to replace then with data
         // values and create a new target URL.
         targetURL = URLTemplatingUtil.getTemplatedURL(targetURL, messageContext, true);
-        targetURL = URLTemplatingUtil.appendParametersToURL(messageContext, targetURL);
+        String ignoreUncited =
+                (String) messageContext.getProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED);
+
+        // Need to have this check here cause         
+        if (ignoreUncited == null || !JavaUtils.isTrueExplicitly(ignoreUncited)) {
+            String httpMethod = (String) messageContext.getProperty(Constants.Configuration.HTTP_METHOD);
+            if (Constants.Configuration.HTTP_METHOD_GET.equals(httpMethod) || Constants.Configuration.HTTP_METHOD_DELETE.equals(httpMethod)) {
+            targetURL = URLTemplatingUtil.appendQueryParameters(messageContext, targetURL);
+            }
+        } else {
+            messageContext.getEnvelope().getBody().getFirstElement().detach();
+        }
 
         return targetURL;
     }

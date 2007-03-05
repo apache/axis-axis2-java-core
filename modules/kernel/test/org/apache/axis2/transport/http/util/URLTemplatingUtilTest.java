@@ -65,7 +65,7 @@ public class URLTemplatingUtilTest extends TestCase {
 
     public void testAppendParametersToURL() throws MalformedURLException, AxisFault {
         URL testURL = new URL("http://locahost:8080/paramOne");
-        URL modifiedURL = URLTemplatingUtil.appendParametersToURL(messageContext, testURL);
+        URL modifiedURL = URLTemplatingUtil.appendQueryParameters(messageContext,testURL);
 
         System.out.println("original = " + testURL);
         System.out.println("modifiedURL = " + modifiedURL);
@@ -76,8 +76,8 @@ public class URLTemplatingUtilTest extends TestCase {
 
     public void testQueryParameterSeperator() throws MalformedURLException, AxisFault {
         URL testURL = new URL("http://locahost:8080/paramOne");
-        messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR, ";");
-        URL modifiedURL = URLTemplatingUtil.appendParametersToURL(messageContext, testURL);
+        messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,";");
+        URL modifiedURL = URLTemplatingUtil.appendQueryParameters(messageContext,testURL);
 
         System.out.println("original = " + testURL);
         System.out.println("modifiedURL = " + modifiedURL);
@@ -89,8 +89,8 @@ public class URLTemplatingUtilTest extends TestCase {
     public void testIgnoreUncitedTrue() throws MalformedURLException, AxisFault {
 
         URL testURL = new URL("http://locahost:8080/paramOne/Foo?test=1");
-        messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED, "true");
-        URL modifiedURL = URLTemplatingUtil.appendParametersToURL(messageContext, testURL);
+        messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED,"true");
+        URL modifiedURL = URLTemplatingUtil.appendQueryParameters(messageContext,testURL);
 
         System.out.println("original = " + testURL);
         System.out.println("modifiedURL = " + modifiedURL);
@@ -103,8 +103,8 @@ public class URLTemplatingUtilTest extends TestCase {
     public void testIgnoreUncitedFalse() throws MalformedURLException, AxisFault {
 
         URL testURL = new URL("http://locahost:8080/paramOne/Foo?test=1");
-        messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED, "false");
-        URL modifiedURL = URLTemplatingUtil.appendParametersToURL(messageContext, testURL);
+        messageContext.setProperty(WSDL2Constants.ATTR_WHTTP_IGNORE_UNCITED,"false");
+        URL modifiedURL = URLTemplatingUtil.appendQueryParameters(messageContext,testURL);
 
         System.out.println("original = " + testURL);
         System.out.println("modifiedURL = " + modifiedURL);
