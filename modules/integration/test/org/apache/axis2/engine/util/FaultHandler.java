@@ -55,15 +55,23 @@ public class FaultHandler extends AbstractHandler {
         if (ERR_HANDLING_WITH_MSG_CTXT.equals(firstElement.getLocalName())) {
             SOAPFaultCode soapFaultCode = soapFac.createSOAPFaultCode();
             soapFaultCode.declareNamespace("http://someuri.org", "m");
-            SOAPFaultValue soapFaultValue = soapFac.createSOAPFaultValue(soapFaultCode);
-            soapFaultValue.setText(M_FAULT_EXCEPTION);
-
-            SOAPFaultText soapFaultText = soapFac.createSOAPFaultText();
-            soapFaultText.setLang("en");
-            soapFaultText.setText(FAULT_REASON);
+            if(msgContext.isSOAP11()) {
+                soapFaultCode.setText(M_FAULT_EXCEPTION);
+            } else {
+                SOAPFaultValue soapFaultValue = soapFac.createSOAPFaultValue(soapFaultCode);
+                soapFaultValue.setText(M_FAULT_EXCEPTION);
+            }
+            
             SOAPFaultReason soapFaultReason = soapFac.createSOAPFaultReason();
-            soapFaultReason.addSOAPText(soapFaultText);
 
+            if(msgContext.isSOAP11()) {
+                soapFaultReason.setText(FAULT_REASON);
+            } else {
+                SOAPFaultText soapFaultText = soapFac.createSOAPFaultText();
+                soapFaultText.setLang("en");
+                soapFaultText.setText(FAULT_REASON);
+                soapFaultReason.addSOAPText(soapFaultText);
+            }
 
             SOAPFaultDetail faultDetail = soapFac.createSOAPFaultDetail();
             faultDetail.addDetailEntry(detailEntry);

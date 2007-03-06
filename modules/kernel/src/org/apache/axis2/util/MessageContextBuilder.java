@@ -423,7 +423,7 @@ public class MessageContextBuilder {
 
         // user can set the fault information to the message context or to the AxisFault itself.
         // whatever user sets to the message context, supercedes eerything.
-
+        
         Object faultCode = context.getProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME);
         String soapFaultCode = "";
 
@@ -463,7 +463,11 @@ public class MessageContextBuilder {
             soapFaultCode = ("".equals(soapFaultCode) || (soapFaultCode == null))
                     ? getSenderFaultCode(context.getEnvelope().getNamespace())
                     : soapFaultCode;
-            fault.getCode().getValue().setText(soapFaultCode);
+            if(context.isSOAP11()) {
+                fault.getCode().setText(soapFaultCode);
+            } else {
+                fault.getCode().getValue().setText(soapFaultCode);
+            }
         }
 
         Object faultReason = context.getProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME);
@@ -471,7 +475,11 @@ public class MessageContextBuilder {
 
         if (faultReason != null) {
             fault.setReason((SOAPFaultReason) faultReason);
-            message = fault.getReason().getFirstSOAPText().getText();
+            if(context.isSOAP11()) {
+                message = fault.getReason().getText();
+            } else {
+                message = fault.getReason().getFirstSOAPText().getText();
+            }
         } else if (soapException != null) {
             message = soapException.getMessage();
         } else if (axisFault != null) {
@@ -493,8 +501,12 @@ public class MessageContextBuilder {
             message = ("".equals(message) || (message == null))
                     ? "unknown"
                     : message;
-            fault.getReason().getFirstSOAPText().setLang("en-US");
-            fault.getReason().getFirstSOAPText().setText(message);
+            if(context.isSOAP11()) {
+                fault.getReason().setText(message);
+            } else {
+                fault.getReason().getFirstSOAPText().setLang("en-US");
+                fault.getReason().getFirstSOAPText().setText(message);
+            }
         }
 
 

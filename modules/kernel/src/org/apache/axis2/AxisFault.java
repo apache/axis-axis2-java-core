@@ -185,7 +185,12 @@ public class AxisFault extends RemoteException {
         setToElementsListIfNotNull(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, soapFaultDetail);
 
         if (soapFaultReason != null) {
-            message = soapFaultReason.getFirstSOAPText().getText();
+            if(soapFaultReason.getNamespace() != null && 
+                    soapFaultReason.getNamespace().getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+                message = soapFaultReason.getFirstSOAPText().getText();
+            } else {
+                message = soapFaultReason.getText();
+            }
         }
 
         if (soapFaultDetail != null) {
@@ -201,7 +206,13 @@ public class AxisFault extends RemoteException {
         }
 
         if (soapFaultCode != null && soapFaultCode.getValue() != null) {
-            faultCode = soapFaultCode.getValue().getTextAsQName();
+            if(soapFaultReason.getNamespace() != null && 
+                    soapFaultReason.getNamespace().getNamespaceURI().equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+                faultCode = soapFaultCode.getValue().getTextAsQName();
+            } else {
+                faultCode = soapFaultCode.getTextAsQName();
+            }
+            
         }
     }
 

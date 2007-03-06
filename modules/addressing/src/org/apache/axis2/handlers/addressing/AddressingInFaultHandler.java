@@ -17,6 +17,7 @@ package org.apache.axis2.handlers.addressing;
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
@@ -58,11 +59,14 @@ public class AddressingInFaultHandler extends AbstractHandler implements Address
                     SOAPFault fault = envelope.getBody().getFault();
                     
                     SOAPFactory sf = ((SOAPFactory)envelope.getOMFactory());
-                    SOAPFaultText sft = sf.createSOAPFaultText();
-                    sft.setText(newReason);
                     SOAPFaultReason sfr = sf.createSOAPFaultReason();
-                    sfr.addSOAPText(sft);
-                    
+                    if(envelope.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+                        sfr.setText(newReason);
+                    } else {
+                        SOAPFaultText sft = sf.createSOAPFaultText();
+                        sft.setText(newReason);
+                        sfr.addSOAPText(sft);
+                    }
                     if (fault != null) {
                         // else call the on error method with the fault
                         AxisFault axisFault = new AxisFault(fault.getCode(), sfr,
@@ -83,7 +87,11 @@ public class AddressingInFaultHandler extends AbstractHandler implements Address
         QName faultCodeQName = null;
         String result = null;
         if(fault != null){
-            faultCodeQName = fault.getCode().getValue().getTextAsQName();
+            if(envelope.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+                faultCodeQName = fault.getCode().getTextAsQName();
+            } else {
+                faultCodeQName = fault.getCode().getValue().getTextAsQName();
+            }
             if(fault.getCode().getSubCode() != null){
                 faultCodeQName = fault.getCode().getSubCode().getValue().getTextAsQName();
                 if(fault.getCode().getSubCode().getSubCode() != null){
