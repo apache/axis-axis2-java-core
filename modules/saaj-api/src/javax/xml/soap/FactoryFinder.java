@@ -117,7 +117,13 @@ class FactoryFinder {
                 String factoryClassName = bufferedreader.readLine();
                 bufferedreader.close();
                 if ((factoryClassName != null) && !"".equals(factoryClassName)) {
-                    return newInstance(factoryClassName);
+                    try {
+                        return newInstance(factoryClassName);
+                    } catch (Exception e) {
+                        throw new SOAPException(
+                                "Provider for " + factoryPropertyName + " cannot be found",
+                                null);
+                    }
                 }
             }
         } catch (Exception exception2) {
