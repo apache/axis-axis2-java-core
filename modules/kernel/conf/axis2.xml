@@ -30,8 +30,8 @@
     <parameter name="attachmentDIR" locked="false"></parameter>
     <parameter name="sizeThreshold" locked="false">4000</parameter-->
 
-    <!--This will give out the timout of the configuration contexts, in seconds-->
-    <parameter name="ConfigContextTimeoutInterval" locked="false">30</parameter>
+    <!--This will give out the timout of the configuration contexts, in milliseconds-->
+    <parameter name="ConfigContextTimeoutInterval" locked="false">30000</parameter>
 
     <!--During a fault, stacktrace can be sent with the fault message. The following flag will control -->
     <!--that behaviour.-->
