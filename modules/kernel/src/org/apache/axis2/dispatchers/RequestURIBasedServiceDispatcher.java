@@ -36,7 +36,6 @@ public class RequestURIBasedServiceDispatcher extends AbstractServiceDispatcher 
      */
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
-
         if (toEPR != null) {
             if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
                 log.debug(messageContext.getLogIDString() +

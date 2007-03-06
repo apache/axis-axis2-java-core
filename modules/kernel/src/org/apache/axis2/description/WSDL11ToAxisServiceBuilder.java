@@ -819,6 +819,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // the list and add it - the name for this is just the
             message.setElementQName((QName) resolvedRpcWrappedElementMap
                     .get(rpcOperationName));
+            ((AxisService)message.getParent().getParent()).addMessageElementQNameToOperationMapping(
+                    (QName)resolvedRpcWrappedElementMap.get(rpcOperationName),
+                            (AxisOperation)message.getParent());
         } else {
             // now we are sure this is an document literal type element
             List bindingPartsList = getPartsListFromSoapBody(extensibilityElements);
@@ -1879,7 +1882,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 }
 
                 String soapAction = soapOperation.getSoapActionURI();
-                if (soapAction != null) {
+                if ((soapAction != null) && (!soapAction.equals(""))) {
                     axisBindingOperation.setProperty(WSDL2Constants.ATTR_WSOAP_ACTION, soapAction);
                     axisBindingOperation.getAxisOperation().setSoapAction(soapAction);
                     axisService.mapActionToOperation(soapAction,
@@ -2132,7 +2135,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             } else if (extElements.get(i) instanceof HTTPBinding) {
                 isHttpBinding = true;
                 this.bindingType = BINDING_TYPE_HTTP;
-            
             }
         }
 

@@ -46,27 +46,20 @@ public class SOAPMessageBodyBasedDispatcher extends AbstractDispatcher {
 
     public AxisOperation findOperation(AxisService service, MessageContext messageContext)
             throws AxisFault {
-        QName operationName;
 
         OMElement bodyFirstChild = messageContext.getEnvelope().getBody().getFirstElement();
 
-        if (bodyFirstChild == null) {
-            return null;
-        } else {
-            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug(messageContext.getLogIDString() +
-                        " Checking for Operation using SOAP message body's first child's local name : "
-                        + bodyFirstChild.getLocalName());
-            }
-            operationName = new QName(bodyFirstChild.getLocalName());
+        AxisOperation axisOperation = null;
+        if (bodyFirstChild != null){
+           axisOperation = service.getOperationByMessageElementQName(bodyFirstChild.getQName());
+
+           // this is required for services uses the RPC message receiver
+           if (axisOperation == null){
+               QName operationName = new QName(bodyFirstChild.getLocalName());
+               axisOperation = service.getOperation(operationName);
+           }
+
         }
-
-        AxisOperation axisOperation = service.getOperation(operationName);
-
-        if (axisOperation == null) {
-            axisOperation = service.getOperationByMessageElementQName(bodyFirstChild.getQName());
-        }
-
         return axisOperation;
     }
 

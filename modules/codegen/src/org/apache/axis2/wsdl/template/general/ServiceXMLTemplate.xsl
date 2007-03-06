@@ -42,7 +42,9 @@
                     </xsl:otherwise>
                 </xsl:choose>
             </parameter>
-			<xsl:for-each select="method">
+            <parameter name="useOriginalwsdl" locked="false">true</parameter>
+            <parameter name="modifyUserWSDLPortAddress" locked="false">true</parameter>
+            <xsl:for-each select="method">
 				<operation>
 					<xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
 					<xsl:attribute name="mep"><xsl:value-of select="@mepURI"/></xsl:attribute>

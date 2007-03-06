@@ -2314,7 +2314,17 @@ public class AxisService extends AxisDescription {
      */
     public void addMessageElementQNameToOperationMapping(QName messageElementQName,
                                                          AxisOperation operation) {
-        messageElementQNameToOperationMap.put(messageElementQName, operation);
+        // when setting an operation we have to set it only if the messegeElementQName does not
+        // exists in the map.
+        // does exists means there are two or more operations which has the same input element (in doc/literal
+        // this is possible. In this case better to set it as null without giving
+        // a random operation.
+        if (messageElementQNameToOperationMap.containsKey(messageElementQName)){
+            messageElementQNameToOperationMap.put(messageElementQName,null);
+        } else {
+            messageElementQNameToOperationMap.put(messageElementQName, operation);
+        }
+
     }
 
     public String getEndpointURL() {
