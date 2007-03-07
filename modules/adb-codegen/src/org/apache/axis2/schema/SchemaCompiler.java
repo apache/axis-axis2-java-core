@@ -1931,7 +1931,7 @@ public class SchemaCompiler {
 
             QName fakeQname;
             if (xsElt != null) {
-                fakeQname = new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart());
+                fakeQname = new QName(xsElt.getQName().getNamespaceURI(), xsElt.getQName().getLocalPart() + getNextTypeSuffix());
                 // we have to set this otherwise the ours attribute would not set properly if refered to this simple
                 // type from any other element
                 xsElt.setSchemaTypeName(fakeQname);
