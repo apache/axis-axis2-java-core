@@ -902,7 +902,15 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // a matter of copying the right QName from the message part
 
         // get the part
-        Part wsdl4jMessagePart = (Part) wsdl4jMessage.getParts().values()
+        Map parts = wsdl4jMessage.getParts();
+        if (parts == null || parts.size()==0) {
+            String message = "There are no parts"
+                    + " for fault message : "
+                    + wsdl4jMessage.getQName();
+            log.error(message);
+            throw new WSDLProcessingException(message);
+        }
+        Part wsdl4jMessagePart = (Part) parts.values()
                 .toArray()[0];
         if (wsdl4jMessagePart == null) {
             throw new WSDLProcessingException();
