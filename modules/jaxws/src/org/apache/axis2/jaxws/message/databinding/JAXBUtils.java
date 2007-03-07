@@ -241,7 +241,7 @@ public class JAXBUtils {
         }
         
         if(!isJAXBFound){
-        	log.info("Both ObjectFactory & package-info not found in package hierachy");
+        	log.debug("Both ObjectFactory & package-info not found in package hierachy");
         }
         
         // The code above may have removed some packages from the list. 
@@ -582,7 +582,8 @@ public class JAXBUtils {
                             // by JAXB should be added.
                             if(!clazz.isInterface()
                                     && ClassUtils.getDefaultPublicConstructor(clazz) != null
-                                    && !ClassUtils.isJAXWSClass(clazz)){
+                                    && !ClassUtils.isJAXWSClass(clazz)
+                                    && !java.lang.Exception.class.isAssignableFrom(clazz)){
                                 if (log.isDebugEnabled()) {
                                     log.debug("Adding class: " + file);
                                 }
