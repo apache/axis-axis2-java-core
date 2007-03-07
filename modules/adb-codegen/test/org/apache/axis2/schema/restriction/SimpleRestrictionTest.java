@@ -20,10 +20,6 @@ import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
 import org.tempuri.*;
-import org.tempuri.HairColor_type0;
-import org.tempuri.Person;
-import org.tempuri.Address;
-import org.tempuri.Zip_type1;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -137,7 +133,7 @@ public class SimpleRestrictionTest extends TestCase {
         personElement.setPersonElement(person);
         person.setName("amila");
         person.setAge(23);
-        person.setHairColor(HairColor_type0.black);
+        person.setHairColor(HairColor_type1.black);
         Date date = new Date();
         person.setBirthDate(date);
         Address address = new Address();
@@ -146,9 +142,9 @@ public class SimpleRestrictionTest extends TestCase {
         address.setLine1("line1");
         address.setLine2("line2");
         address.setState("state");
-        Zip_type1 ziptype = new Zip_type1();
+        Zip_type3 ziptype = new Zip_type3();
         address.setZip(ziptype);
-        ziptype.setZip("C");
+        ziptype.setZip_type2("C");
 
         OMElement omElement = personElement.getOMElement(ComplexRestrictionTypeTestElement.MY_QNAME, OMAbstractFactory.getOMFactory());
         try {
@@ -158,13 +154,13 @@ public class SimpleRestrictionTest extends TestCase {
             PersonElement result = PersonElement.Factory.parse(xmlReader);
             assertEquals(result.getPersonElement().getName(),"amila");
             assertEquals(result.getPersonElement().getAge(),23);
-            assertEquals(result.getPersonElement().getHairColor(),HairColor_type0.black);
+            assertEquals(result.getPersonElement().getHairColor(),HairColor_type1.black);
             Address resultAddress = result.getPersonElement().getAddress();
             assertEquals(resultAddress.getCity(),"Galle");
             assertEquals(resultAddress.getLine1(),"line1");
             assertEquals(resultAddress.getLine2(),"line2");
             assertEquals(resultAddress.getState(),"state");
-            assertEquals(resultAddress.getZip().getZip(),"C");
+            assertEquals(resultAddress.getZip().getZip_type2(),"C");
         } catch (Exception e) {
             e.printStackTrace();
             assertFalse(true);
