@@ -32,6 +32,7 @@ import javax.xml.ws.WebServiceException;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.impl.llom.OMSourcedElementImpl;
+import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPBody;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
@@ -97,9 +98,8 @@ public class XMLFaultUtils {
 	 */
 	public static XMLFault createXMLFault(SOAPFault soapFault, Block[] detailBlocks) throws WebServiceException {
         
-	    // The SOAPFault structure is modeled after SOAP 1.2.  
-        // Here is a sample comprehensive SOAP 1.2 fault which will help you understand the
-        // structure.
+        // Here is a sample comprehensive SOAP 1.2 fault which will help you 
+        // understand the structure.
         // <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
         //               xmlns:m="http://www.example.org/timeouts"
         //               xmlns:xml="http://www.w3.org/XML/1998/namespace">
@@ -127,22 +127,38 @@ public class XMLFaultUtils {
         
         // Get the code
         // TODO what if this fails ?  Log a message and treat like a RECEIVER fault ?
+        
+        //figureout the soap version
+        boolean isSoap11 = soapFault.getNamespace().getNamespaceURI().equals(
+                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        
         SOAPFaultCode soapCode = soapFault.getCode();
-        QName codeQName = soapCode.getValue().getTextAsQName();
+        QName codeQName = null;
+        if(isSoap11) {
+            codeQName = soapCode.getTextAsQName();
+        } else {
+            codeQName = soapCode.getValue().getTextAsQName();
+        }
         XMLFaultCode code = XMLFaultCode.fromQName(codeQName);
         
 		// Get the primary reason text
         // TODO what if this fails
         SOAPFaultReason soapReason = soapFault.getReason();
-        List soapTexts = soapReason.getAllSoapTexts();
-		SOAPFaultText reasonText = (SOAPFaultText) soapTexts.get(0);
-        String text = reasonText.getText();
-        String lang = reasonText.getLang();
+        String text = null;
+        String lang = null;
+        List soapTexts = null;
+        if(isSoap11) {
+            text = soapReason.getText();
+        } else {
+            soapTexts = soapReason.getAllSoapTexts();
+            SOAPFaultText reasonText = (SOAPFaultText) soapTexts.get(0);
+            text = reasonText.getText();
+            lang = reasonText.getLang();
+        }
         XMLFaultReason reason = new XMLFaultReason(text, lang);
 
         // Construct the XMLFault from the required information (code, reason, detail blocks)
 		XMLFault xmlFault = new XMLFault(code, reason, detailBlocks);
-        
         
         
         // Add the secondary fault information
@@ -166,7 +182,7 @@ public class XMLFaultUtils {
         }
         
         // Get the secondary Reasons...the first reason was already saved as the primary reason
-        if (soapTexts.size() > 1) {
+        if (soapTexts != null && soapTexts.size() > 1) {
             XMLFaultReason[] secondaryReasons = new XMLFaultReason[soapTexts.size() - 1];
             for (int i= 1; i<soapTexts.size(); i++) {
                 SOAPFaultText soapReasonText = (SOAPFaultText) soapTexts.get(i);
