@@ -156,6 +156,9 @@ class ArtifactProcessor {
         if (foundClassName == null) {
             faultBeanClassName = missingArtifact(faultBeanClassName);
         }
+        if(foundClassName != null){
+            faultBeanClassName = foundClassName;
+        }
         
         /* Local NameAlgorithm:
          *   1) The name defined on the @WebFault of the exception.
