@@ -71,16 +71,31 @@ public class ApplicationXMLFormatter implements MessageFormatter {
     public void writeTo(MessageContext messageContext, OMOutputFormat format,
                         OutputStream outputStream, boolean preserve) throws AxisFault {
 
-        try {
-            byte[] b = getBytes(messageContext, format);
+        OMElement omElement;
 
-            if (b != null && b.length > 0) {
-                outputStream.write(b);
-            } else {
-                outputStream.flush();
+        if (messageContext.getFLOW() == MessageContext.OUT_FAULT_FLOW) {
+            SOAPFault fault = messageContext.getEnvelope().getBody().getFault();
+            SOAPFaultDetail soapFaultDetail = fault.getDetail();
+            omElement = soapFaultDetail.getFirstElement();
+
+            if (omElement == null) {
+                omElement = fault.getReason();
             }
+
+        } else {
+            omElement = messageContext.getEnvelope().getBody().getFirstElement();
+        }
+        if (omElement != null) {
+            try {
+                omElement.serializeAndConsume(outputStream, format);
+            } catch (XMLStreamException e) {
+                throw new AxisFault(e);
+            }
+        }
+        try {
+            outputStream.flush();
         } catch (IOException e) {
-            throw new AxisFault("An error occured while writing the request");
+            throw new AxisFault(e);
         }
     }
 
