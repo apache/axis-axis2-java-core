@@ -154,6 +154,43 @@ public class ListingAgent extends AbstractAgent {
         return ip;
     }
 
+    public void processExplicitSchemas(HttpServletRequest req,
+                                       HttpServletResponse res)
+            throws IOException, ServletException {
+        HashMap services = configContext.getAxisConfiguration().getServices();
+        String filePart = req.getRequestURL().toString();
+        String schema = filePart.substring(filePart.lastIndexOf("/") + 1,
+                filePart.length());
+        if ((services != null) && !services.isEmpty()) {
+            Iterator i = services.values().iterator();
+            while (i.hasNext()) {
+                AxisService service = (AxisService) i.next();
+                InputStream stream = service.getClassLoader().getResourceAsStream("META-INF/" + schema);
+                if (stream != null) {
+                    OutputStream out = res.getOutputStream();
+                    res.setContentType("text/xml");
+                    copy(stream, out);
+                    out.flush();
+                    out.close();
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Copies the input stream to the output stream
+     *
+     * @param stream the <code>InputStream</code>
+     * @param ostream the <code>OutputStream</code>
+     */
+    public static void copy(InputStream stream, OutputStream ostream) throws IOException {
+        int nextValue = stream.read();
+        while (-1 != nextValue) {
+            ostream.write(nextValue);
+            nextValue = stream.read();
+        }
+    }
 
     public void processListService(HttpServletRequest req,
                                    HttpServletResponse res)
