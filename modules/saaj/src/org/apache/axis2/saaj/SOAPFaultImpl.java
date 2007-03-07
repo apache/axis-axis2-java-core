@@ -522,18 +522,21 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
             } else {
                 text = soapFaultCode.getValue().getText();
             }
+            
+            if(text.indexOf(":") > 0) {
+                prefix = text.substring(0, text.indexOf(":"));
+                localPart = text.substring(text.indexOf(":") + 1);
 
-            prefix = text.substring(0, text.indexOf(":"));
-            localPart = text.substring(text.indexOf(":") + 1);
-            if(isSoap11) {
-                uri  = fault.findNamespaceURI(prefix).getNamespaceURI();
-            } else {
-                OMNamespace namespace = soapFaultCode.getValue().getNamespace();
-                if (namespace != null) {
-                    uri = soapFaultCode.getValue().getNamespace().getNamespaceURI();
+                if(isSoap11) {
+                    uri  = fault.findNamespaceURI(prefix).getNamespaceURI();
                 } else {
-                    uri = this.fault.getNamespace().getNamespaceURI();
-                }    
+                    OMNamespace namespace = soapFaultCode.getValue().getNamespace();
+                    if (namespace != null) {
+                        uri = soapFaultCode.getValue().getNamespace().getNamespaceURI();
+                    } else {
+                        uri = this.fault.getNamespace().getNamespaceURI();
+                    }    
+                }
             }
 
             QName qname = new QName(uri, localPart, prefix);
@@ -767,30 +770,47 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @see getFaultCodeAsQName(), setFaultCode(Name), getFaultCodeAsQName()
      */
     public void setFaultCode(QName qname) throws SOAPException {
-    	if(qname.getNamespaceURI() == null || qname.getNamespaceURI().trim().length() == 0){
-    		throw new SOAPException("Unqualified QName object : "+qname);
-    	}
-    	org.apache.axiom.soap.SOAPFactory soapFactory = null;
-    	if(this.element.getOMFactory() instanceof SOAP11Factory){
-    		soapFactory = (SOAPFactory)this.element.getOMFactory();
-    	}
-    	else if(this.element.getOMFactory() instanceof SOAP12Factory)
-    	{
-    		if(!(qname.getNamespaceURI().equals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE))){
-    			throw new SOAPException("Incorrect URI"+qname.getNamespaceURI());
-    		}
-    		soapFactory = (SOAPFactory)this.element.getOMFactory();
-    	}else{
-    		throw new SOAPException();
-    	}
-        SOAPFaultCode soapFaultCode = soapFactory.createSOAPFaultCode(this.fault);
-        
-        SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
-        // don't just use the default prefix, use the passed one or the parent's
-        String prefix = ((qname.getPrefix() != null) && !qname.getPrefix().equals("")) ? qname.getPrefix() : this.fault.getQName().getPrefix();
-        soapFaultValue.setText(prefix+":"+qname.getLocalPart());
-        OMNamespace omNamespace = new OMNamespaceImpl(qname.getNamespaceURI(),qname.getPrefix());
-        soapFaultValue.setNamespace(omNamespace);
+        boolean isSoap11 = this.element.getNamespace().getNamespaceURI()
+                        .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+
+    	    if (qname.getNamespaceURI() == null
+                || qname.getNamespaceURI().trim().length() == 0) {
+            throw new SOAPException("Unqualified QName object : " + qname);
+        }
+        org.apache.axiom.soap.SOAPFactory soapFactory = null;
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+            soapFactory = (SOAPFactory) this.element.getOMFactory();
+        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+            if (!(qname.getNamespaceURI()
+                    .equals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE))) {
+                throw new SOAPException("Incorrect URI"
+                        + qname.getNamespaceURI());
+            }
+            soapFactory = (SOAPFactory) this.element.getOMFactory();
+        } else {
+            throw new SOAPException();
+        }
+        SOAPFaultCode soapFaultCode = soapFactory
+                .createSOAPFaultCode(this.fault);
+
+        String prefix = ((qname.getPrefix() != null) && !qname.getPrefix()
+                .equals("")) ? qname.getPrefix() : this.fault.getQName()
+                .getPrefix();
+                
+        if(isSoap11) {
+            soapFaultCode.setText(prefix + ":" + qname.getLocalPart());
+            OMNamespace omNamespace = new OMNamespaceImpl(qname.getNamespaceURI(),
+                    qname.getPrefix());
+            soapFaultCode.setNamespace(omNamespace);
+        } else {
+            SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
+            // don't just use the default prefix, use the passed one or the parent's
+
+            soapFaultValue.setText(prefix + ":" + qname.getLocalPart());
+            OMNamespace omNamespace = new OMNamespaceImpl(qname.getNamespaceURI(),
+                    qname.getPrefix());
+            soapFaultValue.setNamespace(omNamespace);
+        }
     }
 
     /**
