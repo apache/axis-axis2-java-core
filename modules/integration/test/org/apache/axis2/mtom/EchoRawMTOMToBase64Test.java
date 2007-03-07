@@ -92,8 +92,7 @@ public class EchoRawMTOMToBase64Test extends UtilServerBasedTestCase {
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement rpcWrapEle = fac.createOMElement("echoMTOMtoBase64", omNs);
         OMElement data = fac.createOMElement("data", omNs);
-        byte[] byteArray = new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
-                98};
+        byte[] byteArray = new byte[]{13, 56, 65, 32, 12, 12, 7,98};
         DataHandler dataHandler = new DataHandler(new ByteArrayDataSource(byteArray));
         expectedTextData = new OMTextImpl(dataHandler, true, fac);
         data.addChild(expectedTextData);
