@@ -429,19 +429,29 @@ public class XMLFaultUtils {
         //      </env:Fault>
         //   </env:Body>
         // </env:Envelope>
+
+        boolean isSoap11 = soapFault.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         
         // Set the primary Code Value
         SOAPFaultCode soapCode = factory.createSOAPFaultCode(soapFault);
-        SOAPFaultValue soapValue = factory.createSOAPFaultValue(soapCode);
         QName soapValueQName = xmlFault.getCode().toQName(ns.getNamespaceURI());
-        soapValue.setText(soapValueQName);
+        if(isSoap11) {
+            soapCode.setText(soapValueQName);
+        } else {
+            SOAPFaultValue soapValue = factory.createSOAPFaultValue(soapCode);
+            soapValue.setText(soapValueQName);
+        }
         
         
         // Set the primary Reason Text
         SOAPFaultReason soapReason = factory.createSOAPFaultReason(soapFault);
-        SOAPFaultText soapText = factory.createSOAPFaultText(soapReason);
-        soapText.setText(xmlFault.getReason().getText());
-        soapText.setLang(xmlFault.getReason().getLang());
+        if(isSoap11) {
+            soapReason.setText(xmlFault.getReason().getText());
+        } else {
+            SOAPFaultText soapText = factory.createSOAPFaultText(soapReason);
+            soapText.setText(xmlFault.getReason().getText());
+            soapText.setLang(xmlFault.getReason().getLang());
+        }
         
         // Set the Detail and contents of Detail
         Block[] blocks = xmlFault.getDetailBlocks();

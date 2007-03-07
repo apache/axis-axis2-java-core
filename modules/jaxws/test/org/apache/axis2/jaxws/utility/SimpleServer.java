@@ -33,6 +33,7 @@ public class SimpleServer {
     
     public void init() {
         repositoryDir = System.getProperty("basedir",".")+"/"+System.getProperty("build.repository");
+//        repositoryDir = "target/test-classes"; 
         System.out.println(">> repositoryDir = " + repositoryDir);
         
         String axis2xml = System.getProperty("axis2.config");

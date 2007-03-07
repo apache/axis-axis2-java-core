@@ -36,6 +36,7 @@ import org.apache.axiom.om.impl.OMNamespaceImpl;
 import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
 import org.apache.axiom.om.impl.dom.ElementImpl;
 import org.apache.axiom.om.impl.dom.NodeImpl;
+import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFaultCode;
 import org.apache.axiom.soap.SOAPFaultDetail;
@@ -88,29 +89,36 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @see setFaultCode(Name), getFaultCode(),SOAPElement.addNamespaceDeclaration(String, String)
      */
     public void setFaultCode(String faultCode) throws SOAPException {
-    	org.apache.axiom.soap.SOAPFactory soapFactory = null;
-    	
-    	//It must be of the form "prefix:localName" where the prefix has been defined in a
-    	//namespace declaration.
-    	if(faultCode.indexOf(":") == -1){
-    		throw new SOAPException("faultCode must be of the form prefix:localName");
-    	}else{
-        	String prefix,localName ="";
-    		prefix = faultCode.substring(0, faultCode.indexOf(":"));
-    		localName = faultCode.substring(faultCode.indexOf(":")+1);
-    	}
-    	
-    	if(this.element.getOMFactory() instanceof SOAP11Factory){
-    		soapFactory = DOOMAbstractFactory.getSOAP11Factory();
-    	}
-    	else if(this.element.getOMFactory() instanceof SOAP12Factory){
-    		soapFactory = DOOMAbstractFactory.getSOAP12Factory();
-    	}
-    	
-        SOAPFaultCode soapFaultCode = soapFactory.createSOAPFaultCode(fault);
-        SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
-        soapFaultCode.setValue(soapFaultValue);
-        soapFaultValue.setText(faultCode);
+        	org.apache.axiom.soap.SOAPFactory soapFactory = null;
+        	boolean isSoap11 = this.element.getNamespace().getNamespaceURI()
+        	.equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+	
+        	//It must be of the form "prefix:localName" where the prefix has been defined in a
+        	//namespace declaration.
+        	if(faultCode.indexOf(":") == -1){
+        		throw new SOAPException("faultCode must be of the form prefix:localName");
+        	}else{
+            	String prefix,localName ="";
+        		prefix = faultCode.substring(0, faultCode.indexOf(":"));
+        		localName = faultCode.substring(faultCode.indexOf(":")+1);
+        	}
+        	
+        	if(isSoap11){
+        		soapFactory = DOOMAbstractFactory.getSOAP11Factory();
+        	} else {
+        		soapFactory = DOOMAbstractFactory.getSOAP12Factory();
+        	}
+        
+        SOAPFaultCode soapFaultCode = soapFactory.createSOAPFaultCode(fault);    
+        
+        if(isSoap11) {
+            soapFaultCode.setText(faultCode);
+        } else {
+            SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
+            soapFaultCode.setValue(soapFaultValue);
+            soapFaultValue.setText(faultCode);
+        }
+        
         this.fault.setCode(soapFaultCode);
     }
 
@@ -188,48 +196,49 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * @see #getFaultString() getFaultString()
      */
     public void setFaultString(String faultString) throws SOAPException {
+        
+        boolean isSoap11 = this.element.getNamespace().getNamespaceURI()
+                        .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+
         if (this.fault.getReason() != null) {
             SOAPFaultReason reason = this.fault.getReason();
-            if (reason.getFirstSOAPText() != null) {
-                reason.getFirstSOAPText().getFirstOMChild().detach();
-                reason.getFirstSOAPText().setText(faultString);
-            } 
-            else 
-            {
-            	SOAPFaultText text = null;
-            	if(this.element.getOMFactory() instanceof SOAP11Factory){
-                    text = new SOAP11FaultTextImpl(reason,
+            if(isSoap11) {
+                reason.setText(faultString);
+            } else {
+                if (reason.getFirstSOAPText() != null) {
+                    reason.getFirstSOAPText().getFirstOMChild().detach();
+                    reason.getFirstSOAPText().setText(faultString);
+                } else {
+                	    SOAPFaultText text = new SOAP12FaultTextImpl(reason,
                             (SOAPFactory) this.element.getOMFactory());
-            	}else if(this.element.getOMFactory() instanceof SOAP12Factory){
-                    text = new SOAP12FaultTextImpl(reason,
-                            (SOAPFactory) this.element.getOMFactory());
-            	}
-                text.setText(faultString);
-                reason.addSOAPText(text);
+                    text.setText(faultString);
+                    reason.addSOAPText(text);
+                }
             }
-        } 
-        else 
-        {
-        	org.apache.axiom.soap.SOAPFactory soapFactory = null;
-        	
-        	if(this.element.getOMFactory() instanceof SOAP11Factory){
-        		soapFactory = (SOAP11Factory)this.element.getOMFactory();
-        	}
-        	else if(this.element.getOMFactory() instanceof SOAP12Factory){
-        		soapFactory = (SOAP12Factory)this.element.getOMFactory();
-        	}
+        } else {
+            	org.apache.axiom.soap.SOAPFactory soapFactory = (SOAPFactory)this.element.getOMFactory();
             SOAPFaultReason faultReason = soapFactory.createSOAPFaultReason(fault);
-            SOAPFaultText faultText = soapFactory.createSOAPFaultText(faultReason);
-            faultText.setText(faultString);
-        }
+            	if(isSoap11) {
+            	    faultReason.setText(faultString);
+             } else {
+                SOAPFaultText faultText = soapFactory.createSOAPFaultText(faultReason);
+                faultText.setText(faultString);
+             }
+         }
     }
 
     /* (non-Javadoc)
       * @see javax.xml.soap.SOAPFault#getFaultString()
       */
     public String getFaultString() {
-        if (this.fault.getReason() != null && this.fault.getReason().getFirstSOAPText() != null) {
-            return this.fault.getReason().getFirstSOAPText().getText();
+
+        if (this.fault.getNamespace().getNamespaceURI().equals(
+                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+            return this.fault.getReason().getText();
+        } else {
+            if (this.fault.getReason() != null && this.fault.getReason().getFirstSOAPText() != null) {
+                return this.fault.getReason().getFirstSOAPText().getText();
+            }
         }
         return null;
     }
@@ -264,9 +273,9 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * 
      */
     public void setFaultCode(Name faultCodeQName) throws SOAPException {
-    	if(faultCodeQName.getURI() == null || faultCodeQName.getURI().trim().length() == 0){
-    		throw new SOAPException("faultCodeQName must be namespace qualified.");
-    	}
+        	if(faultCodeQName.getURI() == null || faultCodeQName.getURI().trim().length() == 0){
+        		throw new SOAPException("faultCodeQName must be namespace qualified.");
+        	}
         this.faultCodeName = faultCodeQName;
     }
 
@@ -316,39 +325,32 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     
     //TODO : check the implementation
     public void setFaultString(String faultString, Locale locale) throws SOAPException {
+        boolean isSoap11 = this.element.getNamespace().getNamespaceURI()
+                .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        
         if (this.fault.getReason() != null) {
             SOAPFaultReason reason = this.fault.getReason();
-            if (reason.getFirstSOAPText() != null) {
-                reason.getFirstSOAPText().setText(faultString);
-                reason.getFirstSOAPText().setLang(locale.toString());
+            if(isSoap11) {
+                reason.setText(faultString);
             } else {
-            	SOAPFaultText text = null;
-            	if(this.element.getOMFactory() instanceof SOAP11Factory){
-                    text = new SOAP11FaultTextImpl(reason,
-                            (SOAPFactory) this.element.getOMFactory());
-                    text.setText(faultString);
-                    text.setLang(locale.toString());
-                    reason.addSOAPText(text);
-                    
+                if (reason.getFirstSOAPText() != null) {
+                    reason.getFirstSOAPText().setText(faultString);
+                    reason.getFirstSOAPText().setLang(locale.toString());
+                } else {
+                    addFaultReasonText(faultString, locale);
+                }                
+            }
+
+        } else {
+            
+            if(isSoap11) {
+                SOAPFaultReason reason = new SOAP11FaultReasonImpl(this.fault,
+                        (SOAPFactory) this.element.getOMFactory());
+                reason.setText(faultString);
             	}else if(this.element.getOMFactory() instanceof SOAP12Factory){
             		addFaultReasonText(faultString, locale);
             	}
-            }
-        } else {
-        	if(this.element.getOMFactory() instanceof SOAP11Factory){
-                SOAPFaultReason reason = new SOAP11FaultReasonImpl(this.fault,
-                        (SOAPFactory) this.element.getOMFactory());
-                SOAPFaultText text = new SOAP11FaultTextImpl(reason,
-                        (SOAPFactory) this.element.getOMFactory());
-                text.setText(faultString);
-                text.setLang(locale.toString());
-                reason.addSOAPText(text);
-                this.fault.setReason(reason);
-        		
-        	}else if(this.element.getOMFactory() instanceof SOAP12Factory){
-        		addFaultReasonText(faultString, locale);
-        	}
-        	
+            	
         }
         this.faultReasonLocale = locale;
     }
@@ -507,24 +509,35 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
      * <p/>
      */
     public QName getFaultCodeAsQName() {
-    	SOAPFaultCode soapFaultCode = this.fault.getCode();
-    	if(soapFaultCode != null){
+        boolean isSoap11 = this.element.getNamespace().getNamespaceURI()
+                        .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        SOAPFaultCode soapFaultCode = this.fault.getCode();
+        if (soapFaultCode != null) {
             String prefix = "";
             String localPart = "";
             String uri = "";
-            String text = soapFaultCode.getValue().getText();
-            
-            prefix = text.substring(0, text.indexOf(":"));
-            localPart = text.substring(text.indexOf(":")+1);
-            OMNamespace namespace = soapFaultCode.getValue().getNamespace();
-            if (namespace != null) {
-                uri = soapFaultCode.getValue().getNamespace().getNamespaceURI();
+            String text = "";
+            if(isSoap11) {
+                text = soapFaultCode.getText();
             } else {
-                uri = this.fault.getNamespace().getNamespaceURI();
+                text = soapFaultCode.getValue().getText();
             }
-    		
-    		QName qname = new QName(uri,localPart,prefix);
-    		return qname;
+
+            prefix = text.substring(0, text.indexOf(":"));
+            localPart = text.substring(text.indexOf(":") + 1);
+            if(isSoap11) {
+                uri  = fault.findNamespaceURI(prefix).getNamespaceURI();
+            } else {
+                OMNamespace namespace = soapFaultCode.getValue().getNamespace();
+                if (namespace != null) {
+                    uri = soapFaultCode.getValue().getNamespace().getNamespaceURI();
+                } else {
+                    uri = this.fault.getNamespace().getNamespaceURI();
+                }    
+            }
+
+            QName qname = new QName(uri, localPart, prefix);
+            return qname;
     	}
     	return null;
     }
