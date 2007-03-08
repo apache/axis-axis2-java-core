@@ -29,16 +29,17 @@ import java.util.ArrayList;
  */
 
 public class AddressingSubmissionInHandler extends AddressingInHandler {
-    
+
     private static final Log log = LogFactory.getLog(AddressingSubmissionInHandler.class);
-    
+
     public AddressingSubmissionInHandler() {
         addressingNamespace = Submission.WSA_NAMESPACE;
         addressingVersion = "WS-Addressing Submission";
     }
 
 
-    protected void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header, String namespace) {
+    protected void extractToEprReferenceParameters(EndpointReference toEPR, SOAPHeader header,
+                                                   String namespace) {
         // there is no exact way to identify ref parameters for Submission version. So let's have a handler
         // at the end of the flow, which puts all the handlers (which are of course mustUnderstand=false)
         // as reference parameters
@@ -46,24 +47,27 @@ public class AddressingSubmissionInHandler extends AddressingInHandler {
         // TODO : Chinthaka
     }
 
-    protected void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) throws AxisFault {
+    protected void checkForMandatoryHeaders(ArrayList alreadyFoundAddrHeader,
+                                            MessageContext messageContext) throws AxisFault {
         if (!alreadyFoundAddrHeader.contains(WSA_TO)) {
             AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_TO);
         }
-        
+
         if (!alreadyFoundAddrHeader.contains(WSA_ACTION)) {
-            AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_ACTION);
+            AddressingFaultsHelper
+                    .triggerMessageAddressingRequiredFault(messageContext, WSA_ACTION);
         }
-        
+
         if (alreadyFoundAddrHeader.contains(WSA_REPLY_TO) ||
-            alreadyFoundAddrHeader.contains(WSA_FAULT_TO)) {
-            
+                alreadyFoundAddrHeader.contains(WSA_FAULT_TO)) {
+
             if (!alreadyFoundAddrHeader.contains(WSA_MESSAGE_ID)) {
-                AddressingFaultsHelper.triggerMessageAddressingRequiredFault(messageContext, WSA_MESSAGE_ID);
+                AddressingFaultsHelper
+                        .triggerMessageAddressingRequiredFault(messageContext, WSA_MESSAGE_ID);
             }
         }
     }
-    
+
     protected void setDefaults(ArrayList alreadyFoundAddrHeader, MessageContext messageContext) {
         //The none URI is not defined in the 2004/08 spec, but it is used here anyway
         //as a flag to indicate the correct semantics to apply, i.e. in the 2004/08 spec
@@ -71,17 +75,18 @@ public class AddressingSubmissionInHandler extends AddressingInHandler {
         if (!alreadyFoundAddrHeader.contains(WSA_REPLY_TO)) {
             Options messageContextOptions = messageContext.getOptions();
             EndpointReference epr = messageContextOptions.getReplyTo();
-            
+
             if (epr == null) {
                 epr = new EndpointReference("");
                 messageContextOptions.setReplyTo(epr);
             }
-            
-            if (log.isTraceEnabled()){
-                log.trace("setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
+
+            if (log.isTraceEnabled()) {
+                log.trace(
+                        "setDefaults: Setting WS-Addressing default value for the ReplyTo property.");
             }
-                
+
             epr.setAddress(Final.WSA_NONE_URI);
-        }        
+        }
     }
 }

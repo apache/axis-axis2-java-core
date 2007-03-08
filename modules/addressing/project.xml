@@ -107,7 +107,7 @@
                 <module>true</module>
             </properties>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.apache.ws.commons.schema</groupId>
             <artifactId>XmlSchema</artifactId>
             <version>${XmlSchema.version}</version>
@@ -130,7 +130,7 @@
                 <module>true</module>
             </properties>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>
             <version>${neethi.version}</version>

@@ -16,11 +16,6 @@
 
 package org.apache.axis2.handlers.addressing;
 
-import java.util.ArrayList;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -30,13 +25,15 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Map;
+
 public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
 
     private Log log = LogFactory.getLog(getClass());
-   
-    /**
-     * @param testName
-     */
+
+    /** @param testName  */
     public AddressingFinalInHandlerTest(String testName) {
         super(testName);
     }
@@ -53,10 +50,10 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     public void testExtractAddressingInformationFromHeaders() {
         try {
             Options options = extractAddressingInformationFromHeaders();
-            
+
             assertNotNull(options);
             assertNotNull(options.getTo());
-   
+
             Map allReferenceParameters = options.getTo().getAllReferenceParameters();
             assertNotNull(allReferenceParameters);
             QName qName = new QName("http://ws.apache.org/namespaces/axis2", "ParamOne", "axis2");
@@ -65,14 +62,14 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
             assertEPRHasCorrectMetadata(options.getFrom());
             assertEPRHasCorrectMetadata(options.getFaultTo());
             assertEPRHasCorrectMetadata(options.getReplyTo());
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
             fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedAction() {
         try {
             testMessageWithOmittedHeaders("noAction");
@@ -84,15 +81,15 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedFaultTo() {
         try {
             Options options = testMessageWithOmittedHeaders("noFaultTo");
             EndpointReference epr = options.getFaultTo();
-            
+
             assertNull("The FaultTo endpoint reference is not null.", epr);
         }
         catch (AxisFault af) {
@@ -103,15 +100,15 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedFrom() {
         try {
             Options options = testMessageWithOmittedHeaders("noFrom");
             EndpointReference epr = options.getFrom();
-            
+
             assertNull("The From endpoint reference is not null.", epr);
         }
         catch (AxisFault af) {
@@ -122,15 +119,15 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedMessageID() {
         try {
             Options options = testMessageWithOmittedHeaders("noMessageID");
             String messageID = options.getMessageId();
-            
+
             assertNull("The message id is not null.", messageID);
         }
         catch (AxisFault af) {
@@ -141,17 +138,18 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedReplyTo() {
         try {
             Options options = testMessageWithOmittedHeaders("noReplyTo");
             EndpointReference epr = options.getReplyTo();
             String address = epr.getAddress();
-            
-            assertEquals("The address of the ReplyTo endpoint reference is not the anonymous URI.", AddressingConstants.Final.WSA_ANONYMOUS_URL, address);
+
+            assertEquals("The address of the ReplyTo endpoint reference is not the anonymous URI.",
+                         AddressingConstants.Final.WSA_ANONYMOUS_URL, address);
         }
         catch (AxisFault af) {
             af.printStackTrace();
@@ -161,15 +159,15 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedTo() {
         try {
             Options options = testMessageWithOmittedHeaders("noTo");
             EndpointReference epr = options.getTo();
-            
+
             assertNull("The To endpoint reference is not null.", epr);
         }
         catch (AxisFault af) {
@@ -180,18 +178,18 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testDifferentSoapActionProcessing() {
-        String testfile = "valid-messages/"+versionDirectory+"/soapmessage.xml";
+        String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
-        mc.setServerSide(true); 
+        mc.setServerSide(true);
         try {
             mc.setSoapAction("http://ws.apache.org/tests/differentAction");
             basicExtractAddressingInformationFromHeaders(testfile, mc);
-            fail("An AxisFault should have been thrown due to the soapaction being different to the ws-a action.");            
+            fail("An AxisFault should have been thrown due to the soapaction being different to the ws-a action.");
         }
         catch (AxisFault af) {
             //Test passed.
@@ -199,12 +197,12 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());                        
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testSameSoapAction() {
-        String testfile = "valid-messages/"+versionDirectory+"/soapmessage.xml";
+        String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
         mc.setServerSide(true);
         try {
@@ -214,19 +212,19 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         catch (AxisFault af) {
             af.printStackTrace();
             log.error(af.getMessage());
-            fail("An unexpected AxisFault was thrown while testing with a soapaction and ws-a action that are the same.");            
+            fail("An unexpected AxisFault was thrown while testing with a soapaction and ws-a action that are the same.");
         }
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());                        
-        }        
+            fail(" An Exception has occured " + e.getMessage());
+        }
     }
-    
+
     public void testEmptySoapAction() {
-        String testfile = "valid-messages/"+versionDirectory+"/soapmessage.xml";
+        String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
-        
+
         try {
             mc.setSoapAction("");
             basicExtractAddressingInformationFromHeaders(testfile, mc);
@@ -234,19 +232,19 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         catch (AxisFault af) {
             af.printStackTrace();
             log.error(af.getMessage());
-            fail("An unexpected AxisFault was thrown while testing with an empty soapaction.");            
+            fail("An unexpected AxisFault was thrown while testing with an empty soapaction.");
         }
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());                        
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testNullSoapAction() {
-        String testfile = "valid-messages/"+versionDirectory+"/soapmessage.xml";
+        String testfile = "valid-messages/" + versionDirectory + "/soapmessage.xml";
         MessageContext mc = new MessageContext();
-        
+
         try {
             mc.setSoapAction(null);
             basicExtractAddressingInformationFromHeaders(testfile, mc);
@@ -254,24 +252,26 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
         catch (AxisFault af) {
             af.printStackTrace();
             log.error(af.getMessage());
-            fail("An unexpected AxisFault was thrown while testing with a null soapaction.");            
+            fail("An unexpected AxisFault was thrown while testing with a null soapaction.");
         }
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());                        
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
-    private void assertEPRHasCorrectMetadata(EndpointReference epr){
-    	ArrayList metadata = epr.getMetaData();
-    	if(metadata != null){
-    		OMElement md = (OMElement)metadata.get(0);
-    		assertEquals(md.getQName(),new QName("http://ws.apache.org/namespaces/axis2","MetaExt"));
-    		assertEquals(md.getText(),"123456789");
-    		assertEquals(md.getAttributeValue(new QName("http://ws.apache.org/namespaces/axis2","AttrExt")),"123456789");
-    	}else{
-    		fail("No Metadata found in EPR");
-    	}
+
+    private void assertEPRHasCorrectMetadata(EndpointReference epr) {
+        ArrayList metadata = epr.getMetaData();
+        if (metadata != null) {
+            OMElement md = (OMElement) metadata.get(0);
+            assertEquals(md.getQName(),
+                         new QName("http://ws.apache.org/namespaces/axis2", "MetaExt"));
+            assertEquals(md.getText(), "123456789");
+            assertEquals(md.getAttributeValue(
+                    new QName("http://ws.apache.org/namespaces/axis2", "AttrExt")), "123456789");
+        } else {
+            fail("No Metadata found in EPR");
+        }
     }
 }

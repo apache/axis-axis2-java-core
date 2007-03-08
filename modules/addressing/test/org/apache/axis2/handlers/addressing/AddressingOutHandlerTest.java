@@ -16,9 +16,6 @@
 
 package org.apache.axis2.handlers.addressing;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
@@ -28,17 +25,17 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.RelatesTo;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.util.TestUtil;
 
 import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class AddressingOutHandlerTest extends TestCase implements AddressingConstants {
     private AddressingOutHandler outHandler;
@@ -57,12 +54,14 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
     }
 
     public void testAddToSOAPHeader() throws Exception {
-        EndpointReference replyTo = new EndpointReference("http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous");
+        EndpointReference replyTo = new EndpointReference(
+                "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous");
         EndpointReference epr = new EndpointReference("http://www.to.org/service/");
 
         for (int i = 0; i < 5; i++) {
             epr.addReferenceParameter(
-                    new QName(Submission.WSA_NAMESPACE, "Reference" + i, AddressingConstants.WSA_DEFAULT_PREFIX),
+                    new QName(Submission.WSA_NAMESPACE, "Reference" + i,
+                              AddressingConstants.WSA_DEFAULT_PREFIX),
                     "Value " + i * 100);
 
         }
@@ -79,14 +78,19 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         msgCtxt.setEnvelope(defaultEnvelope);
         msgCtxt.setWSAAction("http://www.actions.org/action");
         msgCtxt.setMessageID("urn:test:123");
-        
-        OMAttribute extAttr = OMAbstractFactory.getOMFactory().createOMAttribute("AttrExt", OMAbstractFactory.getOMFactory().createOMNamespace("http://ws.apache.org/namespaces/axis2", "axis2"), "123456789");
+
+        OMAttribute extAttr = OMAbstractFactory.getOMFactory().createOMAttribute("AttrExt",
+                                                                                 OMAbstractFactory
+                                                                                         .getOMFactory().createOMNamespace(
+                                                                                         "http://ws.apache.org/namespaces/axis2",
+                                                                                         "axis2"),
+                                                                                 "123456789");
         ArrayList al = new ArrayList();
         al.add(extAttr);
-        
+
         msgCtxt.setProperty(AddressingConstants.ACTION_ATTRIBUTES, al);
         msgCtxt.setProperty(AddressingConstants.MESSAGEID_ATTRIBUTES, al);
-        
+
         outHandler.invoke(msgCtxt);
 
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder("eprTest.xml");
@@ -95,16 +99,17 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
 
         assertTrue(
                 xmlComparator.compare(omBuilder.getDocumentElement(),
-                        defaultEnvelope));
+                                      defaultEnvelope));
 
     }
 
     public void testHeaderCreationFromMsgCtxtInformation() throws Exception {
-        msgCtxt = ContextFactory.createMessageContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+        msgCtxt = ContextFactory.createMessageContext(
+                ConfigurationContextFactory.createDefaultConfigurationContext());
 
         EndpointReference epr = new EndpointReference("http://www.from.org/service/");
         epr.addReferenceParameter(new QName("Reference2"),
-                "Value 200");
+                                  "Value 200");
         msgCtxt.setFrom(epr);
 
         epr = new EndpointReference("http://www.to.org/service/");
@@ -135,18 +140,20 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         XMLComparator xmlComparator = new XMLComparator();
         assertTrue(
                 xmlComparator.compare(msgCtxt.getEnvelope(),
-                        testUtil.getOMBuilder("OutHandlerTest.xml")
-                .getDocumentElement()));
+                                      testUtil.getOMBuilder("OutHandlerTest.xml")
+                                              .getDocumentElement()));
     }
 
     public void testMustUnderstandSupport() throws Exception {
-        msgCtxt = ContextFactory.createMessageContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+        msgCtxt = ContextFactory.createMessageContext(
+                ConfigurationContextFactory.createDefaultConfigurationContext());
 
-        msgCtxt.setProperty(AddressingConstants.ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS, Boolean.TRUE);
-        
+        msgCtxt.setProperty(AddressingConstants.ADD_MUST_UNDERSTAND_TO_ADDRESSING_HEADERS,
+                            Boolean.TRUE);
+
         EndpointReference epr = new EndpointReference("http://www.from.org/service/");
         epr.addReferenceParameter(new QName("Reference2"),
-                "Value 200");
+                                  "Value 200");
         msgCtxt.setFrom(epr);
 
         epr = new EndpointReference("http://www.to.org/service/");
@@ -177,8 +184,8 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         XMLComparator xmlComparator = new XMLComparator();
         assertTrue(
                 xmlComparator.compare(msgCtxt.getEnvelope(),
-                        testUtil.getOMBuilder("mustUnderstandTest.xml")
-                .getDocumentElement()));
+                                      testUtil.getOMBuilder("mustUnderstandTest.xml")
+                                              .getDocumentElement()));
     }
 
     public void testDuplicateHeaders() throws Exception {
@@ -187,7 +194,8 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         EndpointReference eprOne = new EndpointReference("http://whatever.org");
         EndpointReference duplicateEpr = new EndpointReference("http://whatever.duplicate.org");
         RelatesTo reply = new RelatesTo("urn:id");
-        msgCtxt = ContextFactory.createMessageContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+        msgCtxt = ContextFactory.createMessageContext(
+                ConfigurationContextFactory.createDefaultConfigurationContext());
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
         msgCtxt.setEnvelope(defaultEnvelope);
@@ -202,8 +210,10 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         msgCtxt.setTo(duplicateEpr);
         outHandler.invoke(msgCtxt);
 
-        assertEquals("http://whatever.org", defaultEnvelope.getHeader().getFirstChildWithName(new QName(WSA_TO)).getText());
-        Iterator iterator = defaultEnvelope.getHeader().getChildrenWithName(new QName(WSA_RELATES_TO));
+        assertEquals("http://whatever.org", defaultEnvelope.getHeader()
+                .getFirstChildWithName(new QName(WSA_TO)).getText());
+        Iterator iterator =
+                defaultEnvelope.getHeader().getChildrenWithName(new QName(WSA_RELATES_TO));
         int i = 0;
         while (iterator.hasNext()) {
             iterator.next();
@@ -217,20 +227,23 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         // this will check whether we can add to epr, if there is one already.
         EndpointReference eprOne = new EndpointReference("http://whatever.org");
         RelatesTo custom = new RelatesTo("urn:id", "customRelationship");
-        msgCtxt = ContextFactory.createMessageContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+        msgCtxt = ContextFactory.createMessageContext(
+                ConfigurationContextFactory.createDefaultConfigurationContext());
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
-        OMNamespace addressingNamespace = factory.createOMNamespace(Final.WSA_NAMESPACE, WSA_DEFAULT_PREFIX);
+        OMNamespace addressingNamespace =
+                factory.createOMNamespace(Final.WSA_NAMESPACE, WSA_DEFAULT_PREFIX);
         SOAPHeaderBlock soapHeaderBlock =
                 defaultEnvelope.getHeader().addHeaderBlock(WSA_TO, addressingNamespace);
         soapHeaderBlock.setText("http://oldEPR.org");
         soapHeaderBlock =
-            defaultEnvelope.getHeader().addHeaderBlock(WSA_RELATES_TO, addressingNamespace);
+                defaultEnvelope.getHeader().addHeaderBlock(WSA_RELATES_TO, addressingNamespace);
         soapHeaderBlock.setText("urn:id");
         soapHeaderBlock =
-            defaultEnvelope.getHeader().addHeaderBlock(WSA_RELATES_TO, addressingNamespace);
+                defaultEnvelope.getHeader().addHeaderBlock(WSA_RELATES_TO, addressingNamespace);
         soapHeaderBlock.setText("urn:id");
-        soapHeaderBlock.addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE, custom.getRelationshipType(), null);
+        soapHeaderBlock
+                .addAttribute(WSA_RELATES_TO_RELATIONSHIP_TYPE, custom.getRelationshipType(), null);
         msgCtxt.setEnvelope(defaultEnvelope);
 
         msgCtxt.setProperty(REPLACE_ADDRESSING_HEADERS, Boolean.TRUE);
@@ -239,8 +252,10 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         msgCtxt.setWSAAction("http://www.actions.org/action");
         outHandler.invoke(msgCtxt);
 
-        assertEquals("http://whatever.org", defaultEnvelope.getHeader().getFirstChildWithName(new QName(WSA_TO)).getText());
-        Iterator iterator = defaultEnvelope.getHeader().getChildrenWithName(new QName(WSA_RELATES_TO));
+        assertEquals("http://whatever.org", defaultEnvelope.getHeader()
+                .getFirstChildWithName(new QName(WSA_TO)).getText());
+        Iterator iterator =
+                defaultEnvelope.getHeader().getChildrenWithName(new QName(WSA_RELATES_TO));
         int i = 0;
         while (iterator.hasNext()) {
             iterator.next();
@@ -254,15 +269,17 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         // this will check whether we can add to epr, if there is one already.
         EndpointReference eprOne = new EndpointReference("http://whatever.org");
         RelatesTo custom = new RelatesTo("urn:id", "customRelationship");
-        msgCtxt = ContextFactory.createMessageContext(ConfigurationContextFactory.createDefaultConfigurationContext());
+        msgCtxt = ContextFactory.createMessageContext(
+                ConfigurationContextFactory.createDefaultConfigurationContext());
         SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
-        OMNamespace addressingNamespace = factory.createOMNamespace(Final.WSA_NAMESPACE, WSA_DEFAULT_PREFIX);
+        OMNamespace addressingNamespace =
+                factory.createOMNamespace(Final.WSA_NAMESPACE, WSA_DEFAULT_PREFIX);
         SOAPHeaderBlock soapHeaderBlock =
                 defaultEnvelope.getHeader().addHeaderBlock(WSA_TO, addressingNamespace);
         soapHeaderBlock.setText("http://oldEPR.org");
         soapHeaderBlock =
-            defaultEnvelope.getHeader().addHeaderBlock(WSA_RELATES_TO, addressingNamespace);
+                defaultEnvelope.getHeader().addHeaderBlock(WSA_RELATES_TO, addressingNamespace);
         soapHeaderBlock.setText("urn:id");
         msgCtxt.setEnvelope(defaultEnvelope);
 
@@ -272,8 +289,10 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         msgCtxt.setWSAAction("http://www.actions.org/action");
         outHandler.invoke(msgCtxt);
 
-        assertEquals("http://oldEPR.org", defaultEnvelope.getHeader().getFirstChildWithName(new QName(WSA_TO)).getText());
-        Iterator iterator = defaultEnvelope.getHeader().getChildrenWithName(new QName(WSA_RELATES_TO));
+        assertEquals("http://oldEPR.org", defaultEnvelope.getHeader()
+                .getFirstChildWithName(new QName(WSA_TO)).getText());
+        Iterator iterator =
+                defaultEnvelope.getHeader().getChildrenWithName(new QName(WSA_RELATES_TO));
         int i = 0;
         while (iterator.hasNext()) {
             iterator.next();

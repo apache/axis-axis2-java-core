@@ -1,5 +1,5 @@
 <module name="addressing" class="org.apache.axis2.addressing.AddressingModule">
-    <Description>This is WS-Addressing implementation on Axis2. Currently we have implemented Submission version (2004/08) and Proposed Recommendation. </Description>
+    <Description>This is WS-Addressing implementation on Axis2. Currently we have implemented Submission version (2004/08) and Proposed Recommendation.</Description>
     <InFlow>
         <handler name="AddressingFinalInHandler" class="org.apache.axis2.handlers.addressing.AddressingFinalInHandler">
             <order phase="PreDispatch"/>
@@ -8,7 +8,7 @@
             <order phase="PreDispatch"/>
         </handler>
         <handler name="AddressingValidationHandler" class="org.apache.axis2.handlers.addressing.AddressingValidationHandler">
-            <order phase="Dispatch" after="AddressingBasedDispatcher" />
+            <order phase="Dispatch" after="AddressingBasedDispatcher"/>
         </handler>
     </InFlow>
 
@@ -24,7 +24,7 @@
             <order phase="MessageOut"/>
         </handler>
     </OutFaultFlow>
-    
+
     <InFaultFlow>
         <handler name="AddressingFinalInHandler" class="org.apache.axis2.handlers.addressing.AddressingFinalInHandler">
             <order phase="PreDispatch"/>

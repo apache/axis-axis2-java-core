@@ -16,8 +16,8 @@
 
 package org.apache.axis2.handlers.util;
 
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 
 import javax.xml.stream.XMLStreamReader;
 import java.io.File;
@@ -27,7 +27,7 @@ public class TestUtil {
 
     protected static final String IN_FILE_NAME = "soapmessage.xml";
     protected StAXSOAPModelBuilder builder;
-    protected String testResourceDir = System.getProperty("basedir",".")+"/"+"test-resources";
+    protected String testResourceDir = System.getProperty("basedir", ".") + "/" + "test-resources";
 
 
     public StAXSOAPModelBuilder getOMBuilder(String fileName) throws Exception {

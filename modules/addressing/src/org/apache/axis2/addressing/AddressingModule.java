@@ -16,10 +16,6 @@
 
 package org.apache.axis2.addressing;
 
-import java.util.List;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
@@ -37,8 +33,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 
+import javax.xml.namespace.QName;
+import java.util.List;
+
 public class AddressingModule implements Module {
-    
+
     private static final Log log = LogFactory.getLog(AddressingModule.class);
     private static final QName ADDRESSING = new QName(Constants.MODULE_ADDRESSING);
 
@@ -46,18 +45,18 @@ public class AddressingModule implements Module {
             throws AxisFault {
         AxisConfiguration axisConfig = arg0.getAxisConfiguration();
         ModuleConfiguration moduleConfig = axisConfig.getModuleConfig(ADDRESSING);
-        
+
         if (moduleConfig != null) {
             List list = moduleConfig.getParameters();
             for (int i = 0, size = list.size(); i < size; i++) {
                 Parameter param = (Parameter) list.get(i);
                 arg1.addParameter(param);
 
-                if(log.isTraceEnabled()){
+                if (log.isTraceEnabled()) {
                     log.trace("init: Addressing config -" + param);
                 }
             }
-            
+
             initHandlers(arg1);
         }
     }
@@ -81,14 +80,14 @@ public class AddressingModule implements Module {
         // TODO Auto-generated method stub
 
     }
-    
+
     //This method calls the init method of the handlers that we want to initialize.
     //Currently only the handlers in the OutFlow and FaultOutFlow are initialized
     //by this code. If handlers in other flows need to be initialized then code will
     //need to be added to do so.
     private void initHandlers(AxisModule axisModule) {
         Flow flow = axisModule.getOutFlow();
-        if(log.isTraceEnabled()){
+        if (log.isTraceEnabled()) {
             log.trace("initHandlers: Initializing handlers in out flow.");
         }
         for (int i = 0, size = flow.getHandlerCount(); i < size; i++) {
@@ -96,15 +95,15 @@ public class AddressingModule implements Module {
             Handler handler = description.getHandler();
             handler.init(description);
         }
-        
+
         flow = axisModule.getFaultOutFlow();
-        if(log.isTraceEnabled()){
+        if (log.isTraceEnabled()) {
             log.trace("initHandlers: Initializing handlers in fault out flow.");
         }
         for (int i = 0, size = flow.getHandlerCount(); i < size; i++) {
             HandlerDescription description = flow.getHandler(i);
             Handler handler = description.getHandler();
             handler.init(description);
-        }        
+        }
     }
 }

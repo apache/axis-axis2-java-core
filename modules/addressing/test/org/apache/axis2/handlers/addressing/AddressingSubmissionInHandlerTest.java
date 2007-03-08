@@ -26,10 +26,8 @@ import org.apache.commons.logging.LogFactory;
 public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBase {
 
     private Log log = LogFactory.getLog(getClass());
-   
-    /**
-     * @param testName
-     */
+
+    /** @param testName  */
     public AddressingSubmissionInHandlerTest(String testName) {
         super(testName);
     }
@@ -53,7 +51,7 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
             fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedAction() {
         try {
             testMessageWithOmittedHeaders("noAction");
@@ -65,15 +63,15 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedFaultTo() {
         try {
             Options options = testMessageWithOmittedHeaders("noFaultTo");
             EndpointReference epr = options.getFaultTo();
-            
+
             assertNull("The FaultTo endpoint reference is not null.", epr);
         }
         catch (AxisFault af) {
@@ -84,15 +82,15 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedFrom() {
         try {
             Options options = testMessageWithOmittedHeaders("noFrom");
             EndpointReference epr = options.getFrom();
-            
+
             assertNull("The From endpoint reference is not null.", epr);
         }
         catch (AxisFault af) {
@@ -103,10 +101,10 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedMessageID() {
         try {
             testMessageWithOmittedHeaders("noMessageID");
@@ -118,15 +116,15 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedMessageIDReplyToAndFaultTo() {
         try {
             Options options = testMessageWithOmittedHeaders("noMessageIDNoReplyToNoFaultTo");
             String messageID = options.getMessageId();
-            
+
             assertNull("The message id is not null.", messageID);
         }
         catch (AxisFault af) {
@@ -137,17 +135,18 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedReplyTo() {
         try {
             Options options = testMessageWithOmittedHeaders("noReplyTo");
             EndpointReference epr = options.getReplyTo();
             String address = epr.getAddress();
-            
-            assertEquals("The address of the ReplyTo endpoint reference is not the none URI.", AddressingConstants.Final.WSA_NONE_URI, address);
+
+            assertEquals("The address of the ReplyTo endpoint reference is not the none URI.",
+                         AddressingConstants.Final.WSA_NONE_URI, address);
         }
         catch (AxisFault af) {
             af.printStackTrace();
@@ -157,10 +156,10 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
-    
+
     public void testMessageWithOmittedTo() {
         try {
             testMessageWithOmittedHeaders("noTo");
@@ -172,7 +171,7 @@ public class AddressingSubmissionInHandlerTest extends AddressingInHandlerTestBa
         catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            fail(" An Exception has occured " + e.getMessage());            
+            fail(" An Exception has occured " + e.getMessage());
         }
     }
 }
