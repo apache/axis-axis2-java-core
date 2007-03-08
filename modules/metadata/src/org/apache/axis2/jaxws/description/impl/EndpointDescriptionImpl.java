@@ -52,6 +52,7 @@ import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -854,6 +855,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
             if(serviceClient == null) {
                 ConfigurationContext configCtx = getServiceDescription().getAxisConfigContext();
                 AxisService axisSvc = getAxisService();
+                AxisConfiguration axisCfg = configCtx.getAxisConfiguration();
+                if(axisCfg.getService(axisSvc.getName()) != null) {
+                    axisSvc.setName(axisSvc.getName() + this.hashCode());
+                } 
                 serviceClient = new ServiceClient(configCtx, axisSvc);
             }
         } catch (AxisFault e) {

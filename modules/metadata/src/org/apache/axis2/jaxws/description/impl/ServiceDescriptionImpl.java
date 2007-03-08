@@ -520,7 +520,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     ClientConfigurationFactory getClientConfigurationFactory() {
         
         if (clientConfigFactory == null ) {
-            clientConfigFactory = ClientConfigurationFactory.newInstance();
+            clientConfigFactory = DescriptionFactory.createClientConfigurationFactory();
         }
         return clientConfigFactory;
     }

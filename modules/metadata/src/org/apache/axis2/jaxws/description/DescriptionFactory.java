@@ -25,6 +25,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.impl.DescriptionFactoryImpl;
 
@@ -175,5 +176,11 @@ public class DescriptionFactory {
         return DescriptionFactoryImpl.createServiceDescriptionFromServiceImpl(serviceImplClass, axisService);
     }
     
-
+    /**
+     * Creates Client ConfigurationFactory used to create AxisConfiguration.  
+     * @return A Client Configuration Factory's new instance. ClinetConfigurationFactory is Singleton.
+    */
+    public static ClientConfigurationFactory createClientConfigurationFactory(){
+        return DescriptionFactoryImpl.getClientConfigurationFactory();
+    }
 }

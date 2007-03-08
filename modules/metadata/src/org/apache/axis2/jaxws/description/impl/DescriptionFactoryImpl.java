@@ -25,14 +25,19 @@ package org.apache.axis2.jaxws.description.impl;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.ClientConfigurationFactory;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
+import org.apache.axis2.jaxws.description.DescriptionKey;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
@@ -50,6 +55,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DescriptionFactoryImpl {
     private static final Log log = LogFactory.getLog(DescriptionFactoryImpl.class);
+    private static ClientConfigurationFactory clientConfigFactory = ClientConfigurationFactory.newInstance();
+    private static Map<DescriptionKey, ServiceDescription> cache = new Hashtable<DescriptionKey, ServiceDescription>();
 
     /**
      * A DescrptionFactory can not be instantiated; all methods are static.
@@ -62,12 +69,42 @@ public class DescriptionFactoryImpl {
      */
     public static ServiceDescription createServiceDescription(URL wsdlURL,
             QName serviceQName, Class serviceClass) {
-        ServiceDescription serviceDesc = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
-        
-        if (log.isDebugEnabled()) {
-            log.debug("ServiceDescription created with WSDL URL: " + wsdlURL + "; QName: " + serviceQName + "; Class: " + serviceClass);
-            log.debug(serviceDesc.toString());
+        ConfigurationContext configContext = DescriptionFactory.createClientConfigurationFactory().getClientConfigurationContext();
+        DescriptionKey key = new DescriptionKey(serviceQName, wsdlURL, serviceClass, configContext);
+        if(log.isDebugEnabled()){
+            log.debug("Cache Map = "+ cache.toString());
+            if(key !=null)
+                log.debug("Description Key = " + key.printKey());
+            
         }
+        ServiceDescription serviceDesc = cache.get(key);
+        if(log.isDebugEnabled()){
+            log.debug("Check to see if ServiceDescription is found in cache");
+        }
+        if(serviceDesc !=null){
+            if(log.isDebugEnabled()){
+                log.debug("ServiceDescription found in the cache");
+                log.debug(serviceDesc.toString());
+            }
+        }
+        if(serviceDesc == null){
+            if(log.isDebugEnabled()){
+                log.debug("ServiceDescription not found in the cache");
+                log.debug(" creating new ServiceDescriptionImpl");
+            }
+            
+            serviceDesc = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
+            if (log.isDebugEnabled()) {
+                log.debug("ServiceDescription created with WSDL URL: " + wsdlURL + "; QName: " + serviceQName + "; Class: " + serviceClass);
+                log.debug(serviceDesc.toString());
+            }
+            if(log.isDebugEnabled()){
+                log.debug("Caching new ServiceDescription in the cache");
+                
+            }
+            cache.put(key, serviceDesc);
+        }
+        
         return serviceDesc;
     }
 
@@ -179,6 +216,14 @@ public class DescriptionFactoryImpl {
             log.debug("EndpointDescription updated: " + endpointDesc);
         }
         return endpointDesc;
+    }
+    
+    public static ClientConfigurationFactory getClientConfigurationFactory() {
+        
+        if (clientConfigFactory == null ) {
+            clientConfigFactory = ClientConfigurationFactory.newInstance();
+        }
+        return clientConfigFactory;
     }
 
     /**
