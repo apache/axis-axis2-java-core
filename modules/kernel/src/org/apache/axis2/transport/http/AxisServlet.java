@@ -223,8 +223,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 query.indexOf("policy") >= 0)) {
             // handling meta data exchange stuff
             agent.processListService(request, response);
-        } else if (requestURI.endsWith(".xsd")) {
-            agent.processExplicitSchemas(request, response);
+        } else if (requestURI.endsWith(".xsd") ||
+                    requestURI.endsWith(".wsdl")) {
+            agent.processExplicitSchemaAndWSDL(request, response);
         } else if (requestURI.endsWith(LIST_SERVICES_SUFIX) ||
                 requestURI.endsWith(LIST_FAUKT_SERVICES_SUFIX)) {
             // handling list services request

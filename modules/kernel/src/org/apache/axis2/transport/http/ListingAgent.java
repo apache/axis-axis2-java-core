@@ -154,7 +154,7 @@ public class ListingAgent extends AbstractAgent {
         return ip;
     }
 
-    public void processExplicitSchemas(HttpServletRequest req,
+    public void processExplicitSchemaAndWSDL(HttpServletRequest req,
                                        HttpServletResponse res)
             throws IOException, ServletException {
         HashMap services = configContext.getAxisConfiguration().getServices();
