@@ -1341,7 +1341,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 } else {
                     // i.e this element namespace has not found yet so
                     // we have to create new schema for it
-                    Element newSchema = createNewSchemaWithElemet(elementDeclaration,
+                    Element newSchema = createNewSchemaWithElement(elementDeclaration,
                                                                   namespacePrefixMap,
                                                                   namespaceImportsMap,
                                                                   namespaceToUse,
@@ -1438,7 +1438,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 } else {
                     // i.e this element namespace has not found yet so
                     // we have to create new schema for it
-                    Element newSchema = createNewSchemaWithElemet(elementDeclaration,
+                    Element newSchema = createNewSchemaWithElement(elementDeclaration,
                                                                   namespacePrefixMap,
                                                                   namespaceImportsMap,
                                                                   namespaceToUse,
@@ -1492,7 +1492,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     }
 
-    private Element createNewSchemaWithElemet(Element newElement,
+    private Element createNewSchemaWithElement(Element newElement,
                                               Map namespacePrefixMap,
                                               Map namespaceImportsMap,
                                               String targetNamespace,
@@ -1678,10 +1678,10 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // A prefix must be found at this point!
         String existingURL = schemaElement.getAttributeNS(XML_NAMESPACE_URI,
                                                           NAMESPACE_DECLARATION_PREFIX + prefix);
-        if (existingURL == null) {
+        if (existingURL == null || existingURL.length()==0) {
             // there is no existing URL by that prefix - declare a new namespace
-            schemaElement.setAttributeNS(XML_NAMESPACE_URI,
-                                         NAMESPACE_DECLARATION_PREFIX + prefix, namespace);
+                schemaElement.setAttributeNS(XML_NAMESPACE_URI,
+                                             NAMESPACE_DECLARATION_PREFIX + prefix, namespace);
         } else if (existingURL.equals(namespace)) {
             // this namespace declaration is already there with the same prefix
             // ignore it
@@ -1697,7 +1697,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             schemaElement.setAttributeNS(XML_NAMESPACE_URI,
                                          NAMESPACE_DECLARATION_PREFIX + generatedPrefix, namespace);
             // add to the map
-            prefixMap.put(generatedPrefix, namespace);
+            prefixMap.put(namespace, generatedPrefix);
         }
 
     }
