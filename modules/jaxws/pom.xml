@@ -125,6 +125,10 @@
                         <include>**/*.properties</include>
                         <include>**/*.xml</include>
                     </includes>
+                    <directory>resource</directory>
+                    <includes>
+                        <include>**/*</include>
+                    </includes>
                 </resource>
             </resources>
         <testResources>

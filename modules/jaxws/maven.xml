@@ -666,6 +666,7 @@
         <jar destfile="target/jaxws-api-${jaxws.version}.jar">
             <ant:fileset dir="target/classes">
             	<ant:exclude name="com/ibm/webservices/**"/>
+            	<ant:exclude name="META-INF/services/**"/>
             </ant:fileset>
         </jar>
     	<jar destfile="target/jaxws-impl-${jaxws.version}.jar">
