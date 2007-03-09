@@ -1388,6 +1388,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         // then see the parameter order
                         List parameterOrder = operation.getOperation().getParameterOrdering();
                         if (parameterOrder != null) {
+                            parameterOrder = new ArrayList(parameterOrder);
+                            
                             parameterOrder.add("result");
                             partsIterator = message.getOrderedParts(parameterOrder).iterator();
                         } else {
