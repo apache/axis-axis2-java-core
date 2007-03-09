@@ -219,7 +219,7 @@ public class ArchiveReader implements DeploymentConstants {
                     // trying to use the jar scheme as the base URI. I think this can be used to handle
                     // wsdl 1.1 as well without using a custome URI resolver. Need to look at it later.
                     axisServiceBuilder.setBaseUri(
-                            "jar:file:/" + serviceArchiveFile.getAbsolutePath() + "!/" + baseURI);
+                            "jar:file://" + serviceArchiveFile.getAbsolutePath() + "!/" + baseURI);
                 }
             } else {
                 if (serviceArchiveFile != null) {
