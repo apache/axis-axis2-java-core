@@ -47,6 +47,7 @@ import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -134,6 +135,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
             MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
+            String packagesKey = marshalDesc.getPackagesKey();
             
             // Determine if a returnValue is expected.
             // The return value may be an child element
@@ -146,7 +148,7 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
             // Get this block
-            JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
+            JAXBBlockContext blockContext = new JAXBBlockContext(packages, packagesKey);        
             JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             Block block = message.getBodyBlock(blockContext, factory);
             Object wrapperObject = block.getBusinessObject(true);
@@ -204,16 +206,25 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     } else {
                         element = new Element(value, qName);
                     }
-                    pvList.add(new PDElement(pd,element));
+                    pvList.add(new PDElement(pd,element, null));
                     bodyIndex++;
                 } else {
                     // Header
                     // Get the Block from the header
                     String localName = pd.getParameterName();
-                    block = message.getHeaderBlock(pd.getTargetNamespace(), localName, blockContext, factory);
+                    JAXBBlockContext blkContext = new JAXBBlockContext(packages, packagesKey); 
+                    
+                    // Set up "by java type" unmarshalling if necessary
+                    if (blkContext.getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH) {
+                        Class actualType = pd.getParameterActualType();
+                        if (MethodMarshallerUtils.isJAXBBasicType(actualType)) {
+                            blkContext.setProcessType(actualType);
+                        }
+                    }
+                    block = message.getHeaderBlock(pd.getTargetNamespace(), localName, blkContext, factory);
                     Object value = block.getBusinessObject(true);
                     Element element = new Element(value, new QName(pd.getTargetNamespace(), localName));
-                    pvList.add(new PDElement(pd, element));
+                    pvList.add(new PDElement(pd, element, blkContext.getProcessType()));
                 }
             }
             
@@ -335,16 +346,24 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     } else {
                         element = new Element(value, qName);
                     }
-                    pvList.add(new PDElement(pd,element));
+                    pvList.add(new PDElement(pd,element, null));
                     bodyIndex++;
                 } else {
                     // Header
                     // Get the Block from the header
                     String localName = pd.getParameterName();
-                    block = message.getHeaderBlock(pd.getTargetNamespace(), localName, blockContext, factory);
+                    JAXBBlockContext blkContext = new JAXBBlockContext(packages, marshalDesc.getPackagesKey()); 
+                    // Set up "by java type" unmarshalling if necessary
+                    if (blkContext.getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH) {
+                        Class actualType = pd.getParameterActualType();
+                        if (MethodMarshallerUtils.isJAXBBasicType(actualType)) {
+                            blkContext.setProcessType(actualType);
+                        }
+                    }
+                    block = message.getHeaderBlock(pd.getTargetNamespace(), localName, blkContext, factory);
                     Object value = block.getBusinessObject(true);
                     Element element = new Element(value, new QName(pd.getTargetNamespace(), localName));
-                    pvList.add(new PDElement(pd, element));
+                    pvList.add(new PDElement(pd, element, blkContext.getProcessType()));
                 }
                 
             }
@@ -458,9 +477,12 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                     } else {
                         returnElement = new Element(returnObject, returnQName, returnType);
                     }
+
+                    Class byJavaType = MethodMarshallerUtils.isJAXBBasicType(returnType) ? returnType : null;
+                    
                     MethodMarshallerUtils.toMessage(returnElement, returnType,
                             marshalDesc, m, 
-                            false, // don't force xsi:type for doc/lit
+                            byJavaType, 
                             true); 
                 }
             }
@@ -492,7 +514,15 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             
             //  Now place the headers in the message
             if (headerPDEList.size() > 0) {
-                MethodMarshallerUtils.toMessage(headerPDEList, m, packages, false);
+
+                // Use "by java type" marshalling if necessary
+                for (PDElement pde: headerPDEList) {
+                   Class actualType = pde.getParam().getParameterActualType();
+                   if (MethodMarshallerUtils.isJAXBBasicType(actualType)) {
+                       pde.setByJavaTypeClass(actualType);
+                   }     
+                }
+                MethodMarshallerUtils.toMessage(headerPDEList, m, packages);
             }
             return m;
         } catch(Exception e) {
@@ -598,7 +628,16 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
             
             // Now place the headers in the message
             if (headerPDEList.size() > 0) {
-                MethodMarshallerUtils.toMessage(headerPDEList, m, packages, false);
+                
+                // Use "by java type" marshalling if necessary
+                for (PDElement pde: headerPDEList) {
+                   Class actualType = pde.getParam().getParameterActualType();
+                   if (MethodMarshallerUtils.isJAXBBasicType(actualType)) {
+                       pde.setByJavaTypeClass(actualType);
+                   }     
+                }
+                
+                MethodMarshallerUtils.toMessage(headerPDEList, m, packages);
             }
             return m;
         } catch(Exception e) {

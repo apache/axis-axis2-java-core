@@ -86,6 +86,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
             MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
+            String packagesKey = marshalDesc.getPackagesKey();
             
             // Determine if a returnValue is expected.
             // The return value may be an child element
@@ -98,7 +99,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
             // Get this block
-            JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
+            JAXBBlockContext blockContext = new JAXBBlockContext(packages, packagesKey);        
             JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             Block block = message.getBodyBlock(blockContext, factory);
             Object wrapperObject = block.getBusinessObject(true);
@@ -148,7 +149,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 } else {
                     element = new Element(value, qName);
                 }
-                pvList.add(new PDElement(pd, element));
+                pvList.add(new PDElement(pd, element, null));
             }
             
             // Populate the response Holders in the signature
@@ -202,10 +203,11 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
             ParameterDescription[] pds =operationDesc.getParameterDescriptions();
             MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
             TreeSet<String> packages = marshalDesc.getPackages();
+            String packagesKey = marshalDesc.getPackagesKey();
             
             // In usage=WRAPPED, there will be a single JAXB block inside the body.
             // Get this block
-            JAXBBlockContext blockContext = new JAXBBlockContext(packages);        
+            JAXBBlockContext blockContext = new JAXBBlockContext(packages, packagesKey);        
             JAXBBlockFactory factory = (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             Block block = message.getBodyBlock(blockContext, factory);
             Object wrapperObject = block.getBusinessObject(true);
@@ -250,7 +252,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 } else {
                     element = new Element(value, qName);
                 }
-                pvList.add(new PDElement(pd, element));
+                pvList.add(new PDElement(pd, element, null));
             }
              
             // Build the signature arguments
@@ -270,6 +272,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         EndpointDescription endpointDesc = ed.getEndpointDescription();
         MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
         TreeSet<String> packages = marshalDesc.getPackages();
+        String packagesKey = marshalDesc.getPackagesKey();
         
         // We want to respond with the same protocol as the request,
         // It the protocol is null, then use the Protocol defined by the binding
@@ -357,7 +360,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             
             Block block = factory.createFrom(object, 
-                    new JAXBBlockContext(packages), 
+                    new JAXBBlockContext(packages, packagesKey), 
                     wrapperQName);  
             m.setBodyBlock(block);
             
@@ -374,6 +377,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
         Protocol protocol = Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()); 
         MarshalServiceRuntimeDescription marshalDesc = MethodMarshallerUtils.getMarshalDesc(endpointDesc);
         TreeSet<String> packages = marshalDesc.getPackages();
+        String packagesKey = marshalDesc.getPackagesKey();
        
         
         // Note all exceptions are caught and rethrown with a WebServiceException
@@ -445,7 +449,7 @@ public class DocLitWrappedMethodMarshaller implements MethodMarshaller {
                 (JAXBBlockFactory)FactoryRegistry.getFactory(JAXBBlockFactory.class);
             
             Block block = factory.createFrom(object, 
-                    new JAXBBlockContext(packages), 
+                    new JAXBBlockContext(packages, packagesKey), 
                     wrapperQName);  
             m.setBodyBlock(block);
             

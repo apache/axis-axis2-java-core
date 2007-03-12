@@ -28,11 +28,13 @@ import org.apache.axis2.jaxws.description.ParameterDescription;
 public class PDElement {
     private ParameterDescription param;
     private Element element;
+    private Class byJavaTypeClass;  // Class for "by java type" marshalling and unmarshalling is used....normally null
     
-    public PDElement(ParameterDescription param, Element element) {
+    public PDElement(ParameterDescription param, Element element, Class byType) {
         super();
         this.param = param;
         this.element = element;
+        this.byJavaTypeClass = byType;
     }
 
     public ParameterDescription getParam() {
@@ -43,5 +45,12 @@ public class PDElement {
        
         return element;
     }
-    
+
+    public Class getByJavaTypeClass() {
+        return byJavaTypeClass;
+    }
+
+    public void setByJavaTypeClass(Class byType) {
+        this.byJavaTypeClass = byType;
+    }
 }

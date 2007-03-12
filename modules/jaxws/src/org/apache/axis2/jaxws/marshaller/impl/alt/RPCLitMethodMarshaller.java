@@ -120,9 +120,19 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                         true,  // input
                         false, true); // use partName since this is rpc/lit
                         
+            // We want to use "by Java Type" marshalling for 
+            // all body elements and all non-JAXB objects
+            for (PDElement pde:pdeList) {
+                ParameterDescription pd = pde.getParam();
+                Class type = pd.getParameterActualType();
+                if (!pd.isHeader() || 
+                     MethodMarshallerUtils.isJAXBBasicType(type)) {
+                    pde.setByJavaTypeClass(type);                    
+                }
+            }
             
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pdeList, m, packages, true);
+            MethodMarshallerUtils.toMessage(pdeList, m, packages);
             
             return m;
         } catch(Exception e) {
@@ -165,12 +175,24 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // that the data blocks are underneath the operation element
             message.setStyle(Style.RPC);
             
+            // We want to use "by Java Type" unmarshalling for 
+            // all body elements and all non-JAXB objects
+            Class[] javaTypes = new Class[pds.length];
+            for (int i=0; i < pds.length; i++) {
+                ParameterDescription pd = pds[i];
+                Class type = pd.getParameterActualType();
+                if (!pd.isHeader() || 
+                     MethodMarshallerUtils.isJAXBBasicType(type)) {
+                    javaTypes[i] = type;                    
+                }
+            }
+            
             // Unmarshal the ParamValues from the Message
             List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
                     message, 
                     packages, 
                     true, // input
-                    true); // unmarshal by type
+                    javaTypes); // unmarshal by type
             
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
@@ -245,7 +267,7 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             // put the data blocks underneath the operation element
             m.setStyle(Style.RPC);
             
-            // TODO Is there an annotation for the operation element response ?
+      
             QName rpcOpQName = getRPCOperationQName(operationDesc);
             String localPart = rpcOpQName.getLocalPart() + "Response";
             QName responseOp = new QName(rpcOpQName.getNamespaceURI(), localPart, rpcOpQName.getPrefix());
@@ -280,25 +302,41 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 } else {
                     returnElement = new Element(returnObject, returnQName, returnType);
                 }
+                
+                // Use marshalling by java type if necessary
+                Class byJavaType = null;
+                if (!operationDesc.isResultHeader() || MethodMarshallerUtils.isJAXBBasicType(returnType)) {
+                    byJavaType = returnType;
+                }
                 MethodMarshallerUtils.toMessage(returnElement, 
                         returnType, 
                         marshalDesc, 
                         m,
-                        true, // forceXSI since this is rpc/lit
+                        byJavaType, 
                         operationDesc.isResultHeader()); 
             }
             
             // Convert the holder objects into a list of JAXB objects for marshalling
-            List<PDElement> pvList = 
+            List<PDElement> pdeList = 
                 MethodMarshallerUtils.getPDElements(marshalDesc,
                         pds, 
                         signatureArgs, 
                         false,  // output
                         false, true);   // use partName since this is rpc/lit
-
+            
+            // We want to use "by Java Type" marshalling for 
+            // all body elements and all non-JAXB objects
+            for (PDElement pde:pdeList) {
+                ParameterDescription pd = pde.getParam();
+                Class type = pd.getParameterActualType();
+                if (!pd.isHeader() || 
+                     MethodMarshallerUtils.isJAXBBasicType(type)) {
+                    pde.setByJavaTypeClass(type);                    
+                }
+            }
             // TODO Should we check for null output body values?  Should we check for null output header values ?
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pvList, m, packages, true);
+            MethodMarshallerUtils.toMessage(pdeList, m, packages);
             
             return m;
         } catch(Exception e) {
@@ -348,11 +386,17 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
             if (returnType != void.class) {
                 // If the webresult is in the header, we need the name of the header so that we can find it.
                 Element returnElement = null;
+                // Use "byJavaType" unmarshalling if necessary
+                Class byJavaType = null;
+                if (!operationDesc.isResultHeader() ||
+                        MethodMarshallerUtils.isJAXBBasicType(returnType)) {
+                    byJavaType = returnType;
+                }
                 if (operationDesc.isResultHeader()) {
-                    returnElement = MethodMarshallerUtils.getReturnElement(packages, message, returnType, true,
+                    returnElement = MethodMarshallerUtils.getReturnElement(packages, message, byJavaType, true,
                             operationDesc.getResultTargetNamespace(), operationDesc.getResultPartName());
                 } else {
-                    returnElement = MethodMarshallerUtils.getReturnElement(packages, message, returnType, false, null, null);
+                    returnElement = MethodMarshallerUtils.getReturnElement(packages, message, byJavaType, false, null, null);
                 }
                 returnValue = returnElement.getTypeValue();
                 // TODO should we allow null if the return is a header?
@@ -364,12 +408,24 @@ public class RPCLitMethodMarshaller implements MethodMarshaller {
                 }
             }
             
+            // We want to use "by Java Type" unmarshalling for 
+            // all body elements and all non-JAXB objects
+            Class[] javaTypes = new Class[pds.length];
+            for (int i=0; i < pds.length; i++) {
+                ParameterDescription pd = pds[i];
+                Class type = pd.getParameterActualType();
+                if (!pd.isHeader() || 
+                     MethodMarshallerUtils.isJAXBBasicType(type)) {
+                    javaTypes[i] = type;                    
+                }
+            }
+            
             // Unmarshall the ParamValues from the Message
             List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
                     message, 
                     packages, 
                     false, // output
-                    true); // unmarshal by type
+                    javaTypes); // unmarshal by type
             
             // TODO Should we check for null output body values?  Should we check for null output header values ?
             

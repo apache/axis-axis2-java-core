@@ -17,13 +17,19 @@
 package org.apache.axis2.jaxws.marshaller.factory;
 
 import javax.jws.soap.SOAPBinding;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.ws.Holder;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitBareMethodMarshaller;
+import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitBareMinimalMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitWrappedMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitWrappedMinimalMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitWrappedPlusMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.RPCLitMethodMarshaller;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescriptionFactory;
 import org.apache.axis2.jaxws.description.OperationDescription;
@@ -36,7 +42,7 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 public class MethodMarshallerFactory {
 
     
-    private enum SUBTYPE {NORMAL, DLW_WSGEN_PLUS, DLW_MINIMAL };
+    private enum SUBTYPE {NORMAL, PLUS, MINIMAL };
     
 	/**
 	 * Intentionally private
@@ -59,18 +65,23 @@ public class MethodMarshallerFactory {
 		if (style == SOAPBinding.Style.RPC) {
             return new RPCLitMethodMarshaller();  
         } else if (paramStyle == SOAPBinding.ParameterStyle.WRAPPED){
-            if (subType == SUBTYPE.DLW_WSGEN_PLUS) {
+            if (subType == SUBTYPE.PLUS) {
                 // Abnormal case
                 return new DocLitWrappedPlusMethodMarshaller();
-            } else if (subType == SUBTYPE.DLW_MINIMAL) {
+            } else if (subType == SUBTYPE.MINIMAL) {
                 // Abnormal case
                 return new DocLitWrappedMinimalMethodMarshaller();
             }else {
                 return new DocLitWrappedMethodMarshaller();  
             }
-		} else if (paramStyle == SOAPBinding.ParameterStyle.BARE){
-            return new DocLitBareMethodMarshaller();
-		}
+        } else if (paramStyle == SOAPBinding.ParameterStyle.BARE){
+            if (subType == SUBTYPE.MINIMAL) {
+                // Abnormal case
+                return new DocLitBareMinimalMethodMarshaller();
+            }else {
+                return new DocLitBareMethodMarshaller();
+            }
+        }
 		return null;
 	}
 
@@ -97,12 +108,15 @@ public class MethodMarshallerFactory {
         SOAPBinding.ParameterStyle parameterStyle = null;
         SUBTYPE subType = SUBTYPE.NORMAL;
         if(isDocLitBare(op)){
+            if (isDocLitBareMinimal(op)) {
+                subType = SUBTYPE.MINIMAL;
+            }
             parameterStyle = SOAPBinding.ParameterStyle.BARE;
         } else { 
-            if (isDocLitWrappedPlus(op)) {
-                subType = SUBTYPE.DLW_WSGEN_PLUS;
-            } else if (isDocLitWrappedMinimal(op)) {
-                subType = SUBTYPE.DLW_MINIMAL;
+            if (isDocLitWrappedMinimal(op)) {
+                subType = SUBTYPE.MINIMAL;
+            } else if (isDocLitWrappedPlus(op)) {
+                subType = SUBTYPE.PLUS;
             }
             parameterStyle = SOAPBinding.ParameterStyle.WRAPPED;
         }
@@ -146,6 +160,9 @@ public class MethodMarshallerFactory {
      */
     protected static boolean isDocLitWrappedPlus(OperationDescription op){
         if (isDocLitWrapped(op)) {
+            if (isContextPathConstruction(op)) { 
+                return true;
+            }
             if (op.isResultHeader()) {
                 return true;
             }
@@ -160,7 +177,43 @@ public class MethodMarshallerFactory {
     }
     
     /**
-     * If an web service is created without wsgen, it is possible that the
+     * If a webservices is created without xjc, then there will be no ObjectFactory
+     * classes packaged with the webservice.  In such cases, use the doc/lit bare minimal marshaller.
+     * This marshaller will use "by java type" marshalling/unmarshalling for primitives and Strings.
+     * @param op
+     * @return
+     */
+    protected static boolean isDocLitBareMinimal(OperationDescription op) {
+        return isDocLitBare(op) && isContextPathConstruction(op);
+    }
+    
+    /**
+     * @param op
+     * @return true if JAXBContext constructed using CONTEXT PATH
+     */
+    private static boolean isContextPathConstruction(OperationDescription op) {
+        ServiceDescription serviceDesc = op.getEndpointInterfaceDescription().getEndpointDescription().getServiceDescription();
+        MarshalServiceRuntimeDescription marshalDesc = 
+            MarshalServiceRuntimeDescriptionFactory.get(serviceDesc);
+        // Get the JAXBContext...Since this is a cached object we incur no penalty by looking at this point.
+        Holder<JAXBUtils.CONSTRUCTION_TYPE> holder = new Holder<JAXBUtils.CONSTRUCTION_TYPE>();
+        try {
+            JAXBContext context = JAXBUtils.getJAXBContext(marshalDesc.getPackages(), holder, marshalDesc.getPackagesKey());
+        } catch (JAXBException e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+        if (holder.value == JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH) {
+            // If JAXBContext was constructed with a context path, this indicates that ObjectFactory (or other
+            // objects) are available.  
+            return true;
+        } else {
+            // If JAXBContext was constructed using a class[] or we don't know how it was constructed, then assume
+            // that we need to do the specialized "minimal" marshalling.
+            return false;
+        }
+    }
+    /**
+     * If a web service is created without wsgen, it is possible that the
      * wrapper elements are missing.  In such cases, use the doc/lit wrapped minimal marshaller
      * @param op
      * @return

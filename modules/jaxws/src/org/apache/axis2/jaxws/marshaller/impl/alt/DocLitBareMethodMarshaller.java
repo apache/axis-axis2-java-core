@@ -102,7 +102,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                     message, 
                     packages, 
                     false, // output
-                    false); // never unmarshal by type for document/lit bare
+                    null); // always unmarshal with "by element" mode
             
             // Populate the response Holders
             MethodMarshallerUtils.updateResponseSignatureArgs(pds, pvList, signatureArgs);
@@ -143,7 +143,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                     message, 
                     packages, 
                     true, // input
-                    false); // never unmarshal by type for doc/lit bare
+                    null); // always unmarshal using "by element" mode
             
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
@@ -229,7 +229,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                 }
                 MethodMarshallerUtils.toMessage(returnElement, returnType,
                         marshalDesc, m, 
-                        false, // don't force xsi:type for doc/lit
+                        null, // always marshal using "by element" mode
                         operationDesc.isResultHeader()); 
             }
             
@@ -238,11 +238,12 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                     pds, 
                     signatureArgs, 
                     false, // output
-                    false, false);
+                    false, 
+                    false);
                    
 
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pvList, m, packages, false);
+            MethodMarshallerUtils.toMessage(pvList, m, packages);
             
             return m;
         } catch(Exception e) {
@@ -309,7 +310,7 @@ public class DocLitBareMethodMarshaller implements MethodMarshaller {
                     
             
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pvList, m, packages, false);
+            MethodMarshallerUtils.toMessage(pvList, m, packages);
             
             return m;
         } catch(Exception e) {

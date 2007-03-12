@@ -20,6 +20,7 @@ import java.util.TreeSet;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.ws.Holder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,25 +36,37 @@ public class JAXBBlockContext {
     
     private static final Log log = LogFactory.getLog(JAXBBlockContext.class);
     
-	private TreeSet<String> contextPackages;  // List of packages needed by the context
-	private JAXBContext jaxbContext = null;
+    private TreeSet<String> contextPackages;  // List of packages needed by the context
+    private String contextPackagesKey;        // Unique key that represents the set of contextPackages (usually toString)
+    private JAXBContext jaxbContext = null;   // JAXBContext
+    private JAXBUtils.CONSTRUCTION_TYPE       // How the JAXBContext is constructed
+        constructionType = JAXBUtils.CONSTRUCTION_TYPE.UNKNOWN;
     
-    // For RPC processing only...discouraged for other modes
-    // In RPC processing, JAXB needs to unmarshal using the
-    // "declared type unmarshalling" approach because the
-    // element is not known by schema.  If this block will be 
-    // unmarshalled in this fashion, use processType to set the 
-    // declared type.  Please do not use this property for 
-    // document style processing.
+    // There are two modes of marshalling and unmarshalling: "by java type" and "by schema element".
+    // The prefered mode is "by schema element" because it is safe and xml-centric.
+    // However there are some circumstances when "by schema element" is not available.
+    //    Examples: RPC Lit processing (the wire element is defined by a wsdl:part...not schema)
+    //              Doc/Lit Bare "Minimal" Processing (JAXB ObjectFactories are missing...and thus we must use "by type" for primitives/String)
+    // Please don't use "by java type" processing to get around errors.
+    
     private Class processType = null;
-	
-	/**
-	 * Normal Constructor JAXBBlockContext
-	 * @param packages Set of packages needed by the JAXBContext.
-	 */
-	public JAXBBlockContext(TreeSet<String> packages) {
+    
+    /**
+     * Full Constructor JAXBBlockContext (most performant)
+     * @param packages Set of packages needed by the JAXBContext.
+     */
+    public JAXBBlockContext(TreeSet<String> packages, String packagesKey) {
         this.contextPackages = packages;
-	}
+        this.contextPackagesKey = packagesKey;
+    }
+    
+    /** 
+     * Slightly slower constructor
+     * @param packages
+     */
+    public JAXBBlockContext(TreeSet<String> packages) {
+        this(packages, packages.toString());
+    }
     
     /**
      * Normal Constructor JAXBBlockContext
@@ -63,43 +76,46 @@ public class JAXBBlockContext {
     public JAXBBlockContext(String contextPackage) {
         this.contextPackages = new TreeSet();
         this.contextPackages.add(contextPackage);
+        this.contextPackagesKey = this.contextPackages.toString();
     }
 
-	/**
-	 * "Dispatch" Constructor
-	 * Use this full constructor when the JAXBContent is provided by
-	 * the customer.  
-	 * @param jaxbContext
-	 */
-	public JAXBBlockContext(JAXBContext jaxbContext) {
-		this.jaxbContext = jaxbContext;
-	}
+    /**
+     * "Dispatch" Constructor
+     * Use this full constructor when the JAXBContent is provided by
+     * the customer.  
+     * @param jaxbContext
+     */
+    public JAXBBlockContext(JAXBContext jaxbContext) {
+        this.jaxbContext = jaxbContext;
+    }
 
-	/**
-	 * @return Class representing type of the element
-	 */
-	public TreeSet<String> getContextPackages() {
-		return contextPackages;
-	}
+    /**
+     * @return Class representing type of the element
+     */
+    public TreeSet<String> getContextPackages() {
+        return contextPackages;
+    }
     
-	/**
-	 * @return get the JAXBContext
-	 * @throws JAXBException
-	 */
-	public JAXBContext getJAXBContext() throws JAXBException {
-		if (jaxbContext == null) {	
-		    if (log.isDebugEnabled()) {
-		        log.debug("A JAXBContext did not exist, creating a new one with the context packages.");
+    /**
+     * @return get the JAXBContext
+     * @throws JAXBException
+     */
+    public JAXBContext getJAXBContext() throws JAXBException {
+        if (jaxbContext == null) {  
+            if (log.isDebugEnabled()) {
+                log.debug("A JAXBContext did not exist, creating a new one with the context packages.");
             }
-            jaxbContext = JAXBUtils.getJAXBContext(contextPackages);
-		}
+            Holder<JAXBUtils.CONSTRUCTION_TYPE> constructType = new Holder<JAXBUtils.CONSTRUCTION_TYPE>();
+            jaxbContext = JAXBUtils.getJAXBContext(contextPackages, constructType, contextPackagesKey);
+            constructionType = constructType.value;
+        }
         else {
             if (log.isDebugEnabled()) {
                 log.debug("Using an existing JAXBContext");
             }
         }
-		return jaxbContext;
-	}
+        return jaxbContext;
+    }
 
     /**
      * @return RPC Declared Type
@@ -115,5 +131,9 @@ public class JAXBBlockContext {
      */
     public void setProcessType(Class type) {
         processType = type;
+    }
+
+    public JAXBUtils.CONSTRUCTION_TYPE getConstructionType() {
+        return constructionType;
     }
 }

@@ -24,19 +24,19 @@ import java.net.URLDecoder;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.ws.Holder;
 
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -55,26 +55,24 @@ import org.apache.commons.logging.LogFactory;
  * create and pool by package name.
  */
 public class JAXBUtils {
-	
+    
     private static final Log log = LogFactory.getLog(JAXBUtils.class);
     
-	// Create a synchronized map to get the JAXBObject: keys are ClassLoader and Set<String>.
-    // TODO We should change the key from Set<String> to an actual package ContextPath
-    private static Map<ClassLoader, Map<String, JAXBContext> > jaxbMap =
-			Collections.synchronizedMap(new WeakHashMap<ClassLoader, Map<String, JAXBContext> >());
-	private static JAXBContext genericJAXBContext = null;
-	
-	private static Map<JAXBContext,Unmarshaller> umap = 
-        Collections.synchronizedMap(new WeakHashMap<JAXBContext, Unmarshaller>());
+    // Create a concurrent map to get the JAXBObject: keys are ClassLoader and Set<String>.
+    private static Map<ClassLoader, Map<String, JAXBContextValue> > jaxbMap =
+        new ConcurrentHashMap<ClassLoader, Map<String, JAXBContextValue> >();
+    
+    private static Map<JAXBContext,Unmarshaller> umap = 
+        new ConcurrentHashMap<JAXBContext, Unmarshaller>();
     
     private static Map<JAXBContext,Marshaller> mmap = 
-        Collections.synchronizedMap(new WeakHashMap<JAXBContext, Marshaller>());
+        new ConcurrentHashMap<JAXBContext, Marshaller>();
     
     private static Map<JAXBContext,JAXBIntrospector> imap = 
-        Collections.synchronizedMap(new WeakHashMap<JAXBContext, JAXBIntrospector>());
-	
-    // From Lizet:
-    //"If you really care about the performance, 
+        new ConcurrentHashMap<JAXBContext, JAXBIntrospector>();
+    
+    // From Lizet Ernand:
+    // If you really care about the performance, 
     // and/or your application is going to read a lot of small documents, 
     // then creating Unmarshaller could be relatively an expensive operation. 
     // In that case, consider pooling Unmarshaller objects.
@@ -82,77 +80,96 @@ public class JAXBUtils {
     // as long as you don't use one instance from two threads at the same time. 
 
     private static boolean ENABLE_ADV_POOLING = false;
-	
-	/**
-	 * Get a JAXBContext for the class
-	 * @param contextPackage Set<Package>
-	 * @return JAXBContext
-	 * @throws JAXBException
-	 */
-	public static JAXBContext getJAXBContext(TreeSet<String> contextPackages) throws JAXBException {
-		// JAXBContexts for the same class can be reused and are supposed to be thread-safe
+    
+    // The maps are freed up when a LOAD FACTOR is hit
+    private static int MAX_LOAD_FACTOR = 32;  
+    
+    // Construction Type
+    public enum CONSTRUCTION_TYPE {BY_CLASS_ARRAY, BY_CONTEXT_PATH, UNKNOWN};
+    
+    /**
+     * Get a JAXBContext for the class
+     * @param contextPackage Set<Package>
+     * @deprecated
+     * @return JAXBContext
+     * @throws JAXBException
+     */
+    public static JAXBContext getJAXBContext(TreeSet<String> contextPackages) throws JAXBException {
+        return getJAXBContext(contextPackages, new Holder<CONSTRUCTION_TYPE>(), contextPackages.toString());
+    }
+    
+    /**
+     * Get a JAXBContext for the class
+     * @param contextPackage Set<Package>
+     * @param contructionType (output value that indicates how the context was constructed) 
+     * @return JAXBContext
+     * @throws JAXBException
+     */
+    public static JAXBContext getJAXBContext(TreeSet<String> contextPackages, Holder<CONSTRUCTION_TYPE> constructionType, String key) throws JAXBException {
+        // JAXBContexts for the same class can be reused and are supposed to be thread-safe
         if(log.isDebugEnabled()){
-        	log.debug("Following packages are in this batch of getJAXBContext() :");
-        	for(String pkg:contextPackages){
-        		log.debug(pkg);
-        	}
+            log.debug("Following packages are in this batch of getJAXBContext() :");
+            for(String pkg:contextPackages){
+                log.debug(pkg);
+            }
         }
-	    // The JAXBContexts are keyed by ClassLoader and the set of Strings
+        // The JAXBContexts are keyed by ClassLoader and the set of Strings
         ClassLoader cl = getContextClassLoader();
         
         // Get the innerMap 
-        Map<String, JAXBContext> innerMap = jaxbMap.get(cl);
+        Map<String, JAXBContextValue> innerMap = jaxbMap.get(cl);
         if (innerMap == null) {
-            synchronized(jaxbMap) {
-                innerMap = new WeakHashMap<String, JAXBContext>();
-                jaxbMap.put(cl, Collections.synchronizedMap(innerMap));
-            }
+            adjustPoolSize(jaxbMap);
+            innerMap = new ConcurrentHashMap<String, JAXBContextValue>();
+            jaxbMap.put(cl, innerMap);
         }
         
         if (contextPackages == null) {
             contextPackages = new TreeSet<String>();
         }
         
-		JAXBContext context = innerMap.get(contextPackages.toString());
-		if (context == null) {
-            synchronized(innerMap) {
-                // A pooled context was not found, so create one and put it in the map.
-                
-                // A copy is made of the original list of packages because createJAXBContext may 
-                // prune the list.
-                TreeSet<String> origContextPackages = new TreeSet<String>(contextPackages);
-                context = createJAXBContext(contextPackages, cl);
-                
-                // Put the new context in the map keyed by both the original and current list of packages
-                innerMap.put(origContextPackages.toString(), context);
-                innerMap.put(contextPackages.toString(), context);	
-                if (log.isDebugEnabled()) {
-                    log.debug("JAXBContext [created] for " + contextPackages.toString());
-                }
+        JAXBContextValue contextValue = innerMap.get(key);
+        if (contextValue == null) {
+            adjustPoolSize(innerMap);
+            
+            // A pooled context was not found, so create one and put it in the map.
+            
+            // A copy is made of the original list of packages because createJAXBContext may 
+            // prune the list.
+            TreeSet<String> origContextPackages = new TreeSet<String>(contextPackages);
+            contextValue = createJAXBContextValue(contextPackages, cl);
+            
+            // Put the new context in the map keyed by both the original and current list of packages
+            innerMap.put(key, contextValue);
+            innerMap.put(contextPackages.toString(), contextValue);  
+            if (log.isDebugEnabled()) {
+                log.debug("JAXBContext [created] for " + contextPackages.toString());
             }
-		} else {
+            
+        } else {
             if (log.isDebugEnabled()) {
                 log.debug("JAXBContext [from pool] for " + contextPackages.toString());
             }
         }
-		return context;
-	}
+        constructionType.value = contextValue.constructionType;
+        return contextValue.jaxbContext;
+    }
     
     /**
      * Create a JAXBContext using the contextPackages
      * @param contextPackages Set<String>
      * @param cl ClassLoader
-     * @return JAXBContext
+     * @return JAXBContextValue (JAXBContext + constructionType)
      * @throws JAXBException
      */
-    private static JAXBContext createJAXBContext(TreeSet<String> contextPackages, ClassLoader cl) throws JAXBException {
+    private static JAXBContextValue createJAXBContextValue(TreeSet<String> contextPackages, ClassLoader cl) throws JAXBException {
 
-       JAXBContext context = null;
+       JAXBContextValue contextValue = null;
        if(log.isDebugEnabled()){
-       	log.debug("Following packages are in this batch of getJAXBContext() :");
-       	for(String pkg:contextPackages){
-       		log.debug(pkg);
-       	}
+        log.debug("Following packages are in this batch of getJAXBContext() :");
+        for(String pkg:contextPackages){
+            log.debug(pkg);
+        }
        }
         // The contextPackages is a set of package names that are constructed using PackageSetBuilder.
         // PackageSetBuilder gets the packages names from various sources.
@@ -213,7 +230,7 @@ public class JAXBUtils {
             // See if this package has an ObjectFactory or package-info
             if (checkPackage(p, cl)) {
                 // Flow to here indicates package can be used for CONTEXT construction
-            	isJAXBFound = true;
+                isJAXBFound = true;
                 if (log.isDebugEnabled()) {
                     log.debug("Package " + p + " contains an ObjectFactory or package-info class.");
                 }
@@ -241,29 +258,34 @@ public class JAXBUtils {
         }
         
         if(!isJAXBFound){
-        	log.debug("Both ObjectFactory & package-info not found in package hierachy");
+            if (log.isDebugEnabled()) {
+                log.debug("Both ObjectFactory & package-info not found in package hierachy");
+            }
         }
         
         // The code above may have removed some packages from the list. 
         // Retry our lookup with the updated list
-        Map<String, JAXBContext> innerMap = jaxbMap.get(cl);
+        Map<String, JAXBContextValue> innerMap = jaxbMap.get(cl);
         if (innerMap != null) {
-            context = innerMap.get(contextPackages.toString());
-            if (context != null) {
+            contextValue = innerMap.get(contextPackages.toString());
+            if (contextValue != null) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Successfully found JAXBContext with updated context list:" + context.toString());
+                    log.debug("Successfully found JAXBContext with updated context list:" + contextValue.jaxbContext.toString());
                 }
-                return context;
+                return contextValue;
             }
         }
         
         // CONTEXT construction
         if (contextConstruction) {
-            context = createJAXBContextUsingContextPath(contextPackages, cl);
+            JAXBContext context = createJAXBContextUsingContextPath(contextPackages, cl);
+            if (context != null) {
+                contextValue = new JAXBContextValue(context, CONSTRUCTION_TYPE.BY_CONTEXT_PATH);
+            }
         }
         
         // CLASS construction
-        if (context == null) {
+        if (contextValue == null) {
             it = contextPackages.iterator();
             List<Class> fullList = new ArrayList<Class>();
             while (it.hasNext()) {
@@ -271,28 +293,31 @@ public class JAXBUtils {
                 fullList.addAll(getAllClassesFromPackage(pkg, cl));
             }
             Class[] classArray = fullList.toArray(new Class[0]);
-            context = JAXBContext_newInstance(classArray);
+            JAXBContext context = JAXBContext_newInstance(classArray);
+            if (context != null) {
+                contextValue = new JAXBContextValue(context, CONSTRUCTION_TYPE.BY_CLASS_ARRAY);
+            }
         }
         if (log.isDebugEnabled()) {
-            log.debug("Successfully created JAXBContext " + context.toString());
+            log.debug("Successfully created JAXBContext " + contextValue.jaxbContext.toString());
         }
-        return context;
+        return contextValue;
     }
-	
-	/**
-	 * Get the unmarshaller.  You must call releaseUnmarshaller to put it back into the pool
-	 * @param context JAXBContext
-	 * @return Unmarshaller
-	 * @throws JAXBException
-	 */
-	public static Unmarshaller getJAXBUnmarshaller(JAXBContext context) throws JAXBException {
-		if (!ENABLE_ADV_POOLING) {
+    
+    /**
+     * Get the unmarshaller.  You must call releaseUnmarshaller to put it back into the pool
+     * @param context JAXBContext
+     * @return Unmarshaller
+     * @throws JAXBException
+     */
+    public static Unmarshaller getJAXBUnmarshaller(JAXBContext context) throws JAXBException {
+        if (!ENABLE_ADV_POOLING) {
             if (log.isDebugEnabled()) {
                 log.debug("Unmarshaller created [no pooling]");
             }
-		    return context.createUnmarshaller();
+            return context.createUnmarshaller();
         } 
-        Unmarshaller u = umap.get(context);
+        Unmarshaller u = umap.remove(context);
         if (u == null) {
             if (log.isDebugEnabled()) {
                 log.debug("Unmarshaller created [not in pool]");
@@ -304,31 +329,32 @@ public class JAXBUtils {
             }
         }
         return u;
-	}
-	
-	/**
-	 * Release Unmarshaller
-	 * Do not call this method if an exception occurred while using the Unmarshaller.
-	 * We object my be in an invalid state.
-	 * @param context JAXBContext
-	 * @param unmarshaller Unmarshaller
-	 */
-	public static void releaseJAXBUnmarshaller(JAXBContext context, Unmarshaller unmarshaller) {
+    }
+    
+    /**
+     * Release Unmarshaller
+     * Do not call this method if an exception occurred while using the Unmarshaller.
+     * We object my be in an invalid state.
+     * @param context JAXBContext
+     * @param unmarshaller Unmarshaller
+     */
+    public static void releaseJAXBUnmarshaller(JAXBContext context, Unmarshaller unmarshaller) {
         if (log.isDebugEnabled()) {
             log.debug("Unmarshaller placed back into pool");
         }
         if (ENABLE_ADV_POOLING) {
+            adjustPoolSize(umap);
             umap.put(context, unmarshaller);
         }
-	}
-	
-	/**
-	 * Get JAXBMarshaller
-	 * @param context JAXBContext
-	 * @return Marshaller
-	 * @throws JAXBException
-	 */
-	public static Marshaller getJAXBMarshaller(JAXBContext context) throws JAXBException {
+    }
+    
+    /**
+     * Get JAXBMarshaller
+     * @param context JAXBContext
+     * @return Marshaller
+     * @throws JAXBException
+     */
+    public static Marshaller getJAXBMarshaller(JAXBContext context) throws JAXBException {
         Marshaller m = null;
         if (!ENABLE_ADV_POOLING) {
             if (log.isDebugEnabled()) {
@@ -336,7 +362,7 @@ public class JAXBUtils {
             }
             m = context.createMarshaller();
         } else { 
-            m = mmap.get(context);
+            m = mmap.remove(context);
             if (m == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Marshaller created [not in pool]");
@@ -348,33 +374,34 @@ public class JAXBUtils {
                 }
             }
         }
-		m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE); // No PIs
-		return m;
-	}
-	
-	/**
-	 * releaseJAXBMarshalller
-	 * Do not call this method if an exception occurred while using the Marshaller.
-	 * We object my be in an invalid state.
-	 * @param context JAXBContext
-	 * @param marshaller Marshaller
-	 */
-	public static void releaseJAXBMarshaller(JAXBContext context, Marshaller marshaller) {
+        m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE); // No PIs
+        return m;
+    }
+    
+    /**
+     * releaseJAXBMarshalller
+     * Do not call this method if an exception occurred while using the Marshaller.
+     * We object my be in an invalid state.
+     * @param context JAXBContext
+     * @param marshaller Marshaller
+     */
+    public static void releaseJAXBMarshaller(JAXBContext context, Marshaller marshaller) {
         if (log.isDebugEnabled()) {
             log.debug("Marshaller placed back into pool");
         }
         if (ENABLE_ADV_POOLING) {
+            adjustPoolSize(mmap);
             mmap.put(context, marshaller);
         }
-	}
-	
-	/**
-	 * get JAXB Introspector
-	 * @param context JAXBContext
-	 * @return JAXBIntrospector
-	 * @throws JAXBException
-	 */
-	public static JAXBIntrospector getJAXBIntrospector(JAXBContext context) throws JAXBException {
+    }
+    
+    /**
+     * get JAXB Introspector
+     * @param context JAXBContext
+     * @return JAXBIntrospector
+     * @throws JAXBException
+     */
+    public static JAXBIntrospector getJAXBIntrospector(JAXBContext context) throws JAXBException {
         JAXBIntrospector i = null;
         if (!ENABLE_ADV_POOLING) {
             if (log.isDebugEnabled()) {
@@ -382,7 +409,7 @@ public class JAXBUtils {
             }
             i = context.createJAXBIntrospector();
         } else { 
-            i = imap.get(context);
+            i = imap.remove(context);
             if (i == null) {
                 if (log.isDebugEnabled()) {
                     log.debug("JAXBIntrospector created [not in pool]");
@@ -395,57 +422,58 @@ public class JAXBUtils {
             }
         }
         return i;
-	}
-	
-	/**
-	 * Release JAXBIntrospector
-	 * Do not call this method if an exception occurred while using the JAXBIntrospector.
-	 * We object my be in an invalid state.
-	 * @param context JAXBContext
-	 * @param introspector JAXBIntrospector
-	 */
-	public static void releaseJAXBIntrospector(JAXBContext context, JAXBIntrospector introspector) {
+    }
+    
+    /**
+     * Release JAXBIntrospector
+     * Do not call this method if an exception occurred while using the JAXBIntrospector.
+     * We object my be in an invalid state.
+     * @param context JAXBContext
+     * @param introspector JAXBIntrospector
+     */
+    public static void releaseJAXBIntrospector(JAXBContext context, JAXBIntrospector introspector) {
         if (log.isDebugEnabled()) {
             log.debug("JAXBIntrospector placed back into pool");
         }
         if (ENABLE_ADV_POOLING) {
+            adjustPoolSize(imap);
             imap.put(context, introspector);
         }
-	}
+    }
     
     /**
      * @param p Package
      * @param cl
      * @return true if each package has a ObjectFactory class or package-info
      */
-	private static boolean checkPackage(String p, ClassLoader cl) {
-	    
-	    // Each package must have an ObjectFactory
-		if(log.isDebugEnabled()){
-        	log.debug("checking package :" + p);
-        	
+    private static boolean checkPackage(String p, ClassLoader cl) {
+        
+        // Each package must have an ObjectFactory
+        if(log.isDebugEnabled()){
+            log.debug("checking package :" + p);
+            
         }
-	    try {
-	        Class cls = forName(p + ".ObjectFactory",false, cl);
-	        if (cls != null) {
-	            return true;
-	        }
-	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
-	        //does not extend Exception. So we will absorb any Throwable exception here.
-	    } catch (Throwable e) {	      
+        try {
+            Class cls = forName(p + ".ObjectFactory",false, cl);
+            if (cls != null) {
+                return true;
+            }
+            //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+            //does not extend Exception. So we will absorb any Throwable exception here.
+        } catch (Throwable e) {       
            if (log.isDebugEnabled()) {
                log.debug("ObjectFactory Class Not Found " + e);
                log.debug("...caused by " + e.getCause() + " "+ JavaUtils.stackToString(e));
            }
-	    }
-	    
+        }
+        
         try {
             Class cls = forName(p + ".package-info",false, cl);
             if (cls != null) {
                 return true;
             }
             //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
-	        //does not extend Exception. So we will absorb any Throwable exception here.
+            //does not extend Exception. So we will absorb any Throwable exception here.
         } catch (Throwable e) {            
             if (log.isDebugEnabled()) {
                 log.debug("package-info Class Not Found " + e);
@@ -453,7 +481,7 @@ public class JAXBUtils {
             }
         }
 
-	    return false;
+        return false;
     }
     
     /**
@@ -515,29 +543,29 @@ public class JAXBUtils {
             // This will load classes from directory
             classes.addAll(getClassesFromDirectory(pkg, cl));
         } catch (ClassNotFoundException e) {
-        	 if(log.isDebugEnabled()){
+             if(log.isDebugEnabled()){
                  log.debug("getClassesFromDirectory failed to get Classes");
-        	 }          
+             }          
         }
         try {
            //If Clases not found in directory then look for jar that has these classes
-        	if(classes.size() <=0){
-        		//This will load classes from jar file.
-        		ClassFinderFactory cff = (ClassFinderFactory)FactoryRegistry.getFactory(ClassFinderFactory.class);
-	        	ClassFinder cf = cff.getClassFinder();
-	            classes.addAll(cf.getClassesFromJarFile(pkg, cl));
-        	}
+            if(classes.size() <=0){
+                //This will load classes from jar file.
+                ClassFinderFactory cff = (ClassFinderFactory)FactoryRegistry.getFactory(ClassFinderFactory.class);
+                ClassFinder cf = cff.getClassFinder();
+                classes.addAll(cf.getClassesFromJarFile(pkg, cl));
+            }
         } catch (ClassNotFoundException e) {
-        	 if(log.isDebugEnabled()){
+             if(log.isDebugEnabled()){
                  log.debug("getClassesFromJarFile failed to get Classes");
-        	 }
+             }
         }
         
         return classes;
     }
     
     private static ArrayList<Class> getClassesFromDirectory(String pkg, ClassLoader cl)throws ClassNotFoundException{
-    	  // This will hold a list of directories matching the pckgname. There may be more than one if a package is split over multiple jars/paths
+          // This will hold a list of directories matching the pckgname. There may be more than one if a package is split over multiple jars/paths
         String pckgname = pkg;
         ArrayList<File> directories = new ArrayList<File>();
         try {
@@ -600,8 +628,8 @@ public class JAXBUtils {
                                 
                                 //Class aClazz = Class.forName(loadableName, false, Thread.currentThread().getContextClassLoader());
                             }
-                	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
-                	        //does not extend Exception
+                            //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+                            //does not extend Exception
                         } catch (Throwable e) {
                             if (log.isDebugEnabled()) {
                                 log.debug("Tried to load class " + className + " while constructing a JAXBContext.  This class will be skipped.  Processing Continues." );
@@ -648,8 +676,8 @@ public class JAXBUtils {
                 // Load and add the class
                 Class cls = forName(ClassUtils.getLoadableClassName(className), false, cl);
                 list.add(cls);
-    	        //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
-    	        //does not extend Exception
+                //Catch Throwable as ClassLoader can throw an NoClassDefFoundError that
+                //does not extend Exception
             } catch (Throwable e) {
                 if (log.isDebugEnabled()) {
                     log.debug("Tried to load class " + className + " while constructing a JAXBContext.  This class will be skipped.  Processing Continues." );
@@ -786,6 +814,40 @@ public class JAXBUtils {
         } 
         
         return jaxbContext;
+    }
+    
+    /**
+     * Adjust the number of objects in the hash map if the limit is exceeded
+     * @param map 
+     */
+    private static synchronized void adjustPoolSize(Map map) {
+        if (map.size() > MAX_LOAD_FACTOR) {
+            // Remove every other Entry in the map.
+            Iterator it = map.entrySet().iterator();
+            boolean removeIt = false;
+            while (it.hasNext()) {
+                it.next();
+                if (removeIt) {
+                    it.remove();
+                }
+                removeIt = !removeIt;
+            }
+        }
+    }
+    
+    /**
+     * Holds the JAXBContext and the manner by which it was constructed
+     *
+     */
+    static class JAXBContextValue {
+        
+        public JAXBContext jaxbContext;
+        public CONSTRUCTION_TYPE constructionType;
+        
+        public JAXBContextValue(JAXBContext jaxbContext, CONSTRUCTION_TYPE constructionType) {
+            this.jaxbContext = jaxbContext;
+            this.constructionType = constructionType;
+        }
     }
     
 }

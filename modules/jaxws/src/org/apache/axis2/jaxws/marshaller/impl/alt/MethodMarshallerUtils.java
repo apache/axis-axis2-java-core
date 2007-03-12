@@ -21,9 +21,14 @@ package org.apache.axis2.jaxws.marshaller.impl.alt;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -56,6 +61,7 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.XMLFaultReason;
 import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
+import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
@@ -153,7 +159,7 @@ public class MethodMarshallerUtils  {
                 }
                 
                 // The object is now ready for marshalling
-                PDElement pde = new PDElement(pd, element);
+                PDElement pde = new PDElement(pd, element, null);  
                 pdeList.add(pde);
             }
         }
@@ -168,14 +174,14 @@ public class MethodMarshallerUtils  {
      * @param message Message
      * @param packages set of packages needed to unmarshal objects for this operation
      * @param isInput indicates if input or output  params (input on server, output on client)
-     * @param isUnmarshalByType (discouraged...but must be used for rpc)
+     * @param unmarshalByJavaType in most scenarios this is null.  Only use this in the scenarios that require unmarshalling by java type
      * @return ParamValues
      */
     static List<PDElement> getPDElements(ParameterDescription[] params, 
             Message message, 
             TreeSet<String> packages, 
             boolean isInput, 
-            boolean isUnmarshalByType) throws XMLStreamException {
+            Class[] unmarshalByJavaType) throws XMLStreamException {
         
         List<PDElement> pdeList = new ArrayList<PDElement>();
         
@@ -211,10 +217,9 @@ public class MethodMarshallerUtils  {
                 Block block = null;
                 JAXBBlockContext context = new JAXBBlockContext(packages);
                 
-                // RPC is type based, so unfortuately the type of 
-                // object must be provided
-                if (isUnmarshalByType && !pd.isHeader()) {
-                    context.setProcessType(pd.getParameterActualType());
+                // Trigger unmarshal by java type if necessary
+                if (unmarshalByJavaType != null && unmarshalByJavaType[i] != null) {
+                    context.setProcessType(unmarshalByJavaType[i]);
                 }
                 
                 // Unmarshal the object into a JAXB object or JAXBElement
@@ -238,7 +243,7 @@ public class MethodMarshallerUtils  {
                 }
                 
                 Element element = new Element(block.getBusinessObject(true), block.getQName());
-                PDElement pde = new PDElement(pd, element);
+                PDElement pde = new PDElement(pd, element, unmarshalByJavaType[i]);
                 pdeList.add(pde);
             }
         }
@@ -358,13 +363,11 @@ public class MethodMarshallerUtils  {
      * @param pdeList element enabled objects
      * @param message Message
      * @param packages Packages needed to do a JAXB Marshal
-     * @param isMarshalByType (discouraged...but must be used for rpc)
      * @throws MessageException
      */
     static void toMessage(List<PDElement> pdeList, 
             Message message, 
-            TreeSet<String> packages, 
-            boolean isMarshalByType) throws WebServiceException {
+            TreeSet<String> packages) throws WebServiceException {
         
         int totalBodyBlocks = 0;
         for (int i=0; i<pdeList.size(); i++) {
@@ -378,11 +381,12 @@ public class MethodMarshallerUtils  {
         for (int i=0; i<pdeList.size(); i++) {
             PDElement pde = pdeList.get(i);
             
-            // Create the JAXBBlockContext
-            // RPC uses type marshalling, so use the rpcType
+            // Create JAXBContext
             JAXBBlockContext context = new JAXBBlockContext(packages);
-            if (isMarshalByType && !pde.getParam().isHeader()) {
-                context.setProcessType(pde.getParam().getParameterActualType());
+            
+            // Marshal by type only if necessary
+            if (pde.getByJavaTypeClass() != null) {
+                context.setProcessType(pde.getByJavaTypeClass());
             }
                 
             // Create a JAXBBlock out of the value.
@@ -418,7 +422,7 @@ public class MethodMarshallerUtils  {
      * @param returnType
      * @param marshalDesc
      * @param message
-     * @param isMarshalByType..we must do this for RPC...discouraged otherwise
+     * @param marshalByJavaTypeClass..we must do this for RPC...discouraged otherwise
      * @param isHeader
      * @throws MessageException
      */
@@ -426,15 +430,15 @@ public class MethodMarshallerUtils  {
             Class returnType, 
             MarshalServiceRuntimeDescription marshalDesc,
             Message message, 
-            boolean isMarshalByType,
+            Class marshalByJavaTypeClass,
             boolean isHeader)
             throws WebServiceException {
         
         // Create the JAXBBlockContext
         // RPC uses type marshalling, so recored the rpcType
         JAXBBlockContext context = new JAXBBlockContext(marshalDesc.getPackages());
-        if (isMarshalByType && !isHeader) {
-            context.setProcessType(returnType);
+        if (marshalByJavaTypeClass != null) {
+            context.setProcessType(marshalByJavaTypeClass);
         }
         
         //  Create a JAXBBlock out of the value.
@@ -453,7 +457,7 @@ public class MethodMarshallerUtils  {
      * Unmarshal the return object from the message
      * @param packages
      * @param message
-     * @param unmarshalType Used only to indicate unmarshaling by type...only necessary for rpc
+     * @param unmarshalByJavaTypeClass Used only to indicate unmarshaling by type...only necessary in some scenarios
      * @param isHeader
      * @param headerNS (only needed if isHeader)
      * @param headerLocalPart (only needed if isHeader)
@@ -463,7 +467,7 @@ public class MethodMarshallerUtils  {
      */
     static Element getReturnElement(TreeSet<String> packages, 
             Message message, 
-            Class unmarshalType,  // set to null unless style=rpce
+            Class unmarshalByJavaTypeClass,  // normally null
             boolean isHeader,
             String headerNS, 
             String headerLocalPart)
@@ -472,8 +476,8 @@ public class MethodMarshallerUtils  {
         
         // The return object is the first block in the body
         JAXBBlockContext context = new JAXBBlockContext(packages);
-        if (unmarshalType != null && !isHeader) {
-            context.setProcessType(unmarshalType);  
+        if (unmarshalByJavaTypeClass != null && !isHeader) {
+            context.setProcessType(unmarshalByJavaTypeClass);  
         }
         Block block = null;
         if (isHeader) {
@@ -542,11 +546,6 @@ public class MethodMarshallerUtils  {
                 if (faultInfo == null || faultInfo.length() == 0) {
                     // Legacy Exception case
                     faultBeanObject = LegacyExceptionUtil.createFaultBean(t, fd, marshalDesc);
-                    
-                    // If using the exception as the fault bean, then force marshalling by type
-                    if (faultBeanObject == t) {
-                        context.setProcessType(t.getClass());
-                    }
                 } else {
                     // Normal case
                     // Get the fault bean object.  
@@ -558,13 +557,18 @@ public class MethodMarshallerUtils  {
                     log.debug("The faultBean type is" + faultBeanObject.getClass().getName());
                 }
                 
+                // Use "by java type" marshalling if necessary
+                if (faultBeanObject == t ||
+                    (context.getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH &&
+                        isJAXBBasicType(faultBeanObject.getClass()))) {
+                    context.setProcessType(faultBeanObject.getClass());
+                }
+                
                 QName faultBeanQName = new QName(faultBeanDesc.getFaultBeanNamespace(), faultBeanDesc.getFaultBeanLocalName());
                 // Make sure the faultBeanObject can be marshalled as an element
                 if (!marshalDesc.getAnnotationDesc(faultBeanObject.getClass()).hasXmlRootElement()) {
                     faultBeanObject = new JAXBElement(faultBeanQName, faultBeanObject.getClass(), faultBeanObject);
                 }
-                
-                
                
                 
                 // Create a detailblock representing the faultBeanObject
@@ -756,6 +760,12 @@ public class MethodMarshallerUtils  {
             
             // Note that faultBean may not be a bean, it could be a primitive 
             Class faultBeanFormalClass = loadClass(faultBeanDesc.getFaultBeanClassName());     
+            
+            // Use "by java type" marshalling if necessary
+            if (blockContext.getConstructionType() != JAXBUtils.CONSTRUCTION_TYPE.BY_CONTEXT_PATH &&
+                    isJAXBBasicType(faultBeanFormalClass)) {
+                blockContext.setProcessType(faultBeanFormalClass);
+            }
             
             // Get the jaxb block and business object
             Block jaxbBlock = factory.createFrom(detailBlocks[0], blockContext);
@@ -988,4 +998,27 @@ public class MethodMarshallerUtils  {
         return MarshalServiceRuntimeDescriptionFactory.get(sd);
     }
     
+    /**
+     * This probably should be available from the ParameterDescription
+     * @param cls
+     * @return true if primitive, wrapper, java.lang.String. Calendar (or GregorianCalendar), BigInteger etc or anything other
+     * java type that is mapped by the basic schema types
+     */
+    static boolean isJAXBBasicType(Class cls) {
+        // TODO : Others ?  Look at default JAXBContext
+        if (cls == String.class ||
+            cls.isPrimitive() || 
+            cls == Calendar.class ||
+            cls == byte[].class ||
+            cls == GregorianCalendar.class ||
+            cls == Date.class ||
+            cls == BigInteger.class ||
+            cls == BigDecimal.class) {
+            
+            return true;
+        }
+        return false;
+            
+            
+    }
 }

@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
+import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
 
 
@@ -34,6 +35,11 @@ public interface MarshalServiceRuntimeDescription extends ServiceRuntimeDescript
      * @return Set of package names for this service
      */
     public TreeSet<String> getPackages();
+    
+    /**
+     * @return Unique key that represents the object returned by getPackages
+     */
+    public String getPackagesKey();
     
     /**
      * Get the AnnotationDesc for this class.
@@ -71,5 +77,10 @@ public interface MarshalServiceRuntimeDescription extends ServiceRuntimeDescript
      * @return FaultBeanDescriptor that describes the fault bean
      */
     public FaultBeanDesc getFaultBeanDesc(FaultDescription faultDesc);
+    
+    /**
+     * @return MessageFactory for this Marshaller
+     */
+    public MessageFactory getMessageFactory();
 
 }

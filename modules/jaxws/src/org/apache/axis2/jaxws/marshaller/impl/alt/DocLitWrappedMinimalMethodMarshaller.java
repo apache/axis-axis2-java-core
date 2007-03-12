@@ -123,9 +123,16 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                         true,  // doc/lit wrapped
                         true); // false
                         
+            // We want to use "by Java Type" marshalling for 
+            // all objects
+            for (PDElement pde:pdeList) {
+                ParameterDescription pd = pde.getParam();
+                Class type = pd.getParameterActualType();
+                pde.setByJavaTypeClass(type);                      
+            }
             
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pdeList, m, packages, true);
+            MethodMarshallerUtils.toMessage(pdeList, m, packages);
             
             return m;
         } catch(Exception e) {
@@ -169,12 +176,20 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
             message.setStyle(Style.DOCUMENT);
             message.setIndirection(1);
             
+            // We want to use "by Java Type" unmarshalling for 
+            // all objects
+            Class[] javaTypes = new Class[pds.length];
+            for (int i=0; i < pds.length; i++) {
+                ParameterDescription pd = pds[i];
+                javaTypes[i] = pd.getParameterActualType();
+            }
+            
             // Unmarshal the ParamValues from the Message
             List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
                     message, 
                     packages, 
                     true, // input
-                    true);  // sigh...unmarshal by type because there is no wrapper
+                    javaTypes);  // sigh...unmarshal by type because there is no wrapper
             
             // Build the signature arguments
             Object[] sigArguments = MethodMarshallerUtils.createRequestSignatureArgs(pds, pvList);
@@ -285,12 +300,12 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                         returnType, 
                         marshalDesc, 
                         m,
-                        true, // force marshal by type
+                        returnType, // force marshal by type
                         operationDesc.isResultHeader()); 
             }
             
             // Convert the holder objects into a list of JAXB objects for marshalling
-            List<PDElement> pvList = 
+            List<PDElement> pdeList = 
                 MethodMarshallerUtils.getPDElements(marshalDesc,
                         pds, 
                         signatureArgs, 
@@ -298,9 +313,17 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                         true,   // doc/lit wrapped
                         false); // not rpc
 
+            // We want to use "by Java Type" marshalling for 
+            // all objects
+            for (PDElement pde:pdeList) {
+                ParameterDescription pd = pde.getParam();
+                Class type = pd.getParameterActualType();
+                pde.setByJavaTypeClass(type);                    
+            }
+            
             // TODO Should we check for null output body values?  Should we check for null output header values ?
             // Put values onto the message
-            MethodMarshallerUtils.toMessage(pvList, m, packages, true);
+            MethodMarshallerUtils.toMessage(pdeList, m, packages);
             
             return m;
         } catch(Exception e) {
@@ -353,15 +376,15 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                 if (operationDesc.isResultHeader()) {
                     returnElement = MethodMarshallerUtils.getReturnElement(packages, 
                             message, 
-                            null,  // For headers, unmarshal normally 
+                            returnType,  // Hmm we may want to refine this 
                             true,  // is a header
                             operationDesc.getResultTargetNamespace(), // header ns
                             operationDesc.getResultPartName());       // header local part
                 } else {
                     returnElement = MethodMarshallerUtils.getReturnElement(packages, 
                             message, 
-                            returnType, // Unmarshal by type
-                            false,      // not a header
+                            returnType, // Force Unmarshal by type
+                            false,     
                             null, 
                             null);
                 }
@@ -375,12 +398,21 @@ public class DocLitWrappedMinimalMethodMarshaller implements MethodMarshaller {
                 }
             }
             
+            // We want to use "by Java Type" unmarshalling for 
+            // all objects
+            Class[] javaTypes = new Class[pds.length];
+            for (int i=0; i < pds.length; i++) {
+                ParameterDescription pd = pds[i];
+                Class type = pd.getParameterActualType();
+                javaTypes[i] = type;                    
+            }
+            
             // Unmarshall the ParamValues from the Message
             List<PDElement> pvList = MethodMarshallerUtils.getPDElements(pds, 
                     message, 
                     packages, 
                     false, // output
-                    true); // unmarshal by type since there is no response wrapper
+                    javaTypes); // unmarshal by type 
             
             // TODO Should we check for null output body values?  Should we check for null output header values ?
             
