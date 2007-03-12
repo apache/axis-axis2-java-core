@@ -13,27 +13,27 @@
 <h1>Apache Axis2 User's Guide -Building Services</h1>
 
 <p>Now that you know how to use Axis2 to generate clients from WSDL, this
-section digs a little deeper, showing you how to create services, and how to
-create both services and clients "from scratch", so to speak.</p>
+section digs a little deeper showing you how to create services, and also how
+to create services and clients "from scratch", so to speak.</p>
 <ul>
   <li><a href="userguide.html#intro">Introducing Axis2</a><br />
 
     <ul>
-      <li><a href="userguide.html#whatis">What is Axis2</a></li>
-      <li><a href="userguide.html#underhood">What's under the hood?</a></li>
-      <li><a href="userguide.html#handlessoap">How Axis2 handles SOAP
-        messages</a></li>
-      <li><a href="userguide.html#distributions">Axis2 distributions</a></li>
+      <li><a href="userguide.html#whatis">What is Axis2?</a></li>
+      <li><a href="userguide.html#underhood">What's Under the Hood?</a></li>
+      <li><a href="userguide.html#handlessoap">How Axis2 Handles SOAP
+        Messages</a></li>
+      <li><a href="userguide.html#distributions">Axis2 Distributions</a></li>
       <li><a href="userguide.html#sbd">The Axis2 Standard Binary
         Distribution</a></li>
       <li><a href="userguide.html#hierarchy">Axis2.war Directory
-      hierarchy</a></li>
+      Hierarchy</a></li>
       <li><a href="userguide.html#docs">Axis2 Documents Distribution</a></li>
-      <li><a href="userguide.html#clients">Axis2 and clients</a></li>
+      <li><a href="userguide.html#clients">Axis2 and Clients</a></li>
     </ul>
   </li>
   <li><a href="userguide-installingtesting.html#installingtesting">Installing
-    and testing client code</a></li>
+    and Testing Client Code</a></li>
   <li><a href="userguide-introtoservices.html#introservices">Introduction to
     Services</a><br />
 
@@ -64,13 +64,13 @@ create both services and clients "from scratch", so to speak.</p>
         Comfortable with Available Options</strong></a></li>
       <li><a
         href="userguide-buildingservices.html#createscratch"><strong>Creating
-        a service from scratch</strong></a></li>
+        a Service from Scratch</strong></a></li>
       <li><a
         href="userguide-buildingservices.html#deploypojo"><strong>Deploying
         Plain Old Java Objects</strong></a></li>
       <li><a
         href="userguide-buildingservices.html#deployrun"><strong>Deploying
-        and running an Axis2 service created from WSDL</strong></a></li>
+        and Running an Axis2 Service Created from WSDL</strong></a></li>
     </ul>
   </li>
   <li><a href="userguide-samples.html">Samples</a></li>
@@ -79,36 +79,36 @@ create both services and clients "from scratch", so to speak.</p>
 
 <p><a name="getcomfortable"></a></p>
 
-<h2>Getting Comfortable with Available Options</h2>
+<h2>Getting Comfortable with the Available Options</h2>
 
 <p>Axis2 provides a number of ways to create a service, such as:</p>
 <ul>
-  <li>Create a service and build it from scratch: In this case, you build
+  <li>Create a service and build it from scratch. In this case, you build
     your service class to specifically access AXIOM OMElement objects, then
-    create the services.xml file and package it up for deployment.</li>
+    create the services.xml file and package it for deployment.</li>
   <li>Deploy Plain Old Java Objects (POJOs) as a service.</li>
-  <li>Generate the service from WSDL: Just as you can generate clients with
-    WSDL, you can generate the skeleton of a service.</li>
+  <li>Generate the service from WSDL. Just as you can generate clients with
+    WSDL, you can also generate the skeleton of a service.</li>
 </ul>
 
 <p>Let's look at these three options.</p>
 <a name="createscratch"></a>
 
-<h2>Creating a Service From Scratch</h2>
+<h2>Creating a Service from Scratch</h2>
 
 <p>Creating a service from scratch is not the most convenient way to do it,
 but it does give you the most control. The process involves several steps.</p>
 
 <p><b>The short story:</b></p>
 <ol>
-  <li>Create the service class, with each operation represented by a method
-    that takes as its argument a org.apache.axiom.om.OMElement object. (An
-    OMElement is how the AXIs2 Object Model (AXIOM) represents an XML
-    element.)</li>
+  <li>Create the service class with each operation that is represented by a
+    method that takes an org.apache.axiom.om.OMElement object as its
+    argument. (An OMElement is how the AXIs2 Object Model (AXIOM) represents
+    an XML element.)</li>
   <li>Create the service descriptor, services.xml, which defines the class to
     be used by the service and the appropriate message receivers.</li>
   <li>Create the .aar file, with the classes in their proper locations based
-    on package and the services.xml file in the META-INF directory.</li>
+    on the package and the services.xml file in the META-INF directory.</li>
   <li>Deploy the .aar file by using the <a href="webadminguide.html">Web
     Administration application</a> or by copying it to the Axis2 services
     directory.</li>
@@ -164,7 +164,7 @@ source.</p>
 
 <p>Axis2 uses AXIOM, or the AXIs Object Model, a DOM (Document Object Model)
 -like structure that is based on the StAX API ( Streaming API for XML).
-Methods that act as services must take as their argument an OMElement, which
+Methods that act as services must take an OMElement as their argument, which
 represents the payload of the incoming SOAP message. (An OMElement is just
 AXIOM's way of representing an XML element, like a DOM Element object.) In
 this case, you're extracting the contents of the first child of the payload
@@ -195,7 +195,7 @@ class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/&gt;
     &lt;/operation&gt;
 &lt;/service&gt;</pre>
 
-<p>This document defines the service, what it's called by the <a
+<p>This document defines the service, called by the <a
 href="webadminguide.html">Web Administration Application</a>, and the class
 used to serve requests. For each operation, it defines the appropriate
 message receiver class.</p>
@@ -204,7 +204,8 @@ message receiver class.</p>
 this case, that's the same directory that contains the org directory) and
 place the services.xml file in it.</p>
 
-<p>Create the .aar file by typing: jar cvf SampleService.aar ./*</p>
+<p>Create the .aar file by typing: jar cvf SampleService.aar
+./*</p>
 
 <p>Deploy the SampleService.aar file by using the <a
 href="webadminguide.html">Web Administration application</a> or by copying it
@@ -271,13 +272,13 @@ options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 <p>This class uses the same technique of sending and receiving OMElements,
 but it's also important to note the use of the Options class. This class
 enables you to determine properties such as the transport used for the return
-message -- the transport used for the outgoing message can be inferred from
-the URL of the destination -- and the SOAP version to use. In addition to
-providing setter and getter methods of specific properties that affect how
-the client interacts with the service, the Options class enables you to
-create inheritance relationships between Options objects, so that if a
-property is not found in the current Options object used, the client can
-check the parent Options object of the current Options object.</p>
+message (the transport used for the outgoing message can be inferred from the
+URL of the destination) and the SOAP version to use. In addition to providing
+setter and getter methods of specific properties that affect how the client
+interacts with the service, the Options class enables you to create
+inheritance relationships between Options objects. So if a property is not
+found in the current Options object used, the client can check the parent
+Options object of the current Options object.</p>
 
 <p>Compile and run the above SampleClient.java. Make sure to have all axis2
 libraries in your class path. If all has gone well, 'Hello, John' will be
@@ -315,8 +316,8 @@ public class SampleService {
  
 }</pre>
 
-<p>Next, you'll need to tell Axis2 what class corresponds to what Web service
-calls. Do this by creating a file called services.xml and adding the
+<p>Next, you'll need to tell Axis2 what class corresponds with what Web
+service calls. Do this by creating a file called services.xml and adding the
 following shown in Code Listing 12.</p>
 
 <h3><b>Code Listing 12 - Creating services.xml</b></h3>
@@ -359,8 +360,8 @@ Distribution</b></h3>
            - SampleService.class</pre>
 
 <p>Finally, deploy the service by copying the SampleService directory to the
-webapps/axis2/WEB-INF/services directory on the servlet engine. You can check to make
-sure that it's been properly deployed by checking <a
+webapps/axis2/WEB-INF/services directory on the servlet engine. You can check
+to make sure that it's been properly deployed by checking <a
 href="http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices">http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices</a>.</p>
 <a name="deployrun"></a>
 
@@ -369,13 +370,13 @@ href="http://&lt;host&gt;:&lt;port&gt;/axis2/services/listServices">http://&lt;h
 <p>If you have a WSDL file, you can easily create and deploy a service based
 on that description. For example, to create a service based on the same WSDL
 file used in the <a href="userguide-creatingclients.html">clients section</a>
-of this document, you'd employ the following steps.</p>
+of this document, you will follow the steps below.</p>
 
 <p><b>The short story:</b></p>
 <ol>
-  <li>If you haven't already, <a
-    href="http://ws.apache.org/axis2/download/1_1/download.cgi#std-bin">download</a>
-    the Axis2 standard distribution.</li>
+  <li><a
+    href="http://ws.apache.org/axis2/download/1_1/download.cgi#std-bin">Download</a>
+    the Axis2 standard distribution, if you have not done so already.</li>
   <li>Generate the skeleton using the WSDL2Java utility, as in: <br />
 
     <pre>java org.apache.axis2.wsdl.WSDL2Java -uri file:///C:/apps/axis2/samples/zSample/Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d adb -s -wv 1.1 -ss -sd -ssi</pre>
@@ -386,15 +387,15 @@ of this document, you'd employ the following steps.</p>
   <li>Deploy the service by copying the build/lib/*.aar file to
     &lt;J2EE_HOME&gt;/webapps/axis2/WEB-INF/services</li>
   <li>Check http://&lt;server&gt;:&lt;port&gt;/axis2/services/listServices to
-    make sure the service has been properly deployed</li>
+    make sure the service has been properly deployed.</li>
 </ol>
 
 <p><b>The long story:</b></p>
 
-<p>As was the case in generating clients, you will need the <a
+<p>As with generating clients, you will need the <a
 href="http://ws.apache.org/axis2/download/1_1/download.cgi#std-bin">Axis2
 Standard Distribution</a>, because the <a
-href="http://ws.apache.org/axis2/download/1_1/download.cgi#war">Axis2 War
+href="http://ws.apache.org/axis2/download/1_1/download.cgi#war">Axis2 WAR
 Distribution</a> does not include the WSDL2Java utility. Once you've got it
 downloaded and unpacked, make sure that you set the AXIS2_HOME variable to
 point to the location in which you've unpacked it.</p>
@@ -414,27 +415,27 @@ org.apache.axis2.axis2userguide -d adb -s -wv 1.1 -ss -sd</pre>
 <p>This statement tells the utility you want to create a service out of the
 operations in the file Axis2UserGuide.wsdl, and that the Java classes
 generated should be in the org.apache.axis2.axis2userguide package (-p). (You
-should see the appropriate directories created.) It also indicates that you
+can view the appropriate directories created.) It also indicates that you
 want to use the Axis2 DataBinding Framework, or ADB (-d), to generate only
-synchronous, or blocking code (-s), and to generate server-side code (-ss) as
+synchronous or blocking code (-s), and to generate server-side code (-ss) as
 opposed to a client, including the services.xml service descriptor file
-(-sd). It also specifies version 1.1 for the WSDL file (-wv). 
-</p>
+(-sd). It also specifies version 1.1 for the WSDL file (-wv).</p>
 
-<p>At this point, you should see three new items in your chosen directory:
-the build.xml file, which includes instructions for Ant, the src directory,
-which includes all of the generated classes and stubs, the resources
-directory, which includes a regenerated version of the WSDL, and the
-services.xml file, which ultimately controls the service's behavior.</p>
+<p>At this point, you should see four new items in your chosen directory: the
+build.xml file, which includes instructions for Ant, the src directory, which
+includes all the generated classes and stubs, the resources directory, which
+includes a regenerated version of the WSDL, and the services.xml file, which
+ultimately controls the service's behavior.</p>
 
 <p>You can compile the service at this point, but it doesn't actually do
 anything yet. You can solve that problem by opening the
 src\org\apache\axis2\axis2userguide\Axis2UserGuideServiceSkeleton.java file
 and either editing the code in bold -- make sure you manage parameter numbers
--- or replacing all of the code with the following in Code Listing 15.</p>
+-- or replacing all the code with the following in Code Listing 15.</p>
 
 <h3>Code Listing 15 - Compiling the Service</h3>
-<pre>/**
+
+<p><pre>/**
  * Axis2UserGuideServiceSkeleton.java
  *
  * This file was auto-generated from WSDL
@@ -541,13 +542,14 @@ param12
     }
      
 }</pre>
+</p>
 
-<p>As in the case of generating clients, all of these classes, such as
+<p>As with generating clients, all these classes, such as
 MultipleParametersAddItemRequest and TwoWayOneParameterEchoResponse, are
 generated by the utility, and can be found in the same directory as the
-skeleton file. They include methods such as setSuccessfulAdd(), which set the
-value of the content of an element in the response, and getItemName(), which
-retrieve the content of elements in the request.</p>
+skeleton file. They include methods such as setSuccessfulAdd(), which sets
+the value of the content of an element in the response, and getItemName(),
+which retrieves the content of elements in the request.</p>
 
 <p>Save the file and compile it by typing: ant jar.server</p>
 
