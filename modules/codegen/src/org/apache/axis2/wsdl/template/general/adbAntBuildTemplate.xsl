@@ -26,8 +26,11 @@
             <property name="maven.class.path">
                 <xsl:attribute name="value"></xsl:attribute>
             </property>
+            <!--<property name="name">-->
+                <!--<xsl:attribute name="value"><xsl:value-of select="@servicename"/></xsl:attribute>-->
+            <!--</property>-->
             <property name="name">
-                <xsl:attribute name="value"><xsl:value-of select="@servicename"/></xsl:attribute>
+                <xsl:attribute name="value">Services</xsl:attribute>
             </property>
             <property name="src">
                 <xsl:attribute name="value">${project.base.dir}/<xsl:value-of select="$src"/></xsl:attribute>

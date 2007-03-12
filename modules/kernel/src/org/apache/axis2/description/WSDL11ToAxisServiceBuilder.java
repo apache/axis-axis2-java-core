@@ -292,6 +292,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             log.error(e);
             throw new AxisFault(e);
         } catch (Exception e) {
+            e.printStackTrace();
             log.error(e);
             throw new AxisFault(e);
         }
@@ -596,6 +597,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         return schemaMap;
     }
+
+   
 
     /**
      * return the service to process
@@ -1867,6 +1870,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 // ones
                 axisService.addSchema(getXMLSchema(schema.getElement(), schema
                         .getDocumentBaseURI()));
+
             } else if (wsdl4jExtensibilityElement instanceof SOAP12Operation) {
                 SOAP12Operation soapOperation = (SOAP12Operation) wsdl4jExtensibilityElement;
                 AxisBindingOperation axisBindingOperation = (AxisBindingOperation) description;
@@ -2317,6 +2321,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
         }
     }
+
+
 
     /**
      * Inner class declaration for the processing exceptions

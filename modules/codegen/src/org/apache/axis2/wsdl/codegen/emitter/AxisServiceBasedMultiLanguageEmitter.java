@@ -185,6 +185,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
     protected AxisService axisService;
 
+    protected List axisServices;
+
     //a map to keep the fault classNames
     protected Map fullyQualifiedFaultClassNameMap = new HashMap();
     protected Map faultClassNameMap = new HashMap();
@@ -209,8 +211,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     public void setCodeGenConfiguration(CodeGenConfiguration configuration) {
         this.codeGenConfiguration = configuration;
-        this.axisService = codeGenConfiguration.getAxisService();
-        this.axisBinding = axisService.getEndpoint(axisService.getEndpointName()).getBinding();
+        this.axisServices = codeGenConfiguration.getAxisServices();
         resolver = new XSLTIncludeResolver(codeGenConfiguration);
     }
 
@@ -378,51 +379,58 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     public void emitStub() throws CodeGenerationException {
         try {
-            // see the comment at updateMapperClassnames for details and reasons for
-            // calling this method
-            if (mapper.isObjectMappingPresent()) {
-                updateMapperForStub();
-            } else {
-                copyToFaultMap();
-            }
 
-            //generate and populate the fault names before hand. We need that for
-            //the smooth opration of the thing
-            //first reset the fault names and recreate it
-            resetFaultNames();
-            generateAndPopulateFaultNames();
-            updateFaultPackageForStub();
-
-            // write the inteface
-            // feed the binding information also
-            // note that we do not create this interface if the user switched on the wrap classes mode
-            if (!codeGenConfiguration.isPackClasses()) {
-                writeInterface(false);
-            }
-
-            // write the call back handlers
-            writeCallBackHandlers();
-
-            // write the Exceptions
-            writeExceptions();
-
-            // write interface implementations
-            writeInterfaceImplementation();
-
-            // write the test classes
-            writeTestClasses();
-
-            // write an ant build file
-            // Note that ant build is generated only once
-            // and that has to happen here only if the
-            // client side code is required
-            if (!codeGenConfiguration.isGenerateAll()) {
-                //our logic for the build xml is that it will
-                //only be written when not flattened
-                if (!codeGenConfiguration.isFlattenFiles()) {
-                    writeAntBuild();
+            for (Iterator axisServicesIter = this.axisServices.iterator(); axisServicesIter.hasNext();) {
+                this.axisService = (AxisService) axisServicesIter.next();
+                this.axisBinding = axisService.getEndpoint(axisService.getEndpointName()).getBinding();
+                // see the comment at updateMapperClassnames for details and reasons for
+                // calling this method
+                if (mapper.isObjectMappingPresent()) {
+                    updateMapperForStub();
+                } else {
+                    copyToFaultMap();
                 }
+
+                //generate and populate the fault names before hand. We need that for
+                //the smooth opration of the thing
+                //first reset the fault names and recreate it
+                resetFaultNames();
+                generateAndPopulateFaultNames();
+                updateFaultPackageForStub();
+
+                // write the inteface
+                // feed the binding information also
+                // note that we do not create this interface if the user switched on the wrap classes mode
+                if (!codeGenConfiguration.isPackClasses()) {
+                    writeInterface(false);
+                }
+
+                // write the call back handlers
+                writeCallBackHandlers();
+
+                // write the Exceptions
+                writeExceptions();
+
+                // write interface implementations
+                writeInterfaceImplementation();
+
+                // write the test classes
+                writeTestClasses();
+
+                // write an ant build file
+                // Note that ant build is generated only once
+                // and that has to happen here only if the
+                // client side code is required
+                if (!codeGenConfiguration.isGenerateAll()) {
+                    //our logic for the build xml is that it will
+                    //only be written when not flattened
+                    if (!codeGenConfiguration.isFlattenFiles()) {
+                        writeAntBuild();
+                    }
+                }
+
             }
+
         } catch (CodeGenerationException ce) {
             throw ce;
         } catch (Exception e) {
@@ -1073,39 +1081,51 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     public void emitSkeleton() throws CodeGenerationException {
 
         try {
-            // see the comment at updateMapperClassnames for details and reasons for
-            // calling this method
-            if (mapper.isObjectMappingPresent()) {
-                updateMapperForMessageReceiver();
-            } else {
-                copyToFaultMap();
-            }
 
-            //handle faults
-            generateAndPopulateFaultNames();
+            // we are going to generate following files seperately per service
+            for (Iterator axisServicesIter = this.axisServices.iterator(); axisServicesIter.hasNext();) {
+                this.axisService = (AxisService) axisServicesIter.next();
+                this.axisBinding = axisService.getEndpoint(axisService.getEndpointName()).getBinding();
 
-            //
-            if (codeGenConfiguration.isServerSideInterface()) {
-                //write skeletonInterface
-                writeSkeletonInterface();
-            }
+                // see the comment at updateMapperClassnames for details and reasons for
+                // calling this method
+                if (mapper.isObjectMappingPresent()) {
+                    updateMapperForMessageReceiver();
+                } else {
+                    copyToFaultMap();
+                }
 
-            // write skeleton only if the used has
-            // asked for the deployment descriptor in the interface mode
-            // else write it anyway :)
-            if (codeGenConfiguration.isServerSideInterface()) {
-                if (codeGenConfiguration.isGenerateDeployementDescriptor()) {
+                //handle faults
+                generateAndPopulateFaultNames();
+
+                //
+                if (codeGenConfiguration.isServerSideInterface()) {
+                    //write skeletonInterface
+                    writeSkeletonInterface();
+                }
+
+                // write skeleton only if the used has
+                // asked for the deployment descriptor in the interface mode
+                // else write it anyway :)
+                if (codeGenConfiguration.isServerSideInterface()) {
+                    if (codeGenConfiguration.isGenerateDeployementDescriptor()) {
+                        writeSkeleton();
+                    }
+                } else {
                     writeSkeleton();
                 }
-            } else {
-                writeSkeleton();
+
+                // write a MessageReceiver for this particular service.
+                writeMessageReceiver();
+
+                // write the Exceptions
+                writeExceptions();
+
+                //for the server side codegen
+                //we need to serialize the WSDL's
+                writeWSDLFiles();
             }
 
-            // write a MessageReceiver for this particular service.
-            writeMessageReceiver();
-
-            // write the Exceptions
-            writeExceptions();
 
             // write service xml
             // if asked
@@ -1119,9 +1139,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 writeAntBuild();
             }
 
-            //for the server side codegen
-            //we need to serialize the WSDL's
-            writeWSDLFiles();
+
 
         } catch (CodeGenerationException cgExp) {
             throw cgExp;
@@ -1144,7 +1162,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         axisService.setCustomSchemaNameSuffix(".xsd");//suffix with .xsd - the file name extension
         //force the mappings to be reconstructed
         axisService.setSchemaLocationsAdjusted(false);
-        axisService.populateSchemaMappings();
+        Map changedMap = axisService.populateSchemaMappings();
 
         // add these two attribute to use the user defined wsdl to use.
         try {
@@ -1172,6 +1190,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             );
         }
 
+        //we should have a catch here
+        // we have to change the imports in the wsdl schemas
+        
+
         //switch between the correct writer
         if (CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
                 equals(codeGenConfiguration.getWSDLVersion())) {
@@ -1188,7 +1210,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             // wait till Woden implements it.
 
         } else {
-
+            axisService.adjustWSDLSchemaLocatins(changedMap);
             WSDL11Writer wsdl11Writer = new WSDL11Writer(
                     codeGenConfiguration.isFlattenFiles() ?
                             getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
@@ -1644,16 +1666,25 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected Document createDOMDocumentForServiceXML() {
         Document doc = getEmptyDocument();
         String className = null;
-        String serviceName = axisService.getName();
-        if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
-            className = makeJavaClassName(axisService.getBindingName());
-        } else {
-            className = makeJavaClassName(serviceName);
+        String serviceName = null;
+
+        Element rootElement = doc.createElement("interfaces");
+        doc.appendChild(rootElement);
+
+        for (Iterator iter = this.axisServices.iterator(); iter.hasNext();) {
+            this.axisService = (AxisService) iter.next();
+            this.axisBinding = axisService.getEndpoint(axisService.getEndpointName()).getBinding();
+            serviceName = axisService.getName();
+            if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
+                className = makeJavaClassName(axisService.getBindingName());
+            } else {
+                className = makeJavaClassName(serviceName);
+            }
+
+            rootElement.appendChild(getServiceElement(serviceName, className, doc));
         }
 
-        doc.appendChild(getServiceElement(serviceName, className, doc));
         return doc;
-
     }
 
     /**

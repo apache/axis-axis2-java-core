@@ -27,7 +27,7 @@ public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
 
     public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
         //WSDLDescription wom = this.configuration.getWom();
-        List schemaList = configuration.getAxisService().getSchema();
+        List schemaList = configuration.getSchemaListForAllServices();
         if (schemaList == null || schemaList.isEmpty()) {
             //there are no types to be considered
             return;

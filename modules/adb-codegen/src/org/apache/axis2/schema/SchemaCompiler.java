@@ -170,8 +170,7 @@ public class SchemaCompiler {
                 schema = (XmlSchema) schemalist.get(i);
                 availableSchemaMap.put(
                         schema.getTargetNamespace(),
-                        schema
-                );
+                        schema);
             }
 
             //set a mapper package if not avaialable

@@ -20,6 +20,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.description.AxisService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -30,6 +31,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
 public class XMLBeansExtension extends AbstractDBProcessingExtension {
     public static final String SCHEMA_FOLDER = "schemas";
@@ -42,7 +44,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
     public static final String MAPPING_FOLDER = "Mapping";
     public static final String MAPPER_FILE_NAME = "mapper";
     public static final String SCHEMA_PATH = "/org/apache/axis2/wsdl/codegen/schema/";
-    
+
     public static final String XMLBEANS_CONFIG_CLASS =
         "org.apache.xmlbeans.BindingConfig";
     public static final String XMLBEANS_UTILITY_CLASS =
@@ -65,7 +67,7 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("XMLBeans framework jars not in classpath");
             }
-            
+
             // load the actual utility class
             Class clazz = null;
             try {
@@ -73,11 +75,18 @@ public class XMLBeansExtension extends AbstractDBProcessingExtension {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("XMLBeans binding extension not in classpath");
             }
-            
+
             // invoke utility class method for actual processing
             Method method = clazz.getMethod(XMLBEANS_PROCESS_METHOD,
                     new Class[] { List.class, Element[].class, CodeGenConfiguration.class });
-            ArrayList schemas = configuration.getAxisService().getSchema();
+            List schemas = new ArrayList();
+            List axisServices = configuration.getAxisServices();
+            AxisService axisService = null;
+            for (Iterator iter = axisServices.iterator();iter.hasNext();){
+                axisService = (AxisService) iter.next();
+                schemas.addAll(axisService.getSchema());
+            }
+            
             Element[] additionalSchemas = loadAdditionalSchemas();
             TypeMapper mapper = (TypeMapper)method.invoke(null,
                 new Object[] { schemas, additionalSchemas, configuration });

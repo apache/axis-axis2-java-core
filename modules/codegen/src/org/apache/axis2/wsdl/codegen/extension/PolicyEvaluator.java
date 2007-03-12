@@ -120,19 +120,25 @@ public class PolicyEvaluator implements CodeGenExtension {
         PolicyInclude policyInclude;
         Policy policy;
 
+        List axisServices = configuration.getAxisServices();
+        AxisService axisService;
+        for (Iterator servicesIter = axisServices.iterator(); servicesIter.hasNext();) {
+            axisService = (AxisService) servicesIter.next();
+            for (Iterator iterator = axisService.getOperations(); iterator.hasNext();) {
+                axisOperation = (AxisOperation) iterator.next();
+                opName = axisOperation.getName();
 
-        for (Iterator iterator = configuration.getAxisService().getOperations(); iterator.hasNext(); ) {
-            axisOperation = (AxisOperation) iterator.next();
-            opName = axisOperation.getName();
+                policyInclude = axisOperation.getPolicyInclude();
+                policy = policyInclude.getEffectivePolicy();
 
-            policyInclude = axisOperation.getPolicyInclude();
-            policy = policyInclude.getEffectivePolicy();
-
-            if (policy != null) {
-                processPolicies(document, rootElement, policy, opName,namespace2ExtMap);
+                if (policy != null) {
+                    processPolicies(document, rootElement, policy, opName, namespace2ExtMap);
+                }
             }
         }
 
+
+        // TODO: think about this how can we support this
         configuration.putProperty("module-codegen-policy-extensions", rootElement);
     }
 

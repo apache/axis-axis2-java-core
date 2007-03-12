@@ -199,4 +199,12 @@ public abstract class WSDLToAxisServiceBuilder {
     public void setCodegen(boolean codegen) {
         isCodegen = codegen;
     }
+
+    public QName getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(QName serviceName) {
+        this.serviceName = serviceName;
+    }
 }

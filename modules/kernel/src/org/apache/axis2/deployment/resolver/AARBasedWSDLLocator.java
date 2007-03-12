@@ -104,7 +104,7 @@ public class AARBasedWSDLLocator extends DefaultURIResolver implements WSDLLocat
             }
         }
 
-        log.info("AARBasedWSDLLocator: Unable to resolve" + lastImportLocation);
+        log.info("AARBasedWSDLLocator: Unable to resolve " + lastImportLocation);
         return null;
     }
 

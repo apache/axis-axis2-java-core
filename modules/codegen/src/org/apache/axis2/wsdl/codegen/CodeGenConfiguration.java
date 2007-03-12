@@ -23,13 +23,16 @@ import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CodeGenConfiguration implements CommandLineOptionConstants {
 
-    /**  Axis Service reference*/
+    /**  Axis Services reference*/
+    private List axisServices;
+
+    /** Axis service to use */
     private AxisService axisService;
+
     /**  Base URI */
     private String baseURI;
     /** path to the repository - used for evaluating policy */
@@ -73,7 +76,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
             this.uri2PackageNameMap.putAll(uri2PackageNameMap);
         }
     }
-  
+
     /** Full path and name of XMLBeans xsdconfig file to use */
     private String xsdConfigFile = null;
 
@@ -378,18 +381,9 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      *
      * @param optionMap
      */
-    public CodeGenConfiguration(AxisService service, Map optionMap) {
-        this.axisService = service;
-        CodegenConfigLoader.loadConfig(this,optionMap);
-    }
-
-    /**
-     * Constructor for the configuration. It populates the values using the options map.
-     *
-     * @param optionMap
-     */
     public CodeGenConfiguration(Map optionMap) {
         CodegenConfigLoader.loadConfig(this,optionMap);
+        this.axisServices = new ArrayList();
     }
 
 
@@ -463,27 +457,46 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         return repositoryPath;
     }
 
+    public List getAxisServices() {
+        return axisServices;
+    }
+
+    public void setAxisServices(List axisServices) {
+        this.axisServices = axisServices;
+    }
+
+    public void addAxisService(AxisService axisService){
+        this.axisServices.add(axisService);
+    }
+
     public AxisService getAxisService() {
-        return axisService;
+        // return the first element of the axis services
+        if (axisService != null){
+            return axisService;
+        } else if ((axisServices != null) && (axisServices.size() > 0)){
+            return (AxisService) axisServices.get(0);
+        } else {
+            return null;
+        }
     }
 
     public void setAxisService(AxisService axisService) {
         this.axisService = axisService;
     }
-        
-    	/**
-	 * This flag determines whether the generated classes are expected to be
-	 * backword compatible with Axis 1.x
-	 */
-	private boolean backwordCompatibilityMode = false;
 
-	public boolean isBackwordCompatibilityMode() {
-		return backwordCompatibilityMode;
-	}
+    /**
+     * This flag determines whether the generated classes are expected to be
+     * backword compatible with Axis 1.x
+     */
+    private boolean backwordCompatibilityMode = false;
 
-	public void setBackwordCompatibilityMode(boolean backwordCompatibilityMode) {
-		this.backwordCompatibilityMode = backwordCompatibilityMode;
-	}
+    public boolean isBackwordCompatibilityMode() {
+        return backwordCompatibilityMode;
+    }
+
+    public void setBackwordCompatibilityMode(boolean backwordCompatibilityMode) {
+        this.backwordCompatibilityMode = backwordCompatibilityMode;
+    }
 
     /**
      * Should we suppress namespace prefixes
@@ -496,5 +509,23 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
 
     public void setSuppressPrefixesMode(boolean suppressPrefixesMode) {
         this.suppressPrefixesMode = suppressPrefixesMode;
+    }
+
+    public String getTargetNamespace(){
+        String targetNamespace = null;
+        if ((this.axisServices != null) && (this.axisServices.size() > 0)){
+            targetNamespace = ((AxisService)this.axisServices.get(0)).getTargetNamespace();
+        }
+        return targetNamespace;
+    }
+
+    public List getSchemaListForAllServices(){
+        List schemas = new ArrayList();
+        AxisService axisService;
+        for (Iterator iter = this.axisServices.iterator();iter.hasNext();){
+            axisService = (AxisService) iter.next();
+            schemas.addAll(axisService.getSchema());
+        }
+        return schemas;
     }
 }

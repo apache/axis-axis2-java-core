@@ -9,7 +9,7 @@
         </serviceGroup>
     </xsl:template>
 
-    <xsl:template match="interface">
+    <xsl:template match="interfaces/interface">
         <xsl:variable name="package"><xsl:value-of select="@classpackage"/></xsl:variable>
 
         <service>

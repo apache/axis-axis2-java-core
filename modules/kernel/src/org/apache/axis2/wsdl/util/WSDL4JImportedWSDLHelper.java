@@ -20,11 +20,9 @@ import org.apache.commons.logging.LogFactory;
 import javax.wsdl.Definition;
 import javax.wsdl.Import;
 import javax.wsdl.Types;
+import javax.wsdl.PortType;
 import javax.wsdl.extensions.ExtensibilityElement;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * This class provides support for processing a WSDL4J defintion which includes imports.
@@ -48,6 +46,7 @@ public class WSDL4JImportedWSDLHelper {
         }
         Map imported_defs = new HashMap();
         getImportedDefinitions(wsdl4JDefinition, imported_defs);
+
 
         for (Iterator iterator = imported_defs.values().iterator(); iterator.hasNext();) {
             Definition imported_def = (Definition) iterator.next();
@@ -92,6 +91,7 @@ public class WSDL4JImportedWSDLHelper {
             // add portTypes
             wsdl4JDefinition.getPortTypes().putAll(imported_def.getPortTypes());
 
+
             // add bindings
             wsdl4JDefinition.getBindings().putAll(imported_def.getBindings());
 
@@ -101,6 +101,25 @@ public class WSDL4JImportedWSDLHelper {
             // add ExtensibilityElements
             wsdl4JDefinition.getExtensibilityElements()
                     .addAll(imported_def.getExtensibilityElements());
+
+        }
+
+        // after putting the imports we going to remove them to avoid any confilicts
+        List importsList = new ArrayList();
+        Map imports = wsdl4JDefinition.getImports();
+        Import wsdlImport;
+        Vector wsdlImportVector;
+        for (Iterator importsVectorIter = imports.values().iterator(); importsVectorIter.hasNext();) {
+            wsdlImportVector = (Vector) importsVectorIter.next();
+            for (Iterator importsIter = wsdlImportVector.iterator(); importsIter.hasNext();) {
+                wsdlImport = (Import) importsIter.next();
+                importsList.add(wsdlImport);
+            }
+        }
+
+        for (Iterator importsListIter = importsList.iterator();importsListIter.hasNext();){
+            wsdlImport = (Import) importsListIter.next();
+            wsdl4JDefinition.removeImport(wsdlImport);
         }
     }
 

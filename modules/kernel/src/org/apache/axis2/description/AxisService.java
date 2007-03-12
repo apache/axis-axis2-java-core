@@ -61,14 +61,13 @@ import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.codehaus.jam.JAnnotation;
 import org.codehaus.jam.JMethod;
-import org.w3c.dom.Document;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.Definition;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
+import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.schema.Schema;
+import javax.wsdl.extensions.schema.SchemaImport;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
@@ -80,17 +79,7 @@ import java.io.OutputStream;
 import java.net.SocketException;
 import java.net.URL;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class AxisService
@@ -184,6 +173,7 @@ public class AxisService extends AxisDescription {
      * the subsequent requests
      */
     private Map schemaMappingTable = null;
+
 
     /**
      * counter variable for naming the schemas
@@ -1852,20 +1842,70 @@ public class AxisService extends AxisDescription {
      * it is best that this logic be in the axis service since one can
      * call the axis service to populate the schema mappings
      */
-    public void populateSchemaMappings() {
+    public Map populateSchemaMappings() {
 
         //populate the axis service with the necessary schema references
         ArrayList schema = this.schemaList;
+        Map changedScheamLocations = null;
         if (!this.schemaLocationsAdjusted) {
             Hashtable nameTable = new Hashtable();
             //calculate unique names for the schemas
             calcualteSchemaNames(schema, nameTable);
             //adjust the schema locations as per the calculated names
-            adjustSchemaNames(schema, nameTable);
+            changedScheamLocations = adjustSchemaNames(schema, nameTable);
             //reverse the nametable so that there is a mapping from the
             //name to the schemaObject
             setSchemaMappingTable(swapMappingTable(nameTable));
             setSchemaLocationsAdjusted(true);
+        }
+        return changedScheamLocations;
+    }
+
+    /**
+     * adjust the schema locations in the original wsdl 
+     * @param changedScheamLocations
+     */
+    public void adjustWSDLSchemaLocatins(Map changedScheamLocations) {
+        Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
+        Definition definition = (Definition) wsld4jdefinition.getValue();
+        Types wsdlTypes = definition.getTypes();
+        List extensibilityElements = wsdlTypes.getExtensibilityElements();
+        Object currentObject;
+        Schema schema;
+        for (Iterator iter = extensibilityElements.iterator(); iter.hasNext();) {
+            currentObject = iter.next();
+            if (currentObject instanceof Schema) {
+                schema = (Schema) currentObject;
+                changeLocations(schema.getElement(), changedScheamLocations);
+            }
+        }
+
+    }
+
+    private void changeLocations(Element element, Map changedScheamLocations) {
+        NodeList nodeList = element.getChildNodes();
+        String tagName;
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            tagName = nodeList.item(i).getNodeName();
+            if (tagName.equals("import") || tagName.equals("include")) {
+                processImport(nodeList.item(i), changedScheamLocations);
+            }
+        }
+    }
+
+    private void processImport(Node importNode, Map changedScheamLocations) {
+        NamedNodeMap nodeMap = importNode.getAttributes();
+        Node attribute;
+        String attributeValue;
+        for (int i = 0; i < nodeMap.getLength(); i++) {
+            attribute = nodeMap.item(i);
+            if (attribute.getNodeName().equals("schemaLocation")) {
+                attributeValue = attribute.getNodeValue();
+                if (changedScheamLocations.get(attributeValue) != null) {
+                    attribute.setNodeValue(
+                            (String) changedScheamLocations.get(attributeValue));
+                }
+            }
         }
     }
 
@@ -1916,7 +1956,7 @@ public class AxisService extends AxisDescription {
     /**
      * Run 2  - adjust the names
      */
-    private void adjustSchemaNames(List schemas, Hashtable nameTable) {
+    private Map adjustSchemaNames(List schemas, Hashtable nameTable) {
         Hashtable importedSchemas = new Hashtable();
         //process the schemas in the main schema list
         for (int i = 0; i < schemas.size(); i++) {
@@ -1928,6 +1968,7 @@ public class AxisService extends AxisDescription {
             adjustSchemaName((XmlSchema) nameTableKeys.nextElement(), nameTable, importedSchemas);
 
         }
+        return importedSchemas;
     }
 
     /**

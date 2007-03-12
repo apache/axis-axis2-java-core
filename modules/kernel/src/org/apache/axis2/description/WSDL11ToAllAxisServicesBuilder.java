@@ -23,6 +23,8 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.Port;
 import javax.wsdl.Service;
+import javax.wsdl.Definition;
+import javax.xml.namespace.QName;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -53,6 +55,12 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
         axisServices = new ArrayList();   // create an empty ArrayList
     }
 
+    public WSDL11ToAllAxisServicesBuilder(Definition def) {
+        super(def, null, null);
+        axisServices = new ArrayList();   // create an empty ArrayList
+    }
+
+
     /**
      * Public method to access the wsdl 1.1 file and create a List of AxisService objects.
      * For each port on each service in the wsdl, an AxisService object is created and
@@ -77,44 +85,22 @@ public class WSDL11ToAllAxisServicesBuilder extends WSDL11ToAxisServiceBuilder {
                 }
                 return null;   // can't go any further without the wsdl
             }
-            Iterator wsdlServIter = wsdl4jDefinition.getServices().entrySet().iterator();
 
+            Iterator wsdlServIter = wsdl4jDefinition.getServices().values().iterator();
+            // let the wsdlToservice builder to decide the port to generate binding
+            portName = null;
             while (wsdlServIter.hasNext()) {
-                Entry entry = (Entry) wsdlServIter.next();
-                Service service = (Service) entry.getValue();
+                Service service = (Service) wsdlServIter.next();
                 // set the serviceName on the parent to setup call to populateService
                 serviceName = service.getQName();
-                Iterator wsdlPortIter = service.getPorts().entrySet().iterator();
-                while (wsdlPortIter.hasNext()) {
-                    Entry portEntry = (Entry) wsdlPortIter.next();
-                    Port port = (Port) portEntry.getValue();
-                    portName = port.getName();
-                    // start with a fresh axisService
-                    this.axisService = new AxisService();
-                    // now that serviceName and portName are set, call up to the
-                    // parent class to populate this service.                   
-                    AxisService retAxisService = populateService();
-                    if (retAxisService != null) {
-                        // save off the wsdl service QName as a parameter.
-                        Parameter serviceNameParameter = new Parameter();
-                        serviceNameParameter.setName(WSDL_SERVICE_QNAME);
-                        serviceNameParameter.setValue(serviceName);
-                        retAxisService.addParameter(serviceNameParameter);
-                        // Also save off the javax.wsdl.Port object that this AxisService
-                        // represents.
-                        Parameter portParameter = new Parameter();
-                        portParameter.setName(WSDL_PORT);
-                        portParameter.setValue(port);
-                        retAxisService.addParameter(portParameter);
-                        // since this AxisService really represents the wsdl
-                        // port, change the name
-                        // from wsdl service name to port name.
-                        retAxisService.setName(portName); // TODO: mangle name????
-
-                        axisServices.add(retAxisService);
-                    } // end if axisService was returned
-                } // end for all ports of a service
-            } // end for all services in the wsdl
+                this.axisService = new AxisService();
+                // now that serviceName and portName are set, call up to the
+                // parent class to populate this service.
+                AxisService retAxisService = populateService();
+                if (retAxisService != null) {
+                    axisServices.add(retAxisService);
+                }
+            }
 
             if (log.isDebugEnabled()) {
                 log.debug("Exit: populateAllServices.");

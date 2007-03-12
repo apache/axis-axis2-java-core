@@ -20,6 +20,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.description.AxisService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -30,9 +31,10 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 
 public class JAXBRIExtension extends AbstractDBProcessingExtension {
-	
+
     public static final String SCHEMA_FOLDER = "schemas";
 
     public static String MAPPINGS = "mappings";
@@ -43,15 +45,15 @@ public class JAXBRIExtension extends AbstractDBProcessingExtension {
     public static final String MAPPING_FOLDER = "Mapping";
     public static final String MAPPER_FILE_NAME = "mapper";
     public static final String SCHEMA_PATH = "/org/apache/axis2/wsdl/codegen/schema/";
-    
+
     public static final String JAXB_RI_API_CLASS  = "javax.xml.bind.JAXBContext";
     public static final String JAXB_RI_IMPL_CLASS = "com.sun.xml.bind.Util";
     public static final String JAXB_RI_XJC_CLASS = "com.sun.tools.xjc.api.XJC";
-    
+
     public static final String JAXB_RI_UTILITY_CLASS = "org.apache.axis2.jaxbri.CodeGenerationUtility";
 
     public static final String JAXB_RI_PROCESS_METHOD = "processSchemas";
-    
+
 
     public void engage(CodeGenConfiguration configuration) {
 
@@ -59,19 +61,19 @@ public class JAXBRIExtension extends AbstractDBProcessingExtension {
         if (testFallThrough(configuration.getDatabindingType())) {
             return;
         }
-        
+
         try {
 
             // try dummy load of framework classes first to check missing jars
             try {
-            	ClassLoader cl = getClass().getClassLoader();
-            	cl.loadClass(JAXB_RI_API_CLASS);
+                ClassLoader cl = getClass().getClassLoader();
+                cl.loadClass(JAXB_RI_API_CLASS);
                 cl.loadClass(JAXB_RI_IMPL_CLASS);
                 cl.loadClass(JAXB_RI_XJC_CLASS);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("JAX-B RI JARs not on classpath");
             }
-            
+
             // load the actual utility class
             Class clazz = null;
             try {
@@ -79,11 +81,17 @@ public class JAXBRIExtension extends AbstractDBProcessingExtension {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException("JAX-B RI binding extension not in classpath");
             }
-            
+
             // invoke utility class method for actual processing
             Method method = clazz.getMethod(JAXB_RI_PROCESS_METHOD,
                     new Class[] { List.class, Element[].class, CodeGenConfiguration.class });
-            ArrayList schemas = configuration.getAxisService().getSchema();
+            List schemas = new ArrayList();
+            List axisServices = configuration.getAxisServices();
+            AxisService axisService = null;
+            for (Iterator iter = axisServices.iterator();iter.hasNext();){
+                axisService = (AxisService) iter.next();
+                schemas.addAll(axisService.getSchema());
+            }
             Element[] additionalSchemas = loadAdditionalSchemas();
             TypeMapper mapper = (TypeMapper)method.invoke(null,
                 new Object[] { schemas, additionalSchemas, configuration });
@@ -98,7 +106,7 @@ public class JAXBRIExtension extends AbstractDBProcessingExtension {
                 throw new RuntimeException(e);
             }
         }
-        
+
     }
 
 

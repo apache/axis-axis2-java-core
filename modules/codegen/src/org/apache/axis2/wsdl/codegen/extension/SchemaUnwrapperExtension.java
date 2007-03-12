@@ -77,22 +77,26 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                     contains(configuration.getDatabindingType())) {
 
                 //walk the schema and find the top level elements
-                AxisService axisService = configuration.getAxisService();
+                List services = configuration.getAxisServices();
+                AxisService axisService;
 
-                for (Iterator operations = axisService.getOperations();
-                     operations.hasNext();) {
-                    AxisOperation op = (AxisOperation) operations.next();
+                for (Iterator servicesIter = services.iterator(); servicesIter.hasNext();) {
+                    axisService = (AxisService) servicesIter.next();
+                    for (Iterator operations = axisService.getOperations();
+                         operations.hasNext();) {
+                        AxisOperation op = (AxisOperation) operations.next();
 
-                    if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
-                        walkSchema(op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE),
-                                WSDLConstants.INPUT_PART_QNAME_SUFFIX);
+                        if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
+                            walkSchema(op.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE),
+                                    WSDLConstants.INPUT_PART_QNAME_SUFFIX);
+                        }
+                        // get the out put parameter details as well to unwrap the responses
+                        if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
+                            walkSchema(op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE),
+                                    WSDLConstants.OUTPUT_PART_QNAME_SUFFIX);
+                        }
+
                     }
-                    // get the out put parameter details as well to unwrap the responses
-                    if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())){
-                        walkSchema(op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE),
-                                WSDLConstants.OUTPUT_PART_QNAME_SUFFIX);
-                    }
-
                 }
             }
         }

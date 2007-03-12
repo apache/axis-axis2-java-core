@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
 import org.apache.axis2.description.WSDL20ToAllAxisServicesBuilder;
+import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
@@ -36,6 +37,7 @@ import org.xml.sax.SAXException;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
+import javax.wsdl.Service;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -46,6 +48,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 
 public class CodeGenerationEngine {
 
@@ -84,7 +87,7 @@ public class CodeGenerationEngine {
                             get(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION);
             wsdlUri = option.getOptionValue();
             configuration = new CodeGenConfiguration(allOptions);
-            
+
 
             if(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
                     equals(configuration.getWSDLVersion())){
@@ -92,24 +95,37 @@ public class CodeGenerationEngine {
                                 configuration.getServiceName(),
                                 configuration.getPortName());
                 builder.setCodegen(true);
-                configuration.setAxisService(builder.populateService());
+                configuration.addAxisService(builder.populateService());
 
             }else{
                 //It'll be WSDL 1.1
                 Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);
+                // we generate the code for one service and one port if the
+                // user has specified them.
+                // otherwise generate the code for every service.
+                // TODO: find out a permanant solution for this.
+
                 QName serviceQname = null;
-                if (configuration.getServiceName()!=null){
+
+                if (configuration.getServiceName() != null) {
                     serviceQname = new QName(wsdl4jDef.getTargetNamespace(), configuration.getServiceName());
                 }
 
-                WSDL11ToAxisServiceBuilder builder = new WSDL11ToAxisServiceBuilder(
-                                        wsdl4jDef,
-                                        serviceQname,
-                                        configuration.getPortName());
-                builder.setCodegen(true);
-                configuration.setAxisService(builder.populateService());
+                WSDL11ToAxisServiceBuilder builder = null;
+                if (serviceQname != null) {
+                    builder = new WSDL11ToAxisServiceBuilder(
+                            wsdl4jDef,
+                            serviceQname,
+                            configuration.getPortName());
+                    builder.setCodegen(true);
+                    configuration.addAxisService(builder.populateService());
+                } else {
+                    builder = new WSDL11ToAllAxisServicesBuilder(wsdl4jDef);
+                    builder.setCodegen(true);
+                    configuration.setAxisServices(((WSDL11ToAllAxisServicesBuilder) builder).populateAllServices());
+                }
             }
-            
+
         } catch (AxisFault axisFault) {
             throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), axisFault);
         } catch (WSDLException e) {
@@ -136,7 +152,7 @@ public class CodeGenerationEngine {
                 addPreExtension((CodeGenExtension) getObjectFromClassName(extensions[i].trim()));
             }
         }
-        
+
         //load post extensions
         String[] postExtensions = ConfigPropertyFileLoader.getPostExtensionClassNames();
         if (postExtensions!=null){

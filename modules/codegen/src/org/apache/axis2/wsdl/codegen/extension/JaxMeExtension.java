@@ -22,6 +22,7 @@ import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
+import org.apache.axis2.description.AxisService;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.jaxme.generator.impl.GeneratorImpl;
 import org.apache.ws.jaxme.generator.sg.GroupSG;
@@ -46,6 +47,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.Iterator;
 
 public class JaxMeExtension extends AbstractDBProcessingExtension {
     public static final String SCHEMA_FOLDER = "schemas";
@@ -70,7 +72,13 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
 
         try {
             //get the types from the types section
-            List typesList = configuration.getAxisService().getSchema();
+            List typesList = new ArrayList();
+            List axisServices = configuration.getAxisServices();
+            AxisService axisService = null;
+            for (Iterator iter = axisServices.iterator();iter.hasNext();){
+                axisService = (AxisService) iter.next();
+                typesList.addAll(axisService.getSchema());
+            }
 
             //check for the imported types. Any imported types are supposed to be here also
             if (typesList == null || typesList.isEmpty()) {

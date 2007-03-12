@@ -15,10 +15,7 @@ import org.apache.ws.commons.schema.*;
 
 import javax.xml.namespace.QName;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -42,7 +39,12 @@ public class ExtensionUtility {
 
 
     public static void invoke(CodeGenConfiguration configuration) throws Exception {
-        List schemaList = configuration.getAxisService().getSchema();
+        List schemaList = new ArrayList();
+        // add all the schemas to the list
+        List services = configuration.getAxisServices();
+        for (Iterator iter = services.iterator();iter.hasNext();){
+            schemaList.addAll(((AxisService)iter.next()).getSchema());
+        }
 
         //hashmap that keeps the targetnamespace and the xmlSchema object
         //this is a convenience to locate the relevant schema quickly
@@ -127,50 +129,57 @@ public class ExtensionUtility {
         //process the unwrapped parameters
         if (!configuration.isParametersWrapped()) {
             //figure out the unwrapped operations
-            AxisService axisService = configuration.getAxisService();
+            List axisServices = configuration.getAxisServices();
+            AxisService axisService;
+            for (Iterator servicesIter = axisServices.iterator(); servicesIter.hasNext();) {
+                axisService = (AxisService) servicesIter.next();
+                for (Iterator operations = axisService.getOperations();
+                     operations.hasNext();) {
+                    AxisOperation op = (AxisOperation) operations.next();
+                    if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
+                        walkSchema(op.getMessage(
+                                WSDLConstants.MESSAGE_LABEL_IN_VALUE),
+                                mapper,
+                                schemaMap,
+                                op.getName().getLocalPart(),
+                                WSDLConstants.INPUT_PART_QNAME_SUFFIX);
+                    }
 
-            for (Iterator operations = axisService.getOperations();
-                 operations.hasNext();) {
-                AxisOperation op = (AxisOperation) operations.next();
-                if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
-                    walkSchema(op.getMessage(
-                            WSDLConstants.MESSAGE_LABEL_IN_VALUE),
-                            mapper,
-                            schemaMap,
-                            op.getName().getLocalPart(),
-                            WSDLConstants.INPUT_PART_QNAME_SUFFIX);
+                    if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
+                        walkSchema(op.getMessage(
+                                WSDLConstants.MESSAGE_LABEL_OUT_VALUE),
+                                mapper,
+                                schemaMap,
+                                op.getName().getLocalPart(),
+                                WSDLConstants.OUTPUT_PART_QNAME_SUFFIX);
+                    }
                 }
-
-                if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
-                    walkSchema(op.getMessage(
-                            WSDLConstants.MESSAGE_LABEL_OUT_VALUE),
-                            mapper,
-                            schemaMap,
-                            op.getName().getLocalPart(),
-                            WSDLConstants.OUTPUT_PART_QNAME_SUFFIX);
-                }
-
-
             }
+
         }
 
         //put the complext types for the top level elements having them
         // this is needed in unwrapping and to provide backwordCompatibility
-        if(!configuration.isParametersWrapped() || configuration.isBackwordCompatibilityMode()){
-           AxisService axisService = configuration.getAxisService();
-           AxisOperation axisOperation;
-           AxisMessage axisMessage;
-           for (Iterator operators = axisService.getOperations(); operators.hasNext();){
-               axisOperation = (AxisOperation) operators.next();
-               if (WSDLUtil.isInputPresentForMEP(axisOperation.getMessageExchangePattern())){
-                   axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                   setComplexTypeName(axisMessage);
-               }
-               if (WSDLUtil.isOutputPresentForMEP(axisOperation.getMessageExchangePattern())){
-                   axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-                   setComplexTypeName(axisMessage);
-               }
-           }
+        if (!configuration.isParametersWrapped() || configuration.isBackwordCompatibilityMode()) {
+            List axisServices = configuration.getAxisServices();
+            AxisService axisService;
+            for (Iterator servicesIter = axisServices.iterator(); servicesIter.hasNext();) {
+                axisService = (AxisService) servicesIter.next();
+                AxisOperation axisOperation;
+                AxisMessage axisMessage;
+                for (Iterator operators = axisService.getOperations(); operators.hasNext();) {
+                    axisOperation = (AxisOperation) operators.next();
+                    if (WSDLUtil.isInputPresentForMEP(axisOperation.getMessageExchangePattern())) {
+                        axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                        setComplexTypeName(axisMessage);
+                    }
+                    if (WSDLUtil.isOutputPresentForMEP(axisOperation.getMessageExchangePattern())) {
+                        axisMessage = axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                        setComplexTypeName(axisMessage);
+                    }
+                }
+            }
+
         }
 
         //set the type mapper to the config

@@ -27,7 +27,8 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
         if (packageName == null || URLProcessor.DEFAULT_PACKAGE.equals(packageName)) {
 
             //use the target namespace from the axis service to form a package name
-            String targetNameSpace = configuration.getAxisService().getTargetNamespace();
+            // since all the services are in same name space
+            String targetNameSpace = configuration.getTargetNamespace();
 
             // if this target name space exists in the ns2p then we have to get that package
             if ((configuration.getUri2PackageNameMap() != null) &&
@@ -35,7 +36,7 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
                 packageName = (String) configuration.getUri2PackageNameMap().get(targetNameSpace);
             } else {
                 // i.e. user have not given any ns2p information for this name space
-                packageName = URLProcessor.makePackageName(configuration.getAxisService().getTargetNamespace());
+                packageName = URLProcessor.makePackageName(configuration.getTargetNamespace());
             }
 
         }

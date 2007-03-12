@@ -112,7 +112,13 @@ public class CodeGenerationUtility {
             //xmlbeans specific XMLObject
             mapper.setDefaultMappingName(XmlObject.class.getName());
 
-            Map nameSpacesMap = cgconfig.getAxisService().getNameSpacesMap();
+            Map nameSpacesMap = new HashMap();
+            List axisServices = cgconfig.getAxisServices();
+            AxisService axisService = null;
+            for (Iterator iter = axisServices.iterator();iter.hasNext();){
+                axisService = (AxisService) iter.next();
+                nameSpacesMap.putAll(axisService.getNameSpacesMap());
+            }
 
             // process all the schemas and make a list of all of them for
             // resolving entities
@@ -193,82 +199,83 @@ public class CodeGenerationUtility {
             //process the unwrapped parameters
             if (!cgconfig.isParametersWrapped()) {
                 //figure out the unwrapped operations
-                AxisService axisService = cgconfig.getAxisService();
-                for (Iterator operations = axisService.getOperations();
-                     operations.hasNext();) {
-                    AxisOperation op = (AxisOperation) operations.next();
+                axisServices = cgconfig.getAxisServices();
+                for (Iterator servicesIter = axisServices.iterator(); servicesIter.hasNext();) {
+                    axisService = (AxisService) servicesIter.next();
+                    for (Iterator operations = axisService.getOperations();
+                         operations.hasNext();) {
+                        AxisOperation op = (AxisOperation) operations.next();
 
-                    if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
-                        AxisMessage message = op.getMessage(
-                                WSDLConstants.MESSAGE_LABEL_IN_VALUE);
-                        if (message != null && message.getParameter(Constants.UNWRAPPED_KEY) != null) {
-                            SchemaGlobalElement xmlbeansElement = sts.findElement(message.getElementQName());
-                            SchemaType sType = xmlbeansElement.getType();
+                        if (WSDLUtil.isInputPresentForMEP(op.getMessageExchangePattern())) {
+                            AxisMessage message = op.getMessage(
+                                    WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+                            if (message != null && message.getParameter(Constants.UNWRAPPED_KEY) != null) {
+                                SchemaGlobalElement xmlbeansElement = sts.findElement(message.getElementQName());
+                                SchemaType sType = xmlbeansElement.getType();
 
-                            SchemaProperty[] elementProperties = sType.getElementProperties();
-                            for (int i = 0; i < elementProperties.length; i++) {
-                                SchemaProperty elementProperty = elementProperties[i];
+                                SchemaProperty[] elementProperties = sType.getElementProperties();
+                                for (int i = 0; i < elementProperties.length; i++) {
+                                    SchemaProperty elementProperty = elementProperties[i];
 
-                                QName partQName = WSDLUtil.getPartQName(op.getName().getLocalPart(),
-                                        WSDLConstants.INPUT_PART_QNAME_SUFFIX,
-                                        elementProperty.getName().getLocalPart());
+                                    QName partQName = WSDLUtil.getPartQName(op.getName().getLocalPart(),
+                                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                            elementProperty.getName().getLocalPart());
 
-                                //this type is based on a primitive type- use the
-                                //primitive type name in this case
-                                String fullJaveName = elementProperty.getType().getFullJavaName();
-                                if (elementProperty.extendsJavaArray()) {
-                                    fullJaveName = fullJaveName.concat("[]");
+                                    //this type is based on a primitive type- use the
+                                    //primitive type name in this case
+                                    String fullJaveName = elementProperty.getType().getFullJavaName();
+                                    if (elementProperty.extendsJavaArray()) {
+                                        fullJaveName = fullJaveName.concat("[]");
+                                    }
+                                    mapper.addTypeMappingName(partQName, fullJaveName);
+                                    SchemaType primitiveType = elementProperty.getType().getPrimitiveType();
+
+
+                                    if (primitiveType != null) {
+                                        mapper.addTypeMappingStatus(partQName, Boolean.TRUE);
+                                    }
+                                    if (elementProperty.extendsJavaArray()) {
+                                        mapper.addTypeMappingStatus(partQName, Constants.ARRAY_TYPE);
+                                    }
                                 }
-                                mapper.addTypeMappingName(partQName, fullJaveName);
-                                SchemaType primitiveType = elementProperty.getType().getPrimitiveType();
+                            }
+                        }
+
+                        if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
+                            AxisMessage message = op.getMessage(
+                                    WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
+                            if (message != null && message.getParameter(Constants.UNWRAPPED_KEY) != null) {
+                                SchemaGlobalElement xmlbeansElement = sts.findElement(message.getElementQName());
+                                SchemaType sType = xmlbeansElement.getType();
+
+                                SchemaProperty[] elementProperties = sType.getElementProperties();
+                                for (int i = 0; i < elementProperties.length; i++) {
+                                    SchemaProperty elementProperty = elementProperties[i];
+
+                                    QName partQName = WSDLUtil.getPartQName(op.getName().getLocalPart(),
+                                            WSDLConstants.OUTPUT_PART_QNAME_SUFFIX,
+                                            elementProperty.getName().getLocalPart());
+
+                                    //this type is based on a primitive type- use the
+                                    //primitive type name in this case
+                                    String fullJaveName = elementProperty.getType().getFullJavaName();
+                                    if (elementProperty.extendsJavaArray()) {
+                                        fullJaveName = fullJaveName.concat("[]");
+                                    }
+                                    mapper.addTypeMappingName(partQName, fullJaveName);
+                                    SchemaType primitiveType = elementProperty.getType().getPrimitiveType();
 
 
-                                if (primitiveType != null) {
-                                    mapper.addTypeMappingStatus(partQName, Boolean.TRUE);
-                                }
-                                if (elementProperty.extendsJavaArray()) {
-                                    mapper.addTypeMappingStatus(partQName, Constants.ARRAY_TYPE);
+                                    if (primitiveType != null) {
+                                        mapper.addTypeMappingStatus(partQName, Boolean.TRUE);
+                                    }
+                                    if (elementProperty.extendsJavaArray()) {
+                                        mapper.addTypeMappingStatus(partQName, Constants.ARRAY_TYPE);
+                                    }
                                 }
                             }
                         }
                     }
-
-                     if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
-                        AxisMessage message = op.getMessage(
-                                WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
-                        if (message != null && message.getParameter(Constants.UNWRAPPED_KEY) != null) {
-                            SchemaGlobalElement xmlbeansElement = sts.findElement(message.getElementQName());
-                            SchemaType sType = xmlbeansElement.getType();
-
-                            SchemaProperty[] elementProperties = sType.getElementProperties();
-                            for (int i = 0; i < elementProperties.length; i++) {
-                                SchemaProperty elementProperty = elementProperties[i];
-
-                                QName partQName = WSDLUtil.getPartQName(op.getName().getLocalPart(),
-                                        WSDLConstants.OUTPUT_PART_QNAME_SUFFIX,
-                                        elementProperty.getName().getLocalPart());
-
-                                //this type is based on a primitive type- use the
-                                //primitive type name in this case
-                                String fullJaveName = elementProperty.getType().getFullJavaName();
-                                if (elementProperty.extendsJavaArray()) {
-                                    fullJaveName = fullJaveName.concat("[]");
-                                }
-                                mapper.addTypeMappingName(partQName, fullJaveName);
-                                SchemaType primitiveType = elementProperty.getType().getPrimitiveType();
-
-
-                                if (primitiveType != null) {
-                                    mapper.addTypeMappingStatus(partQName, Boolean.TRUE);
-                                }
-                                if (elementProperty.extendsJavaArray()) {
-                                    mapper.addTypeMappingStatus(partQName, Constants.ARRAY_TYPE);
-                                }
-                            }
-                        }
-                    }
-
-
                 }
             }
 
