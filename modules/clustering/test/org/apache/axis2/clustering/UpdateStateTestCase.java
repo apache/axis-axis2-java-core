@@ -49,7 +49,12 @@ public abstract class UpdateStateTestCase extends ClusterManagerTestCase {
 
 	public void setUp() throws Exception {
 		super.setUp();
-
+		if (skipChannelTests) {
+			String message = "Cannot run the clustering test setUp.Please make sure that your network service is enabled. Skipping the test...";
+			log.error(message);
+			return;
+		}
+		
 		sgcID = UUIDGenerator.getUUID();
 
 		//Adding contexts to the Node1
