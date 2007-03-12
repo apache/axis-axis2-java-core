@@ -18,15 +18,21 @@ package org.apache.axis2.cluster.handlers;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.cluster.ClusterManager;
+import org.apache.axis2.cluster.ClusteringFault;
+import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class ReplicationHandler extends AbstractHandler {
 
+    private static final Log log = LogFactory.getLog(ReplicationHandler.class);
+    
 	public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
 
 		replicateState(msgContext);
@@ -34,30 +40,40 @@ public class ReplicationHandler extends AbstractHandler {
 		return InvocationResponse.CONTINUE;
 	}
 
-	public void flowComplete(MessageContext msgContext) {
+	public void flowComplete(MessageContext msgContext) throws AxisFault {
 		super.flowComplete(msgContext);
 
 		replicateState(msgContext);
 	}
 
-	private void replicateState(MessageContext message) {
+	private void replicateState(MessageContext message) throws ClusteringFault {
 
 		ConfigurationContext configurationContext = message.getConfigurationContext();
 		AxisConfiguration axisConfiguration = configurationContext.getAxisConfiguration();
 		ClusterManager clusterManager = axisConfiguration.getClusterManager();
 
 		if (clusterManager != null) {
+			
+			ContextManager contextManager = clusterManager.getContextManager();
+			if (contextManager==null) {
+				if (log.isDebugEnabled()) {
+					String msg = "Cannot replicate contexts since the ClusterManager has not defined a ContextManager";
+					log.error(msg);
+				}
+			}
+			
 			ServiceContext serviceContext = message.getServiceContext();
 			ServiceGroupContext serviceGroupContext = message.getServiceGroupContext();
 
-			clusterManager.updateState(configurationContext);
+			
+			contextManager.updateState(configurationContext);
 
 			if (serviceGroupContext != null) {
-				clusterManager.updateState(serviceGroupContext);
+				contextManager.updateState(serviceGroupContext);
 			}
 
 			if (serviceContext != null) {
-				clusterManager.updateState(serviceContext);
+				contextManager.updateState(serviceContext);
 			}
 
 		}

@@ -23,6 +23,7 @@ import org.apache.axiom.soap.SOAPFault;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.cluster.ClusterManager;
+import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.ContextFactory;
@@ -126,7 +127,7 @@ public class Utils {
     }
 
     public static ServiceContext fillContextInformation(AxisService axisService,
-                                                        ConfigurationContext configurationContext) {
+                                                        ConfigurationContext configurationContext) throws AxisFault {
 
         // 2. if null, create new opCtxt
         // fill the service group context and service context info
@@ -134,7 +135,7 @@ public class Utils {
     }
 
     private static ServiceContext fillServiceContextAndServiceGroupContext(AxisService axisService,
-                                                                           ConfigurationContext configurationContext) {
+                                                                           ConfigurationContext configurationContext) throws AxisFault {
         String serviceGroupContextId = UUIDGenerator.getUUID();
         ServiceGroupContext serviceGroupContext =
                 ContextFactory.createServiceGroupContext(configurationContext,
@@ -148,8 +149,11 @@ public class Utils {
         ClusterManager clusterManager =
                 configurationContext.getAxisConfiguration().getClusterManager();
         if (clusterManager != null) {
-            clusterManager.addContext(serviceGroupContext);
-            clusterManager.addContext(serviceContext);
+        	ContextManager contextManager = clusterManager.getContextManager();
+        	if (contextManager!=null) {
+        		contextManager.addContext(serviceGroupContext);
+        		contextManager.addContext(serviceContext);
+        	}
         }
 
         return serviceContext;

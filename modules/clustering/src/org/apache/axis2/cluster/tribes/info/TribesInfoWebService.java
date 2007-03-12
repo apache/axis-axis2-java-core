@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster.tribes;
+package org.apache.axis2.cluster.tribes.info;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.axiom.om.OMAbstractFactory;
@@ -39,8 +40,8 @@ public class TribesInfoWebService {
 		TransientTribesMemberInfo memberInfo = (TransientTribesMemberInfo) configCtx
 				.getProperty("MEMBER_INFO");
 
-		List<Member> liveMembers = memberInfo.getLiveNodes();
-		List<Member> deadMembers = memberInfo.getDeadNodes();
+		List liveMembers = memberInfo.getLiveNodes();
+		List deadMembers = memberInfo.getDeadNodes();
 
 		SOAPFactory factory = OMAbstractFactory.getSOAP11Factory();
 		OMNamespace omNs = factory.createOMNamespace("http://org.apache.axis2.cluster.tribes/xsd",
@@ -49,7 +50,8 @@ public class TribesInfoWebService {
 		OMElement memberInfoOM = factory.createOMElement("memberInfo", omNs);
 
 		OMElement liveMemberOM = factory.createOMElement("liveMemberInfo", omNs);
-		for (Member member : liveMembers) {
+		for (Iterator it=liveMembers.iterator();it.hasNext();) {
+			Member member = (Member) it.next();
 			OMElement memberOM = factory.createOMElement("member", omNs);
 			memberOM.addAttribute(factory.createOMAttribute("name", omNs, member.getName()));
 			memberOM.addAttribute(factory.createOMAttribute("host", omNs, String.valueOf(member
@@ -62,7 +64,8 @@ public class TribesInfoWebService {
 		}
 
 		OMElement deadMemberOM = factory.createOMElement("deadMemberInfo", omNs);
-		for (Member member : deadMembers) {
+		for (Iterator it=deadMembers.iterator();it.hasNext();) {
+			Member member = (Member) it.next();
 			OMElement memberOM = factory.createOMElement("member", omNs);
 			memberOM.addAttribute(factory.createOMAttribute("name", omNs, member.getName()));
 			memberOM.addAttribute(factory.createOMAttribute("host", omNs, String.valueOf(member

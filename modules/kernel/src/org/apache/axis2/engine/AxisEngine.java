@@ -271,7 +271,7 @@ public class AxisEngine {
         return pi;
     }
 
-    private void flowComplete(MessageContext msgContext, boolean inbound) {
+    private void flowComplete(MessageContext msgContext, boolean inbound) throws AxisFault {
         Iterator invokedPhaseIterator = inbound ? msgContext.getInboundExecutedPhases() :
                 msgContext.getOutboundExecutedPhases();
 

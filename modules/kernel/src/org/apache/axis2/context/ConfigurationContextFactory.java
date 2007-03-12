@@ -63,6 +63,11 @@ public class ConfigurationContextFactory {
             AxisConfigurator axisConfigurator) throws AxisFault {
         AxisConfiguration axisConfig = axisConfigurator.getAxisConfiguration();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
+        
+        if (axisConfig.getClusterManager() != null) {
+        	configContext.initCluster();
+        }
+        
         if (axisConfigurator instanceof DeploymentEngine) {
             ((DeploymentEngine) axisConfigurator).setConfigContext(configContext);
         }
@@ -178,6 +183,7 @@ public class ConfigurationContextFactory {
     public static ConfigurationContext createConfigurationContextFromFileSystem(
             String path,
             String axis2xml) throws AxisFault {
+    	
         return createConfigurationContext(new FileSystemConfigurator(path, axis2xml));
     }
 
@@ -254,9 +260,13 @@ public class ConfigurationContextFactory {
      *
      * @return Returns ConfigurationContext.
      */
-    public static ConfigurationContext createEmptyConfigurationContext() {
+    public static ConfigurationContext createEmptyConfigurationContext() throws AxisFault {
         AxisConfiguration axisConfiguration = new AxisConfiguration();
         ConfigurationContext configContext = new ConfigurationContext(axisConfiguration);
+        if (axisConfiguration.getClusterManager() != null) {
+        	configContext.initCluster();
+        }
+        
         setContextPaths(axisConfiguration, configContext);
         return configContext;
     }
@@ -275,6 +285,11 @@ public class ConfigurationContextFactory {
         builder.populateConfig();
         axisConfig.validateSystemPredefinedPhases();
         ConfigurationContext configContext = new ConfigurationContext(axisConfig);
+        
+        if (axisConfig.getClusterManager() != null) {
+        	configContext.initCluster();
+        }
+        
         setContextPaths(axisConfig, configContext);
         return configContext;
     }

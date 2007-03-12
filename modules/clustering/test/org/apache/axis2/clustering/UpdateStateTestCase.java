@@ -22,9 +22,13 @@ import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public abstract class UpdateStateTestCase extends ClusterManagerTestCase {
 
+    private static final Log log = LogFactory.getLog(UpdateStateTestCase.class);
+    
 	ServiceContext serviceContext1 = null;
 
 	ServiceGroupContext serviceGroupContext1 = null;
@@ -60,18 +64,24 @@ public abstract class UpdateStateTestCase extends ClusterManagerTestCase {
 		serviceGroupContext1.setProperty(key2, val2);
 		serviceContext1.setProperty(key3, val3);
 
-		clusterManager1.addContext(serviceGroupContext1);
-		clusterManager1.addContext(serviceContext1);
+		clusterManager1.getContextManager().addContext(serviceGroupContext1);
+		clusterManager1.getContextManager().addContext(serviceContext1);
 
-		clusterManager1.updateState(configurationContext1);
-		clusterManager1.updateState(serviceGroupContext1);
-		clusterManager1.updateState(serviceContext1);
+		clusterManager1.getContextManager().updateState(configurationContext1);
+		clusterManager1.getContextManager().updateState(serviceGroupContext1);
+		clusterManager1.getContextManager().updateState(serviceContext1);
 
 		Thread.sleep(1000);
 	}
 
 	public void testAddProperty() throws Exception {
 
+		if (skipChannelTests) {
+			String message = "Cannot runc the clustering test.Please make sure that your network service is enabled. Skipping the test...";
+			log.error(message);
+			return;
+		}
+		
 		//TODO uncomment this when configCtx proeprty updates are supported
 		//		Object val = configurationContext2.getProperty(key1);
 		//		assertNotNull(val);
@@ -99,11 +109,17 @@ public abstract class UpdateStateTestCase extends ClusterManagerTestCase {
 
 	public void testRemoveProperty() throws Exception {
 
+		if (skipChannelTests) {
+			String message = "Cannot runc the clustering test.Please make sure that your network service is enabled. Skipping the test...";
+			log.error(message);
+			return;
+		}
+		
 		serviceGroupContext1.getProperties().remove(key2);
 		serviceContext1.getProperties().remove(key3);
 
-		clusterManager1.updateState(serviceContext1);
-		clusterManager1.updateState(serviceGroupContext1);
+		clusterManager1.getContextManager().updateState(serviceContext1);
+		clusterManager1.getContextManager().updateState(serviceGroupContext1);
 
 		Thread.sleep(1000);
 
@@ -125,11 +141,17 @@ public abstract class UpdateStateTestCase extends ClusterManagerTestCase {
 
 	public void testUpdateProperty() throws Exception {
 
+		if (skipChannelTests) {
+			String message = "Cannot runc the clustering test.Please make sure that your network service is enabled. Skipping the test...";
+			log.error(message);
+			return;
+		}
+		
 		serviceGroupContext1.setProperty(key2, val3);
 		serviceContext1.setProperty(key3, val2);
 
-		clusterManager1.updateState(serviceContext1);
-		clusterManager1.updateState(serviceGroupContext1);
+		clusterManager1.getContextManager().updateState(serviceContext1);
+		clusterManager1.getContextManager().updateState(serviceGroupContext1);
 
 		Thread.sleep(1000);
 

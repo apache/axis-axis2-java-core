@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster.tribes;
+package org.apache.axis2.cluster.tribes.context;
 
 import java.io.Serializable;
 
-public class TribesMapEntryMessage extends TribesCommandMessage {
+
+public class ContextUpdateEntryCommandMessage extends ContextCommandMessage {
 
 	public static short ADD_OR_UPDATE_ENTRY = 0;
 
@@ -52,7 +53,7 @@ public class TribesMapEntryMessage extends TribesCommandMessage {
 		this.operation = operation;
 	}
 
-	public TribesMapEntryMessage(String commandName, String parentId,
+	public ContextUpdateEntryCommandMessage(String commandName, String parentId,
 			String contextId, String axisDescriptionName, String key,
 			Serializable value, short ctxType, short operation) {
 		super(commandName, parentId, contextId, axisDescriptionName, ctxType);

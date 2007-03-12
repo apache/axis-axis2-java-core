@@ -123,6 +123,14 @@
                 <module>true</module>
             </properties>
         </dependency>   
+        <dependency>
+            <groupId>org.apache.neethi</groupId>
+            <artifactId>neethi</artifactId>
+            <version>${neethi.version}</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
     </dependencies>
     <build/>
     <reports/>

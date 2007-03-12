@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster.tribes;
+package org.apache.axis2.cluster;
 
-public class ContextType {
+import org.apache.axis2.AxisFault;
 
-	public static int CONFIGURATION_CONTEXT = 1;
-	public static int SERVICE_GROUP_CONTEXT = 2;
-	public static int SERVICE_CONTEXT = 3;
+public class ClusteringFault extends AxisFault {
+
+	public ClusteringFault (String message) {
+		super (message);
+	}
 	
+	public ClusteringFault (String message, Exception e) {
+		super (message, e);
+	}
 }

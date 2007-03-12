@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster.tribes;
+package org.apache.axis2.cluster.tribes.context;
 
 import java.io.Serializable;
 
-
-public class TribesCommandMessage implements CommandType, Serializable {
+public class ContextCommandMessage implements Serializable {
 
 	private String commandName;
 
@@ -31,10 +30,10 @@ public class TribesCommandMessage implements CommandType, Serializable {
 
 	private int contextType;
 
-	public TribesCommandMessage() {
+	public ContextCommandMessage() {
 	}
 
-	public TribesCommandMessage(String commandName, String parentId, String contextId,
+	public ContextCommandMessage(String commandName, String parentId, String contextId,
 			String axisDescriptionName, int contextType) {
 		this.commandName = commandName;
 		this.parentId = parentId;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster.tribes;
+package org.apache.axis2.cluster.tribes.info;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +24,9 @@ import org.apache.catalina.tribes.MembershipListener;
 
 public class TransientTribesMemberInfo implements MembershipListener {
 
-	private List<Member> liveNodes = new ArrayList<Member>();
+	private List liveNodes = new ArrayList();
 
-	private List<Member> deadNodes = new ArrayList<Member>();
+	private List deadNodes = new ArrayList();
 
 	public void memberAdded(Member member) {
 		liveNodes.add(member);
@@ -38,11 +38,11 @@ public class TransientTribesMemberInfo implements MembershipListener {
 		deadNodes.add(member);
 	}
 
-	public List<Member> getLiveNodes() {
+	public List getLiveNodes() {
 		return liveNodes;
 	}
 
-	public List<Member> getDeadNodes() {
+	public List getDeadNodes() {
 		return deadNodes;
 	}
 }

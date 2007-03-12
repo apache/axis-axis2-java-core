@@ -400,7 +400,7 @@ public class Phase implements Handler {
         return pi;
     }
 
-    public void flowComplete(MessageContext msgContext) {
+    public void flowComplete(MessageContext msgContext) throws AxisFault {
         if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
             log.debug(msgContext.getLogIDString() + " Invoking flowComplete() in Phase \"" +
                     phaseName + "\"");

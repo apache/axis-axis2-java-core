@@ -19,11 +19,17 @@ package org.apache.axis2.clustering;
 import junit.framework.TestCase;
 
 import org.apache.axis2.cluster.ClusterManager;
+import org.apache.axis2.cluster.ClusteringFault;
+import org.apache.axis2.cluster.tribes.context.TribesContextManager;
+import org.apache.axis2.cluster.tribes.context.TribesContextManagerListener;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.engine.AxisEngine;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public abstract class ClusterManagerTestCase extends TestCase {
 
@@ -50,18 +56,24 @@ public abstract class ClusterManagerTestCase extends TestCase {
 	protected String serviceName = "testService";
 
 	protected abstract ClusterManager getClusterManager();
+	
+	protected boolean skipChannelTests = false; 
 
+    private static final Log log = LogFactory.getLog(ClusterManagerTestCase.class);
+    
 	protected void setUp() throws Exception {
 
 		clusterManager1 = getClusterManager();
 		clusterManager2 = getClusterManager();
 
-		//ConfigContext of the Node1
 		configurationContext1 = ConfigurationContextFactory.createDefaultConfigurationContext();
-
-		//ConfigContext of the Node2
 		configurationContext2 = ConfigurationContextFactory.createDefaultConfigurationContext();
 
+		TribesContextManagerListener listener1 = new TribesContextManagerListener (configurationContext1);
+		clusterManager1.getContextManager(). addContextManagerListener (listener1);
+		TribesContextManagerListener listener2 = new TribesContextManagerListener (configurationContext2);
+		clusterManager2.getContextManager(). addContextManagerListener (listener2);	
+		
 		//giving both Nodes the same deployment configuration
 
 		axisConfiguration1 = configurationContext1.getAxisConfiguration();
@@ -77,8 +89,16 @@ public abstract class ClusterManagerTestCase extends TestCase {
 		axisConfiguration2.addServiceGroup(serviceGroup2);
 
 		//Initiating ClusterManagers
-		clusterManager1.init(configurationContext1);
-		clusterManager2.init(configurationContext2);
+		try {
+			clusterManager1.init(configurationContext1);
+			clusterManager2.init(configurationContext2);
+		} catch (ClusteringFault e) {
+			String message = "Could not initialize ClusterManagers. Please check the network connection";
+			if (log.isErrorEnabled())
+				log.error(message);
+			
+			skipChannelTests = true;
+		}
 	}
 
 	protected void tearDown() throws Exception {

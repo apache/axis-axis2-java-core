@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster.tribes;
+package org.apache.axis2.cluster.tribes.info;
 
 import java.io.Serializable;
 
+import org.apache.axis2.cluster.tribes.CommandType;
+import org.apache.axis2.cluster.tribes.context.ContextCommandMessage;
 import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.Member;
 
@@ -44,8 +46,8 @@ public class TransientTribesChannelInfo implements ChannelListener {
 
 		System.out.println("Tribes message " + msg);
 
-		if (msg instanceof TribesCommandMessage) {
-			TribesCommandMessage comMsg = (TribesCommandMessage) msg;
+		if (msg instanceof ContextCommandMessage) {
+			ContextCommandMessage comMsg = (ContextCommandMessage) msg;
 
 			if (comMsg.getCommandName().equals(
 					CommandType.CREATE_SERVICE_GROUP_CONTEXT)) {

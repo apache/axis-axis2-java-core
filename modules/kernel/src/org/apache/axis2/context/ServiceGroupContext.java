@@ -19,6 +19,7 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.cluster.ClusterManager;
+import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -147,7 +148,9 @@ public class ServiceGroupContext extends AbstractContext implements Externalizab
 
             ClusterManager clusterManager = axisService.getAxisConfiguration().getClusterManager();
             if (clusterManager != null) {
-                clusterManager.addContext(serviceContext);
+            	ContextManager contextManager = clusterManager.getContextManager();
+            	if (contextManager!=null)
+            		contextManager.addContext(serviceContext);
             }
 
         }

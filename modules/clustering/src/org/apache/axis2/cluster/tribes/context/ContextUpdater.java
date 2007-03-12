@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster.tribes;
+package org.apache.axis2.cluster.tribes.context;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.axis2.cluster.tribes.CommandType;
 import org.apache.catalina.tribes.Channel;
 
-public class ContextManager {
+public class ContextUpdater {
 
 	private Channel channel;
 
@@ -34,14 +36,23 @@ public class ContextManager {
 
 	private ClassLoader classLoader;
 
-	private Map<String, HashMap> serviceCtxProps = new HashMap<String, HashMap>();
+	private Map serviceCtxProps = null;
+	private Map serviceGrpCtxProps = null;
 
-	private Map<String, HashMap> serviceGrpCtxProps = new HashMap<String, HashMap>();
+	public Map getServiceCtxProps() {
+		return serviceCtxProps;
+	}
 
-	public ContextManager(Channel channel, long timeout, ClassLoader classLoader) {
+	public Map getServiceGrpCtxProps() {
+		return serviceGrpCtxProps;
+	}
+
+	public ContextUpdater(Channel channel, long timeout, ClassLoader classLoader) {
 		this.channel = channel;
 		this.timeout = timeout;
 		this.classLoader = classLoader;
+		serviceCtxProps = new HashMap ();
+		serviceGrpCtxProps = new HashMap ();
 	}
 
 	public void addServiceContext(String parentId, String serviceCtxName) {
@@ -120,16 +131,16 @@ public class ContextManager {
 	}
 
 	public Map getServiceGroupProps(String groupId) {
-		return serviceGrpCtxProps.get(groupId);
+		return (Map) serviceGrpCtxProps.get(groupId);
 	}
 
 	public Map getServiceProps(String parentId, String serviceCtxName) {
 		String key = parentId + "_" + serviceCtxName;
-		return serviceCtxProps.get(key);
+		return (Map) serviceCtxProps.get(key);
 	}
 
 	public List updateStateOnServiceContext(String parentId,
-			String serviceCtxName, Map<String, ?> newProps) {
+			String serviceCtxName, Map newProps) {
 		String key = parentId + "_" + serviceCtxName;
 		HashMap oldProps = (HashMap) serviceCtxProps.get(key);
 		if (oldProps == null) {
@@ -137,23 +148,26 @@ public class ContextManager {
 			serviceCtxProps.put(key, oldProps);
 		}
 
-		List<TribesMapEntryMessage> commandList = new ArrayList<TribesMapEntryMessage>();
+		List commandList = new ArrayList();
 
 		try {
 			// using set operations to figure out the diffs
 
 			// figuring out entries to remove
-			Set<String> diffForRemove = new HashSet<String>();
+			Set diffForRemove = new HashSet();
 			diffForRemove.addAll(oldProps.keySet());
 			diffForRemove.removeAll(newProps.keySet());
 
 			// figuring out new entires
-			Set<String> diffForAddOrUpdate = new HashSet<String>();
+			Set diffForAddOrUpdate = new HashSet();
 			diffForAddOrUpdate.addAll(newProps.keySet());
 			diffForAddOrUpdate.removeAll(oldProps.keySet());
 
 			// figuring out entries to update
-			for (String paramKey : newProps.keySet()) {
+			for (Iterator it= newProps.keySet().iterator();it.hasNext();) {
+				
+				String paramKey = (String) it.next();
+				
 				Object oldValue = oldProps.get(paramKey);
 				Object newValue = newProps.get(paramKey);
 
@@ -162,27 +176,33 @@ public class ContextManager {
 				}
 			}
 
-			for (String paramKey : diffForAddOrUpdate) {
+			for (Iterator it= diffForAddOrUpdate.iterator();it.hasNext();) {
+				
+				String paramKey = (String) it.next();
+				
 				Object value = newProps.get(paramKey);
 				if (value instanceof Serializable) {
 					oldProps.put(paramKey, value);
-					commandList.add(new TribesMapEntryMessage(
+					commandList.add(new ContextUpdateEntryCommandMessage(
 							CommandType.UPDATE_STATE_MAP_ENTRY, parentId,
 							serviceCtxName, serviceCtxName, paramKey,
 							(Serializable) value,
-							TribesMapEntryMessage.SERVICE_CONTEXT,
-							TribesMapEntryMessage.ADD_OR_UPDATE_ENTRY));
+							ContextUpdateEntryCommandMessage.SERVICE_CONTEXT,
+							ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY));
 					// oldProps.replicate(paramKey, true);
 				}
 			}
 
-			for (String paramKey : diffForRemove) {
+			for (Iterator it= diffForRemove.iterator();it.hasNext();) {
+				
+				String paramKey = (String) it.next();
+				
 				oldProps.remove(paramKey);
-				commandList.add(new TribesMapEntryMessage(
+				commandList.add(new ContextUpdateEntryCommandMessage(
 						CommandType.UPDATE_STATE_MAP_ENTRY, parentId,
 						serviceCtxName, serviceCtxName, paramKey, "",
-						TribesMapEntryMessage.SERVICE_CONTEXT,
-						TribesMapEntryMessage.REMOVE_ENTRY));
+						ContextUpdateEntryCommandMessage.SERVICE_CONTEXT,
+						ContextUpdateEntryCommandMessage.REMOVE_ENTRY));
 
 				// oldProps.replicate(paramKey, true);
 			}
@@ -194,32 +214,34 @@ public class ContextManager {
 		return commandList;
 	}
 
-	@SuppressWarnings("unchecked")
 	public List updateStateOnServiceGroupContext(String ctxId,
-			Map<String, ?> newProps) {
+			Map newProps) {
 		HashMap oldProps = (HashMap) serviceGrpCtxProps.get(ctxId);
 		if (oldProps == null) {
 			oldProps = new HashMap();
 			serviceCtxProps.put(ctxId, oldProps);
 		}
 
-		List<TribesMapEntryMessage> commandList = new ArrayList<TribesMapEntryMessage>();
+		List commandList = new ArrayList ();
 
 		try {
 			// using set operations to figure out the diffs
 
 			// figuring out entries to remove
-			Set<String> diffForRemove = new HashSet<String>();
+			Set diffForRemove = new HashSet();
 			diffForRemove.addAll(oldProps.keySet());
 			diffForRemove.removeAll(newProps.keySet());
 
 			// figuring out entries to update
-			Set<String> diffForAddOrUpdate = new HashSet<String>();
+			Set diffForAddOrUpdate = new HashSet ();
 			diffForAddOrUpdate.addAll(newProps.keySet());
 			diffForAddOrUpdate.removeAll(oldProps.keySet());
 
 			// figuring out entries to update
-			for (String paramKey : newProps.keySet()) {
+			for (Iterator it=newProps.keySet().iterator();it.hasNext();) {
+				
+				String paramKey = (String) it.next();
+				
 				Object oldValue = oldProps.get(paramKey);
 				Object newValue = newProps.get(paramKey);
 
@@ -228,26 +250,32 @@ public class ContextManager {
 				}
 			}
 
-			for (String paramKey : diffForAddOrUpdate) {
+			for (Iterator it=diffForAddOrUpdate.iterator();it.hasNext();) {
+				
+				String paramKey = (String) it.next();
+				
 				Object value = newProps.get(paramKey);
 				if (value instanceof Serializable) {
 					oldProps.put(paramKey, value);
-					commandList.add(new TribesMapEntryMessage(
+					commandList.add(new ContextUpdateEntryCommandMessage(
 							CommandType.UPDATE_STATE_MAP_ENTRY, "", ctxId,
 							ctxId, paramKey, (Serializable) value,
-							TribesMapEntryMessage.SERVICE_GROUP_CONTEXT,
-							TribesMapEntryMessage.ADD_OR_UPDATE_ENTRY));
+							ContextUpdateEntryCommandMessage.SERVICE_GROUP_CONTEXT,
+							ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY));
 					// oldProps.replicate(paramKey, true); //
 					// map.replicate(true) will replicate all
 				}
 			}
 
-			for (String paramKey : diffForRemove) {
-				commandList.add(new TribesMapEntryMessage(
+			for (Iterator it=diffForRemove.iterator();it.hasNext();) {
+				
+				String paramKey = (String) it.next();
+				
+				commandList.add(new ContextUpdateEntryCommandMessage(
 						CommandType.UPDATE_STATE_MAP_ENTRY, "", ctxId, ctxId,
 						paramKey, "",
-						TribesMapEntryMessage.SERVICE_GROUP_CONTEXT,
-						TribesMapEntryMessage.REMOVE_ENTRY));
+						ContextUpdateEntryCommandMessage.SERVICE_GROUP_CONTEXT,
+						ContextUpdateEntryCommandMessage.REMOVE_ENTRY));
 				// oldProps.remove(paramKey);
 			}
 		} catch (RuntimeException e) {

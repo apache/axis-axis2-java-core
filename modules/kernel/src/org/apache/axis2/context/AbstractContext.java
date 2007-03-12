@@ -19,6 +19,7 @@ package org.apache.axis2.context;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.cluster.ClusterManager;
+import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 
@@ -181,8 +182,10 @@ public abstract class AbstractContext {
         ClusterManager clusterManager = axisConfiguration.getClusterManager();
 
         //Calling the ClusterManager probably to replicate the updated state of the context.
-        if (clusterManager != null && clusterManager.isContextClusterable(this)) {
-            clusterManager.updateState(this);
+        if (clusterManager != null) {
+        	ContextManager contextManager = clusterManager.getContextManager();
+        	if (contextManager!=null && contextManager.isContextClusterable (this))
+        		contextManager.updateState(this);
         }
 
         //Other logic needed for flushing the contexts

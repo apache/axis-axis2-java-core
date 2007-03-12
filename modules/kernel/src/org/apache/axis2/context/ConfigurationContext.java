@@ -21,6 +21,7 @@ import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.cluster.ClusterManager;
+import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Parameter;
@@ -71,10 +72,6 @@ public class ConfigurationContext extends AbstractContext {
         super(null);
         this.axisConfiguration = axisConfiguration;
         initConfigContextTimeout(axisConfiguration);
-
-        if (axisConfiguration.getClusterManager() != null) {
-            initCluster();
-        }
     }
 
     private void initConfigContextTimeout(AxisConfiguration axisConfiguration) {
@@ -88,7 +85,7 @@ public class ConfigurationContext extends AbstractContext {
         }
     }
 
-    private void initCluster() {
+    public void initCluster() throws AxisFault {
         ClusterManager clusterManager = axisConfiguration.getClusterManager();
         clusterManager.init(this);
     }
@@ -142,7 +139,9 @@ public class ConfigurationContext extends AbstractContext {
 
                     ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
                     if (clusterManager != null) {
-                        clusterManager.addContext(serviceGroupContext);
+                    	ContextManager contextManager = clusterManager.getContextManager();
+                    	if (contextManager!=null)
+                    		contextManager.addContext(serviceGroupContext);
                     }
                 }
                 messageContext.setServiceGroupContext(serviceGroupContext);
@@ -169,7 +168,9 @@ public class ConfigurationContext extends AbstractContext {
 
                     ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
                     if (clusterManager != null) {
-                        clusterManager.addContext(serviceGroupContext);
+                    	ContextManager contextManager = clusterManager.getContextManager();
+                    	if (contextManager!=null)
+                    		contextManager.addContext(serviceGroupContext);
                     }
 
                     messageContext.setServiceGroupContextId(serviceGroupContextId);

@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster;
+package org.apache.axis2.cluster.tribes.context;
 
-import org.apache.axis2.cluster.configuration.ConfigurationManager;
-import org.apache.axis2.cluster.context.ContextManager;
-import org.apache.axis2.context.ConfigurationContext;
+public class ContextType {
 
-public interface ClusterManager {
-    public void init(ConfigurationContext context) throws ClusteringFault;
-    public ContextManager getContextManager ();
-    public ConfigurationManager getConfigurationManager ();
+	public static int CONFIGURATION_CONTEXT = 1;
+	public static int SERVICE_GROUP_CONTEXT = 2;
+	public static int SERVICE_CONTEXT = 3;
+	
 }

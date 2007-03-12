@@ -21,11 +21,21 @@ import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 public abstract class ManageContextTestCase extends ClusterManagerTestCase {
 
+    private static final Log log = LogFactory.getLog(ClusterManagerTestCase.class);
+    
 	public void testAddContext () throws Exception {
+		
+		if (skipChannelTests) {
+			String message = "Cannot runc the clustering test.Please make sure that your network service is enabled. Skipping the test...";
+			log.error(message);
+			return;
+		}
 		
 		//Adding contexts to the Node1
 		ServiceGroupContext serviceGroupContext1 = ContextFactory.createServiceGroupContext(configurationContext1, serviceGroup1);
@@ -35,14 +45,15 @@ public abstract class ManageContextTestCase extends ClusterManagerTestCase {
 		ServiceContext serviceContext1 = ContextFactory.createServiceContext(serviceGroupContext1, service1);
 		
 		//adding the Contexts to the first configContext 
-		clusterManager1.addContext(serviceGroupContext1);
-		clusterManager1.addContext(serviceContext1);
+		clusterManager1.getContextManager().addContext(serviceGroupContext1);
+		clusterManager1.getContextManager().addContext(serviceContext1);
 		
 		//give a time interval
 		Thread.sleep(5000);
 		
 		//The second configContext should have the newly added contexts.
 		ServiceGroupContext serviceGroupContext2 = configurationContext2.getServiceGroupContext(sgcID);
+		System.out.println("sgs ID 2:" + sgcID);
 		assertNotNull(serviceGroupContext2);
 		
 		Iterator iter = serviceGroupContext2.getServiceContexts();
@@ -56,7 +67,11 @@ public abstract class ManageContextTestCase extends ClusterManagerTestCase {
 	}
 	
 	public void testRemoveContext () {
-		
+		if (skipChannelTests) {
+			String message = "Cannot runc the clustering test.Please make sure that your network service is enabled. Skipping the test...";
+			log.error(message);
+			return;
+		}
 	}
 	
 	
