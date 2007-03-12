@@ -98,6 +98,7 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
                     envelope = TransportUtils.createSOAPMessage(
                             responseMessageContext);
                 }
+                responseMessageContext.setEnvelope(envelope);
             }
             if (envelope != null) {
                 if (envelope.getBody().hasFault()) {
