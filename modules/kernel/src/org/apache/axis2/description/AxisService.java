@@ -49,6 +49,7 @@ import org.apache.axis2.util.XMLUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.neethi.Policy;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaExternal;
@@ -587,6 +588,17 @@ public class AxisService extends AxisDescription {
             operation.addParameter(parameter);
         }
 
+        PolicyInclude policyInclude = new PolicyInclude(operation);
+        PolicyInclude axisOperationPolicyInclude = axisOperation.getPolicyInclude();
+        
+        if (axisOperationPolicyInclude != null) {
+            Policy policy = axisOperationPolicyInclude.getPolicy();
+            if (policy != null) {
+                policyInclude.setPolicy(axisOperationPolicyInclude.getPolicy());
+            }
+        }
+        operation.setPolicyInclude(policyInclude);
+        
         operation.setWsamappingList(axisOperation.getWsamappingList());
         operation.setRemainingPhasesInFlow(axisOperation.getRemainingPhasesInFlow());
         operation.setPhasesInFaultFlow(axisOperation.getPhasesInFaultFlow());

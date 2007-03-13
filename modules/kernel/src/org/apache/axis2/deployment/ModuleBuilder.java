@@ -270,6 +270,20 @@ public class ModuleBuilder extends DescriptionBuilder {
             // Process Module Refs
             Iterator modules = operation.getChildrenWithName(new QName(TAG_MODULE));
             processOperationModuleRefs(modules, op_descrip);
+            
+//          processing <wsp:Policy> .. </..> elements
+            Iterator policyElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY));
+
+            if (policyElements != null && policyElements.hasNext()) {
+                processPolicyElements(PolicyInclude.AXIS_MODULE_OPERATION_POLICY, policyElements, op_descrip.getPolicyInclude());
+            }
+
+            // processing <wsp:PolicyReference> .. </..> elements
+            Iterator policyRefElements = operation.getChildrenWithName(new QName(POLICY_NS_URI, TAG_POLICY_REF));
+
+            if (policyRefElements != null && policyElements.hasNext()) {
+                processPolicyRefElements(PolicyInclude.AXIS_MODULE_OPERATION_POLICY, policyRefElements, module.getPolicyInclude());
+            }
 
             // setting Operation phase
             PhasesInfo info = axisConfig.getPhasesInfo();
@@ -278,6 +292,7 @@ public class ModuleBuilder extends DescriptionBuilder {
             } catch (AxisFault axisFault) {
                 throw new DeploymentException(axisFault);
             }
+            
 
             // adding the operation
             operations.add(op_descrip);

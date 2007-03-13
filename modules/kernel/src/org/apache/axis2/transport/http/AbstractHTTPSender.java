@@ -62,7 +62,10 @@ public abstract class AbstractHTTPSender {
     protected String httpVersion = HTTPConstants.HEADER_PROTOCOL_11;
     private static final Log log = LogFactory.getLog(AbstractHTTPSender.class);
     int soTimeout = HTTPConstants.DEFAULT_SO_TIMEOUT;
-
+    
+    protected static final String PROTOCOL_HTTP = "http";
+    protected static final String PROTOCOL_HTTPS = "https";
+    
     /**
      * proxydiscription
      */
@@ -304,8 +307,14 @@ public abstract class AbstractHTTPSender {
         boolean isAuthenticationEnabled = isAuthenticationEnabled(msgCtx);
         int port = targetURL.getPort();
 
+        String protocal = targetURL.getProtocol();
         if (port == -1) {
-            port = 80;
+            if (PROTOCOL_HTTP.equals(protocal)) {
+                port = 80;
+            } else if (PROTOCOL_HTTPS.equals(protocal)){
+                port = 443;                
+            }
+            
         }
 
         // to see the host is a proxy and in the proxy list - available in axis2.xml

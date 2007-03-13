@@ -33,6 +33,8 @@ public class PolicyInclude {
     public static final int AXIS_POLICY = 1;
 
     public static final int AXIS_MODULE_POLICY = 2;
+    
+    public static final int AXIS_MODULE_OPERATION_POLICY = 17;
 
     public static final int AXIS_SERVICE_POLICY = 3;
 
