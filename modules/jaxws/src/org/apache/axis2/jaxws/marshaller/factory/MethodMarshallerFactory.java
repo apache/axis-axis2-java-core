@@ -184,7 +184,7 @@ public class MethodMarshallerFactory {
      * @return
      */
     protected static boolean isDocLitBareMinimal(OperationDescription op) {
-        return isDocLitBare(op) && isContextPathConstruction(op);
+        return isDocLitBare(op) && !isContextPathConstruction(op);
     }
     
     /**
