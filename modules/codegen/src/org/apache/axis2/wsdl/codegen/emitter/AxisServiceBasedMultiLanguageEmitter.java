@@ -1,26 +1,13 @@
 package org.apache.axis2.wsdl.codegen.emitter;
 
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.description.AxisBinding;
-import org.apache.axis2.description.AxisBindingMessage;
-import org.apache.axis2.description.AxisBindingOperation;
-import org.apache.axis2.description.AxisMessage;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.PolicyInclude;
-import org.apache.axis2.description.WSDL20DefaultValueHolder;
-import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.*;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.Utils;
 import org.apache.axis2.util.XSLTUtils;
-import org.apache.axis2.wsdl.HTTPHeaderMessage;
-import org.apache.axis2.wsdl.SOAPHeaderMessage;
-import org.apache.axis2.wsdl.SOAPModuleMessage;
-import org.apache.axis2.wsdl.WSDLConstants;
-import org.apache.axis2.wsdl.WSDLUtil;
+import org.apache.axis2.wsdl.*;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 import org.apache.axis2.wsdl.codegen.writer.AntBuildWriter;
@@ -230,15 +217,18 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     private Object getBindingPropertyFromOperation(String name, QName qName) {
 
         // Get the correct AxisBindingOperation coresponding to the AxisOperation
-        AxisBindingOperation axisBindingOperation =
-                (AxisBindingOperation) axisBinding.getChild(qName);
+        AxisBindingOperation axisBindingOperation = null;
+        if (axisBinding != null){
+             axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(qName);
+        }
+
         Object property = null;
 
         if (axisBindingOperation != null) {
             property = axisBindingOperation.getProperty(name);
         }
 
-        if (property == null) {
+        if ((property == null) && (axisBinding != null)) {
             property = axisBinding.getProperty(name);
         }
 
@@ -253,8 +243,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         Object property = null;
         // Get the correct AxisBindingOperation coresponding to the AxisOperation
-        AxisBindingOperation axisBindingOperation =
-                (AxisBindingOperation) axisBinding.getChild(qName);
+        AxisBindingOperation axisBindingOperation = null;
+        if (axisBinding != null) {
+            axisBindingOperation = (AxisBindingOperation) axisBinding.getChild(qName);
+
+        }
 
         AxisBindingMessage axisBindingMessage = null;
         if (axisBindingOperation != null) {
@@ -269,7 +262,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         }
 
 
-        if (property == null) {
+        if ((property == null) && (axisBinding != null)) {
             property = axisBinding.getProperty(name);
         }
 
@@ -325,7 +318,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     protected String getFullyQualifiedStubName() {
         String packageName = codeGenConfiguration.getPackageName();
-        String localPart = makeJavaClassName(axisService.getName());
+        String localPart = makeJavaClassName(axisService.getName() + axisService.getEndpointName());
         return packageName + "." + localPart + STUB_SUFFIX;
     }
 
@@ -382,55 +375,96 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     public void emitStub() throws CodeGenerationException {
         try {
 
+            //first keep a seperate copy of the original map to use in
+            // every iteration
+            // for every iteration  qName2NameMap is changed in updateMapperForStub
+            // method if in the packing mode
+            Map originalTypeMap = getNewCopy(mapper.getAllMappedNames());
+
             for (Iterator axisServicesIter = this.axisServices.iterator(); axisServicesIter.hasNext();) {
                 this.axisService = (AxisService) axisServicesIter.next();
-                this.axisBinding = axisService.getEndpoint(axisService.getEndpointName()).getBinding();
-                // see the comment at updateMapperClassnames for details and reasons for
-                // calling this method
-                if (mapper.isObjectMappingPresent()) {
-                    updateMapperForStub();
-                } else {
-                    copyToFaultMap();
-                }
 
-                //generate and populate the fault names before hand. We need that for
-                //the smooth opration of the thing
-                //first reset the fault names and recreate it
-                resetFaultNames();
-                generateAndPopulateFaultNames();
-                updateFaultPackageForStub();
+                //we have to generate the code for each bininding
+                //for the moment lets genrate the stub name with the service name and end point name
 
                 // write the inteface
                 // feed the binding information also
                 // note that we do not create this interface if the user switched on the wrap classes mode
                 if (!codeGenConfiguration.isPackClasses()) {
                     writeInterface(false);
+                    // write the call back handlers
+                    writeCallBackHandlers();
                 }
 
-                // write the call back handlers
-                writeCallBackHandlers();
-
-                // write the Exceptions
-                writeExceptions();
-
-                // write interface implementations
-                writeInterfaceImplementation();
-
-                // write the test classes
-                writeTestClasses();
-
-                // write an ant build file
-                // Note that ant build is generated only once
-                // and that has to happen here only if the
-                // client side code is required
-                if (!codeGenConfiguration.isGenerateAll()) {
-                    //our logic for the build xml is that it will
-                    //only be written when not flattened
-                    if (!codeGenConfiguration.isFlattenFiles()) {
-                        writeAntBuild();
+                Map endpoints = this.axisService.getEndpoints();
+                AxisEndpoint axisEndpoint;
+                for (Iterator endPointsIter = endpoints.values().iterator(); endPointsIter.hasNext();) {
+                    axisEndpoint = (AxisEndpoint) endPointsIter.next();
+                    // set the end point details.
+                    this.axisBinding = axisEndpoint.getBinding();
+                    axisService.setEndpointName(axisEndpoint.getName());
+                    axisService.setBindingName(axisEndpoint.getBinding().getName().getLocalPart());
+                    if (axisEndpoint.getProperty(WSDL2Constants.ATTR_WSOAP_ADDRESS) instanceof SoapAddress) {
+                        SoapAddress soapAddress = (SoapAddress)
+                                axisEndpoint.getProperty(WSDL2Constants.ATTR_WSOAP_ADDRESS);
+                        axisService.setEndpointURL(soapAddress.getLocation());
+                    } else if (axisEndpoint.getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION) instanceof HttpAddress) {
+                        HttpAddress httpAddress = (HttpAddress) axisEndpoint
+                                .getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
+                        axisService.setEndpointURL(httpAddress.getLocation());
                     }
+
+                    // see the comment at updateMapperClassnames for details and reasons for
+                    // calling this method
+                    if (mapper.isObjectMappingPresent()) {
+                        // initialize the map to original one
+                        copyMap(originalTypeMap, mapper.getAllMappedNames());
+                        updateMapperForStub();
+                    } else {
+                        copyToFaultMap();
+                    }
+
+                    //generate and populate the fault names before hand. We need that for
+                    //the smooth opration of the thing
+                    //first reset the fault names and recreate it
+                    resetFaultNames();
+                    generateAndPopulateFaultNames();
+                    updateFaultPackageForStub();
+
+                    if (codeGenConfiguration.isPackClasses()) {
+                        // write the call back handlers
+                        writeCallBackHandlers();
+                    }
+
+
+                    // write the Exceptions
+                    writeExceptions();
+
+                    // write interface implementations
+                    writeInterfaceImplementation();
+
+                    // write the test classes
+                    writeTestClasses();
+
                 }
 
+            }
+
+            // save back type map
+            if (this.mapper.isObjectMappingPresent()){
+                copyMap(originalTypeMap, this.mapper.getAllMappedNames());
+            }
+
+            // write an ant build file
+            // Note that ant build is generated only once
+            // and that has to happen here only if the
+            // client side code is required
+            if (!codeGenConfiguration.isGenerateAll()) {
+                //our logic for the build xml is that it will
+                //only be written when not flattened
+                if (!codeGenConfiguration.isFlattenFiles()) {
+                    writeAntBuild();
+                }
             }
 
         } catch (CodeGenerationException ce) {
@@ -439,6 +473,25 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             throw new CodeGenerationException(e);
         }
     }
+
+    private Map getNewCopy(Map copyFormMap){
+        Map copyToMap = new HashMap();
+        Object key;
+        for (Iterator iter = copyFormMap.keySet().iterator(); iter.hasNext();){
+            key = iter.next();
+            copyToMap.put(key,copyFormMap.get(key));
+        }
+        return copyToMap;
+    }
+
+    private void copyMap(Map copyFormMap,Map copyToMap){
+        Object key;
+        for (Iterator iter = copyFormMap.keySet().iterator(); iter.hasNext();){
+            key = iter.next();
+            copyToMap.put(key,copyFormMap.get(key));
+        }
+    }
+
 
     /**
      * Writes the Ant build.
@@ -515,16 +568,23 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element rootElement = doc.createElement("class");
 
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
-        addAttribute(doc, "name", coreClassName + TEST_SUFFIX, rootElement);
+        addAttribute(doc, "name", makeJavaClassName(axisService.getName() + axisService.getEndpointName())
+                + TEST_SUFFIX, rootElement);
         //todo is this right ???
         addAttribute(doc, "namespace", axisService.getTargetNamespace(), rootElement);
         addAttribute(doc, "interfaceName", coreClassName, rootElement);
-        addAttribute(doc, "callbackname", coreClassName + CALL_BACK_HANDLER_SUFFIX, rootElement);
+        if (codeGenConfiguration.isPackClasses()){
+           addAttribute(doc, "callbackname", makeJavaClassName(axisService.getName() + axisService.getEndpointName())
+                   + CALL_BACK_HANDLER_SUFFIX, rootElement);
+        } else {
+           addAttribute(doc, "callbackname", coreClassName + CALL_BACK_HANDLER_SUFFIX, rootElement);
+        }
         if (this.codeGenConfiguration.isBackwordCompatibilityMode()) {
             addAttribute(doc, "stubname",
                     makeJavaClassName(axisService.getBindingName()) + STUB_SUFFIX, rootElement);
         } else {
-            addAttribute(doc, "stubname", coreClassName + STUB_SUFFIX, rootElement);
+            addAttribute(doc, "stubname", makeJavaClassName(axisService.getName() + axisService.getEndpointName())
+                    + STUB_SUFFIX, rootElement);
         }
 
         //add backwordcompatibility attribute
@@ -574,7 +634,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         String packageName = codeGenConfiguration.getPackageName();
         String localPart = makeJavaClassName(axisService.getName());
-        String stubName = localPart + STUB_SUFFIX;
+        String stubName = makeJavaClassName(axisService.getName() + axisService.getEndpointName()) + STUB_SUFFIX;
         Document doc = getEmptyDocument();
         Element rootElement = doc.createElement("class");
 
@@ -590,11 +650,17 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "name", makeJavaClassName(axisService.getBindingName()) + STUB_SUFFIX,
                     rootElement);
         } else {
-            addAttribute(doc, "interfaceName", localPart, rootElement);
+            addAttribute(doc, "interfaceName", localPart , rootElement);
             addAttribute(doc, "name", stubName, rootElement);
         }
 
-        addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX, rootElement);
+        if (codeGenConfiguration.isPackClasses()){
+            addAttribute(doc, "callbackname",
+                    makeJavaClassName(axisService.getName() + axisService.getEndpointName()) +
+                            CALL_BACK_HANDLER_SUFFIX, rootElement);
+        } else {
+            addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX, rootElement);
+        }
         //add backwordcompatibility attribute
         addAttribute(doc, "isbackcompatible",
                 String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),
@@ -948,8 +1014,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element rootElement = doc.createElement("callback");
 
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
-        addAttribute(doc, "name",
+        if (codeGenConfiguration.isPackClasses()){
+            addAttribute(doc, "name",
+                makeJavaClassName(axisService.getName() + axisService.getEndpointName()) + CALL_BACK_HANDLER_SUFFIX, rootElement);
+        } else {
+            addAttribute(doc, "name",
                 makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX, rootElement);
+        }
+
 
         // TODO JAXRPC mapping support should be considered here ??
         this.loadOperations(doc, rootElement, null);
@@ -1084,6 +1156,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         try {
 
+            Map originalMap = getNewCopy(this.mapper.getAllMappedNames());
             // we are going to generate following files seperately per service
             for (Iterator axisServicesIter = this.axisServices.iterator(); axisServicesIter.hasNext();) {
                 this.axisService = (AxisService) axisServicesIter.next();
@@ -1092,6 +1165,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 // see the comment at updateMapperClassnames for details and reasons for
                 // calling this method
                 if (mapper.isObjectMappingPresent()) {
+                    copyMap(originalMap, this.mapper.getAllMappedNames());
                     updateMapperForMessageReceiver();
                 } else {
                     copyToFaultMap();
@@ -1126,6 +1200,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 //for the server side codegen
                 //we need to serialize the WSDL's
                 writeWSDLFiles();
+            }
+
+            // save back type map
+            if (this.mapper.isObjectMappingPresent()){
+                copyMap(originalMap, this.mapper.getAllMappedNames());
             }
 
 
@@ -1985,7 +2064,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         String mep = (String) getBindingPropertyFromOperation(WSDL2Constants.ATTR_WSOAP_MEP,
                 axisOperation.getName());
 
-        String bindingType = axisBinding.getType();
+        String bindingType = null;
+        if (axisBinding != null){
+            axisBinding.getType();
+        }
 
         if (WSDL2Constants.URI_WSOAP_MEP.equalsIgnoreCase(mep)) {
             methodElement.appendChild(generateOptionParamComponent(doc,

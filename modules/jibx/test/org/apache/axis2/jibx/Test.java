@@ -62,7 +62,7 @@ public class Test extends TestCase
     private static final String MODULE_PATH_PREFIX = "../modules/";
     private static final String COMPILE_TARGET_NAME = "compile";
     private static final String STUB_CLASS =
-        "org.apache.ws.axis2.jibx.customer.wsdl.EchoCustomerServiceStub";
+        "org.apache.ws.axis2.jibx.customer.wsdl.EchoCustomerServiceEchoCustomerPortStub";
 
     public static final QName serviceName = new QName("EchoCustomerService");
     public static final QName operationName = new QName("echo");
