@@ -30,6 +30,8 @@ import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.context.MessageContext;
 
 import javax.xml.namespace.QName;
+
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -106,6 +108,8 @@ public class AxisFault extends RemoteException {
      * indicate explicitly that it generated the fault.
      */
     private String nodeURI;
+
+	private String faultAction;
 
 
     /**
@@ -508,7 +512,7 @@ public class AxisFault extends RemoteException {
         return faultMessageContext;
     }
 
-    class FaultReason {
+    class FaultReason implements Serializable{
 
         /**
          * Language of the reason.
@@ -554,5 +558,19 @@ public class AxisFault extends RemoteException {
             this.text = text;
         }
     }
+    
+    /**
+     * @return the action value set for the fault message  
+     */
+	public String getFaultAction() {
+		return faultAction;
+	}
 
+	/**
+	 * Set the (OPTIONAL) action value for the fault message 
+	 * @param faultAction
+	 */
+	public void setFaultAction(String faultAction) {
+		this.faultAction = faultAction;
+	}
 }

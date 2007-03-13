@@ -244,12 +244,19 @@ public class MessageContextBuilder {
         faultContext.setProcessingFault(true);
 
         // Set wsa:Action for response message
+        
         // Use specified value if available
         AxisOperation op = processingContext.getAxisOperation();
         if (op != null && op.getFaultAction() != null) {
             faultContext.setWSAAction(op.getFaultAction());
         } else { //If, for some reason there is no value set, should use a sensible action.
             faultContext.setWSAAction(Final.WSA_SOAP_FAULT_ACTION);
+        }
+        // override if the fault action has been set in the AxisFault
+        if (e instanceof AxisFault) {
+        	if(((AxisFault)e).getFaultAction() != null){
+        		faultContext.setWSAAction(((AxisFault)e).getFaultAction());
+        	}
         }
 
         // there are some information  that the fault thrower wants to pass to the fault path.
