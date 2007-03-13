@@ -365,13 +365,15 @@ public class CodegenBean {
             if (!"xmlbeans".equals(getDatabindingName())) {
                 Thread.currentThread().setContextClassLoader(Class.class.getClassLoader());
             }
-            CodeGenConfiguration codegenConfig = new CodeGenConfiguration(getAxisService(WSDLFileName), fillOptionMap());
+            CodeGenConfiguration codegenConfig = new CodeGenConfiguration(fillOptionMap());
+            codegenConfig.addAxisService(getAxisService(WSDLFileName));
             //set the baseURI
             codegenConfig.setBaseURI(getBaseUri(WSDLFileName));
             new CodeGenerationEngine(codegenConfig).generate();
         } catch (Throwable e) {
             try {
-                CodeGenConfiguration codegenConfig = new CodeGenConfiguration(getAxisService(WSDLFileName), fillOptionMap());
+                CodeGenConfiguration codegenConfig = new CodeGenConfiguration(fillOptionMap());
+                codegenConfig.addAxisService(getAxisService(WSDLFileName));
                 //set the baseURI
                 codegenConfig.setBaseURI(getBaseUri(WSDLFileName));
                 new CodeGenerationEngine(codegenConfig).generate();
