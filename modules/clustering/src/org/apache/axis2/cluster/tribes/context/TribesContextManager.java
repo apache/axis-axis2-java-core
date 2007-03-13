@@ -28,6 +28,7 @@ import org.apache.axis2.cluster.context.ContextEvent;
 import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.cluster.context.ContextManagerListener;
 import org.apache.axis2.cluster.handlers.ReplicationHandler;
+import org.apache.axis2.cluster.tribes.ChannelSender;
 import org.apache.axis2.cluster.tribes.CommandType;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
@@ -46,7 +47,6 @@ public class TribesContextManager implements ContextManager {
     private static final Log log = LogFactory.getLog(TribesContextManager.class);
     
 	private ConfigurationContext configContext;
-	private Channel channel;
 	private ContextUpdater updater;
 
 	private Map orphanedServiceCtxs = new HashMap ();
@@ -54,17 +54,21 @@ public class TribesContextManager implements ContextManager {
 	private ArrayList addedServiceCtxs = new ArrayList ();
 	private ArrayList listeners = null;
 	
-	public TribesContextManager (ConfigurationContext configurationContext, Channel channel, ContextUpdater updater) {
+	private ChannelSender sender;
+	
+	public void setSender(ChannelSender sender) {
+		this.sender = sender;
+	}
+
+	public TribesContextManager (ConfigurationContext configurationContext, ContextUpdater updater) {
 		this ();
 		this.configContext = configurationContext;
-		this.channel = channel;
 		this.updater = updater;
 	}
 	
 	public TribesContextManager () {
 		listeners = new ArrayList ();
 	}
-	
 	
 	public void notifyListeners(ContextEvent event, int eventType) {
 
@@ -99,7 +103,7 @@ public class TribesContextManager implements ContextManager {
 				updater.addServiceContext(parentContextId, contextId);
 				comMsg = new ContextCommandMessage(CommandType.CREATE_SERVICE_CONTEXT,
 						parentContextId, contextId, contextId, ContextType.SERVICE_CONTEXT);
-				send(comMsg);
+				sender.send(comMsg);
 			} else {
 				// put in the queue until the service group context is created
 				// with an id
@@ -135,7 +139,7 @@ public class TribesContextManager implements ContextManager {
 					contextId, srvGrpCtx.getDescription().getServiceGroupName(),
 					ContextType.SERVICE_GROUP_CONTEXT);
 
-			send(comMsg);
+			sender.send(comMsg);
 
 			// now iterate through the list of service contexts and replicate them
 			List list = (List) orphanedServiceCtxs.get(srvGrpCtx.getDescription()
@@ -148,7 +152,7 @@ public class TribesContextManager implements ContextManager {
 					updater.addServiceContext(contextId, command.getContextId());
 					command.setParentId(contextId);
 
-					send(command);
+					sender.send(command);
 
 				}
 
@@ -183,7 +187,7 @@ public class TribesContextManager implements ContextManager {
 							.getServiceGroupName(), ContextType.SERVICE_CONTEXT);
 		}
 
-		send(comMsg);
+		sender.send(comMsg);
 	}
 
 	/*
@@ -216,42 +220,14 @@ public class TribesContextManager implements ContextManager {
 		if (mapEntryMsgs != null) {
 			for (Iterator it=mapEntryMsgs.iterator();it.hasNext();) {
 				ContextUpdateEntryCommandMessage msg = (ContextUpdateEntryCommandMessage) it.next();
-				send(msg);
+				sender.send(msg);
 			}
 		}
 
 		ContextCommandMessage comMsg = new ContextCommandMessage(CommandType.UPDATE_STATE,
 				parentContextId, contextId, contextId, contextType);
 
-		send(comMsg);
-	}
-
-
-	private void send(ContextCommandMessage msg) throws ClusteringFault {
-		Member[] group = channel.getMembers();
-		log.debug("Group size " + group.length);
-		// send the message
-
-		for (int i=0;i<group.length;i++) {
-			printMember(group[i]);
-		}
-
-		try {
-			channel.send(group, msg, 0);
-		} catch (ChannelException e) {
-			log.error("" + msg, e);
-			String message = "Error sending command message : " + msg;
-			throw new ClusteringFault (message, e);
-		}
-	}
-	
-	private void printMember(Member member) {
-		member.getUniqueId();
-		log.debug("\n===============================");
-		log.debug("Member Name " + member.getName());
-		log.debug("Member Host" + member.getHost());
-		log.debug("Member Payload" + member.getPayload());
-		log.debug("===============================\n");
+		sender.send(comMsg);
 	}
 
 	public boolean isContextClusterable(AbstractContext context) {
@@ -288,11 +264,6 @@ public class TribesContextManager implements ContextManager {
 
 	public void addContextManagerListener(ContextManagerListener listener) {
 		listeners.add(listener);
-	}
-
-
-	public void setChannel(Channel channel) {
-		this.channel = channel;
 	}
 
 	public void setUpdater(ContextUpdater updater) {

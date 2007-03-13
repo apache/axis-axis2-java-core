@@ -26,15 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.axis2.cluster.tribes.CommandType;
-import org.apache.catalina.tribes.Channel;
 
 public class ContextUpdater {
-
-	private Channel channel;
-
-	private long timeout = 1000;
-
-	private ClassLoader classLoader;
 
 	private Map serviceCtxProps = null;
 	private Map serviceGrpCtxProps = null;
@@ -47,44 +40,28 @@ public class ContextUpdater {
 		return serviceGrpCtxProps;
 	}
 
-	public ContextUpdater(Channel channel, long timeout, ClassLoader classLoader) {
-		this.channel = channel;
-		this.timeout = timeout;
-		this.classLoader = classLoader;
+	public ContextUpdater() {
 		serviceCtxProps = new HashMap ();
 		serviceGrpCtxProps = new HashMap ();
 	}
 
 	public void addServiceContext(String parentId, String serviceCtxName) {
 		String key = parentId + "_" + serviceCtxName;
-		/*
-		 * serviceCtxProps.put(key,new ReplicatedMap(this, channel, timeout,
-		 * key, new ClassLoader[]{classLoader} ));
-		 */
-
 		serviceCtxProps.put(key, new HashMap());
 	}
 
 	public void addServiceGroupContext(String groupId) {
 		String key = groupId;
-		/*
-		 * serviceGrpCtxProps.put(key,new ReplicatedMap(this, channel, timeout,
-		 * key, new ClassLoader[]{classLoader} ));
-		 */
 		serviceGrpCtxProps.put(key, new HashMap());
 	}
 
 	public void removeServiceContext(String parentId, String serviceCtxName) {
 		String key = parentId + "_" + serviceCtxName;
-		HashMap map = (HashMap) serviceCtxProps.get(key);
-		// map.breakdown();
 		serviceCtxProps.remove(key);
 	}
 
 	public void removeServiceGroupContext(String groupId) {
 		String key = groupId;
-		HashMap map = (HashMap) serviceGrpCtxProps.get(key);
-		// map.breakdown();
 		serviceGrpCtxProps.remove(key);
 	}
 
@@ -189,7 +166,6 @@ public class ContextUpdater {
 							(Serializable) value,
 							ContextUpdateEntryCommandMessage.SERVICE_CONTEXT,
 							ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY));
-					// oldProps.replicate(paramKey, true);
 				}
 			}
 
@@ -204,10 +180,8 @@ public class ContextUpdater {
 						ContextUpdateEntryCommandMessage.SERVICE_CONTEXT,
 						ContextUpdateEntryCommandMessage.REMOVE_ENTRY));
 
-				// oldProps.replicate(paramKey, true);
 			}
 		} catch (RuntimeException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

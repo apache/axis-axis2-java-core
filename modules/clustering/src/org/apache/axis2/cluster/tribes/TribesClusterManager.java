@@ -16,22 +16,14 @@
 
 package org.apache.axis2.cluster.tribes;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.cluster.ClusteringFault;
 import org.apache.axis2.cluster.configuration.ConfigurationManager;
-import org.apache.axis2.cluster.context.ContextEvent;
 import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.cluster.tribes.configuration.TribesConfigurationManager;
-import org.apache.axis2.cluster.tribes.context.ContextListenerEventType;
-import org.apache.axis2.cluster.tribes.context.ContextType;
 import org.apache.axis2.cluster.tribes.context.ContextUpdater;
-import org.apache.axis2.cluster.tribes.context.ContextCommandMessage;
 import org.apache.axis2.cluster.tribes.context.TribesContextManager;
-import org.apache.axis2.cluster.tribes.context.ContextUpdateEntryCommandMessage;
 import org.apache.axis2.cluster.tribes.info.TransientTribesChannelInfo;
 import org.apache.axis2.cluster.tribes.info.TransientTribesMemberInfo;
 import org.apache.axis2.context.ConfigurationContext;
@@ -39,19 +31,16 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.ChannelListener;
-import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class TribesClusterManager implements ClusterManager, ChannelListener {
+public class TribesClusterManager implements ClusterManager {
 
 
-	TribesConfigurationManager descriptionManager = null;
+	TribesConfigurationManager configurationManager = null;
 	TribesContextManager contextManager = null;
 	ConfigurationContext configContext = null;
-	private Channel channel;
 	private ContextUpdater updater;
 	private static long timeout = 1000L; // this should be configured in the axis2.xml
 	
@@ -59,7 +48,7 @@ public class TribesClusterManager implements ClusterManager, ChannelListener {
     
     public TribesClusterManager () {
 		contextManager = new TribesContextManager ();
-		descriptionManager = new TribesConfigurationManager ();
+		configurationManager = new TribesConfigurationManager ();
     }
 	
 	public ContextManager getContextManager() {
@@ -67,34 +56,45 @@ public class TribesClusterManager implements ClusterManager, ChannelListener {
 	}
 
 	public ConfigurationManager getConfigurationManager() {
-		return descriptionManager;
+		return configurationManager;
 	}
 
 	public void init(ConfigurationContext context) throws ClusteringFault {
 		log.debug("initializing tibes");
 
+		this.configContext = context;
+		contextManager.setConfigContext(context);
+		
+		ChannelSender sender = new ChannelSender ();
+		ChannelListener listener = new ChannelListener ();
+
+		TransientTribesChannelInfo channelInfo = new TransientTribesChannelInfo();
+		TransientTribesMemberInfo memberInfo = new TransientTribesMemberInfo();
+
+		configContext.setProperty("MEMBER_INFO", memberInfo);
+		configContext.setProperty("CHANNEL_INFO", channelInfo);
+
+		contextManager.setSender(sender);
+		configurationManager.setSender(sender);
+		
 		try {
-			this.configContext = context;
-
-			TransientTribesChannelInfo channelInfo = new TransientTribesChannelInfo();
-			TransientTribesMemberInfo memberInfo = new TransientTribesMemberInfo();
-
-			configContext.setProperty("MEMBER_INFO", memberInfo);
-			configContext.setProperty("CHANNEL_INFO", channelInfo);
-
-			channel = new GroupChannel();
-			channel.addChannelListener(this);
+			Channel channel = new GroupChannel();
+			channel.addChannelListener (listener);
 			channel.addChannelListener(channelInfo);
 			channel.addMembershipListener(memberInfo);
 			channel.start(Channel.DEFAULT);
-			updater = new ContextUpdater (channel, TribesClusterManager.timeout, context.getAxisConfiguration()
-					.getSystemClassLoader());
+			sender.setChannel(channel);
+			contextManager.setSender(sender);
+			configurationManager.setSender(sender);
 			
-			contextManager.setChannel(channel);
+			updater = new ContextUpdater ();
 			contextManager.setUpdater(updater);
-			contextManager.setConfigContext(context);
+			
+			listener.setUpdater(updater);
+			listener.setContextManager(contextManager);
 			
 			registerTribesInfoService(configContext);
+
 		} catch (ChannelException e) {
 			String message = "Error starting Tribes channel";
 			throw new ClusteringFault (message, e);
@@ -112,97 +112,6 @@ public class TribesClusterManager implements ClusterManager, ChannelListener {
 			String message = "Unable to create Tribes info web service";
 			throw new ClusteringFault (message, e);
 		}
-	}
-
-	public void messageReceived(Serializable msg, Member sender) {
-
-		if (!(msg instanceof ContextCommandMessage)) {
-			return;
-		}
-
-		ContextCommandMessage comMsg = (ContextCommandMessage) msg;
-
-		// TODO make sure to remove from the duplicate lists when remove is
-		// requested for both service group and service contexts
-		// TODO fix this to support scopes other than SOAP Session.
-
-		if (comMsg.getCommandName().equals(CommandType.CREATE_SERVICE_GROUP_CONTEXT)) {
-
-			// add to the duplicate list to prevent cyclic replication
-			contextManager.addToDuplicateServiceGroupContexts(comMsg.getContextId());
-			updater.addServiceGroupContext(comMsg.getContextId());
-
-			ContextEvent event = new ContextEvent();
-			event.setContextType(ContextType.SERVICE_GROUP_CONTEXT);
-			event.setContextID(comMsg.getContextId());
-			event.setParentContextID(comMsg.getParentId());
-			event.setDescriptionID(comMsg.getAxisDescriptionName());
-
-			contextManager.notifyListeners(event, ContextListenerEventType.ADD_CONTEXT);
-
-		} else if (comMsg.getCommandName().equals(CommandType.CREATE_SERVICE_CONTEXT)) {
-
-			// add to the duplicate list to prevent cyclic replication
-			contextManager.addToDuplicateServiceContexts(comMsg.getParentId()
-					+ comMsg.getContextId());
-			updater.addServiceContext(comMsg.getParentId(), comMsg.getContextId());
-
-			ContextEvent event = new ContextEvent();
-			event.setContextType(ContextType.SERVICE_CONTEXT);
-			event.setContextID(comMsg.getContextId());
-			event.setParentContextID(comMsg.getParentId());
-			event.setDescriptionID(comMsg.getAxisDescriptionName());
-
-			contextManager.notifyListeners(event, ContextListenerEventType.ADD_CONTEXT);
-
-		} else if (comMsg.getCommandName().equals(CommandType.UPDATE_STATE)) {
-
-			if (comMsg.getContextType() == ContextType.SERVICE_GROUP_CONTEXT) {
-
-				ContextEvent event = new ContextEvent();
-				event.setContextType(ContextType.SERVICE_GROUP_CONTEXT);
-				event.setContextID(comMsg.getContextId());
-				event.setParentContextID(comMsg.getParentId());
-				event.setDescriptionID(comMsg.getAxisDescriptionName());
-
-				contextManager.notifyListeners(event, ContextListenerEventType.UPDATE_CONTEXT);
-
-			} else if (comMsg.getContextType() == ContextType.SERVICE_CONTEXT) {
-
-				ContextEvent event = new ContextEvent();
-				event.setContextType(ContextType.SERVICE_CONTEXT);
-				event.setContextID(comMsg.getContextId());
-				event.setParentContextID(comMsg.getParentId());
-				event.setDescriptionID(comMsg.getAxisDescriptionName());
-
-				contextManager.notifyListeners(event, ContextListenerEventType.UPDATE_CONTEXT);
-
-			}
-
-		} else if (comMsg.getCommandName().equals(CommandType.UPDATE_STATE_MAP_ENTRY)) {
-
-			ContextUpdateEntryCommandMessage mapEntryMsg = (ContextUpdateEntryCommandMessage) comMsg;
-			if (mapEntryMsg.getCtxType() == ContextUpdateEntryCommandMessage.SERVICE_GROUP_CONTEXT) {
-				Map props = updater.getServiceGroupProps(comMsg.getContextId());
-				if (mapEntryMsg.getOperation() == ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY) {
-					props.put(mapEntryMsg.getKey(), mapEntryMsg.getValue());
-				} else {
-					props.remove(mapEntryMsg.getKey());
-				}
-			} else if (mapEntryMsg.getCtxType() == ContextUpdateEntryCommandMessage.SERVICE_CONTEXT) {
-				Map props = updater.getServiceProps(comMsg.getParentId(), comMsg.getContextId());
-				if (mapEntryMsg.getOperation() == ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY) {
-					props.put(mapEntryMsg.getKey(), mapEntryMsg.getValue());
-				} else {
-					props.remove(mapEntryMsg.getKey());
-				}
-			}
-		}
-	}
-
-	public boolean accept(Serializable msg, Member sender) {
-		// return msg instanceof TribesCommandMessage;
-		return true;
 	}
 
 }

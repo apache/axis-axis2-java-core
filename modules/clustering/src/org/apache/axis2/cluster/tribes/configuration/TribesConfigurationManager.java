@@ -16,14 +16,25 @@
 
 package org.apache.axis2.cluster.tribes.configuration;
 
+import java.util.ArrayList;
+
 import org.apache.axis2.cluster.configuration.ConfigurationManager;
 import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
+import org.apache.axis2.cluster.tribes.ChannelSender;
 import org.apache.neethi.Policy;
 
 public class TribesConfigurationManager implements ConfigurationManager {
 
+	private ArrayList listeners = null;
+	private ChannelSender sender = null;
+	
+	
+	public TribesConfigurationManager () {
+		listeners = new ArrayList ();
+	}
+	
 	public void addConfigurationManagerListener(ConfigurationManagerListener listener) {
-		throw new UnsupportedOperationException ();
+		listeners.add(listener);
 	}
 
 	public void applyPolicy(String serviceGroupName, Policy policy) {
@@ -31,27 +42,54 @@ public class TribesConfigurationManager implements ConfigurationManager {
 	}
 
 	public void commit() {
-		throw new UnsupportedOperationException ();
+		ConfigurationCommand command = new ConfigurationCommand ();
+		command.setCommandType(ConfigurationCommand.COMMAND_COMMIT);
+		
+		send (command);
 	}
 
 	public void loadServiceGroup(String serviceGroupName) {
-		throw new UnsupportedOperationException ();
+		ConfigurationCommand command = new ConfigurationCommand ();
+		command.setCommandType(ConfigurationCommand.COMMAND_LOAD_SERVICE_GROUP);
+		command.setSgcName(serviceGroupName);
+		
+		send (command);
 	}
 
 	public void prepare() {
-		throw new UnsupportedOperationException ();		
+		ConfigurationCommand command = new ConfigurationCommand ();
+		command.setCommandType(ConfigurationCommand.COMMAND_PREPARE);
+		
+		send (command);
 	}
 
 	public void reloadConfiguration() {
-		throw new UnsupportedOperationException ();		
+		ConfigurationCommand command = new ConfigurationCommand ();
+		command.setCommandType(ConfigurationCommand.COMMAND_RELOAD_CONFIGURATION);
+		
+		send (command);		
 	}
 
 	public void rollback() {
-		throw new UnsupportedOperationException ();		
+		ConfigurationCommand command = new ConfigurationCommand ();
+		command.setCommandType(ConfigurationCommand.COMMAND_ROLLBACK);
+		
+		send (command);			
 	}
 
 	public void unloadServiceGroup(String serviceGroupName) {
-		throw new UnsupportedOperationException ();		
+		ConfigurationCommand command = new ConfigurationCommand ();
+		command.setCommandType(ConfigurationCommand.COMMAND_LOAD_SERVICE_GROUP);
+		command.setSgcName(serviceGroupName);
+		
+		send (command);
 	}
 
+	private void send (ConfigurationCommand command) {
+		throw new UnsupportedOperationException ();
+	}
+
+	public void setSender(ChannelSender sender) {
+		this.sender = sender;
+	}
 }
