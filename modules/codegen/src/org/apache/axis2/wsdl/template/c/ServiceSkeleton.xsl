@@ -85,7 +85,7 @@
 	{
 	    svc_skeleton->func_array = axis2_array_list_create(env, 10);
         <xsl:for-each select="method">
-	      AXIS2_ARRAY_LIST_ADD(svc_skeleton->func_array, env, "<xsl:value-of select="@localpart"/>");
+	      axis2_array_list_add(svc_skeleton->func_array, env, "<xsl:value-of select="@localpart"/>");
         </xsl:for-each>
 
 	    /* Any initialization stuff of <xsl:value-of select="$svcname"/> goes here */
@@ -98,7 +98,7 @@
 	{
           if(svc_skeleton->func_array)
           {
-            AXIS2_ARRAY_LIST_FREE(svc_skeleton->func_array, env);
+            axis2_array_list_free(svc_skeleton->func_array, env);
             svc_skeleton->func_array = NULL;
           }
 
@@ -156,9 +156,9 @@
             </xsl:for-each>
           </xsl:for-each>
 
-          operation_ctx = AXIS2_MSG_CTX_GET_OP_CTX(msg_ctx, env);
-          operation = AXIS2_OP_CTX_GET_OP(operation_ctx, env);
-          op_qname = (axis2_qname_t *)AXIS2_OP_GET_QNAME(operation, env);
+          operation_ctx = axis2_msg_ctx_get_op_ctx(msg_ctx, env);
+          operation = axis2_op_ctx_get_op(operation_ctx, env);
+          op_qname = (axis2_qname_t *)axis2_op_get_qname(operation, env);
           op_name = AXIS2_QNAME_GET_LOCALPART(op_qname, env);
 
           if (op_name)
