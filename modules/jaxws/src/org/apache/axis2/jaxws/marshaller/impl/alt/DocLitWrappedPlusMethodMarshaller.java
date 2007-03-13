@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.TreeSet;
+import java.lang.annotation.Annotation;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -358,6 +359,11 @@ public class DocLitWrappedPlusMethodMarshaller implements MethodMarshaller {
                         Class actualType = pd.getParameterActualType();
                         if (MethodMarshallerUtils.isJAXBBasicType(actualType)) {
                             blkContext.setProcessType(actualType);
+                        } else {
+                            Annotation annos[] = actualType.getAnnotations();
+                            if (annos == null || annos.length == 0) {
+                                blkContext.setProcessType(actualType);
+                            }
                         }
                     }
                     block = message.getHeaderBlock(pd.getTargetNamespace(), localName, blkContext, factory);

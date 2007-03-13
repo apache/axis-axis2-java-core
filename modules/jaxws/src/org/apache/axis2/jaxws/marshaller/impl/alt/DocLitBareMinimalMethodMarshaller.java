@@ -20,6 +20,7 @@ package org.apache.axis2.jaxws.marshaller.impl.alt;
 
 import java.util.List;
 import java.util.TreeSet;
+import java.lang.annotation.Annotation;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceException;
@@ -165,8 +166,14 @@ public class DocLitBareMinimalMethodMarshaller implements MethodMarshaller {
             for (int i=0; i < pds.length; i++) {
                 ParameterDescription pd = pds[i];
                 Class type = pd.getParameterActualType();
+                // If it is a JAXB basic type or it has no annotations
                 if (MethodMarshallerUtils.isJAXBBasicType(type)) {
                     javaTypes[i] = type;                    
+                } else {
+                    Annotation annos[] = type.getAnnotations();
+                    if(annos == null || annos.length==0){
+                        javaTypes[i] = type;
+                    }
                 }
             }
             
