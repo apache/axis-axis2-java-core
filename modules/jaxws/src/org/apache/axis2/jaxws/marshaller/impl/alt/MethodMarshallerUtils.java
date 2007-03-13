@@ -243,7 +243,7 @@ public class MethodMarshallerUtils  {
                 }
                 
                 Element element = new Element(block.getBusinessObject(true), block.getQName());
-                PDElement pde = new PDElement(pd, element, unmarshalByJavaType[i]);
+                PDElement pde = new PDElement(pd, element, unmarshalByJavaType == null ? null : unmarshalByJavaType[i]);
                 pdeList.add(pde);
             }
         }
