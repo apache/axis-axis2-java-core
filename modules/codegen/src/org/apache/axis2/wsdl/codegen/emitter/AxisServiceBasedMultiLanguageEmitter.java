@@ -212,6 +212,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     public void setCodeGenConfiguration(CodeGenConfiguration configuration) {
         this.codeGenConfiguration = configuration;
         this.axisServices = codeGenConfiguration.getAxisServices();
+        this.axisService = codeGenConfiguration.getAxisService();
         resolver = new XSLTIncludeResolver(codeGenConfiguration);
     }
 
