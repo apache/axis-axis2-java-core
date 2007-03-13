@@ -48,21 +48,7 @@ public class NonWrapTests extends TestCase {
 			fail();
 		}
 	}
-    
-    public void testTwoWaySyncNull() throws Exception{
-        System.out.println("------------------------------");
-        System.out.println("Test : "+getName());
-        try{
-            TwoWay twoWay = null;  // This should cause an WebServiceException
-            DocLitNonWrapService service = new DocLitNonWrapService();
-            DocLitNonWrapPortType proxy = service.getDocLitNonWrapPort();
-            ReturnType returnValue = proxy.twoWay(twoWay);
-            fail("Expected WebServiceException");
-        } catch(WebServiceException e){
-            System.out.println(e.toString());
-        }
-    }
-    
+
 	public void testTwoWayASyncCallback(){
 		System.out.println("------------------------------");
 		System.out.println("Test : "+getName());
