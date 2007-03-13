@@ -215,7 +215,7 @@ public class ServiceDelegate extends javax.xml.ws.spi.ServiceDelegate {
         
     	JAXWSProxyHandler proxyHandler = new JAXWSProxyHandler(this, sei, endpointDesc);
     	
-    	Class[] seiClazz = new Class[]{sei, BindingProvider.class};
+    	Class[] seiClazz = new Class[]{sei, org.apache.axis2.jaxws.spi.BindingProvider.class};
     	Object proxyClass = Proxy.newProxyInstance(getClassLoader(sei), seiClazz, proxyHandler);
     	return sei.cast(proxyClass);
     }

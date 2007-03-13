@@ -74,6 +74,7 @@ import org.apache.axis2.jaxws.sample.ParallelAsyncTests;
 import org.apache.axis2.jaxws.sample.WSGenTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
+import org.apache.axis2.jaxws.spi.BindingProviderTests;
 import org.apache.axis2.jaxws.wsdl.schemareader.SchemaReaderTests;
 import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.datasource.DispatchXMessageDataSource;
 import org.apache.axis2.jaxws.xmlhttp.clientTests.dispatch.jaxb.DispatchXPayloadJAXB;
@@ -171,6 +172,9 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(DispatchXPayloadJAXB.class);
         suite.addTestSuite(DispatchXMessageDataSource.class);
         suite.addTestSuite(SchemaReaderTests.class);
+        
+        suite.addTestSuite(BindingProviderTests.class);
+        
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {
             public void setUp() {
