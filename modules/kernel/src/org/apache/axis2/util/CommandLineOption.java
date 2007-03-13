@@ -71,7 +71,7 @@ public class CommandLineOption implements CommandLineOptionConstants {
      * @return Returns the optionValues.
      */
     public String getOptionValue() {
-        if (optionValues != null) {
+        if ((optionValues != null) && (optionValues.size() > 0)) {
             return (String) optionValues.get(0);
         } else {
             return null;

@@ -100,11 +100,20 @@ public class CodeGenerationEngine {
             }else{
                 //It'll be WSDL 1.1
                 Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);
+
+                // we save the original wsdl definition to write it to the resource folder later
+                // this is required only if it has imports
+                Map imports = wsdl4jDef.getImports();
+                if ((imports != null) && (imports.size() > 0)){
+                    configuration.setWsdlDefinition(readInTheWSDLFile(wsdlUri));
+                } else {
+                    configuration.setWsdlDefinition(wsdl4jDef);
+                }
+
                 // we generate the code for one service and one port if the
                 // user has specified them.
                 // otherwise generate the code for every service.
                 // TODO: find out a permanant solution for this.
-
                 QName serviceQname = null;
 
                 if (configuration.getServiceName() != null) {

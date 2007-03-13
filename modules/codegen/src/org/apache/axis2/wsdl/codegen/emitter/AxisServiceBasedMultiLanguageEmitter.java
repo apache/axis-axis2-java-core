@@ -1180,6 +1180,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                                 codeGenConfiguration.getResourceLocation()));
 
 
+        // first write all the schmas.
+        // then use the changedMap got above to adjust the names.
         Map schemaMappings = axisService.getSchemaMappingTable();
         Iterator keys = schemaMappings.keySet().iterator();
         while (keys.hasNext()) {
@@ -1190,37 +1192,27 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             );
         }
 
-        //we should have a catch here
-        // we have to change the imports in the wsdl schemas
-        
-
         //switch between the correct writer
         if (CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
                 equals(codeGenConfiguration.getWSDLVersion())) {
-
-//            WSDL20Writer wsdl20Writer = new WSDL20Writer(
-//                    codeGenConfiguration.isFlattenFiles() ?
-//                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
-//                            getOutputDirectory(codeGenConfiguration.getOutputLocation(),
-//                                    codeGenConfiguration.getResourceLocation())
-//            );
-//            wsdl20Writer.writeWSDL(axisService);
 
             // TODO : We can not write WSDL 2.0 documents. Even WSDL20Writer implementation is wrong.
             // wait till Woden implements it.
 
         } else {
-            axisService.adjustWSDLSchemaLocatins(changedMap);
+            // here we are going to write the wsdl and its imports
+            // with out using the axis service.
+
             WSDL11Writer wsdl11Writer = new WSDL11Writer(
                     codeGenConfiguration.isFlattenFiles() ?
                             getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
                             getOutputDirectory(codeGenConfiguration.getOutputLocation(),
                                     codeGenConfiguration.getResourceLocation()));
-            wsdl11Writer.writeWSDL(axisService);
+            wsdl11Writer.writeWSDL(axisService,
+                    codeGenConfiguration.getWsdlDefinition(),
+                    changedMap);
 
         }
-
-
     }
 
     /**

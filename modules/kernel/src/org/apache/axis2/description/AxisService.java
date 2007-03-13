@@ -1861,53 +1861,6 @@ public class AxisService extends AxisDescription {
         return changedScheamLocations;
     }
 
-    /**
-     * adjust the schema locations in the original wsdl 
-     * @param changedScheamLocations
-     */
-    public void adjustWSDLSchemaLocatins(Map changedScheamLocations) {
-        Parameter wsld4jdefinition = getParameter(WSDLConstants.WSDL_4_J_DEFINITION);
-        Definition definition = (Definition) wsld4jdefinition.getValue();
-        Types wsdlTypes = definition.getTypes();
-        List extensibilityElements = wsdlTypes.getExtensibilityElements();
-        Object currentObject;
-        Schema schema;
-        for (Iterator iter = extensibilityElements.iterator(); iter.hasNext();) {
-            currentObject = iter.next();
-            if (currentObject instanceof Schema) {
-                schema = (Schema) currentObject;
-                changeLocations(schema.getElement(), changedScheamLocations);
-            }
-        }
-
-    }
-
-    private void changeLocations(Element element, Map changedScheamLocations) {
-        NodeList nodeList = element.getChildNodes();
-        String tagName;
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            tagName = nodeList.item(i).getNodeName();
-            if (tagName.equals("import") || tagName.equals("include")) {
-                processImport(nodeList.item(i), changedScheamLocations);
-            }
-        }
-    }
-
-    private void processImport(Node importNode, Map changedScheamLocations) {
-        NamedNodeMap nodeMap = importNode.getAttributes();
-        Node attribute;
-        String attributeValue;
-        for (int i = 0; i < nodeMap.getLength(); i++) {
-            attribute = nodeMap.item(i);
-            if (attribute.getNodeName().equals("schemaLocation")) {
-                attributeValue = attribute.getNodeValue();
-                if (changedScheamLocations.get(attributeValue) != null) {
-                    attribute.setNodeValue(
-                            (String) changedScheamLocations.get(attributeValue));
-                }
-            }
-        }
-    }
 
     /**
      * run 1 -calcualte unique names

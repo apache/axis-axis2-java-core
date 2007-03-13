@@ -291,7 +291,10 @@ public class ArchiveReader implements DeploymentConstants {
                             && entryName.endsWith(SUFFIX_WSDL)) {
                         out = new ByteArrayOutputStream();
 
-                        if (entryName.indexOf("/") != entryName.lastIndexOf("/")) {
+                        // we do not want to generate the services for the
+                        // imported wsdl of one file.
+                        if ((entryName.indexOf("/") != entryName.lastIndexOf("/"))
+                                || (entryName.indexOf("wsdl_") != -1)) {
                             //only care abt the toplevel wsdl
                             continue;
                         }

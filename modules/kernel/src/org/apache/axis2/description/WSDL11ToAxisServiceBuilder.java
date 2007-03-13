@@ -292,7 +292,6 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             log.error(e);
             throw new AxisFault(e);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error(e);
             throw new AxisFault(e);
         }
@@ -1392,7 +1391,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         List parameterOrder = operation.getOperation().getParameterOrdering();
                         if (parameterOrder != null) {
                             parameterOrder = new ArrayList(parameterOrder);
-                            
+
                             parameterOrder.add("result");
                             partsIterator = message.getOrderedParts(parameterOrder).iterator();
                         } else {

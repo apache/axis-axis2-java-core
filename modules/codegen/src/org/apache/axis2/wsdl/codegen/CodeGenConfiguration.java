@@ -22,6 +22,7 @@ import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 
+import javax.wsdl.Definition;
 import java.io.File;
 import java.util.*;
 
@@ -527,5 +528,18 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
             schemas.addAll(axisService.getSchema());
         }
         return schemas;
+    }
+
+    /**
+     * keep this wsdl definition to write the wsdl file later
+     */
+    private Definition wsdlDefinition;
+
+    public Definition getWsdlDefinition() {
+        return wsdlDefinition;
+    }
+
+    public void setWsdlDefinition(Definition wsdlDefinition) {
+        this.wsdlDefinition = wsdlDefinition;
     }
 }
