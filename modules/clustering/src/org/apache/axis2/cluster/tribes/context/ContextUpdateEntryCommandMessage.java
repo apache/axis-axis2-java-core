@@ -18,6 +18,8 @@ package org.apache.axis2.cluster.tribes.context;
 
 import java.io.Serializable;
 
+import org.apache.axis2.cluster.tribes.CommandType;
+
 
 public class ContextUpdateEntryCommandMessage extends ContextCommandMessage {
 
@@ -53,10 +55,10 @@ public class ContextUpdateEntryCommandMessage extends ContextCommandMessage {
 		this.operation = operation;
 	}
 
-	public ContextUpdateEntryCommandMessage(String commandName, String parentId,
+	public ContextUpdateEntryCommandMessage(String parentId,
 			String contextId, String axisDescriptionName, String key,
 			Serializable value, short ctxType, short operation) {
-		super(commandName, parentId, contextId, axisDescriptionName, ctxType);
+		super(CommandType.UPDATE_STATE_MAP_ENTRY, parentId, contextId, axisDescriptionName, ctxType);
 		this.key = key;
 		this.value = value;
 		this.operation = operation;
@@ -82,7 +84,7 @@ public class ContextUpdateEntryCommandMessage extends ContextCommandMessage {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("TribesCommandMessage [");
-		builder.append(this.getCommandName() + ",");
+		builder.append(this.getCommandType() + ",");
 		builder.append(this.getParentId() + ",");
 		builder.append(this.getContextId() + ",");
 		builder.append(this.getOperation() == ADD_OR_UPDATE_ENTRY ? "ADD_OR_UPDATE_ENTRY"

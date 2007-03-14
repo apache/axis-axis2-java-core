@@ -18,16 +18,30 @@ package org.apache.axis2.cluster.tribes;
 
 public interface CommandType {
 	
-	public static String CREATE_SERVICE_CONTEXT = "CREATE_SERVICE_CONTEXT";
+	public static int CREATE_SERVICE_CONTEXT = 1;
 	
-	public static String CREATE_SERVICE_GROUP_CONTEXT = "CREATE_SERVICE_GROUP_CONTEXT";
+	public static int CREATE_SERVICE_GROUP_CONTEXT = 2;
 
-	public static String REMOVE_SERVICE_CONTEXT = "REMOVE_SERVICE_CONTEXT";
+	public static int REMOVE_SERVICE_CONTEXT = 3;
 	
-	public static String REMOVE_SERVICE_GROUP_CONTEXT = "REMOVE_SERVICE_GROUP_CONTEXT";
+	public static int REMOVE_SERVICE_GROUP_CONTEXT = 4;
 	
-	public static String UPDATE_STATE = "UPDATE_STATE";
+	public static int UPDATE_STATE = 5;
 	
-	public static String UPDATE_STATE_MAP_ENTRY = "UPDATE_STATE_MAP_ENTRY";
+	public static int UPDATE_STATE_MAP_ENTRY = 6;
+	
+	public static int LOAD_SERVICE_GROUP = 7;
+	
+	public static int UNLOAD_SERVICE_GROUP = 8;
+	
+	public static int APPLY_POLICY = 9;
+	
+	public static int RELOAD_CONFIGURATION = 10;
+	
+	public static int PREPARE = 11;
+	
+	public static int COMMIT = 12;
+	
+	public static int ROLLBACK = 13;
 	
 }

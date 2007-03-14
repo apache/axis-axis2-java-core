@@ -161,7 +161,7 @@ public class ContextUpdater {
 				if (value instanceof Serializable) {
 					oldProps.put(paramKey, value);
 					commandList.add(new ContextUpdateEntryCommandMessage(
-							CommandType.UPDATE_STATE_MAP_ENTRY, parentId,
+							parentId,
 							serviceCtxName, serviceCtxName, paramKey,
 							(Serializable) value,
 							ContextUpdateEntryCommandMessage.SERVICE_CONTEXT,
@@ -175,7 +175,7 @@ public class ContextUpdater {
 				
 				oldProps.remove(paramKey);
 				commandList.add(new ContextUpdateEntryCommandMessage(
-						CommandType.UPDATE_STATE_MAP_ENTRY, parentId,
+						parentId,
 						serviceCtxName, serviceCtxName, paramKey, "",
 						ContextUpdateEntryCommandMessage.SERVICE_CONTEXT,
 						ContextUpdateEntryCommandMessage.REMOVE_ENTRY));
@@ -232,7 +232,8 @@ public class ContextUpdater {
 				if (value instanceof Serializable) {
 					oldProps.put(paramKey, value);
 					commandList.add(new ContextUpdateEntryCommandMessage(
-							CommandType.UPDATE_STATE_MAP_ENTRY, "", ctxId,
+							"", 
+							ctxId,
 							ctxId, paramKey, (Serializable) value,
 							ContextUpdateEntryCommandMessage.SERVICE_GROUP_CONTEXT,
 							ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY));
@@ -246,7 +247,7 @@ public class ContextUpdater {
 				String paramKey = (String) it.next();
 				
 				commandList.add(new ContextUpdateEntryCommandMessage(
-						CommandType.UPDATE_STATE_MAP_ENTRY, "", ctxId, ctxId,
+						"", ctxId, ctxId,
 						paramKey, "",
 						ContextUpdateEntryCommandMessage.SERVICE_GROUP_CONTEXT,
 						ContextUpdateEntryCommandMessage.REMOVE_ENTRY));

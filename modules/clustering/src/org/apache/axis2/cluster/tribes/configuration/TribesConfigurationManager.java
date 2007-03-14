@@ -18,9 +18,11 @@ package org.apache.axis2.cluster.tribes.configuration;
 
 import java.util.ArrayList;
 
+import org.apache.axis2.cluster.ClusteringFault;
 import org.apache.axis2.cluster.configuration.ConfigurationManager;
 import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
 import org.apache.axis2.cluster.tribes.ChannelSender;
+import org.apache.axis2.cluster.tribes.CommandType;
 import org.apache.neethi.Policy;
 
 public class TribesConfigurationManager implements ConfigurationManager {
@@ -37,56 +39,44 @@ public class TribesConfigurationManager implements ConfigurationManager {
 		listeners.add(listener);
 	}
 
-	public void applyPolicy(String serviceGroupName, Policy policy) {
+	public void applyPolicy(String serviceGroupName, Policy policy)  throws ClusteringFault {
 		throw new UnsupportedOperationException ();
 	}
 
-	public void commit() {
-		ConfigurationCommand command = new ConfigurationCommand ();
-		command.setCommandType(ConfigurationCommand.COMMAND_COMMIT);
-		
+	public void commit()  throws ClusteringFault {
+		ConfigurationCommand command = new ConfigurationCommand (CommandType.COMMIT);
 		send (command);
 	}
 
-	public void loadServiceGroup(String serviceGroupName) {
-		ConfigurationCommand command = new ConfigurationCommand ();
-		command.setCommandType(ConfigurationCommand.COMMAND_LOAD_SERVICE_GROUP);
+	public void loadServiceGroup(String serviceGroupName)  throws ClusteringFault {
+		ConfigurationCommand command = new ConfigurationCommand (CommandType.LOAD_SERVICE_GROUP);
 		command.setSgcName(serviceGroupName);
-		
 		send (command);
 	}
 
-	public void prepare() {
-		ConfigurationCommand command = new ConfigurationCommand ();
-		command.setCommandType(ConfigurationCommand.COMMAND_PREPARE);
-		
+	public void prepare()  throws ClusteringFault {
+		ConfigurationCommand command = new ConfigurationCommand (CommandType.PREPARE);
 		send (command);
 	}
 
-	public void reloadConfiguration() {
-		ConfigurationCommand command = new ConfigurationCommand ();
-		command.setCommandType(ConfigurationCommand.COMMAND_RELOAD_CONFIGURATION);
-		
+	public void reloadConfiguration() throws ClusteringFault {
+		ConfigurationCommand command = new ConfigurationCommand (CommandType.RELOAD_CONFIGURATION);
 		send (command);		
 	}
 
-	public void rollback() {
-		ConfigurationCommand command = new ConfigurationCommand ();
-		command.setCommandType(ConfigurationCommand.COMMAND_ROLLBACK);
-		
+	public void rollback()  throws ClusteringFault {
+		ConfigurationCommand command = new ConfigurationCommand (CommandType.ROLLBACK);
 		send (command);			
 	}
 
-	public void unloadServiceGroup(String serviceGroupName) {
-		ConfigurationCommand command = new ConfigurationCommand ();
-		command.setCommandType(ConfigurationCommand.COMMAND_LOAD_SERVICE_GROUP);
+	public void unloadServiceGroup(String serviceGroupName)  throws ClusteringFault {
+		ConfigurationCommand command = new ConfigurationCommand (CommandType.UNLOAD_SERVICE_GROUP);
 		command.setSgcName(serviceGroupName);
-		
 		send (command);
 	}
 
-	private void send (ConfigurationCommand command) {
-		throw new UnsupportedOperationException ();
+	private void send (ConfigurationCommand command) throws ClusteringFault {
+		sender.send(command);
 	}
 
 	public void setSender(ChannelSender sender) {

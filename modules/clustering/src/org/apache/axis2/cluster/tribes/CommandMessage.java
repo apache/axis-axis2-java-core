@@ -14,42 +14,24 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster.tribes.configuration;
+package org.apache.axis2.cluster.tribes;
 
-import org.apache.axis2.cluster.tribes.CommandMessage;
+import java.io.Serializable;
 
-public class ConfigurationCommand extends CommandMessage {
-	
-	int commandType;
-	String policy;
-	String sgcName;
-	
-	public ConfigurationCommand (int commandType) {
-		super (commandType);
-	}
-	
+public class CommandMessage implements Serializable {
+
+	protected int commandType;
+
 	public int getCommandType() {
 		return commandType;
 	}
-	
+
 	public void setCommandType(int commandType) {
 		this.commandType = commandType;
 	}
 	
-	public String getPolicy() {
-		return policy;
-	}
-	
-	public void setPolicy(String policy) {
-		this.policy = policy;
-	}
-	
-	public String getSgcName() {
-		return sgcName;
-	}
-	
-	public void setSgcName(String sgcName) {
-		this.sgcName = sgcName;
+	public CommandMessage (int commandType) {
+		this.commandType = commandType;
 	}
 	
 }

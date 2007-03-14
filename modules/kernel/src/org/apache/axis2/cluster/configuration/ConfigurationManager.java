@@ -17,7 +17,6 @@
 package org.apache.axis2.cluster.configuration;
 
 import org.apache.axis2.cluster.ClusteringFault;
-import org.apache.axis2.description.AxisDescription;
 import org.apache.neethi.Policy;
 
 public interface ConfigurationManager {
@@ -25,17 +24,17 @@ public interface ConfigurationManager {
 	/*
 	 * Configuration management methods
 	 */
-    void loadServiceGroup(String serviceGroupName);
-    void unloadServiceGroup(String serviceGroupName);
-    void applyPolicy(String serviceGroupName, Policy policy);
-    void reloadConfiguration();
+    void loadServiceGroup(String serviceGroupName) throws ClusteringFault;
+    void unloadServiceGroup(String serviceGroupName) throws ClusteringFault;
+    void applyPolicy(String serviceGroupName, Policy policy) throws ClusteringFault;
+    void reloadConfiguration() throws ClusteringFault ;
     
     /*
      * Transaction management methods
      */
-    void prepare();
-    void rollback();
-    void commit();
+    void prepare() throws ClusteringFault;
+    void rollback() throws ClusteringFault;
+    void commit() throws ClusteringFault;
     
     /**
      * For registering a configuration event listener.

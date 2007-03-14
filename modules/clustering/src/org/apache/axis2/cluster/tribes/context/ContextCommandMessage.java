@@ -16,11 +16,9 @@
 
 package org.apache.axis2.cluster.tribes.context;
 
-import java.io.Serializable;
+import org.apache.axis2.cluster.tribes.CommandMessage;
 
-public class ContextCommandMessage implements Serializable {
-
-	private String commandName;
+public class ContextCommandMessage extends CommandMessage {
 
 	private String parentId;
 
@@ -30,24 +28,13 @@ public class ContextCommandMessage implements Serializable {
 
 	private int contextType;
 
-	public ContextCommandMessage() {
-	}
-
-	public ContextCommandMessage(String commandName, String parentId, String contextId,
+	public ContextCommandMessage(int commandType, String parentId, String contextId,
 			String axisDescriptionName, int contextType) {
-		this.commandName = commandName;
+		super (commandType);
 		this.parentId = parentId;
 		this.contextId = contextId;
 		this.axisDescriptionName = axisDescriptionName;
 		this.contextType = contextType;
-	}
-
-	public String getCommandName() {
-		return commandName;
-	}
-
-	public void setCommandName(String commandName) {
-		this.commandName = commandName;
 	}
 
 	public String getContextId() {
@@ -69,7 +56,7 @@ public class ContextCommandMessage implements Serializable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("TribesCommandMessage [");
-		builder.append(commandName + ",");
+		builder.append(getCommandType() + ",");
 		builder.append(parentId + ",");
 		builder.append(contextId + ",");
 		builder.append(axisDescriptionName + "]");

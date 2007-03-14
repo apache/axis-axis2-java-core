@@ -49,19 +49,15 @@ public class TransientTribesChannelInfo implements ChannelListener {
 		if (msg instanceof ContextCommandMessage) {
 			ContextCommandMessage comMsg = (ContextCommandMessage) msg;
 
-			if (comMsg.getCommandName().equals(
-					CommandType.CREATE_SERVICE_GROUP_CONTEXT)) {
+			if (comMsg.getCommandType()==CommandType.CREATE_SERVICE_GROUP_CONTEXT) {
 				grpCtxCreationCount++;
-			} else if (comMsg.getCommandName().equals(
-					CommandType.CREATE_SERVICE_CONTEXT)) {
+			} else if (comMsg.getCommandType()==CommandType.CREATE_SERVICE_CONTEXT) {
 				srvCtxCreationCount++;
-			} else if (comMsg.getCommandName().equals(
-					CommandType.REMOVE_SERVICE_GROUP_CONTEXT)) {
+			} else if (comMsg.getCommandType()==CommandType.REMOVE_SERVICE_GROUP_CONTEXT) {
 				grpCtxRemoveCount++;
-			} else if (comMsg.getCommandName().equals(
-					CommandType.REMOVE_SERVICE_CONTEXT)) {
+			} else if (comMsg.getCommandType()==CommandType.REMOVE_SERVICE_CONTEXT) {
 				srvCtxRemoveCount++;
-			} else if (comMsg.getCommandName().equals(CommandType.UPDATE_STATE)) {
+			} else if (comMsg.getCommandType()==CommandType.UPDATE_STATE) {
 				updateStateCount++;
 			}
 		}

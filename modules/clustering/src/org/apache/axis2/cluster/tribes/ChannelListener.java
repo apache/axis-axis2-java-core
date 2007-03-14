@@ -1,3 +1,19 @@
+/*
+ * Copyright 2004,2005 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.axis2.cluster.tribes;
 
 import java.io.Serializable;
@@ -42,7 +58,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 		// requested for both service group and service contexts
 		// TODO fix this to support scopes other than SOAP Session.
 
-		if (comMsg.getCommandName().equals(CommandType.CREATE_SERVICE_GROUP_CONTEXT)) {
+		if (comMsg.getCommandType() == CommandType.CREATE_SERVICE_GROUP_CONTEXT) {
 
 			// add to the duplicate list to prevent cyclic replication
 			contextManager.addToDuplicateServiceGroupContexts(comMsg.getContextId());
@@ -56,7 +72,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
 			contextManager.notifyListeners(event, ContextListenerEventType.ADD_CONTEXT);
 
-		} else if (comMsg.getCommandName().equals(CommandType.CREATE_SERVICE_CONTEXT)) {
+		} else if (comMsg.getCommandType() == CommandType.CREATE_SERVICE_CONTEXT) {
 
 			// add to the duplicate list to prevent cyclic replication
 			contextManager.addToDuplicateServiceContexts(comMsg.getParentId()
@@ -71,7 +87,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
 			contextManager.notifyListeners(event, ContextListenerEventType.ADD_CONTEXT);
 
-		} else if (comMsg.getCommandName().equals(CommandType.UPDATE_STATE)) {
+		} else if (comMsg.getCommandType() == CommandType.UPDATE_STATE) {
 
 			if (comMsg.getContextType() == ContextType.SERVICE_GROUP_CONTEXT) {
 
@@ -95,7 +111,7 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 
 			}
 
-		} else if (comMsg.getCommandName().equals(CommandType.UPDATE_STATE_MAP_ENTRY)) {
+		} else if (comMsg.getCommandType() == CommandType.UPDATE_STATE_MAP_ENTRY) {
 
 			ContextUpdateEntryCommandMessage mapEntryMsg = (ContextUpdateEntryCommandMessage) comMsg;
 			if (mapEntryMsg.getCtxType() == ContextUpdateEntryCommandMessage.SERVICE_GROUP_CONTEXT) {
