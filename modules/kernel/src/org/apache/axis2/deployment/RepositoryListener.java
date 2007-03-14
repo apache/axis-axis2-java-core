@@ -22,6 +22,8 @@ import org.apache.axis2.deployment.repository.util.WSInfoList;
 import org.apache.axis2.util.Loader;
 
 import java.io.File;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
@@ -29,6 +31,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class RepositoryListener implements DeploymentConstants {
+    static String defaultEncoding = new OutputStreamWriter(System.out).getEncoding();
 
     protected DeploymentEngine deploymentEngine;
     private HashMap directoryToExtensionMappingMap;
@@ -37,15 +40,13 @@ public class RepositoryListener implements DeploymentConstants {
      * The parent directory of the modules and services directories
      */
 
-    /**
-     * Reference to a WSInfoList
-     */
+    /** Reference to a WSInfoList */
     protected WSInfoList wsInfoList;
 
     /**
      * This constructor takes two arguments, a folder name and a reference to Deployment Engine
-     * First, it initializes the system, by loading all the modules in the /modules directory
-     * and then creates a WSInfoList to store information about available modules and services.
+     * First, it initializes the system, by loading all the modules in the /modules directory and
+     * then creates a WSInfoList to store information about available modules and services.
      *
      * @param deploymentEngine reference to engine registry for updates
      */
@@ -60,9 +61,7 @@ public class RepositoryListener implements DeploymentConstants {
         loadClassPathModules();
     }
 
-    /**
-     * Finds a list of modules in the folder and adds to wsInfoList.
-     */
+    /** Finds a list of modules in the folder and adds to wsInfoList. */
     public void checkModules() {
         File root = deploymentEngine.getModulesDir();
         File[] files = root.listFiles();
@@ -99,6 +98,9 @@ public class RepositoryListener implements DeploymentConstants {
 
     protected void loadClassPathModules() {
         String classPath = getLocation();
+
+        if (classPath == null) return;
+
         int lstindex = classPath.lastIndexOf(File.separatorChar);
         if (lstindex > 0) {
             classPath = classPath.substring(0, lstindex);
@@ -129,10 +131,12 @@ public class RepositoryListener implements DeploymentConstants {
                     if (path.length() >= 3 && path.charAt(0) == '/' && path.charAt(2) == ':') {
                         path = path.substring(1);
                     }
-                    java.io.File file =
-                            new java.io.File(URLDecoder.decode(urls[i].getPath()).replace('/',
-                                                                                          File.separatorChar).replace(
-                                    '|', ':'));
+                    try {
+                        path = URLDecoder.decode(path, defaultEncoding);
+                    } catch (UnsupportedEncodingException e) {
+                        // Log this?
+                    }
+                    File file = new File(path.replace('/', File.separatorChar).replace('|', ':'));
                     if (file.isFile()) {
                         if (DeploymentFileData.isModuleArchiveFile(file.getName())) {
                             //adding modules in the class path
@@ -166,21 +170,19 @@ public class RepositoryListener implements DeploymentConstants {
                 location = url.toString();
             }
             if (location.startsWith("file")) {
-                java.io.File file = new java.io.File(URLDecoder.decode(url.getPath()).replace('/',
-                                                                                              File.separatorChar).replace(
-                        '|', ':'));
+                String path = URLDecoder.decode(url.getPath(), defaultEncoding);
+                java.io.File file =
+                        new java.io.File(path.replace('/', File.separatorChar).replace('|', ':'));
                 return file.getAbsolutePath();
             } else {
                 return url.toString();
             }
         } catch (Throwable t) {
-            return "an unknown location";
+            return null;
         }
     }
 
-    /**
-     * Finds a list of services in the folder and adds to wsInfoList.
-     */
+    /** Finds a list of services in the folder and adds to wsInfoList. */
     public void checkServices() {
         findServicesInDirectory();
         loadOtherDirectories();
@@ -193,8 +195,8 @@ public class RepositoryListener implements DeploymentConstants {
     }
 
     /**
-     * First initializes the WSInfoList, then calls checkModule to load all the modules
-     * and calls update() to update the Deployment engine and engine registry.
+     * First initializes the WSInfoList, then calls checkModule to load all the modules and calls
+     * update() to update the Deployment engine and engine registry.
      */
     public void init() {
         wsInfoList.init();
@@ -242,10 +244,7 @@ public class RepositoryListener implements DeploymentConstants {
         }
     }
 
-    /**
-     * Searches a given folder for jar files and adds them to a list in the
-     * WSInfolist class.
-     */
+    /** Searches a given folder for jar files and adds them to a list in the WSInfolist class. */
     protected void findServicesInDirectory() {
         File root = deploymentEngine.getServicesDir();
         File[] files = root.listFiles();
@@ -270,9 +269,7 @@ public class RepositoryListener implements DeploymentConstants {
         wsInfoList.addWSInfoItem(null, TYPE_DEFAULT);
     }
 
-    /**
-     * Method invoked from the scheduler to start the listener.
-     */
+    /** Method invoked from the scheduler to start the listener. */
     public void startListener() {
         checkServices();
         loadOtherDirectories();
@@ -284,9 +281,7 @@ public class RepositoryListener implements DeploymentConstants {
         }
     }
 
-    /**
-     * Updates WSInfoList object.
-     */
+    /** Updates WSInfoList object. */
     public void update() throws DeploymentException {
         wsInfoList.update();
     }

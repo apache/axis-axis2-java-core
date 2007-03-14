@@ -2188,7 +2188,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             //---------------------------------------------
             // get the soap namespace uri
             //---------------------------------------------
-            String namespaceURI = envelope.getNamespace().getName();
+            String namespaceURI = envelope.getNamespace().getNamespaceURI();
 
             // write out the following information, IN ORDER:
             //           the class name
@@ -2601,7 +2601,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
         String tmpID = getMessageID();
         if (tmpID == null) {
             // get an id to use when restoring this object
-            tmpID = org.apache.axis2.util.UUIDGenerator.getUUID();
+            tmpID = UUIDGenerator.getUUID();
             setMessageID(tmpID);
         }
 

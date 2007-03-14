@@ -26,9 +26,9 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.MetaDataEntry;
 import org.apache.axis2.util.ObjectStateUtils;
-import org.apache.axis2.util.UUIDGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axiom.om.util.UUIDGenerator;
 
 import java.io.Externalizable;
 import java.io.IOException;

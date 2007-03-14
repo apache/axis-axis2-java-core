@@ -17,6 +17,7 @@
 package org.apache.axis2.client;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.Callback;
@@ -30,7 +31,6 @@ import org.apache.axis2.description.ClientUtils;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.TargetResolver;
-import org.apache.axis2.util.UUIDGenerator;
 import org.apache.axis2.wsdl.WSDLConstants;
 
 import java.util.Iterator;
