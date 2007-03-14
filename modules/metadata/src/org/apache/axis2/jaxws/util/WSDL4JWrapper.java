@@ -23,14 +23,18 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -60,31 +64,40 @@ public class WSDL4JWrapper implements WSDLWrapper {
 	super();
 	this.wsdlURL = wsdlURL;
 	try {
-		URL url=wsdlURL;
-		boolean isFileProtocol = (url!=null && "file".equals(url.getProtocol()))?true:false;
-		if(isFileProtocol){
-			String filePath = (url!=null)?url.getPath():null;
-			//Check is the uri has relative path i.e path is not absolute and is not starting with a "/"
-			boolean isRelativePath = (filePath!=null && !new File(filePath).isAbsolute())?true:false;
-			if(isRelativePath){
-				if(log.isDebugEnabled()){
-					log.debug("WSDL URL has a relative path");
-				}
-				ClassLoader loader = Thread.currentThread().getContextClassLoader();
-				//Lets read the complete WSDL URL for relative path from class loader
-				//Use relative path of url to fetch complete URL.              
-				url = loader.getResource(filePath);
-				if(url == null){
-					if(log.isDebugEnabled()){
-						log.debug("WSDL URL for relative path not found in ClassLoader");
-						log.warn("Unable to read WSDL from relative path, check the relative path");
-						log.info("Relative path example: file:/WEB-INF/wsdl/<wsdlfilename>");
-						log.warn("Using relative path as default wsdl URL to create wsdl Definition.");
-					}
-					url = wsdlURL;
-				}     
-			}
-		}
+	    URL url=wsdlURL;
+	    boolean isFileProtocol = (url!=null && "file".equals(url.getProtocol())) ?true:false;
+	    if(isFileProtocol){
+	        String filePath = (url!=null)?url.getPath():null;
+	        //Check is the uri has relative path i.e path is not absolute and is not starting with a "/"
+	        boolean isRelativePath = (filePath!=null && !new File(filePath).isAbsolute())?true:false;
+	        if(isRelativePath){
+	            if(log.isDebugEnabled()){
+	                log.debug("WSDL URL has a relative path");
+	            }
+	            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+	            //Lets read the complete WSDL URL for relative path from class loader
+	            //Use relative path of url to fetch complete URL.   
+	            url = loader.getResource(filePath);
+                    if(url == null){
+                        //Let see if we can get this resource from a jar file. This code is only relevant in case of a 
+                        //thin client scenario where client has chose to put wsdl inside a jar and provided a relative
+                        //path.
+                        if(loader instanceof URLClassLoader){
+                            URLClassLoader urlLoader = (URLClassLoader)loader;
+                            url = getURLFromJAR(urlLoader, wsdlURL);
+                        }
+                    }
+	            if(url == null){
+	                if(log.isDebugEnabled()){
+	                    log.debug("WSDL URL for relative path not found in ClassLoader");
+	                    log.warn("Unable to read WSDL from relative path, check the relative path");
+	                    log.info("Relative path example: file:/WEB-INF/wsdl/<wsdlfilename>");
+	                    log.warn("Using relative path as default wsdl URL to create wsdl Definition.");
+	                }
+	                url = wsdlURL;
+	            }
+	        }
+	    }
             
 	    URLConnection urlCon = url.openConnection();
 	    InputStream is = urlCon.getInputStream();
@@ -116,7 +129,46 @@ public class WSDL4JWrapper implements WSDLWrapper {
             throw new WSDLException("WSDL4JWrapper : ", ex.getMessage());
 	}
     }
+    
+        
+    private URL getURLFromJAR(URLClassLoader urlLoader, URL relativeURL) {
 
+		URL[] urlList = urlLoader.getURLs();
+	
+		for (URL url : urlList) {
+			if ("file".equals(url.getProtocol())) {
+				File f = new File(url.getPath());
+				// If file is not of type directory then its a jar file
+				if (f.exists() && !f.isDirectory()) {
+					try {
+						JarFile jf = new JarFile(f);
+						Enumeration<JarEntry> entries = jf.entries();
+						// read all entries in jar file and return the first
+						// wsdl file that matches
+						// the relative path
+						while (entries.hasMoreElements()) {
+							JarEntry je = entries.nextElement();
+							String name = je.getName();
+							if (name.endsWith(".wsdl")) {
+								String relativePath = relativeURL.getPath();
+								if (relativePath.endsWith(name)) {
+									URL absoluteUrl = new URL("jar:file:/"
+											+ f.getAbsolutePath() + "!/"
+											+ je.getName());
+									return absoluteUrl;
+								}
+							}
+						}
+					} catch (Exception e) {
+						throw ExceptionFactory.makeWebServiceException(e);
+					}
+				}
+			}
+		}
+	
+		return null;
+}
+        
     private static WSDLReader getWSDLReader() throws WSDLException {
         // Keep this method private
         WSDLReader reader;
