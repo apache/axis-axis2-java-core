@@ -8,7 +8,6 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -44,7 +43,7 @@ import javax.xml.namespace.QName;
 *
 */
 
-public class AddressingServiceTest extends UtilServerBasedTestCase implements TestConstants {
+public class AddressingFinalServiceTest extends UtilServerBasedTestCase implements TestConstants {
 
     protected QName transportName = new QName("http://localhost/my",
             "NullTransport");
@@ -64,7 +63,7 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
     protected AxisService rrService;
 
     public static Test suite() {
-        return getTestSetup(new TestSuite(AddressingServiceTest.class));
+        return getTestSetup(new TestSuite(AddressingFinalServiceTest.class));
     }
 
     protected void setUp() throws Exception {
@@ -248,5 +247,44 @@ public class AddressingServiceTest extends UtilServerBasedTestCase implements Te
         sender.setOptions(options);
 
         return sender;
+    }
+
+    private ServiceClient createSyncResponseServiceClient() throws AxisFault {
+        AxisService service =
+                Utils.createSimpleServiceforClient(serviceName,
+                        Echo.class.getName(),
+                        operationName);
+
+        ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
+        ServiceClient sender;
+
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setAction(operationName.getLocalPart());
+
+        sender = new ServiceClient(configcontext, service);
+        sender.setOptions(options);
+        sender.engageModule(new QName("addressing"));
+
+        return sender;
+    }
+
+    public void testSyncResponseAddressing() throws Exception {
+        String test = "hello.";
+        OMElement method = createEchoOMElement(test);
+        ServiceClient sender = null;
+
+        try {
+            sender = createSyncResponseServiceClient();
+            OMElement result = sender.sendReceive(operationName, method);
+            System.out.println("echoOMElementResponse: "+result);
+            QName name = new QName("http://localhost/my", "myValue");
+            String value = result.getFirstChildWithName(name).getText();
+            
+            assertEquals(test, value);
+        } finally {
+            if (sender != null)
+                sender.cleanup();
+        }
     }
 }

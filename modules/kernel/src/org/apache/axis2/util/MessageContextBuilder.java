@@ -136,13 +136,13 @@ public class MessageContextBuilder {
             targetResolver.resolveTarget(newmsgCtx);
         }
 
-        // Determine ReplyTo for respome message.
+        // Determine ReplyTo for response message.
         AxisService axisService = inMessageContext.getAxisService();
         if (axisService != null && Constants.SCOPE_SOAP_SESSION.equals(axisService.getScope())) {
             //If the wsa 2004/08 (submission) spec is in effect use the wsa anonymous URI as the default replyTo value.
             //This is necessary because the wsa none URI is not available in that spec.
-            if (AddressingConstants.Submission.WSA_NAMESPACE.equals(inMessageContext.getProperty(
-                    AddressingConstants.WS_ADDRESSING_VERSION))) {
+            Object version = inMessageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+            if (AddressingConstants.Submission.WSA_NAMESPACE.equals(version)) {
                 newmsgCtx.setReplyTo(
                         new EndpointReference(AddressingConstants.Submission.WSA_ANONYMOUS_URL));
             } else {
@@ -161,9 +161,10 @@ public class MessageContextBuilder {
                                                  serviceGroupContextId);
             }
         } else {
-            // Only set a ReplyTo and a MessageId on async response messages. 
             EndpointReference outboundToEPR = newmsgCtx.getTo();
-            if (outboundToEPR != null && !outboundToEPR.hasAnonymousAddress()) {
+            Object version = newmsgCtx.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+            if (AddressingConstants.Submission.WSA_NAMESPACE.equals(version) ||
+                (outboundToEPR != null && !outboundToEPR.hasAnonymousAddress())) {
                 newmsgCtx.setMessageID(UUIDGenerator.getUUID());
                 newmsgCtx.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
             }
@@ -284,9 +285,10 @@ public class MessageContextBuilder {
         }
 
         // Not worth setting up the session information on a fault flow
-        // Only set a ReplyTo and a MessageId on async response messages. 
         EndpointReference outboundToEPR = faultContext.getTo();
-        if (outboundToEPR != null && !outboundToEPR.hasAnonymousAddress()) {
+        Object version = faultContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        if (AddressingConstants.Submission.WSA_NAMESPACE.equals(version) ||
+            (outboundToEPR != null && !outboundToEPR.hasAnonymousAddress())) {
             faultContext.setMessageID(UUIDGenerator.getUUID());
             faultContext.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_NONE_URI));
         }
