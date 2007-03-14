@@ -2,6 +2,7 @@ package org.apache.axis2.databinding;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
+import java.io.Serializable;
 
 /*
  * Copyright 2001-2004 The Apache Software Foundation.

@@ -383,15 +383,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
             for (Iterator axisServicesIter = this.axisServices.iterator(); axisServicesIter.hasNext();) {
                 this.axisService = (AxisService) axisServicesIter.next();
-
                 //we have to generate the code for each bininding
                 //for the moment lets genrate the stub name with the service name and end point name
 
-                // write the inteface
-                // feed the binding information also
-                // note that we do not create this interface if the user switched on the wrap classes mode
                 if (!codeGenConfiguration.isPackClasses()) {
-                    writeInterface(false);
                     // write the call back handlers
                     writeCallBackHandlers();
                 }
@@ -430,6 +425,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                     resetFaultNames();
                     generateAndPopulateFaultNames();
                     updateFaultPackageForStub();
+
+                    // write the inteface
+                    // feed the binding information also
+                    // note that we do not create this interface if the user switched on the wrap classes mode
+                    // this interface also depends on the binding
+                    if (!codeGenConfiguration.isPackClasses()) {
+                        writeInterface(false);
+                    }
 
                     if (codeGenConfiguration.isPackClasses()) {
                         // write the call back handlers
@@ -650,7 +653,9 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "name", makeJavaClassName(axisService.getBindingName()) + STUB_SUFFIX,
                     rootElement);
         } else {
-            addAttribute(doc, "interfaceName", localPart , rootElement);
+            addAttribute(doc, "interfaceName",
+                    makeJavaClassName(axisService.getName() + axisService.getEndpointName()) ,
+                    rootElement);
             addAttribute(doc, "name", stubName, rootElement);
         }
 
@@ -1060,7 +1065,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             localPart =
                     makeJavaClassName(axisService.getEndpointName() + STUB_INTERFACE_SUFFIX_BACK);
         } else {
-            localPart = makeJavaClassName(axisService.getName());
+            localPart = makeJavaClassName(axisService.getName() + axisService.getEndpointName());
         }
 
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
