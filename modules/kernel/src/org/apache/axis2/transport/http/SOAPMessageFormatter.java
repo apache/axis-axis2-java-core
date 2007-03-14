@@ -101,7 +101,7 @@ public class SOAPMessageFormatter implements MessageFormatter {
         if (!msgCtxt.isSOAP11() && (soapActionString != null)
                 && !"".equals(soapActionString.trim())
                 && !"\"\"".equals(soapActionString.trim())) {
-            contentType = contentType + ";action=\"" + soapActionString + "\";";
+            contentType = contentType + "; action=\"" + soapActionString+ "\"";
         }
         return contentType;
     }
