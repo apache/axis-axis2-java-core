@@ -365,7 +365,7 @@ public class WSDL2CodeMojo extends AbstractMojo
     				throw new MojoFailureException("A namespace to package mapping requires an uri child element.");
     			}
     			String uriPackageName = mapping.getPackageName();
-    			if (uriPackageName != null) {
+    			if (uriPackageName == null) {
     				throw new MojoFailureException("A namespace to package mapping requires a packageName child element.");
     			}
     			if(sb.length() > 0) {
