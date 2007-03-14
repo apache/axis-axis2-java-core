@@ -127,7 +127,7 @@
                     </includes>
                 </resource>
                 <resource>
-                    <directory>resource</directory>
+                    <directory>resources</directory>
                     <includes>
                         <include>**/*</include>
                     </includes>
