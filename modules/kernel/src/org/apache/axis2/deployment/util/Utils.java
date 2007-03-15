@@ -162,6 +162,35 @@ public class Utils {
         }
     }
 
+    public static URL[] getURLsForAllJars(URL url) {
+        try {
+            ArrayList array = new ArrayList();
+            String urlString = url.toString();
+            InputStream in = url.openStream();
+            ZipInputStream zin = new ZipInputStream(in);
+
+            array.add(url);
+
+            ZipEntry entry;
+            String entryName;
+            while ((entry = zin.getNextEntry()) != null) {
+                entryName = entry.getName();
+                /**
+                 * id the entry name start with /lib and end with .jar
+                 * then those entry name will be added to the arraylist
+                 */
+                if ((entryName != null) && entryName.toLowerCase().startsWith("lib/")
+                        && entryName.toLowerCase().endsWith(".jar")) {
+                    array.add(new URL("jar", "", -1, url.toString() + "!/" + entry.getName()));
+                }
+            }
+            zin.close();
+            return (URL[]) array.toArray(new URL[array.size()]);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static File createTempFile(String suffix, InputStream in) throws IOException {
         byte data[] = new byte[2048];
         int count;
@@ -472,8 +501,7 @@ public class Utils {
                     }
                     File inputFile = Utils.createTempFile(servicename, fin);
                     DeploymentFileData filedata = new DeploymentFileData(inputFile,
-                                                                         DeploymentConstants.TYPE_SERVICE,
-                                                                         false);
+                                                                         DeploymentConstants.TYPE_SERVICE);
 
                     filedata.setClassLoader(false,
                                             moduleClassLoader);

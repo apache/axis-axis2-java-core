@@ -17,6 +17,7 @@
 
 package org.apache.axis2.deployment;
 
+import org.apache.axis2.classloader.JarStreamHandlerFactory;
 import org.apache.axis2.deployment.util.Utils;
 
 import java.net.URL;
@@ -32,6 +33,11 @@ public class DeploymentClassLoader extends URLClassLoader {
      * @param parent parent classloader <code>ClassLoader</code>
      */
     public DeploymentClassLoader(URL[] urls, ClassLoader parent, boolean antiJARLocking) {
-        super(Utils.getURLsForAllJars(urls[0], antiJARLocking), parent);
+//        super(Utils.getURLsForAllJars(urls[0], antiJARLocking), parent);
+        super(Utils.getURLsForAllJars(urls[0]), parent, new JarStreamHandlerFactory());
+    }
+
+    public DeploymentClassLoader(URL[] urls, ClassLoader parent) {
+        super(Utils.getURLsForAllJars(urls[0]), parent, new JarStreamHandlerFactory());
     }
 }

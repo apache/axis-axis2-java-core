@@ -64,7 +64,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     private static final Log log = LogFactory.getLog(DeploymentEngine.class);
     protected boolean hotUpdate = true;    // to do hot update or not
     protected boolean hotDeployment = true;    // to do hot deployment or not
-    protected boolean antiJARLocking = false;    // to do hot deployment or not
     /**
      * Stores all the web Services to deploy.
      */
@@ -199,8 +198,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     DeploymentClassLoader deploymentClassLoader =
                             new DeploymentClassLoader(
                                     new URL[]{moduleurl},
-                                    axisConfig.getModuleClassLoader(),
-                                    antiJARLocking);
+                                    axisConfig.getModuleClassLoader());
                     AxisModule module = new AxisModule();
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);
@@ -246,7 +244,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         try {
             serviceGroup.setServiceGroupName(serviceName);
             DeploymentClassLoader serviceClassLoader = new DeploymentClassLoader(
-                    new URL[]{servicesURL}, axisConfig.getServiceClassLoader(), antiJARLocking);
+                    new URL[]{servicesURL}, axisConfig.getServiceClassLoader());
             String metainf = "meta-inf";
             serviceGroup.setServiceGroupClassLoader(serviceClassLoader);
             //processing wsdl.list
@@ -699,10 +697,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         return hotUpdate;
     }
 
-    public boolean isAntiJARLocking() {
-        return antiJARLocking;
-    }
-
     /**
      * To set the all the classLoader hierarchy this method can be used , the top most parent is
      * CCL then SCL(system Class Loader)
@@ -750,7 +744,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         String value;
         Parameter parahotdeployment = axisConfig.getParameter(TAG_HOT_DEPLOYMENT);
         Parameter parahotupdate = axisConfig.getParameter(TAG_HOT_UPDATE);
-//        Parameter paraantiJARLocking = axisConfig.getParameter(TAG_ANTI_JAR_LOCKING);
 
         if (parahotdeployment != null) {
             value = (String) parahotdeployment.getValue();
@@ -770,10 +763,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
         if (parahotupdate != null) {
             value = (String) parahotupdate.getValue();
-
-            if ("true".equalsIgnoreCase(value)) {
-                antiJARLocking = true;
-            }
         }
         String serviceDirPara = (String)
                 axisConfig.getParameterValue(DeploymentConstants.SERVICE_DIR_PATH);
@@ -901,8 +890,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         AxisModule axismodule;
         try {
             DeploymentFileData currentDeploymentFile = new DeploymentFileData(modulearchive,
-                                                                              DeploymentConstants.TYPE_MODULE,
-                                                                              false);
+                                                                              DeploymentConstants.TYPE_MODULE);
             axismodule = new AxisModule();
             ArchiveReader archiveReader = new ArchiveReader();
 
@@ -960,16 +948,11 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
             AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
             Parameter parahotupdate = axisConfig.getParameter(TAG_HOT_UPDATE);
-            boolean antiJARLocking = true;
             if (parahotupdate != null) {
                 String value = (String) parahotupdate.getValue();
-
-                if ("false".equalsIgnoreCase(value)) {
-                    antiJARLocking = false;
-                }
             }
             DeploymentFileData currentDeploymentFile = new DeploymentFileData(
-                    DeploymentConstants.TYPE_SERVICE, "", antiJARLocking);
+                    DeploymentConstants.TYPE_SERVICE, "");
             currentDeploymentFile.setClassLoader(classLoader);
 
             ServiceBuilder builder = new ServiceBuilder(serviceInputStream, configCtx,
@@ -1001,7 +984,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                                      ArchiveReader archiveReader,
                                                      HashMap wsdlServices) throws AxisFault {
         DeploymentFileData currentDeploymentFile = new DeploymentFileData(
-                DeploymentConstants.TYPE_SERVICE, "", false);
+                DeploymentConstants.TYPE_SERVICE, "");
         currentDeploymentFile.setClassLoader(classLoader);
         AxisServiceGroup serviceGroup = new AxisServiceGroup();
         serviceGroup.setServiceGroupClassLoader(classLoader);

@@ -35,21 +35,18 @@ public class DeploymentFileData {
     private ArrayList deployableServices = new ArrayList();
     private ClassLoader classLoader;
     private String messageReceiver;
-    private boolean lock;
 
     private String name;
     private String type;
 
-    public DeploymentFileData(File file, String type, boolean lock) {
+    public DeploymentFileData(File file, String type) {
         this.file = file;
         this.type = type;
-        this.lock = lock;
     }
 
-    public DeploymentFileData(String type, String name, boolean lock) {
+    public DeploymentFileData(String type, String name) {
         this.type = type;
         this.name = name;
-        this.lock = lock;
     }
 
     public String getAbsolutePath() {
@@ -122,7 +119,7 @@ public class DeploymentFileData {
                                                                 file.getAbsolutePath()));
                     }
                     urlsToLoadFrom = new URL[]{file.toURL()};
-                    classLoader = new DeploymentClassLoader(urlsToLoadFrom, parent, lock);
+                    classLoader = new DeploymentClassLoader(urlsToLoadFrom, parent);
                 } catch (Exception e) {
                     throw new AxisFault(e);
                 }

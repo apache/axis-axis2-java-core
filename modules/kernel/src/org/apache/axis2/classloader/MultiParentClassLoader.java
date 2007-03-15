@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.axis2.util;
+package org.apache.axis2.classloader;
 
 import org.apache.commons.logging.LogFactory;
 

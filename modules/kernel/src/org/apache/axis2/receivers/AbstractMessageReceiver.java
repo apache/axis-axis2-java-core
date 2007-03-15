@@ -31,7 +31,7 @@ import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.Loader;
-import org.apache.axis2.util.MultiParentClassLoader;
+import org.apache.axis2.classloader.MultiParentClassLoader;
 
 import java.lang.reflect.Method;
 import java.net.URL;
