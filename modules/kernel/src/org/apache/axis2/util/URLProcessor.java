@@ -52,7 +52,7 @@ public class URLProcessor {
                     hostname = hostname.substring(0, hostname.indexOf("/"));
                 }
             } else {
-                hostname = namespace;
+                hostname = namespace.replace("/",".");
             }
         }
 

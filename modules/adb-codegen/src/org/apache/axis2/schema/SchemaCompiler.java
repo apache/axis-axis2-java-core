@@ -1851,34 +1851,61 @@ public class SchemaCompiler {
             if (refElement == null) {
                 // The referenced element seems to come from an imported
                 // schema.
-                XmlSchemaObjectCollection includes = schema.getIncludes();
-                if (includes != null) {
-                    Iterator tempIterator = includes.getIterator();
-                    while (tempIterator.hasNext()) {
-                        Object o = tempIterator.next();
-                        XmlSchema inclSchema = null;
-                        if (o instanceof XmlSchemaImport) {
-                            inclSchema = ((XmlSchemaImport) o).getSchema();
-                            if (inclSchema == null) {
-                                inclSchema = (XmlSchema) loadedSchemaMap.get(((XmlSchemaImport) o).getNamespace());
-                            }
-                        }
-                        if (o instanceof XmlSchemaInclude) {
-                            inclSchema = ((XmlSchemaInclude) o).getSchema();
-                        }
-                        // get the element from the included schema
-                        if (inclSchema != null) {
-                            refElement = inclSchema.getElementByName(referencedQName);
+                refElement = getReferenceElementFromSchema(schema, referencedQName);
+            }
+        }
+
+        return refElement;
+    }
+
+    private XmlSchemaElement getReferenceElementFromSchema(
+            XmlSchema schema,
+            QName referencedQName) {
+        XmlSchemaElement refElement = null;
+        XmlSchemaObjectCollection includes = schema.getIncludes();
+        if (includes != null) {
+            Iterator tempIterator = includes.getIterator();
+            while (tempIterator.hasNext()) {
+                Object o = tempIterator.next();
+                XmlSchema inclSchema = null;
+
+                if (o instanceof XmlSchemaInclude) {
+                    inclSchema = ((XmlSchemaInclude) o).getSchema();
+                    if (inclSchema != null) {
+                        // first check in the scheam
+                        refElement = inclSchema.getElementByName(referencedQName);
+                        if (refElement == null) {
+                            // try to find the element in an inner schema
+                            refElement = getReferenceElementFromSchema(inclSchema, referencedQName);
                         }
                         if (refElement != null) {
-                            // we found the referenced element an can break the loop
+                            // we have found the element so exit from while loop;
                             break;
                         }
                     }
                 }
+
+                if (o instanceof XmlSchemaImport) {
+                    inclSchema = ((XmlSchemaImport) o).getSchema();
+                    if (inclSchema == null) {
+                        inclSchema = (XmlSchema) loadedSchemaMap.get(((XmlSchemaImport) o).getNamespace());
+                    }
+                    if (inclSchema != null) {
+                        // first check in the scheam
+                        refElement = inclSchema.getElementByName(referencedQName);
+                        if (refElement == null) {
+                            // try to find the element in an inner schema
+                            refElement = getReferenceElementFromSchema(inclSchema, referencedQName);
+                        }
+                        if (refElement != null) {
+                            // we have found the element so exit from while loop;
+                            break;
+                        }
+                    }
+                }
+
             }
         }
-
         return refElement;
     }
 

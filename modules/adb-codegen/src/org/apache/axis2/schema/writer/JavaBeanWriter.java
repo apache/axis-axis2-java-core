@@ -210,6 +210,7 @@ public class JavaBeanWriter implements BeanWriter {
 
             return process(qName, metainf, typeMap, true);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new SchemaCompilationException(e);
         }
 
