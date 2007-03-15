@@ -32,7 +32,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Policy;
-import org.apache.woden.internal.util.dom.DOM2Writer;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -2001,8 +2000,6 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "namespace", axisOperation.getName().getNamespaceURI(), methodElement);
         addAttribute(doc, "style", (String) getBindingPropertyFromOperation(
                 WSDLConstants.WSDL_1_1_STYLE, axisOperation.getName()), methodElement);
-        addAttribute(doc, "http_location", (String) getBindingPropertyFromOperation(
-                WSDL2Constants.ATTR_WHTTP_LOCATION, axisOperation.getName()), methodElement);
         addAttribute(doc, "dbsupportname",
                 endpointName + localPart + DATABINDING_SUPPORTER_NAME_SUFFIX,
                 methodElement);
@@ -2063,6 +2060,15 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (property != null) {
             methodElement.appendChild(generateOptionParamComponent(doc,
                     "org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR",
+                    "\"" + property + "\""));
+        }
+
+        property = (String) getBindingPropertyFromOperation(
+                WSDL2Constants.ATTR_WHTTP_LOCATION,
+                axisOperation.getName());
+        if (property != null) {
+            methodElement.appendChild(generateOptionParamComponent(doc,
+                    "org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_LOCATION",
                     "\"" + property + "\""));
         }
 

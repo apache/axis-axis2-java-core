@@ -136,7 +136,7 @@
 
         _serviceClient.getOptions().setTo(new org.apache.axis2.addressing.EndpointReference(
                 targetEndpoint));
-        <xsl:if test="starts-with($soapVersion,'http://schemas.xmlsoap.org/wsdl/soap12/')">
+        <xsl:if test="starts-with($soapVersion,'http://www.w3.org/2003/05/soap-envelope')">
             //Set the soap version
             _serviceClient.getOptions().setSoapVersionURI(org.apache.axiom.soap.SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         </xsl:if>
@@ -271,19 +271,10 @@
                         ,<xsl:value-of select="@name"/>
                     </xsl:for-each>{
 
-              <xsl:if test="string-length(normalize-space(@http_location)) > 0">
-                   // keep the old address to add later
-                   String oldAdress = null;
-              </xsl:if>
               try{
                org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
               _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
               _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
-
-              <!-- change the EPR if http location available -->
-              <xsl:if test="string-length(normalize-space(@http_location)) > 0">
-                   oldAdress = setAppendAddressToEPR(_operationClient,"<xsl:value-of select="@http_location"/>");
-              </xsl:if>
 
               <!-- add the other parameter options to operational client -->
               <xsl:for-each select="optionParam">
@@ -411,11 +402,6 @@
         //execute the operation client
         _operationClient.execute(true);
 
-        <xsl:if test="string-length(normalize-space(@http_location)) > 0">
-           // set the old address again
-           setServiceClientEPR(oldAdress);
-        </xsl:if>
-
          <xsl:choose>
             <xsl:when test="$outputtype=''">
                 return;
@@ -454,10 +440,7 @@
             </xsl:otherwise>
         </xsl:choose>
          }catch(org.apache.axis2.AxisFault f){
-            <xsl:if test="string-length(normalize-space(@http_location)) > 0">
-               // set the old address again
-               setServiceClientEPR(oldAdress);
-            </xsl:if>
+
             org.apache.axiom.om.OMElement faultElt = f.getDetail();
             if (faultElt!=null){
                 if (faultExeptionNameMap.containsKey(faultElt.getQName())){
@@ -548,19 +531,9 @@
 
                 throws java.rmi.RemoteException{
 
-              <xsl:if test="string-length(normalize-space(@http_location)) > 0">
-                   // keep the old address to add later
-                   String oldAdress = null;
-              </xsl:if>
-
               org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
              _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
              _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
-
-             <!-- change the EPR if http location available -->
-              <xsl:if test="string-length(normalize-space(@http_location)) > 0">
-                   oldAdress = setAppendAddressToEPR(_operationClient,"<xsl:value-of select="@http_location"/>");
-              </xsl:if>
 
               <!-- add the other parameter options to operational client -->
               <xsl:for-each select="optionParam">
@@ -716,10 +689,6 @@
 
            //execute the operation client
            _operationClient.execute(false);
-            <xsl:if test="string-length(normalize-space(@http_location)) > 0">
-               // set the old address again
-               setServiceClientEPR(oldAdress);
-            </xsl:if>
 
                     }
                 </xsl:if>
@@ -767,20 +736,10 @@
                 </xsl:if>
                 {
 
-                <xsl:if test="string-length(normalize-space(@http_location)) > 0">
-                   // keep the old address to add later
-                   String oldAdress = null;
-              </xsl:if>
-
                 <xsl:if test="$mep='11'">try {</xsl:if>
                 org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[<xsl:value-of select="position()-1"/>].getName());
                 _operationClient.getOptions().setAction("<xsl:value-of select="$soapAction"/>");
                 _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
-
-                <!-- change the EPR if http location available -->
-               <xsl:if test="string-length(normalize-space(@http_location)) > 0">
-                   oldAdress = setAppendAddressToEPR(_operationClient,"<xsl:value-of select="@http_location"/>");
-               </xsl:if>
 
                 <!-- add the other parameter options to operational client -->
               <xsl:for-each select="optionParam">
@@ -892,16 +851,8 @@
 
              _operationClient.execute(true);
 
-              <xsl:if test="string-length(normalize-space(@http_location)) > 0">
-               // set the old address again
-               setServiceClientEPR(oldAdress);
-            </xsl:if>
            <xsl:if test="$mep='11'">
                }catch(org.apache.axis2.AxisFault f){
-                  <xsl:if test="string-length(normalize-space(@http_location)) > 0">
-                   // set the old address again
-                   setServiceClientEPR(oldAdress);
-                  </xsl:if>
                   org.apache.axiom.om.OMElement faultElt = f.getDetail();
                   if (faultElt!=null){
                       if (faultExeptionNameMap.containsKey(faultElt.getQName())){
