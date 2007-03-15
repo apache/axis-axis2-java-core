@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster.tribes.context;
+package org.apache.axis2.cluster.listeners;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -22,6 +22,8 @@ import java.util.Map;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.cluster.context.ContextEvent;
 import org.apache.axis2.cluster.context.ContextManagerListener;
+import org.apache.axis2.cluster.tribes.context.ContextType;
+import org.apache.axis2.cluster.tribes.context.ContextUpdater;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
@@ -30,13 +32,13 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class TribesContextManagerListener implements ContextManagerListener {
+public class DefaultContextManagerListener implements ContextManagerListener {
 
 	ContextUpdater updater = null;
 	ConfigurationContext configurationContext = null;
-	private static final Log log = LogFactory.getLog(TribesContextManagerListener.class);
+	private static final Log log = LogFactory.getLog(DefaultContextManagerListener.class);
 	
-	public TribesContextManagerListener (ConfigurationContext configurationContext) {
+	public DefaultContextManagerListener (ConfigurationContext configurationContext) {
 		this.configurationContext = configurationContext;
 	}
 	

@@ -17,9 +17,42 @@
 package org.apache.axis2.cluster.configuration;
 
 public class ConfigurationEvent {
-	String descriptionName;
-	String parentDescriptionName;
-	int descriptionType;
+
+	String configurationName;
+	String parentConfigurationName;
+	int configurationType;
+	String policyId = null;
 	
+	public String getConfigurationName() {
+		return configurationName;
+	}
+
+	public void setConfigurationName(String configurationName) {
+		this.configurationName = configurationName;
+	}
+
+	public int getConfigurationType() {
+		return configurationType;
+	}
+
+	public void setConfigurationType(int configurationType) {
+		this.configurationType = configurationType;
+	}
+
+	public String getParentConfigurationName() {
+		return parentConfigurationName;
+	}
+
+	public void setParentConfigurationName(String parentConfigurationName) {
+		this.parentConfigurationName = parentConfigurationName;
+	}
+
+	public String getPolicyId() {
+		return policyId;
+	}
+
+	public void setPolicyId(String policyId) {
+		this.policyId = policyId;
+	}
 	
 }

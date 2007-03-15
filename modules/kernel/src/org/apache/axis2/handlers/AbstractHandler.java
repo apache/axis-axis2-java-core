@@ -103,6 +103,6 @@ public abstract class AbstractHandler implements Handler {
         return handlerDesc.getParameter(name);
     }
 
-    public void flowComplete(MessageContext msgContext) throws AxisFault {
+    public void flowComplete(MessageContext msgContext) {
     }
 }

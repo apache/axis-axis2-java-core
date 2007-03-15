@@ -18,6 +18,11 @@ package org.apache.axis2.clustering;
 import java.util.Iterator;
 
 import org.apache.axiom.om.util.UUIDGenerator;
+import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
+import org.apache.axis2.cluster.context.ContextManagerListener;
+import org.apache.axis2.cluster.listeners.DefaultContextManagerListener;
+import org.apache.axis2.clustering.configuration.TestConfigurationManagerListener;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
@@ -73,6 +78,5 @@ public abstract class ManageContextTestCase extends ClusterManagerTestCase {
 			return;
 		}
 	}
-	
 	
 }

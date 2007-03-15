@@ -40,10 +40,15 @@ public class ReplicationHandler extends AbstractHandler {
 		return InvocationResponse.CONTINUE;
 	}
 
-	public void flowComplete(MessageContext msgContext) throws AxisFault {
+	public void flowComplete(MessageContext msgContext) {
 		super.flowComplete(msgContext);
 
-		replicateState(msgContext);
+		try {
+			replicateState(msgContext);
+		} catch (ClusteringFault e) {
+			String message = "Could not replicate the state";
+			log.error(message);
+		}
 	}
 
 	private void replicateState(MessageContext message) throws ClusteringFault {

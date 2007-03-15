@@ -271,32 +271,15 @@ public class AxisEngine {
         return pi;
     }
 
-    private void flowComplete(MessageContext msgContext, boolean inbound) throws AxisFault {
+    private void flowComplete(MessageContext msgContext, boolean inbound) {
         Iterator invokedPhaseIterator = inbound ? msgContext.getInboundExecutedPhases() :
                 msgContext.getOutboundExecutedPhases();
 
-        Handler currentHandler;
-        
-        //Even if an exception get thrown in the middle, we should continue to call flowComplete of all the Handlers.
-        //The first exception that was caught will be thrown out, others will be logged here.
-        AxisFault firstException = null;
         while (invokedPhaseIterator.hasNext()) {
-            currentHandler = ((Handler) invokedPhaseIterator.next());
-            
-            try {
-            	currentHandler.flowComplete(msgContext);
-            } catch (AxisFault e) {
-            	if (firstException==null)
-            		firstException = e;
-            	else {
-            		log.error(e);
-            	}
-            }
+            Handler currentHandler = ((Handler) invokedPhaseIterator.next());
+            currentHandler.flowComplete(msgContext);
         }
 
-        if (firstException!=null) 
-        	throw firstException;
-        
         /*This is needed because the OutInAxisOperation currently invokes
         * receive() even when a fault occurs, and we will have already executed
         * the flowComplete on those before receiveFault() is called.

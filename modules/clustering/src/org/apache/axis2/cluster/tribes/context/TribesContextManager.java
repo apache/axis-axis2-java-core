@@ -16,7 +16,6 @@
 
 package org.apache.axis2.cluster.tribes.context;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +26,7 @@ import org.apache.axis2.cluster.ClusteringFault;
 import org.apache.axis2.cluster.context.ContextEvent;
 import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.cluster.context.ContextManagerListener;
-import org.apache.axis2.cluster.handlers.ReplicationHandler;
+import org.apache.axis2.cluster.listeners.DefaultContextManagerListener;
 import org.apache.axis2.cluster.tribes.ChannelSender;
 import org.apache.axis2.cluster.tribes.CommandType;
 import org.apache.axis2.context.AbstractContext;
@@ -36,9 +35,6 @@ import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.catalina.tribes.Channel;
-import org.apache.catalina.tribes.ChannelException;
-import org.apache.catalina.tribes.Member;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -271,7 +267,7 @@ public class TribesContextManager implements ContextManager {
 		
 		//updating the listeners
 		for (Iterator it = listeners.iterator();it.hasNext();) {
-			TribesContextManagerListener listener = (TribesContextManagerListener) it.next();
+			DefaultContextManagerListener listener = (DefaultContextManagerListener) it.next();
 			listener.setUpdater(updater);
 		}
 	}

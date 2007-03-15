@@ -73,7 +73,7 @@ public interface Handler {
      * @param msgContext the <code>MessageContext</code> to process with this
      *                   <code>Handler</code>.
      */
-    public void flowComplete(MessageContext msgContext) throws AxisFault;
+    public void flowComplete(MessageContext msgContext);
 
     /**
      * Gets the HandlerDescription of a handler. This is used as an input to get phaseRule of a handler.

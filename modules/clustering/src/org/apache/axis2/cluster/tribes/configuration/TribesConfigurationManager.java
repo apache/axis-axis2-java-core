@@ -17,8 +17,10 @@
 package org.apache.axis2.cluster.tribes.configuration;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.axis2.cluster.ClusteringFault;
+import org.apache.axis2.cluster.configuration.ConfigurationEvent;
 import org.apache.axis2.cluster.configuration.ConfigurationManager;
 import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
 import org.apache.axis2.cluster.tribes.ChannelSender;
@@ -40,7 +42,10 @@ public class TribesConfigurationManager implements ConfigurationManager {
 	}
 
 	public void applyPolicy(String serviceGroupName, Policy policy)  throws ClusteringFault {
-		throw new UnsupportedOperationException ();
+		ConfigurationCommand command = new ConfigurationCommand (CommandType.APPLY_POLICY);
+		command.setSgcName(serviceGroupName);
+		command.setPolicyId(policy.getId());
+		send (command);
 	}
 
 	public void commit()  throws ClusteringFault {
@@ -82,4 +87,28 @@ public class TribesConfigurationManager implements ConfigurationManager {
 	public void setSender(ChannelSender sender) {
 		this.sender = sender;
 	}
+	
+	public void notifyListeners (int command, ConfigurationEvent event) {
+		
+		for (Iterator it=listeners.iterator();it.hasNext();) {
+			ConfigurationManagerListener listener = (ConfigurationManagerListener) it.next();
+			
+			if (CommandType.LOAD_SERVICE_GROUP==command) 
+				listener.serviceGroupLoaded(event);
+			else if (CommandType.UNLOAD_SERVICE_GROUP==command)
+				listener.serviceGroupUnloaded(event);
+			else if (CommandType.APPLY_POLICY==command)
+				listener.policyApplied(event);
+			else if (CommandType.RELOAD_CONFIGURATION==command)
+				listener.configurationReloaded(event);
+			else if (CommandType.PREPARE==command)
+				listener.prepareCalled(event);
+			else if (CommandType.COMMIT==command)
+				listener.commitCalled(event);
+			else if (CommandType.ROLLBACK==command)
+				listener.rollbackCalled(event);
+		}
+		
+	}
+	
 }

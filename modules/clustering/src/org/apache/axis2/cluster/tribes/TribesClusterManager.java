@@ -66,7 +66,7 @@ public class TribesClusterManager implements ClusterManager {
 		contextManager.setConfigContext(context);
 		
 		ChannelSender sender = new ChannelSender ();
-		ChannelListener listener = new ChannelListener ();
+		ChannelListener listener = new ChannelListener (configurationManager, contextManager);
 
 		TransientTribesChannelInfo channelInfo = new TransientTribesChannelInfo();
 		TransientTribesMemberInfo memberInfo = new TransientTribesMemberInfo();

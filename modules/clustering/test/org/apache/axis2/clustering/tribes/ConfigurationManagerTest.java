@@ -14,33 +14,16 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster.tribes.configuration;
+package org.apache.axis2.clustering.tribes;
 
-import org.apache.axis2.cluster.tribes.CommandMessage;
+import org.apache.axis2.cluster.ClusterManager;
+import org.apache.axis2.cluster.tribes.TribesClusterManager;
 
-public class ConfigurationCommand extends CommandMessage {
-	
-	String policyId;
-	String sgcName;
-	
-	public ConfigurationCommand (int commandType) {
-		super (commandType);
-	}
-	
-	public String getPolicyId() {
-		return policyId;
+public class ConfigurationManagerTest extends
+		org.apache.axis2.clustering.configuration.ConfigurationManagerTestCase {
+
+	protected ClusterManager getClusterManager() {
+		return new TribesClusterManager ();
 	}
 
-	public void setPolicyId(String policyId) {
-		this.policyId = policyId;
-	}
-
-	public String getSgcName() {
-		return sgcName;
-	}
-	
-	public void setSgcName(String sgcName) {
-		this.sgcName = sgcName;
-	}
-	
 }

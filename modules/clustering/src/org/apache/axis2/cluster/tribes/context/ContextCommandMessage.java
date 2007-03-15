@@ -21,11 +21,8 @@ import org.apache.axis2.cluster.tribes.CommandMessage;
 public class ContextCommandMessage extends CommandMessage {
 
 	private String parentId;
-
 	private String contextId;
-
 	private String axisDescriptionName;
-
 	private int contextType;
 
 	public ContextCommandMessage(int commandType, String parentId, String contextId,

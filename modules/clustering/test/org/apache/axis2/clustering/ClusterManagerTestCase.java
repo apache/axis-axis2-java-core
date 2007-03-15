@@ -20,46 +20,39 @@ import junit.framework.TestCase;
 
 import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.cluster.ClusteringFault;
-import org.apache.axis2.cluster.tribes.context.TribesContextManager;
-import org.apache.axis2.cluster.tribes.context.TribesContextManagerListener;
+import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
+import org.apache.axis2.cluster.context.ContextManagerListener;
+import org.apache.axis2.cluster.listeners.DefaultContextManagerListener;
+import org.apache.axis2.clustering.configuration.TestConfigurationManagerListener;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.axis2.engine.AxisEngine;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public abstract class ClusterManagerTestCase extends TestCase {
 
 	protected ClusterManager clusterManager1 = null;
-
 	protected ClusterManager clusterManager2 = null;
-
 	protected AxisConfiguration axisConfiguration1 = null;
-
 	protected AxisConfiguration axisConfiguration2 = null;
-
 	protected ConfigurationContext configurationContext1 = null;
-
 	protected ConfigurationContext configurationContext2 = null;
-
 	protected AxisServiceGroup serviceGroup1 = null;
-
 	protected AxisServiceGroup serviceGroup2 = null;
-
 	protected AxisService service1 = null;
-
 	protected AxisService service2 = null;
-
 	protected String serviceName = "testService";
-
 	protected abstract ClusterManager getClusterManager();
-	
 	protected boolean skipChannelTests = false; 
-
-    private static final Log log = LogFactory.getLog(ClusterManagerTestCase.class);
+	protected TestConfigurationManagerListener configurationManagerListener1 = null;
+	protected TestConfigurationManagerListener configurationManagerListener2 = null;
+	protected DefaultContextManagerListener contextManagerListener1 = null;
+	protected DefaultContextManagerListener contextManagerListener2 = null;
+	
+	private static final Log log = LogFactory.getLog(ClusterManagerTestCase.class);
     
 	protected void setUp() throws Exception {
 
@@ -69,10 +62,16 @@ public abstract class ClusterManagerTestCase extends TestCase {
 		configurationContext1 = ConfigurationContextFactory.createDefaultConfigurationContext();
 		configurationContext2 = ConfigurationContextFactory.createDefaultConfigurationContext();
 
-		TribesContextManagerListener listener1 = new TribesContextManagerListener (configurationContext1);
-		clusterManager1.getContextManager(). addContextManagerListener (listener1);
-		TribesContextManagerListener listener2 = new TribesContextManagerListener (configurationContext2);
-		clusterManager2.getContextManager(). addContextManagerListener (listener2);	
+		contextManagerListener1 = new DefaultContextManagerListener (configurationContext1);
+		clusterManager1.getContextManager(). addContextManagerListener (contextManagerListener1);
+		contextManagerListener2 = new DefaultContextManagerListener (configurationContext2);
+		clusterManager2.getContextManager(). addContextManagerListener (contextManagerListener2);	
+
+		configurationManagerListener1 = new TestConfigurationManagerListener ();
+		clusterManager1.getConfigurationManager().addConfigurationManagerListener(configurationManagerListener1);
+		configurationManagerListener2 = new TestConfigurationManagerListener ();
+		clusterManager2.getConfigurationManager().addConfigurationManagerListener(configurationManagerListener2);
+
 		
 		//giving both Nodes the same deployment configuration
 
