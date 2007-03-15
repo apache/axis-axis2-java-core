@@ -83,8 +83,6 @@ public class AxisBindingOperation extends AxisDescription {
         return property;
     }
 
-    //todo faults
-
     public Object getKey() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }

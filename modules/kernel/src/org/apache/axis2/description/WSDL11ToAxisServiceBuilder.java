@@ -21,6 +21,8 @@ import org.apache.neethi.Constants;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyReference;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAP11Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -2023,9 +2025,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 axisBinding.setType(soapBinding.getTransportURI());
 
-                String soapNamespaceURI = soapBinding.getElementType().getNamespaceURI();
-                axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION, soapNamespaceURI);
-                axisService.setSoapNsUri(soapNamespaceURI);
+                axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION,
+                                        SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
                 String style = soapBinding.getStyle();
                 if (style != null) {
@@ -2037,9 +2038,8 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                 SOAP12Binding soapBinding = (SOAP12Binding) wsdl4jExtensibilityElement;
                 AxisBinding axisBinding = (AxisBinding) description;
 
-                String soapNamesapceURI = soapBinding.getElementType().getNamespaceURI();
-                axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION, soapNamesapceURI);
-                axisService.setSoapNsUri(soapNamesapceURI);
+                axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION,
+                                        SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
 
                 String style = soapBinding.getStyle();
                 if (style != null) {

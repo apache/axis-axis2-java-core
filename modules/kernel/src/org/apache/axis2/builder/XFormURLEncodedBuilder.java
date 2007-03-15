@@ -71,7 +71,12 @@ public class XFormURLEncodedBuilder implements Builder {
             throw new AxisFault("Cannot create DocumentElement without destination EPR");
         }
 
-        String requestURL = endpointReference.getAddress();
+        String requestURL = null;
+        try {
+            requestURL = URIEncoderDecoder.decode(endpointReference.getAddress());
+        } catch (UnsupportedEncodingException e) {
+            throw new AxisFault(e);
+        }
         try {
             requestURL = extractParametersUsingHttpLocation(templatedPath, parameterMap,
                                                             requestURL,
@@ -103,18 +108,9 @@ public class XFormURLEncodedBuilder implements Builder {
                                                 InputStream inputStream)
             throws AxisFault {
 
-        String queryString;
-
         if (query != null && !"".equals(query)) {
 
-            try {
-                queryString = URIEncoderDecoder.decode(query);
-            } catch (UnsupportedEncodingException e) {
-                log.error("Could not decode the query String in the HttpServletRequest");
-                throw new AxisFault("Could not decode the query String in the HttpServletRequest");
-            }
-
-            String parts[] = queryString.split(queryParamSeparator);
+            String parts[] = query.split(queryParamSeparator);
             for (int i = 0; i < parts.length; i++) {
                 int separator = parts[i].indexOf("=");
                 if (separator > 0) {
@@ -198,14 +194,22 @@ public class XFormURLEncodedBuilder implements Builder {
                     // get the preceding constant part from the template
                     String constantPart =
                             pathTemplate.substring(templateEndIndex + 1, templateStartIndex);
+                    constantPart = constantPart.replaceAll("\\{\\{","{");
+                    constantPart = constantPart.replaceAll("}}","}");
 
                     // get the index of the end of this template param
                     templateEndIndex = pathTemplate.indexOf("}", templateStartIndex);
+                    if ((pathTemplate.length() -1) > templateEndIndex && pathTemplate.charAt(templateEndIndex +1) == '}') {
+                        templateEndIndex = pathTemplate.indexOf("}", templateEndIndex +2);
+                    }
 
                     String parameterName =
                             pathTemplate.substring(templateStartIndex + 1, templateEndIndex);
                     // next try to find the next constant
                     templateStartIndex = pathTemplate.indexOf("{", templateEndIndex);
+                    if (pathTemplate.charAt(templateStartIndex +1) == '{') {
+                        templateStartIndex = pathTemplate.indexOf("{", templateStartIndex +2);
+                    }
 
                     int endIndexOfConstant = requestURIBuffer
                             .indexOf(constantPart, indexOfNextConstant) + constantPart.length();
@@ -220,18 +224,22 @@ public class XFormURLEncodedBuilder implements Builder {
                                 addParameterToMap(parameterMap, parameterName,
                                                   requestURIBuffer.substring(endIndexOfConstant,
                                                                              indexOfNextConstant));
+                                return requestURL.substring(indexOfNextConstant);
                             } else {
 
                                 addParameterToMap(parameterMap, parameterName,
                                                   requestURIBuffer.substring(
                                                           endIndexOfConstant));
+                                return "";
                             }
-                            return "";
+
                         } else {
 
                             constantPart =
                                     pathTemplate.substring(templateEndIndex + 1,
                                                            pathTemplate.length());
+                            constantPart = constantPart.replaceAll("\\{\\{","{");
+                            constantPart = constantPart.replaceAll("}}","}");
                             indexOfNextConstant =
                                     requestURIBuffer.indexOf(constantPart, endIndexOfConstant);
 
@@ -250,6 +258,8 @@ public class XFormURLEncodedBuilder implements Builder {
                         constantPart =
                                 pathTemplate
                                         .substring(templateEndIndex + 1, templateStartIndex);
+                        constantPart = constantPart.replaceAll("\\{\\{","{");
+                        constantPart = constantPart.replaceAll("}}","}");
 
                         indexOfNextConstant =
                                 requestURIBuffer.indexOf(constantPart, endIndexOfConstant);
@@ -271,7 +281,7 @@ public class XFormURLEncodedBuilder implements Builder {
                                    String paramValue)
             throws UnsupportedEncodingException {
         if (paramName.startsWith(WSDL2Constants.TEMPLATE_ENCODE_ESCAPING_CHARACTER)) {
-            parameterMap.put(paramName.substring(1), URIEncoderDecoder.decode(paramValue));
+            parameterMap.put(paramName.substring(1), paramValue);
         } else {
             parameterMap.put(paramName, paramValue);
         }

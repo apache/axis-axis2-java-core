@@ -23,11 +23,14 @@ import org.apache.axis2.description.WSDL20DefaultValueHolder;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.util.JavaUtils;
 import org.apache.woden.wsdl20.extensions.http.HTTPLocation;
+import org.apache.woden.wsdl20.extensions.http.HTTPLocationTemplate;
 
 import javax.xml.namespace.QName;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 
 
@@ -60,25 +63,39 @@ public class URLTemplatingUtil {
             firstElement =
                     messageContext.getEnvelope().getBody().getFirstElement().cloneOMElement();
         }
-
+        String queryParameterSeparator = (String) messageContext.getProperty(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR);
+        if (queryParameterSeparator == null) {
+            queryParameterSeparator = WSDL20DefaultValueHolder.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR_DEFAULT;
+        }
         HTTPLocation httpLocation = new HTTPLocation(rawURLString);
-        String[] localNames = httpLocation.getLocalNames();
-        String[] values = new String[localNames.length];
+        HTTPLocationTemplate[] templates = httpLocation.getTemplates();
 
-        for (int i = 0; i < localNames.length; i++) {
-            String localName = localNames[i];
-            try {
-                values[i] = URIEncoderDecoder.quoteIllegal(
-                        getOMElementValue(localName, firstElement),
-                        WSDL2Constants.LEGAL_CHARACTERS_IN_URL);
-            } catch (UnsupportedEncodingException e) {
-                throw new AxisFault("Unable to encode Query String");
+        for (int i = 0; i < templates.length; i++) {
+            HTTPLocationTemplate template = templates[i];
+            String localName = template.getName();
+            String elementValue = getOMElementValue(localName, firstElement);
+            if (template.isEncoded()) {
+                try {
+
+                    if (template.isQuery()) {
+                        template.setValue(URIEncoderDecoder.quoteIllegal(
+                                elementValue,
+                                WSDL2Constants.LEGAL_CHARACTERS_IN_QUERY.replaceAll(queryParameterSeparator, "")));
+                    } else {
+                        template.setValue(URIEncoderDecoder.quoteIllegal(
+                                elementValue,
+                                WSDL2Constants.LEGAL_CHARACTERS_IN_PATH));
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    throw new AxisFault("Unable to encode Query String");
+                }
+
+            } else {
+                template.setValue(elementValue);
             }
         }
 
-        httpLocation.substitute(values);
-
-        return httpLocation.toString();
+        return httpLocation.getFormattedLocation();
     }
 
     /**
@@ -107,32 +124,37 @@ public class URLTemplatingUtil {
         if (firstElement != null) {
             Iterator iter = firstElement.getChildElements();
 
+            String legalCharacters = WSDL2Constants.LEGAL_CHARACTERS_IN_QUERY.replaceAll(queryParameterSeparator, "");
+
             while (iter.hasNext()) {
                 OMElement element = (OMElement) iter.next();
-                params = params + element.getLocalName() + "=" + element.getText() +
-                        queryParameterSeparator;
+                try {
+                    params = params + URIEncoderDecoder.quoteIllegal(element.getLocalName(), legalCharacters) + "=" + URIEncoderDecoder.quoteIllegal(element.getText(), legalCharacters) +
+                            queryParameterSeparator;
+                } catch (UnsupportedEncodingException e) {
+                    throw new AxisFault(e);
+                }
             }
         }
 
         if (!"".equals(params)) {
-
             int index = urlString.indexOf("?");
             if (index == -1) {
-                urlString = urlString + "?" + params.substring(0,params.length()-1);
-            }
-            else if (index == urlString.length() - 1) {
-                urlString = urlString + params.substring(0,params.length()-1);
+                urlString = urlString + "?" + params.substring(0, params.length() - 1);
+            } else if (index == urlString.length() - 1) {
+                urlString = urlString + params.substring(0, params.length() - 1);
 
             } else {
-                urlString = urlString + queryParameterSeparator + params.substring(0,params.length()-1);
+                urlString = urlString + queryParameterSeparator + params.substring(0, params.length() - 1);
             }
 
+            try {
+                return new URL(urlString);
+            } catch (MalformedURLException e) {
+                throw new AxisFault(e);
+            }
         }
-        try {
-            return new URL(urlString);
-        } catch (MalformedURLException e) {
-            throw new AxisFault("Unable to append query parameters to URL");
-        }
+        return url;
     }
 
     /**
@@ -152,9 +174,9 @@ public class URLTemplatingUtil {
             if (parentElement.getFirstOMChild() == null) {
                 parentElement.detach();
             }
+            return httpURLParam.getText();
         }
-
-        return httpURLParam.getText();
+        return "";
 
     }
 
@@ -172,19 +194,30 @@ public class URLTemplatingUtil {
     public static URL getTemplatedURL(URL targetURL, MessageContext messageContext, boolean detach)
             throws AxisFault {
 
-        String urlString = targetURL.toString();
-        String replacedQuery = "";
-        String path = "";
-        int separator = urlString.indexOf('{');
+        String httpLocation = (String) messageContext.getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
+
+//        String urlString = targetURL.toString();
+        if (httpLocation != null) {
+        String replacedQuery = httpLocation;
+        int separator = httpLocation.indexOf('{');
+            try {
 
         if (separator > 0) {
-            path = urlString.substring(0, separator - 1);
-            String query = urlString.substring(separator - 1);
+            replacedQuery = URIEncoderDecoder.quoteIllegal(
+                    URLTemplatingUtil.applyURITemplating(messageContext, httpLocation, detach),
+                    WSDL2Constants.LEGAL_CHARACTERS_IN_URL);
 
-            replacedQuery = URLTemplatingUtil.applyURITemplating(messageContext, query, detach);
-            try {
-                targetURL = new URL(path + replacedQuery);
+        }
+                URI targetURI = new URI(targetURL.toString() + "/");
+                
+                URI appendedURI = targetURI.resolve(replacedQuery);
+                targetURL = appendedURI.toURL(); 
+
             } catch (MalformedURLException e) {
+                throw new AxisFault("An error occured while trying to create request URL");
+            } catch (URISyntaxException e) {
+                throw new AxisFault("An error occured while trying to create request URL");
+            } catch (UnsupportedEncodingException e) {
                 throw new AxisFault("An error occured while trying to create request URL");
             }
         }

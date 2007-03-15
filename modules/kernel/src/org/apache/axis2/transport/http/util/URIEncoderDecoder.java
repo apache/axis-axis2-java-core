@@ -108,9 +108,7 @@ public class URIEncoderDecoder {
             if ((ch >= 'a' && ch <= 'z')
                     || (ch >= 'A' && ch <= 'Z')
                     || (ch >= '0' && ch <= '9')
-                    || legal.indexOf(ch) > -1
-                    || (ch > 127 && !Character.isSpaceChar(ch) && !Character
-                    .isISOControl(ch))) {
+                    || legal.indexOf(ch) > -1) {
                 buf.append(ch);
             } else {
                 byte[] bytes = new String(new char[]{ch}).getBytes(encoding);

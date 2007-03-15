@@ -98,6 +98,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
     private Map namespacemap;
 
+    private List operationNames = new ArrayList();
+
     private NamespaceMap stringBasedNamespaceMap;
 
     private boolean setupComplete = false;
@@ -126,6 +128,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             fullPath = file.getAbsolutePath();
         }
         Description description = wsdlReader.readWSDL(fullPath);
+
         DescriptionElement descriptionElement = description.toElement();
         savedTargetNamespace = descriptionElement.getTargetNamespace()
                 .toString();
@@ -196,7 +199,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             //
             // }
 
-            TypesElement typesElement = description.toElement()
+            DescriptionElement descriptionElement = description.toElement();
+            TypesElement typesElement = descriptionElement
                     .getTypesElement();
             if (typesElement != null) {
                 Schema[] schemas = typesElement.getSchemas();
@@ -283,7 +287,9 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         wsdlService = services[0];
         axisService.setName(wsdlService.getName().getLocalPart().toString());
         processInterface(wsdlService.getInterface());
-
+        if (isCodegen) {
+            axisService.setOperationsNameList(operationNames);
+        }
         processEndpoints();
 
     }
@@ -418,20 +424,14 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         String soapVersion;
         if ((soapVersion = soapBindingExtensions.getSoapVersion()) != null) {
             if (soapVersion.equals(WSDL2Constants.SOAP_VERSION_1_1)) {
-                // Might have to remove this as its a binding specific property
-                axisService.setSoapNsUri(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                 axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION,
                                         SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
             } else {
-                // Might have to remove this as its a binding specific property
-                axisService.setSoapNsUri(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
                 axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION,
                                         SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
             }
         } else {
             // Set the default to soap 1.2
-            axisService.setSoapNsUri(
-                    WSDL20DefaultValueHolder.getDefaultValue(WSDL2Constants.ATTR_WSOAP_VERSION));
             axisBinding.setProperty(WSDL2Constants.ATTR_WSOAP_VERSION,
                                     WSDL20DefaultValueHolder.getDefaultValue(
                                             WSDL2Constants.ATTR_WSOAP_VERSION));
@@ -518,7 +518,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             }
 
             URI soapAction = soapBindingOperationExtensions.getSoapAction();
-            if (soapAction != null) {
+            if (soapAction != null && !"\"\"".equals(soapAction)) {
                 axisBindingOperation.setProperty(WSDL2Constants.ATTR_WSOAP_ACTION,
                                                  soapAction.toString());
             }
@@ -797,18 +797,11 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         // copyExtensionAttributes(wsdl4jPortType.getExtensionAttributes(),
         // axisService, PORT_TYPE);
 
-        List operationNames = new ArrayList();
-
-
         InterfaceOperation[] interfaceOperations = serviceInterface
                 .getInterfaceOperations();
         for (int i = 0; i < interfaceOperations.length; i++) {
             axisService.addOperation(populateOperations(interfaceOperations[i]));
             operationNames.add(interfaceOperations[i].getName());
-        }
-
-        if (isCodegen) {
-            axisService.setOperationsNameList(operationNames);
         }
 
         Interface[] extendedInterfaces = serviceInterface.getExtendedInterfaces();

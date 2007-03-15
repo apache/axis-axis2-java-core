@@ -28,9 +28,12 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPProcessingException;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.httpclient.Header;
@@ -122,33 +125,6 @@ public abstract class Stub {
      */
     public void cleanup() throws AxisFault {
         _service.getAxisConfiguration().removeService(_service.getName());
-    }
-
-    /**
-     * sets the EPR in operation client. First get the available EPR from the service client
-     * and then append the addressFromBinding string to available address
-     *
-     * @param _operationClient
-     * @param addressFromBinding return existing address
-     */
-
-
-    protected String setAppendAddressToEPR(OperationClient _operationClient,
-                                           String addressFromBinding) {
-        EndpointReference toEPRFromServiceClient = _serviceClient.getOptions().getTo();
-
-        String oldAddress = toEPRFromServiceClient.getAddress();
-        String address = toEPRFromServiceClient.getAddress();
-
-        // here we assume either addressFromBinding have a '?' infront or not
-        if (addressFromBinding.charAt(0) != '?') {
-            addressFromBinding = "/" + addressFromBinding;
-        }
-
-        address += addressFromBinding;
-        toEPRFromServiceClient.setAddress(address);
-        _operationClient.getOptions().setTo(toEPRFromServiceClient);
-        return oldAddress;
     }
 
     /**

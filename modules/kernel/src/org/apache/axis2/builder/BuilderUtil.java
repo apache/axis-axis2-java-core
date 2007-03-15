@@ -130,41 +130,33 @@ public class BuilderUtil {
                         String name =
                                 qName != null ? qName.getLocalPart() : innerElement.getName();
                         String value;
+                        OMNamespace ns = (qName == null ||
+                                qName.getNamespaceURI() == null
+                                || qName.getNamespaceURI().length() == 0) ?
+                                null : soapFactory.createOMNamespace(
+                                qName.getNamespaceURI(), null);
                         while ((value = (String) requestParameterMap.get(name)) != null) {
 
-                            OMNamespace ns = (qName == null ||
-                                    qName.getNamespaceURI() == null
-                                    || qName.getNamespaceURI().length() == 0) ?
-                                    null : soapFactory.createOMNamespace(
-                                    qName.getNamespaceURI(), null);
-                            if (value != null) {
-
-                                soapFactory.createOMElement(name, ns,
-                                                            bodyFirstChild).setText(value);
-                            } else {
-
-                                if (nillable) {
-
-                                    OMNamespace xsi = soapFactory.createOMNamespace(
-                                            Constants.URI_DEFAULT_SCHEMA_XSI,
-                                            Constants.NS_PREFIX_SCHEMA_XSI);
-                                    OMAttribute omAttribute =
-                                            soapFactory.createOMAttribute("nil", xsi, "true");
-                                    soapFactory.createOMElement(name, ns,
-                                                                bodyFirstChild)
-                                            .addAttribute(omAttribute);
-
-                                } else {
-                                    throw new AxisFault("Required element " + qName +
-                                            " defined in the schema can not be found in the request");
-                                }
-                            }
+                            soapFactory.createOMElement(name, ns,
+                                                        bodyFirstChild).setText(value);
                             minOccurs--;
                         }
                         if (minOccurs > 0) {
-                            throw new AxisFault("Required element " + qName +
-                                    " defined in the schema should appear atleast " +
-                                    innerElement.getMinOccurs() + "times");
+                            if (nillable) {
+
+                                OMNamespace xsi = soapFactory.createOMNamespace(
+                                        Constants.URI_DEFAULT_SCHEMA_XSI,
+                                        Constants.NS_PREFIX_SCHEMA_XSI);
+                                OMAttribute omAttribute =
+                                        soapFactory.createOMAttribute("nil", xsi, "true");
+                                soapFactory.createOMElement(name, ns,
+                                                            bodyFirstChild)
+                                        .addAttribute(omAttribute);
+
+                            } else {
+                                throw new AxisFault("Required element " + qName +
+                                        " defined in the schema can not be found in the request");
+                            }
                         }
                     }
                 }

@@ -67,8 +67,6 @@ import org.xml.sax.SAXException;
 
 import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
-import javax.wsdl.extensions.schema.Schema;
-import javax.wsdl.extensions.schema.SchemaImport;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
@@ -1494,7 +1492,12 @@ public class AxisService extends AxisDescription {
         serviceBuilder.setServerSide(false);
         AxisService axisService = serviceBuilder.populateService();
         options.setTo(new EndpointReference(axisService.getEndpointName()));
-        options.setSoapVersionURI(axisService.getSoapNsUri());
+        AxisEndpoint axisEndpoint = (AxisEndpoint) axisService.getEndpoints()
+                .get(axisService.getEndpointName());
+        if (axisEndpoint != null) {
+            options.setSoapVersionURI((String) axisEndpoint.getBinding()
+                    .getProperty(WSDL2Constants.ATTR_WSOAP_VERSION));
+        }
         return axisService;
     }
 

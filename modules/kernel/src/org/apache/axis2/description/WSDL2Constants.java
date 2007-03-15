@@ -91,6 +91,8 @@ public interface WSDL2Constants {
     // This was taken from thye resolution of CR117 (WSDL 2.0 working group)
     // http://www.w3.org/2002/ws/desc/5/cr-issues/issues.html?view=normal#CR117
     // http://lists.w3.org/Archives/Public/www-ws-desc/2007Feb/0039.html
-    String LEGAL_CHARACTERS_IN_URL = "-._~!$&()*+,;=:@";
+    String LEGAL_CHARACTERS_IN_URL = "-._~!$&()*+,;=:@?/%";
+    String LEGAL_CHARACTERS_IN_PATH = "-._~!$'()*+,;=:@";
+    String LEGAL_CHARACTERS_IN_QUERY = "-._~!$'()*+,;=:@/?";
     String TEMPLATE_ENCODE_ESCAPING_CHARACTER = "!";
 }
