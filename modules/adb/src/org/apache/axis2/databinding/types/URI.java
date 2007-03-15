@@ -482,10 +482,6 @@ import java.io.Serializable;
             }
         }
     }
-    else if (p_base == null && uriSpec.indexOf('#') != 0) {
-        throw new MalformedURIException("No scheme found in URI.");    
-    }
-
     // Two slashes means we may have authority, but definitely means we're either
     // matching net_path or abs_path. These two productions are ambiguous in that
     // every net_path (except those containing an IPv6Reference) is an abs_path. 
