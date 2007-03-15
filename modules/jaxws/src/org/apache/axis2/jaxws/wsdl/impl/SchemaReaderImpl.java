@@ -139,7 +139,9 @@ public class SchemaReaderImpl implements SchemaReader {
 	
 	private void processImport(SchemaImport si,  List<Schema> schemaList, Set<String> packageList)throws SchemaReaderException{	
 		Schema refSchema = si.getReferencedSchema();
-		processSchema(refSchema, schemaList, packageList);
+                if(refSchema!=null){
+                    processSchema(refSchema, schemaList, packageList);
+                }
 	}
 	
 	private String readSchemaTargetnamespace(Schema schema){
