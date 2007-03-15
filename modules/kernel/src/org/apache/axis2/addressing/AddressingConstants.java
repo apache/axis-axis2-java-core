@@ -106,7 +106,9 @@ public interface AddressingConstants {
     public static final String FAULT_ACTION_NOT_SUPPORTED = "ActionNotSupported";
     public static final String FAULT_ACTION_NOT_SUPPORTED_REASON =
             "The [action] cannot be processed at the receiver.";
-
+    public static final String FAULT_ADDRESSING_DESTINATION_UNREACHABLE =
+            "DestinationUnreachable";
+    
     public interface Final {
 
         // ====================== Addressing 1.0 Final Version Constants ====================
@@ -141,6 +143,7 @@ public interface AddressingConstants {
         // fault information
         public static final String FAULT_HEADER_PROB_HEADER_QNAME = "ProblemHeaderQName";
         public static final String FAULT_HEADER_PROB_HEADER = "ProblemHeader";
+        public static final String FAULT_HEADER_PROB_IRI = "ProblemIRI";
         public static final String FAULT_HEADER_DETAIL = "FaultDetail";
         public static final String FAULT_INVALID_HEADER = "InvalidAddressingHeader";
         public static final String FAULT_INVALID_HEADER_REASON =
@@ -149,6 +152,8 @@ public interface AddressingConstants {
                 "MessageAddressingHeaderRequired";
         public static final String FAULT_ADDRESSING_HEADER_REQUIRED_REASON =
                 "A required header representing a Message Addressing Property is not present";
+        public static final String FAULT_ADDRESSING_DESTINATION_UNREACHABLE_REASON =
+                "No route can be determined to reach [destination]";
         public static final String FAULT_INVALID_CARDINALITY = "InvalidCardinality";
         public static final String FAULT_ONLY_ANONYMOUS_ADDRESS_SUPPORTED =
                 "OnlyAnonymousAddressSupported";
@@ -187,6 +192,8 @@ public interface AddressingConstants {
                 "MessageInformationHeaderRequired";
         public static final String FAULT_ADDRESSING_HEADER_REQUIRED_REASON =
                 "A required message information header, To, MessageID, or Action, is not present.";
+        public static final String FAULT_ADDRESSING_DESTINATION_UNREACHABLE_REASON =
+                "No route can be determined to reach the destination role defined by the WS-Addressing To.";
 
         public static final QName WSAW_USING_ADDRESSING =
                 new QName(WSA_NAMESPACE, USING_ADDRESSING);

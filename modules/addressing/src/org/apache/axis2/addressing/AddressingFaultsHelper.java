@@ -109,6 +109,12 @@ public class AddressingFaultsHelper {
             } else {
                 result = AddressingMessages.getMessage("addressingHeaderRequired");
             }
+        }else if(AddressingConstants.FAULT_ADDRESSING_DESTINATION_UNREACHABLE.equals(faultCodeLocalName)){
+            if(faultDetail!=null){
+                result = AddressingMessages.getMessage("specificDestinationUnreachable", faultDetail);
+            }else{
+                result = AddressingMessages.getMessage("destinationUnreachable");
+            }
         } else if (AddressingConstants.FAULT_ACTION_NOT_SUPPORTED.equals(faultCodeLocalName)) {
             if (faultDetail != null) {
                 result = AddressingMessages.getMessage("specificActionNotRecognised", faultDetail);
@@ -274,6 +280,27 @@ public class AddressingFaultsHelper {
         }
     }
 
+    //    wsa:DestinationUnreachable [Reason] the string: "No route can be determined to reach [destination]"
+    public static void triggerDestinationUnreachableFault(MessageContext messageContext, String address) throws AxisFault {
+        if(log.isDebugEnabled()){
+            log.debug("triggerDestinationUnreachableFault: messageContext: "+messageContext+
+                    " address: "+address);
+        }
+        String namespace =
+                (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        if (Submission.WSA_NAMESPACE.equals(namespace)){
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_IRI, address,
+                                   AddressingConstants.FAULT_ADDRESSING_DESTINATION_UNREACHABLE, null,
+                                   AddressingMessages.getMessage(
+                                           "spec.submission.FAULT_ADDRESSING_DESTINATION_UNREACHABLE_REASON"));
+        }else{
+            triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_IRI, null,
+                                   AddressingConstants.FAULT_ADDRESSING_DESTINATION_UNREACHABLE, null,
+                                   AddressingMessages.getMessage(
+                                           "spec.final.FAULT_ADDRESSING_DESTINATION_UNREACHABLE_REASON"));
+        }
+    }
+
     //    wsa:ActionNotSupported [Reason] the string: "The [action] cannot be processed at the receiver"
     public static void triggerActionNotSupportedFault(MessageContext messageContext,
                                                       String problemAction) throws AxisFault {
@@ -352,6 +379,12 @@ public class AddressingFaultsHelper {
         if (faultInfo != null) {
             String faultyHeaderQName = (String) faultInfo.get(Final.FAULT_HEADER_PROB_HEADER_QNAME);
             String faultyAction = (String) faultInfo.get(Final.FAULT_PROBLEM_ACTION_NAME);
+            String faultyAddress = (String) faultInfo.get(Final.FAULT_HEADER_PROB_IRI);
+            if(faultyAddress!=null && !"".equals(faultyAddress)){
+                problemDetail = messageContext.getEnvelope().getOMFactory().createOMElement(
+                        Final.FAULT_HEADER_PROB_IRI, addressingNamespaceObject);
+                problemDetail.setText(faultyAddress);
+            }
             if (faultyAction != null && !"".equals(faultyAction)) {
                 problemDetail = messageContext.getEnvelope().getOMFactory().createOMElement(
                         Final.FAULT_PROBLEM_ACTION_NAME, addressingNamespaceObject);
