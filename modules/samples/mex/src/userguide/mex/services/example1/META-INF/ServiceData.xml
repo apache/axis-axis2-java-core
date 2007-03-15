@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 /*
  * Copyright 2007 The Apache Software Foundation.
@@ -15,10 +16,9 @@
  * limitations under the License.
  */
  -->
-<?xml version="1.0" encoding="UTF-8"?>
 <ServiceData>
-<Data dialect="http://schemas.xmlsoap.org/wsdl" file="META-INF/DefaultAxis2DataLocatorDemoService.wsdl">
- <URL>http://127/0/0/1:8080/axis2/services/DefaultAxis2DataLocatorDemoService?wsdl </URL>
+<Data dialect="http://schemas.xmlsoap.org/wsdl/" file="META-INF/DefaultAxis2DataLocatorDemoService.wsdl">
+ <URL>http://localhost:8080/axis2/services/DefaultAxis2DataLocatorDemoService?wsdl </URL>
 </Data>
 <Data dialect="http://www.w3.org/2001/XMLSchema" file="META-INF/DefaultAxis2DataLocatorDemoService.xsd">
  <URL>http://localhost:8080/axis2/services/DefaultAxis2DataLocatorDemoService?xsd </URL>

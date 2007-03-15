@@ -29,11 +29,11 @@ public class DataLocatorFactory {
     /*
     * Return instance of default Data Locator for the dialect.
     */
-    protected static AxisDataLocator createDataLocator(String dialect) {
+    public static AxisDataLocator createDataLocator(String dialect) {
         return (createDataLocator(dialect, null));
     }
 
-    protected static AxisDataLocator createDataLocator(String dialect,
+    public static AxisDataLocator createDataLocator(String dialect,
                                                        ServiceData[] serviceDataArray) {
         AxisDataLocator dataLocator = null;
         if (dialect.equals(DRConstants.SPEC.DIALECT_TYPE_WSDL)) {

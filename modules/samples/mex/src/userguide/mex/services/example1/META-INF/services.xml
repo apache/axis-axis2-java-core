@@ -15,12 +15,16 @@
  * limitations under the License.
  */
  -->
-<service name="DefaultAxisDataLocatorDemoService">
+<service name="DefaultAxis2DataLocatorDemoService">
     <description>
      Sample web service to demostrate use of Default Axis2 Data Locator to handle ws-mex GetMetadata request.       
      </description>
     <parameter name="ServiceClass" locked="false">userguide.mex.services.example1.Version</parameter>
     <operation name="getVersion">
+    <parameter name="metadataExchange" locked="false">
+      <outputform dialect="http://schemas.xmlsoap.org/wsdl/" forms="inline,location"/>
+      <outputform forms="location"/>
+     </parameter>
     <messageReceiver  class="org.apache.axis2.rpc.receivers.RPCMessageReceiver" />
     </operation>
-</service>
+</service>

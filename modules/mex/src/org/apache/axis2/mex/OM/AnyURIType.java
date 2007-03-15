@@ -60,6 +60,13 @@ public abstract class AnyURIType extends MexOM implements IMexOM {
 		return element;
 	}
 	
+    protected void setURI(String uri){
+	     this.uri = uri;	
+	}
+    
+    public String getURI(){
+	   return uri;	
+	}
 	/*
 	 * Child class must implement to answer the element name.
 	 */

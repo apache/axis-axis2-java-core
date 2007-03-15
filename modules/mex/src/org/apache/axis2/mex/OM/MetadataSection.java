@@ -15,21 +15,27 @@
 */
 
 package org.apache.axis2.mex.OM;
-
+import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMNode;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.mex.MexConstants;
+import org.apache.axis2.mex.MexException;
+import org.apache.axis2.mex.util.MexUtil;
 
 
 /**
  * Class implemented for MetadataSection element defined in 
- * the WS-MEX spec.
+ * the WS-MEX spec. A unit of metdata i.e. a MetadataSection may be included in-line data, 
+ * or may be by reference as an endpoint reference (MetadataReference) or a URL (Location).
+ * An instance of MetadataSection can have one form of data: inline, location, or reference.
  *
  */
+
 public  class MetadataSection extends MexOM implements IMexOM {
 	private String namespaceValue = null;
 	private OMFactory factory;
@@ -41,9 +47,21 @@ public  class MetadataSection extends MexOM implements IMexOM {
 	private MetadataReference ref = null;
 	
     // Attributes
-    private String dialet;
+    private String dialect;
     private String identifier;
     
+    
+    /**
+	 * Constructor
+	 * @throws MexException 
+	 */
+
+	public MetadataSection() throws MexException  {
+		
+		this.factory = MexUtil.getSOAPFactory(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);;
+		this.namespaceValue = MexConstants.Spec_2004_09.NS_URI;
+	}
+	
     /**
      * Constructor
      * @param defaultFactory
@@ -55,9 +73,62 @@ public  class MetadataSection extends MexOM implements IMexOM {
 		this.namespaceValue = namespaceValue;
 	}
 	
+	
+	/**
+	 * Populates an MetadataSection object based on the <code>OMElement</code> passed. 
+	 * @param inElement mex:MetadataSection element
+	 * @return MetadataSection 
+	 * @throws MexOMException
+	 */
+	
+	public MetadataSection fromOM(OMElement element) throws MexOMException {
+		if (element == null) {
+			throw new MexOMException("Null element passed.");
+		}
+		if (!element.getLocalName().equals(MexConstants.SPEC.METADATA_SECTION)) {
+			throw new MexOMException("Invalid element passed.");
+		}
+		OMAttribute dialectAttr  = element.getAttribute(new QName(MexConstants.SPEC.DIALECT));
+		if (dialectAttr == null){
+			throw new MexOMException("Missing Dialect Attribute in MetadataSection.");
+		}
+		setDialect(dialectAttr.getAttributeValue());
+		OMAttribute identifierAttr  = element.getAttribute(new QName(MexConstants.SPEC.IDENTIFIER));
+		if (identifierAttr != null){
+			setIdentifier(identifierAttr.getAttributeValue());		
+		}
+		// validate one of the following element must exist: Location, MetadataReference, inline data
+		OMElement locationElem = element.getFirstChildWithName(new QName(MexConstants.SPEC.LOCATION));
+		Location location = null;
+		MetadataReference ref = null;
 		
+		if (locationElem != null){
+			location = new Location(factory, namespaceValue);
+		    setLocation(location.fromOM(locationElem));	
+		}
+		else { // check for MetadataReference
+			OMElement refElem = element.getFirstChildWithName(new QName(MexConstants.SPEC.METADATA_REFERENCE));
+			if (refElem != null ){
+				ref = new MetadataReference(factory, namespaceValue);
+				setMetadataReference(ref.fromOM(refElem));
+			}
+		}
+		if (location == null && ref == null) { // check for inline content
+			OMNode inline = element.getFirstOMChild();
+		    if (inline != null)
+		    	setinlineData(inline);
+		    else {
+		    	throw new MexOMException("Invalid empty MetadataSection.");
+		    }
+		    
+		}
+
+		return this;
+	}
+	
 	/**
 	 * Convert MetadatSection content to the OMElement representation.
+	 * 
 	 * @return OMElement representation of MetadataSection.
 	 * @throws MexOMException
 	 */
@@ -68,11 +139,11 @@ public  class MetadataSection extends MexOM implements IMexOM {
 				MexConstants.SPEC.METADATA_SECTION, mexNamespace);
 
 		// dialet is required
-		if (dialet == null) {
+		if (dialect == null) {
 			throw new MexOMException("Dialet was not set. Dialet must be set.");
 		}
 		OMAttribute dialetAttrib = factory.createOMAttribute(
-				MexConstants.SPEC.DIALECT, null, dialet);
+				MexConstants.SPEC.DIALECT, null, dialect);
 
 		metadataSection.addAttribute(dialetAttrib);
 
@@ -105,8 +176,8 @@ public  class MetadataSection extends MexOM implements IMexOM {
 
 	}
 	
-	public String getDialet() {
-		return dialet;
+	public String getDialect() {
+		return dialect;
 	}
 	
 	public String getIdentifier() {
@@ -116,14 +187,28 @@ public  class MetadataSection extends MexOM implements IMexOM {
 	public String getanyAttribute() {
 		return anyAttribute;
 	}
+	
+	/**
+	 * Return metadata unit in URL form i.e. mex:Location
+	 * 
+	 * @return
+	 */
 	public Location getLocation() {
 		return location;
 	}
 	
+	/**
+	 * Return metadata unit in inline form such as WSDL definitions, XML schema document, etc.
+	 * @return
+	 */
 	public OMNode getInlineData() {
 		return inlineData;
 	}
 	
+	/**
+	 * Return metadata unit in endpoint reference form i.e. mex:MetadataReference.
+	 * @return
+	 */
 	public MetadataReference getMetadataReference() {
 		return ref;
 	}
@@ -132,8 +217,8 @@ public  class MetadataSection extends MexOM implements IMexOM {
 		identifier =in_identifier;
 	}
 	
-	public void setDialet(String in_dialet) {
-		dialet = in_dialet;
+	public void setDialect(String in_dialect) {
+		dialect = in_dialect;
 	}
 	
 	

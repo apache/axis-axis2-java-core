@@ -952,7 +952,7 @@ public class AxisService extends AxisDescription {
 
         Data[] result = getData(request, context);
         OMElement wsdlElement;
-        if (result != null && result[0] != null) {
+        if (result != null && result.length > 0) {
             wsdlElement = (OMElement) (result[0].getData());
             try {
                 wsdlElement.serialize(out);

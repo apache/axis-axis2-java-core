@@ -19,10 +19,13 @@ import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
-//import org.apache.axis2.addressing.EndpointReference;
-//import org.apache.axis2.addressing.EndpointReferenceHelper;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.EndpointReferenceHelper;
 import org.apache.axis2.mex.MexConstants;
+import org.apache.axis2.mex.MexException;
+import org.apache.axis2.mex.util.MexUtil;
 
 /**
  * Class implemented for MetadataReference element defined in 
@@ -34,9 +37,20 @@ public class MetadataReference extends MexOM implements IMexOM {
 
 	private OMFactory factory;
 	private OMElement eprElement = null; 
+        private EndpointReference epr = null;
+ 	private String namespaceValue = null;
 
-	private String namespaceValue = null;
+	 /**
+	 * Constructor
+	 * @throws MexException 
+	 */
 
+	public MetadataReference() throws MexException  {
+		
+		this.factory = MexUtil.getSOAPFactory(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+		this.namespaceValue = MexConstants.Spec_2004_09.NS_URI;
+	}
+	
 	/**
 	 * Constructor
 	 * @param defaultFactory
@@ -53,6 +67,39 @@ public class MetadataReference extends MexOM implements IMexOM {
 		this.namespaceValue = namespaceValue;
 		}
 
+	 public OMElement getEPRElement() {
+			return eprElement;
+		}
+	  
+	public EndpointReference getEPR() {
+			return epr;
+	}
+
+
+	/**
+	 * Populates an MetadataReference object based on the endpoint reference type <code>OMElement</code> passed. 
+	 * @param inElement MetadataReference element
+	 * @return MetadataReference 
+	 * @throws MexOMException
+	 */
+	
+	public MetadataReference fromOM(OMElement element) throws MexOMException{
+		
+		if (element == null) {
+			throw new MexOMException("Null element passed.");
+		}
+		if (!element.getLocalName().equals(MexConstants.SPEC.METADATA_REFERENCE)) {
+			throw new MexOMException("Invalid element passed.");
+		}
+		eprElement = element;
+		try {
+			epr = EndpointReferenceHelper.fromOM(element);
+		} catch (AxisFault e) {
+			throw new MexOMException (e);
+		}
+		
+		return this;
+	}
 	/**
 	 * Convert MetadatReference object content to the OMElement representation.
 	 * @return OMElement representation of MetadatReference.
@@ -65,31 +112,43 @@ public class MetadataReference extends MexOM implements IMexOM {
 		}
 
 		OMElement metadataRef = null;
-		/*if (eprElement.getLocalName() == "EndpointReference") {
-			EndpointReference epr;
-			try {
-				epr = EndpointReferenceHelper.fromOM(eprElement);
-				metadataRef = EndpointReferenceHelper.toOM(factory, epr,
-						new QName(namespaceValue,
-								MexConstants.SPEC.METADATA_REFERENCE,
-								MexConstants.SPEC.NS_PREFIX), eprElement
-								.getNamespace().getNamespaceURI());
-
-			} catch (AxisFault e) {
-				throw new MexOMException(e);
-			}
-		} */
+		try {
+			metadataRef = EndpointReferenceHelper.toOM(factory, epr, new QName(
+					namespaceValue, MexConstants.SPEC.METADATA_REFERENCE,
+					MexConstants.SPEC.NS_PREFIX), eprElement.getNamespace()
+					.getNamespaceURI());
+	
+		} catch (AxisFault e) {
+			throw new MexOMException(e);
+		}
+		
 
 		return metadataRef;
 	}
 	
 	/**
-	 * Set EPR element
+	 * Set EPR 
 	 * 
-	 * @param element
+	 * @param element Endpoint Reference Type element
 	 */
-	public void setEPRElement(OMElement element) {
+	public void setEPR(OMElement element) throws MexOMException {
 		eprElement = element;
+		try {
+			epr = EndpointReferenceHelper.fromOM(eprElement);
+		} catch (AxisFault e) {
+			throw new MexOMException (e);
+		}
+		
+	}
+	
+	/**
+	 * Set EPR 
+	 * 
+	 * @param element Endpoint Reference Type elem
+	 */
+	public void setEPR(EndpointReference endRef) throws MexOMException {
+		epr = endRef;
+		
 	}
 	
 }

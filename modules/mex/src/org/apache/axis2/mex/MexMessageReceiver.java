@@ -29,6 +29,7 @@ import org.apache.axis2.dataretrieval.DataRetrievalException;
 import org.apache.axis2.dataretrieval.DataRetrievalRequest;
 import org.apache.axis2.dataretrieval.OutputForm;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver;
 import org.apache.axis2.mex.OM.Location;
 import org.apache.axis2.mex.OM.Metadata;
@@ -47,20 +48,24 @@ import javax.xml.namespace.QName;
  */
 public class MexMessageReceiver extends AbstractInOutSyncMessageReceiver {
 	private static final Log log = LogFactory.getLog(MexMessageReceiver.class);
-
+	Parameter axisConfigMEXParm = null;
+    Parameter serviceConfigMEXParm = null;
 	String mexNamespaceValue = null;
 
 	/**
-	 * 
-     */
+	 * Process GetMetadata request
+        */
 	public void invokeBusinessLogic(MessageContext msgContext,
 			MessageContext newmsgContext) throws AxisFault {
-	
+		AxisService theService = msgContext.getAxisService();       
+		axisConfigMEXParm = msgContext.getConfigurationContext().getAxisConfiguration().getParameter(MexConstants.MEX_CONFIG.MEX_PARM);
+		serviceConfigMEXParm = theService.getParameter(MexConstants.MEX_CONFIG.MEX_PARM);
+		
+		check_MEX_disabled(serviceConfigMEXParm);
+		
 		try {
 			Metadata metadata = handleRequest(msgContext);
-			AxisService theService = msgContext.getAxisService();
-
-			theService.setEndpointURL(msgContext.getTo().getAddress());
+		        theService.setEndpointURL(msgContext.getTo().getAddress());
 
 			if (metadata != null) {
 				SOAPEnvelope envelope = newmsgContext.getEnvelope();
@@ -162,7 +167,7 @@ public class MexMessageReceiver extends AbstractInOutSyncMessageReceiver {
 
 				requestOptions.putDialect(dialect);
 
-				outputforms = MexUtil.allSupportedOutputForms();
+				outputforms = MexUtil.determineOutputForm(dialect, axisConfigMEXParm, serviceConfigMEXParm);
 				// Loop to call AxisService::getData API to retrieve data
 				// for the Dialect and Identifier(if specified) in the request
 				// for each
@@ -217,7 +222,7 @@ public class MexMessageReceiver extends AbstractInOutSyncMessageReceiver {
 				section = createMetadataSection(outputForm, data[k].getData(),
 						factory, mexNamespaceValue);
 
-				section.setDialet(dialect);
+				section.setDialect(dialect);
 				identifier_value = data[k].getIdentifier();
 
 				if (identifier_value != null) {
@@ -244,7 +249,8 @@ public class MexMessageReceiver extends AbstractInOutSyncMessageReceiver {
 		else if (outputForm == OutputForm.REFERENCE_FORM) {
 			MetadataReference ref = new MetadataReference(factory,
 					mexNamespaceValue);
-			ref.setEPRElement((OMElement) result);
+			
+			ref.setEPR((OMElement) result);
 			section.setMetadataReference(ref);
 		} else {
 
@@ -284,4 +290,10 @@ public class MexMessageReceiver extends AbstractInOutSyncMessageReceiver {
 		return metadata_request_list;
 	}
 
-}
+
+    private void check_MEX_disabled (Parameter mexConfig) throws MexDisabledException{
+        if (MexUtil.isMexDisabled(mexConfig)){
+            throw new MexDisabledException("'metadataexchange' parameter configured to disable MEX for the service.");
+        }
+    }
+}

@@ -18,6 +18,7 @@ package org.apache.axis2.dataretrieval;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
@@ -44,8 +45,8 @@ public class DataRetrievalUtil {
      * Loading xml file content and convert to OMElement.
      *
      * @param file - file path relative to the Service Repository
-     * @return OMElement format of the xml file content
-     * @throws DataRetrievalException
+     * @return OMElement format of the xml file content 
+     * @throws DataRetrievalException 
      */
 
     public OMElement buildOM(ClassLoader classLoader, String file)
@@ -56,9 +57,10 @@ public class DataRetrievalUtil {
             servicexmlStream = getInputStream(classLoader, file);
 
             element = convertToOMElement(servicexmlStream);
-        } catch (XMLStreamException e) {
-            throw new DataRetrievalException(e);
+         } catch (Exception e) {
+            throw new DataRetrievalException("Failed to load from file, " + file, e);
         }
+
 
         return element;
     }
@@ -72,7 +74,7 @@ public class DataRetrievalUtil {
      */
 
     public static OMElement convertToOMElement(InputStream servicexmlStream)
-            throws XMLStreamException {
+            throws XMLStreamException, OMException{
         OMElement element = null;
 
         XMLStreamReader xmlReader = StAXUtils

@@ -42,14 +42,14 @@ public class ServiceData {
      * @param in_data an Data element in the ServiceData.
      */
 
-    protected ServiceData(OMElement in_data) {
+    public ServiceData(OMElement in_data) {
         data = in_data;
         identifier = getAttributeValue(DRConstants.SERVICE_DATA.IDENTIFIER);
         dialect = getAttributeValue(DRConstants.SERVICE_DATA.DIALECT);
         fileName = getAttributeValue(DRConstants.SERVICE_DATA.FILE);
     }
 
-    protected String getAttributeValue(String qName) {
+    public String getAttributeValue(String qName) {
 
         String value = null;
         OMAttribute attribute = data.getAttribute(new QName(qName));
@@ -62,23 +62,23 @@ public class ServiceData {
     }
 
     // return identifier for this Data element
-    protected String getIdentifier() {
+    public String getIdentifier() {
         return identifier;
     }
 
     // return dialect for this Data element
-    protected String getDialect() {
+    public String getDialect() {
         return dialect;
     }
 
     // return the Data ELement
-    protected OMElement getOMData() {
+    public OMElement getOMData() {
         return data;
     }
 
 
     // Get URL from data Element
-    protected String getURL() {
+    public String getURL() {
 
         String urlValue = null;
         OMElement url = data.getFirstChildWithName(new QName(
@@ -91,7 +91,7 @@ public class ServiceData {
     }
 
     // Get ENDPOINT_REFERENCE from Data Element
-    protected OMElement getEndpointReference() {
+    public OMElement getEndpointReference() {
         OMElement epr = data.getFirstChildWithName(new QName(
                 DRConstants.SERVICE_DATA.ENDPOINT_REFERENCE));
         return epr;
@@ -99,7 +99,7 @@ public class ServiceData {
 
     // Load the file content of the file specified in the file attribute
     // in the data element.
-    protected OMElement getFileContent(ClassLoader classloader)
+    public OMElement getFileContent(ClassLoader classloader)
             throws DataRetrievalException {
 
         OMElement metaElement = null;

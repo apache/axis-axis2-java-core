@@ -16,8 +16,12 @@
 
 package org.apache.axis2.mex.OM;
 
+import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.mex.MexConstants;
+import org.apache.axis2.mex.MexException;
+import org.apache.axis2.mex.util.MexUtil;
 
 /**
  * Class implemented for Location element defined in 
@@ -27,11 +31,34 @@ import org.apache.axis2.mex.MexConstants;
 
 public class Location extends AnyURIType {
 
+	
+	/**
+	 * @param uri  valid URL to retrieve the metadata using HTTP Get
+	 * @throws MexException 
+         *
+	 */
+	public Location(String uri) throws MexException {
+		super(MexUtil.getSOAPFactory(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI), MexConstants.Spec_2004_09.NS_URI, uri);
+	}
+	
 	public Location(OMFactory defaultFactory, String namespaceValue, String uri) throws MexOMException {
 		super(defaultFactory, namespaceValue, uri);
 	}
+
 	public Location(OMFactory defaultFactory, String uri) throws MexOMException {
 		super(defaultFactory, MexConstants.Spec_2004_09.NS_URI, uri );
+	}
+	
+	public Location fromOM(OMElement element) throws MexOMException{
+		if (element == null) {
+			throw new MexOMException("Null element passed.");
+		}
+		if (!element.getLocalName().equals(MexConstants.SPEC.LOCATION)) {
+			throw new MexOMException("Invalid element passed.");
+		}
+		super.setURI(element.getText());
+			
+		return this;
 	}
 	
 	/*
