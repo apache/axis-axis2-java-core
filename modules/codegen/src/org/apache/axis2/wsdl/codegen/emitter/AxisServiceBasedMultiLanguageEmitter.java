@@ -96,6 +96,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     protected static Map mepToSuffixMap;
 
     protected AxisBinding axisBinding;
+    protected AxisEndpoint axisEndpoint;
 
     protected int uniqueFaultNameCounter = 0;
     /**
@@ -199,7 +200,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         this.codeGenConfiguration = configuration;
         this.axisServices = codeGenConfiguration.getAxisServices();
         this.axisService = codeGenConfiguration.getAxisService();
-        this.axisBinding = axisService.getEndpoint(axisService.getEndpointName()).getBinding();
+        this.axisEndpoint = axisService.getEndpoint(axisService.getEndpointName());
+        this.axisBinding = axisEndpoint.getBinding();
         resolver = new XSLTIncludeResolver(codeGenConfiguration);
     }
 
@@ -391,22 +393,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 }
 
                 Map endpoints = this.axisService.getEndpoints();
-                AxisEndpoint axisEndpoint;
                 for (Iterator endPointsIter = endpoints.values().iterator(); endPointsIter.hasNext();) {
-                    axisEndpoint = (AxisEndpoint) endPointsIter.next();
                     // set the end point details.
-                    this.axisBinding = axisEndpoint.getBinding();
-                    axisService.setEndpointName(axisEndpoint.getName());
-                    axisService.setBindingName(axisEndpoint.getBinding().getName().getLocalPart());
-                    if (axisEndpoint.getProperty(WSDL2Constants.ATTR_WSOAP_ADDRESS) instanceof SoapAddress) {
-                        SoapAddress soapAddress = (SoapAddress)
-                                axisEndpoint.getProperty(WSDL2Constants.ATTR_WSOAP_ADDRESS);
-                        axisService.setEndpointURL(soapAddress.getLocation());
-                    } else if (axisEndpoint.getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION) instanceof HttpAddress) {
-                        HttpAddress httpAddress = (HttpAddress) axisEndpoint
-                                .getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
-                        axisService.setEndpointURL(httpAddress.getLocation());
-                    }
+                    this.axisEndpoint = (AxisEndpoint) endPointsIter.next();
+                    this.axisBinding = this.axisEndpoint.getBinding();
+                    axisService.setEndpointName(this.axisEndpoint.getName());
+                    axisService.setBindingName(this.axisEndpoint.getBinding().getName().getLocalPart());
 
                     // see the comment at updateMapperClassnames for details and reasons for
                     // calling this method
@@ -892,7 +884,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         Element endpointElement = doc.createElement("endpoint");
 
-        String endpoint = axisService.getEndpointURL();
+        String endpoint = this.axisEndpoint.getEndpointURL();
         Text text = doc.createTextNode((endpoint != null)
                 ? endpoint
                 : "");

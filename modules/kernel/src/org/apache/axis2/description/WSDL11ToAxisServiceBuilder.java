@@ -9,9 +9,7 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.transport.http.util.RESTUtil;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.wsdl.HttpAddress;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
-import org.apache.axis2.wsdl.SoapAddress;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.util.WSDL4JImportedWSDLHelper;
@@ -332,17 +330,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                     populateEndpoint(axisEndpoint, port, true);
                     axisService.setEndpointName(axisEndpoint.getName());
                     axisService.setBindingName(axisEndpoint.getBinding().getName().getLocalPart());
-                    if (BINDING_TYPE_SOAP.equals(this.bindingType)) {
-                        SoapAddress soapAddress = (SoapAddress) axisEndpoint
-                                .getProperty(WSDL2Constants.ATTR_WSOAP_ADDRESS);
-                        axisService.setEndpointURL(soapAddress.getLocation());
-                    } else if (BINDING_TYPE_HTTP.equals(this.bindingType)) {
-                        HttpAddress httpAddress = (HttpAddress) axisEndpoint
-                                .getProperty(WSDL2Constants.ATTR_WHTTP_LOCATION);
-                        axisService.setEndpointURL(httpAddress.getLocation());
-                    }
-
-                } else {
+                    } else {
                     populateEndpoint(axisEndpoint, port, false);
                 }
                 axisService.addEndpoint(port.getName(), axisEndpoint);
@@ -1841,28 +1829,22 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             } else if (wsdl4jExtensibilityElement instanceof SOAP12Address) {
                 SOAP12Address soapAddress = (SOAP12Address) wsdl4jExtensibilityElement;
-                SoapAddress address = new SoapAddress();
-                address.setLocation(soapAddress.getLocationURI());
                 if (description instanceof AxisEndpoint) {
                     ((AxisEndpoint) description)
-                            .setProperty(WSDL2Constants.ATTR_WSOAP_ADDRESS, address);
+                            .setEndpointURL(soapAddress.getLocationURI());
                 }
 
             } else if (wsdl4jExtensibilityElement instanceof SOAPAddress) {
                 SOAPAddress soapAddress = (SOAPAddress) wsdl4jExtensibilityElement;
-                SoapAddress address = new SoapAddress();
-                address.setLocation(soapAddress.getLocationURI());
                 if (description instanceof AxisEndpoint) {
                     ((AxisEndpoint) description)
-                            .setProperty(WSDL2Constants.ATTR_WSOAP_ADDRESS, address);
+                            .setEndpointURL(soapAddress.getLocationURI());
                 }
             } else if (wsdl4jExtensibilityElement instanceof HTTPAddress) {
                 HTTPAddress httpAddress = (HTTPAddress) wsdl4jExtensibilityElement;
-                HttpAddress address = new HttpAddress();
-                address.setLocation(httpAddress.getLocationURI());
                 if (description instanceof AxisEndpoint) {
                     ((AxisEndpoint) description)
-                            .setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, address);
+                            .setEndpointURL(httpAddress.getLocationURI());
                 }
 
             } else if (wsdl4jExtensibilityElement instanceof Schema) {

@@ -33,10 +33,22 @@ public class AxisEndpoint extends AxisDescription {
     // The binding reffered to by the endpoint
     private AxisBinding binding;
 
+    // The address of the endpoint
+    private String endpointURL;
+
     // The alias used for the endpoint
     private String alias;
 
     private Map options;
+
+
+    public String getEndpointURL() {
+        return endpointURL;
+    }
+
+    public void setEndpointURL(String endpointURL) {
+        this.endpointURL = endpointURL;
+    }
 
     public AxisEndpoint() {
         options = new HashMap();

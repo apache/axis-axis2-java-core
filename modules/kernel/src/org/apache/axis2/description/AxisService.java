@@ -2336,10 +2336,12 @@ public class AxisService extends AxisDescription {
 
     }
 
+    //@deprecated - use getEndpointURL in axisEndpoint
     public String getEndpointURL() {
         return endpointURL;
     }
 
+    //@deprecated - use setEndpointURL in axisEndpoint
     public void setEndpointURL(String endpointURL) {
         this.endpointURL = endpointURL;
     }
