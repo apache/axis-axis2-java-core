@@ -18,7 +18,6 @@ package org.apache.axis2.processingModel;
 
 // todo
 
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.framework.Test;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -35,7 +34,6 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.*;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
@@ -46,8 +44,6 @@ import org.apache.axis2.util.Utils;
 public class SoapProcessingModelTest extends UtilServerBasedTestCase implements TestConstants {
 
     private AxisService clientService;
-
-    private boolean finish = false;
 
     public SoapProcessingModelTest() {
         super(SoapProcessingModelTest.class.getName());
@@ -74,8 +70,8 @@ public class SoapProcessingModelTest extends UtilServerBasedTestCase implements 
         UtilServer.unDeployService(serviceName);
     }
 
-    public void sendMessageWithHeader(SOAPEnvelope envelope) throws AxisFault {
-        ServiceClient serviceClient = null;
+    public void sendMessageWithHeader(SOAPEnvelope envelope) throws Exception {
+        ServiceClient serviceClient;
 
         try {
             ConfigurationContext configContext = Utils
@@ -97,12 +93,12 @@ public class SoapProcessingModelTest extends UtilServerBasedTestCase implements 
             opClient.setOptions(options);
             opClient.execute(true);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("Exception Occurred !! ." + e.getMessage());
-            throw new AxisFault(e);
-        } finally {
+        } catch (AxisFault fault) {
+            // This should be a MustUnderstand fault
+            assertEquals(fault.getFaultCode(), SOAP12Constants.QNAME_MU_FAULTCODE);
+            return;
         }
+        fail("MU header was processed");
     }
 
     public void testSendingMustUnderstandWithNextRole() throws Exception {
@@ -118,6 +114,5 @@ public class SoapProcessingModelTest extends UtilServerBasedTestCase implements 
         OMElement payload = TestingUtils.createDummyOMElement();
         envelope.getBody().addChild(payload);
         sendMessageWithHeader(envelope);
-
     }
 }
