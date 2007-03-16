@@ -529,7 +529,7 @@
                                                     }
                                             </xsl:if>
                                             <xsl:if test="@minExFacet">
-                                                 if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, "<xsl:value-of select="$maxExFacet"/>") &gt; 0){
+                                                 if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, "<xsl:value-of select="$minExFacet"/>") &gt; 0){
                                                     this.<xsl:value-of select="$varName"/>=param;
                                                 }
                                                 else {
@@ -537,7 +537,7 @@
                                                 }
                                             </xsl:if>
                                             <xsl:if test="@maxInFacet">
-                                                if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, "<xsl:value-of select="$maxExFacet"/>") &lt;= 0){
+                                                if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, "<xsl:value-of select="$maxInFacet"/>") &lt;= 0){
                                                     this.<xsl:value-of select="$varName"/>=param;
                                                 }
                                                 else {
@@ -545,7 +545,7 @@
                                                 }
                                             </xsl:if>
                                             <xsl:if test="@minInFacet">
-                                                if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, "<xsl:value-of select="$maxExFacet"/>") &gt;= 0){
+                                                if (org.apache.axis2.databinding.utils.ConverterUtil.compare(param, "<xsl:value-of select="$minInFacet"/>") &gt;= 0){
                                                     this.<xsl:value-of select="$varName"/>=param;
                                                 }
                                                 else {
