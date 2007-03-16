@@ -229,11 +229,17 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
                     for (int i = 0; i < msgs.length; i++) {
                         MimeMessage msg = (MimeMessage) msgs[i];
-                        MessageContext mc = createMessageContextToMailWorker(msg);
-                        if (mc != null) {
-                            messageQueue.add(mc);
+                        try {
+                            MessageContext mc = createMessageContextToMailWorker(msg);
+                            if (mc != null) {
+                                messageQueue.add(mc);
+                            }
+                        } catch (Exception e) {
+                            log.error("Error in SimpleMailListener - processing mail " + e );
+                        } finally {
+                            // delete mail in any case
+                            msg.setFlag(Flags.Flag.DELETED, true);
                         }
-                        msg.setFlag(Flags.Flag.DELETED, true);
                     }
                 }
 
