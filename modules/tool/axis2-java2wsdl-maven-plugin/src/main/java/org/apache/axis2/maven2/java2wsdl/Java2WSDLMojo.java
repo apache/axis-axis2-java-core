@@ -18,8 +18,11 @@ package org.apache.axis2.maven2.java2wsdl;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -34,7 +37,7 @@ import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
  * WSDL file.
  * 
  * @goal java2wsdl
- * @phase generate-resources
+ * @phase process-classes
  * @requiresDependencyResolution compile
  */
 public class Java2WSDLMojo extends AbstractMojo {
@@ -91,9 +94,13 @@ public class Java2WSDLMojo extends AbstractMojo {
     private String outputFileName;
 
     private void addToOptionMap(Map map, String option, String value) {
+        addToOptionMap(map, option, new String[]{value});
+    }
+
+    private void addToOptionMap(Map map, String option, String[] value) {
         if (value != null) {
             map.put(option,
-                    new Java2WSDLCommandLineOption(option, new String[]{value}));
+                    new Java2WSDLCommandLineOption(option, value));
         }
     }
 
@@ -136,6 +143,18 @@ public class Java2WSDLMojo extends AbstractMojo {
         addToOptionMap( optionMap,
                         Java2WSDLConstants.OUTPUT_FILENAME_OPTION,
                         f.getName() );
+
+        Set artifacts = project.getArtifacts();
+        String[] artifactFileNames = new String[artifacts.size() + 1];
+        int j = 0;
+        for(Iterator i = artifacts.iterator(); i.hasNext(); j++) {
+            artifactFileNames[j] = ((Artifact) i.next()).getFile().getAbsolutePath();
+        }
+        artifactFileNames[j] = project.getArtifact().getFile().getAbsolutePath();
+
+        addToOptionMap( optionMap,
+                        Java2WSDLConstants.CLASSPATH_OPTION,
+                        artifactFileNames);
 
         return optionMap;
     }
