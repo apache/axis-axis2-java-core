@@ -50,8 +50,7 @@ public class SAAJResultTest extends TestCase {
 
     
     public void testGetResult() {
-    	try 
-    	{
+    	try{
     		SAAJResult sr = new SAAJResult();
     		Node node = sr.getResult();
     		assertNull(node);
@@ -59,6 +58,4 @@ public class SAAJResultTest extends TestCase {
     		fail("Exception: " + e);
     	}
     }
-
-    
 }

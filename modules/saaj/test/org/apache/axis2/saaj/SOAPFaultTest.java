@@ -802,4 +802,122 @@ public class SOAPFaultTest extends TestCase {
     		fail("Exception: " + e);
     	}
     }
+    
+    
+    public void testFaultCodeWithPrefix1(){
+    	try {
+    		MessageFactory fac = MessageFactory.newInstance();
+    		SOAPMessage soapMessage = fac.createMessage();
+    		SOAPPart soapPart = soapMessage.getSOAPPart();
+    		SOAPEnvelope envelope = soapPart.getEnvelope();
+    		SOAPBody body = envelope.getBody();
+    		SOAPFault sf = body.addFault();
+
+    		String prefix = "wso2";
+    		sf.setFaultCode(prefix+":Server");
+    		String result=sf.getFaultCode();
+
+    		assertNotNull(result);
+    		assertEquals(prefix+":Server", result);
+    	} catch(Exception e) {
+    		fail(e.getMessage());
+    	}
+    }
+    
+    public void testFaultCodeWithPrefix2(){
+    	try {
+    		MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    		SOAPMessage soapMessage = fac.createMessage();
+    		SOAPPart soapPart = soapMessage.getSOAPPart();
+    		SOAPEnvelope envelope = soapPart.getEnvelope();
+    		SOAPBody body = envelope.getBody();
+    		SOAPFault sf = body.addFault();
+
+    		String prefix = "wso2";
+    		sf.setFaultCode(prefix+":Server");
+    		String result=sf.getFaultCode();
+
+    		assertNotNull(result);
+    		assertEquals(prefix+":Server", result);
+    	} catch(Exception e) {
+    		fail(e.getMessage());
+    	}
+    }
+    
+    public void testSetGetFaultCodeAsName1(){
+    	try {
+    		SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+    		SOAPFault sf = fac.createFault();
+
+    		Name name = fac.createName("myfault", "flt", "http://example.com");
+    		sf.setFaultCode(name);
+    		Name name2 = sf.getFaultCodeAsName();
+    		assertNotNull(name2);
+    		assertEquals(name2.getLocalName(),name.getLocalName());
+    		assertEquals(name2.getPrefix(),name.getPrefix());
+    		assertEquals(name2.getURI(),name.getURI());
+    	} catch(Exception e) {
+    		fail(e.getMessage());
+    	}
+    }
+    
+    
+    public void testSetGetFaultCodeAsName2(){
+    	try {
+    		QName qname = SOAPConstants.SOAP_SENDER_FAULT;
+    		SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    		Name name = fac.createName(qname.getLocalPart(), 
+    				qname.getPrefix(), qname.getNamespaceURI());
+    		SOAPFault sf = fac.createFault();
+    		sf.setFaultCode(name);
+    		Name name2 = sf.getFaultCodeAsName();
+    		assertNotNull(name2);
+    		assertEquals(name2.getLocalName(),name.getLocalName());
+    		assertEquals(name2.getPrefix(),name.getPrefix());
+    		assertEquals(name2.getURI(),name.getURI());
+    	} catch(Exception e) {
+    		fail(e.getMessage());
+    	}
+
+    }
+    
+    
+    public void testSetGetFaultCodeAsQName1() {
+    	try {
+    		SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+    		SOAPFault sf = fac.createFault();
+
+    		QName name = new QName("http://example.com", "myfault", "flt");
+    		sf.setFaultCode(name);
+    		QName name2 = sf.getFaultCodeAsQName();
+
+    		assertNotNull(name2);
+    		assertEquals(name2.getLocalPart(), name.getLocalPart());
+    		assertEquals(name2.getPrefix(), name.getPrefix());
+    		assertEquals(name2.getNamespaceURI(), name.getNamespaceURI());
+    	}catch(Exception e){
+    		fail(e.getMessage());
+    	}
+    }
+    
+   
+    
+    public void testSetGetFaultCodeAsQName2() {
+    	try{
+    		QName name = SOAPConstants.SOAP_SENDER_FAULT;
+    		SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    		SOAPFault sf = fac.createFault();
+            sf.setFaultCode(name);
+            QName name2 = sf.getFaultCodeAsQName();
+
+            assertNotNull(name2);
+            assertEquals(name2.getLocalPart(),name.getLocalPart());
+            assertEquals(name2.getPrefix(),name.getPrefix());
+            assertEquals(name2.getNamespaceURI(),name.getNamespaceURI());    		
+    	}catch(Exception e){
+    		fail(e.getMessage());
+    	}    	
+    }
+    
+    
 }
