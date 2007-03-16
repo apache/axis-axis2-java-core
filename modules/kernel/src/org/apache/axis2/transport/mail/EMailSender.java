@@ -50,6 +50,7 @@ public class EMailSender {
     private MessageContext messageContext;
     private PasswordAuthentication passwordAuthentication;
     private OutputStream outputStream;
+    private String inReplyTo;
 
     static {
         //Initializing the proper mime types
@@ -104,6 +105,10 @@ public class EMailSender {
 
             if (mailToInfo.isxServicePath()) {
                 msg.setHeader("X-Service-Path", "\"" + mailToInfo.getContentDescription() + "\"");
+            }
+
+            if( inReplyTo != null ) {
+                msg.setHeader("In-Reply-To", inReplyTo);
             }
 
             createMailMimeMessage(msg, mailToInfo, format);
@@ -165,4 +170,7 @@ public class EMailSender {
     }
 
 
+    public void setInReplyTo(String inReplyTo) {
+        this.inReplyTo = inReplyTo;
+    }
 }

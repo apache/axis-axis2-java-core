@@ -282,6 +282,14 @@ public class SimpleMailListener implements Runnable, TransportListener {
                 msgContext.setFrom(new EndpointReference((msg.getFrom()[0]).toString()));
             }
 
+            // Save Message-Id to set as In-Reply-To on reply
+            String smtpMessageId = msg.getMessageID();
+            if( smtpMessageId != null ) {
+                MailBasedOutTransportInfo transportInfo = new MailBasedOutTransportInfo();
+                transportInfo.setInReplyTo( smtpMessageId );
+                msgContext.setProperty( org.apache.axis2.Constants.OUT_TRANSPORT_INFO, transportInfo ) ;
+            }
+
             buildSOAPEnvelope(msg, msgContext);
         }
         return msgContext;

@@ -28,6 +28,7 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.transport.MessageFormatter;
+import org.apache.axis2.transport.OutTransportInfo;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.axis2.transport.TransportUtils;
 import org.apache.axis2.transport.http.HTTPTransportUtils;
@@ -203,6 +204,15 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
             format.setCharSetEncoding(charSet);
 
             parseMailToAddress(msgContext.getTo());
+            
+            // Check if msg is 'In-Reply-To' received message
+            OutTransportInfo transportInfo = (OutTransportInfo) msgContext.getProperty(org.apache.axis2.Constants.OUT_TRANSPORT_INFO);
+            
+            if (transportInfo != null && transportInfo instanceof MailBasedOutTransportInfo) {
+                MailBasedOutTransportInfo mailTransportInfo = (MailBasedOutTransportInfo) transportInfo;
+
+                sender.setInReplyTo( mailTransportInfo.getInReplyTo() );
+            }
 
             sender.send(mailToInfo, format);
 
