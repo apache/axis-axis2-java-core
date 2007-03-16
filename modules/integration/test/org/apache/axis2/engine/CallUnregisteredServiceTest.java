@@ -82,7 +82,7 @@ public class CallUnregisteredServiceTest extends UtilServerBasedTestCase {
         } catch (AxisFault e) {
 //            e.printStackTrace();
             System.out.println(e.getMessage());
-            assertTrue(e.getMessage().indexOf("Service not found for the") >= 0);
+            assertTrue(e.getMessage().indexOf("The service cannot be found for the") >= 0);
             tearDown();
             return;
         }
