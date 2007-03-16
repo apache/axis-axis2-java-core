@@ -441,6 +441,10 @@ public class Duration implements Serializable {
                 this.getAsCalendar().equals(duration.getAsCalendar());
     }
 
+    public int compare(Duration duration){
+        return this.getAsCalendar().compareTo(duration.getAsCalendar());
+    }
+
     public int hashCode() {
         int hashCode = 0;
 
