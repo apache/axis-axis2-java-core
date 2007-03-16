@@ -96,15 +96,18 @@
         </ciManagement>
 
 	<scm>
-		<connection>scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/</connection>
-		<developerConnection>scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/</developerConnection>
+        <connection>
+            scm:svn:http://svn.apache.org/repos/asf/webservices/axis2/trunk/java/</connection>
+        <developerConnection>
+            scm:svn:https://svn.apache.org/repos/asf/webservices/axis2/trunk/java/</developerConnection>
 		<url>http://svn.apache.org/viewvc/webservices/axis2/trunk/java/</url>
 	</scm>
 	<distributionManagement>
         <repository>
             <id>apache-repo</id>
             <name>Maven Central Repository</name>
-            <url>scpexe://people.apache.org//www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
+            <url>
+                scpexe://people.apache.org//www/people.apache.org/repo/m2-ibiblio-rsync-repository</url>
         </repository>
         <snapshotRepository>
             <id>apache-snapshots</id>
@@ -112,4 +115,63 @@
             <url>scpexe://people.apache.org//www/people.apache.org/repo/m2-snapshot-repository</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <id>axis2-jar</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="target/lib"/>
+                                <jar destfile="target/lib/axis2-${pom.version}.jar">
+                                    <fileset dir="modules/java2wsdl/target/classes"/>
+                                    <fileset dir="modules/kernel/target/classes"/>
+                                    <!-- adding the tool classes. This is needed to get the ant task -->
+                                    <fileset dir="modules/tool/target/classes"/>
+                                    <fileset dir="modules/saaj/target/classes"/>
+                                    <fileset dir="modules/addressing/target/classes"/>
+                                    <fileset dir="modules/codegen/target/classes"/>
+                                    <fileset dir="modules/adb/target/classes"/>
+                                    <fileset dir="modules/adb-codegen/target/classes"/>
+                                    <fileset dir="modules/xmlbeans/target/classes"/>
+                                </jar>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <id>axis2-jar-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>target/lib/axis2-${pom.version}.jar</file>
+                                    <type>jar</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
