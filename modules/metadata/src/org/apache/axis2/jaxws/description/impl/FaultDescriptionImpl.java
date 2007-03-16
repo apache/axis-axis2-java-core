@@ -219,21 +219,26 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         final String newline = "\n";
         final String sameline = "; ";
         StringBuffer string = new StringBuffer();
-
-        
-        string.append(super.toString());
-        string.append(newline);
-        string.append("Exception class: " + getExceptionClassName());
-        string.append(newline);
-        string.append("Name: " + getName());
-        string.append(newline);
-        string.append("Namespace: " + getName());
-        string.append(newline);
-        string.append("FaultBean: " + getFaultBean());
-        string.append(newline);
-        string.append("FaultInfo Type Name  : " + getFaultInfo());
-        
-        
+        try {
+        	string.append(super.toString());
+            string.append(newline);
+            string.append("Exception class: " + getExceptionClassName());
+            string.append(newline);
+            string.append("Name: " + getName());
+            string.append(newline);
+            string.append("Namespace: " + getName());
+            string.append(newline);
+            string.append("FaultBean: " + getFaultBean());
+            string.append(newline);
+            string.append("FaultInfo Type Name  : " + getFaultInfo());
+            
+        }
+        catch(Throwable t) {
+        	string.append(newline);
+        	string.append("Complete debug information not currently available for " +
+        			"FaultDescription");
+        	return string.toString();
+        }
         return string.toString();
     }
 }

@@ -1185,60 +1185,67 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         // do a toString on themselves.
         boolean dumpWSDLContents = false;
         StringBuffer string = new StringBuffer();
-        
-        // Basic information
-        string.append(super.toString());
-        string.append(newline);
-        string.append("ServiceQName: " + getServiceQName());
-        // WSDL information
-        string.append(newline);
-        string.append("isWSDLSpecified: " + isWSDLSpecified());
-        string.append(sameline);
-        string.append("WSDL Location: " + getWSDLLocation());
-        string.append(newline);
-        if (dumpWSDLContents) {
-            string.append("WSDL Definition: " + getWSDLDefinition());
+        try {
+			// Basic information
+            string.append(super.toString());
             string.append(newline);
-            string.append("Generated WSDL Definition: " + getWSDLGeneratedDefinition());
-        }
-        else {
-            string.append("WSDL Definition available: " + (getWSDLDefinition() != null));
+            string.append("ServiceQName: " + getServiceQName());
+            // WSDL information
+            string.append(newline);
+            string.append("isWSDLSpecified: " + isWSDLSpecified());
             string.append(sameline);
-            string.append("Generated WSDL Definition available: " + (getWSDLGeneratedDefinition() != null));
-        }
-        // Ports
-        string.append(newline);
-        List<QName> ports = getPorts();
-        string.append("Number of ports: " + ports.size());
-        string.append(newline);
-        string.append("Port QNames: ");
-        for (QName port : ports) {
-            string.append(port + sameline);
-        }
-        // Axis Config information
-        // We don't print out the config context because it will force one to be created
-        // if it doesn't already exist.
-//        string.append(newline);
-//        string.append("ConfigurationContext: " + getAxisConfigContext());
-        // EndpointDescriptions
-        string.append(newline);
-        EndpointDescription[] endpointDescs = getEndpointDescriptions();
-        if (endpointDescs == null) {
-            string.append("EndpointDescription array is null");
-        }
-        else {
-            string.append("Number of EndpointDescrptions: " + endpointDescs.length);
+            string.append("WSDL Location: " + getWSDLLocation());
             string.append(newline);
-            for (EndpointDescription endpointDesc : endpointDescs) {
-                string.append(endpointDesc.toString());
+            if (dumpWSDLContents) {
+                string.append("WSDL Definition: " + getWSDLDefinition());
+                string.append(newline);
+                string.append("Generated WSDL Definition: " + getWSDLGeneratedDefinition());
+            }
+            else {
+                string.append("WSDL Definition available: " + (getWSDLDefinition() != null));
+                string.append(sameline);
+                string.append("Generated WSDL Definition available: " + (getWSDLGeneratedDefinition() != null));
+            }
+            // Ports
+            string.append(newline);
+            List<QName> ports = getPorts();
+            string.append("Number of ports: " + ports.size());
+            string.append(newline);
+            string.append("Port QNames: ");
+            for (QName port : ports) {
+                string.append(port + sameline);
+            }
+            // Axis Config information
+            // We don't print out the config context because it will force one to be created
+            // if it doesn't already exist.
+			// string.append(newline);
+			// string.append("ConfigurationContext: " + getAxisConfigContext());
+            // EndpointDescriptions
+            string.append(newline);
+            EndpointDescription[] endpointDescs = getEndpointDescriptions();
+            if (endpointDescs == null) {
+                string.append("EndpointDescription array is null");
+            }
+            else {
+                string.append("Number of EndpointDescrptions: " + endpointDescs.length);
+                string.append(newline);
+                for (EndpointDescription endpointDesc : endpointDescs) {
+                    string.append(endpointDesc.toString());
+                    string.append(newline);
+                }
+            }
+            string.append("RuntimeDescriptions:" +this.runtimeDescMap.size());
+            string.append(newline);
+            for (ServiceRuntimeDescription runtimeDesc:runtimeDescMap.values()) {
+                string.append(runtimeDesc.toString());
                 string.append(newline);
             }
-        }
-        string.append("RuntimeDescriptions:" +this.runtimeDescMap.size());
-        string.append(newline);
-        for (ServiceRuntimeDescription runtimeDesc:runtimeDescMap.values()) {
-            string.append(runtimeDesc.toString());
-            string.append(newline);
+        }  
+        catch(Throwable t) {
+        	string.append(newline);
+        	string.append("Complete debug information not currently available for " +
+        			"ServiceDescription");
+        	return string.toString();
         }
         return string.toString();
         

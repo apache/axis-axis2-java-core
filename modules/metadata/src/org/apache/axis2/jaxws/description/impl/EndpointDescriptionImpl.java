@@ -1523,49 +1523,55 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         final String newline = "\n";
         final String sameline = "; ";
         StringBuffer string = new StringBuffer();
-
-        string.append(super.toString());
-        string.append(newline);
-        string.append("Name: " + getName());
-        string.append(sameline);
-        string.append("Endpoint Address: " + getEndpointAddress());
-        // 
-        string.append(newline);
-        string.append("ServiceQName: " + getServiceQName());
-        string.append(sameline);
-        string.append("PortQName: " + getPortQName());
-        string.append(sameline);
-        string.append("TargetNamespace: " + getTargetNamespace());
-        //
-        string.append(newline);
-        string.append("Service Mode: " + getServiceMode());
-        string.append(sameline);
-        string.append("Binding Type: " + getBindingType());
-        string.append(sameline);
-        string.append("Client Binding Type: " + getClientBindingID());
-        //
-        string.append(newline);
-        string.append("Is provider-based: " + (isProviderBased() == true));
-        string.append(sameline);
-        string.append("Is proxy-based: " + (isEndpointBased() == true));
-        string.append(sameline);
-        string.append("Is WSDL fully specified: " + (isWSDLFullySpecified() == true));
-        //
-        string.append(newline);
-        string.append("Handler List: " + getHandlerList());
-        //
-        string.append(newline);
-        string.append("AxisService: " + getAxisService());
-        //
-        string.append(newline);
-        EndpointInterfaceDescription endpointInterfaceDesc = getEndpointInterfaceDescription();
-        if (endpointInterfaceDesc != null) {
-            string.append("EndpointInterfaceDescription: " + endpointInterfaceDesc.toString());
+		try {
+			string.append(super.toString());
+	        string.append(newline);
+	        string.append("Name: " + getName());
+	        string.append(sameline);
+	        string.append("Endpoint Address: " + getEndpointAddress());
+	        // 
+	        string.append(newline);
+	        string.append("ServiceQName: " + getServiceQName());
+	        string.append(sameline);
+	        string.append("PortQName: " + getPortQName());
+	        string.append(sameline);
+	        string.append("TargetNamespace: " + getTargetNamespace());
+	        //
+	        string.append(newline);
+	        string.append("Service Mode: " + getServiceMode());
+	        string.append(sameline);
+	        string.append("Binding Type: " + getBindingType());
+	        string.append(sameline);
+	        string.append("Client Binding Type: " + getClientBindingID());
+	        //
+	        string.append(newline);
+	        string.append("Is provider-based: " + (isProviderBased() == true));
+	        string.append(sameline);
+	        string.append("Is proxy-based: " + (isEndpointBased() == true));
+	        string.append(sameline);
+	        string.append("Is WSDL fully specified: " + (isWSDLFullySpecified() == true));
+	        //
+	        string.append(newline);
+	        string.append("Handler List: " + getHandlerList());
+	        //
+	        string.append(newline);
+	        string.append("AxisService: " + getAxisService());
+	        //
+	        string.append(newline);
+	        EndpointInterfaceDescription endpointInterfaceDesc = getEndpointInterfaceDescription();
+	        if (endpointInterfaceDesc != null) {
+	            string.append("EndpointInterfaceDescription: " + endpointInterfaceDesc.toString());
+	        }
+	        else {
+	            string.append("EndpointInterfaceDescription is null.");
+	        }
+		}
+        catch(Throwable t) {
+        	string.append(newline);
+        	string.append("Complete debug information not currently available for " +
+        			"EndpointDescription");
+        	return string.toString();
         }
-        else {
-            string.append("EndpointInterfaceDescription is null.");
-        }
-        
         return string.toString();
     }
 }

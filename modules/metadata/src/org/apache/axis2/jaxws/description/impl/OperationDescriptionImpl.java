@@ -1455,89 +1455,96 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         final String newline = "\n";
         final String sameline = "; ";
         StringBuffer string = new StringBuffer();
+		try {
+			string.append(super.toString());
+	        string.append(newline);
+	        string.append("Name: " + getName());
+	        string.append(sameline);
+	        string.append("Operation Name: " + getOperationName());
+	        string.append(sameline);
+	        string.append("Action: " + getAction());
+	        //
+	        string.append(newline);
+	        string.append("Operation excluded: " + (isExcluded() == true));
+	        string.append(sameline);
+	        string.append("Is oneway: " + (isOneWay() == true));
+	        string.append(sameline);
+	        string.append("Is returning result: " + (isOperationReturningResult() == true));
+	        string.append(sameline);
+	        string.append("Is result header: " + (isResultHeader() == true));
+	        string.append(sameline);
+	        string.append("Is JAXWS Client Async method: " + (isJAXWSAsyncClientMethod() == true));
+	        //
+	        string.append(newline);
+	        string.append("SOAP Style: " + getSoapBindingStyle());
+	        string.append(sameline);
+	        string.append("SOAP Use: " + getSoapBindingUse());
+	        string.append(sameline);
+	        string.append("SOAP Paramater Style: " + getSoapBindingParameterStyle());
+	        //
+	        string.append(newline);
+	        string.append("Result name: " + getResultName());
+	        string.append(sameline);
+	        string.append("Result part name: " + getResultPartName());
+	        string.append(sameline);
+	        string.append("Result type: " + getResultType());
+	        string.append(sameline);
+	        string.append("Result actual type: " + getResultActualType());
+	        //
+	        string.append(newline);
+	        string.append("Request Wrapper class: " + getRequestWrapperClassName());
+	        string.append(sameline);
+	        string.append("Response Wrapper class: " + getResponseWrapperClassName());
+	        //
+	        string.append(newline);
+	        string.append("Java declaring class name: " + getJavaDeclaringClassName());
+	        string.append(newline);
+	        string.append("Java method name: " + getJavaMethodName());
+	        string.append(newline);
+	        string.append("Java paramaters: " + getJavaParameters());
+	        string.append(newline);
+	        string.append("Service Implementation method: " + getMethodFromServiceImpl());
+	        string.append(newline);
+	        string.append("Axis Operation: " + getAxisOperation());
 
-        string.append(super.toString());
-        string.append(newline);
-        string.append("Name: " + getName());
-        string.append(sameline);
-        string.append("Operation Name: " + getOperationName());
-        string.append(sameline);
-        string.append("Action: " + getAction());
-        //
-        string.append(newline);
-        string.append("Operation excluded: " + (isExcluded() == true));
-        string.append(sameline);
-        string.append("Is oneway: " + (isOneWay() == true));
-        string.append(sameline);
-        string.append("Is returning result: " + (isOperationReturningResult() == true));
-        string.append(sameline);
-        string.append("Is result header: " + (isResultHeader() == true));
-        string.append(sameline);
-        string.append("Is JAXWS Client Async method: " + (isJAXWSAsyncClientMethod() == true));
-        //
-        string.append(newline);
-        string.append("SOAP Style: " + getSoapBindingStyle());
-        string.append(sameline);
-        string.append("SOAP Use: " + getSoapBindingUse());
-        string.append(sameline);
-        string.append("SOAP Paramater Style: " + getSoapBindingParameterStyle());
-        //
-        string.append(newline);
-        string.append("Result name: " + getResultName());
-        string.append(sameline);
-        string.append("Result part name: " + getResultPartName());
-        string.append(sameline);
-        string.append("Result type: " + getResultType());
-        string.append(sameline);
-        string.append("Result actual type: " + getResultActualType());
-        //
-        string.append(newline);
-        string.append("Request Wrapper class: " + getRequestWrapperClassName());
-        string.append(sameline);
-        string.append("Response Wrapper class: " + getResponseWrapperClassName());
-        //
-        string.append(newline);
-        string.append("Java declaring class name: " + getJavaDeclaringClassName());
-        string.append(newline);
-        string.append("Java method name: " + getJavaMethodName());
-        string.append(newline);
-        string.append("Java paramaters: " + getJavaParameters());
-        string.append(newline);
-        string.append("Service Implementation method: " + getMethodFromServiceImpl());
-        string.append(newline);
-        string.append("Axis Operation: " + getAxisOperation());
+	        string.append(newline);
+	        ParameterDescription[] paramDescs = getParameterDescriptions();
+	        if (paramDescs != null && paramDescs.length > 0) {
+	            string.append("Number of Parameter Descriptions: " + paramDescs.length);
+	            for (ParameterDescription paramDesc : paramDescs) {
+	                string.append(newline);
+	                string.append("Parameter Description: " + paramDesc.toString());
+	            }
+	        }
+	        else {
+	            string.append("No Paramater Descriptions");
+	        }
 
-        string.append(newline);
-        ParameterDescription[] paramDescs = getParameterDescriptions();
-        if (paramDescs != null && paramDescs.length > 0) {
-            string.append("Number of Parameter Descriptions: " + paramDescs.length);
-            for (ParameterDescription paramDesc : paramDescs) {
-                string.append(newline);
-                string.append("Parameter Description: " + paramDesc.toString());
-            }
-        }
-        else {
-            string.append("No Paramater Descriptions");
-        }
+	        string.append(newline);
+	        FaultDescription[] faultDescs = getFaultDescriptions();
+	        if (faultDescs != null && faultDescs.length > 0) {
+	            string.append("Number of Fault Descriptions: " + faultDescs.length);
+	            for (FaultDescription faultDesc : faultDescs) {
+	                string.append(newline);
+	                string.append("Fault Description: " + faultDesc.toString());
+	            }
+	        }
+	        else {
+	            string.append("No Fault Descriptions");
+	        }
 
-        string.append(newline);
-        FaultDescription[] faultDescs = getFaultDescriptions();
-        if (faultDescs != null && faultDescs.length > 0) {
-            string.append("Number of Fault Descriptions: " + faultDescs.length);
-            for (FaultDescription faultDesc : faultDescs) {
-                string.append(newline);
-                string.append("Fault Description: " + faultDesc.toString());
-            }
-        }
-        else {
-            string.append("No Fault Descriptions");
-        }
-
-        string.append("RuntimeDescriptions:" +this.runtimeDescMap.size());
-        string.append(newline);
-        for (OperationRuntimeDescription runtimeDesc:runtimeDescMap.values()) {
-            string.append(runtimeDesc.toString());
-            string.append(newline);
+	        string.append("RuntimeDescriptions:" +this.runtimeDescMap.size());
+	        string.append(newline);
+	        for (OperationRuntimeDescription runtimeDesc:runtimeDescMap.values()) {
+	            string.append(runtimeDesc.toString());
+	            string.append(newline);
+	        }
+		}
+        catch(Throwable t) {
+        	string.append(newline);
+        	string.append("Complete debug information not currently available for " +
+        			"OperationDescription");
+        	return string.toString();
         }
         return string.toString();
     }

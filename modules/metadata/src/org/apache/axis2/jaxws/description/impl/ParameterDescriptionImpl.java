@@ -337,24 +337,30 @@ class ParameterDescriptionImpl implements ParameterDescription, ParameterDescrip
         final String newline = "\n";
         final String sameline = "; ";
         StringBuffer string = new StringBuffer();
-
-        string.append(super.toString());
-        string.append(newline);
-        string.append("Name: " + getParameterName());
-        //
-        string.append(newline);
-        string.append("Is header: " + (isHeader() == true));
-        string.append(sameline);
-        string.append("Is holder: " + (isHolderType() == true));
-        //
-        string.append(newline);
-        string.append("Mode: " + getMode());
-        //
-        string.append(newline);
-        string.append("Type: " + getParameterType());
-        string.append(sameline);
-        string.append("Actual type: " + getParameterActualType());
-        
+		try {
+			string.append(super.toString());
+	        string.append(newline);
+	        string.append("Name: " + getParameterName());
+	        //
+	        string.append(newline);
+	        string.append("Is header: " + (isHeader() == true));
+	        string.append(sameline);
+	        string.append("Is holder: " + (isHolderType() == true));
+	        //
+	        string.append(newline);
+	        string.append("Mode: " + getMode());
+	        //
+	        string.append(newline);
+	        string.append("Type: " + getParameterType());
+	        string.append(sameline);
+	        string.append("Actual type: " + getParameterActualType());
+		}
+        catch(Throwable t) {
+        	string.append(newline);
+        	string.append("Complete debug information not currently available for " +
+        			"ParameterDescription");
+        	return string.toString();
+        }
         return string.toString();
     }
 }
