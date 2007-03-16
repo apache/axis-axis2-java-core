@@ -18,13 +18,21 @@ package javax.xml.soap;
 
 import javax.xml.transform.dom.DOMResult;
 
+import org.w3c.dom.NodeList;
+
 public class SAAJResult extends DOMResult {
 
     public SAAJResult()
             throws SOAPException {
         this(MessageFactory.newInstance().createMessage());
         org.w3c.dom.Node node = this.getNode();
-        node.removeChild(node.getFirstChild());
+        NodeList nodeList = node.getChildNodes();
+        if(nodeList != null){
+        	int size = nodeList.getLength();
+        	for(int a = 0;a < size;a++){
+                node.removeChild(nodeList.item(a));        		
+        	}
+        }
         this.setNode(null);
     }
 
