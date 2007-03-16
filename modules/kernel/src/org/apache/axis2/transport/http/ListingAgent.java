@@ -46,6 +46,7 @@ import javax.xml.stream.XMLStreamWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -244,7 +245,7 @@ public class ListingAgent extends AbstractAgent {
                                 (XmlSchema) schemaMappingtable.get(xsds);
                         if (schema != null) {
                             //schema is there - pump it outs
-                            schema.write(out);
+                            schema.write(new OutputStreamWriter(out, "UTF8"));
                             out.flush();
                             out.close();
                         } else {
@@ -269,7 +270,7 @@ public class ListingAgent extends AbstractAgent {
                     } else {
                         XmlSchema schema = axisService.getSchema(0);
                         if (schema != null) {
-                            schema.write(out);
+                            schema.write(new OutputStreamWriter(out, "UTF8"));
                             out.flush();
                             out.close();
                         }
