@@ -20,7 +20,7 @@
     <pomVersion>3</pomVersion>
     <extend>../../etc/project.xml</extend>
 
-    <name>Apache Axis 2.0 - Scrpting</name>
+    <name>Apache Axis 2.0 - Scripting</name>
     <id>axis2-scripting</id>
     <groupId>org.apache.axis2</groupId>
     <description>Axis2 scripting support for services implemented with scripting languages</description>
