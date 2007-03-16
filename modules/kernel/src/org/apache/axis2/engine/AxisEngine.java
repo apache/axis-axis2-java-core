@@ -22,6 +22,7 @@ import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axiom.soap.RolePlayer;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
@@ -38,6 +39,7 @@ import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -66,69 +68,28 @@ public class AxisEngine {
     }
 
     private void checkMustUnderstand(MessageContext msgContext) throws AxisFault {
-
-        if (!msgContext.isHeaderPresent()) {
-            return;
-        }
         SOAPEnvelope envelope = msgContext.getEnvelope();
         if (envelope.getHeader() == null) {
             return;
         }
-        Iterator headerBlocks = envelope.getHeader().examineAllHeaderBlocks();
+
+        // Get all the headers targeted to us
+        Iterator headerBlocks = envelope.getHeader().getHeadersToProcess(null);
+
         while (headerBlocks.hasNext()) {
             SOAPHeaderBlock headerBlock = (SOAPHeaderBlock) headerBlocks.next();
+
             // if this header block has been processed or mustUnderstand isn't
             // turned on then its cool
             if (headerBlock.isProcessed() || !headerBlock.getMustUnderstand()) {
                 continue;
             }
-            // if this header block is not targetted to me then its not my
-            // problem. Currently this code only supports the "next" role; we
-            // need to fix this to allow the engine/service to be in one or more
-            // additional roles and then to check that any headers targetted for
-            // that role too have been dealt with.
 
-            String role = headerBlock.getRole();
-
-            String prefix = envelope.getNamespace().getPrefix();
-
-            if (!msgContext.isSOAP11()) {
-
-                // if must understand and soap 1.2 the Role should be NEXT , if it is null we consider
-                // it to be NEXT
-                if (prefix == null || "".equals(prefix)) {
-                    prefix = SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX;
-                }
-                if (role != null) {
-                    if (!SOAP12Constants.SOAP_ROLE_NEXT.equals(role)) {
-                        // TODO: should we be using a prefix on the faultcode?  What about
-                        // the QName object Constants.FAULT_SOAP12_MUSTUNDERSTAND?
-                        throw new AxisFault(Messages.getMessage(
-                                "mustunderstandfailed",
-                                prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND),
-                                            SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
-                    }
-                } else {
-                    // TODO: should we be using a prefix on the faultcode?  What about
-                    // the QName object Constants.FAULT_SOAP12_MUSTUNDERSTAND?
-                    throw new AxisFault(Messages.getMessage(
-                            "mustunderstandfailed",
-                            prefix, SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND),
-                                        SOAP12Constants.FAULT_CODE_MUST_UNDERSTAND);
-                }
-            } else {
-
-                // if must understand and soap 1.1 the actor should be NEXT , if it is null we considerr
-                // it to be NEXT
-                if ((role != null) && !SOAP11Constants.SOAP_ACTOR_NEXT.equals(role)) {
-                    // TODO: should we be using a prefix on the faultcode?  What about
-                    // the QName object Constants.FAULT_MUSTUNDERSTAND?
-                    throw new AxisFault(Messages.getMessage(
-                            "mustunderstandfailed",
-                            prefix, SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND),
-                                        SOAP11Constants.FAULT_CODE_MUST_UNDERSTAND);
-                }
-            }
+            // Oops, throw an appropriate MustUnderstand fault!!
+            QName faultQName = headerBlock.getVersion().getMustUnderstandFaultCode();
+            throw new AxisFault(Messages.getMessage("mustunderstandfailed",
+                                                    headerBlock.getNamespace().getNamespaceURI(),
+                                                    headerBlock.getLocalName()), faultQName);
         }
     }
 

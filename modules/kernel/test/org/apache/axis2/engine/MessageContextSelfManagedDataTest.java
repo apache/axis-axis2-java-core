@@ -18,6 +18,7 @@ package org.apache.axis2.engine;
 
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
@@ -40,7 +41,6 @@ import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.transport.http.CommonsHTTPTransportSender;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.axis2.util.UUIDGenerator;
 
 import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;

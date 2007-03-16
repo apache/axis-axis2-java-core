@@ -68,10 +68,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
             return InvocationResponse.CONTINUE;
         }
 
-        SOAPHeader header = null;
-        if (msgContext.isHeaderPresent()) {
-            header = msgContext.getEnvelope().getHeader();
-        }
+        SOAPHeader header = msgContext.getEnvelope().getHeader();
 
         // if there are not headers put a flag to disable addressing temporary
         if (header == null) {
