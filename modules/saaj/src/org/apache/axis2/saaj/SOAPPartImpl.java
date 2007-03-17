@@ -37,6 +37,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -44,6 +45,7 @@ import org.apache.axiom.attachments.Attachments;
 import org.apache.axiom.attachments.utils.IOUtils;
 import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.MTOMConstants;
+import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
@@ -388,35 +390,9 @@ public class SOAPPartImpl extends SOAPPart {
     public void setContent(Source source) throws SOAPException {
         this.source = source;
 		try {
-	        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            InputStream is;
-            if (source instanceof StreamSource) {
-                is = ((StreamSource) source).getInputStream();
-            } else {
-                Result result = new StreamResult(baos);
-                Transformer xformer = TransformerFactory.newInstance().newTransformer();
-                xformer.transform(source, result);
-                is = new ByteArrayInputStream(baos.toByteArray());
-            }
-
-            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-			XMLStreamReader reader = inputFactory.createXMLStreamReader(is);
-			
-			StAXSOAPModelBuilder builder1 = null;
-			if(this.envelope.element.getOMFactory() instanceof SOAP11Factory){
-				builder1 = new StAXSOAPModelBuilder(reader,
-						(SOAP11Factory)this.envelope.element.getOMFactory(),null);
-			}else if(this.envelope.element.getOMFactory() instanceof SOAP12Factory){
-				builder1 = new StAXSOAPModelBuilder(reader,
-						(SOAP12Factory)this.envelope.element.getOMFactory(),null);
-			}
-
-            org.apache.axiom.soap.SOAPEnvelope soapEnvelope = builder1.getSOAPEnvelope();
-            envelope = new SOAPEnvelopeImpl(
-            		(org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)soapEnvelope);
-            envelope.element.build();
-            this.document = envelope.getOwnerDocument();
+            Result result = new DOMResult(this.envelope.element);
+            Transformer xformer = TransformerFactory.newInstance().newTransformer();
+            xformer.transform(source, result);
         } catch (TransformerFactoryConfigurationError e) {
             log.error(e);
             throw new SOAPException(e);
