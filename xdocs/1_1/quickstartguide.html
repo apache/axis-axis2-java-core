@@ -171,16 +171,21 @@ this service will be as follows:</p>
 <pre>- StockQuoteService
    - META-INF
      - services.xml
+   - lib
    - samples
      - quickstart
        - service
          - pojo
            - StockQuoteService.class</pre>
 
-<p>This is not that complicated. The name of the service is
-StockQuoteService, which is specified in the services.xml, and it places any
-Java classes in their proper place based on the package name. The META-INF
-directory contains additional information about the services that Axis2 needs
+<p>Here, the name of the service is StockQuoteService, which 
+is specified in the services.xml file and corresponds to the top-level
+folder of this service. Compiled Java classes are placed underneath
+this in their proper place based on the package name. The lib directory
+holds any service-specific JAR files needed for the service to run (none in 
+this case) besides those already stored with the Axis2 WAR file and the
+servlet container's common JAR directories.  Finally, the META-INF directory
+contains any additional information about the service that Axis2 needs
 to execute it properly. The services.xml file defines the service itself and
 links the Java class to it (See Code Listing 3).</p>
 
