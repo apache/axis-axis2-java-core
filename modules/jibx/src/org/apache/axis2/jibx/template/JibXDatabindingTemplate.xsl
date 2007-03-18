@@ -626,11 +626,11 @@
                 org.apache.axis2.AxisFault f = (org.apache.axis2.AxisFault)ex;
                 org.apache.axiom.om.OMElement faultElt = f.getDetail();
                 if (faultElt != null) {
-                    if (faultExeptionNameMap.containsKey(faultElt.getQName())) {
+                    if (faultExceptionNameMap.containsKey(faultElt.getQName())) {
                         try {
                             
                             // first create the actual exception
-                            String exceptionClassName = (String)faultExeptionClassNameMap.get(faultElt.getQName());
+                            String exceptionClassName = (String)faultExceptionClassNameMap.get(faultElt.getQName());
                             Class exceptionClass = Class.forName(exceptionClassName);
                             Exception e = (Exception)exceptionClass.newInstance();
                             

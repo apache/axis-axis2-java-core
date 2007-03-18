@@ -91,16 +91,16 @@ public class PluginClassLoader extends URLClassLoader {
     /**
      * @param name <code>String</code>  Name of the file to be loaded
      * @return <code>Class</code> return a class object if it found else
-     *         will return null or classNotfoun exeption
+     *         will return null or a ClassNotFoundException
      *         <p/>
-     *         The method has ovride in the following way
-     *         1. called the super class and check to see wether the class is there
-     *         if the class is found then return that , else if super returns ClassNotfoundExeption
-     *         2. Check wether the entry corresponding to the class name exsit in one of jar files
+     *         This method has been overridden in the following way
+     *         1. It calls the super class and checks to see whether the class is there
+     *         If the class is found then return it, else if super return ClassNotfoundException
+     *         2. Check whether the entry corresponding to the class name exists in one of jar files
      *         in /lib director
-     *         3. If it is there get the byte array out of that and creat a Class object out of that
-     *         by calling "defineClass()" , if it sucssed then return that else
-     *         4. Throw classNotfound exeption
+     *         3. If it is there get the byte array out of that and create a Class object out of that
+     *         by calling "defineClass()" , if it succeeds then return that else
+     *         4. Throw a ClassNotFoundException
      * @throws ClassNotFoundException
      */
     protected Class findClass(final String name)

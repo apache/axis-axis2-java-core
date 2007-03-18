@@ -599,7 +599,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      * <p/>
      * You will be getting AxisConfiguration corresponding to given inputstream
      * if it is valid , if something goes wrong you will be getting
-     * DeploymentExeption
+     * DeploymentException
      *
      * @param in : InputStream to axis2.xml
      * @throws DeploymentException : If something goes wrong

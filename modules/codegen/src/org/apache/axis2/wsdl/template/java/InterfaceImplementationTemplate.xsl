@@ -40,8 +40,8 @@
         protected org.apache.axis2.description.AxisOperation[] _operations;
 
         //hashmaps to keep the fault mapping
-        private java.util.HashMap faultExeptionNameMap = new java.util.HashMap();
-        private java.util.HashMap faultExeptionClassNameMap = new java.util.HashMap();
+        private java.util.HashMap faultExceptionNameMap = new java.util.HashMap();
+        private java.util.HashMap faultExceptionClassNameMap = new java.util.HashMap();
         private java.util.HashMap faultMessageMap = new java.util.HashMap();
 
     
@@ -97,12 +97,12 @@
     private void populateFaults(){
          <xsl:for-each select="method">
            <xsl:for-each select="fault/param">
-              faultExeptionNameMap.put( new javax.xml.namespace.QName(
+              faultExceptionNameMap.put( new javax.xml.namespace.QName(
                  "<xsl:value-of select="@namespace"/>",
                  "<xsl:value-of select="@localname"/>"),
                  "<xsl:value-of select="@name"/>"
                );
-              faultExeptionClassNameMap.put(new javax.xml.namespace.QName(
+              faultExceptionClassNameMap.put(new javax.xml.namespace.QName(
                 "<xsl:value-of select="@namespace"/>",
                 "<xsl:value-of select="@localname"/>"),
                 "<xsl:value-of select="@name"/>");
@@ -443,10 +443,10 @@
 
             org.apache.axiom.om.OMElement faultElt = f.getDetail();
             if (faultElt!=null){
-                if (faultExeptionNameMap.containsKey(faultElt.getQName())){
+                if (faultExceptionNameMap.containsKey(faultElt.getQName())){
                     //make the fault by reflection
                     try{
-                        java.lang.String exceptionClassName = (java.lang.String)faultExeptionClassNameMap.get(faultElt.getQName());
+                        java.lang.String exceptionClassName = (java.lang.String)faultExceptionClassNameMap.get(faultElt.getQName());
                         java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
                         java.lang.Exception ex=
                                 (java.lang.Exception) exceptionClass.newInstance();
@@ -855,10 +855,10 @@
                }catch(org.apache.axis2.AxisFault f){
                   org.apache.axiom.om.OMElement faultElt = f.getDetail();
                   if (faultElt!=null){
-                      if (faultExeptionNameMap.containsKey(faultElt.getQName())){
+                      if (faultExceptionNameMap.containsKey(faultElt.getQName())){
                           //make the fault by reflection
                           try{
-                              java.lang.String exceptionClassName = (java.lang.String)faultExeptionClassNameMap.get(faultElt.getQName());
+                              java.lang.String exceptionClassName = (java.lang.String)faultExceptionClassNameMap.get(faultElt.getQName());
                               java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
                               java.lang.Exception ex=
                                       (java.lang.Exception) exceptionClass.newInstance();
