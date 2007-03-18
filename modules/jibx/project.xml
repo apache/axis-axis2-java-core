@@ -172,7 +172,7 @@
                 <module>true</module>
             </properties>
         </dependency>
-	  <dependency>
+      <dependency>
             <groupId>org.apache.woden</groupId>
             <artifactId>woden</artifactId>
             <version>${woden.version}</version>
@@ -183,16 +183,22 @@
 
     </dependencies>
     <build>
-    <resources>
-	<resource>
-            <directory>../../</directory>
-            <targetPath>META-INF</targetPath>
-            <includes>
-                <include>NOTICE.txt</include>
-                <include>LICENSE.txt</include>
-            </includes>
-       </resource>
-    </resources>
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <includes>
+                    <include>**/*.xsl</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>../../</directory>
+                <targetPath>META-INF</targetPath>
+                <includes>
+                    <include>NOTICE.txt</include>
+                    <include>LICENSE.txt</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 
 </project>
