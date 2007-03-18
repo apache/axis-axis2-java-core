@@ -298,12 +298,39 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
             XmlSchemaComplexType complexType = new XmlSchemaComplexType(xmlSchema);
             XmlSchemaSequence sequence = new XmlSchemaSequence();
+            XmlSchemaComplexContentExtension complexExtension = new XmlSchemaComplexContentExtension() ;
 
             XmlSchemaElement eltOuter = new XmlSchemaElement();
             schemaTypeName = new QName(targetNameSpace, simpleName, targetNamespacePrefix);
             eltOuter.setName(simpleName);
             eltOuter.setQName(schemaTypeName);
-            complexType.setParticle(sequence);
+            
+            JClass sup = javaType.getSuperclass() ;
+            
+//          AXIS2-1749 inheritance
+            if ((sup != null) && !( "java.lang.Object".compareTo(sup.getQualifiedName()) == 0)) {
+            	
+            	String superclassname = getSimpleName(sup) ;
+            	
+            	String tgtNamespace = resolveSchemaNamespace(sup.getContainingPackage().getQualifiedName()) ;
+            	String tgtNamespacepfx = (String) targetNamespacePrefixMap.get(tgtNamespace);
+            	
+            	QName basetype = new QName(tgtNamespace,superclassname,tgtNamespacepfx) ;
+            	
+            	complexExtension.setBaseTypeName(basetype) ;
+            	complexExtension.setParticle(sequence) ;
+            	
+            	XmlSchemaComplexContent contentModel = new XmlSchemaComplexContent() ;
+            	
+            	contentModel.setContent(complexExtension) ;
+            	            	
+            	complexType.setContentModel(contentModel) ;
+            
+            }
+            else           
+            	complexType.setParticle(sequence);
+
+            
             complexType.setName(simpleName);
 
             xmlSchema.getItems().add(eltOuter);
@@ -318,66 +345,155 @@ public class SchemaGenerator implements Java2WSDLConstants {
 
 	    JClass tempClass = javaType;
 	    Set propertiesSet = new HashSet();
-	    while (tempClass != null && !"java.lang.Object".equals(getQualifiedName(tempClass))) {
-		JProperty[] tempProperties = tempClass.getDeclaredProperties();
+	    Set propertiesNames = new HashSet() ;
+	  
+	   // while (tempClass != null && !"java.lang.Object".equals(getQualifiedName(tempClass))) {
+//	  With 1749 we don'nt need properties of superclasses
+	    JProperty[] tempProperties = tempClass.getDeclaredProperties();
 		for (int i = 0; i < tempProperties.length; i++) {
 		    propertiesSet.add(tempProperties[i]);
 		}
-		tempClass = tempClass.getSuperclass();
-	    }
+	//	tempClass = tempClass.getSuperclass();
+	//    }
+	    
 	    JProperty[] properties = (JProperty[]) propertiesSet.toArray(new JProperty[0]);
             Arrays.sort(properties);
             for (int i = 0; i < properties.length; i++) {
                 JProperty property = properties[i];
                 String propertyName = getQualifiedName(property.getType());
                 boolean isArryType = property.getType().isArrayType();
-                if (isArryType) {
-                    propertyName = getQualifiedName(property.getType().getArrayComponentType());
-                }
-                if(isArryType&&"byte".equals(propertyName)){
-                    propertyName = "base64Binary";
-                }
-                if (typeTable.isSimpleType(propertyName)) {
-                    XmlSchemaElement elt1 = new XmlSchemaElement();
-                    elt1.setName(getCorrectName(getSimpleName(property)));
-                    elt1.setSchemaTypeName(typeTable.getSimpleSchemaTypeName(propertyName));
-                    sequence.getItems().add(elt1);
-                    if (isArryType) {
-                        elt1.setMaxOccurs(Long.MAX_VALUE);
-                        elt1.setMinOccurs(1);
-                    }
-                    if (String.class.getName().equals(propertyName)) {
-                        elt1.setNillable(true);
-                    }
-                } else {
-                    if (isArryType) {
-                        generateSchema(property.getType().getArrayComponentType());
-                    } else {
-                        generateSchema(property.getType());
-                    }
-                    XmlSchemaElement elt1 = new XmlSchemaElement();
-                    elt1.setName(getCorrectName(getSimpleName(property)));
-                    elt1.setSchemaTypeName(typeTable.getComplexSchemaType(propertyName));
-                    sequence.getItems().add(elt1);
-                    if (isArryType) {
-                        elt1.setMaxOccurs(Long.MAX_VALUE);
-                        elt1.setMinOccurs(1);
-                    }
-                    elt1.setNillable(true);
-
-                    if (!((NamespaceMap) xmlSchema.getNamespaceContext()).values().
-                            contains(typeTable.getComplexSchemaType(propertyName).getNamespaceURI())) {
-                        XmlSchemaImport importElement = new XmlSchemaImport();
-                        importElement.setNamespace(typeTable.getComplexSchemaType(propertyName).getNamespaceURI());
-                        xmlSchema.getItems().add(importElement);
-                        ((NamespaceMap) xmlSchema.getNamespaceContext()).
-                                put(generatePrefix(), typeTable.getComplexSchemaType(propertyName).getNamespaceURI());
-                    }
-                }
+                
+                String propname = getCorrectName(property.getSimpleName()) ;
+                
+                propertiesNames.add(propname) ;
+                
+                this.generateSchemaforFieldsandProperties(xmlSchema,sequence,property.getType(),propname, isArryType) ;
+                
             }
+            
+            // AXIS2-2116 support for fields
+            
+            JField[] tempFields = javaType.getDeclaredFields() ;
+            HashMap FieldMap = new HashMap() ;
+          
+            
+            for (int i = 0; i < tempFields.length; i++) {
+    			// create a element for the field only if it is public 
+            	// and there is no property with the same name
+            	            	
+            	if (tempFields[i].isPublic()) {
+   		
+            		// skip field with same name as a property
+    				if (!propertiesNames.contains(tempFields[i].getSimpleName())) {
+    					
+    					FieldMap.put(tempFields[i].getSimpleName(),tempFields[i]) ;
+    				}
+    			}	
+    				
+     		}
+            
+            // remove fields from super classes patch for defect Annogen-21
+            // getDeclaredFields is incorrectly returning fields of super classes as well
+            // getDeclaredProperties used earlier works correctly
+            
+            JClass supr = javaType.getSuperclass() ;
+              while(supr != null && supr.getQualifiedName().compareTo("java.lang.Object") != 0) {
+            	
+            	JField[] suprFields = supr.getFields() ;
+            	
+            	for (int i = 0 ; i < suprFields.length ;i++) {
+            		
+            		FieldMap.remove(suprFields[i].getSimpleName()) ;
+            		            		
+            	}
+            	
+            	supr = supr.getSuperclass() ;
+            	
+            	
+            }
+            
+            // end patch for Annogen -21  
+            
+            JField[] froperties = (JField[]) FieldMap.values().toArray(new JField[0]);
+            Arrays.sort(froperties);
+           
+            for (int i = 0; i < froperties.length; i++) {
+                JField field = froperties[i];
+                String propertyName = field.getType().getQualifiedName();
+                boolean isArryType = field.getType().isArrayType();
+               
+                this.generateSchemaforFieldsandProperties(xmlSchema, sequence,field.getType(),field.getSimpleName(), isArryType) ;
+            }     
+     
+            
+            
         }
         return schemaTypeName;
     }
+    
+
+    // moved code common to Fields & properties out of above method 
+    private void generateSchemaforFieldsandProperties(XmlSchema xmlSchema,XmlSchemaSequence sequence, JClass type, String name, boolean isArryType) 
+	throws Exception {
+    	
+    	String propertyName ;
+
+    	if (isArryType) {
+    		propertyName = getQualifiedName(type.getArrayComponentType()) ;
+    	} else
+    		propertyName = getQualifiedName(type) ;
+    	
+    	if(isArryType&&"byte".equals(propertyName)){
+            propertyName = "base64Binary";
+        }
+
+    	if (typeTable.isSimpleType(propertyName)) {
+    		XmlSchemaElement elt1 = new XmlSchemaElement();
+    		elt1.setName(name);
+    		elt1.setSchemaTypeName(typeTable.getSimpleSchemaTypeName(propertyName));
+    		sequence.getItems().add(elt1);
+
+    		if (isArryType) {
+    			elt1.setMaxOccurs(Long.MAX_VALUE);
+    			elt1.setMinOccurs(1);
+    		}
+    		
+    		  		
+    		if (String.class.getName().equals(propertyName)) {
+    			elt1.setNillable(true);
+    		}
+    		    		    		
+    		
+    	} else {
+    		if (isArryType) {
+    			generateSchema(type.getArrayComponentType());
+    		} else {
+    			generateSchema(type);
+    		}
+    		XmlSchemaElement elt1 = new XmlSchemaElement();
+    		elt1.setName(name);
+    		elt1.setSchemaTypeName(typeTable.getComplexSchemaType(propertyName));
+    		sequence.getItems().add(elt1);
+    		if (isArryType) {
+    			elt1.setMaxOccurs(Long.MAX_VALUE);
+    			elt1.setMinOccurs(1);
+    		}
+    		elt1.setNillable(true);
+
+    		if (!((NamespaceMap) xmlSchema.getNamespaceContext()).values().
+    				contains(typeTable.getComplexSchemaType(propertyName).getNamespaceURI())) {
+    			XmlSchemaImport importElement = new XmlSchemaImport();
+    			importElement.setNamespace(typeTable.getComplexSchemaType(propertyName).getNamespaceURI());
+    			xmlSchema.getItems().add(importElement);
+    			((NamespaceMap) xmlSchema.getNamespaceContext()).
+    			put(generatePrefix(), typeTable.getComplexSchemaType(propertyName).getNamespaceURI());
+    		}
+    	}
+    	
+
+
+    }
+
 
     private QName generateSchemaForType(XmlSchemaSequence sequence, JClass type, String partName) throws Exception {
 
