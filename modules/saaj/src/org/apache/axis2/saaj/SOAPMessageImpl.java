@@ -507,6 +507,10 @@ public class SOAPMessageImpl extends SOAPMessage {
                 if ((charset.endsWith("\"") || charset.endsWith("\'"))) {
                     charset = charset.substring(0, charset.length() - 1);
                 }
+                int index = charset.indexOf(';');
+                if(index!=-1){
+                    charset = charset.substring(0, index);
+                }
                 setProperty(SOAPMessage.CHARACTER_SET_ENCODING, charset);
             }
         }
