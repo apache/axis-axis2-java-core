@@ -859,7 +859,7 @@
               }
     </xsl:if>
     <xsl:choose>
-      <xsl:when test="optional">
+      <xsl:when test="@optional='true'">
           }
       </xsl:when>
       <xsl:otherwise>

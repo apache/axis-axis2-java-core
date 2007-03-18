@@ -736,6 +736,9 @@ public class CodeGenerationUtility {
                             String dflt = element.getDefaultValue();
                             if (dflt == null) {
                                 dflt = format.getDefaultText();
+                                if (javatype.equals("float")) {
+                                    dflt = dflt + 'F';
+                                }
                             }
                             if (dflt != null) {
                                 param.setAttribute("default", dflt);

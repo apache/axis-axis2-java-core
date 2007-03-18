@@ -143,7 +143,8 @@ public class JiBXDataSource implements OMDataSource
     public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
         try {
             IMarshallingContext ctx = bindingFactory.createMarshallingContext();
-            ctx.setOutput(output, format.getCharSetEncoding());
+            ctx.setOutput(output,
+                format == null ? null : format.getCharSetEncoding());
             marshal(ctx);
         } catch (JiBXException e) {
             throw new XMLStreamException("Error in JiBX marshalling", e);
