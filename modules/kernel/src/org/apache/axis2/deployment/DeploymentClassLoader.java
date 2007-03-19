@@ -33,8 +33,7 @@ public class DeploymentClassLoader extends URLClassLoader {
      * @param parent parent classloader <code>ClassLoader</code>
      */
     public DeploymentClassLoader(URL[] urls, ClassLoader parent, boolean antiJARLocking) {
-//        super(Utils.getURLsForAllJars(urls[0], antiJARLocking), parent);
-        super(Utils.getURLsForAllJars(urls[0]), parent, new JarStreamHandlerFactory());
+        super(Utils.getURLsForAllJars(urls[0], antiJARLocking), parent);
     }
 
     public DeploymentClassLoader(URL[] urls, ClassLoader parent) {

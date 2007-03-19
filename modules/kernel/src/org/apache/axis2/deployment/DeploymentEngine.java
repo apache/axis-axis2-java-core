@@ -244,7 +244,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         try {
             serviceGroup.setServiceGroupName(serviceName);
             DeploymentClassLoader serviceClassLoader = new DeploymentClassLoader(
-                    new URL[]{servicesURL}, axisConfig.getServiceClassLoader());
+                    new URL[]{servicesURL}, axisConfig.getServiceClassLoader(), false);
             String metainf = "meta-inf";
             serviceGroup.setServiceGroupClassLoader(serviceClassLoader);
             //processing wsdl.list

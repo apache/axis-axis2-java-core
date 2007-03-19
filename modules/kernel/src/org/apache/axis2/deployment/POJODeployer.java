@@ -167,7 +167,8 @@ public class POJODeployer implements Deployer {
                     String className = (String) classList.get(i);
                     DeploymentClassLoader classLoader = new DeploymentClassLoader(
                             new URL[]{deploymentFileData.getFile().toURL()},
-                            configCtx.getAxisConfiguration().getSystemClassLoader());
+                            configCtx.getAxisConfiguration().getSystemClassLoader(),
+                            false);
                     Thread.currentThread().setContextClassLoader(classLoader);
                     className = className.replaceAll(".class", "");
                     className = className.replaceAll("/", ".");
