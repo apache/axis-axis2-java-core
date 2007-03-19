@@ -1547,19 +1547,14 @@ public class MessageContext extends AbstractContext implements Externalizable {
      * a soap:Header present, use getHeader() and also check for null on getHeader() to be absolutely sure.
      *
      * @return boolean
+     * @deprecated The bonus you used to get from this is now built in to SOAPEnvelope.getHeader()
      */
     public boolean isHeaderPresent() {
         // If there's no envelope there can't be a header.
         if (this.envelope == null) {
             return false;
         }
-        OMElement node = this.envelope.getFirstElement();
-        if (node == null) {
-            return false;
-        } else if (node.getQName().getLocalPart().equals(SOAPConstants.BODY_LOCAL_NAME)) {
-            return false;
-        }
-        return true;
+        return (this.envelope.getHeader() != null);
     }
 
     /**

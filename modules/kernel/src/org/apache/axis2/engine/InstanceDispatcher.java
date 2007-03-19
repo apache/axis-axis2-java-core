@@ -166,9 +166,6 @@ public class InstanceDispatcher extends AbstractHandler {
     }
 
     private void extractServiceGroupContextId(MessageContext msgContext) throws AxisFault {
-        if (!msgContext.isHeaderPresent()) {
-            return;
-        }
         SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
         if (soapHeader != null) {
             OMElement serviceGroupId = soapHeader.getFirstChildWithName(SERVICE_GROUP_QNAME);
