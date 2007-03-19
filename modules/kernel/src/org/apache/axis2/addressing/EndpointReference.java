@@ -571,15 +571,27 @@ public class EndpointReference implements Serializable {
 
         in.read(serBytes, 0, numBytes);
         ByteArrayInputStream bais = new ByteArrayInputStream(serBytes);
+        XMLStreamReader xmlReader = null;
         try {
-            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(bais);
+            xmlReader = StAXUtils.createXMLStreamReader(bais);
             StAXOMBuilder builder = new StAXOMBuilder(xmlReader);
             OMElement om = builder.getDocumentElement();
 
             EndpointReferenceHelper.fromOM(this, om, AddressingConstants.Final.WSA_NAMESPACE);
-        }
-        catch (javax.xml.stream.XMLStreamException e) {
+        } catch (javax.xml.stream.XMLStreamException e) {
             throw (IOException) (new IOException("Unable to deserialize the EPR")).initCause(e);
+        } finally{
+        	// Make sure that the stream and reader are properly closed
+        	if(xmlReader != null){
+        		try{
+        			xmlReader.close();
+        		} catch (javax.xml.stream.XMLStreamException e) {
+                    throw (IOException) (new IOException("Unable to deserialize the EPR")).initCause(e);
+                } 
+        	}
+        	if(bais != null){
+        		bais.close();
+        	}
         }
     }
 }
