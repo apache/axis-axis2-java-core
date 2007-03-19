@@ -25,19 +25,23 @@ import org.apache.axis2.cluster.configuration.ConfigurationManager;
 import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
 import org.apache.axis2.cluster.tribes.ChannelSender;
 import org.apache.axis2.cluster.tribes.CommandType;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.neethi.Policy;
 
 public class TribesConfigurationManager implements ConfigurationManager {
 
 	private ArrayList listeners = null;
 	private ChannelSender sender = null;
-	
+	private AxisConfiguration axisConfiguration = null;
 	
 	public TribesConfigurationManager () {
 		listeners = new ArrayList ();
 	}
 	
 	public void addConfigurationManagerListener(ConfigurationManagerListener listener) {
+		if (axisConfiguration!=null)
+			listener.setAxisConfiguration(axisConfiguration);
+		
 		listeners.add(listener);
 	}
 
@@ -108,7 +112,10 @@ public class TribesConfigurationManager implements ConfigurationManager {
 			else if (CommandType.ROLLBACK==command)
 				listener.rollbackCalled(event);
 		}
-		
+	}
+
+	public void setAxisConfiguration(AxisConfiguration axisConfiguration) {
+		this.axisConfiguration = axisConfiguration;
 	}
 	
 }

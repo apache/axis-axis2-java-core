@@ -19,10 +19,12 @@ package org.apache.axis2.clustering.configuration;
 import java.util.ArrayList;
 import org.apache.axis2.cluster.configuration.ConfigurationEvent;
 import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
+import org.apache.axis2.engine.AxisConfiguration;
 
 public class TestConfigurationManagerListener implements ConfigurationManagerListener {
 
 	ArrayList eventList = null;
+	private AxisConfiguration axisConfiguration = null;
 	
 	public TestConfigurationManagerListener () {
 		eventList = new ArrayList ();
@@ -64,4 +66,8 @@ public class TestConfigurationManagerListener implements ConfigurationManagerLis
 		eventList.add(event);
 	}
 
+	public void setAxisConfiguration(AxisConfiguration axisConfiguration) {
+		this.axisConfiguration = axisConfiguration;
+	}
+	
 }

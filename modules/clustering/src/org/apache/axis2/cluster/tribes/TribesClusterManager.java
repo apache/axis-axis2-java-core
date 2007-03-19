@@ -59,20 +59,17 @@ public class TribesClusterManager implements ClusterManager {
 		return configurationManager;
 	}
 
-	public void init(ConfigurationContext context) throws ClusteringFault {
+	public void init(ConfigurationContext configurationContext) throws ClusteringFault {
 		log.debug("initializing tibes");
-
-		this.configContext = context;
-		contextManager.setConfigContext(context);
-		
+		this.configContext = configurationContext;
 		ChannelSender sender = new ChannelSender ();
 		ChannelListener listener = new ChannelListener (configurationManager, contextManager);
 
 		TransientTribesChannelInfo channelInfo = new TransientTribesChannelInfo();
 		TransientTribesMemberInfo memberInfo = new TransientTribesMemberInfo();
 
-		configContext.setProperty("MEMBER_INFO", memberInfo);
-		configContext.setProperty("CHANNEL_INFO", channelInfo);
+		configurationContext.setProperty("MEMBER_INFO", memberInfo);
+		configurationContext.setProperty("CHANNEL_INFO", channelInfo);
 
 		contextManager.setSender(sender);
 		configurationManager.setSender(sender);
@@ -93,7 +90,7 @@ public class TribesClusterManager implements ClusterManager {
 			listener.setUpdater(updater);
 			listener.setContextManager(contextManager);
 			
-			registerTribesInfoService(configContext);
+			registerTribesInfoService(configurationContext);
 
 		} catch (ChannelException e) {
 			String message = "Error starting Tribes channel";
@@ -114,4 +111,13 @@ public class TribesClusterManager implements ClusterManager {
 		}
 	}
 
+	public void setConfigurationManager(ConfigurationManager configurationManager) {
+		this.configurationManager = (TribesConfigurationManager) configurationManager;
+	}
+
+	public void setContextManager(ContextManager contextManager) {
+		this.contextManager = (TribesContextManager) contextManager;
+	}
+
+	
 }

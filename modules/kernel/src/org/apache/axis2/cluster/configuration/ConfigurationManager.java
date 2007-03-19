@@ -17,6 +17,7 @@
 package org.apache.axis2.cluster.configuration;
 
 import org.apache.axis2.cluster.ClusteringFault;
+import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.neethi.Policy;
 
 public interface ConfigurationManager {
@@ -40,4 +41,6 @@ public interface ConfigurationManager {
      * For registering a configuration event listener.
      */
     void addConfigurationManagerListener(ConfigurationManagerListener listener);
+    
+    void setAxisConfiguration (AxisConfiguration axisConfiguration);
 }

@@ -244,9 +244,16 @@
     <!-- Configure and uncomment following for preparing Axis2 to a clustered environment -->
     <!-- 
     <cluster class="org.apache.axis2.cluster.tribes.TribesClusterManager">
-    	<parameter name="param1" locked="false">value1</parameter>
+    	<configurationManager class="org.apache.axis2.cluster.tribes.configuration.TribesConfigurationManager">
+    	    <listeners>
+    	    </listeners>
+    	</configurationManager>
+    	<contextManager class="org.apache.axis2.cluster.tribes.context.TribesContextManager">
+    	    <listeners>
+    	    </listeners>
+    	</contextManager>
     </cluster>
-     -->
+    -->
      
     <!-- ================================================= -->
     <!-- Phases  -->

@@ -21,7 +21,9 @@ import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.context.ConfigurationContext;
 
 public interface ClusterManager {
-    public void init(ConfigurationContext context) throws ClusteringFault;
+    public void init(ConfigurationContext configurationContext) throws ClusteringFault;
     public ContextManager getContextManager ();
     public ConfigurationManager getConfigurationManager ();
+    public void setContextManager (ContextManager contextManager);
+    public void setConfigurationManager (ConfigurationManager configurationManager);
 }

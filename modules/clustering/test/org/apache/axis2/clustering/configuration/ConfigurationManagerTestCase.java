@@ -16,6 +16,8 @@
 
 package org.apache.axis2.clustering.configuration;
 
+import java.util.List;
+
 import org.apache.axis2.cluster.ClusteringFault;
 import org.apache.axis2.cluster.configuration.ConfigurationEvent;
 import org.apache.axis2.clustering.ClusterManagerTestCase;
@@ -40,7 +42,11 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 			e.printStackTrace();
 		}
     	
-		ConfigurationEvent event = (ConfigurationEvent) configurationManagerListener2.getEventList().get(0);
+    	List eventList = configurationManagerListener2.getEventList();
+    	assertNotNull(eventList);
+    	assertEquals(eventList.size(), 1);
+		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
+		
 		assertNotNull(event);
 		assertEquals(event.getConfigurationName(), serviceGroupName);
     }
@@ -58,7 +64,11 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 			e.printStackTrace();
 		}
     	
-		ConfigurationEvent event = (ConfigurationEvent) configurationManagerListener2.getEventList().get(0);
+    	List eventList = configurationManagerListener2.getEventList();
+    	assertNotNull(eventList);
+    	assertEquals(eventList.size(), 1);
+		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
+		
 		assertNotNull(event);
 		assertEquals(event.getConfigurationName(), serviceGroupName);
     }
@@ -80,8 +90,11 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-    	
-		ConfigurationEvent event = (ConfigurationEvent) configurationManagerListener2.getEventList().get(0);
+		
+    	List eventList = configurationManagerListener2.getEventList();
+    	assertNotNull(eventList);
+    	assertEquals(eventList.size(), 1);
+		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
 		assertNotNull(event);
 		assertEquals(event.getConfigurationName(), serviceGroupName);
 		assertEquals(event.getPolicyId(), policyID);
@@ -101,7 +114,11 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 			e.printStackTrace();
 		}
     	
-		ConfigurationEvent event = (ConfigurationEvent) configurationManagerListener2.getEventList().get(0);
+    	List eventList = configurationManagerListener2.getEventList();
+    	assertNotNull(eventList);
+    	assertEquals(eventList.size(), 1);
+		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
+		
 		assertNotNull(event);
     }
     
@@ -118,7 +135,11 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 			e.printStackTrace();
 		}
     	
-		ConfigurationEvent event = (ConfigurationEvent) configurationManagerListener2.getEventList().get(0);
+    	List eventList = configurationManagerListener2.getEventList();
+    	assertNotNull(eventList);
+    	assertEquals(eventList.size(), 1);
+		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
+		
 		assertNotNull(event);
     }
     
@@ -135,7 +156,11 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 			e.printStackTrace();
 		}
     	
-		ConfigurationEvent event = (ConfigurationEvent) configurationManagerListener2.getEventList().get(0);
+    	List eventList = configurationManagerListener2.getEventList();
+    	assertNotNull(eventList);
+    	assertEquals(eventList.size(), 1);
+		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
+		
 		assertNotNull(event);
     }
 	
@@ -152,7 +177,11 @@ public abstract class ConfigurationManagerTestCase extends ClusterManagerTestCas
 			e.printStackTrace();
 		}
     	
-		ConfigurationEvent event = (ConfigurationEvent) configurationManagerListener2.getEventList().get(0);
+    	List eventList = configurationManagerListener2.getEventList();
+    	assertNotNull(eventList);
+    	assertEquals(eventList.size(), 1);
+		ConfigurationEvent event = (ConfigurationEvent) eventList.get(0);
+		
 		assertNotNull(event);
     }
     

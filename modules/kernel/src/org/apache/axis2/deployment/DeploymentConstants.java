@@ -96,6 +96,11 @@ public interface DeploymentConstants {
     String TAG_SUPPORTED_POLICY_NAMESPACES = "supported-policy-namespaces";
     String TAG_NAMESPACES = "namespaces";
 
+    //ClusterBuilder
+    String TAG_CONFIGURATION_MANAGER = "configurationManager";
+    String TAG_CONTEXT_MANAGER = "contextManager";
+    String TAG_LISTENERS = "listeners";
+    
     //Deployer related cons
     String DIRECTORY = "directory";
     String EXTENSION = "extension";

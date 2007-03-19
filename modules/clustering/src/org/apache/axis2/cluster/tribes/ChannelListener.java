@@ -155,7 +155,6 @@ public class ChannelListener implements org.apache.catalina.tribes.ChannelListen
 		if (msg instanceof ConfigurationCommand) {
 
 			ConfigurationCommand command = (ConfigurationCommand) msg;
-			System.out.println("CmdType:" + command.getCommandType());
 			if (command.getCommandType() == CommandType.LOAD_SERVICE_GROUP) {
 				
 				ConfigurationEvent event = new ConfigurationEvent();

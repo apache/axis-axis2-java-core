@@ -38,10 +38,6 @@ public class DefaultContextManagerListener implements ContextManagerListener {
 	ConfigurationContext configurationContext = null;
 	private static final Log log = LogFactory.getLog(DefaultContextManagerListener.class);
 	
-	public DefaultContextManagerListener (ConfigurationContext configurationContext) {
-		this.configurationContext = configurationContext;
-	}
-	
 	public ContextUpdater getUpdater() {
 		return updater;
 	}
@@ -117,7 +113,10 @@ public class DefaultContextManagerListener implements ContextManagerListener {
 			}
 
 		}
-		
+	}
+
+	public void setConfigurationContext(ConfigurationContext configurationContext) {
+		this.configurationContext = configurationContext;
 	}
 
 }

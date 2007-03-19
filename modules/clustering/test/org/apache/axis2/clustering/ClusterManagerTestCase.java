@@ -62,11 +62,17 @@ public abstract class ClusterManagerTestCase extends TestCase {
 		configurationContext1 = ConfigurationContextFactory.createDefaultConfigurationContext();
 		configurationContext2 = ConfigurationContextFactory.createDefaultConfigurationContext();
 
-		contextManagerListener1 = new DefaultContextManagerListener (configurationContext1);
+		clusterManager1.getContextManager().setConfigurationContext(configurationContext1);
+		clusterManager2.getContextManager().setConfigurationContext(configurationContext2);
+		
+		contextManagerListener1 = new DefaultContextManagerListener ();
 		clusterManager1.getContextManager(). addContextManagerListener (contextManagerListener1);
-		contextManagerListener2 = new DefaultContextManagerListener (configurationContext2);
+		contextManagerListener2 = new DefaultContextManagerListener ();
 		clusterManager2.getContextManager(). addContextManagerListener (contextManagerListener2);	
 
+		clusterManager1.getConfigurationManager().setAxisConfiguration(configurationContext1.getAxisConfiguration());
+		clusterManager2.getConfigurationManager().setAxisConfiguration(configurationContext2.getAxisConfiguration());
+		
 		configurationManagerListener1 = new TestConfigurationManagerListener ();
 		clusterManager1.getConfigurationManager().addConfigurationManagerListener(configurationManagerListener1);
 		configurationManagerListener2 = new TestConfigurationManagerListener ();

@@ -259,6 +259,9 @@ public class TribesContextManager implements ContextManager {
 	}
 
 	public void addContextManagerListener(ContextManagerListener listener) {
+		if (configContext!=null)
+			listener.setConfigurationContext(configContext);
+		
 		listeners.add(listener);
 	}
 
@@ -272,9 +275,16 @@ public class TribesContextManager implements ContextManager {
 		}
 	}
 
-	public void setConfigContext(ConfigurationContext configContext) {
-		this.configContext = configContext;
+	public void setConfigurationContext(ConfigurationContext configurationContext) {
+		this.configContext = configurationContext;
+		
+		//setting this to the listeners as well.
+		if (listeners!=null) {
+			for (Iterator it=listeners.iterator();it.hasNext();) {
+				ContextManagerListener listener = (ContextManagerListener) it.next();
+				listener.setConfigurationContext(configurationContext);
+			}
+		}
 	}
-	
 	
 }

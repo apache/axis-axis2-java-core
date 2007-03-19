@@ -87,6 +87,12 @@ public class ConfigurationContext extends AbstractContext {
 
     public void initCluster() throws AxisFault {
         ClusterManager clusterManager = axisConfiguration.getClusterManager();
+        if (clusterManager!=null) {
+        	ContextManager contextManager = clusterManager.getContextManager();
+        	if (contextManager!=null)
+        		contextManager.setConfigurationContext(this);
+        }
+        
         clusterManager.init(this);
     }
 

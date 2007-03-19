@@ -27,4 +27,8 @@ public class ClusteringFault extends AxisFault {
 	public ClusteringFault (String message, Exception e) {
 		super (message, e);
 	}
+	
+	public ClusteringFault (Exception e) {
+		super (e);
+	}
 }
