@@ -860,6 +860,21 @@ public class ConverterUtil {
         return duration.compare(compareValue);
     }
 
+    public static long compare(Date date, String value){
+        Date newDate = convertToDate(value);
+        return date.getTime() - newDate.getTime();
+    }
+
+    public static long compare(Time time, String value){
+        Time newTime = new Time(value);
+        return time.getAsCalendar().getTimeInMillis() - newTime.getAsCalendar().getTimeInMillis();
+    }
+
+    public static long compare(Calendar calendar, String value){
+        Calendar newCalendar = convertToDateTime(value);
+        return calendar.getTimeInMillis() - newCalendar.getTimeInMillis();
+    }
+
     /**
      * Converts the given .datahandler to a string
      *
