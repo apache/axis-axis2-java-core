@@ -133,8 +133,9 @@
                                     <fileset dir="modules/java2wsdl/target/classes"/>
                                     <fileset dir="modules/kernel/target/classes"/>
                                     <!-- adding the tool classes. This is needed to get the ant task -->
-                                    <fileset dir="modules/tool/target/classes"/>
-                                    <fileset dir="modules/saaj/target/classes"/>
+<!-- No such path! Commented out. -Glen -->
+<!--                                    <fileset dir="modules/tool/target/classes"/> -->
+<!--                                    <fileset dir="modules/saaj/target/classes"/> -->
                                     <fileset dir="modules/addressing/target/classes"/>
                                     <fileset dir="modules/codegen/target/classes"/>
                                     <fileset dir="modules/adb/target/classes"/>
