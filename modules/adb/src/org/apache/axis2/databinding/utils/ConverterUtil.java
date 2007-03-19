@@ -855,7 +855,7 @@ public class ConverterUtil {
         return binBigDecimal.doubleValue() - Double.parseDouble(value);
     }
 
-    public static int compare(Duration duration, String value){
+    public static long compare(Duration duration, String value){
         Duration compareValue = new Duration(value);
         return duration.compare(compareValue);
     }

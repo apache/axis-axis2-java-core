@@ -68,7 +68,7 @@ public class Duration implements Serializable {
      * PnYnMnDTnHnMnS.
      *
      * @param duration String
-     * @throws SchemaException if the string doesn't parse correctly.
+     * @throws IllegalArgumentException if the string doesn't parse correctly.
      */
     public Duration(String duration) throws IllegalArgumentException {
         int position = 1;
@@ -441,8 +441,8 @@ public class Duration implements Serializable {
                 this.getAsCalendar().equals(duration.getAsCalendar());
     }
 
-    public int compare(Duration duration){
-        return this.getAsCalendar().compareTo(duration.getAsCalendar());
+    public long compare(Duration duration){
+        return this.getAsCalendar().getTimeInMillis() - duration.getAsCalendar().getTimeInMillis();
     }
 
     public int hashCode() {
