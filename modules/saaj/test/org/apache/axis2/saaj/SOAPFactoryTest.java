@@ -144,9 +144,10 @@ public class SOAPFactoryTest extends TestCase {
     		SOAPElement se1 = sf.createElement(qname);
     		//Create second SOAPElement from first SOAPElement
     		SOAPElement se2 = sf.createElement(se1);
-    		if(!se1.isEqualNode(se2) && !se1.isSameNode(se2)) {
-    			fail("The SOAPElement's are not equal and not the same (unexpected)");
-    		}
+            //commented to support jdk 1.4 build
+            //    		if(!se1.isEqualNode(se2) && !se1.isSameNode(se2)) {
+            //    			fail("The SOAPElement's are not equal and not the same (unexpected)");
+            //    		}
     		if(!se1.getNodeName().equals(se2.getNodeName()) || !se1.getNamespaceURI().equals(
     				se2.getNamespaceURI())) {
     			fail("Got: <URI="+se1.getNamespaceURI()+", PREFIX="+
@@ -178,7 +179,7 @@ public class SOAPFactoryTest extends TestCase {
     			reason += (String)i.next();
     		}
     		assertNotNull(reason);
-    		assertTrue(reason.contains("This is the fault reason."));
+    		assertTrue(reason.indexOf("This is the fault reason.") > -1);
     		assertTrue(fc.equals(SOAPConstants.SOAP_RECEIVER_FAULT));
     	} catch(SOAPException e) {
     		fail("Caught unexpected SOAPException");
@@ -202,7 +203,7 @@ public class SOAPFactoryTest extends TestCase {
     		}
     		System.out.println("Actual ReasonText="+reason);
     		assertNotNull(reason);
-    		assertTrue(reason.contains("This is the fault reason."));
+    		assertTrue(reason.indexOf("This is the fault reason.") > -1);
     		assertTrue(fc.equals(SOAPConstants.SOAP_RECEIVER_FAULT));
     	} catch(SOAPException e) {
     		//Caught expected SOAPException

@@ -167,7 +167,7 @@ public class SOAPBodyTest extends TestCase {
                 getContents(iter2, indent + " ");
             } else {
                 text = (Text) node;
-                assertNotNull(text.getTextContent());
+                assertNotNull(text);
             }
         }
     }
