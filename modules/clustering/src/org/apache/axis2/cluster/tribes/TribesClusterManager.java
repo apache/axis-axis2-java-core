@@ -37,10 +37,9 @@ import org.apache.commons.logging.LogFactory;
 
 public class TribesClusterManager implements ClusterManager {
 
-
-	TribesConfigurationManager configurationManager = null;
-	TribesContextManager contextManager = null;
-	ConfigurationContext configContext = null;
+	private TribesConfigurationManager configurationManager = null;
+	private TribesContextManager contextManager = null;
+	private ConfigurationContext configContext = null;
 	private ContextUpdater updater;
 	private static long timeout = 1000L; // this should be configured in the axis2.xml
 	
