@@ -99,7 +99,7 @@ public class TribesConfigurationManager implements ConfigurationManager {
         try {
             channel.send(new Member[]{channel.getLocalMember(true)},
                          command,
-                         0);
+                         Channel.SEND_OPTIONS_USE_ACK);
         } catch (ChannelException e) {
             throw new ClusteringFault(e);
         }
