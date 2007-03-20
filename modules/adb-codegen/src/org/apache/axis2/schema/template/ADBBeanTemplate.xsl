@@ -675,36 +675,38 @@
                final javax.xml.namespace.QName parentQName,
                final org.apache.axiom.om.OMFactory factory){
 
-        org.apache.axiom.om.OMDataSource dataSource = getOMDataSource(parentQName, factory);
 
         <xsl:choose>
             <xsl:when test="@type">
+               org.apache.axiom.om.OMDataSource dataSource =
+                       new org.apache.axis2.databinding.ADBDataSource(this,parentQName){
+
+                 public void serialize(javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+                       <xsl:value-of select="$name"/>.this.serialize(parentQName,factory,xmlWriter);
+                 }
+               };
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
                parentQName,factory,dataSource);
             </xsl:when>
             <xsl:otherwise>
+                org.apache.axiom.om.OMDataSource dataSource =
+                       new org.apache.axis2.databinding.ADBDataSource(this,MY_QNAME){
+
+                 public void serialize(javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+                       <xsl:value-of select="$name"/>.this.serialize(MY_QNAME,factory,xmlWriter);
+                 }
+               };
                return new org.apache.axiom.om.impl.llom.OMSourcedElementImpl(
                MY_QNAME,factory,dataSource);
             </xsl:otherwise>
        </xsl:choose>
        }
 
-     /**
-     *
-     * @param parentQName
-     * @param factory
-     * @return org.apache.axiom.om.OMElement
-     */
-    public org.apache.axiom.om.OMDataSource getOMDataSource(
-            final javax.xml.namespace.QName parentQName,
-            final org.apache.axiom.om.OMFactory factory){
 
 
-        org.apache.axiom.om.OMDataSource dataSource =
-                       new org.apache.axis2.databinding.ADBDataSource(this,parentQName){
-
-         public void serialize(
-                                  javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
+         public void serialize(final javax.xml.namespace.QName parentQName,
+                               final org.apache.axiom.om.OMFactory factory,
+                               javax.xml.stream.XMLStreamWriter xmlWriter) throws javax.xml.stream.XMLStreamException {
             <xsl:choose>
 
             <xsl:when test="$simple and $union">
@@ -925,18 +927,16 @@
                                       writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                       xmlWriter.writeEndElement();
                                     }else{
-                                     <xsl:value-of select="$varName"/>.getOMDataSource(
-                                       new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                        factory).serialize(xmlWriter);
+                                     <xsl:value-of select="$varName"/>.serialize(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
+                                        factory,xmlWriter);
                                     }
                                 </xsl:when>
                                 <xsl:otherwise>
                                     if (<xsl:value-of select="$varName"/>==null){
                                          throw new RuntimeException("<xsl:value-of select="$propertyName"/> cannot be null!!");
                                     }
-                                   <xsl:value-of select="$varName"/>.getOMDataSource(
-                                       new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                       factory).serialize(xmlWriter);
+                                   <xsl:value-of select="$varName"/>.serialize(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
+                                       factory,xmlWriter);
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
@@ -944,9 +944,8 @@
                              if (<xsl:value-of select="$varName"/>!=null){
                                     for (int i = 0;i &lt; <xsl:value-of select="$varName"/>.length;i++){
                                         if (<xsl:value-of select="$varName"/>[i] != null){
-                                         <xsl:value-of select="$varName"/>[i].getOMDataSource(
-                                                   new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
-                                                   factory).serialize(xmlWriter);
+                                         <xsl:value-of select="$varName"/>[i].serialize(new javax.xml.namespace.QName("<xsl:value-of select="$namespace"/>","<xsl:value-of select="$propertyName"/>"),
+                                                   factory,xmlWriter);
                                         } else {
                                            <xsl:choose>
                                             <xsl:when test="@nillable">
@@ -1501,18 +1500,14 @@
                                         writeAttribute("xsi","http://www.w3.org/2001/XMLSchema-instance","nil","1",xmlWriter);
                                         xmlWriter.writeEndElement();
                                        }else{
-                                         <xsl:value-of select="$varName"/>.getOMDataSource(
-                                         MY_QNAME,
-                                         factory).serialize(xmlWriter);
+                                         <xsl:value-of select="$varName"/>.serialize(MY_QNAME,factory,xmlWriter);
                                        }
                             </xsl:when>
                             <xsl:otherwise>
                                  if (<xsl:value-of select="$varName"/>==null){
                                    throw new RuntimeException("Property cannot be null!");
                                  }
-                                 <xsl:value-of select="$varName"/>.getOMDataSource(
-                                         MY_QNAME,
-                                         factory).serialize(xmlWriter);
+                                 <xsl:value-of select="$varName"/>.serialize(MY_QNAME,factory,xmlWriter);
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
@@ -1728,10 +1723,7 @@
           private java.lang.String createPrefix() {
                 return "ns" + (int)Math.random();
           }
-        };
 
-        return dataSource;
-    }
 
   <!-- ######################################################################################### -->
         /**

@@ -67,12 +67,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -465,7 +460,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 axisBindingInMessage.setAxisMessage(axisInMessage);
                 axisBindingInMessage.setDirection(axisInMessage.getDirection());
-                
+
                 axisBindingOperation
                         .addChild(axisBindingInMessage.getDirection(), axisBindingInMessage);
             }
@@ -587,7 +582,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         return schemaMap;
     }
 
-   
+
 
     /**
      * return the service to process
@@ -1274,36 +1269,30 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
             if (bindingInput != null) {
 
-                Iterator partsIterator = null;
+                Collection partsCollection = null;
                 if (BINDING_TYPE_SOAP.equals(this.bindingType)) {
                     // first see the body parts list
                     List bodyPartsList =
                             getPartsListFromSoapBody(bindingInput.getExtensibilityElements());
                     if (bodyPartsList != null) {
-                        partsIterator = message.getOrderedParts(bodyPartsList).iterator();
+                        partsCollection = message.getOrderedParts(bodyPartsList);
                     } else {
-                        // then see the parameter order
-                        List parameterOrder = operation.getOperation().getParameterOrdering();
-                        if (parameterOrder != null) {
-                            partsIterator = message.getOrderedParts(parameterOrder).iterator();
-                        } else {
-                            // finally get the message part list
-                            partsIterator = message.getParts().values().iterator();
-                        }
-
+                        partsCollection = message.getParts().values();
                     }
                 } else {
                     // i.e http binding
-                    partsIterator = message.getParts().values().iterator();
+                    partsCollection = message.getParts().values();
                 }
 
-
+                List parameterOrder = operation.getOperation().getParameterOrdering();
                 namespaceImportsMap = new HashMap();
                 namespacePrefixMap = new HashMap();
 
                 Node newComplexType = getNewComplextType(document,
                                                          xsdPrefix,
-                                                         partsIterator,
+                                                         partsCollection,
+                                                         parameterOrder,
+                                                         false,
                                                          namespaceImportsMap,
                                                          namespacePrefixMap);
 
@@ -1368,32 +1357,23 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             Message message = (Message) operationToOutputMessageMap.get(operation);
 
             if (bindingOutput != null) {
-                Iterator partsIterator = null;
+                Collection partsCollection = null;
                 if (BINDING_TYPE_SOAP.equals(this.bindingType)) {
                     // first see the body parts list
                     List bodyPartsList =
                             getPartsListFromSoapBody(bindingOutput.getExtensibilityElements());
                     if (bodyPartsList != null) {
-                        bodyPartsList.add("result");
-                        partsIterator = message.getOrderedParts(bodyPartsList).iterator();
+                        partsCollection = message.getOrderedParts(bodyPartsList);
                     } else {
                         // then see the parameter order
-                        List parameterOrder = operation.getOperation().getParameterOrdering();
-                        if (parameterOrder != null) {
-                            parameterOrder = new ArrayList(parameterOrder);
-
-                            parameterOrder.add("result");
-                            partsIterator = message.getOrderedParts(parameterOrder).iterator();
-                        } else {
-                            // finally get the message part list
-                            partsIterator = message.getParts().values().iterator();
-                        }
-
+                        partsCollection = message.getParts().values();
                     }
                 } else {
                     // i.e if http binding
-                    partsIterator = message.getParts().values().iterator();
+                    partsCollection = message.getParts().values();
                 }
+
+                List parameterOrder = operation.getOperation().getParameterOrdering();
 
                 // we have to initialize the hash maps always since we add the elements onece we
                 // generate it
@@ -1402,7 +1382,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
                 Node newComplexType = getNewComplextType(document,
                                                          xsdPrefix,
-                                                         partsIterator,
+                                                         partsCollection,
+                                                         parameterOrder,
+                                                         true,
                                                          namespaceImportsMap,
                                                          namespacePrefixMap);
                 elementDeclaration.appendChild(newComplexType);
@@ -1578,15 +1560,19 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
      *
      * @param document
      * @param xsdPrefix
-     * @param partsIterator
+     * @param partsCollection - parts to be added
+     * @param parameterOrder - param Order list if it is given
+     * @param isOutMessage
      * @param namespaceImportsMap
      * @param namespacePrefixMap
-     * @return the new complex type element
+     * @return new element
      */
 
     private Element getNewComplextType(Document document,
                                        String xsdPrefix,
-                                       Iterator partsIterator,
+                                       Collection partsCollection,
+                                       List parameterOrder,
+                                       boolean isOutMessage,
                                        Map namespaceImportsMap,
                                        Map namespacePrefixMap) {
         // add the complex type
@@ -1597,69 +1583,129 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         Element cmplxTypeSequence = document.createElementNS(
                 XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
                 + XML_SCHEMA_SEQUENCE_LOCAL_NAME);
-        Element child;
+
         Part part;
+        if ((parameterOrder == null) || (parameterOrder.size() == 0)) {
+            // no parameter order then just add the elements in the parts collection
+            for (Iterator partsIter = partsCollection.iterator(); partsIter.hasNext();) {
+                part = (Part) partsIter.next();
+                // the part name
+                addPartToElement(part,
+                        document,
+                        xsdPrefix,
+                        namespaceImportsMap,
+                        namespacePrefixMap,
+                        cmplxTypeSequence);
 
-        while (partsIterator.hasNext()) {
-            part = (Part) partsIterator.next();
-            // the part name
-            String elementName = part.getName();
-
-            // the type name
-            QName schemaTypeName = part.getTypeName();
-
-            if (schemaTypeName != null) {
-
-                child = document.createElementNS(XMLSCHEMA_NAMESPACE_URI,
-                                                 xsdPrefix + ":" + XML_SCHEMA_ELEMENT_LOCAL_NAME);
-                // always child attribute should be in no namespace
-                child.setAttribute("form", "unqualified");
-
-                String prefix;
-                if (XMLSCHEMA_NAMESPACE_URI.equals(schemaTypeName.getNamespaceURI())) {
-                    prefix = xsdPrefix;
-                } else {
-                    // this schema is a third party one. So we need to have
-                    // an import statement in our generated schema
-                    String uri = schemaTypeName.getNamespaceURI();
-                    if (!namespaceImportsMap.containsKey(uri)) {
-                        // create Element for namespace import
-                        Element namespaceImport = document.createElementNS(
-                                XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
-                                + XML_SCHEMA_IMPORT_LOCAL_NAME);
-                        namespaceImport.setAttribute(NAMESPACE_URI, uri);
-                        // add this to the map
-                        namespaceImportsMap.put(uri, namespaceImport);
-                        // we also need to associate this uri with a prefix
-                        // and include that prefix
-                        // in the schema's namspace declarations. So add
-                        // theis particular namespace to the
-                        // prefix map as well
-                        prefix = getTemporaryNamespacePrefix();
-                        namespacePrefixMap.put(uri, prefix);
-                    } else {
-                        // this URI should be already in the namspace prefix
-                        // map
-                        prefix = (String) namespacePrefixMap.get(uri);
-                    }
-
-                }
-
-                child.setAttribute(XSD_NAME, elementName);
-                child.setAttribute(XSD_TYPE, prefix + ":" + schemaTypeName.getLocalPart());
-
-
-                cmplxTypeSequence.appendChild(child);
-
-            } else {
-                // see the basic profile 4.4.1 for rpc-literal messages parts can have only types
-                throw new WSDLProcessingException("RPC-literal type message part " +
-                        part.getName() + "should have a type attribute ");
+            }
+        } else {
+            // i.e an parts order is given
+            // first populate all the parts to a map
+            Map partsMap = new HashMap();
+            for (Iterator partsIter = partsCollection.iterator(); partsIter.hasNext();){
+               part = (Part) partsIter.next();
+               partsMap.put(part.getName(),part);
             }
 
+            String partName;
+            for (Iterator paramOrderIter = parameterOrder.iterator(); paramOrderIter.hasNext();) {
+                partName = (String) paramOrderIter.next();
+                part = (Part) partsMap.get(partName);
+                if (part != null) {
+                    addPartToElement(part,
+                            document,
+                            xsdPrefix,
+                            namespaceImportsMap,
+                            namespacePrefixMap,
+                            cmplxTypeSequence);
+                    partsMap.remove(partName);
+                }
+            }
+            // if this is an out put message then we have to set the
+            // return type if exists
+            if (isOutMessage) {
+                if (partsMap.size() > 0) {
+                    if (partsMap.size() == 1) {
+                        part = (Part) partsMap.values().iterator().next();
+                        // change the name of this part
+                        // this is the return type and its name should be result
+//                        part.setName("result");
+//                        addPartToElement(part,
+//                            document,
+//                            xsdPrefix,
+//                            namespaceImportsMap,
+//                            namespacePrefixMap,
+//                            cmplxTypeSequence);
+                    } else {
+                        throw new WSDLProcessingException("the parameter order can left atmost" +
+                                " one part");
+                    }
+                }
+            }
         }
+
         newComplexType.appendChild(cmplxTypeSequence);
         return newComplexType;
+    }
+
+    private void addPartToElement(Part part,
+                                  Document document,
+                                  String xsdPrefix,
+                                  Map namespaceImportsMap,
+                                  Map namespacePrefixMap,
+                                  Element cmplxTypeSequence) {
+        Element child;
+        String elementName = part.getName();
+
+        // the type name
+        QName schemaTypeName = part.getTypeName();
+
+        if (schemaTypeName != null) {
+
+            child = document.createElementNS(XMLSCHEMA_NAMESPACE_URI,
+                                             xsdPrefix + ":" + XML_SCHEMA_ELEMENT_LOCAL_NAME);
+            // always child attribute should be in no namespace
+            child.setAttribute("form", "unqualified");
+
+            String prefix;
+            if (XMLSCHEMA_NAMESPACE_URI.equals(schemaTypeName.getNamespaceURI())) {
+                prefix = xsdPrefix;
+            } else {
+                // this schema is a third party one. So we need to have
+                // an import statement in our generated schema
+                String uri = schemaTypeName.getNamespaceURI();
+                if (!namespaceImportsMap.containsKey(uri)) {
+                    // create Element for namespace import
+                    Element namespaceImport = document.createElementNS(
+                            XMLSCHEMA_NAMESPACE_URI, xsdPrefix + ":"
+                            + XML_SCHEMA_IMPORT_LOCAL_NAME);
+                    namespaceImport.setAttribute(NAMESPACE_URI, uri);
+                    // add this to the map
+                    namespaceImportsMap.put(uri, namespaceImport);
+                    // we also need to associate this uri with a prefix
+                    // and include that prefix
+                    // in the schema's namspace declarations. So add
+                    // theis particular namespace to the
+                    // prefix map as well
+                    prefix = getTemporaryNamespacePrefix();
+                    namespacePrefixMap.put(uri, prefix);
+                } else {
+                    // this URI should be already in the namspace prefix
+                    // map
+                    prefix = (String) namespacePrefixMap.get(uri);
+                }
+
+            }
+
+            child.setAttribute(XSD_NAME, elementName);
+            child.setAttribute(XSD_TYPE, prefix + ":" + schemaTypeName.getLocalPart());
+            cmplxTypeSequence.appendChild(child);
+
+        } else {
+            // see the basic profile 4.4.1 for rpc-literal messages parts can have only types
+            throw new WSDLProcessingException("RPC-literal type message part " +
+                    part.getName() + " should have a type attribute ");
+        }
     }
 
     /**
