@@ -44,6 +44,8 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLConstants;
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
+
 
 import javax.wsdl.Definition;
 import javax.xml.namespace.QName;
@@ -62,6 +64,10 @@ public class ServiceClient {
      * Base name used for a service created without an existing configuration.
      */
     public static final String ANON_SERVICE = "anonService";
+
+    /** Counter used to generate the anonymous service name. */
+    private static AtomicLong anonServiceCounter = new AtomicLong(0);
+
 
     /**
      * Operation name used for an anonymous out-only operation (meaning we send
@@ -235,7 +241,7 @@ public class ServiceClient {
         // later in the convenience API; if you use
         // this constructor then you can't expect any magic!
         AxisService axisService =
-                new AxisService(ANON_SERVICE + this.hashCode() + System.currentTimeMillis());
+                new AxisService(ANON_SERVICE + anonServiceCounter.incrementAndGet());
         RobustOutOnlyAxisOperation robustoutoonlyOperation = new RobustOutOnlyAxisOperation(
                 ANON_ROBUST_OUT_ONLY_OP);
         axisService.addOperation(robustoutoonlyOperation);
