@@ -56,7 +56,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         }
 
         // check whether someone has explicitly set which addressing handler should run.
-        String namespace = (String) msgContext.getProperty(WS_ADDRESSING_VERSION);
+        String namespace = (String)msgContext.getProperty(WS_ADDRESSING_VERSION);
         if (namespace == null) {
             namespace = addressingNamespace;
         } else if (!namespace.equals(addressingNamespace)) {
@@ -114,15 +114,17 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         ArrayList duplicateHeaderNames =
                 new ArrayList(1); // Normally will not be used for more than 1 header
 
-        // Per the SOAP Binding spec "headers with an incorrect cardinality MUST NOT be used" So these variables
-        // are used to keep track of invalid cardinality headers so they are not deserialised.
+        // Per the SOAP Binding spec "headers with an incorrect cardinality MUST NOT be used" So
+        // these variables are used to keep track of invalid cardinality headers so they are not
+        // deserialised.
         boolean ignoreTo = false, ignoreFrom = false, ignoreReplyTo = false, ignoreFaultTo =
                 false, ignoreMessageID = false, ignoreAction = false;
 
         // First pass just check for duplicates
         Iterator addressingHeadersIt = addressingHeaders.iterator();
         while (addressingHeadersIt.hasNext()) {
-            SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt.next();
+            SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock)addressingHeadersIt.next();
+            // TODO - Don't do role processing here!
             if (!SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole())) {
                 if (WSA_ACTION.equals(soapHeaderBlock.getLocalName())) {
                     ignoreAction = checkDuplicateHeaders(WSA_ACTION, checkedHeaderNames,
@@ -149,7 +151,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         // Now extract information
         Iterator addressingHeadersIt2 = addressingHeaders.iterator();
         while (addressingHeadersIt2.hasNext()) {
-            SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) addressingHeadersIt2.next();
+            SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock)addressingHeadersIt2.next();
             if (!SOAP12Constants.SOAP_ROLE_NONE.equals(soapHeaderBlock.getRole())) {
                 if (WSA_ACTION.equals(soapHeaderBlock.getLocalName()) && !ignoreAction) {
                     extractActionInformation(soapHeaderBlock, namespace, messageContext);
@@ -176,7 +178,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         if (!duplicateHeaderNames.isEmpty()) {
             // Simply choose the first problem header we came across as we can only fault for one of them.
             AddressingFaultsHelper.triggerInvalidCardinalityFault(messageContext,
-                                                                  (String) duplicateHeaderNames
+                                                                  (String)duplicateHeaderNames
                                                                           .get(0));
         }
 
@@ -313,7 +315,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         if (addressAttributes != null && addressAttributes.hasNext()) {
             ArrayList attributes = new ArrayList();
             while (addressAttributes.hasNext()) {
-                OMAttribute attr = (OMAttribute) addressAttributes.next();
+                OMAttribute attr = (OMAttribute)addressAttributes.next();
                 attributes.add(attr);
             }
             epr.setAddressAttributes(attributes);
@@ -411,7 +413,7 @@ public abstract class AddressingInHandler extends AbstractHandler implements Add
         if (actionAttributes != null && actionAttributes.hasNext()) {
             ArrayList attributes = new ArrayList();
             while (actionAttributes.hasNext()) {
-                OMAttribute attr = (OMAttribute) actionAttributes.next();
+                OMAttribute attr = (OMAttribute)actionAttributes.next();
                 attributes.add(attr);
             }
             return attributes;

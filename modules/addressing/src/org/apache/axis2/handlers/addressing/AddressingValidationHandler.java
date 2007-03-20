@@ -44,10 +44,15 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
 
         if (JavaUtils.isTrueExplicitly(flag)) {
             // If no AxisOperation has been found at the end of the dispatch phase and addressing
-            // is in use we should throw an ActionNotSupported Fault
-            checkAction(msgContext);
-            // Check if the wsa:MessageID is required or not.
-            checkMessageIDHeader(msgContext);
+            // is in use we should throw an ActionNotSupported Fault, unless we've been told
+            // not to do this check (by Synapse, for instance)
+            if (JavaUtils.isTrue(msgContext.getProperty(ADDR_VALIDATE_ACTION), true)) {
+                checkAction(msgContext);
+
+                // Check if the wsa:MessageID is required or not.
+                checkMessageIDHeader(msgContext);
+            }
+
             // Check that if anonymous flag is in effect that the replyto and faultto are valid
             //checkAnonymous(msgContext);
         }
