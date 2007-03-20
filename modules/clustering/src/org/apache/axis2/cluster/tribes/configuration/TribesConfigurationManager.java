@@ -23,10 +23,10 @@ import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
 import org.apache.axis2.cluster.tribes.ChannelSender;
 import org.apache.axis2.cluster.tribes.CommandType;
 import org.apache.axis2.engine.AxisConfiguration;
-import org.apache.neethi.Policy;
 import org.apache.catalina.tribes.Channel;
-import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.ChannelException;
+import org.apache.catalina.tribes.Member;
+import org.apache.neethi.Policy;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -93,15 +93,15 @@ public class TribesConfigurationManager implements ConfigurationManager {
         Channel channel = sender.getChannel();
         if (channel.getMembers().length > 0) {
             sender.send(command);
+        }
 
-            // Need to send the message to self too
-            try {
-                channel.send(new Member[]{channel.getLocalMember(true)},
-                             command,
-                             0);
-            } catch (ChannelException e) {
-                throw new ClusteringFault(e);
-            }
+        // Need to send the message to self too
+        try {
+            channel.send(new Member[]{channel.getLocalMember(true)},
+                         command,
+                         0);
+        } catch (ChannelException e) {
+            throw new ClusteringFault(e);
         }
     }
 
