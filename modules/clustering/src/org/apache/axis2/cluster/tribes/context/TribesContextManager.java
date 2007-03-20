@@ -16,18 +16,13 @@
 
 package org.apache.axis2.cluster.tribes.context;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.axis2.cluster.ClusteringFault;
 import org.apache.axis2.cluster.context.ContextEvent;
 import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.cluster.context.ContextManagerListener;
 import org.apache.axis2.cluster.listeners.DefaultContextManagerListener;
 import org.apache.axis2.cluster.tribes.ChannelSender;
+import org.apache.axis2.cluster.tribes.CommandMessage;
 import org.apache.axis2.cluster.tribes.CommandType;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
@@ -38,253 +33,273 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.*;
+
 public class TribesContextManager implements ContextManager {
 
     private static final Log log = LogFactory.getLog(TribesContextManager.class);
-    
-	private ConfigurationContext configContext;
-	private ContextUpdater updater;
 
-	private Map orphanedServiceCtxs = new HashMap ();
-	private ArrayList addedServiceGrpCtxs = new ArrayList ();
-	private ArrayList addedServiceCtxs = new ArrayList ();
-	private ArrayList listeners = null;
-	
-	private ChannelSender sender;
-	
-	public void setSender(ChannelSender sender) {
-		this.sender = sender;
-	}
+    private ConfigurationContext configContext;
+    private ContextUpdater updater;
 
-	public TribesContextManager (ConfigurationContext configurationContext, ContextUpdater updater) {
-		this ();
-		this.configContext = configurationContext;
-		this.updater = updater;
-	}
-	
-	public TribesContextManager () {
-		listeners = new ArrayList ();
-	}
-	
-	public void notifyListeners(ContextEvent event, int eventType) {
+    private Map orphanedServiceCtxs = new HashMap();
+    private List addedServiceGrpCtxs = new ArrayList();
+    private List addedServiceCtxs = new ArrayList();
+    private List listeners = null;
 
-		for (Iterator it = listeners.iterator(); it.hasNext();) {
-			ContextManagerListener listener = (ContextManagerListener) it.next();
+    private ChannelSender sender;
 
-			if (eventType == ContextListenerEventType.ADD_CONTEXT)
-				listener.contextAdded(event);
-			else if (eventType == ContextListenerEventType.REMOVE_CONTEXT)
-				listener.contextRemoved(event);
-			else if (eventType == ContextListenerEventType.UPDATE_CONTEXT)
-				listener.contextUpdated(event);
-		}
-		
-	}
-	
-	public void addContext(AbstractContext context) throws ClusteringFault {
-		ContextCommandMessage comMsg = null;
+    public void setSender(ChannelSender sender) {
+        this.sender = sender;
+    }
 
-		String contextId = getContextID(context);
-		String parentContextId = getContextID(context.getParent());
+    public TribesContextManager(ConfigurationContext configurationContext, ContextUpdater updater) {
+        this();
+        this.configContext = configurationContext;
+        this.updater = updater;
+    }
 
-		// The ServiceContex does not define a contextId
-		// therefore the service name is used
-		if (context instanceof ServiceContext) {
+    public TribesContextManager() {
+        listeners = new ArrayList();
+    }
 
-			if (addedServiceCtxs.contains (parentContextId + contextId)) {
-				return; // this is a duplicate replication request
-			}
+    public void notifyListeners(ContextEvent event, int eventType) {
 
-			if (updater.getServiceGroupProps(parentContextId) != null) {
-				updater.addServiceContext(parentContextId, contextId);
-				comMsg = new ContextCommandMessage(CommandType.CREATE_SERVICE_CONTEXT,
-						parentContextId, contextId, contextId, ContextType.SERVICE_CONTEXT);
-				sender.send(comMsg);
-			} else {
-				// put in the queue until the service group context is created
-				// with an id
-				comMsg = new ContextCommandMessage(CommandType.CREATE_SERVICE_CONTEXT,
-						parentContextId, contextId, contextId, ContextType.SERVICE_CONTEXT);
+        for (Iterator it = listeners.iterator(); it.hasNext();) {
+            ContextManagerListener listener = (ContextManagerListener) it.next();
 
-				AxisServiceGroup serviceGroupDesc = ((ServiceContext) context)
-						.getServiceGroupContext().getDescription();
-				List list = (List) orphanedServiceCtxs.get(serviceGroupDesc
-						.getServiceGroupName());
-				if (list == null) {
-					list = new ArrayList();
-					orphanedServiceCtxs.put(serviceGroupDesc.getServiceGroupName(), list);
-				}
-				list.add(comMsg);
-			}
-		} else if (context instanceof ServiceGroupContext) {
+            if (eventType == ContextListenerEventType.ADD_CONTEXT) {
+                listener.contextAdded(event);
+            } else if (eventType == ContextListenerEventType.REMOVE_CONTEXT) {
+                listener.contextRemoved(event);
+            } else if (eventType == ContextListenerEventType.UPDATE_CONTEXT) {
+                listener.contextUpdated(event);
+            }
+        }
 
-			if (addedServiceGrpCtxs.contains (contextId)) {
-				return; // this is a duplicate replication request
-			}
+    }
 
-			ServiceGroupContext srvGrpCtx = (ServiceGroupContext) context;
+    public void addContext(AbstractContext context) throws ClusteringFault {
+        ContextCommandMessage comMsg = null;
 
-			// The new serialization code sets the service group name as it's id initially
-			if (srvGrpCtx.getId().equals(srvGrpCtx.getDescription().getServiceGroupName())) {
-				return;
-			}
+        String contextId = getContextID(context);
+        String parentContextId = getContextID(context.getParent());
 
-			updater.addServiceGroupContext(contextId);
+        // The ServiceContex does not define a contextId
+        // therefore the service name is used
+        if (context instanceof ServiceContext) {
 
-			comMsg = new ContextCommandMessage(CommandType.CREATE_SERVICE_GROUP_CONTEXT, "",
-					contextId, srvGrpCtx.getDescription().getServiceGroupName(),
-					ContextType.SERVICE_GROUP_CONTEXT);
+            if (addedServiceCtxs.contains(parentContextId + contextId)) {
+                return; // this is a duplicate replication request
+            }
 
-			sender.send(comMsg);
+            if (updater.getServiceGroupProps(parentContextId) != null) {
+                updater.addServiceContext(parentContextId, contextId);
+                comMsg = new ContextCommandMessage(CommandType.CREATE_SERVICE_CONTEXT,
+                                                   parentContextId,
+                                                   contextId,
+                                                   contextId,
+                                                   ContextType.SERVICE_CONTEXT);
+                send(comMsg);
+            } else {
+                // put in the queue until the service group context is created
+                // with an id
+                comMsg = new ContextCommandMessage(CommandType.CREATE_SERVICE_CONTEXT,
+                                                   parentContextId,
+                                                   contextId,
+                                                   contextId,
+                                                   ContextType.SERVICE_CONTEXT);
 
-			// now iterate through the list of service contexts and replicate them
-			List list = (List) orphanedServiceCtxs.get(srvGrpCtx.getDescription()
-					.getServiceGroupName());
+                AxisServiceGroup serviceGroupDesc = ((ServiceContext) context)
+                        .getServiceGroupContext().getDescription();
+                List list = (List) orphanedServiceCtxs.get(serviceGroupDesc
+                        .getServiceGroupName());
+                if (list == null) {
+                    list = new ArrayList();
+                    orphanedServiceCtxs.put(serviceGroupDesc.getServiceGroupName(), list);
+                }
+                list.add(comMsg);
+            }
+        } else if (context instanceof ServiceGroupContext) {
 
-			if (list != null) {
-				for (Iterator it=list.iterator();it.hasNext();) {
-					
-					ContextCommandMessage command = (ContextCommandMessage) it.next();
-					updater.addServiceContext(contextId, command.getContextId());
-					command.setParentId(contextId);
+            if (addedServiceGrpCtxs.contains(contextId)) {
+                return; // this is a duplicate replication request
+            }
 
-					sender.send(command);
+            ServiceGroupContext srvGrpCtx = (ServiceGroupContext) context;
 
-				}
+            // The new serialization code sets the service group name as it's id initially
+            if (srvGrpCtx.getId().equals(srvGrpCtx.getDescription().getServiceGroupName())) {
+                return;
+            }
 
-				orphanedServiceCtxs.remove(srvGrpCtx.getDescription().getServiceGroupName());
-			}
-		}
-	}
+            updater.addServiceGroupContext(contextId);
 
-	/*
-	 * public void addProperty(AbstractContext ctx,String contextId, String
-	 * parentId, String propertyName, Object propertyValue) { if (ctx instanceof
-	 * ServiceContext){ ctxManager.addPropToServiceContext(parentId, contextId,
-	 * propertyName, propertyValue); }else{
-	 * ctxManager.addPropToServiceGroupContext(contextId, propertyName,
-	 * propertyValue); } }
-	 */
+            comMsg = new ContextCommandMessage(CommandType.CREATE_SERVICE_GROUP_CONTEXT,
+                                               "",
+                                               contextId,
+                                               srvGrpCtx.getDescription().getServiceGroupName(),
+                                               ContextType.SERVICE_GROUP_CONTEXT);
 
-	public void removeContext(AbstractContext context) throws ClusteringFault {
-		ContextCommandMessage comMsg = null;
+            send(comMsg);
 
-		String contextId = getContextID(context);
-		String parentContextId = getContextID(context.getParent());
+            // now iterate through the list of service contexts and replicate them
+            List list = (List) orphanedServiceCtxs.get(srvGrpCtx.getDescription()
+                    .getServiceGroupName());
 
-		if (context instanceof ServiceContext) {
-			updater.removeServiceContext(parentContextId, contextId);
-			comMsg = new ContextCommandMessage(CommandType.CREATE_SERVICE_GROUP_CONTEXT,
-					parentContextId, contextId, contextId, ContextType.SERVICE_CONTEXT);
-		} else if (context instanceof ServiceGroupContext) {
-			updater.removeServiceGroupContext(contextId);
-			comMsg = new ContextCommandMessage(CommandType.REMOVE_SERVICE_GROUP_CONTEXT, "",
-					contextId, ((ServiceGroupContext) context).getDescription()
-							.getServiceGroupName(), ContextType.SERVICE_CONTEXT);
-		}
+            if (list != null) {
+                for (Iterator it = list.iterator(); it.hasNext();) {
 
-		sender.send(comMsg);
-	}
+                    ContextCommandMessage command = (ContextCommandMessage) it.next();
+                    updater.addServiceContext(contextId, command.getContextId());
+                    command.setParentId(contextId);
 
-	/*
-	 * public void removeProperty(AbstractContext ctx, String contextId, String
-	 * parentId, String propertyName) { if (ctx instanceof ServiceContext){
-	 * ctxManager.removePropFromServiceContext(parentId, contextId,
-	 * propertyName); }else{
-	 * ctxManager.removePropFromServiceGroupContext(contextId, propertyName); } }
-	 */
+                    send(command);
 
-	public void updateState(AbstractContext context) throws ClusteringFault {
+                }
 
-		String contextId = getContextID(context);
-		String parentContextId = getContextID(context.getParent());
+                orphanedServiceCtxs.remove(srvGrpCtx.getDescription().getServiceGroupName());
+            }
+        }
+    }
 
-		Map props = context.getProperties();
+    /*
+      * public void addProperty(AbstractContext ctx,String contextId, String
+      * parentId, String propertyName, Object propertyValue) { if (ctx instanceof
+      * ServiceContext){ ctxManager.addPropToServiceContext(parentId, contextId,
+      * propertyName, propertyValue); }else{
+      * ctxManager.addPropToServiceGroupContext(contextId, propertyName,
+      * propertyValue); } }
+      */
 
-		List mapEntryMsgs = null;
+    public void removeContext(AbstractContext context) throws ClusteringFault {
+        ContextCommandMessage comMsg = null;
 
-		int contextType = 0;
-		if (context instanceof ServiceContext) {
-			contextType = ContextType.SERVICE_CONTEXT;
-			mapEntryMsgs = updater
-					.updateStateOnServiceContext(parentContextId, contextId, props);
-		} else if (context instanceof ServiceGroupContext) {
-			contextType = ContextType.SERVICE_GROUP_CONTEXT;
-			mapEntryMsgs = updater.updateStateOnServiceGroupContext(contextId, props);
-		}
+        String contextId = getContextID(context);
+        String parentContextId = getContextID(context.getParent());
 
-		if (mapEntryMsgs != null) {
-			for (Iterator it=mapEntryMsgs.iterator();it.hasNext();) {
-				ContextUpdateEntryCommandMessage msg = (ContextUpdateEntryCommandMessage) it.next();
-				sender.send(msg);
-			}
-		}
+        if (context instanceof ServiceContext) {
+            updater.removeServiceContext(parentContextId, contextId);
+            comMsg = new ContextCommandMessage(CommandType.CREATE_SERVICE_GROUP_CONTEXT,
+                                               parentContextId, contextId, contextId, ContextType.SERVICE_CONTEXT);
+        } else if (context instanceof ServiceGroupContext) {
+            updater.removeServiceGroupContext(contextId);
+            comMsg = new ContextCommandMessage(CommandType.REMOVE_SERVICE_GROUP_CONTEXT, "",
+                                               contextId, ((ServiceGroupContext) context).getDescription()
+                    .getServiceGroupName(), ContextType.SERVICE_CONTEXT);
+        }
 
-		ContextCommandMessage comMsg = new ContextCommandMessage(CommandType.UPDATE_STATE,
-				parentContextId, contextId, contextId, contextType);
+        send(comMsg);
+    }
 
-		sender.send(comMsg);
-	}
+    /*
+      * public void removeProperty(AbstractContext ctx, String contextId, String
+      * parentId, String propertyName) { if (ctx instanceof ServiceContext){
+      * ctxManager.removePropFromServiceContext(parentId, contextId,
+      * propertyName); }else{
+      * ctxManager.removePropFromServiceGroupContext(contextId, propertyName); } }
+      */
 
-	public boolean isContextClusterable(AbstractContext context) {
+    public void updateState(AbstractContext context) throws ClusteringFault {
 
-		if ((context instanceof ConfigurationContext) || (context instanceof ServiceContext)
-				|| (context instanceof ServiceGroupContext)) {
-			return true;
-		}
+        String contextId = getContextID(context);
+        String parentContextId = getContextID(context.getParent());
 
-		return false;
-	}
-	
-	private String getContextID(AbstractContext context) {
+        Map props = context.getProperties();
 
-		String id = null;
+        List mapEntryMsgs = null;
 
-		if (context instanceof ServiceContext) {
-			AxisService axisService = ((ServiceContext) context).getAxisService();
-			return axisService.getName();
-		} else if (context instanceof ServiceGroupContext) {
-			return ((ServiceGroupContext) context).getId();
-		}
+        int contextType = 0;
+        if (context instanceof ServiceContext) {
+            contextType = ContextType.SERVICE_CONTEXT;
+            mapEntryMsgs = updater
+                    .updateStateOnServiceContext(parentContextId, contextId, props);
+        } else if (context instanceof ServiceGroupContext) {
+            contextType = ContextType.SERVICE_GROUP_CONTEXT;
+            mapEntryMsgs = updater.updateStateOnServiceGroupContext(contextId, props);
+        }
 
-		return id;
-	}
+        if (mapEntryMsgs != null) {
+            for (Iterator it = mapEntryMsgs.iterator(); it.hasNext();) {
+                ContextUpdateEntryCommandMessage msg = (ContextUpdateEntryCommandMessage) it.next();
+                send(msg);
+            }
+        }
 
-	public void addToDuplicateServiceGroupContexts (String id) {
-		
-	}
-	
-	public void addToDuplicateServiceContexts (String id) {
-		
-	}
+        ContextCommandMessage comMsg = new ContextCommandMessage(CommandType.UPDATE_STATE,
+                                                                 parentContextId,
+                                                                 contextId,
+                                                                 contextId,
+                                                                 contextType);
 
-	public void addContextManagerListener(ContextManagerListener listener) {
-		if (configContext!=null)
-			listener.setConfigurationContext(configContext);
-		
-		listeners.add(listener);
-	}
+        send(comMsg);
+    }
 
-	public void setUpdater(ContextUpdater updater) {
-		this.updater = updater;
-		
-		//updating the listeners
-		for (Iterator it = listeners.iterator();it.hasNext();) {
-			DefaultContextManagerListener listener = (DefaultContextManagerListener) it.next();
-			listener.setUpdater(updater);
-		}
-	}
+    public boolean isContextClusterable(AbstractContext context) {
 
-	public void setConfigurationContext(ConfigurationContext configurationContext) {
-		this.configContext = configurationContext;
-		
-		//setting this to the listeners as well.
-		if (listeners!=null) {
-			for (Iterator it=listeners.iterator();it.hasNext();) {
-				ContextManagerListener listener = (ContextManagerListener) it.next();
-				listener.setConfigurationContext(configurationContext);
-			}
-		}
-	}
-	
+        if ((context instanceof ConfigurationContext) || (context instanceof ServiceContext)
+            || (context instanceof ServiceGroupContext)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private String getContextID(AbstractContext context) {
+
+        String id = null;
+
+        if (context instanceof ServiceContext) {
+            AxisService axisService = ((ServiceContext) context).getAxisService();
+            return axisService.getName();
+        } else if (context instanceof ServiceGroupContext) {
+            return ((ServiceGroupContext) context).getId();
+        }
+
+        return id;
+    }
+
+    public void addToDuplicateServiceGroupContexts(String id) {
+
+    }
+
+    public void addToDuplicateServiceContexts(String id) {
+
+    }
+
+    public void addContextManagerListener(ContextManagerListener listener) {
+        if (configContext != null) {
+            listener.setConfigurationContext(configContext);
+        }
+
+        listeners.add(listener);
+    }
+
+    public void setUpdater(ContextUpdater updater) {
+        this.updater = updater;
+
+        //updating the listeners
+        for (Iterator it = listeners.iterator(); it.hasNext();) {
+            DefaultContextManagerListener listener = (DefaultContextManagerListener) it.next();
+            listener.setUpdater(updater);
+        }
+    }
+
+    public void setConfigurationContext(ConfigurationContext configurationContext) {
+        this.configContext = configurationContext;
+
+        //setting this to the listeners as well.
+        if (listeners != null) {
+            for (Iterator it = listeners.iterator(); it.hasNext();) {
+                ContextManagerListener listener = (ContextManagerListener) it.next();
+                listener.setConfigurationContext(configurationContext);
+            }
+        }
+    }
+
+    private void send(CommandMessage command) throws ClusteringFault {
+        if (sender.getChannel().getMembers().length > 0) {
+            sender.send(command);
+        }
+    }
 }
