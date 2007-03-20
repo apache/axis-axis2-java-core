@@ -319,7 +319,12 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
      */
     protected String getFullyQualifiedStubName() {
         String packageName = codeGenConfiguration.getPackageName();
-        String localPart = makeJavaClassName(axisService.getName() + axisService.getEndpointName());
+        String localPart = null;
+        if (this.axisService.getEndpoints().size() > 1){
+           localPart = makeJavaClassName(axisService.getName() + axisService.getEndpointName());
+        } else {
+           localPart = makeJavaClassName(axisService.getName()); 
+        }
         return packageName + "." + localPart + STUB_SUFFIX;
     }
 
@@ -562,14 +567,26 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element rootElement = doc.createElement("class");
 
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
-        addAttribute(doc, "name", makeJavaClassName(axisService.getName() + axisService.getEndpointName())
+        if (this.axisService.getEndpoints().size() > 1){
+            addAttribute(doc, "name", makeJavaClassName(axisService.getName() + axisService.getEndpointName())
                 + TEST_SUFFIX, rootElement);
+        } else {
+           addAttribute(doc, "name", makeJavaClassName(axisService.getName())
+                + TEST_SUFFIX, rootElement);
+        }
+
         //todo is this right ???
         addAttribute(doc, "namespace", axisService.getTargetNamespace(), rootElement);
         addAttribute(doc, "interfaceName", coreClassName, rootElement);
         if (codeGenConfiguration.isPackClasses()){
-           addAttribute(doc, "callbackname", makeJavaClassName(axisService.getName() + axisService.getEndpointName())
+           if (this.axisService.getEndpoints().size() > 1){
+               addAttribute(doc, "callbackname", makeJavaClassName(axisService.getName() + axisService.getEndpointName())
                    + CALL_BACK_HANDLER_SUFFIX, rootElement);
+           } else {
+               addAttribute(doc, "callbackname", makeJavaClassName(axisService.getName())
+                   + CALL_BACK_HANDLER_SUFFIX, rootElement);
+           }
+
         } else {
            addAttribute(doc, "callbackname", coreClassName + CALL_BACK_HANDLER_SUFFIX, rootElement);
         }
@@ -577,8 +594,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "stubname",
                     makeJavaClassName(axisService.getBindingName()) + STUB_SUFFIX, rootElement);
         } else {
-            addAttribute(doc, "stubname", makeJavaClassName(axisService.getName() + axisService.getEndpointName())
+            if (this.axisService.getEndpoints().size() > 1){
+               addAttribute(doc, "stubname", makeJavaClassName(axisService.getName() + axisService.getEndpointName())
                     + STUB_SUFFIX, rootElement);
+            } else {
+               addAttribute(doc, "stubname", makeJavaClassName(axisService.getName())
+                    + STUB_SUFFIX, rootElement);
+            }
+
         }
 
         //add backwordcompatibility attribute
@@ -644,16 +667,31 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             addAttribute(doc, "name", makeJavaClassName(axisService.getBindingName()) + STUB_SUFFIX,
                     rootElement);
         } else {
-            addAttribute(doc, "interfaceName",
+            if (this.axisService.getEndpoints().size() > 1){
+                addAttribute(doc, "interfaceName",
                     makeJavaClassName(axisService.getName() + axisService.getEndpointName()) ,
                     rootElement);
-            addAttribute(doc, "name", stubName, rootElement);
+                addAttribute(doc, "name", stubName, rootElement);
+            } else {
+                addAttribute(doc, "interfaceName",
+                    makeJavaClassName(axisService.getName()) ,
+                    rootElement);
+                addAttribute(doc, "name", makeJavaClassName(axisService.getName()) + STUB_SUFFIX, rootElement);
+            }
+
         }
 
         if (codeGenConfiguration.isPackClasses()){
-            addAttribute(doc, "callbackname",
+            if (this.axisService.getEndpoints().size() > 1){
+                addAttribute(doc, "callbackname",
                     makeJavaClassName(axisService.getName() + axisService.getEndpointName()) +
                             CALL_BACK_HANDLER_SUFFIX, rootElement);
+            } else {
+                addAttribute(doc, "callbackname",
+                    makeJavaClassName(axisService.getName()) +
+                            CALL_BACK_HANDLER_SUFFIX, rootElement);
+            }
+
         } else {
             addAttribute(doc, "callbackname", localPart + CALL_BACK_HANDLER_SUFFIX, rootElement);
         }
@@ -1010,9 +1048,10 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         Element rootElement = doc.createElement("callback");
 
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
-        if (codeGenConfiguration.isPackClasses()){
+        if (codeGenConfiguration.isPackClasses() && this.axisService.getEndpoints().size() > 1){
             addAttribute(doc, "name",
-                makeJavaClassName(axisService.getName() + axisService.getEndpointName()) + CALL_BACK_HANDLER_SUFFIX, rootElement);
+                makeJavaClassName(axisService.getName() + axisService.getEndpointName())
+                        + CALL_BACK_HANDLER_SUFFIX, rootElement);
         } else {
             addAttribute(doc, "name",
                 makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX, rootElement);
@@ -1056,14 +1095,21 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
             localPart =
                     makeJavaClassName(axisService.getEndpointName() + STUB_INTERFACE_SUFFIX_BACK);
         } else {
-            localPart = makeJavaClassName(axisService.getName() + axisService.getEndpointName());
+            if (this.axisService.getEndpoints().size() > 1){
+                localPart = makeJavaClassName(axisService.getName() + axisService.getEndpointName());
+            } else {
+                localPart = makeJavaClassName(axisService.getName());
+            }
         }
 
         addAttribute(doc, "package", codeGenConfiguration.getPackageName(), rootElement);
         addAttribute(doc, "name", localPart, rootElement);
+
         addAttribute(doc, "callbackname",
                 makeJavaClassName(axisService.getName()) + CALL_BACK_HANDLER_SUFFIX,
                 rootElement);
+
+
         //add backwordcompatibility attribute
         addAttribute(doc, "isbackcompatible",
                 String.valueOf(codeGenConfiguration.isBackwordCompatibilityMode()),

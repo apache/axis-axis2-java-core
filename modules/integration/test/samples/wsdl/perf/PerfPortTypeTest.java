@@ -52,7 +52,7 @@ public class PerfPortTypeTest extends UtilServerBasedTestCase {
      * Auto generated test method
      */
    public void testhandleStringArray() throws java.lang.Exception {
-        PerfPortTypePerformanceStub stub = new PerfPortTypePerformanceStub(null, targetEpr);
+        PerfPortTypeStub stub = new PerfPortTypeStub(null, targetEpr);
         //create a new databinder
         stub._getServiceClient().getOptions().setAction("handleStringArray");
         log.info(">>>> Warming up...");
@@ -64,7 +64,7 @@ public class PerfPortTypeTest extends UtilServerBasedTestCase {
         pump(stub, 100000);
     }
 
-    private void pump(PerfPortTypePerformanceStub stub, int count) throws Exception {
+    private void pump(PerfPortTypeStub stub, int count) throws Exception {
         InputElementDocument input =
                 InputElementDocument.Factory.newInstance();
         String[] s = new String[count];
