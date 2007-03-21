@@ -89,7 +89,7 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         dispatchPhase.addHandler(smbd);
         dispatchPhase.addHandler(id);
         config.getGlobalInFlow().add(dispatchPhase);
-        TransportInDescription tIn = new TransportInDescription(new QName(Constants.TRANSPORT_LOCAL));
+        TransportInDescription tIn = new TransportInDescription(Constants.TRANSPORT_LOCAL);
         tIn.setReceiver(new TransportListener() {
 
             public void init(ConfigurationContext axisConf, TransportInDescription transprtIn) {
@@ -115,7 +115,7 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
         });
         config.addTransportIn(tIn);
 
-        tOut = new TransportOutDescription(new QName(Constants.TRANSPORT_LOCAL));
+        tOut = new TransportOutDescription(Constants.TRANSPORT_LOCAL);
         tOut.setSender(new LocalTransportSender());
         config.addTransportOut(tOut);
 

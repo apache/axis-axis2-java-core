@@ -18,14 +18,11 @@ package org.apache.axis2.mail;
 
 //todo
 
-import java.util.Iterator;
-
 import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
@@ -36,8 +33,6 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.transport.mail.SimpleMailListener;
 
@@ -51,11 +46,7 @@ public class MailOneWayRawXMLTest extends TestCase {
     private QName operationName = new QName("echoOMElement");
 
 
-    private ConfigurationContext configContext;
     private ConfigurationContext clientConfigContext;
-
-    private SOAPEnvelope envelope;
-
 
     public MailOneWayRawXMLTest() {
         super(MailOneWayRawXMLTest.class.getName());
@@ -67,13 +58,12 @@ public class MailOneWayRawXMLTest extends TestCase {
 
     protected void setUp() throws Exception {
         //start the mail server      
-        configContext = UtilsMailServer.start();
+        ConfigurationContext configContext = UtilsMailServer.start();
         clientConfigContext = UtilsMailServer.createClientConfigurationContext();
 
         SimpleMailListener ml = new SimpleMailListener();
         ml.init(configContext,
-                configContext.getAxisConfiguration().getTransportIn(
-                        new QName(Constants.TRANSPORT_MAIL)));
+                configContext.getAxisConfiguration().getTransportIn(Constants.TRANSPORT_MAIL));
         ml.start();
 
         AxisService service = new AxisService(serviceName.getLocalPart());
@@ -82,7 +72,7 @@ public class MailOneWayRawXMLTest extends TestCase {
         axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messageCtx) {
-                envelope = messageCtx.getEnvelope();
+                messageCtx.getEnvelope();
             }
         });
         service.addOperation(axisOperation);
@@ -112,7 +102,7 @@ public class MailOneWayRawXMLTest extends TestCase {
         axisOperation.setName(operationName);
         axisOperation.setMessageReceiver(new MessageReceiver() {
             public void receive(MessageContext messageCtx) {
-                envelope = messageCtx.getEnvelope();
+                messageCtx.getEnvelope();
             }
         });
         service.addOperation(axisOperation);

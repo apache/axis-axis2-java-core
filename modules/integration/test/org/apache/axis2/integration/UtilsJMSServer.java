@@ -71,7 +71,7 @@ public class UtilsJMSServer {
             }
             receiver = new JMSListener();
             ListenerManager listenerManager = configurationContext.getListenerManager();
-            TransportInDescription trsIn = configurationContext.getAxisConfiguration().getTransportIn(new QName(Constants.TRANSPORT_JMS));
+            TransportInDescription trsIn = configurationContext.getAxisConfiguration().getTransportIn(Constants.TRANSPORT_JMS);
             trsIn.setReceiver(receiver);
             if (listenerManager == null) {
                 listenerManager = new ListenerManager();

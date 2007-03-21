@@ -93,7 +93,7 @@ public class MailCharSetEncodingTest extends TestCase {
         SimpleMailListener ml = new SimpleMailListener();
 
         ml.init(serverConfigContext, serverConfigContext.getAxisConfiguration()
-                .getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
+                .getTransportIn(Constants.TRANSPORT_MAIL));
         ml.start();
 
     }
