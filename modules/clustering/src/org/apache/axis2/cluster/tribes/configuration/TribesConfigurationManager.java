@@ -22,7 +22,6 @@ import org.apache.axis2.cluster.configuration.ConfigurationEvent;
 import org.apache.axis2.cluster.configuration.ConfigurationManager;
 import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
 import org.apache.axis2.cluster.tribes.ChannelSender;
-import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
@@ -129,7 +128,7 @@ public class TribesConfigurationManager implements ConfigurationManager {
                 listener.policyApplied(event);
             } else if (CommandType.RELOAD_CONFIGURATION == command) {
                 listener.configurationReloaded(event);
-            } else if (CommandType.PREPARE == command) {
+            } else if (CommandType.PREPARE == command) {            
                 listener.prepareCalled(event);
             } else if (CommandType.COMMIT == command) {
                 listener.commitCalled(event);
@@ -141,6 +140,9 @@ public class TribesConfigurationManager implements ConfigurationManager {
 
     public void setConfigurationContext(ConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
+        for (Iterator it = listeners.iterator(); it.hasNext();) {
+            ConfigurationManagerListener listener = (ConfigurationManagerListener) it.next();
+            listener.setConfigurationContext(configurationContext);
+        }
     }
-
 }

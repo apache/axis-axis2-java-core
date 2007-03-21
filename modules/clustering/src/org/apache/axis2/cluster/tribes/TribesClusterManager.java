@@ -85,8 +85,10 @@ public class TribesClusterManager implements ClusterManager {
 		contextManager.setSender(sender);
         configurationManager.setSender(sender);
 
+        System.err.println("########## Setting the cfg ctx ###################");
         contextManager.setConfigurationContext(configurationContext);
         configurationManager.setConfigurationContext(configurationContext);
+        
 
         try {
 			ManagedChannel channel = new GroupChannel();
