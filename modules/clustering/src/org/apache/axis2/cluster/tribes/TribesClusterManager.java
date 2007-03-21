@@ -52,15 +52,15 @@ public class TribesClusterManager implements ClusterManager {
 	private ContextUpdater updater;
 	private static long timeout = 1000L; // this should be configured in the axis2.xml
 	private HashMap parameters = null;
-	
+
     private static final Log log = LogFactory.getLog(TribesClusterManager.class);
-    
+
     public TribesClusterManager () {
 		contextManager = new TribesContextManager ();
 		configurationManager = new TribesConfigurationManager ();
 		parameters = new HashMap ();
     }
-	
+
 	public ContextManager getContextManager() {
 		return contextManager;
 	}
@@ -85,6 +85,9 @@ public class TribesClusterManager implements ClusterManager {
 		contextManager.setSender(sender);
         configurationManager.setSender(sender);
 
+        contextManager.setConfigurationContext(configurationContext);
+        configurationManager.setConfigurationContext(configurationContext);
+
         try {
 			ManagedChannel channel = new GroupChannel();
 
@@ -96,16 +99,16 @@ public class TribesClusterManager implements ClusterManager {
 			sender.setChannel(channel);
 			contextManager.setSender(sender);
 			configurationManager.setSender(sender);
-			
+
 			Member[] members = channel.getMembers();
 			TribesUtil.printMembers (members);
-			
+
 			updater = new ContextUpdater ();
 			contextManager.setUpdater(updater);
-			
+
 			listener.setUpdater(updater);
 			listener.setContextManager(contextManager);
-			
+
 //			registerTribesInfoService(configurationContext);
 
 		} catch (ChannelException e) {
@@ -149,24 +152,24 @@ public class TribesClusterManager implements ClusterManager {
 
 	public ArrayList getParameters() {
 		ArrayList list = new ArrayList ();
-		for (Iterator it=parameters.keySet().iterator();it.hasNext();) { 
+		for (Iterator it=parameters.keySet().iterator();it.hasNext();) {
 			list.add(parameters.get(it.next()));
 		}
-		
+
 		return list;
 	}
 
 	public boolean isParameterLocked(String parameterName) {
-		
+
 		Parameter parameter = (Parameter) parameters.get(parameterName);
 		if (parameter!=null)
 			return parameter.isLocked();
-		
+
 		return false;
 	}
 
 	public void removeParameter(Parameter param) throws AxisFault {
 		parameters.remove(param.getName());
 	}
-	
+
 }
