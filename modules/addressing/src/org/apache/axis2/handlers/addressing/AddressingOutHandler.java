@@ -113,8 +113,6 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
     private class WSAHeaderWriter {
 
-        private final Log log = LogFactory.getLog(AddressingOutHandler.class);
-
         private MessageContext messageContext;
         private SOAPEnvelope envelope;
         private SOAPHeader header;
