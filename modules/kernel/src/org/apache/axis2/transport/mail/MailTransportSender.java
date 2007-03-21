@@ -204,14 +204,17 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
             format.setCharSetEncoding(charSet);
 
             parseMailToAddress(msgContext.getTo());
-            
-            // Check if msg is 'In-Reply-To' received message
-            OutTransportInfo transportInfo = (OutTransportInfo) msgContext.getProperty(org.apache.axis2.Constants.OUT_TRANSPORT_INFO);
-            
-            if (transportInfo != null && transportInfo instanceof MailBasedOutTransportInfo) {
-                MailBasedOutTransportInfo mailTransportInfo = (MailBasedOutTransportInfo) transportInfo;
 
-                sender.setInReplyTo( mailTransportInfo.getInReplyTo() );
+            // Check if msg is 'In-Reply-To' received message
+            OutTransportInfo transportInfo = (OutTransportInfo) msgContext
+                    .getProperty(org.apache.axis2.Constants.OUT_TRANSPORT_INFO);
+
+            if (transportInfo != null && transportInfo instanceof MailBasedOutTransportInfo) {
+                MailBasedOutTransportInfo mailTransportInfo =
+                        (MailBasedOutTransportInfo) transportInfo;
+
+                sender.setInReplyTo(mailTransportInfo.getInReplyTo());
+                sender.setFrom(mailTransportInfo.getFrom());
             }
 
             sender.send(mailToInfo, format);
@@ -287,28 +290,10 @@ public class MailTransportSender extends AbstractHandler implements TransportSen
         msgContext.setDoingMTOM(HTTPTransportUtils.doWriteMTOM(msgContext));
         msgContext.setDoingSwA(HTTPTransportUtils.doWriteSwA(msgContext));
 
-        EndpointReference epr = null;
+        byteArrayOutputStream = new ByteArrayOutputStream();
+        writeMimeMessage(msgContext, byteArrayOutputStream);
 
-        if (msgContext.getTo() != null && !msgContext.getTo().hasAnonymousAddress()) {
-            epr = msgContext.getTo();
-        }
-
-        if (epr != null) {
-            if (!epr.hasNoneAddress()) {
-
-                byteArrayOutputStream = new ByteArrayOutputStream();
-
-                writeMimeMessage(msgContext, byteArrayOutputStream);
-
-                sendMimeMessage(msgContext);
-            }
-        } else {
-            // TODO If epr is null or anonymous, then the flow shold be as
-            // replyto : from : or reply-path;
-            if (msgContext.isServerSide()) {
-
-            }
-        }
+        sendMimeMessage(msgContext);
 
         return InvocationResponse.CONTINUE;
     }

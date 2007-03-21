@@ -149,7 +149,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
         }
         if (password.length() == 0 || user.length() == 0 || host.length() == 0 ||
-                protocol.length() == 0) {
+            protocol.length() == 0) {
             throw new AxisFault(
                     "One or more of Password, User, Host and Protocol are null or empty");
         }
@@ -194,7 +194,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
             if (transportIn != null) {
                 sas.init(configurationContext, transportIn);
                 log.info("Starting the SimpleMailListener with repository "
-                        + new File(args[0]).getAbsolutePath());
+                         + new File(args[0]).getAbsolutePath());
                 sas.start();
             } else {
                 log.info(
@@ -235,7 +235,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
                                 messageQueue.add(mc);
                             }
                         } catch (Exception e) {
-                            log.error("Error in SimpleMailListener - processing mail " + e );
+                            log.error("Error in SimpleMailListener - processing mail " + e);
                         } finally {
                             // delete mail in any case
                             msg.setFlag(Flags.Flag.DELETED, true);
@@ -278,17 +278,20 @@ public class SimpleMailListener implements Runnable, TransportListener {
             msgContext.setProperty(org.apache.axis2.transport.mail.Constants.CONTENT_TYPE,
                                    msg.getContentType());
             msgContext.setIncomingTransportName(org.apache.axis2.Constants.TRANSPORT_MAIL);
+
+            MailBasedOutTransportInfo transportInfo = new MailBasedOutTransportInfo();
             if (msg.getFrom() != null && msg.getFrom().length > 0) {
-                msgContext.setFrom(new EndpointReference((msg.getFrom()[0]).toString()));
+                EndpointReference fromEPR = new EndpointReference((msg.getFrom()[0]).toString());
+                msgContext.setFrom(fromEPR);
+                transportInfo.setFrom(fromEPR);
             }
 
             // Save Message-Id to set as In-Reply-To on reply
             String smtpMessageId = msg.getMessageID();
-            if( smtpMessageId != null ) {
-                MailBasedOutTransportInfo transportInfo = new MailBasedOutTransportInfo();
-                transportInfo.setInReplyTo( smtpMessageId );
-                msgContext.setProperty( org.apache.axis2.Constants.OUT_TRANSPORT_INFO, transportInfo ) ;
+            if (smtpMessageId != null) {
+                transportInfo.setInReplyTo(smtpMessageId);
             }
+            msgContext.setProperty(org.apache.axis2.Constants.OUT_TRANSPORT_INFO, transportInfo);
 
             buildSOAPEnvelope(msg, msgContext);
         }
@@ -308,7 +311,6 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
                     if (disposition != null && disposition.equals(Part.ATTACHMENT)) {
                         String soapAction = "";
-                        String soapNamespaceURI = "";
 
                         /* Set the Charactorset Encoding */
                         if (BuilderUtil.getCharSetEncoding(part.getContentType()) != null) {
@@ -337,7 +339,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
                         }
 
                         if (part.getContentType().indexOf(SOAP12Constants.SOAP_12_CONTENT_TYPE) >
-                                -1) {
+                            -1) {
                             TransportUtils
                                     .processContentTypeForAction(part.getContentType(), msgContext);
                         }
@@ -428,7 +430,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
     public EndpointReference[] getEPRsForService(String serviceName, String ip) throws AxisFault {
         return new EndpointReference[]{new EndpointReference(Constants.TRANSPORT_MAIL + ":" +
-                replyTo + "?" + configurationContext
+                                                             replyTo + "?" + configurationContext
                 .getServiceContextPath() + "/" + serviceName)};
     }
 

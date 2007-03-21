@@ -18,10 +18,12 @@
 package org.apache.axis2.transport.mail;
 
 import org.apache.axis2.transport.OutTransportInfo;
+import org.apache.axis2.addressing.EndpointReference;
 
 public class MailBasedOutTransportInfo implements OutTransportInfo {
     protected String contentType;
     protected String inReplyTo;
+    protected EndpointReference from;
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
@@ -30,8 +32,16 @@ public class MailBasedOutTransportInfo implements OutTransportInfo {
     public void setInReplyTo(String messageId) {
         this.inReplyTo = messageId;
     }
-    
+
     public String getInReplyTo() {
         return this.inReplyTo;
+    }
+
+    public EndpointReference getFrom() {
+        return from;
+    }
+
+    public void setFrom(EndpointReference from) {
+        this.from = from;
     }
 }

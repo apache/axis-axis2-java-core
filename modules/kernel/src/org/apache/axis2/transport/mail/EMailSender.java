@@ -22,7 +22,10 @@ import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.activation.CommandMap;
 import javax.activation.DataHandler;
@@ -51,6 +54,9 @@ public class EMailSender {
     private PasswordAuthentication passwordAuthentication;
     private OutputStream outputStream;
     private String inReplyTo;
+    private EndpointReference from;
+
+    protected static Log log = LogFactory.getLog(EMailSender.class);
 
     static {
         //Initializing the proper mime types
@@ -95,19 +101,52 @@ public class EMailSender {
             });
             MimeMessage msg = new MimeMessage(session);
 
-            /*from address is comming from mail.smtp.from property */
 
-            msg.addRecipient(Message.RecipientType.TO,
-                             new InternetAddress(mailToInfo.getEmailAddress()));
+            EndpointReference epr = null;
 
-//            Fix Subject TODO
+            if (messageContext.getTo() != null && !messageContext.getTo().hasAnonymousAddress()) {
+                epr = messageContext.getTo();
+            }
+
+            if (epr != null) {
+                if (!epr.hasNoneAddress()) {
+                    msg.addRecipient(Message.RecipientType.TO,
+                                     new InternetAddress(mailToInfo.getEmailAddress()));
+
+                } else {
+                    if (from != null) {
+                         msg.addRecipient(Message.RecipientType.TO,
+                                         new InternetAddress(from.getAddress()));
+                    } else {
+                        String error = EMailSender.class.getName() + "Couldn't countinue due to" +
+                                       " FROM addressing is NULL";
+                        log.error(error);
+                        throw new AxisFault(error);
+                    }
+                }
+            } else {
+                // replyto : from : or reply-path;
+                if (messageContext.isServerSide()) {
+                    if (from != null) {
+                        msg.addRecipient(Message.RecipientType.TO,
+                                         new InternetAddress(from.getAddress()));
+                    } else {
+                        String error = EMailSender.class.getName() + "Couldn't countinue due to" +
+                                       " FROM addressing is NULL and EPR is NULL";
+                        log.error(error);
+                        throw new AxisFault(error);
+                    }
+
+                }
+            }
+
             msg.setSubject("__ Axis2/Java Mail Message __");
 
             if (mailToInfo.isxServicePath()) {
                 msg.setHeader("X-Service-Path", "\"" + mailToInfo.getContentDescription() + "\"");
             }
 
-            if( inReplyTo != null ) {
+            if (inReplyTo != null) {
                 msg.setHeader("In-Reply-To", inReplyTo);
             }
 
@@ -144,7 +183,7 @@ public class EMailSender {
                 .addHeader("Content-Description", "\"" + mailToInfo.getContentDescription() + "\"");
 
         String contentType = format.getContentType() != null ? format.getContentType() :
-                Constants.DEFAULT_CONTENT_TYPE;
+                             Constants.DEFAULT_CONTENT_TYPE;
         if (contentType.indexOf(SOAP11Constants.SOAP_11_CONTENT_TYPE) > -1) {
             if (messageContext.getSoapAction() != null) {
                 messageBodyPart.setHeader(Constants.HEADER_SOAP_ACTION,
@@ -156,8 +195,8 @@ public class EMailSender {
             if (messageContext.getSoapAction() != null) {
                 messageBodyPart.setHeader("Content-Type",
                                           contentType + "; charset=" + format.getCharSetEncoding() +
-                                                  " ; action=\"" + messageContext.getSoapAction() +
-                                                  "\"");
+                                          " ; action=\"" + messageContext.getSoapAction() +
+                                          "\"");
             }
         } else {
             messageBodyPart.setHeader("Content-Type",
@@ -172,5 +211,9 @@ public class EMailSender {
 
     public void setInReplyTo(String inReplyTo) {
         this.inReplyTo = inReplyTo;
+    }
+
+    public void setFrom(EndpointReference from) {
+        this.from = from;
     }
 }
