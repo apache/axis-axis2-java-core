@@ -344,10 +344,10 @@
         </java>
        <!-- ################################################################### -->
         <!-- All simple derived types xsd -->
-        <ant:echo>Compiling testattribute.xsd</ant:echo>
+        <echo>Compiling testattribute.xsd</echo>
         <java classname="org.apache.axis2.schema.XSD2Java" fork="true">
             <jvmarg line="${maven.junit.jvmargs}"/>
-            <classpath refid="maven.dependency.classpath"/>
+            <classpath refid="maven.runtime.classpath"/>
             <classpath location="${compiled.classes.dir}"/>
             <arg file="${testsuite.source.dir}/testattribute.xsd"/>
             <arg file="${schema.generated.src.dir}"/>
