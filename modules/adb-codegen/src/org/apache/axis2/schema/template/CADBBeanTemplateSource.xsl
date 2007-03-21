@@ -632,111 +632,47 @@
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='axis2_char_t*'">
                                       text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                      if ( NULL == text_value )
-                                      {
-                                         status = AXIS2_FAILURE;
-                                      }
-                                      else
-                                      {
-                                          status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
+                                      status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
                                                                    text_value);
-                                      }
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='axis2_uri_t*'">
                                       text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                      if ( NULL == text_value )
-                                      {
-                                         status = AXIS2_FAILURE;
-                                      }
-                                      else
-                                      {
-                                          status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
+                                      status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
                                                                    axis2_uri_parse_string( env, text_value));
-                                      }
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='axis2_qname_t*'">
                                       text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                      if ( NULL == text_value )
-                                      {
-                                         status = AXIS2_FAILURE;
-                                      }
-                                      else
-                                      {
-                                          status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
+                                      status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
                                                                    axis2_qname_create_from_string( env, text_value));
-                                      }
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='char'">
                                       text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                      if ( NULL == text_value )
-                                      {
-                                         status = AXIS2_FAILURE;
-                                      }
-                                      else
-                                      {
-                                          status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
+                                      status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
                                                                     (char)atoi( text_value));
-                                      }
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='int'">
                                       text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                      if ( NULL == text_value )
-                                      {
-                                         status = AXIS2_FAILURE;
-                                      }
-                                      else
-                                      {
-                                          status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
+                                      status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
                                                                     atoi( text_value));
-                                      }
-                                    </xsl:when>
+                                   </xsl:when>
                                     <xsl:when test="$nativePropertyType='short'">
                                       text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                      if ( NULL == text_value )
-                                      {
-                                         status = AXIS2_FAILURE;
-                                      }
-                                      else
-                                      {
-                                          status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
+                                      status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
                                                                     atoi( text_value));
-                                      }
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='float'">
                                       text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                      if ( NULL == text_value )
-                                      {
-                                         status = AXIS2_FAILURE;
-                                      }
-                                      else
-                                      {
-                                          status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
-                                                                     atof( text_value));
-                                      }
-                                    </xsl:when>
+                                      status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
+                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='double'">
                                       text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                      if ( NULL == text_value )
-                                      {
-                                         status = AXIS2_FAILURE;
-                                      }
-                                      else
-                                      {
-                                          status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
+                                      status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
                                                                      atof( text_value));
-                                      }
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='long'">
                                       text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                      if ( NULL == text_value )
-                                      {
-                                         status = AXIS2_FAILURE;
-                                      }
-                                      else
-                                      {
-                                          status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
+                                      status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
                                                                       atol( text_value));
-                                      }
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='axiom_node_t*'">
                                       text_value = NULL; /** just to avoid warning */
@@ -745,11 +681,7 @@
                                     </xsl:when>
                                     <xsl:when test="$nativePropertyType='axis2_bool_t'">
                                       text_value = AXIOM_ELEMENT_GET_TEXT(current_element, env, current_node );
-                                      if ( NULL == text_value )
-                                      {
-                                         status = AXIS2_FAILURE;
-                                      }
-                                      else if ( !strcmp ( text_value , "true" ) || !strcmp ( text_value, "TRUE") )
+                                      if ( !strcmp ( text_value , "true" ) || !strcmp ( text_value, "TRUE") )
                                       {
                                          status = <xsl:value-of select="$axis2_capsname"/>_SET_<xsl:value-of select="$CapsCName"/>( <xsl:value-of select="$name"/>, env,
                                                                       AXIS2_TRUE);
@@ -1662,7 +1594,7 @@
                       return AXIS2_FAILURE;
                   }
                 </xsl:if>
-                <xsl:if test="not(@nillable) and @ours">
+                <xsl:if test="not(@nillable) or @ours">
                   if( NULL == param_<xsl:value-of select="$CName"/> )
                   {
                       AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "<xsl:value-of select="$propertyName"/> is NULL, but not a nullable element"
