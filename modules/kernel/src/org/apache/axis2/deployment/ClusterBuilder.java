@@ -19,17 +19,13 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.cluster.configuration.ConfigurationManager;
 import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
 import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.cluster.context.ContextManagerListener;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import java.io.InputStream;
@@ -41,8 +37,7 @@ import java.util.Iterator;
  */
 public class ClusterBuilder extends DescriptionBuilder {
 
-	private static final Log log = LogFactory.getLog(ClusterBuilder.class);
-    private AxisService service;
+//	private static final Log log = LogFactory.getLog(ClusterBuilder.class);
 
     public ClusterBuilder(AxisConfiguration axisConfig) {
         this.axisConfig = axisConfig;
@@ -105,13 +100,13 @@ public class ClusterBuilder extends DescriptionBuilder {
 						clazz = Class.forName(className);
 						ConfigurationManagerListener listener = (ConfigurationManagerListener) clazz
 								.newInstance();
-						listener.setAxisConfiguration(axisConfig);
+						listener.setConfigurationContext(configCtx);
 						configurationManager.addConfigurationManagerListener(listener);
 					}
 				}
 
-				//updating the ConfigurationManager with the new Axisconfiguration
-				configurationManager.setAxisConfiguration(axisConfig);
+				//updating the ConfigurationManager with the new ConfigurationContext
+				configurationManager.setConfigurationContext(configCtx);
 			}
 
 			
@@ -152,7 +147,6 @@ public class ClusterBuilder extends DescriptionBuilder {
 			}
             
             axisConfig.setClusterManager(clusterManager);
-            return;
         } catch (ClassNotFoundException e) {
             throw new DeploymentException(Messages.getMessage("clusterImplNotFound"));
         } catch (InstantiationException e) {
@@ -162,5 +156,4 @@ public class ClusterBuilder extends DescriptionBuilder {
             throw new DeploymentException(e);
         }
     }
-
 }

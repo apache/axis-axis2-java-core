@@ -22,6 +22,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.cluster.ClusteringConstants;
+import org.apache.axis2.cluster.configuration.ConfigurationManager;
 import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -36,12 +37,7 @@ import org.apache.axis2.util.threadpool.ThreadPool;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This contains all the configuration information for Axis2.
@@ -89,23 +85,29 @@ public class ConfigurationContext extends AbstractContext {
 
     public void initCluster() throws AxisFault {
         ClusterManager clusterManager = axisConfiguration.getClusterManager();
-        if (clusterManager!=null) {
-        	ContextManager contextManager = clusterManager.getContextManager();
-        	if (contextManager!=null)
-        		contextManager.setConfigurationContext(this);
+        if (clusterManager != null) {
+            ContextManager contextManager = clusterManager.getContextManager();
+            if (contextManager != null) {
+                contextManager.setConfigurationContext(this);
+            }
+            ConfigurationManager configManager = clusterManager.getConfigurationManager();
+            if (configManager != null) {
+                configManager.setConfigurationContext(this);
+            }
+            if (shouldClusterBeInitiated(clusterManager)) {
+                clusterManager.init(this);
+            }
         }
-        
-        if (shouldClusterBeInitiated(clusterManager))
-        	clusterManager.init(this);
     }
-    
-    private static boolean shouldClusterBeInitiated (ClusterManager clusterManager) {
-    	Parameter param = clusterManager.getParameter(ClusteringConstants.AVOID_INITIATION_KEY);
-    	if (param!=null && JavaUtils.isTrueExplicitly(param.getValue()))
-    		return false;
-    	else 
-    		return true;
-    }	
+
+    private static boolean shouldClusterBeInitiated(ClusterManager clusterManager) {
+        Parameter param = clusterManager.getParameter(ClusteringConstants.AVOID_INITIATION_KEY);
+        if (param != null && JavaUtils.isTrueExplicitly(param.getValue())) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     protected void finalize() throws Throwable {
         super.finalize();
@@ -156,9 +158,10 @@ public class ConfigurationContext extends AbstractContext {
 
                     ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
                     if (clusterManager != null) {
-                    	ContextManager contextManager = clusterManager.getContextManager();
-                    	if (contextManager!=null)
-                    		contextManager.addContext(serviceGroupContext);
+                        ContextManager contextManager = clusterManager.getContextManager();
+                        if (contextManager != null) {
+                            contextManager.addContext(serviceGroupContext);
+                        }
                     }
                 }
                 messageContext.setServiceGroupContext(serviceGroupContext);
@@ -171,7 +174,7 @@ public class ConfigurationContext extends AbstractContext {
                             serviceGroupContextId, messageContext);
                     if (serviceGroupContext == null) {
                         throw new AxisFault("Unable to find corresponding context" +
-                                " for the serviceGroupId: " + serviceGroupContextId);
+                                            " for the serviceGroupId: " + serviceGroupContextId);
                     }
                 } else {
                     AxisServiceGroup axisServiceGroup = (AxisServiceGroup) axisService.getParent();
@@ -185,9 +188,10 @@ public class ConfigurationContext extends AbstractContext {
 
                     ClusterManager clusterManager = this.getAxisConfiguration().getClusterManager();
                     if (clusterManager != null) {
-                    	ContextManager contextManager = clusterManager.getContextManager();
-                    	if (contextManager!=null)
-                    		contextManager.addContext(serviceGroupContext);
+                        ContextManager contextManager = clusterManager.getContextManager();
+                        if (contextManager != null) {
+                            contextManager.addContext(serviceGroupContext);
+                        }
                     }
 
                     messageContext.setServiceGroupContextId(serviceGroupContextId);
@@ -317,7 +321,7 @@ public class ConfigurationContext extends AbstractContext {
                     {
                         if ((valueServiceName != null) && (valueServiceName.equals(serviceName))) {
                             if ((valueServiceGroupName != null) && (serviceGroupName != null)
-                                    && (valueServiceGroupName.equals(serviceGroupName))) {
+                                && (valueServiceGroupName.equals(serviceGroupName))) {
                                 // match
                                 return value;
                             }
@@ -444,7 +448,7 @@ public class ConfigurationContext extends AbstractContext {
             ServiceGroupContext serviceGroupContext =
                     (ServiceGroupContext) serviceGroupContextMap.get(sgCtxtId);
             if ((currentTime - serviceGroupContext.getLastTouchedTime()) >
-                    getServiceGroupContextTimoutInterval()) {
+                getServiceGroupContextTimoutInterval()) {
                 sgCtxtMapKeyIter.remove();
                 cleanupServiceContexts(serviceGroupContext);
             }
@@ -475,7 +479,7 @@ public class ConfigurationContext extends AbstractContext {
 
     public void cleanupContexts() {
         if ((applicationSessionServiceGroupContextTable != null) &&
-                (applicationSessionServiceGroupContextTable.size() > 0)) {
+            (applicationSessionServiceGroupContextTable.size() > 0)) {
             Iterator applicationScopeSgs =
                     applicationSessionServiceGroupContextTable.values().iterator();
             while (applicationScopeSgs.hasNext()) {

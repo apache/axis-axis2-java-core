@@ -17,6 +17,7 @@
 package org.apache.axis2.cluster.configuration;
 
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.context.ConfigurationContext;
 
 public interface ConfigurationManagerListener {
     void serviceGroupLoaded(ConfigurationEvent event);
@@ -27,5 +28,5 @@ public interface ConfigurationManagerListener {
     void rollbackCalled (ConfigurationEvent event);
     void commitCalled (ConfigurationEvent event);
     void handleException(Throwable throwable);
-    void setAxisConfiguration (AxisConfiguration axisConfiguration);
+    void setConfigurationContext (ConfigurationContext configurationContext);
 }

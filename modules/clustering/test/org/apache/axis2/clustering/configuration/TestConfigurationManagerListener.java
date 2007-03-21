@@ -16,62 +16,62 @@
 
 package org.apache.axis2.clustering.configuration;
 
-import java.util.ArrayList;
 import org.apache.axis2.cluster.configuration.ConfigurationEvent;
 import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
-import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.context.ConfigurationContext;
+
+import java.util.ArrayList;
 
 public class TestConfigurationManagerListener implements ConfigurationManagerListener {
 
-	ArrayList eventList = null;
-	private AxisConfiguration axisConfiguration = null;
-	
-	public TestConfigurationManagerListener () {
-		eventList = new ArrayList ();
-	}
-	
-	public void handleException(Throwable throwable) {
-		// TODO Auto-generated method stub
-	}
+    ArrayList eventList = null;
+    private ConfigurationContext configurationContext = null;
 
-	public void clearEventList () {
-		eventList.clear();
-	}
-	
-	public ArrayList getEventList() {
-		return eventList;
-	}
+    public TestConfigurationManagerListener() {
+        eventList = new ArrayList();
+    }
 
-	public void commitCalled(ConfigurationEvent event) {
-		eventList.add(event);
-	}
+    public void handleException(Throwable throwable) {
+        // TODO Auto-generated method stub
+    }
 
-	public void configurationReloaded(ConfigurationEvent event) {
-		eventList.add(event);
-	}
+    public void clearEventList() {
+        eventList.clear();
+    }
 
-	public void policyApplied(ConfigurationEvent event) {
-		eventList.add(event);
-	}
+    public ArrayList getEventList() {
+        return eventList;
+    }
 
-	public void prepareCalled(ConfigurationEvent event) {
-		eventList.add(event);
-	}
+    public void commitCalled(ConfigurationEvent event) {
+        eventList.add(event);
+    }
 
-	public void rollbackCalled(ConfigurationEvent event) {
-		eventList.add(event);
-	}
+    public void configurationReloaded(ConfigurationEvent event) {
+        eventList.add(event);
+    }
 
-	public void serviceGroupLoaded(ConfigurationEvent event) {
-		eventList.add(event);
-	}
+    public void policyApplied(ConfigurationEvent event) {
+        eventList.add(event);
+    }
 
-	public void serviceGroupUnloaded(ConfigurationEvent event) {
-		eventList.add(event);
-	}
+    public void prepareCalled(ConfigurationEvent event) {
+        eventList.add(event);
+    }
 
-	public void setAxisConfiguration(AxisConfiguration axisConfiguration) {
-		this.axisConfiguration = axisConfiguration;
-	}
-	
+    public void rollbackCalled(ConfigurationEvent event) {
+        eventList.add(event);
+    }
+
+    public void serviceGroupLoaded(ConfigurationEvent event) {
+        eventList.add(event);
+    }
+
+    public void serviceGroupUnloaded(ConfigurationEvent event) {
+        eventList.add(event);
+    }
+
+    public void setConfigurationContext(ConfigurationContext configurationContext) {
+        this.configurationContext = configurationContext;
+    }
 }

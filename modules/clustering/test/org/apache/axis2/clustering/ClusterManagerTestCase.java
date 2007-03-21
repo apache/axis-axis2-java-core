@@ -20,8 +20,6 @@ import junit.framework.TestCase;
 
 import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.cluster.ClusteringFault;
-import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
-import org.apache.axis2.cluster.context.ContextManagerListener;
 import org.apache.axis2.cluster.listeners.DefaultContextManagerListener;
 import org.apache.axis2.clustering.configuration.TestConfigurationManagerListener;
 import org.apache.axis2.context.ConfigurationContext;
@@ -70,8 +68,8 @@ public abstract class ClusterManagerTestCase extends TestCase {
 		contextManagerListener2 = new DefaultContextManagerListener ();
 		clusterManager2.getContextManager(). addContextManagerListener (contextManagerListener2);	
 
-		clusterManager1.getConfigurationManager().setAxisConfiguration(configurationContext1.getAxisConfiguration());
-		clusterManager2.getConfigurationManager().setAxisConfiguration(configurationContext2.getAxisConfiguration());
+		clusterManager1.getConfigurationManager().setConfigurationContext(configurationContext1.getAxisConfiguration());
+		clusterManager2.getConfigurationManager().setConfigurationContext(configurationContext2.getAxisConfiguration());
 		
 		configurationManagerListener1 = new TestConfigurationManagerListener ();
 		clusterManager1.getConfigurationManager().addConfigurationManagerListener(configurationManagerListener1);
