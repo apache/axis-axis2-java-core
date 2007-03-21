@@ -18,7 +18,7 @@ package org.apache.axis2.cluster.tribes.info;
 
 import java.io.Serializable;
 
-import org.apache.axis2.cluster.tribes.CommandType;
+import org.apache.axis2.cluster.CommandType;
 import org.apache.axis2.cluster.tribes.context.ContextCommandMessage;
 import org.apache.catalina.tribes.ChannelListener;
 import org.apache.catalina.tribes.Member;
@@ -53,7 +53,7 @@ public class TransientTribesChannelInfo implements ChannelListener {
 				grpCtxCreationCount++;
 			} else if (comMsg.getCommandType()==CommandType.CREATE_SERVICE_CONTEXT) {
 				srvCtxCreationCount++;
-			} else if (comMsg.getCommandType()==CommandType.REMOVE_SERVICE_GROUP_CONTEXT) {
+			} else if (comMsg.getCommandType()== CommandType.REMOVE_SERVICE_GROUP_CONTEXT) {
 				grpCtxRemoveCount++;
 			} else if (comMsg.getCommandType()==CommandType.REMOVE_SERVICE_CONTEXT) {
 				srvCtxRemoveCount++;

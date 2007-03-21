@@ -21,26 +21,39 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.neethi.Policy;
 
 public interface ConfigurationManager {
-	
-	/*
-	 * Configuration management methods
-	 */
-    void loadServiceGroup(String serviceGroupName) throws ClusteringFault;
-    void unloadServiceGroup(String serviceGroupName) throws ClusteringFault;
-    void applyPolicy(String serviceGroupName, Policy policy) throws ClusteringFault;
-    void reloadConfiguration() throws ClusteringFault ;
-    
+
     /*
-     * Transaction management methods
-     */
+      * Configuration management methods
+      */
+    void loadServiceGroup(String serviceGroupName) throws ClusteringFault;
+
+    void unloadServiceGroup(String serviceGroupName) throws ClusteringFault;
+
+    void applyPolicy(String serviceGroupName, Policy policy) throws ClusteringFault;
+
+    void reloadConfiguration() throws ClusteringFault;
+
+    /*
+    * Transaction management methods
+    */
     void prepare() throws ClusteringFault;
+
     void rollback() throws ClusteringFault;
+
     void commit() throws ClusteringFault;
-    
+
+    /**
+     * To notify other nodes that an Exception occurred, during the processing
+     * of a {@link ConfigurationEvent}
+     *
+     * @param throwable The throwable which has to be propogated to other nodes
+     */
+    void exceptionOccurred(Throwable throwable) throws ClusteringFault;
+
     /**
      * For registering a configuration event listener.
      */
     void addConfigurationManagerListener(ConfigurationManagerListener listener);
-    
-    void setAxisConfiguration (AxisConfiguration axisConfiguration);
+
+    void setAxisConfiguration(AxisConfiguration axisConfiguration);
 }

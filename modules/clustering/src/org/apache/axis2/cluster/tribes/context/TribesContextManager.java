@@ -17,13 +17,13 @@
 package org.apache.axis2.cluster.tribes.context;
 
 import org.apache.axis2.cluster.ClusteringFault;
+import org.apache.axis2.cluster.CommandType;
 import org.apache.axis2.cluster.context.ContextEvent;
 import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.cluster.context.ContextManagerListener;
 import org.apache.axis2.cluster.listeners.DefaultContextManagerListener;
 import org.apache.axis2.cluster.tribes.ChannelSender;
 import org.apache.axis2.cluster.tribes.CommandMessage;
-import org.apache.axis2.cluster.tribes.CommandType;
 import org.apache.axis2.context.AbstractContext;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ServiceContext;
@@ -298,8 +298,6 @@ public class TribesContextManager implements ContextManager {
     }
 
     private void send(CommandMessage command) throws ClusteringFault {
-        if (sender.getChannel().getMembers().length > 0) {
-            sender.send(command);
-        }
+        sender.send(command);
     }
 }

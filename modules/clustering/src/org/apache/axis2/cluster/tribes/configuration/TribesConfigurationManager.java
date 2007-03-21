@@ -17,11 +17,11 @@
 package org.apache.axis2.cluster.tribes.configuration;
 
 import org.apache.axis2.cluster.ClusteringFault;
+import org.apache.axis2.cluster.CommandType;
 import org.apache.axis2.cluster.configuration.ConfigurationEvent;
 import org.apache.axis2.cluster.configuration.ConfigurationManager;
 import org.apache.axis2.cluster.configuration.ConfigurationManagerListener;
 import org.apache.axis2.cluster.tribes.ChannelSender;
-import org.apache.axis2.cluster.tribes.CommandType;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
@@ -62,6 +62,10 @@ public class TribesConfigurationManager implements ConfigurationManager {
         send(command);
     }
 
+    public void exceptionOccurred(Throwable throwable) throws ClusteringFault {
+        send(throwable);
+    }
+
     public void loadServiceGroup(String serviceGroupName) throws ClusteringFault {
         ConfigurationCommand command = new ConfigurationCommand(CommandType.LOAD_SERVICE_GROUP);
         command.setSgcName(serviceGroupName);
@@ -89,13 +93,15 @@ public class TribesConfigurationManager implements ConfigurationManager {
         send(command);
     }
 
+    private void send(Throwable throwable) throws ClusteringFault {
+        sender.send(throwable);
+    }
+
     private void send(ConfigurationCommand command) throws ClusteringFault {
-        Channel channel = sender.getChannel();
-        if (channel.getMembers().length > 0) {
-            sender.send(command);
-        }
+        sender.send(command);
 
         // Need to send the message to self too
+        Channel channel = sender.getChannel();
         try {
             channel.send(new Member[]{channel.getLocalMember(true)},
                          command,

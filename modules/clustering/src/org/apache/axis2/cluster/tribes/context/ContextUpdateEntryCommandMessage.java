@@ -18,7 +18,7 @@ package org.apache.axis2.cluster.tribes.context;
 
 import java.io.Serializable;
 
-import org.apache.axis2.cluster.tribes.CommandType;
+import org.apache.axis2.cluster.CommandType;
 
 
 public class ContextUpdateEntryCommandMessage extends ContextCommandMessage {

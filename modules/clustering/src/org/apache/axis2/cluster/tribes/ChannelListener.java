@@ -19,7 +19,7 @@ package org.apache.axis2.cluster.tribes;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.apache.axis2.cluster.ClusteringFault;
+import org.apache.axis2.cluster.CommandType;
 import org.apache.axis2.cluster.configuration.ConfigurationEvent;
 import org.apache.axis2.cluster.context.ContextEvent;
 import org.apache.axis2.cluster.tribes.configuration.ConfigurationCommand;

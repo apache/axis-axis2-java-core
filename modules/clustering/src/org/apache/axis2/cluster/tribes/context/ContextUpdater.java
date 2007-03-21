@@ -25,238 +25,236 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.axis2.cluster.tribes.CommandType;
-
 public class ContextUpdater {
 
-	private Map serviceCtxProps = null;
-	private Map serviceGrpCtxProps = null;
+    private Map serviceCtxProps = null;
+    private Map serviceGrpCtxProps = null;
 
-	public Map getServiceCtxProps() {
-		return serviceCtxProps;
-	}
+    public Map getServiceCtxProps() {
+        return serviceCtxProps;
+    }
 
-	public Map getServiceGrpCtxProps() {
-		return serviceGrpCtxProps;
-	}
+    public Map getServiceGrpCtxProps() {
+        return serviceGrpCtxProps;
+    }
 
-	public ContextUpdater() {
-		serviceCtxProps = new HashMap ();
-		serviceGrpCtxProps = new HashMap ();
-	}
+    public ContextUpdater() {
+        serviceCtxProps = new HashMap ();
+        serviceGrpCtxProps = new HashMap ();
+    }
 
-	public void addServiceContext(String parentId, String serviceCtxName) {
-		String key = parentId + "_" + serviceCtxName;
-		serviceCtxProps.put(key, new HashMap());
-	}
+    public void addServiceContext(String parentId, String serviceCtxName) {
+        String key = parentId + "_" + serviceCtxName;
+        serviceCtxProps.put(key, new HashMap());
+    }
 
-	public void addServiceGroupContext(String groupId) {
-		String key = groupId;
-		serviceGrpCtxProps.put(key, new HashMap());
-	}
+    public void addServiceGroupContext(String groupId) {
+        String key = groupId;
+        serviceGrpCtxProps.put(key, new HashMap());
+    }
 
-	public void removeServiceContext(String parentId, String serviceCtxName) {
-		String key = parentId + "_" + serviceCtxName;
-		serviceCtxProps.remove(key);
-	}
+    public void removeServiceContext(String parentId, String serviceCtxName) {
+        String key = parentId + "_" + serviceCtxName;
+        serviceCtxProps.remove(key);
+    }
 
-	public void removeServiceGroupContext(String groupId) {
-		String key = groupId;
-		serviceGrpCtxProps.remove(key);
-	}
+    public void removeServiceGroupContext(String groupId) {
+        String key = groupId;
+        serviceGrpCtxProps.remove(key);
+    }
 
-	public void addPropToServiceContext(String parentId, String serviceCtxName,
-			String propName, Object value) {
-		String key = parentId + "_" + serviceCtxName;
-		HashMap map = (HashMap) serviceCtxProps.get(key);
-		map.put(propName, value);
-	}
+    public void addPropToServiceContext(String parentId, String serviceCtxName,
+                                        String propName, Object value) {
+        String key = parentId + "_" + serviceCtxName;
+        HashMap map = (HashMap) serviceCtxProps.get(key);
+        map.put(propName, value);
+    }
 
-	public void addPropToServiceGroupContext(String groupId, String propName,
-			Object value) {
-		String key = groupId;
-		HashMap map = (HashMap) serviceGrpCtxProps.get(key);
-		map.put(propName, value);
-	}
+    public void addPropToServiceGroupContext(String groupId, String propName,
+                                             Object value) {
+        String key = groupId;
+        HashMap map = (HashMap) serviceGrpCtxProps.get(key);
+        map.put(propName, value);
+    }
 
-	public void removePropFromServiceContext(String parentId,
-			String serviceCtxName, String propName) {
-		String key = parentId + "_" + serviceCtxName;
-		HashMap map = (HashMap) serviceCtxProps.get(key);
-		map.remove(propName);
-	}
+    public void removePropFromServiceContext(String parentId,
+                                             String serviceCtxName, String propName) {
+        String key = parentId + "_" + serviceCtxName;
+        HashMap map = (HashMap) serviceCtxProps.get(key);
+        map.remove(propName);
+    }
 
-	public void removePropFromServiceGroupContext(String groupId,
-			String propName) {
-		String key = groupId;
-		HashMap map = (HashMap) serviceGrpCtxProps.get(key);
-		map.remove(propName);
-	}
+    public void removePropFromServiceGroupContext(String groupId,
+                                                  String propName) {
+        String key = groupId;
+        HashMap map = (HashMap) serviceGrpCtxProps.get(key);
+        map.remove(propName);
+    }
 
-	public void updatePropOnServiceContext(String parentId,
-			String serviceCtxName, String propName, Object value) {
-		String key = parentId + "_" + serviceCtxName;
-		HashMap map = (HashMap) serviceCtxProps.get(key);
-		map.put(propName, value);
-	}
+    public void updatePropOnServiceContext(String parentId,
+                                           String serviceCtxName, String propName, Object value) {
+        String key = parentId + "_" + serviceCtxName;
+        HashMap map = (HashMap) serviceCtxProps.get(key);
+        map.put(propName, value);
+    }
 
-	public void updatePropOnServiceGroupContext(String groupId,
-			String propName, Object value) {
-		String key = groupId;
-		HashMap map = (HashMap) serviceGrpCtxProps.get(key);
-		map.put(propName, value);
-	}
+    public void updatePropOnServiceGroupContext(String groupId,
+                                                String propName, Object value) {
+        String key = groupId;
+        HashMap map = (HashMap) serviceGrpCtxProps.get(key);
+        map.put(propName, value);
+    }
 
-	public Map getServiceGroupProps(String groupId) {
-		return (Map) serviceGrpCtxProps.get(groupId);
-	}
+    public Map getServiceGroupProps(String groupId) {
+        return (Map) serviceGrpCtxProps.get(groupId);
+    }
 
-	public Map getServiceProps(String parentId, String serviceCtxName) {
-		String key = parentId + "_" + serviceCtxName;
-		return (Map) serviceCtxProps.get(key);
-	}
+    public Map getServiceProps(String parentId, String serviceCtxName) {
+        String key = parentId + "_" + serviceCtxName;
+        return (Map) serviceCtxProps.get(key);
+    }
 
-	public List updateStateOnServiceContext(String parentId,
-			String serviceCtxName, Map newProps) {
-		String key = parentId + "_" + serviceCtxName;
-		HashMap oldProps = (HashMap) serviceCtxProps.get(key);
-		if (oldProps == null) {
-			oldProps = new HashMap();
-			serviceCtxProps.put(key, oldProps);
-		}
+    public List updateStateOnServiceContext(String parentId,
+                                            String serviceCtxName, Map newProps) {
+        String key = parentId + "_" + serviceCtxName;
+        HashMap oldProps = (HashMap) serviceCtxProps.get(key);
+        if (oldProps == null) {
+            oldProps = new HashMap();
+            serviceCtxProps.put(key, oldProps);
+        }
 
-		List commandList = new ArrayList();
+        List commandList = new ArrayList();
 
-		try {
-			// using set operations to figure out the diffs
+        try {
+            // using set operations to figure out the diffs
 
-			// figuring out entries to remove
-			Set diffForRemove = new HashSet();
-			diffForRemove.addAll(oldProps.keySet());
-			diffForRemove.removeAll(newProps.keySet());
+            // figuring out entries to remove
+            Set diffForRemove = new HashSet();
+            diffForRemove.addAll(oldProps.keySet());
+            diffForRemove.removeAll(newProps.keySet());
 
-			// figuring out new entires
-			Set diffForAddOrUpdate = new HashSet();
-			diffForAddOrUpdate.addAll(newProps.keySet());
-			diffForAddOrUpdate.removeAll(oldProps.keySet());
+            // figuring out new entires
+            Set diffForAddOrUpdate = new HashSet();
+            diffForAddOrUpdate.addAll(newProps.keySet());
+            diffForAddOrUpdate.removeAll(oldProps.keySet());
 
-			// figuring out entries to update
-			for (Iterator it= newProps.keySet().iterator();it.hasNext();) {
-				
-				String paramKey = (String) it.next();
-				
-				Object oldValue = oldProps.get(paramKey);
-				Object newValue = newProps.get(paramKey);
+            // figuring out entries to update
+            for (Iterator it= newProps.keySet().iterator();it.hasNext();) {
 
-				if (oldValue != null && !oldValue.equals(newValue)) {
-					diffForAddOrUpdate.add(paramKey);
-				}
-			}
+                String paramKey = (String) it.next();
 
-			for (Iterator it= diffForAddOrUpdate.iterator();it.hasNext();) {
-				
-				String paramKey = (String) it.next();
-				
-				Object value = newProps.get(paramKey);
-				if (value instanceof Serializable) {
-					oldProps.put(paramKey, value);
-					commandList.add(new ContextUpdateEntryCommandMessage(
-							parentId,
-							serviceCtxName, serviceCtxName, paramKey,
-							(Serializable) value,
-							ContextUpdateEntryCommandMessage.SERVICE_CONTEXT,
-							ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY));
-				}
-			}
+                Object oldValue = oldProps.get(paramKey);
+                Object newValue = newProps.get(paramKey);
 
-			for (Iterator it= diffForRemove.iterator();it.hasNext();) {
-				
-				String paramKey = (String) it.next();
-				
-				oldProps.remove(paramKey);
-				commandList.add(new ContextUpdateEntryCommandMessage(
-						parentId,
-						serviceCtxName, serviceCtxName, paramKey, "",
-						ContextUpdateEntryCommandMessage.SERVICE_CONTEXT,
-						ContextUpdateEntryCommandMessage.REMOVE_ENTRY));
+                if (oldValue != null && !oldValue.equals(newValue)) {
+                    diffForAddOrUpdate.add(paramKey);
+                }
+            }
 
-			}
-		} catch (RuntimeException e) {
-			e.printStackTrace();
-		}
+            for (Iterator it= diffForAddOrUpdate.iterator();it.hasNext();) {
 
-		return commandList;
-	}
+                String paramKey = (String) it.next();
 
-	public List updateStateOnServiceGroupContext(String ctxId,
-			Map newProps) {
-		HashMap oldProps = (HashMap) serviceGrpCtxProps.get(ctxId);
-		if (oldProps == null) {
-			oldProps = new HashMap();
-			serviceCtxProps.put(ctxId, oldProps);
-		}
+                Object value = newProps.get(paramKey);
+                if (value instanceof Serializable) {
+                    oldProps.put(paramKey, value);
+                    commandList.add(new ContextUpdateEntryCommandMessage(
+                            parentId,
+                            serviceCtxName, serviceCtxName, paramKey,
+                            (Serializable) value,
+                            ContextUpdateEntryCommandMessage.SERVICE_CONTEXT,
+                            ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY));
+                }
+            }
 
-		List commandList = new ArrayList ();
+            for (Iterator it= diffForRemove.iterator();it.hasNext();) {
 
-		try {
-			// using set operations to figure out the diffs
+                String paramKey = (String) it.next();
 
-			// figuring out entries to remove
-			Set diffForRemove = new HashSet();
-			diffForRemove.addAll(oldProps.keySet());
-			diffForRemove.removeAll(newProps.keySet());
+                oldProps.remove(paramKey);
+                commandList.add(new ContextUpdateEntryCommandMessage(
+                        parentId,
+                        serviceCtxName, serviceCtxName, paramKey, "",
+                        ContextUpdateEntryCommandMessage.SERVICE_CONTEXT,
+                        ContextUpdateEntryCommandMessage.REMOVE_ENTRY));
 
-			// figuring out entries to update
-			Set diffForAddOrUpdate = new HashSet ();
-			diffForAddOrUpdate.addAll(newProps.keySet());
-			diffForAddOrUpdate.removeAll(oldProps.keySet());
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
 
-			// figuring out entries to update
-			for (Iterator it=newProps.keySet().iterator();it.hasNext();) {
-				
-				String paramKey = (String) it.next();
-				
-				Object oldValue = oldProps.get(paramKey);
-				Object newValue = newProps.get(paramKey);
+        return commandList;
+    }
 
-				if (oldValue != null && !oldValue.equals(newValue)) {
-					diffForAddOrUpdate.add(paramKey);
-				}
-			}
+    public List updateStateOnServiceGroupContext(String ctxId,
+                                                 Map newProps) {
+        HashMap oldProps = (HashMap) serviceGrpCtxProps.get(ctxId);
+        if (oldProps == null) {
+            oldProps = new HashMap();
+            serviceCtxProps.put(ctxId, oldProps);
+        }
 
-			for (Iterator it=diffForAddOrUpdate.iterator();it.hasNext();) {
-				
-				String paramKey = (String) it.next();
-				
-				Object value = newProps.get(paramKey);
-				if (value instanceof Serializable) {
-					oldProps.put(paramKey, value);
-					commandList.add(new ContextUpdateEntryCommandMessage(
-							"", 
-							ctxId,
-							ctxId, paramKey, (Serializable) value,
-							ContextUpdateEntryCommandMessage.SERVICE_GROUP_CONTEXT,
-							ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY));
-					// oldProps.replicate(paramKey, true); //
-					// map.replicate(true) will replicate all
-				}
-			}
+        List commandList = new ArrayList ();
 
-			for (Iterator it=diffForRemove.iterator();it.hasNext();) {
-				
-				String paramKey = (String) it.next();
-				
-				commandList.add(new ContextUpdateEntryCommandMessage(
-						"", ctxId, ctxId,
-						paramKey, "",
-						ContextUpdateEntryCommandMessage.SERVICE_GROUP_CONTEXT,
-						ContextUpdateEntryCommandMessage.REMOVE_ENTRY));
-				// oldProps.remove(paramKey);
-			}
-		} catch (RuntimeException e) {
-			e.printStackTrace();
-		}
+        try {
+            // using set operations to figure out the diffs
 
-		return commandList;
-	}
+            // figuring out entries to remove
+            Set diffForRemove = new HashSet();
+            diffForRemove.addAll(oldProps.keySet());
+            diffForRemove.removeAll(newProps.keySet());
+
+            // figuring out entries to update
+            Set diffForAddOrUpdate = new HashSet ();
+            diffForAddOrUpdate.addAll(newProps.keySet());
+            diffForAddOrUpdate.removeAll(oldProps.keySet());
+
+            // figuring out entries to update
+            for (Iterator it=newProps.keySet().iterator();it.hasNext();) {
+
+                String paramKey = (String) it.next();
+
+                Object oldValue = oldProps.get(paramKey);
+                Object newValue = newProps.get(paramKey);
+
+                if (oldValue != null && !oldValue.equals(newValue)) {
+                    diffForAddOrUpdate.add(paramKey);
+                }
+            }
+
+            for (Iterator it=diffForAddOrUpdate.iterator();it.hasNext();) {
+
+                String paramKey = (String) it.next();
+
+                Object value = newProps.get(paramKey);
+                if (value instanceof Serializable) {
+                    oldProps.put(paramKey, value);
+                    commandList.add(new ContextUpdateEntryCommandMessage(
+                            "",
+                            ctxId,
+                            ctxId, paramKey, (Serializable) value,
+                            ContextUpdateEntryCommandMessage.SERVICE_GROUP_CONTEXT,
+                            ContextUpdateEntryCommandMessage.ADD_OR_UPDATE_ENTRY));
+                    // oldProps.replicate(paramKey, true); //
+                    // map.replicate(true) will replicate all
+                }
+            }
+
+            for (Iterator it=diffForRemove.iterator();it.hasNext();) {
+
+                String paramKey = (String) it.next();
+
+                commandList.add(new ContextUpdateEntryCommandMessage(
+                        "", ctxId, ctxId,
+                        paramKey, "",
+                        ContextUpdateEntryCommandMessage.SERVICE_GROUP_CONTEXT,
+                        ContextUpdateEntryCommandMessage.REMOVE_ENTRY));
+                // oldProps.remove(paramKey);
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+
+        return commandList;
+    }
 }

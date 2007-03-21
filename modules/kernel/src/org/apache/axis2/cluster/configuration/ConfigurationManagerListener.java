@@ -19,12 +19,13 @@ package org.apache.axis2.cluster.configuration;
 import org.apache.axis2.engine.AxisConfiguration;
 
 public interface ConfigurationManagerListener {
-    public void serviceGroupLoaded(ConfigurationEvent event);
-    public void serviceGroupUnloaded(ConfigurationEvent event);
-    public void policyApplied(ConfigurationEvent event);
-    public void configurationReloaded (ConfigurationEvent event);
-    public void prepareCalled (ConfigurationEvent event);
-    public void rollbackCalled (ConfigurationEvent event);
-    public void commitCalled (ConfigurationEvent event);
-    public void setAxisConfiguration (AxisConfiguration axisConfiguration);
+    void serviceGroupLoaded(ConfigurationEvent event);
+    void serviceGroupUnloaded(ConfigurationEvent event);
+    void policyApplied(ConfigurationEvent event);
+    void configurationReloaded (ConfigurationEvent event);
+    void prepareCalled (ConfigurationEvent event);
+    void rollbackCalled (ConfigurationEvent event);
+    void commitCalled (ConfigurationEvent event);
+    void handleException(Throwable throwable);
+    void setAxisConfiguration (AxisConfiguration axisConfiguration);
 }

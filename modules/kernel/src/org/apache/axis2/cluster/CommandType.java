@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis2.cluster.tribes;
+package org.apache.axis2.cluster;
 
 public interface CommandType {
 	
