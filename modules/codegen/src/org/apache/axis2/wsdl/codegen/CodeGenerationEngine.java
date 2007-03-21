@@ -260,7 +260,7 @@ public class CodeGenerationEngine {
      * @param uri
      * @throws WSDLException
      */
-    private Definition readInTheWSDLFile(String uri) throws WSDLException {
+    public Definition readInTheWSDLFile(String uri) throws WSDLException {
 
         WSDLReader reader =  WSDLFactory.newInstance().newWSDLReader();
         reader.setFeature("javax.wsdl.importDocuments", true);

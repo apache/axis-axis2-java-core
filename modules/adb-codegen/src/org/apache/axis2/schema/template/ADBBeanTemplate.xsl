@@ -826,6 +826,7 @@
                     <xsl:variable name="propertyName"><xsl:value-of select="@name"/></xsl:variable>
                     <xsl:variable name="varName">local<xsl:value-of select="@javaname"/></xsl:variable>
                      <xsl:variable name="namespace"><xsl:value-of select="@nsuri"/></xsl:variable>
+                     <xsl:variable name="propertyType"><xsl:value-of select="@type"/></xsl:variable>
                     <xsl:choose>
                         <!-- Note - It is assumed that any attributes are OMAttributes-->
                         <xsl:when test="@any and not(@array)">
@@ -843,41 +844,61 @@
                                      }
                              }
                         </xsl:when>
-                        <!-- there can never be attribute arrays in the normal case-->
-                        <xsl:when test="@optional">
-                             // optional attribute <xsl:value-of select="$propertyName"/>
-                            try {
-                                <xsl:choose>
-                                    <xsl:when test="@ours">
-                                        <!--  this can only be a simple type -->
-                                        writeAttribute("<xsl:value-of select="$namespace"/>",
-                                               "<xsl:value-of select="$propertyName"/>",
-                                               <xsl:value-of select="$varName"/>.toString(), xmlWriter);
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                         writeAttribute("<xsl:value-of select="$namespace"/>",
-                                               "<xsl:value-of select="$propertyName"/>",
-                                               org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);
-                                    </xsl:otherwise>
-                                </xsl:choose>
-
-                            } catch (NullPointerException e) {
-                                // If <xsl:value-of select="$varName"/> was null
-                                // it can not be serialized.
-                            }
-                        </xsl:when>
                         <xsl:otherwise>
-                             <xsl:choose>
+                            <xsl:choose>
                                 <xsl:when test="@ours">
                                     <!--  this can only be a simple type -->
-                                    writeAttribute("<xsl:value-of select="$namespace"/>",
+                                    if (<xsl:value-of select="$varName"/> != null){
+                                        writeAttribute("<xsl:value-of select="$namespace"/>",
                                            "<xsl:value-of select="$propertyName"/>",
                                            <xsl:value-of select="$varName"/>.toString(), xmlWriter);
+                                    }
+                                    <xsl:if test="not(@optional)">
+                                      else {
+                                          throw new RuntimeException("required attribute <xsl:value-of select="$varName"/> is null");
+                                      }
+                                    </xsl:if>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                     writeAttribute("<xsl:value-of select="$namespace"/>",
-                                           "<xsl:value-of select="$propertyName"/>",
-                                           org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);
+                                    <xsl:choose>
+                                        <xsl:when test="@primitive">
+                                            <xsl:choose>
+                                               <xsl:when test="$propertyType='int'">
+                                                   if (<xsl:value-of select="$varName"/>!=java.lang.Integer.MIN_VALUE) {
+                                               </xsl:when>
+                                               <xsl:when test="$propertyType='long'">
+                                                   if (<xsl:value-of select="$varName"/>!=java.lang.Long.MIN_VALUE) {
+                                               </xsl:when>
+                                               <xsl:when test="$propertyType='byte'">
+                                                   if (<xsl:value-of select="$varName"/>!=java.lang.Byte.MIN_VALUE) {
+                                               </xsl:when>
+                                               <xsl:when test="$propertyType='double'">
+                                                   if (<xsl:value-of select="$varName"/>!=java.lang.Double.NaN) {
+                                               </xsl:when>
+                                               <xsl:when test="$propertyType='float'">
+                                                   if (<xsl:value-of select="$varName"/>!=java.lang.Float.NaN) {
+                                               </xsl:when>
+                                               <xsl:when test="$propertyType='short'">
+                                                   if (<xsl:value-of select="$varName"/>!=java.lang.Short.MIN_VALUE) {
+                                               </xsl:when>
+                                               <xsl:otherwise>
+                                                   if (true) {
+                                               </xsl:otherwise>
+                                           </xsl:choose>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            if (<xsl:value-of select="$varName"/> != null){
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                        writeAttribute("<xsl:value-of select="$namespace"/>",
+                                                  "<xsl:value-of select="$propertyName"/>",
+                                                  org.apache.axis2.databinding.utils.ConverterUtil.convertToString(<xsl:value-of select="$varName"/>), xmlWriter);
+                                    }
+                                    <xsl:if test="not(@optional)">
+                                      else {
+                                          throw new RuntimeException("required attribute <xsl:value-of select="$varName"/> is null");
+                                      }
+                                    </xsl:if>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:otherwise>
@@ -2361,6 +2382,36 @@
                                 </xsl:choose>
                              </xsl:otherwise>
                         </xsl:choose>
+                    } else {
+                       <xsl:choose>
+                           <xsl:when test="@optional">
+                               <xsl:if test="@primitive">
+                                  <xsl:choose>
+                                       <xsl:when test="$propertyType='int'">
+                                           object.set<xsl:value-of select="$javaName"/>(java.lang.Integer.MIN_VALUE);
+                                       </xsl:when>
+                                       <xsl:when test="$propertyType='long'">
+                                           object.set<xsl:value-of select="$javaName"/>(java.lang.Long.MIN_VALUE);
+                                       </xsl:when>
+                                       <xsl:when test="$propertyType='byte'">
+                                           object.set<xsl:value-of select="$javaName"/>(java.lang.Byte.MIN_VALUE);
+                                       </xsl:when>
+                                       <xsl:when test="$propertyType='double'">
+                                           object.set<xsl:value-of select="$javaName"/>(java.lang.Double.NaN);
+                                       </xsl:when>
+                                       <xsl:when test="$propertyType='float'">
+                                           object.set<xsl:value-of select="$javaName"/>(java.lang.Float.NaN);
+                                       </xsl:when>
+                                       <xsl:when test="$propertyType='short'">
+                                           object.set<xsl:value-of select="$javaName"/>(java.lang.Short.MIN_VALUE);
+                                       </xsl:when>
+                                   </xsl:choose>
+                               </xsl:if>
+                           </xsl:when>
+                           <xsl:otherwise>
+                               throw new RuntimeException("Required attribute <xsl:value-of select="$propertyName"/> is missing");
+                           </xsl:otherwise>
+                       </xsl:choose>
                     }
                     handledAttributes.add("<xsl:value-of select="$propertyName"/>");
                     </xsl:if>
