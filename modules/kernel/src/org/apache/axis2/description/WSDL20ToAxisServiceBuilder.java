@@ -537,7 +537,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // the operation name into this map.
             String httpLocationString = "";
             if (httpLocation != null) {
-                String httpLocationTemplete = httpLocation.getLocationTemplate();
+                String httpLocationTemplete = httpLocation.getOriginalLocation();
                 axisBindingOperation
                         .setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocationTemplete);
                 httpLocationString = RESTUtil.getConstantFromHTTPLocation(httpLocationTemplete);
@@ -715,7 +715,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // the operation name into this map.
             String httpLocationString = "";
             if (httpLocation != null) {
-                String httpLocationTemplete = httpLocation.getLocationTemplate();
+                String httpLocationTemplete = httpLocation.getOriginalLocation();
                 axisBindingOperation
                         .setProperty(WSDL2Constants.ATTR_WHTTP_LOCATION, httpLocationTemplete);
                 httpLocationString = RESTUtil.getConstantFromHTTPLocation(httpLocationTemplete);
