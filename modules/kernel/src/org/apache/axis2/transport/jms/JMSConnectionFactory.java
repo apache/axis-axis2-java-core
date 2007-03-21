@@ -18,7 +18,12 @@ package org.apache.axis2.transport.jms;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.jms.*;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
+import javax.jms.Session;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
@@ -82,13 +87,9 @@ public class JMSConnectionFactory {
      */
     private String jndiName = null;
     /**
-     * Map of destination JNDI names to service names
+     * A map of destinations to service names they belong to
      */
-    private Map serviceJNDINameMapping = null;
-    /**
-     * Map of destinations to service names
-     */
-    private Map serviceDestinationMapping = null;
+    private Map destinations = null;
     /**
      * The JMS Sessions listening for messages
      */
@@ -123,8 +124,7 @@ public class JMSConnectionFactory {
     JMSConnectionFactory(String name, String jndiName) {
         this.name = name;
         this.jndiName = jndiName;
-        serviceJNDINameMapping = new HashMap();
-        serviceDestinationMapping = new HashMap();        
+        destinations = new HashMap();
         properties = new Hashtable();
         jmsSessions = new HashMap();
     }
@@ -176,24 +176,17 @@ public class JMSConnectionFactory {
      * @param serviceName     the service to which it belongs
      */
     public void addDestination(String destinationJndi, String serviceName) {
-        serviceJNDINameMapping.put(destinationJndi, serviceName);
-        serviceDestinationMapping.put(getDestinationName(destinationJndi), serviceName);
+        destinations.put(destinationJndi, serviceName);
     }
 
     /**
      * Remove listen destination on this connection factory
      *
      * @param destinationJndi the JMS destination to be removed
-     * @throws if an error occurs trying to stop listening for messages before removal
      */
     public void removeDestination(String destinationJndi) throws JMSException {
-        // find and save provider specific Destination name before we delete
-        String providerSpecificDestination = getDestinationName(destinationJndi);
         stoplistenOnDestination(destinationJndi);
-        serviceJNDINameMapping.remove(destinationJndi);
-        if (providerSpecificDestination != null) {
-            serviceDestinationMapping.remove(providerSpecificDestination);
-        }
+        destinations.remove(destinationJndi);
     }
 
     /**
@@ -234,12 +227,12 @@ public class JMSConnectionFactory {
     }
 
     /**
-     * Get the list of destinations (JNDI) associated with this connection factory
+     * Get the list of destinations associated with this connection factory
      *
      * @return destinations to service maping
      */
     public Map getDestinations() {
-        return serviceJNDINameMapping;
+        return destinations;
     }
 
     /**
@@ -278,7 +271,7 @@ public class JMSConnectionFactory {
             }
         }
 
-        Iterator iter = serviceJNDINameMapping.keySet().iterator();
+        Iterator iter = destinations.keySet().iterator();
         while (iter.hasNext()) {
             String destinationJndi = (String) iter.next();
             listenOnDestination(destinationJndi);
@@ -313,7 +306,7 @@ public class JMSConnectionFactory {
             log.warn("Error looking up destination : " + destinationJndi, e);
             // mark service as faulty
             JMSUtils.markServiceAsFaulty(
-                    (String) serviceJNDINameMapping.get(destinationJndi),
+                    (String) destinations.get(destinationJndi),
                     "Error looking up JMS destination : " + destinationJndi,
                     this.msgRcvr.getAxisConf().getAxisConfiguration());
         }
@@ -341,7 +334,7 @@ public class JMSConnectionFactory {
      */
     public String getServiceNameForDestination(String destination) {
 
-        return (String) serviceJNDINameMapping.get(destination);
+        return (String) destinations.get(destination);
     }
 
     /**
@@ -353,34 +346,6 @@ public class JMSConnectionFactory {
         } catch (JMSException e) {
             log.warn("Error shutting down connection factory : " + name, e);
         }
-    }
-
-    /**
-     * Return the provider specific Destination name if any for the destination with the given
-     * JNDI name
-     * @param destinationJndi the JNDI name of the destination
-     * @return the provider specific Destination name or null if cannot be found
-     */
-    public String getDestinationName(String destinationJndi) {
-        try {
-            Destination destination = (Destination) context.lookup(destinationJndi);
-            if (destination != null && destination instanceof Queue) {
-                return ((Queue) destination).getQueueName();
-            } else if (destination != null && destination instanceof Topic) {
-                return ((Topic) destination).getTopicName();
-            }
-        } catch (JMSException e) {
-            log.warn("Error reading provider specific JMS destination name for destination " +
-                "with JNDI name : " + destinationJndi, e);
-        } catch (NamingException e) {
-            log.warn("Error looking up destination with JNDI name : " + destinationJndi +
-                " to map its corresponding provider specific Destination name");
-        }
-        return null;
-    }
-
-    public String getServiceByDestination(String destinationName) {
-        return (String) serviceDestinationMapping.get(destinationName);
     }
 
     private void handleException(String msg) throws AxisJMSException {
