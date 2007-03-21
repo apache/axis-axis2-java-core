@@ -84,7 +84,7 @@ public class SimpleHTTPServer implements TransportListener {
         this.configurationContext = httpFactory.getConfigurationContext();
         this.port = httpFactory.getPort();
         TransportInDescription httpDescription =
-                new TransportInDescription(new QName(Constants.TRANSPORT_HTTP));
+                new TransportInDescription(Constants.TRANSPORT_HTTP);
         httpDescription.setReceiver(this);
         httpFactory.getListenerManager().addListener(httpDescription, true);
         sessionManager = new SessionManager();
@@ -147,7 +147,7 @@ public class SimpleHTTPServer implements TransportListener {
         String repository = optionsParser.isValueSet('r');
         if (repository == null) {
             args = optionsParser.getRemainingArgs();
-            if (args != null && args[0] != null && args[0] != "") {
+            if (args != null && args[0] != null && !args[0].equals("")) {
                 repository = args[0];
             } else {
                 printUsage();
@@ -165,8 +165,7 @@ public class SimpleHTTPServer implements TransportListener {
             Runtime.getRuntime().addShutdownHook(new ShutdownThread(receiver));
             receiver.start();
             ListenerManager listenerManager = configctx .getListenerManager();
-            TransportInDescription trsIn = new TransportInDescription(
-                    new QName(Constants.TRANSPORT_HTTP));
+            TransportInDescription trsIn = new TransportInDescription(Constants.TRANSPORT_HTTP);
             trsIn.setReceiver(receiver);
             if (listenerManager == null) {
                 listenerManager = new ListenerManager();

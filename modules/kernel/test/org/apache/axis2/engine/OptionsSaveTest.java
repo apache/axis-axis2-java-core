@@ -88,9 +88,9 @@ public class OptionsSaveTest extends TestCase {
         options.setTo(new EndpointReference("http://ws.apache.org/axis2/to"));
         options.setReplyTo(new EndpointReference(AddressingConstants.Final.WSA_ANONYMOUS_URL));
 
-        TransportOutDescription transportOut = new TransportOutDescription(new QName("null"));
-        TransportOutDescription transportOut2 = new TransportOutDescription(new QName("happy"));
-        TransportOutDescription transportOut3 = new TransportOutDescription(new QName("golucky"));
+        TransportOutDescription transportOut = new TransportOutDescription("null");
+        TransportOutDescription transportOut2 = new TransportOutDescription("happy");
+        TransportOutDescription transportOut3 = new TransportOutDescription("golucky");
         transportOut.setSender(new CommonsHTTPTransportSender());
         transportOut2.setSender(new CommonsHTTPTransportSender());
         transportOut3.setSender(new CommonsHTTPTransportSender());
@@ -99,9 +99,9 @@ public class OptionsSaveTest extends TestCase {
         axisConfiguration.addTransportOut(transportOut2);
         axisConfiguration.addTransportOut(transportOut);
 
-        TransportInDescription transportIn = new TransportInDescription(new QName("null"));
-        TransportInDescription transportIn2 = new TransportInDescription(new QName("always"));
-        TransportInDescription transportIn3 = new TransportInDescription(new QName("thebest"));
+        TransportInDescription transportIn = new TransportInDescription("null");
+        TransportInDescription transportIn2 = new TransportInDescription("always");
+        TransportInDescription transportIn3 = new TransportInDescription("thebest");
         transportIn.setReceiver(new SimpleHTTPServer());
         transportIn2.setReceiver(new SimpleHTTPServer());
         transportIn3.setReceiver(new SimpleHTTPServer());

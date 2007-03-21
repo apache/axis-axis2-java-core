@@ -516,7 +516,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     private String internalGetServiceContextPath() {
-        String ctxRoot = getContextRoot().trim();
+        String ctxRoot = getContextRoot();
         String path = "/";
         if (!ctxRoot.equals("/")) {
             path = ctxRoot + "/";
@@ -530,7 +530,7 @@ public class ConfigurationContext extends AbstractContext {
     }
 
     public String getRESTContextPath() {
-        String ctxRoot = getContextRoot().trim();
+        String ctxRoot = getContextRoot();
         String path = "/";
         if (!ctxRoot.equals("/")) {
             path = ctxRoot + "/";
@@ -557,13 +557,6 @@ public class ConfigurationContext extends AbstractContext {
         return restPath.trim();
     }
 
-    public String getContextRoot() {
-        if (contextRoot == null || contextRoot.trim().length() == 0) {
-            throw new IllegalArgumentException("context root cannot be null or empty");
-        }
-        return contextRoot.trim();
-    }
-
     public void setServicePath(String servicePath) {
         this.servicePath = servicePath;
     }
@@ -572,9 +565,15 @@ public class ConfigurationContext extends AbstractContext {
         this.restPath = restPath;
     }
 
+    public String getContextRoot() {
+        return contextRoot;
+    }
+
     public void setContextRoot(String contextRoot) {
-        this.contextRoot = contextRoot;
-        cachedServicePath = internalGetServiceContextPath();
+        if (contextRoot != null) {
+            this.contextRoot = contextRoot.trim();  // Trim before storing away for good hygiene
+            cachedServicePath = internalGetServiceContextPath();
+        }
     }
 
     /**

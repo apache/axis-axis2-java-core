@@ -214,7 +214,7 @@ public class HTTPTransportUtils {
                                                             String requestURI)
             throws AxisFault {
         int soapVersion = VERSION_UNKNOWN;
-        InvocationResponse pi = InvocationResponse.CONTINUE;
+        InvocationResponse pi;
 
         try {
 
@@ -232,8 +232,7 @@ public class HTTPTransportUtils {
             msgContext.setProperty(MessageContext.TRANSPORT_OUT, out);
             msgContext.setServerSide(true);
 
-            SOAPEnvelope envelope = null;
-            boolean isMIME = false;
+            SOAPEnvelope envelope;
 
             // get the type of char encoding
             String charSetEnc = BuilderUtil.getCharSetEncoding(contentType);

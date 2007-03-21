@@ -158,7 +158,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
             }
 
             TransportOutDescription transportOut = msgContext.getConfigurationContext().
-                    getAxisConfiguration().getTransportOut(new QName(Constants.TRANSPORT_HTTP));
+                    getAxisConfiguration().getTransportOut(Constants.TRANSPORT_HTTP);
 
             //if a parameter hs set been set, we will omit the SOAP action for SOAP 1.2 
             if (transportOut != null) {

@@ -863,8 +863,7 @@ public class Options implements Externalizable {
      */
     public void setSenderTransport(String senderTransport,
                                    AxisConfiguration axisConfiguration) throws AxisFault {
-        this.transportOut = axisConfiguration.getTransportOut(new QName(
-                senderTransport));
+        this.transportOut = axisConfiguration.getTransportOut(senderTransport);
 
         if (senderTransport == null) {
             throw new AxisFault(Messages.getMessage("unknownTransport",
@@ -1374,7 +1373,7 @@ public class Options implements Externalizable {
             QName qin = metaTransportIn.getQName();
             TransportInDescription tmpIn = null;
             try {
-                tmpIn = axisConfig.getTransportIn(qin);
+                tmpIn = axisConfig.getTransportIn(qin.getLocalPart());
             }
             catch (Exception exin) {
                 // if a fault is thrown, log it and continue
@@ -1404,7 +1403,7 @@ public class Options implements Externalizable {
             QName qout = metaTransportOut.getQName();
             TransportOutDescription tmpOut = null;
             try {
-                tmpOut = axisConfig.getTransportOut(qout);
+                tmpOut = axisConfig.getTransportOut(qout.getLocalPart());
             }
             catch (Exception exout) {
                 // if a fault is thrown, log it and continue

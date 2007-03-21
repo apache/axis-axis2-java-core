@@ -54,12 +54,10 @@ public class EngineWithoutPhaseResolvingTest extends AbstractEngineTest {
         engineRegistry = new AxisConfiguration();
         configContext = new ConfigurationContext(engineRegistry);
 
-        TransportOutDescription transport = new TransportOutDescription(
-                new QName("null"));
+        TransportOutDescription transport = new TransportOutDescription("null");
         transport.setSender(new CommonsHTTPTransportSender());
 
-        TransportInDescription transportIn = new TransportInDescription(
-                new QName("null"));
+        TransportInDescription transportIn = new TransportInDescription("null");
         axisOp = new InOutAxisOperation(operationName);
 
         service = new AxisService(serviceName.getLocalPart());

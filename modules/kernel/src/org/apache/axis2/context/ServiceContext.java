@@ -188,8 +188,8 @@ public class ServiceContext extends AbstractContext implements Externalizable {
         if (configctx != null) {
             ListenerManager lm = configctx.getListenerManager();
             if (!lm.isListenerRunning(transport)) {
-                TransportInDescription trsin = configctx.getAxisConfiguration().
-                        getTransportIn(new QName(transport));
+                TransportInDescription trsin =
+                        configctx.getAxisConfiguration().getTransportIn(transport);
                 if (trsin != null) {
                     lm.addListener(trsin, false);
                 } else {

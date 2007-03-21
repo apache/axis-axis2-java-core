@@ -28,11 +28,6 @@ public class JMSConstants {
     public static final String JMS_PREFIX = "jms:/";
 
     /**
-     * The QName of the JMS transport
-     */
-    public static final QName JMS_QNAME = new QName(Constants.TRANSPORT_JMS);
-
-    /**
      * The Parameter name indicating a JMS destination
      */
     public static final String DEST_PARAM = "transport.jms.Destination";

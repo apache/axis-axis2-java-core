@@ -17,7 +17,6 @@
 package org.apache.axis2.context;
 
 import org.apache.axiom.attachments.Attachments;
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.impl.MTOMConstants;
 import org.apache.axiom.om.impl.builder.StAXBuilder;
@@ -25,7 +24,6 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
-import org.apache.axiom.soap.SOAPConstants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.AxisFault;
@@ -1414,10 +1412,10 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
     /**
-     * @param referance
+     * @param to
      */
-    public void setTo(EndpointReference referance) {
-        options.setTo(referance);
+    public void setTo(EndpointReference to) {
+        options.setTo(to);
     }
 
     /**
@@ -3800,7 +3798,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             QName qin = metaTransportIn.getQName();
             TransportInDescription tmpIn = null;
             try {
-                tmpIn = axisConfig.getTransportIn(qin);
+                tmpIn = axisConfig.getTransportIn(qin.getLocalPart());
             }
             catch (Exception exin) {
                 // if a fault is thrown, log it and continue
@@ -3821,10 +3819,11 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         // We previously saved metaTransportOut; restore it
         if (metaTransportOut != null) {
+            // TODO : Check if this should really be a QName?
             QName qout = metaTransportOut.getQName();
             TransportOutDescription tmpOut = null;
             try {
-                tmpOut = axisConfig.getTransportOut(qout);
+                tmpOut = axisConfig.getTransportOut(qout.getLocalPart());
             }
             catch (Exception exout) {
                 // if a fault is thrown, log it and continue
@@ -4033,7 +4032,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             QName qin = metaTransportIn.getQName();
             TransportInDescription tmpIn = null;
             try {
-                tmpIn = axisCfg.getTransportIn(qin);
+                tmpIn = axisCfg.getTransportIn(qin.getLocalPart());
             }
             catch (Exception exin) {
                 // if a fault is thrown, log it and continue
@@ -4058,7 +4057,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             QName qout = metaTransportOut.getQName();
             TransportOutDescription tmpOut = null;
             try {
-                tmpOut = axisCfg.getTransportOut(qout);
+                tmpOut = axisCfg.getTransportOut(qout.getLocalPart());
             }
             catch (Exception exout) {
                 // if a fault is thrown, log it and continue

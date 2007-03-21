@@ -67,10 +67,8 @@ public class OperationContextTest extends AbstractTestCase {
 
     public MessageContext getBasicMessageContext() throws AxisFault {
         MessageContext messageContext = ContextFactory.createMessageContext(configContext);
-        messageContext.setTransportIn(new TransportInDescription(
-                new QName("axis2")));
-        messageContext.setTransportOut(new TransportOutDescription(new QName(
-                "axis2")));
+        messageContext.setTransportIn(new TransportInDescription("axis2"));
+        messageContext.setTransportOut(new TransportOutDescription("axis2"));
 
         return messageContext;
 

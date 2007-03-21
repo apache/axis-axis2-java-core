@@ -34,7 +34,6 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import java.util.Map;
 
 /**
@@ -59,8 +58,7 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
         String action = messageContext.getWSAAction();
 
         if (action != null) {
-            AxisOperation axisOperation = service.getOperationByAction(action);
-            return axisOperation;
+            return service.getOperationByAction(action);
         }
 
         return null;
@@ -68,55 +66,53 @@ public class AddressingBasedDispatcher extends AbstractDispatcher implements Add
 
     public AxisService findService(MessageContext messageContext) throws AxisFault {
         EndpointReference toEPR = messageContext.getTo();
+
+        if ((toEPR == null) || (toEPR.hasAnonymousAddress())) {
+            return null;
+        }
+
         AxisService service = null;
+        String address = toEPR.getAddress();
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug(messageContext.getLogIDString() + " " +
+                    Messages.getMessage("checkingserviceforepr", address));
+        }
 
-        if (toEPR != null) {
-            if (toEPR.hasAnonymousAddress()) {
-                return null;
-            }
+        ConfigurationContext configurationContext = messageContext.getConfigurationContext();
+        String[] values =
+                Utils.parseRequestURLForServiceAndOperation(address,
+                                                            configurationContext.
+                                                                    getServiceContextPath());
+        if (values == null) {
+            return null;
+        }
 
-            String address = toEPR.getAddress();
-            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug(messageContext.getLogIDString() + " " +
-                        Messages.getMessage("checkingserviceforepr", address));
-            }
-            QName serviceName;
-            ConfigurationContext configurationContext = messageContext.getConfigurationContext();
-            String[] values = Utils.parseRequestURLForServiceAndOperation(address,
-                                                                          configurationContext.getServiceContextPath());
-            if (values == null) {
-                return null;
-            }
+        if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
+            log.debug(messageContext.getLogIDString() + " " +
+                    Messages.getMessage("checkingserviceforepr", values[0]));
+        }
 
-            if (LoggingControl.debugLoggingAllowed && log.isDebugEnabled()) {
-                log.debug(messageContext.getLogIDString() + " " +
-                        Messages.getMessage("checkingserviceforepr", values[0]));
-            }
-            if (values[0] != null) {
-                serviceName = new QName(values[0]);
+        if (values[0] != null) {
+            AxisConfiguration registry =
+                    configurationContext.getAxisConfiguration();
 
-                AxisConfiguration registry =
-                        configurationContext.getAxisConfiguration();
+            service = registry.getService(values[0]);
 
-                AxisService axisService = registry.getService(serviceName.getLocalPart());
-
-                // If the axisService is not null we get the binding that the request came to add
-                // add it as a property to the messageContext
-                if (axisService != null) {
-                    Map endpoints = axisService.getEndpoints();
-                    if (endpoints != null) {
-                        if (endpoints.size() == 1) {
-                            messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
-                                                       endpoints.get(
-                                                               axisService.getEndpointName()));
-                        } else {
-                            String endpointName = values[0].substring(values[0].indexOf(".") + 1);
-                            messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
-                                                       endpoints.get(endpointName));
-                        }
+            // If the axisService is not null we get the binding that the request came to and
+            // add it as a property to the messageContext
+            if (service != null) {
+                Map endpoints = service.getEndpoints();
+                if (endpoints != null) {
+                    if (endpoints.size() == 1) {
+                        messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+                                                   endpoints.get(
+                                                           service.getEndpointName()));
+                    } else {
+                        String endpointName = values[0].substring(values[0].indexOf(".") + 1);
+                        messageContext.setProperty(WSDL2Constants.ENDPOINT_LOCAL_NAME,
+                                                   endpoints.get(endpointName));
                     }
                 }
-                return axisService;
             }
         }
 

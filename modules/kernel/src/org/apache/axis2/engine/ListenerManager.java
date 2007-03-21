@@ -14,7 +14,6 @@ import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -100,7 +99,7 @@ public class ListenerManager {
 
         } else {
             TransportInDescription trsIN = configctx.getAxisConfiguration()
-                    .getTransportIn(new QName(transportName));
+                    .getTransportIn(transportName);
             TransportListener listener = trsIN.getReceiver();
             EndpointReference[] eprsForService;
             if (opName == null) {
@@ -123,11 +122,11 @@ public class ListenerManager {
                 TransportInDescription transportIn = (TransportInDescription) transportNames.next();
                 TransportListener listener = transportIn.getReceiver();
                 if (listener != null &&
-                        startedTransports.get(transportIn.getName().getLocalPart()) == null) {
+                        startedTransports.get(transportIn.getName()) == null) {
                     listener.init(configctx, transportIn);
                     listener.start();
-                    if (startedTransports.get(transportIn.getName().getLocalPart()) == null) {
-                        startedTransports.put(transportIn.getName().getLocalPart(), listener);
+                    if (startedTransports.get(transportIn.getName()) == null) {
+                        startedTransports.put(transportIn.getName(), listener);
                     }
                 }
             } catch (Exception e) {
@@ -208,7 +207,7 @@ public class ListenerManager {
                 transportListener.start();
             }
             stopped = false;
-            startedTransports.put(trsIn.getName().getLocalPart(), transportListener);
+            startedTransports.put(trsIn.getName(), transportListener);
         }
     }
 

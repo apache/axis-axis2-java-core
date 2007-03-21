@@ -185,9 +185,9 @@ public class MessageContextSaveATest extends TestCase {
 
         //-----------------------------------------------------------------
 
-        transportOut = new TransportOutDescription(new QName("null"));
-        transportOut2 = new TransportOutDescription(new QName("happy"));
-        transportOut3 = new TransportOutDescription(new QName("golucky"));
+        transportOut = new TransportOutDescription("null");
+        transportOut2 = new TransportOutDescription("happy");
+        transportOut3 = new TransportOutDescription("golucky");
         transportOut.setSender(new CommonsHTTPTransportSender());
         transportOut2.setSender(new CommonsHTTPTransportSender());
         transportOut3.setSender(new CommonsHTTPTransportSender());
@@ -195,9 +195,9 @@ public class MessageContextSaveATest extends TestCase {
         axisConfiguration.addTransportOut(transportOut2);
         axisConfiguration.addTransportOut(transportOut);
 
-        transportIn = new TransportInDescription(new QName("null"));
-        transportIn2 = new TransportInDescription(new QName("always"));
-        transportIn3 = new TransportInDescription(new QName("thebest"));
+        transportIn = new TransportInDescription("null");
+        transportIn2 = new TransportInDescription("always");
+        transportIn3 = new TransportInDescription("thebest");
         transportIn.setReceiver(new SimpleHTTPServer());
         transportIn2.setReceiver(new SimpleHTTPServer());
         transportIn3.setReceiver(new SimpleHTTPServer());

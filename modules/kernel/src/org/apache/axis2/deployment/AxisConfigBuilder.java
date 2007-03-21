@@ -453,7 +453,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             OMAttribute trsName = transport.getAttribute(new QName(ATTRIBUTE_NAME));
             if (trsName != null) {
                 String name = trsName.getAttributeValue();
-                transportIN = new TransportInDescription(new QName(name));
+                transportIN = new TransportInDescription(name);
                 // transport impl class
                 OMAttribute trsClas = transport.getAttribute(new QName(TAG_CLASS_NAME));
                 if (trsClas != null) {
@@ -498,7 +498,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             if (trsName != null) {
                 String name = trsName.getAttributeValue();
 
-                transportout = new TransportOutDescription(new QName(name));
+                transportout = new TransportOutDescription(name);
 
                 // transport impl class
                 OMAttribute trsClas = transport.getAttribute(new QName(TAG_CLASS_NAME));

@@ -56,7 +56,6 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.HttpService;
 
-import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -119,9 +118,9 @@ public class AxisHttpService extends HttpService {
 
         try {
             TransportOutDescription transportOut = this.configurationContext.getAxisConfiguration()
-                    .getTransportOut(new QName(Constants.TRANSPORT_HTTP));
+                    .getTransportOut(Constants.TRANSPORT_HTTP);
             TransportInDescription transportIn = this.configurationContext.getAxisConfiguration()
-                    .getTransportIn(new QName(Constants.TRANSPORT_HTTP));
+                    .getTransportIn(Constants.TRANSPORT_HTTP);
 
             String sessionKey = (String) context.getAttribute(HTTPConstants.COOKIE_STRING);
             this.msgContext.setTransportIn(transportIn);

@@ -70,10 +70,9 @@ public class ListingAgent extends AbstractAgent {
     private void addTransportListner(String schema, int port) {
         try {
             TransportInDescription trsIn =
-                    configContext.getAxisConfiguration().getTransportIn(
-                            new QName(schema));
+                    configContext.getAxisConfiguration().getTransportIn(schema);
             if (trsIn == null) {
-                trsIn = new TransportInDescription(new QName(schema));
+                trsIn = new TransportInDescription(schema);
                 HTTPSListener httspReceiver = new HTTPSListener(port, schema);
                 httspReceiver.init(configContext, trsIn);
                 trsIn.setReceiver(httspReceiver);

@@ -50,7 +50,7 @@ public class TransportInDescription implements ParameterInclude {
     /**
      * Field name
      */
-    protected QName name;
+    protected String name;
 
     /**
      * Field paramInclude
@@ -58,12 +58,7 @@ public class TransportInDescription implements ParameterInclude {
     protected final ParameterInclude paramInclude;
     protected TransportListener receiver;
 
-    /**
-     * Constructor AxisTransport.
-     *
-     * @param name
-     */
-    public TransportInDescription(QName name) {
+    public TransportInDescription(String name) {
         paramInclude = new ParameterIncludeImpl();
         this.name = name;
         inPhase = new Phase(PhaseMetadata.TRANSPORT_PHASE);
@@ -104,9 +99,10 @@ public class TransportInDescription implements ParameterInclude {
     }
 
     /**
+     * Get Transport name as a QName
      * @return Returns QName.
      */
-    public QName getName() {
+    public String getName() {
         return name;
     }
 
@@ -155,7 +151,7 @@ public class TransportInDescription implements ParameterInclude {
     /**
      * @param name
      */
-    public void setName(QName name) {
+    public void setName(String name) {
         this.name = name;
     }
 

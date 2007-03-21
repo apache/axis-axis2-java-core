@@ -243,8 +243,7 @@ public class ConfigurationContextFactory {
                 try {
                     sender.init(configContext, transportOut);
                 } catch (AxisFault axisFault) {
-                    log.info(Messages.getMessage("transportiniterror",
-                                                 transportOut.getName().getLocalPart()));
+                    log.info(Messages.getMessage("transportiniterror", transportOut.getName()));
                 }
             }
         }

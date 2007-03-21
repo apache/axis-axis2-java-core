@@ -153,10 +153,10 @@ public class JMSMessageReceiver implements MessageListener {
 
             msgContext.setIncomingTransportName(Constants.TRANSPORT_JMS);
             msgContext.setTransportIn(
-                    axisConf.getAxisConfiguration().getTransportIn(JMSConstants.JMS_QNAME));
+                    axisConf.getAxisConfiguration().getTransportIn(Constants.TRANSPORT_JMS));
 
             msgContext.setTransportOut(
-                    axisConf.getAxisConfiguration().getTransportOut(JMSConstants.JMS_QNAME));
+                    axisConf.getAxisConfiguration().getTransportOut(Constants.TRANSPORT_JMS));
             // the reply is assumed to be on the JMSReplyTo destination, using
             // the same incoming connection factory
             msgContext.setProperty(Constants.OUT_TRANSPORT_INFO,

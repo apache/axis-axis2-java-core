@@ -355,7 +355,7 @@ public class AxisConfiguration extends AxisDescription {
         if (transport.getReceiver() == null) {
             throw new AxisFault(
                     "Transport Receiver can not be null for the transport "
-                            + transport.getName().getLocalPart());
+                            + transport.getName());
         }
         transportsIn.put(transport.getName(), transport);
     }
@@ -371,7 +371,7 @@ public class AxisConfiguration extends AxisDescription {
         if (transport.getSender() == null) {
             throw new AxisFault(
                     "Transport sender can not be null for the transport "
-                            + transport.getName().getLocalPart());
+                            + transport.getName());
         }
         transportsOut.put(transport.getName(), transport);
     }
@@ -745,11 +745,11 @@ public class AxisConfiguration extends AxisDescription {
         return this.systemClassLoader;
     }
 
-    public TransportInDescription getTransportIn(QName name) {
+    public TransportInDescription getTransportIn(String name) {
         return (TransportInDescription) transportsIn.get(name);
     }
 
-    public TransportOutDescription getTransportOut(QName name) {
+    public TransportOutDescription getTransportOut(String name) {
         return (TransportOutDescription) transportsOut.get(name);
     }
 

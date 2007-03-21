@@ -30,7 +30,6 @@ import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisEngine;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLStreamException;
 import java.io.InputStream;
@@ -53,9 +52,9 @@ public class LocalTransportReceiver {
     public void processMessage(InputStream in, EndpointReference to) throws AxisFault {
         try {
             TransportInDescription tIn = confContext.getAxisConfiguration().getTransportIn(
-                    new QName(Constants.TRANSPORT_LOCAL));
+                    Constants.TRANSPORT_LOCAL);
             TransportOutDescription tOut = confContext.getAxisConfiguration().getTransportOut(
-                    new QName(Constants.TRANSPORT_LOCAL));
+                    Constants.TRANSPORT_LOCAL);
 
             tOut.setSender(new LocalResponder(sender));
 

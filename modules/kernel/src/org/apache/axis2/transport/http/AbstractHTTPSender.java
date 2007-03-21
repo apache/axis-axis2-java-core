@@ -460,8 +460,7 @@ public abstract class AbstractHTTPSender {
         Parameter par = null;
 
         proxyOutSetting = msgCtx.getConfigurationContext()
-                .getAxisConfiguration().getTransportOut(
-                new QName(Constants.TRANSPORT_HTTP));
+                .getAxisConfiguration().getTransportOut(Constants.TRANSPORT_HTTP);
 
         if (proxyOutSetting != null) {
             par = proxyOutSetting.getParameter(HTTPConstants.PROXY);

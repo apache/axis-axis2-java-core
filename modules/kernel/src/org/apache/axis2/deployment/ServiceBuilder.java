@@ -274,10 +274,10 @@ public class ServiceBuilder extends DescriptionBuilder {
                 ArrayList trs = new ArrayList();
                 while (transport_itr.hasNext()) {
                     OMElement trsEle = (OMElement) transport_itr.next();
-                    String tarnsportName = trsEle.getText().trim();
-                    trs.add(tarnsportName);
-                    if (axisConfig.getTransportIn(new QName(tarnsportName)) == null) {
-                        throw new AxisFault("Service is trying to expose in a tarnsport : "
+                    String transportName = trsEle.getText().trim();
+                    trs.add(transportName);
+                    if (axisConfig.getTransportIn(transportName) == null) {
+                        throw new AxisFault("Service is trying to expose in a transport : "
                                 + transports + " and which is not available in Axis2");
                     }
                 }

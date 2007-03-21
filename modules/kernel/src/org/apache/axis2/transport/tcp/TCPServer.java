@@ -61,8 +61,7 @@ public class TCPServer implements Runnable, TransportListener {
             serversocket = new ServerSocket(port);
 
             ListenerManager listenerManager = configContext.getListenerManager();
-            TransportInDescription trsIn = new TransportInDescription(
-                    new QName(Constants.TRANSPORT_TCP));
+            TransportInDescription trsIn = new TransportInDescription(Constants.TRANSPORT_TCP);
             trsIn.setReceiver(this);
             if (listenerManager == null) {
                 listenerManager = new ListenerManager();

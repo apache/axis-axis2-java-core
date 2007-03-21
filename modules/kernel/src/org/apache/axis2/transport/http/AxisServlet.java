@@ -408,7 +408,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             ListenerManager listenerManager = new ListenerManager();
             listenerManager.init(configContext);
             TransportInDescription transportInDescription = new TransportInDescription(
-                    new QName(Constants.TRANSPORT_HTTP));
+                    Constants.TRANSPORT_HTTP);
             transportInDescription.setReceiver(this);
             listenerManager.addListener(transportInDescription, true);
             listenerManager.start();
@@ -614,10 +614,10 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             msgContext.setIncomingTransportName(Constants.TRANSPORT_HTTP);
         }
         TransportInDescription transportIn =
-                axisConfiguration.getTransportIn(new QName(msgContext.getIncomingTransportName()));
+                axisConfiguration.getTransportIn(msgContext.getIncomingTransportName());
         //set the default output description. This will be http
         TransportOutDescription transportOut = configContext.getAxisConfiguration()
-                .getTransportOut(new QName(Constants.TRANSPORT_HTTP));
+                .getTransportOut(Constants.TRANSPORT_HTTP);
 
         msgContext.setTransportIn(transportIn);
         msgContext.setTransportOut(transportOut);

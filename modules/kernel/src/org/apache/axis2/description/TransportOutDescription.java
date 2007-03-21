@@ -23,7 +23,6 @@ import org.apache.axis2.engine.Phase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.transport.TransportSender;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 /**
@@ -40,7 +39,7 @@ public class TransportOutDescription implements ParameterInclude {
     /**
      * Field name
      */
-    protected QName name;
+    protected String name;
 
     /**
      * Field outFlow
@@ -59,7 +58,7 @@ public class TransportOutDescription implements ParameterInclude {
      *
      * @param name
      */
-    public TransportOutDescription(QName name) {
+    public TransportOutDescription(String name) {
         paramInclude = new ParameterIncludeImpl();
         this.name = name;
         outPhase = new Phase(PhaseMetadata.TRANSPORT_PHASE);
@@ -94,7 +93,7 @@ public class TransportOutDescription implements ParameterInclude {
     /**
      * @return Returns QName.
      */
-    public QName getName() {
+    public String getName() {
         return name;
     }
 
@@ -143,7 +142,7 @@ public class TransportOutDescription implements ParameterInclude {
     /**
      * @param name
      */
-    public void setName(QName name) {
+    public void setName(String name) {
         this.name = name;
     }
 

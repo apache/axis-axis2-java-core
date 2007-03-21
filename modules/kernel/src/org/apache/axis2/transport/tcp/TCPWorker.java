@@ -34,7 +34,6 @@ import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -61,9 +60,9 @@ public class TCPWorker implements Runnable {
             AxisEngine engine = new AxisEngine(configurationContext);
             AxisConfiguration axisConf = configurationContext.getAxisConfiguration();
             TransportOutDescription transportOut =
-                    axisConf.getTransportOut(new QName(Constants.TRANSPORT_TCP));
+                    axisConf.getTransportOut(Constants.TRANSPORT_TCP);
             TransportInDescription transportIn =
-                    axisConf.getTransportIn(new QName(Constants.TRANSPORT_TCP));
+                    axisConf.getTransportIn(Constants.TRANSPORT_TCP);
 
             if ((transportOut != null) && (transportIn != null)) {
 
@@ -114,6 +113,7 @@ public class TCPWorker implements Runnable {
                 try {
                     this.socket.close();
                 } catch (IOException e1) {
+                    // Do nothing
                 }
             }
         }

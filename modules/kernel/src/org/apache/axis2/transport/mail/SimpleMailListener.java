@@ -50,7 +50,6 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.URLName;
 import javax.mail.internet.MimeMessage;
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.IOException;
@@ -189,8 +188,8 @@ public class SimpleMailListener implements Runnable, TransportListener {
             }
             SimpleMailListener sas = new SimpleMailListener();
             TransportInDescription transportIn =
-                    configurationContext.getAxisConfiguration().getTransportIn(
-                            new QName(Constants.TRANSPORT_MAIL));
+                    configurationContext.
+                            getAxisConfiguration().getTransportIn(Constants.TRANSPORT_MAIL);
             if (transportIn != null) {
                 sas.init(configurationContext, transportIn);
                 log.info("Starting the SimpleMailListener with repository "
@@ -263,12 +262,10 @@ public class SimpleMailListener implements Runnable, TransportListener {
         MessageContext msgContext = null;
         TransportInDescription transportIn =
                 configurationContext.getAxisConfiguration()
-                        .getTransportIn(
-                                new QName(org.apache.axis2.Constants.TRANSPORT_MAIL));
+                        .getTransportIn(org.apache.axis2.Constants.TRANSPORT_MAIL);
         TransportOutDescription transportOut =
                 configurationContext.getAxisConfiguration()
-                        .getTransportOut(
-                                new QName(org.apache.axis2.Constants.TRANSPORT_MAIL));
+                        .getTransportOut(org.apache.axis2.Constants.TRANSPORT_MAIL);
         if ((transportIn != null) && (transportOut != null)) {
             // create Message Context
             msgContext = ContextFactory.createMessageContext(configurationContext);
@@ -310,7 +307,7 @@ public class SimpleMailListener implements Runnable, TransportListener {
                     String disposition = part.getDisposition();
 
                     if (disposition != null && disposition.equals(Part.ATTACHMENT)) {
-                        String soapAction = "";
+                        String soapAction;
 
                         /* Set the Charactorset Encoding */
                         if (BuilderUtil.getCharSetEncoding(part.getContentType()) != null) {

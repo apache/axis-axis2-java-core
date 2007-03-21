@@ -240,8 +240,7 @@ class OutInAxisOperationClient extends OperationClient {
                         mc.getConfigurationContext().getListenerManager().
                                 getEPRforService(sc.getAxisService().getName(),
                                                  axisOp.getName().getLocalPart(), mc
-                                        .getTransportIn().getName()
-                                        .getLocalPart());
+                                        .getTransportIn().getName());
 
                 if (mc.getReplyTo() == null) {
                     mc.setReplyTo(replyToFromTransport);

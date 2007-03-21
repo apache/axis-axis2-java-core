@@ -165,10 +165,10 @@ public class OperationContextSaveTest extends TestCase {
 
         //-----------------------------------------------------------------
 
-        transportOut = new TransportOutDescription(new QName("null"));
+        transportOut = new TransportOutDescription("null");
         transportOut.setSender(new CommonsHTTPTransportSender());
 
-        transportIn = new TransportInDescription(new QName("null"));
+        transportIn = new TransportInDescription("null");
 
         //-----------------------------------------------------------------
 

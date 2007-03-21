@@ -22,7 +22,6 @@ import org.apache.axis2.description.TransportOutDescription;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.phaseresolver.PhaseException;
 
-import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
 
@@ -45,8 +44,7 @@ public class TransportDeploymentTest extends AbstractTestCase {
         FileSystemConfigurator fsc =
                 new FileSystemConfigurator(repo.getAbsolutePath(), xml.getAbsolutePath());
         AxisConfiguration er = fsc.getAxisConfiguration();
-        TransportOutDescription transport1 = er.getTransportOut(
-                new QName("custom"));
+        TransportOutDescription transport1 = er.getTransportOut("custom");
         assertNotNull(transport1);
     }
 }

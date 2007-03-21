@@ -56,7 +56,6 @@ import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 
-import javax.xml.namespace.QName;
 import java.io.IOException;
 
 /**
@@ -127,14 +126,12 @@ public class HttpFactory {
 
     private WorkerFactory requestWorkerFactory = null;
 
-    private static final QName HTTP_NAME = new QName(Constants.TRANSPORT_HTTP);
-
     /**
      * Create and configure a new HttpFactory
      */
     public HttpFactory(ConfigurationContext configurationContext) throws AxisFault {
         this.configurationContext = configurationContext;
-        httpConfiguration = configurationContext.getAxisConfiguration().getTransportIn(HTTP_NAME);
+        httpConfiguration = configurationContext.getAxisConfiguration().getTransportIn(Constants.TRANSPORT_HTTP);
         port = getIntParam(PARAMETER_PORT, 6060);
         hostAddress = getStringParam(PARAMETER_HOST_ADDRESS, null);
         originServer = getStringParam(PARAMETER_ORIGIN_SERVER, "Simple-Server/1.1");

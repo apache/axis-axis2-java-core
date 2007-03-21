@@ -846,8 +846,7 @@ public class AxisService extends AxisDescription {
             List trs = this.exposedTransports;
             for (int i = 0; i < trs.size(); i++) {
                 String trsName = (String) trs.get(i);
-                TransportInDescription transportIn = axisConfig.getTransportIn(
-                        new QName(trsName));
+                TransportInDescription transportIn = axisConfig.getTransportIn(trsName);
                 if (transportIn != null) {
                     TransportListener listener = transportIn.getReceiver();
                     if (listener != null) {
@@ -2346,6 +2345,7 @@ public class AxisService extends AxisDescription {
         this.endpointURL = endpointURL;
     }
 
+    // TODO : Explain what goes in this map!
     public Map getEndpoints() {
         return endpointMap;
     }

@@ -35,7 +35,6 @@ import org.apache.commons.logging.LogFactory;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.xml.namespace.QName;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
@@ -76,9 +75,9 @@ public class MailSorter {
         try {
             msgContext = ContextFactory.createMessageContext(confContext);
             msgContext.setTransportIn(confContext.getAxisConfiguration().getTransportIn(
-                    new QName(org.apache.axis2.Constants.TRANSPORT_MAIL)));
+                    org.apache.axis2.Constants.TRANSPORT_MAIL));
             msgContext.setTransportOut(confContext.getAxisConfiguration().getTransportOut(
-                    new QName(org.apache.axis2.Constants.TRANSPORT_MAIL)));
+                    org.apache.axis2.Constants.TRANSPORT_MAIL));
 
             msgContext.setServerSide(true);
             msgContext.setProperty(Constants.CONTENT_TYPE, mimeMessage.getContentType());

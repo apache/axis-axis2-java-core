@@ -43,11 +43,11 @@ public class ClientUtils {
             int index = transportURI.indexOf(':');
             String transport = (index > 0) ? transportURI.substring(0, index) : null;
             if (transport != null) {
-                TransportOutDescription transportOut = ac.getTransportOut(new QName(transport));
+                TransportOutDescription transportOut = ac.getTransportOut(transport);
                 if (transportOut == null) {
                     throw new AxisFault("No Tranport Sender found for : " + transport);
                 } else {
-                    return ac.getTransportOut(new QName(transport));
+                    return ac.getTransportOut(transport);
                 }
             } else {
                 throw new AxisFault(Messages.getMessage("cannotInferTransport", transportURI));
@@ -66,7 +66,7 @@ public class ClientUtils {
             int index = uri.indexOf(':');
             String transport = (index > 0) ? uri.substring(0, index) : null;
             if (transport != null) {
-                return ac.getTransportOut(new QName(transport));
+                return ac.getTransportOut(transport);
             } else {
                 throw new AxisFault(Messages.getMessage("cannotInferTransport", uri));
             }
@@ -90,14 +90,14 @@ public class ClientUtils {
             } else {
                 //assume listener transport as sender transport
                 if (msgCtxt.getTransportOut() != null) {
-                    listenerTransportProtocol = msgCtxt.getTransportOut().getName().getLocalPart();
+                    listenerTransportProtocol = msgCtxt.getTransportOut().getName();
                 }
             }
         }
         TransportInDescription transportIn = null;
         if (options.isUseSeparateListener()) {
             if ((listenerTransportProtocol != null) && !"".equals(listenerTransportProtocol)) {
-                transportIn = ac.getTransportIn(new QName(listenerTransportProtocol));
+                transportIn = ac.getTransportIn(listenerTransportProtocol);
                 ListenerManager listenerManager =
                         msgCtxt.getConfigurationContext().getListenerManager();
                 if (transportIn == null) {
@@ -106,7 +106,7 @@ public class ClientUtils {
                     throw new AxisFault(Messages.getMessage("unknownTransport",
                                                             listenerTransportProtocol));
                 }
-                if (!listenerManager.isListenerRunning(transportIn.getName().getLocalPart())) {
+                if (!listenerManager.isListenerRunning(transportIn.getName())) {
                     listenerManager.addListener(transportIn, false);
                 }
             }

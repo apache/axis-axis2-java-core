@@ -60,9 +60,9 @@ public class EnginePausingTest extends TestCase {
         configConetxt = new ConfigurationContext(engineRegistry);
         configConetxt.setServicePath(Constants.DEFAULT_SERVICES_PATH);
         configConetxt.setContextRoot("axis2");
-        transportOut = new TransportOutDescription(new QName("null"));
+        transportOut = new TransportOutDescription("null");
         transportOut.setSender(new CommonsHTTPTransportSender());
-        transportIn = new TransportInDescription(new QName("null"));
+        transportIn = new TransportInDescription("null");
 
     }
 
