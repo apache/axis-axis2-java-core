@@ -543,7 +543,7 @@ public class CStructWriter implements BeanWriter {
         for (int i = 0; i < qName.length; i++) {
             Element property = XSLTUtils.addChildElement(model, "property", rootElt);
             name = qName[i];
-            String xmlName = name.getLocalPart();
+            String xmlName = makeUniqueCStructName(new ArrayList(), name.getLocalPart());
 
             XSLTUtils.addAttribute(model, "name", xmlName, property);
 
