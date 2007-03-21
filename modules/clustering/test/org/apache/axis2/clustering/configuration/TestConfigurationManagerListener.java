@@ -30,6 +30,10 @@ public class TestConfigurationManagerListener implements ConfigurationManagerLis
 		eventList = new ArrayList ();
 	}
 	
+	public void handleException(Throwable throwable) {
+		// TODO Auto-generated method stub
+	}
+
 	public void clearEventList () {
 		eventList.clear();
 	}

@@ -21,6 +21,7 @@ import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.cluster.ClusterManager;
+import org.apache.axis2.cluster.ClusteringConstants;
 import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -29,6 +30,7 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.util.threadpool.ThreadFactory;
 import org.apache.axis2.util.threadpool.ThreadPool;
 
@@ -93,8 +95,17 @@ public class ConfigurationContext extends AbstractContext {
         		contextManager.setConfigurationContext(this);
         }
         
-        clusterManager.init(this);
+        if (shouldClusterBeInitiated(clusterManager))
+        	clusterManager.init(this);
     }
+    
+    private static boolean shouldClusterBeInitiated (ClusterManager clusterManager) {
+    	Parameter param = clusterManager.getParameter(ClusteringConstants.AVOID_INITIATION_KEY);
+    	if (param!=null && JavaUtils.isTrueExplicitly(param.getValue()))
+    		return false;
+    	else 
+    		return true;
+    }	
 
     protected void finalize() throws Throwable {
         super.finalize();

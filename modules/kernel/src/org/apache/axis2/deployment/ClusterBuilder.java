@@ -40,7 +40,8 @@ import java.util.Iterator;
  * Builds a service description from OM
  */
 public class ClusterBuilder extends DescriptionBuilder {
-    private static final Log log = LogFactory.getLog(ClusterBuilder.class);
+
+	private static final Log log = LogFactory.getLog(ClusterBuilder.class);
     private AxisService service;
 
     public ClusterBuilder(AxisConfiguration axisConfig) {
@@ -67,6 +68,10 @@ public class ClusterBuilder extends DescriptionBuilder {
         try {
             Class clazz = Class.forName(className);
             clusterManager = (ClusterManager) clazz.newInstance();
+            
+            //loading the parameters.
+            Iterator params = clusterElement.getChildrenWithName(new QName(TAG_PARAMETER));
+            processParameters(params, clusterManager,null );
             
             //loading the ConfigurationManager
             OMElement configurationManagerElement = clusterElement.getFirstChildWithName(
@@ -156,7 +161,6 @@ public class ClusterBuilder extends DescriptionBuilder {
         } catch (IllegalAccessException e) {
             throw new DeploymentException(e);
         }
-
     }
 
 }

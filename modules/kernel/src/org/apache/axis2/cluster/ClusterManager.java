@@ -19,8 +19,10 @@ package org.apache.axis2.cluster;
 import org.apache.axis2.cluster.configuration.ConfigurationManager;
 import org.apache.axis2.cluster.context.ContextManager;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.ParameterInclude;
 
-public interface ClusterManager {
+public interface ClusterManager extends ParameterInclude {
+	
     public void init(ConfigurationContext configurationContext) throws ClusteringFault;
     public ContextManager getContextManager ();
     public ConfigurationManager getConfigurationManager ();

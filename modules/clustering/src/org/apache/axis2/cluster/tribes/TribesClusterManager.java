@@ -16,6 +16,11 @@
 
 package org.apache.axis2.cluster.tribes;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.cluster.ClusterManager;
 import org.apache.axis2.cluster.ClusteringFault;
@@ -26,11 +31,15 @@ import org.apache.axis2.cluster.tribes.context.ContextUpdater;
 import org.apache.axis2.cluster.tribes.context.TribesContextManager;
 import org.apache.axis2.cluster.tribes.info.TransientTribesChannelInfo;
 import org.apache.axis2.cluster.tribes.info.TransientTribesMemberInfo;
+import org.apache.axis2.cluster.tribes.util.TribesUtil;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
+import org.apache.catalina.tribes.ManagedChannel;
+import org.apache.catalina.tribes.Member;
 import org.apache.catalina.tribes.group.GroupChannel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,12 +51,14 @@ public class TribesClusterManager implements ClusterManager {
 	private ConfigurationContext configContext = null;
 	private ContextUpdater updater;
 	private static long timeout = 1000L; // this should be configured in the axis2.xml
+	private HashMap parameters = null;
 	
     private static final Log log = LogFactory.getLog(TribesClusterManager.class);
     
     public TribesClusterManager () {
 		contextManager = new TribesContextManager ();
 		configurationManager = new TribesConfigurationManager ();
+		parameters = new HashMap ();
     }
 	
 	public ContextManager getContextManager() {
@@ -75,7 +86,8 @@ public class TribesClusterManager implements ClusterManager {
         configurationManager.setSender(sender);
 
         try {
-			Channel channel = new GroupChannel();
+			ManagedChannel channel = new GroupChannel();
+
 			channel.addChannelListener (listener);
 			channel.addChannelListener(channelInfo);
 			channel.addMembershipListener(memberInfo);
@@ -84,6 +96,9 @@ public class TribesClusterManager implements ClusterManager {
 			sender.setChannel(channel);
 			contextManager.setSender(sender);
 			configurationManager.setSender(sender);
+			
+			Member[] members = channel.getMembers();
+			TribesUtil.printMembers (members);
 			
 			updater = new ContextUpdater ();
 			contextManager.setUpdater(updater);
@@ -119,4 +134,39 @@ public class TribesClusterManager implements ClusterManager {
 	public void setContextManager(ContextManager contextManager) {
 		this.contextManager = (TribesContextManager) contextManager;
 	}
+
+	public void addParameter(Parameter param) throws AxisFault {
+		parameters.put(param.getName(), param);
+	}
+
+	public void deserializeParameters(OMElement parameterElement) throws AxisFault {
+		throw new UnsupportedOperationException ();
+	}
+
+	public Parameter getParameter(String name) {
+		return (Parameter) parameters.get(name);
+	}
+
+	public ArrayList getParameters() {
+		ArrayList list = new ArrayList ();
+		for (Iterator it=parameters.keySet().iterator();it.hasNext();) { 
+			list.add(parameters.get(it.next()));
+		}
+		
+		return list;
+	}
+
+	public boolean isParameterLocked(String parameterName) {
+		
+		Parameter parameter = (Parameter) parameters.get(parameterName);
+		if (parameter!=null)
+			return parameter.isLocked();
+		
+		return false;
+	}
+
+	public void removeParameter(Parameter param) throws AxisFault {
+		parameters.remove(param.getName());
+	}
+	
 }
