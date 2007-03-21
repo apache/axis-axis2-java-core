@@ -243,7 +243,7 @@ public class JMSSender extends AbstractHandler implements TransportSender {
 
         // set the JMS correlation ID if specified
         String correlationId = getProperty(msgContext, JMSConstants.JMS_COORELATION_ID);
-        if (correlationId == null) {
+        if (correlationId == null && msgContext.getRelatesTo() != null) {
             correlationId = msgContext.getRelatesTo().getValue();
         }
 
