@@ -235,7 +235,7 @@ public class AxisService extends AxisDescription {
         this.endpointMap.put(key, axisEndpoint);
     }
 
-    private boolean customWsld = false;
+    private boolean customWsdl = false;
 
     public String getWSAddressingFlag() {
         return wsaddressingFlag;
@@ -2350,12 +2350,12 @@ public class AxisService extends AxisDescription {
         return endpointMap;
     }
 
-    public boolean isCustomWsld() {
-        return customWsld;
+    public boolean isCustomWsdl() {
+        return customWsdl;
     }
 
-    public void setCustomWsld(boolean customWsld) {
-        this.customWsld = customWsld;
+    public void setCustomWsdl(boolean customWsdl) {
+        this.customWsdl = customWsdl;
     }
 
     public List getOperationsNameList() {

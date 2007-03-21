@@ -93,7 +93,26 @@ public class BeanUtil {
             }
 
             // properties from JAM
+            ArrayList propertyList = new ArrayList();
             JProperty properties [] = jClass.getDeclaredProperties();
+            for (int i = 0; i < properties.length; i++) {
+                JProperty property = properties[i];
+                propertyList.add(property);
+            }
+            JClass supClass = jClass.getSuperclass();
+            while(!"java.lang.Object".equals(supClass.getQualifiedName())){
+                properties = supClass.getDeclaredProperties();
+                for (int i = 0; i < properties.length; i++) {
+                    JProperty property = properties[i];
+                    propertyList.add(property);
+                }
+                supClass = supClass.getSuperclass();
+            }
+            properties = new JProperty[propertyList.size()];
+            for (int i = 0; i < propertyList.size(); i++) {
+                JProperty jProperty = (JProperty) propertyList.get(i);
+                properties[i]= jProperty;
+            }
             Arrays.sort(properties);
             BeanInfo beanInfo = Introspector.getBeanInfo(beanObject.getClass());
             PropertyDescriptor [] propDescs = beanInfo.getPropertyDescriptors();

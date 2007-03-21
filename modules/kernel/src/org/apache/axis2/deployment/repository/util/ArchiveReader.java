@@ -86,7 +86,7 @@ public class ArchiveReader implements DeploymentConstants {
                 axisService = new AxisService(serviceName);
             } else {
                 axisService.setWsdlFound(true);
-                axisService.setCustomWsld(true);
+                axisService.setCustomWsdl(true);
             }
 
             axisService.setParent(axisServiceGroup);

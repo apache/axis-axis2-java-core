@@ -329,7 +329,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                 }
             }
-            if (service.isCustomWsld()) {
+            if (service.isCustomWsdl()) {
                 OMElement mappingElement = service_element.getFirstChildWithName(
                         new QName(TAG_PACKAGE2QNAME));
                 if (mappingElement != null) {
