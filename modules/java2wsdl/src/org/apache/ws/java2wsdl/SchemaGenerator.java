@@ -286,7 +286,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
      */
     private QName generateSchema(JClass javaType) throws Exception {
         String name = getQualifiedName(javaType);
-        QName schemaTypeName = typeTable.getComplexSchemaType(name);
+        QName schemaTypeName =typeTable.getComplexSchemaType(name);
         if (schemaTypeName == null) {
             String simpleName =  getSimpleName(javaType);
 
@@ -309,12 +309,19 @@ public class SchemaGenerator implements Java2WSDLConstants {
             
 //          AXIS2-1749 inheritance
             if ((sup != null) && !( "java.lang.Object".compareTo(sup.getQualifiedName()) == 0)) {
-            	
+            	String superClassName = sup.getQualifiedName();
             	String superclassname = getSimpleName(sup) ;
-            	
-            	String tgtNamespace = resolveSchemaNamespace(sup.getContainingPackage().getQualifiedName()) ;
-            	String tgtNamespacepfx = (String) targetNamespacePrefixMap.get(tgtNamespace);
-            	
+            	String tgtNamespace ;
+                String tgtNamespacepfx;
+                QName qName = typeTable.getSimpleSchemaTypeName(superClassName);
+                if(qName !=null){
+                    tgtNamespace =qName.getNamespaceURI();
+                    tgtNamespacepfx = qName.getPrefix();
+                } else {
+                     tgtNamespace = resolveSchemaNamespace(sup.getContainingPackage().getQualifiedName()) ;
+                     tgtNamespacepfx = (String) targetNamespacePrefixMap.get(tgtNamespace);
+                 }
+
             	QName basetype = new QName(tgtNamespace,superclassname,tgtNamespacepfx) ;
             	
             	complexExtension.setBaseTypeName(basetype) ;
