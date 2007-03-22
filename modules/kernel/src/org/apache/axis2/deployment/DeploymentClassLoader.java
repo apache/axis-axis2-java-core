@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLStreamHandler;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -133,7 +135,9 @@ public class DeploymentClassLoader extends URLClassLoader {
                         entryName = entry.getName();
                         if (entryName != null &&
                                 entryName.endsWith(resource)) {
-                            return new URL("jar", "", -1, urls[0] + "!/" + libjar_name + "!/" + entryName, new JarFileUrlStreamHandler());
+                            byte[] raw = IOUtils.getStreamAsByteArray(zin);
+                            return new URL("jar", "", -1, urls[0] + "!/" + libjar_name + "!/" + entryName,
+                                    new ByteUrlStreamHandler(raw));
                         }
                     }
                 } catch (Exception e) {
@@ -169,7 +173,9 @@ public class DeploymentClassLoader extends URLClassLoader {
                     entryName = entry.getName();
                     if (entryName != null &&
                             entryName.endsWith(resource)) {
-                        resources.add(new URL("jar", "", -1, urls[0] + "!/" + libjar_name + "!/" + entryName, new JarFileUrlStreamHandler()));
+                        byte[] raw = IOUtils.getStreamAsByteArray(zin);
+                        resources.add(new URL("jar", "", -1, urls[0] + "!/" + libjar_name + "!/" + entryName,
+                                new ByteUrlStreamHandler(raw)));
                     }
                 }
             } catch (Exception ex) {
@@ -233,5 +239,33 @@ public class DeploymentClassLoader extends URLClassLoader {
      */
     private InputStream getJarAsStream(String libjar_name) throws Exception {
         return new ByteArrayInputStream(getBytes(urls[0].openStream(), libjar_name));
+    }
+
+    public static class ByteUrlStreamHandler extends URLStreamHandler {
+        private byte[] bytes;
+
+        public ByteUrlStreamHandler(byte[] bytes) {
+            this.bytes = bytes;
+        }
+
+        protected URLConnection openConnection(URL u) throws IOException {
+            return new ByteURLConnection(u, bytes);
+        }
+    }
+
+    public static class ByteURLConnection extends URLConnection {
+        protected byte[] bytes;
+
+        public ByteURLConnection(URL url, byte[] bytes) {
+            super(url);
+            this.bytes = bytes;
+        }
+
+        public void connect() {
+        }
+
+        public InputStream getInputStream() {
+            return new ByteArrayInputStream(bytes);
+        }
     }
 }
