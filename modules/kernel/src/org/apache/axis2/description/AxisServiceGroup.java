@@ -120,6 +120,9 @@ public class AxisServiceGroup extends AxisDescription {
 
         service.setLastupdate();
         addChild(service);
+        if(axisConfig!=null){
+            axisConfig.addToAllServicesMap(service.getName(),service);
+        }
     }
 
     public void addToengagedModules(QName moduleName) {

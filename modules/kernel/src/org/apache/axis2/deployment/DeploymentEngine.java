@@ -198,8 +198,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     DeploymentClassLoader deploymentClassLoader =
                             new DeploymentClassLoader(
                                     new URL[]{moduleurl},
-                                    axisConfig.getModuleClassLoader(),
-                                    false);
+                                    axisConfig.getModuleClassLoader());
                     AxisModule module = new AxisModule();
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);
@@ -245,7 +244,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         try {
             serviceGroup.setServiceGroupName(serviceName);
             DeploymentClassLoader serviceClassLoader = new DeploymentClassLoader(
-                    new URL[]{servicesURL}, axisConfig.getServiceClassLoader(), false);
+                    new URL[]{servicesURL}, axisConfig.getServiceClassLoader());
             String metainf = "meta-inf";
             serviceGroup.setServiceGroupClassLoader(serviceClassLoader);
             //processing wsdl.list

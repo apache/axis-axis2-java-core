@@ -119,7 +119,7 @@ public class DeploymentFileData {
                                                                 file.getAbsolutePath()));
                     }
                     urlsToLoadFrom = new URL[]{file.toURL()};
-                    classLoader = new DeploymentClassLoader(urlsToLoadFrom, parent, false);
+                    classLoader = new DeploymentClassLoader(urlsToLoadFrom, parent);
                 } catch (Exception e) {
                     throw new AxisFault(e);
                 }

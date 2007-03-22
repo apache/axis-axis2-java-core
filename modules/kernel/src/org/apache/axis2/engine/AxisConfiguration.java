@@ -276,14 +276,7 @@ public class AxisConfiguration extends AxisDescription {
         while (services.hasNext()) {
             axisService = (AxisService) services.next();
             String serviceName = axisService.getName();
-            if (allServices.get(serviceName) != null) {
-                throw new AxisFault(Messages.getMessage(
-                        "twoservicecannothavesamename", axisService.getName()));
-            }
-            if (axisService.getSchematargetNamespace() == null) {
-                axisService
-                        .setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
-            }
+            addToAllServicesMap(serviceName, axisService);
         }
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
@@ -323,6 +316,17 @@ public class AxisConfiguration extends AxisDescription {
         // serviceGroups.put(axisServiceGroup.getServiceGroupName(),
         // axisServiceGroup);
         addChild(axisServiceGroup);
+    }
+
+    public void addToAllServicesMap(String serviceName, AxisService axisService) throws AxisFault {
+        if (allServices.get(serviceName) != null) {
+            throw new AxisFault(Messages.getMessage(
+                    "twoservicecannothavesamename", axisService.getName()));
+        }
+        if (axisService.getSchematargetNamespace() == null) {
+            axisService
+                    .setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
+        }
     }
 
     public AxisServiceGroup removeServiceGroup(String serviceGroupName) throws AxisFault {

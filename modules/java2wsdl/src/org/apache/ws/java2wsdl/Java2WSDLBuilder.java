@@ -166,8 +166,8 @@ public class Java2WSDLBuilder implements Java2WSDLConstants {
         if ( getPkg2nsMap() != null && !getPkg2nsMap().isEmpty() && 
                 (getPkg2nsMap().containsKey(ALL) || getPkg2nsMap().containsKey(ALL.toUpperCase())) ) {
             schemaGenerator.setUseWSDLTypesNamespace(true);
-        } 
-        
+        }
+
         Collection schemaCollection = schemaGenerator.generateSchema();
         
         Java2OMBuilder java2OMBuilder = new Java2OMBuilder(schemaGenerator.getMethods(),
