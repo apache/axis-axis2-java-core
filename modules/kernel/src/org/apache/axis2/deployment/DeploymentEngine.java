@@ -198,7 +198,8 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     DeploymentClassLoader deploymentClassLoader =
                             new DeploymentClassLoader(
                                     new URL[]{moduleurl},
-                                    axisConfig.getModuleClassLoader());
+                                    axisConfig.getModuleClassLoader(),
+                                    false);
                     AxisModule module = new AxisModule();
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);

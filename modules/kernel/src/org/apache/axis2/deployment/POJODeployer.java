@@ -70,7 +70,8 @@ public class POJODeployer implements Deployer {
                     DeploymentClassLoader classLoader =
                             new DeploymentClassLoader(new URL[]{parentFile.toURL()},
                                                       configCtx
-                                                              .getAxisConfiguration().getSystemClassLoader());
+                                                              .getAxisConfiguration().getSystemClassLoader(),
+                                                      false);
                     Thread.currentThread().setContextClassLoader(classLoader);
                     String className = file.getName();
                     className = className.replaceAll(".class", "");

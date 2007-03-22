@@ -117,23 +117,16 @@ public class Utils {
         }
     }
 
-    public static URL[] getURLsForAllJars(URL url, boolean antiJARLocking) {
+    public static URL[] getURLsForAllJars(URL url) {
         try {
             ArrayList array = new ArrayList();
             String urlString = url.toString();
             InputStream in = url.openStream();
             ZipInputStream zin;
             FileInputStream fin = null;
-            if (antiJARLocking) {
-                File inputFile = createTempFile(urlString.substring(urlString.length() - 4), in);
-                in.close();
-                array.add(inputFile.toURL());
-                fin = new FileInputStream(inputFile);
-                zin = new ZipInputStream(fin);
-            } else {
                 array.add(url);
                 zin = new ZipInputStream(in);
-            }
+
             ZipEntry entry;
             String entryName;
             while ((entry = zin.getNextEntry()) != null) {
@@ -150,41 +143,9 @@ public class Utils {
                 }
             }
             zin.close();
-            if (!antiJARLocking) {
-                in.close();
-            }
             if (fin != null) {
                 fin.close();
             }
-            return (URL[]) array.toArray(new URL[array.size()]);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static URL[] getURLsForAllJars(URL url) {
-        try {
-            ArrayList array = new ArrayList();
-            String urlString = url.toString();
-            InputStream in = url.openStream();
-            ZipInputStream zin = new ZipInputStream(in);
-
-            array.add(url);
-
-            ZipEntry entry;
-            String entryName;
-            while ((entry = zin.getNextEntry()) != null) {
-                entryName = entry.getName();
-                /**
-                 * id the entry name start with /lib and end with .jar
-                 * then those entry name will be added to the arraylist
-                 */
-                if ((entryName != null) && entryName.toLowerCase().startsWith("lib/")
-                        && entryName.toLowerCase().endsWith(".jar")) {
-                    array.add(new URL("jar", "", -1, url.toString() + "!/" + entry.getName()));
-                }
-            }
-            zin.close();
             return (URL[]) array.toArray(new URL[array.size()]);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -624,5 +585,34 @@ public class Utils {
             }
         }
         return filepath;
+    }
+
+    /**
+     * Searches for jar files inside /lib dirctory. If there are any, the
+     * names of those jar files will be added to the array list
+     */
+    public static ArrayList findLibJars(URL url) {
+        ArrayList embedded_jars = new ArrayList();
+        try {
+            ZipInputStream zin = new ZipInputStream(url.openStream());
+            ZipEntry entry;
+            String entryName = "";
+            while ((entry = zin.getNextEntry()) != null) {
+                entryName = entry.getName();
+                /**
+                 * if the entry name start with /lib and ends with .jar
+                 * add it to the the arraylist
+                 */
+                if (entryName != null && (entryName.startsWith("lib/") ||
+                        entryName.startsWith("Lib/")) &&
+                        entryName.endsWith(".jar")) {
+                    embedded_jars.add(entryName);
+                }
+            }
+            zin.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return embedded_jars;
     }
 }
