@@ -253,14 +253,14 @@ public class Utils {
     }
 
 
-    public static QName getModuleName(String name, String versionID) {
+    public static String getModuleName(String name, String versionID) {
         String moduleName;
         if (versionID != null && versionID.length() != 0) {
             moduleName = name + "-" + versionID;
         } else {
             moduleName = name;
         }
-        return new QName(moduleName);
+        return moduleName;
     }
 
     /**
@@ -273,12 +273,12 @@ public class Utils {
      * @param deployedModulename
      * @throws AxisFault
      */
-    public static boolean checkVersion(QName deployingModuleName,
-                                       QName deployedModulename) throws AxisFault {
-        String module1name = getModuleName(deployingModuleName.getLocalPart());
-        String module2name = getModuleName(deployedModulename.getLocalPart());
-        String module1version = getModuleVersion(deployingModuleName.getLocalPart());
-        String module2version = getModuleVersion(deployedModulename.getLocalPart());
+    public static boolean checkVersion(String deployingModuleName,
+                                       String deployedModulename) throws AxisFault {
+        String module1name = getModuleName(deployingModuleName);
+        String module2name = getModuleName(deployedModulename);
+        String module1version = getModuleVersion(deployingModuleName);
+        String module2version = getModuleVersion(deployedModulename);
         if (module1name.equals(module2name)) {
             if (module1version != null) {
                 if (!module1version.equals(module2version)) {
@@ -300,9 +300,9 @@ public class Utils {
         HashMap defaultModules = new HashMap();
         while (allModules.hasNext()) {
             AxisModule axisModule = (AxisModule) allModules.next();
-            QName moduleName = axisModule.getName();
-            String moduleNameString = getModuleName(moduleName.getLocalPart());
-            String moduleVersionString = getModuleVersion(moduleName.getLocalPart());
+            String moduleName = axisModule.getName();
+            String moduleNameString = getModuleName(moduleName);
+            String moduleVersionString = getModuleVersion(moduleName);
             String currentDefaultVerison = (String) defaultModules.get(moduleNameString);
             if (currentDefaultVerison != null) {
                 // if the module version is null then , that will be ignore in this case

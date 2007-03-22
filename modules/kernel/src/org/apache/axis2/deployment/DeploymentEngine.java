@@ -19,6 +19,7 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
@@ -60,10 +61,21 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public abstract class DeploymentEngine implements DeploymentConstants {
-
     private static final Log log = LogFactory.getLog(DeploymentEngine.class);
-    protected boolean hotUpdate = true;    // to do hot update or not
-    protected boolean hotDeployment = true;    // to do hot deployment or not
+
+    //to keep the web resource location if any
+    protected static String webLocationString = null;
+
+    public static void setWebLocationString(String webLocationString) {
+        DeploymentEngine.webLocationString = webLocationString;
+    }
+
+    /** Support for hot update is controlled by this flag */
+    protected boolean hotUpdate = true;
+
+    /** Support for hot deployment is controlled by this flag */
+    protected boolean hotDeployment = true;
+
     /**
      * Stores all the web Services to deploy.
      */
@@ -73,9 +85,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      * Stores all the web Services to undeploy.
      */
     protected List wsToUnDeploy = new ArrayList();
-
-    //to keep the web resource location if any
-    protected static String webLocationString = null;
 
     /**
      * to keep a ref to engine register
@@ -203,7 +212,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);
                     String moduleName = fileUrl.substring(0, fileUrl.indexOf(".mar"));
-                    module.setName(new QName(moduleName));
+                    module.setName(moduleName);
                     populateModule(module, moduleurl);
                     module.setFileName(moduleurl);
                     addNewModule(module, axisConfig);
@@ -431,7 +440,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         ArrayList groupModules = serviceGroup.getModuleRefs();
 
         for (int i = 0; i < groupModules.size(); i++) {
-            QName moduleName = (QName) groupModules.get(i);
+            String moduleName = (String) groupModules.get(i);
             AxisModule module = axisConfig.getModule(moduleName);
 
             if (module != null) {
@@ -440,7 +449,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 throw new DeploymentException(
                         Messages.getMessage(
                                 DeploymentErrorMsgs.BAD_MODULE_FROM_SERVICE,
-                                serviceGroup.getServiceGroupName(), moduleName.getLocalPart()));
+                                serviceGroup.getServiceGroupName(), moduleName));
             }
         }
 
@@ -457,7 +466,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             ArrayList list = axisService.getModules();
 
             for (int i = 0; i < list.size(); i++) {
-                AxisModule module = axisConfig.getModule((QName) list.get(i));
+                AxisModule module = axisConfig.getModule((String)list.get(i));
 
                 if (module == null) {
                     throw new DeploymentException(
@@ -475,7 +484,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                 ArrayList modules = opDesc.getModuleRefs();
 
                 for (int i = 0; i < modules.size(); i++) {
-                    QName moduleName = (QName) modules.get(i);
+                    String moduleName = (String) modules.get(i);
                     AxisModule module = axisConfig.getModule(moduleName);
 
                     if (module != null) {
@@ -485,7 +494,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                 Messages.getMessage(
                                         DeploymentErrorMsgs.BAD_MODULE_FROM_OPERATION,
                                         opDesc.getName().getLocalPart(),
-                                        moduleName.getLocalPart()));
+                                        moduleName));
                     }
                 }
             }
@@ -693,7 +702,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         return fileName;
     }
 
-    public AxisModule getModule(QName moduleName) throws AxisFault {
+    public AxisModule getModule(String moduleName) throws AxisFault {
         return axisConfig.getModule(moduleName);
     }
 
@@ -745,29 +754,17 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      * Sets hotDeployment and hot update.
      */
     protected void setDeploymentFeatures() {
-        String value;
-        Parameter parahotdeployment = axisConfig.getParameter(TAG_HOT_DEPLOYMENT);
-        Parameter parahotupdate = axisConfig.getParameter(TAG_HOT_UPDATE);
+        Parameter hotDeployment = axisConfig.getParameter(TAG_HOT_DEPLOYMENT);
+        Parameter hotUpdate = axisConfig.getParameter(TAG_HOT_UPDATE);
 
-        if (parahotdeployment != null) {
-            value = (String) parahotdeployment.getValue();
-
-            if ("false".equalsIgnoreCase(value)) {
-                hotDeployment = false;
-            }
+        if (hotDeployment != null) {
+            this.hotDeployment = JavaUtils.isTrue(hotDeployment.getValue(), true);
         }
 
-        if (parahotupdate != null) {
-            value = (String) parahotupdate.getValue();
-
-            if ("false".equalsIgnoreCase(value)) {
-                hotUpdate = false;
-            }
+        if (hotUpdate != null) {
+            this.hotUpdate = JavaUtils.isTrue(hotUpdate.getValue(), true);
         }
 
-        if (parahotupdate != null) {
-            value = (String) parahotupdate.getValue();
-        }
         String serviceDirPara = (String)
                 axisConfig.getParameterValue(DeploymentConstants.SERVICE_DIR_PATH);
         if (serviceDirPara != null) {
@@ -858,10 +855,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         return webLocationString;
     }
 
-    public void setWebLocationString(String webLocationString) {
-        this.webLocationString = webLocationString;
-    }
-
     public void setConfigContext(ConfigurationContext configContext) {
         this.configContext = configContext;
         initializeDeployers(this.configContext);
@@ -949,12 +942,6 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             throws DeploymentException {
         AxisService axisService = new AxisService();
         try {
-
-            AxisConfiguration axisConfig = configCtx.getAxisConfiguration();
-            Parameter parahotupdate = axisConfig.getParameter(TAG_HOT_UPDATE);
-            if (parahotupdate != null) {
-                String value = (String) parahotupdate.getValue();
-            }
             DeploymentFileData currentDeploymentFile = new DeploymentFileData(
                     DeploymentConstants.TYPE_SERVICE, "");
             currentDeploymentFile.setClassLoader(classLoader);

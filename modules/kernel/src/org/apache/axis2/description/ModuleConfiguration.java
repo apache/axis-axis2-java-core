@@ -21,7 +21,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.i18n.Messages;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 
 /**
@@ -33,13 +32,13 @@ import java.util.ArrayList;
  * Right now this just keeps stores the set of parameters
  */
 public class ModuleConfiguration implements ParameterInclude {
-    private QName moduleName;
+    private String moduleName;
     private ParameterInclude parameterInclude;
 
     // to keep the pointer to its parent , only to access parameters
     private ParameterInclude parent;
 
-    public ModuleConfiguration(QName moduleName, ParameterInclude parent) {
+    public ModuleConfiguration(String moduleName, ParameterInclude parent) {
         this.moduleName = moduleName;
         this.parent = parent;
         parameterInclude = new ParameterIncludeImpl();
@@ -65,7 +64,7 @@ public class ModuleConfiguration implements ParameterInclude {
         this.parameterInclude.deserializeParameters(parameterElement);
     }
 
-    public QName getModuleName() {
+    public String getModuleName() {
         return moduleName;
     }
 

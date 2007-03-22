@@ -469,7 +469,7 @@ public class DescriptionBuilder implements DeploymentConstants {
                 if (moduleRefAttribute != null) {
                     String refName = moduleRefAttribute.getAttributeValue();
 
-                    if (axisConfig.getModule(new QName(refName)) == null) {
+                    if (axisConfig.getModule(refName) == null) {
                         throw new DeploymentException(Messages.getMessage(
                                 DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
                     } else {

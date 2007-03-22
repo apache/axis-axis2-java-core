@@ -50,9 +50,9 @@ public class Client {
         options.setProperty(RampartMessageData.KEY_RAMPART_POLICY,  loadPolicy(args[2]));
         client.setOptions(options);
         
-        client.engageModule(new QName("addressing"));
-        client.engageModule(new QName("rampart"));
-        
+        client.engageModule("addressing");
+        client.engageModule("rampart");
+
         OMElement response = client.sendReceive(getPayload("Hello world1"));
         System.out.println("Response 1 : " + response);
         response = client.sendReceive(getPayload("Hello world2"));

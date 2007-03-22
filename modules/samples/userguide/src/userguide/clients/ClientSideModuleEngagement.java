@@ -44,8 +44,7 @@ public class ClientSideModuleEngagement {
                 createConfigurationContextFromFileSystem(repository.getAbsolutePath(),
                         repository.getName() + "/axis2.xml");
         ServiceClient serviceClient = new ServiceClient(configContext, null);
-        serviceClient.engageModule(new QName("LoggingModule"));
-//        call.engageModule(new QName("LoggingModule"));
+        serviceClient.engageModule("LoggingModule");
     }
 }
 

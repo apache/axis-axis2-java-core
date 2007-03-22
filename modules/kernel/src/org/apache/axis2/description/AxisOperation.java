@@ -23,7 +23,6 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.util.WSDLSerializationUtil;
-import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
@@ -169,10 +168,10 @@ public abstract class AxisOperation extends AxisDescription
         }
         Iterator module_itr = engagedModules.iterator();
         boolean isEngagable;
-        QName moduleName = moduleref.getName();
+        String moduleName = moduleref.getName();
         while (module_itr.hasNext()) {
             AxisModule module = (AxisModule) module_itr.next();
-            QName modu = module.getName();
+            String modu = module.getName();
             isEngagable = org.apache.axis2.util.Utils.checkVersion(moduleName, modu);
             if (!isEngagable) {
                 return new ArrayList();
@@ -216,8 +215,7 @@ public abstract class AxisOperation extends AxisDescription
                 }
             }
             engagedModules.remove(module);
-            log.debug("removed module from engaged modules list "
-                    + module.getName().getLocalPart());
+            log.debug("removed module from engaged modules list " + module.getName());
         }
     }
 
@@ -228,7 +226,7 @@ public abstract class AxisOperation extends AxisDescription
      */
     public void removeFromEngagedModuleList(AxisModule module) {
         engagedModules.remove(module);
-        log.debug("removed module from engaged modules list " + module.getName().getLocalPart());
+        log.debug("removed module from engaged modules list " + module.getName());
     }
 
 
@@ -476,7 +474,7 @@ public abstract class AxisOperation extends AxisDescription
         return messageReceiver;
     }
 
-    public ModuleConfiguration getModuleConfig(QName moduleName) {
+    public ModuleConfiguration getModuleConfig(String moduleName) {
         return (ModuleConfiguration) moduleConfigmap.get(moduleName);
     }
 
@@ -625,11 +623,11 @@ public abstract class AxisOperation extends AxisDescription
         return result;
     }
 
-    public boolean isEngaged(QName moduleName) {
+    public boolean isEngaged(String moduleName) {
         Iterator engagedModuleItr = engagedModules.iterator();
         while (engagedModuleItr.hasNext()) {
             AxisModule axisModule = (AxisModule) engagedModuleItr.next();
-            if (axisModule.getName().getLocalPart().equals(moduleName.getLocalPart())) {
+            if (axisModule.getName().equals(moduleName)) {
                 return true;
             }
         }

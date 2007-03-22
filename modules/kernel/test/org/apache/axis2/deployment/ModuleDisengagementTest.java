@@ -36,8 +36,9 @@ public class ModuleDisengagementTest extends TestCase {
     QName opName = new QName("testOperation");
 
     protected void setUp() throws Exception {
-        String filename =
-                System.getProperty("basedir") + "/test-resources/deployment/moduleDisEngegeRepo";
+//        String filename =
+//                System.getProperty("basedir") + "/test-resources/deployment/moduleDisEngegeRepo";
+        String filename = "./test-resources/deployment/moduleDisEngegeRepo";
         er = ConfigurationContextFactory.
                 createConfigurationContextFromFileSystem(filename, null).getAxisConfiguration();
         AxisService testService = new AxisService();
@@ -49,7 +50,7 @@ public class ModuleDisengagementTest extends TestCase {
     }
 
     public void testGloalDisengagement() throws AxisFault {
-        AxisModule module = er.getModule(new QName("testModule"));
+        AxisModule module = er.getModule("testModule");
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
@@ -74,7 +75,7 @@ public class ModuleDisengagementTest extends TestCase {
     }
 
     public void testServiceDisengagement() throws AxisFault {
-        AxisModule module = er.getModule(new QName("testModule"));
+        AxisModule module = er.getModule("testModule");
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
@@ -100,7 +101,7 @@ public class ModuleDisengagementTest extends TestCase {
 
 
     public void testGlobalChcek() throws AxisFault {
-        AxisModule module = er.getModule(new QName("testModule"));
+        AxisModule module = er.getModule("testModule");
         assertNotNull(module);
         er.engageModule(module.getName());
         er.disengageModule(module);
@@ -108,7 +109,7 @@ public class ModuleDisengagementTest extends TestCase {
     }
 
     public void testOperationDisengagement() throws AxisFault {
-        AxisModule module = er.getModule(new QName("testModule"));
+        AxisModule module = er.getModule("testModule");
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
@@ -133,7 +134,7 @@ public class ModuleDisengagementTest extends TestCase {
     }
 
     public void testServiceEnageServiceDisengag() throws AxisFault {
-        AxisModule module = er.getModule(new QName("testModule"));
+        AxisModule module = er.getModule("testModule");
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
@@ -158,7 +159,7 @@ public class ModuleDisengagementTest extends TestCase {
     }
 
     public void testServiceEnageOperationDisengag() throws AxisFault {
-        AxisModule module = er.getModule(new QName("testModule"));
+        AxisModule module = er.getModule("testModule");
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;
@@ -183,7 +184,7 @@ public class ModuleDisengagementTest extends TestCase {
     }
 
     public void testOperationEnageOperationDisengage() throws AxisFault {
-        AxisModule module = er.getModule(new QName("testModule"));
+        AxisModule module = er.getModule("testModule");
         assertNotNull(module);
         Phase predisptah;
         Phase userPhase;

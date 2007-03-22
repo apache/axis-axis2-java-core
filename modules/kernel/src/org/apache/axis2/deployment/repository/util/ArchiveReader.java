@@ -463,10 +463,8 @@ public class ArchiveReader implements DeploymentConstants {
                         moduleXMLFound = true;
                         ModuleBuilder builder = new ModuleBuilder(zin, module, axisConfig);
                         // setting module name
-                        module.setName(
-                                new QName(
-                                        DescriptionBuilder.getShortFileName(
-                                                deploymentFile.getServiceName())));
+                        module.setName(DescriptionBuilder.getShortFileName(
+                                                deploymentFile.getServiceName()));
                         builder.populateModule();
                         break;
                     }
@@ -493,10 +491,8 @@ public class ArchiveReader implements DeploymentConstants {
                     in = new FileInputStream(file);
                     ModuleBuilder builder = new ModuleBuilder(in, module, axisConfig);
                     // setting module name
-                    module.setName(
-                            new QName(
-                                    DescriptionBuilder.getShortFileName(
-                                            deploymentFile.getServiceName())));
+                    module.setName(DescriptionBuilder.getShortFileName(
+                                            deploymentFile.getServiceName()));
                     builder.populateModule();
                 } catch (FileNotFoundException e) {
                     throw new DeploymentException(

@@ -47,7 +47,7 @@ public class TCPClient {
         options.setAction("urn:echo");
 
         ServiceClient sender = new ServiceClient();
-        sender.engageModule(new QName(Constants.MODULE_ADDRESSING));
+        sender.engageModule(Constants.MODULE_ADDRESSING);
         sender.setOptions(options);
         OMElement result = sender.sendReceive(getPayload());
 

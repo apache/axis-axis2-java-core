@@ -753,7 +753,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         if (opDesc != null) {
 
-            moduleConfig = opDesc.getModuleConfig(new QName(moduleName));
+            moduleConfig = opDesc.getModuleConfig(moduleName);
 
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
@@ -774,7 +774,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         if (axisService != null) {
 
-            moduleConfig = axisService.getModuleConfig(new QName(moduleName));
+            moduleConfig = axisService.getModuleConfig(moduleName);
 
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
@@ -795,8 +795,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
 
         if (axisServiceDesc != null) {
 
-            moduleConfig = axisServiceDesc
-                    .getModuleConfig(new QName(moduleName));
+            moduleConfig = axisServiceDesc.getModuleConfig(moduleName);
 
             if (moduleConfig != null) {
                 param = moduleConfig.getParameter(key);
@@ -813,10 +812,9 @@ public class MessageContext extends AbstractContext implements Externalizable {
             }
         }
 
-        AxisConfiguration baseConfig = configurationContext
-                .getAxisConfiguration();
+        AxisConfiguration baseConfig = configurationContext.getAxisConfiguration();
 
-        moduleConfig = baseConfig.getModuleConfig(new QName(moduleName));
+        moduleConfig = baseConfig.getModuleConfig(moduleName);
 
         if (moduleConfig != null) {
             param = moduleConfig.getParameter(key);
@@ -832,7 +830,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
             }
         }
 
-        AxisModule module = baseConfig.getModule(new QName(moduleName));
+        AxisModule module = baseConfig.getModule(moduleName);
 
         if (module != null) {
             param = module.getParameter(key);
@@ -1501,7 +1499,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     }
 
 
-    public boolean isEngaged(QName moduleName) {
+    public boolean isEngaged(String moduleName) {
         if (LoggingControl.debugLoggingAllowed) {
             checkActivateWarning("isEngaged");
         }

@@ -54,7 +54,7 @@ public class Client {
         client.setOptions(options);
         
         //Engage rampart
-        client.engageModule(new QName("rampart"));
+        client.engageModule("rampart");
         
         OMElement response = client.sendReceive(getPayload("Hello world"));
         

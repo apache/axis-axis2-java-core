@@ -43,7 +43,7 @@ public class MexClient extends ServiceClient {
 
         // Attempt to engage MEX module
         /*    try{
-          super.engageModule(new QName("metadataExchange"));
+          super.engageModule("metadataExchange");
        }
        catch (Exception e){
          throw new AxisFault ("Unable to proceed with GetMetadata Request!", e);

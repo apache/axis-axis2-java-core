@@ -25,7 +25,6 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMAbstractFactory;
 
-import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,8 +107,8 @@ public class AxisEndpoint extends AxisDescription {
         throw new UnsupportedOperationException("Sorry we do not support this");
     }
 
-    public boolean isEngaged(QName moduleName) {
-        throw new UnsupportedOperationException("axisMessage.isEngaged(qName) is not supported");
+    public boolean isEngaged(String moduleName) {
+        throw new UnsupportedOperationException("axisMessage.isEngaged() is not supported");
 
     }
 

@@ -38,9 +38,9 @@ public class ModuleEngageTest extends TestCase {
         String filename = System.getProperty("basedir") + "/target/test-resources/deployment";
         ac = ConfigurationContextFactory.createConfigurationContextFromFileSystem(filename, null)
                 .getAxisConfiguration();
-        AxisModule module = ac.getModule(new QName("module1"));
+        AxisModule module = ac.getModule("module1");
         assertNotNull(module);
-        ac.engageModule(new QName("module1"));
+        ac.engageModule("module1");
         AxisService service = ac.getService("service2");
         assertNotNull(service);
         AxisOperation moduleOperation = service.getOperation(

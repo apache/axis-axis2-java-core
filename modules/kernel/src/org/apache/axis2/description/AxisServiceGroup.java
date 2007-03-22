@@ -90,7 +90,7 @@ public class AxisServiceGroup extends AxisDescription {
 
         if (serviceGroupName == null) {
             // setup a temporary name based on the first service under this group
-            serviceGroupName = new String(service.getName());
+            serviceGroupName = service.getName();
         }
 
         service.setParent(this);
@@ -101,7 +101,7 @@ public class AxisServiceGroup extends AxisDescription {
             Iterator modules = this.engagedModules.iterator();
 
             while (modules.hasNext()) {
-                QName moduleName = (QName) modules.next();
+                String moduleName = (String) modules.next();
                 AxisModule axisModule = axisConfig.getModule(moduleName);
 
                 if (axisModule != null) {
@@ -112,8 +112,7 @@ public class AxisServiceGroup extends AxisDescription {
                     }
                     service.engageModule(axisModule, axisConfig);
                 } else {
-                    throw new AxisFault(Messages.getMessage(
-                            "modulenotavailble", moduleName.getLocalPart()));
+                    throw new AxisFault(Messages.getMessage("modulenotavailble", moduleName));
                 }
             }
         }
@@ -134,7 +133,7 @@ public class AxisServiceGroup extends AxisDescription {
             Iterator modules = this.engagedModules.iterator();
 
             while (modules.hasNext()) {
-                QName moduleName = (QName) modules.next();
+                String moduleName = (String) modules.next();
                 AxisModule axisModule = axisConfig.getModule(moduleName);
 
                 if (axisModule != null) {
@@ -145,8 +144,7 @@ public class AxisServiceGroup extends AxisDescription {
                     }
                     service.engageModule(axisModule, axisConfig);
                 } else {
-                    throw new AxisFault(Messages.getMessage(
-                            "modulenotavailble", moduleName.getLocalPart()));
+                    throw new AxisFault(Messages.getMessage("modulenotavailble", moduleName));
                 }
             }
         }
@@ -157,19 +155,33 @@ public class AxisServiceGroup extends AxisDescription {
         }
     }
 
-    public void addToengagedModules(QName moduleName) {
+//    /**
+//     * @deprecate Please use String version instead
+//     * @param moduleName
+//     */
+//    public void addToengagedModules(String moduleName) {
+//    }
+
+    public void addToengagedModules(String moduleName) {
         engagedModules.add(moduleName);
     }
 
-    public void removeFromEngageList(QName moduleName) {
+//    /**
+//     * @deprecate Please use String version instead
+//     * @param moduleName
+//     */
+//    public void removeFromEngageList(QName moduleName) {
+//    }
+
+    public void removeFromEngageList(String moduleName) {
         engagedModules.remove(moduleName);
     }
 
     public void engageModule(AxisModule module, AxisConfiguration axisConfig) throws AxisFault {
-        QName moduleName = module.getName();
+        String moduleName = module.getName();
         boolean isEngagable;
         for (Iterator iterator = engagedModules.iterator(); iterator.hasNext();) {
-            QName modu = (QName) iterator.next();
+            String modu = (String) iterator.next();
             isEngagable = Utils.checkVersion(moduleName, modu);
             if (!isEngagable) {
                 return;
@@ -209,7 +221,7 @@ public class AxisServiceGroup extends AxisDescription {
         return engagedModules;
     }
 
-    public ModuleConfiguration getModuleConfig(QName moduleName) {
+    public ModuleConfiguration getModuleConfig(String moduleName) {
         return (ModuleConfiguration) moduleConfigmap.get(moduleName);
     }
 
@@ -257,7 +269,7 @@ public class AxisServiceGroup extends AxisDescription {
         return this.serviceGroupName;
     }
 
-    public boolean isEngaged(QName moduleName) {
+    public boolean isEngaged(String moduleName) {
         AxisModule module = getAxisDescription().getModule(moduleName);
         if (module == null) {
             return false;
@@ -265,7 +277,7 @@ public class AxisServiceGroup extends AxisDescription {
         Iterator engagedModuleItr = engagedModules.iterator();
         while (engagedModuleItr.hasNext()) {
             QName axisModule = (QName) engagedModuleItr.next();
-            if (axisModule.getLocalPart().equals(module.getName().getLocalPart())) {
+            if (axisModule.getLocalPart().equals(module.getName())) {
                 return true;
             }
         }

@@ -310,17 +310,27 @@ public class ServiceClient {
     /**
      * Engage a module for this service client.
      *
+     * @deprecate Please use String version instead
      * @param moduleName name of the module to engage
      * @throws AxisFault if something goes wrong
      */
     public void engageModule(QName moduleName) throws AxisFault {
+        engageModule(moduleName.getLocalPart());
+    }
+
+    /**
+     * Engage a module for this service client.
+     *
+     * @param moduleName name of the module to engage
+     * @throws AxisFault if something goes wrong
+     */
+    public void engageModule(String moduleName) throws AxisFault {
         synchronized (this) {
             AxisModule module = axisConfig.getModule(moduleName);
             if (module != null) {
                 axisService.engageModule(module, axisConfig);
             } else {
-                throw new AxisFault("Unable to engage module : " +
-                        moduleName.getLocalPart());
+                throw new AxisFault("Unable to engage module : " + moduleName);
             }
         }
     }
@@ -328,9 +338,19 @@ public class ServiceClient {
     /**
      * Disengage a module for this service client
      *
+     * @deprecate Please use String version instead
      * @param moduleName
      */
     public void disengageModule(QName moduleName) {
+        disengageModule(moduleName.getLocalPart());
+    }
+
+    /**
+     * Disengage a module for this service client
+     *
+     * @param moduleName
+     */
+    public void disengageModule(String moduleName) {
         AxisModule module = axisConfig.getModule(moduleName);
         if (module != null) {
             axisService.disengageModule(module);

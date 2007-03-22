@@ -22,9 +22,6 @@ import org.apache.axis2.context.MessageContext;
 import java.lang.reflect.Field;
 
 public class MessageContextChangeTest extends TestCase {
-    private String testArg = null;
-
-    private static String mc_package = "org.apache.axis2.context.MessageContext";
 
     private FieldDescription[] knownList = {
             new FieldDescription("org.apache.commons.logging.Log", "log"),
@@ -107,16 +104,15 @@ public class MessageContextChangeTest extends TestCase {
             new FieldDescription("boolean", "inboundReset"),
             new FieldDescription("boolean", "outboundReset"),
             new FieldDescription("java.lang.String", "selfManagedDataDelimiter"),
-            new FieldDescription("java.lang.Class",
-                                 "class$org$apache$axis2$context$MessageContext"),
-            new FieldDescription("java.lang.Class",
-                                 "class$org$apache$axis2$context$SelfManagedDataManager"),
+//            new FieldDescription("java.lang.Class",
+//                                 "class$org$apache$axis2$context$MessageContext"),
+//            new FieldDescription("java.lang.Class",
+//                                 "class$org$apache$axis2$context$SelfManagedDataManager"),
     };
 
 
     public MessageContextChangeTest(String arg0) {
         super(arg0);
-        testArg = new String(arg0);
     }
 
 

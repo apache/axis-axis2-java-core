@@ -203,7 +203,7 @@ public class AddressingSubmissionServiceTest extends UtilServerBasedTestCase imp
 
         sender = new ServiceClient(configcontext, service);
         sender.setOptions(options);
-        sender.engageModule(new QName("addressing"));
+        sender.engageModule("addressing");
 
         return sender;
     }
@@ -224,7 +224,7 @@ public class AddressingSubmissionServiceTest extends UtilServerBasedTestCase imp
 
         sender = new ServiceClient(configcontext, service);
         sender.setOptions(options);
-        sender.engageModule(new QName("addressing"));
+        sender.engageModule("addressing");
 
         return sender;
     }

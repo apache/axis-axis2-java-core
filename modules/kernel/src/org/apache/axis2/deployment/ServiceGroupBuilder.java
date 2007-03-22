@@ -122,7 +122,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                 if (moduleRefAttribute != null) {
                     String refName = moduleRefAttribute.getAttributeValue();
 
-                    if (axisConfig.getModule(new QName(refName)) == null) {
+                    if (axisConfig.getModule(refName) == null) {
                         throw new DeploymentException(
                                 Messages.getMessage(DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
                     } else {
@@ -148,7 +148,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
             } else {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
-                        new ModuleConfiguration(new QName(module), parent);
+                        new ModuleConfiguration(module, parent);
                 Iterator parameters = moduleConfig.getChildrenWithName(new QName(TAG_PARAMETER));
 
                 processParameters(parameters, moduleConfiguration, parent);

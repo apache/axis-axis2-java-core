@@ -42,7 +42,6 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
     private QName operationName =
             new QName("http://ws.apache.org/axis2", "echoVoid");
 
-    private AxisConfiguration config;
     private ClassLoader cl;
 
     public MessageWithServerTest(String testName) {
@@ -62,11 +61,10 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
 
         //service.setFaultInFlow(new MockFlow("service faultflow", 1));
 
-        AxisModule m1 = new AxisModule(
-                new QName("", "A Module 1"));
+        AxisModule m1 = new AxisModule("A Module 1");
         m1.setInFlow(new MockFlow("service module inflow", 4));
         //m1.setFaultInFlow(new MockFlow("service module faultflow", 1));
-        config = new AxisConfiguration();
+        AxisConfiguration config = new AxisConfiguration();
         config.addMessageReceiver(
                 "http://www.w3.org/2004/08/wsdl/in-only", new RawXMLINOnlyMessageReceiver());
         config.addMessageReceiver(
@@ -121,7 +119,7 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
         Socket socket = new Socket("127.0.0.1", UtilServer.TESTING_PORT);
         OutputStream out = socket.getOutputStream();
         byte[] buf = new byte[1024];
-        int index = -1;
+        int index;
         while ((index = in.read(buf)) > 0) {
             out.write(buf, 0, index);
         }
@@ -129,7 +127,7 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
         InputStream respose = socket.getInputStream();
         Reader rReader = new InputStreamReader(respose);
         char[] charBuf = new char[1024];
-        while ((index = rReader.read(charBuf)) > 0) {
+        while ((rReader.read(charBuf)) > 0) {
             log.info(new String(charBuf));
         }
 

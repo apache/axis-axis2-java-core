@@ -290,7 +290,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             } else {
                 String module = moduleName_att.getAttributeValue();
                 ModuleConfiguration moduleConfiguration =
-                        new ModuleConfiguration(new QName(module), parent);
+                        new ModuleConfiguration(module, parent);
                 Iterator parameters = moduleConfig.getChildrenWithName(new QName(TAG_PARAMETER));
 
                 processParameters(parameters, moduleConfiguration, parent);

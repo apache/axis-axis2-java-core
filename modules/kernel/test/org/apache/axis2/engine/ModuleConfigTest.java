@@ -36,9 +36,8 @@ import java.io.InputStream;
 public class ModuleConfigTest extends TestCase {
 
     AxisConfiguration ar;
-    String axis2xml = System.getProperty("basedir") +
-            "/target/test-resources/deployment/moduleConfig/axis2.xml";
-    String repo = System.getProperty("basedir") + "/target/test-resources/deployment/moduleConfig";
+    String axis2xml = "./target/test-resources/deployment/moduleConfig/axis2.xml";
+    String repo = "./target/test-resources/deployment/moduleConfig";
 
 
     public void testModuleConfigAtAxisConfig() {
@@ -47,13 +46,13 @@ public class ModuleConfigTest extends TestCase {
                     .createConfigurationContextFromFileSystem(null, axis2xml)
                     .getAxisConfiguration();
             ModuleConfiguration moduleConfiguration =
-                    ar.getModuleConfig(new QName("testModule"));
+                    ar.getModuleConfig("testModule");
             assertNotNull(moduleConfiguration);
             Parameter para = moduleConfiguration.getParameter("testModulePara");
             assertNotNull(para);
 
             moduleConfiguration =
-                    ar.getModuleConfig(new QName("testModule2"));
+                    ar.getModuleConfig("testModule2");
             assertNotNull(moduleConfiguration);
             para = moduleConfiguration.getParameter("testModulePara2");
             assertNotNull(para);
@@ -78,7 +77,7 @@ public class ModuleConfigTest extends TestCase {
             sbuilder.populateService(sbuilder.buildOM());
 
             ModuleConfiguration moduleConfiguration =
-                    service.getModuleConfig(new QName("Servie_module"));
+                    service.getModuleConfig("Servie_module");
             assertNotNull(moduleConfiguration);
             Parameter para = moduleConfiguration.getParameter("Servie_module_para");
             assertNotNull(para);
@@ -86,7 +85,7 @@ public class ModuleConfigTest extends TestCase {
             AxisOperation op = service.getOperation(new QName("echoString"));
             assertNotNull(op);
 
-            moduleConfiguration = op.getModuleConfig(new QName("Op_Module"));
+            moduleConfiguration = op.getModuleConfig("Op_Module");
             assertNotNull(moduleConfiguration);
             para = moduleConfiguration.getParameter("Op_Module_para");
             assertNotNull(para);

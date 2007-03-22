@@ -7,7 +7,6 @@ import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.util.Utils;
 
-import javax.xml.namespace.QName;
 import java.util.Iterator;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -30,8 +29,7 @@ import java.util.Iterator;
 public class ModuleversionTest extends TestCase {
 
     public void testDefautModuleVersion() throws AxisFault {
-        String filename = System.getProperty("basedir") +
-                "/test-resources/deployment/moduleVersion/Test1/axis2.xml";
+        String filename = "./test-resources/deployment/moduleVersion/Test1/axis2.xml";
         AxisConfiguration ac =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, filename)
                         .getAxisConfiguration();
@@ -43,31 +41,31 @@ public class ModuleversionTest extends TestCase {
     public void testCalculateDefaultModuleVersions() throws AxisFault {
         AxisConfiguration axiConfiguration = new AxisConfiguration();
         AxisModule module1 = new AxisModule();
-        module1.setName(new QName("Module1"));
+        module1.setName("Module1");
         axiConfiguration.addModule(module1);
 
         AxisModule module2 = new AxisModule();
-        module2.setName(new QName("Module2-0.94"));
+        module2.setName("Module2-0.94");
         axiConfiguration.addModule(module2);
 
         AxisModule module3 = new AxisModule();
-        module3.setName(new QName("Module2-0.95"));
+        module3.setName("Module2-0.95");
         axiConfiguration.addModule(module3);
 
         AxisModule module4 = new AxisModule();
-        module4.setName(new QName("Module2-0.93"));
+        module4.setName("Module2-0.93");
         axiConfiguration.addModule(module4);
 
         AxisModule module5 = new AxisModule();
-        module5.setName(new QName("testModule-1.93"));
+        module5.setName("testModule-1.93");
         axiConfiguration.addModule(module5);
 
         Utils.calculateDefaultModuleVersion(axiConfiguration.getModules(), axiConfiguration);
         assertEquals(module1, axiConfiguration.getDefaultModule("Module1"));
         assertEquals(module3, axiConfiguration.getDefaultModule("Module2"));
         assertEquals(module5, axiConfiguration.getDefaultModule("testModule"));
-        axiConfiguration.engageModule(new QName("Module2"));
-        axiConfiguration.engageModule(new QName("Module1"));
+        axiConfiguration.engageModule("Module2");
+        axiConfiguration.engageModule("Module1");
         axiConfiguration.engageModule("testModule", "1.93");
 
         Iterator engageModules = axiConfiguration.getEngagedModules().iterator();
@@ -75,22 +73,22 @@ public class ModuleversionTest extends TestCase {
         boolean found2 = false;
         boolean found3 = false;
         while (engageModules.hasNext()) {
-            QName qName = (QName) engageModules.next();
-            if (qName.getLocalPart().equals("Module2-0.95")) {
+            String qName = (String) engageModules.next();
+            if (qName.equals("Module2-0.95")) {
                 found1 = true;
             }
         }
         engageModules = axiConfiguration.getEngagedModules().iterator();
         while (engageModules.hasNext()) {
-            QName qName = (QName) engageModules.next();
-            if (qName.getLocalPart().equals("Module1")) {
+            String name = (String) engageModules.next();
+            if (name.equals("Module1")) {
                 found2 = true;
             }
         }
         engageModules = axiConfiguration.getEngagedModules().iterator();
         while (engageModules.hasNext()) {
-            QName qName = (QName) engageModules.next();
-            if (qName.getLocalPart().equals("testModule-1.93")) {
+            String qName = (String) engageModules.next();
+            if (qName.equals("testModule-1.93")) {
                 found3 = true;
             }
         }

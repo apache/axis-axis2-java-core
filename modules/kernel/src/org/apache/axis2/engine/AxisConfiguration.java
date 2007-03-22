@@ -211,12 +211,11 @@ public class AxisConfiguration extends AxisDescription {
         module.setParent(this);
         notifyObservers(AxisEvent.MODULE_DEPLOY, module);
 
-        String moduleName = module.getName().getLocalPart();
+        String moduleName = module.getName();
         if (moduleName.endsWith("SNAPSHOT")) {
-            QName moduleQName = new QName(moduleName.substring(0, moduleName
-                    .indexOf("SNAPSHOT") - 1));
-            module.setName(moduleQName);
-            allModules.put(moduleQName, module);
+            moduleName = moduleName.substring(0, moduleName.indexOf("SNAPSHOT") - 1);
+            module.setName(moduleName);
+            allModules.put(moduleName, module);
         } else {
             allModules.put(module.getName(), module);
         }
@@ -298,7 +297,7 @@ public class AxisConfiguration extends AxisDescription {
         }
         Iterator enModule = engagedModules.iterator();
         while (enModule.hasNext()) {
-            QName moduleName = (QName) enModule.next();
+            String moduleName = (String) enModule.next();
             axisServiceGroup.engageModule(getModule(moduleName), this);
         }
         services = axisServiceGroup.getServices();
@@ -383,16 +382,29 @@ public class AxisConfiguration extends AxisDescription {
      * the correct module. Both of the below two cases are valid 1.
      * engageModule("addressing"); 2. engageModule("addressing-1.23");
      *
-     * @param moduleref
+     * @deprecate Please use the String version instead
+     * @param moduleref QName of module to engage
      * @throws AxisFault
      */
     public void engageModule(QName moduleref) throws AxisFault {
+        engageModule(moduleref.getLocalPart());
+    }
+
+    /**
+     * Engages the default module version corresponding to given module name ,
+     * or if the module name contains version number in it then it will engage
+     * the correct module. Both of the below two cases are valid 1.
+     * engageModule("addressing"); 2. engageModule("addressing-1.23");
+     *
+     * @param moduleref name of module to engage
+     * @throws AxisFault
+     */
+    public void engageModule(String moduleref) throws AxisFault {
         AxisModule module = getModule(moduleref);
         if (module != null) {
             engageModule(module);
         } else {
-            throw new AxisFault(Messages.getMessage("modulenotavailble",
-                                                    moduleref.getLocalPart()));
+            throw new AxisFault(Messages.getMessage("modulenotavailble", moduleref));
         }
     }
 
@@ -405,8 +417,8 @@ public class AxisConfiguration extends AxisDescription {
      */
     public void engageModule(String moduleName, String versionID)
             throws AxisFault {
-        QName moduleQName = Utils.getModuleName(moduleName, versionID);
-        AxisModule module = getModule(moduleQName);
+        String actualName = Utils.getModuleName(moduleName, versionID);
+        AxisModule module = getModule(actualName);
         if (module != null) {
             engageModule(module);
         } else {
@@ -422,12 +434,12 @@ public class AxisConfiguration extends AxisDescription {
     private void engageModule(AxisModule module) throws AxisFault {
         boolean isEngagable;
         if (module != null) {
-            QName moduleQName = module.getName();
+            String moduleName = module.getName();
             for (Iterator iterator = engagedModules.iterator(); iterator
                     .hasNext();) {
-                QName qName = (QName) iterator.next();
+                String thisModule = (String) iterator.next();
 
-                isEngagable = Utils.checkVersion(moduleQName, qName);
+                isEngagable = Utils.checkVersion(moduleName, thisModule);
                 if (!isEngagable) {
                     return;
                 }
@@ -601,6 +613,16 @@ public class AxisConfiguration extends AxisDescription {
         return (MessageFormatter) messageFormatters.get(contentType);
     }
 
+//    /**
+//     *
+//     * @deprecate Please use String version instead
+//     * @param qname
+//     * @return
+//     */
+//    public AxisModule getModule(QName qname) {
+//        return getModule(qname.getLocalPart());
+//    }
+
     /**
      * Method getModule. first it will check whether the given module is there
      * in the hashMap , if so just return that and the name can be either with
@@ -612,14 +634,14 @@ public class AxisConfiguration extends AxisDescription {
      * @param name
      * @return Returns ModuleDescription.
      */
-    public AxisModule getModule(QName name) {
+    public AxisModule getModule(String name) {
         AxisModule module = (AxisModule) allModules.get(name);
         if (module != null) {
             return module;
         }
         // checking whether the version string seperator is not there in the
         // module name
-        String moduleName = name.getLocalPart();
+        String moduleName = name;
         String defaultModuleVersion = getDefaultModuleVersion(moduleName);
         if (defaultModuleVersion != null) {
             module = (AxisModule) allModules.get(Utils.getModuleName(
@@ -636,7 +658,7 @@ public class AxisConfiguration extends AxisDescription {
         return this.moduleClassLoader;
     }
 
-    public ModuleConfiguration getModuleConfig(QName moduleName) {
+    public ModuleConfiguration getModuleConfig(String moduleName) {
         return (ModuleConfiguration) moduleConfigmap.get(moduleName);
     }
 
@@ -761,10 +783,9 @@ public class AxisConfiguration extends AxisDescription {
         return transportsOut;
     }
 
-    public boolean isEngaged(QName moduleName) {
+    public boolean isEngaged(String moduleName) {
         boolean b = engagedModules.contains(moduleName);
-        return b ? b : engagedModules.contains(this.getDefaultModule(
-                moduleName.getLocalPart()).getName());
+        return b ? b : engagedModules.contains(getDefaultModule(moduleName).getName());
     }
 
     public void setGlobalOutPhase(ArrayList outPhases) {
@@ -830,12 +851,11 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     public AxisModule getDefaultModule(String moduleName) {
-        String defualtModuleVersion = getDefaultModuleVersion(moduleName);
-        if (defualtModuleVersion == null) {
-            return (AxisModule) allModules.get(new QName(moduleName));
+        String defaultModuleVersion = getDefaultModuleVersion(moduleName);
+        if (defaultModuleVersion == null) {
+            return (AxisModule) allModules.get(moduleName);
         } else {
-            return (AxisModule) allModules.get(new QName(moduleName + "-"
-                    + defualtModuleVersion));
+            return (AxisModule) allModules.get(moduleName + "-" + defaultModuleVersion);
         }
     }
 

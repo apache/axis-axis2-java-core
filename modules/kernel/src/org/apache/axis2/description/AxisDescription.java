@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -335,8 +334,7 @@ public abstract class AxisDescription implements ParameterInclude,
             module = axisModule.getModule();
 
             if (!(module == null || module.canSupportAssertion(assertion))) {
-                log.debug(((AxisModule) axisModule).getName()
-                        + " says it can't support " + assertion.getName());
+                log.debug(axisModule.getName() + " says it can't support " + assertion.getName());
                 return false;
             }
         }
@@ -389,5 +387,12 @@ public abstract class AxisDescription implements ParameterInclude,
     public abstract void engageModule(AxisModule axisModule,
                                       AxisConfiguration axisConfig) throws AxisFault;
 
-    public abstract boolean isEngaged(QName axisModule);
+//    /**
+//     * @deprecate Please use String version instead
+//     * @param moduleName
+//     * @return
+//     */
+//    public abstract boolean isEngaged(QName moduleName);
+
+    public abstract boolean isEngaged(String moduleName);
 }

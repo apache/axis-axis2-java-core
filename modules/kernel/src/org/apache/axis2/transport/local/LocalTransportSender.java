@@ -35,7 +35,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class LocalTransportSender extends AbstractHandler implements TransportSender {
-
     private ByteArrayOutputStream out;
     private ByteArrayOutputStream response;
 

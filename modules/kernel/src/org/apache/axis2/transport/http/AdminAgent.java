@@ -269,7 +269,7 @@ public class AdminAgent extends AbstractAgent {
 
         if (moduleName != null) {
             try {
-                configContext.getAxisConfiguration().engageModule(new QName(moduleName));
+                configContext.getAxisConfiguration().engageModule(moduleName);
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                                               moduleName + " module engaged globally successfully");
             } catch (AxisFault axisFault) {
@@ -314,7 +314,7 @@ public class AdminAgent extends AbstractAgent {
                         serviceName).getOperation(new QName(operationName));
 
                 od.engageModule(
-                        configContext.getAxisConfiguration().getModule(new QName(moduleName)),
+                        configContext.getAxisConfiguration().getModule(moduleName),
                         configContext.getAxisConfiguration());
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                                               moduleName
@@ -348,7 +348,7 @@ public class AdminAgent extends AbstractAgent {
         if ((serviceName != null) && (moduleName != null)) {
             try {
                 configContext.getAxisConfiguration().getService(serviceName).engageModule(
-                        configContext.getAxisConfiguration().getModule(new QName(moduleName)),
+                        configContext.getAxisConfiguration().getModule(moduleName),
                         configContext.getAxisConfiguration());
                 req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                                               moduleName
@@ -384,7 +384,7 @@ public class AdminAgent extends AbstractAgent {
 
         if ((serviceName != null) && (moduleName != null)) {
             configContext.getAxisConfiguration().getServiceGroup(serviceName).engageModule(
-                    configContext.getAxisConfiguration().getModule(new QName(moduleName)),
+                    configContext.getAxisConfiguration().getModule(moduleName),
                     configContext.getAxisConfiguration());
             req.getSession().setAttribute(Constants.ENGAGE_STATUS,
                                           moduleName
@@ -547,7 +547,7 @@ public class AdminAgent extends AbstractAgent {
         String moduleName = req.getParameter("module");
         AxisConfiguration axisConfiguration = configContext.getAxisConfiguration();
         AxisService service = axisConfiguration.getService(serviceName);
-        AxisModule module = axisConfiguration.getModule(new QName(moduleName));
+        AxisModule module = axisConfiguration.getModule(moduleName);
         if (type.equals("operation")) {
             if (service.isEngaged(module.getName()) ||
                     axisConfiguration.isEngaged(module.getName())) {
@@ -567,7 +567,7 @@ public class AdminAgent extends AbstractAgent {
                         .setAttribute("status", "Can not disengage module " + moduleName + ". " +
                                 "This module is engaged at a higher level.");
             } else {
-                service.disengageModule(axisConfiguration.getModule(new QName(moduleName)));
+                service.disengageModule(axisConfiguration.getModule(moduleName));
                 req.getSession()
                         .setAttribute("status", "Module " + moduleName + " was disengaged from" +
                                 " service " + serviceName + ".");

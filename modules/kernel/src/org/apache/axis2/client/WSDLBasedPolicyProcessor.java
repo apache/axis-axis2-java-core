@@ -147,7 +147,7 @@ public class WSDLBasedPolicyProcessor {
     private void engageModulesToAxisDescription(List modulesToEngage,
                                                 AxisDescription axisDescription) throws AxisFault {
         AxisModule axisModule;
-        QName moduleName;
+        String moduleName;
 
         for (Iterator iterator = modulesToEngage.iterator(); iterator.hasNext();) {
             axisModule = (AxisModule) iterator.next();

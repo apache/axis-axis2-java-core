@@ -151,7 +151,7 @@ public class MessageSaveAndRestoreWithMTOMTest extends UtilServerBasedTestCase i
 
         ServiceClient sender = new ServiceClient(configurationContext,null);
         sender.setOptions(options);
-        sender.engageModule(new QName("addressing"));
+        sender.engageModule("addressing");
 
         OMElement result = sender.sendReceive(payload);
 

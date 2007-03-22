@@ -56,10 +56,10 @@ public class AxisModule implements ParameterInclude {
     /**
      * Field name
      */
-    private QName name;
+    private String name;
 
     // to store module operations , which are suppose to be added to a service if it is engaged to a service
-    private HashMap operations;
+    private HashMap operations = new HashMap();
     private AxisConfiguration parent;
 
     /*
@@ -78,7 +78,6 @@ public class AxisModule implements ParameterInclude {
      * Constructor ModuleDescription.
      */
     public AxisModule() {
-        operations = new HashMap();
     }
 
     /**
@@ -86,8 +85,7 @@ public class AxisModule implements ParameterInclude {
      *
      * @param name
      */
-    public AxisModule(QName name) {
-        this();
+    public AxisModule(String name) {
         this.name = name;
     }
 
@@ -148,9 +146,10 @@ public class AxisModule implements ParameterInclude {
     }
 
     /**
-     * @return Returns QName.
+     * Get the name of this Module
+     * @return a String name.
      */
-    public QName getName() {
+    public String getName() {
         return name;
     }
 
@@ -235,7 +234,7 @@ public class AxisModule implements ParameterInclude {
     /**
      * @param name
      */
-    public void setName(QName name) {
+    public void setName(String name) {
         this.name = name;
     }
 

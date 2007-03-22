@@ -61,7 +61,7 @@ public class EchoNonBlockingDualClient {
 
             //Non-Blocking Invocation
             sender = new ServiceClient();
-            sender.engageModule(new QName(Constants.MODULE_ADDRESSING));
+            sender.engageModule(Constants.MODULE_ADDRESSING);
             sender.setOptions(options);
             sender.sendReceiveNonBlocking(payload, callback);
 

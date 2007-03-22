@@ -125,7 +125,7 @@ public class MessageSaveAndRestoreTest extends UtilServerBasedTestCase implement
 
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
-        sender.engageModule(new QName("addressing"));
+        sender.engageModule("addressing");
 
         OMElement result = sender.sendReceive(payload);
 

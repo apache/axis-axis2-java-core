@@ -20,7 +20,6 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.util.WSDLSerializationUtil;
-import org.apache.axis2.wsdl.SOAPModuleMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axiom.om.OMElement;
@@ -101,8 +100,8 @@ public class AxisBindingOperation extends AxisDescription {
         throw new UnsupportedOperationException("Sorry we do not support this");
     }
 
-    public boolean isEngaged(QName moduleName) {
-        throw new UnsupportedOperationException("axisMessage.isEngaged(qName) is not supported");
+    public boolean isEngaged(String moduleName) {
+        throw new UnsupportedOperationException("axisMessage.isEngaged() is not supported");
 
     }
 

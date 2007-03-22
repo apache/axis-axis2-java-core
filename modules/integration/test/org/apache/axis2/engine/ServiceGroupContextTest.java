@@ -92,7 +92,7 @@ public class ServiceGroupContextTest extends UtilServerBasedTestCase {
 
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
-        configContext.getAxisConfiguration().engageModule(new QName("addressing"));
+        configContext.getAxisConfiguration().engageModule("addressing");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 

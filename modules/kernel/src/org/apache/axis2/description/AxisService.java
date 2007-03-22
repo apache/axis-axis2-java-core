@@ -18,11 +18,6 @@
 package org.apache.axis2.description;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMNode;
-import org.apache.axiom.om.OMAttribute;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -51,7 +46,6 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XMLUtils;
-import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,26 +62,36 @@ import org.apache.ws.java2wsdl.SchemaGenerator;
 import org.apache.ws.java2wsdl.utils.TypeTable;
 import org.codehaus.jam.JAnnotation;
 import org.codehaus.jam.JMethod;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import javax.wsdl.*;
+import javax.wsdl.Definition;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.wsdl.WSDLException;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
-import java.io.ByteArrayInputStream;
 import java.net.SocketException;
 import java.net.URL;
 import java.security.PrivilegedAction;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Class AxisService
@@ -500,8 +504,7 @@ public class AxisService extends AxisDescription {
                 }
                 axisOperation.engageModule(module, axisConfig);
             } catch (AxisFault axisFault) {
-                log.info(Messages.getMessage(
-                        "modulealredyengagetoservice", module.getName().getLocalPart()));
+                log.info(Messages.getMessage("modulealredyengagetoservice", module.getName()));
             }
         }
         if (axisOperation.getMessageReceiver() == null) {
@@ -640,10 +643,10 @@ public class AxisService extends AxisDescription {
         }
         Iterator itr_engageModules = engagedModules.iterator();
         boolean isEngagable;
-        QName moduleName = axisModule.getName();
+        String moduleName = axisModule.getName();
         while (itr_engageModules.hasNext()) {
             AxisModule module = (AxisModule) itr_engageModules.next();
-            QName modu = module.getName();
+            String modu = module.getName();
             isEngagable = org.apache.axis2.util.Utils.checkVersion(moduleName, modu);
             if (!isEngagable) {
                 return;
@@ -1094,7 +1097,7 @@ public class AxisService extends AxisDescription {
         return lastupdate;
     }
 
-    public ModuleConfiguration getModuleConfig(QName moduleName) {
+    public ModuleConfiguration getModuleConfig(String moduleName) {
         return (ModuleConfiguration) moduleConfigmap.get(moduleName);
     }
 
@@ -1432,7 +1435,7 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    public boolean isEngaged(QName moduleName) {
+    public boolean isEngaged(String moduleName) {
         AxisModule module = getAxisConfiguration().getModule(moduleName);
         if (module == null) {
             return false;
@@ -1440,7 +1443,7 @@ public class AxisService extends AxisDescription {
         Iterator engagedModuleItr = engagedModules.iterator();
         while (engagedModuleItr.hasNext()) {
             AxisModule axisModule = (AxisModule) engagedModuleItr.next();
-            if (axisModule.getName().getLocalPart().equals(module.getName().getLocalPart())) {
+            if (axisModule.getName().equals(module.getName())) {
                 return true;
             }
         }

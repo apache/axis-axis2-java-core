@@ -161,7 +161,7 @@ public class MultiHopRedirectServiceTest extends UtilServerBasedTestCase impleme
         options.setUseSeparateListener(true);
         sender = new ServiceClient(configcontext, service);
         sender.setOptions(options);
-        sender.engageModule(new QName("addressing"));
+        sender.engageModule("addressing");
         return sender;
     }
 }

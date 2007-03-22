@@ -163,7 +163,7 @@ public class PausingHandlerExecutionTest extends UtilServerBasedTestCase impleme
     
     ServiceClient sender = new ServiceClient(configContext, null);
     sender.setOptions(options);
-    sender.engageModule(new QName("addressing"));
+    sender.engageModule("addressing");
     return sender;
   }
 

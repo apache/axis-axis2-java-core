@@ -48,7 +48,7 @@ public class EchoBlockingDualClient {
 
             //Blocking Invocation
             sender = new ServiceClient();
-            sender.engageModule(new QName(Constants.MODULE_ADDRESSING));
+            sender.engageModule(Constants.MODULE_ADDRESSING);
             sender.setOptions(options);
             OMElement result = sender.sendReceive(payload);
 

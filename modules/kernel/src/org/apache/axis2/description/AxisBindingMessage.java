@@ -111,8 +111,8 @@ public class AxisBindingMessage extends AxisDescription {
         throw new UnsupportedOperationException("Sorry we do not support this");
     }
 
-    public boolean isEngaged(QName moduleName) {
-        throw new UnsupportedOperationException("axisMessage.isEngaged(qName) is not supported");
+    public boolean isEngaged(String moduleName) {
+        throw new UnsupportedOperationException("axisMessage.isEngaged() is not supported");
 
     }
 

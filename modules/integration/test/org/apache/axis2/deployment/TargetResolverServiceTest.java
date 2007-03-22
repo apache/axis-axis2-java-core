@@ -144,7 +144,7 @@ public class TargetResolverServiceTest extends UtilServerBasedTestCase implement
 
         sender = new ServiceClient(configcontext, service);
         sender.setOptions(options);
-        sender.engageModule(new QName("addressing"));
+        sender.engageModule("addressing");
 
         return sender;
     }

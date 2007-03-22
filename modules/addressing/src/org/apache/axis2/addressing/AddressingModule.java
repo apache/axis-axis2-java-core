@@ -33,18 +33,16 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Assertion;
 import org.apache.neethi.Policy;
 
-import javax.xml.namespace.QName;
 import java.util.List;
 
 public class AddressingModule implements Module {
 
     private static final Log log = LogFactory.getLog(AddressingModule.class);
-    private static final QName ADDRESSING = new QName(Constants.MODULE_ADDRESSING);
 
     public void init(ConfigurationContext arg0, AxisModule arg1)
             throws AxisFault {
         AxisConfiguration axisConfig = arg0.getAxisConfiguration();
-        ModuleConfiguration moduleConfig = axisConfig.getModuleConfig(ADDRESSING);
+        ModuleConfiguration moduleConfig = axisConfig.getModuleConfig(Constants.MODULE_ADDRESSING);
 
         if (moduleConfig != null) {
             List list = moduleConfig.getParameters();

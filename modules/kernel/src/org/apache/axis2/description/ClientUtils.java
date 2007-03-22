@@ -25,7 +25,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 
-import javax.xml.namespace.QName;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -111,11 +110,11 @@ public class ClientUtils {
                 }
             }
             if (msgCtxt.getAxisService() != null) {
-                if (!msgCtxt.isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
+                if (!msgCtxt.isEngaged(Constants.MODULE_ADDRESSING)) {
                     throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
                 }
             } else {
-                if (!ac.isEngaged(new QName(Constants.MODULE_ADDRESSING))) {
+                if (!ac.isEngaged(Constants.MODULE_ADDRESSING)) {
                     throw new AxisFault(Messages.getMessage("2channelNeedAddressing"));
                 }
             }
