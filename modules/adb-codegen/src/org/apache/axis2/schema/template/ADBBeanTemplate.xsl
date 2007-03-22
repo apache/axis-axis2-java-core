@@ -511,8 +511,8 @@
                                             }
                                         </xsl:when>
                                         <xsl:when test="(@maxLenFacet) or (@minLenFacet)">
-                                            if ( <xsl:if test="(@minLenFacet)"> (<xsl:value-of select="$minLenFacet"/> &lt; java.lang.String.valueOf(param).length())</xsl:if>
-                                              <xsl:if test="(@maxLenFacet)"> <xsl:if test="(@minLenFacet)"> &amp;&amp; </xsl:if> (java.lang.String.valueOf(param).length() &gt;= <xsl:value-of select="$maxLenFacet"/>) </xsl:if> ) {
+                                            if ( <xsl:if test="(@minLenFacet)"> (<xsl:value-of select="$minLenFacet"/> &lt;= java.lang.String.valueOf(param).length())</xsl:if>
+                                              <xsl:if test="(@maxLenFacet)"> <xsl:if test="(@minLenFacet)"> &amp;&amp; </xsl:if> (java.lang.String.valueOf(param).length() &lt;= <xsl:value-of select="$maxLenFacet"/>) </xsl:if> ) {
                                                 this.<xsl:value-of select="$varName"/>=param;
                                             }
                                             else {
@@ -1725,10 +1725,10 @@
                 java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
                 if (prefix == null) {
-                    prefix = createPrefix();
+                    prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
 
                     while (xmlWriter.getNamespaceContext().getNamespaceURI(prefix) != null) {
-                        prefix = createPrefix();
+                        prefix = org.apache.axis2.databinding.utils.BeanUtil.getUniquePrefix();
                     }
 
                     xmlWriter.writeNamespace(prefix, namespace);
@@ -1737,13 +1737,6 @@
 
                 return prefix;
             }
-
-         /**
-          * Create a prefix
-          */
-          private java.lang.String createPrefix() {
-                return "ns" + (int)Math.random();
-          }
 
 
   <!-- ######################################################################################### -->

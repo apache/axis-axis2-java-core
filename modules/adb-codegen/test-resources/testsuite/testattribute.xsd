@@ -23,5 +23,14 @@
             <xs:attribute name="attribute1"  type="xs:string"/>
         </xs:complexType>
     </xs:element>
+    <xs:element name="TestAttributeSimpleType">
+        <xs:complexType>
+            <xs:attribute name="attribute1" >
+                <xs:simpleType>
+                    <xs:restriction base="xs:string"/>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
 
 </xs:schema>

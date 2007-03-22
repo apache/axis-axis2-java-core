@@ -1505,20 +1505,18 @@ public class SchemaCompiler {
                     if (type instanceof XmlSchemaSimpleType) {
                         XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType) type;
                         // we only support simple type restriction
-                        if (simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction) {
-                            if (!isAlreadyProcessed(schemaTypeName)) {
-                                //process simple type
-                                processSimpleSchemaType(simpleType, null, parentSchema, null);
-                            }
-                            metainf.registerMapping(att.getQName(),
-                                    schemaTypeName,
-                                    processedTypemap.get(schemaTypeName).toString(),
-                                    SchemaConstants.ATTRIBUTE_TYPE);
-                            // add optional attribute status if set
-                            String use = att.getUse().getValue();
-                            if (use.indexOf("optional") != -1) {
-                                metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
-                            }
+                        if (!isAlreadyProcessed(schemaTypeName)) {
+                            //process simple type
+                            processSimpleSchemaType(simpleType, null, parentSchema, null);
+                        }
+                        metainf.registerMapping(att.getQName(),
+                                schemaTypeName,
+                                processedTypemap.get(schemaTypeName).toString(),
+                                SchemaConstants.ATTRIBUTE_TYPE);
+                        // add optional attribute status if set
+                        String use = att.getUse().getValue();
+                        if (use.indexOf("optional") != -1) {
+                            metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
                         }
                     }
                 }
@@ -1567,8 +1565,27 @@ public class SchemaCompiler {
             }
 
         } else {
-            //todo his attribute refers to a custom type, probably one of the extended simple types.
-            //todo handle it here
+            // this attribute refers to a custom type, probably one of the extended simple types.\
+            QName attributeQName = att.getQName();
+            if (attributeQName != null) {
+                XmlSchemaSimpleType attributeSimpleType = att.getSchemaType();
+                QName schemaTypeQName = att.getSchemaTypeName();
+                if (schemaTypeQName == null) {
+                    // set the parent schema target name space since attribute Qname uri is ""
+                    schemaTypeQName = new QName(parentSchema.getTargetNamespace(), attributeQName.getLocalPart() + getNextTypeSuffix());
+                }
+                processSimpleSchemaType(attributeSimpleType, null, parentSchema, schemaTypeQName);
+                metainf.registerMapping(att.getQName(),
+                        schemaTypeQName,
+                        processedTypemap.get(schemaTypeQName).toString(),
+                        SchemaConstants.ATTRIBUTE_TYPE);
+                // add optional attribute status if set
+                String use = att.getUse().getValue();
+                if (use.indexOf("optional") != -1) {
+                    metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                }
+            }
+
         }
     }
 

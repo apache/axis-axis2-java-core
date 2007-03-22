@@ -19,12 +19,10 @@ import junit.framework.TestCase;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
-import org.tempuri.attribute.TestElement1;
-import org.tempuri.attribute.TestElement2;
-import org.tempuri.attribute.TestElement3;
-import org.tempuri.attribute.TestElement4;
+import org.tempuri.attribute.*;
 
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 
 public class AttributeTest extends TestCase {
@@ -143,6 +141,25 @@ public class AttributeTest extends TestCase {
             fail();
         } catch (Exception e) {
             assertTrue(true);
+        }
+    }
+
+    public void testAttributeSimpleType(){
+        TestAttributeSimpleType testAttributeSimpleType = new TestAttributeSimpleType();
+        Attribute1_type0 attribute1_type0 = new Attribute1_type0();
+        attribute1_type0.setAttribute1_type0("test attribute");
+        testAttributeSimpleType.setAttribute1(attribute1_type0);
+
+        OMElement omElement = testAttributeSimpleType.getOMElement(TestAttributeSimpleType.MY_QNAME,
+                OMAbstractFactory.getOMFactory());
+        try {
+            String omElementString = omElement.toStringWithConsume();
+            System.out.println("OMString ==> " + omElementString);
+            XMLStreamReader xmlReader = StAXUtils.createXMLStreamReader(new ByteArrayInputStream(omElementString.getBytes()));
+            TestAttributeSimpleType result = TestAttributeSimpleType.Factory.parse(xmlReader);
+            assertEquals(result.getAttribute1().getAttribute1_type0(),"test attribute");
+        } catch (Exception e) {
+            fail();
         }
     }
 }
