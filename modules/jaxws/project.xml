@@ -88,6 +88,9 @@
     </resources>
 
         <unitTest>
+            <excludes>
+		<exclude>**/JAXWSTest.java</exclude>
+            </excludes>
             <includes>
                 <include>**/*Test.java</include>
             </includes>
@@ -360,6 +363,9 @@
         <sourceDirectory>src</sourceDirectory>
         <unitTestSourceDirectory>test</unitTestSourceDirectory>
         <unitTest>
+            <excludes>
+                <exclude>**/JAXWSTest.java</exclude>
+            </excludes>
             <includes>
                 <include>**/*Test.java</include>
             </includes>

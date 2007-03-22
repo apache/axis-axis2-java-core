@@ -1633,13 +1633,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         part = (Part) partsMap.values().iterator().next();
                         // change the name of this part
                         // this is the return type and its name should be result
-//                        part.setName("result");
-//                        addPartToElement(part,
-//                            document,
-//                            xsdPrefix,
-//                            namespaceImportsMap,
-//                            namespacePrefixMap,
-//                            cmplxTypeSequence);
+                        part.setName("result");
+                        addPartToElement(part,
+                            document,
+                            xsdPrefix,
+                            namespaceImportsMap,
+                            namespacePrefixMap,
+                            cmplxTypeSequence);
                     } else {
                         throw new WSDLProcessingException("the parameter order can left atmost" +
                                 " one part");
