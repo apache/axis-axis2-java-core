@@ -121,8 +121,8 @@ public class DeploymentClassLoader extends URLClassLoader {
      */
     public URL findResource(String resource) {
         URL url = super.findResource(resource);
-        if (url != null) {
-            for (int i = 0; i < embedded_jars.size(); i++) {
+        if (url == null) {
+            for (int i = 0; embedded_jars != null && i < embedded_jars.size(); i++) {
                 String libjar_name = (String) embedded_jars.get(i);
                 try {
                 InputStream in = getJarAsStream(libjar_name);
@@ -158,7 +158,7 @@ public class DeploymentClassLoader extends URLClassLoader {
         while (e.hasMoreElements()) {
             resources.add(e.nextElement());
         }
-        for (int i = 0; i < embedded_jars.size(); i++) {
+        for (int i = 0; embedded_jars != null && i < embedded_jars.size(); i++) {
             String libjar_name = (String) embedded_jars.get(i);
             try {
             InputStream in = getJarAsStream(libjar_name);
@@ -189,7 +189,7 @@ public class DeploymentClassLoader extends URLClassLoader {
      * @throws java.io.IOException <code>Exception</code>
      */
     private byte[] getBytes(String resource) throws Exception {
-        for (int i = 0; i < embedded_jars.size(); i++) {
+        for (int i = 0; embedded_jars != null && i < embedded_jars.size(); i++) {
             String libjar_name = (String) embedded_jars.get(i);
             InputStream in = getJarAsStream(libjar_name);
             byte[] bytes = getBytes(in, resource);
