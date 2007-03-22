@@ -20,10 +20,19 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
@@ -99,7 +108,7 @@ public class XSDListUtils {
      * @throws NoSuchMethodException 
      * @throws IllegalArgumentException 
      */
-    public static Object fromXSDListString(String xsdListString, Class type) throws IllegalArgumentException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    public static Object fromXSDListString(String xsdListString, Class type) throws IllegalArgumentException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, ParseException, DatatypeConfigurationException {
         // TODO only supports arrays right now.  Need to implement this for List
         if (type.isArray()) {
            Class componentType = type.getComponentType();
@@ -112,7 +121,14 @@ public class XSDListUtils {
               Object componentObject = getFromText(text, componentType);
               list.add(componentObject);
            }
-           Object array = Array.newInstance(componentType, list.size());
+           Class arrayType = componentType;
+           if(componentType.isPrimitive()){
+               Class boxedType = getBoxedType(componentType);
+               if(boxedType!=null){
+                   arrayType = boxedType;
+               }
+           }
+           Object array = Array.newInstance(arrayType, list.size());
            return list.toArray((Object[]) array);
         } else {
             throw new IllegalArgumentException(type.toString());
@@ -149,7 +165,7 @@ public class XSDListUtils {
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    private static Object getFromText(String value, Class componentType) throws NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    private static Object getFromText(String value, Class componentType) throws NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, ParseException, DatatypeConfigurationException {
         // TODO This needs to be upgraded to handle more complicated objects (enum, calendar, primitive, etc.)
         if (componentType == String.class) {
             return value;
@@ -163,8 +179,36 @@ public class XSDListUtils {
             Object obj = method.invoke(null, new Object[] {value} );
             return obj;
         }
+        
+        if(componentType == byte.class){
+           componentType = Byte.class;
+        }
+        if(componentType == short.class){
+            componentType = Short.class;
+         }
+        if(componentType == int.class){
+            componentType = Integer.class;
+        }
+        if(componentType == float.class){
+            componentType = Float.class;
+        }
+        if(componentType == double.class){
+            componentType = Double.class;
+        }
+        if(componentType == char.class){
+            Character ch = null;
+            if(value!=null && value.length()>0){
+                ch = new Character(value.charAt(0));
+            }
+            return ch;
+        }
+        if(componentType == boolean.class){
+            componentType = Boolean.class;
+        }
+        
         if (componentType.equals(QName.class)) {
             // TODO Missing Support
+           
             throw new IllegalArgumentException(Messages.getMessage("XSDListNotSupported", componentType.getName()));
         } else if (componentType.equals(XMLGregorianCalendar.class)) {
             // TODO Missing Support
@@ -178,4 +222,37 @@ public class XSDListUtils {
         return obj;
     }
     
+    private static Class getBoxedType(Class primitiveType){
+        if(primitiveType == byte.class){
+            return Byte.class;
+        }
+        if(primitiveType == short.class){
+            return Short.class;
+        }
+        if(primitiveType == int.class){
+            return Integer.class;
+        }
+        if(primitiveType == long.class){
+            return Long.class;
+        }
+        if(primitiveType == float.class){
+            return Float.class;
+        }
+        if(primitiveType == double.class){
+            return Double.class;
+        }
+        if(primitiveType == char.class){
+            return Character.class;
+        }
+        if(primitiveType == boolean.class){
+            return Boolean.class;
+        }
+        return null;
+    }
+    private static GregorianCalendar toGregorianCalendar(String value) throws ParseException{
+        Date d = new SimpleDateFormat().parse(value);
+        GregorianCalendar gc = new GregorianCalendar();
+        gc.setTime(d);
+        return gc;
+    }
 }
