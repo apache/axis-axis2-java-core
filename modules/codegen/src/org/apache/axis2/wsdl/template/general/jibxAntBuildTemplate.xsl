@@ -189,10 +189,7 @@
                 </jar>
             </target>
 
-
-
-
-            <target depends="jar.server" name="make.repo" if="jars.ok">
+            <target name="make.repo" depends="jar.server" if="jars.ok">
                 <mkdir>
                     <xsl:attribute name="dir">${build}/repo/</xsl:attribute>
                 </mkdir>
@@ -204,7 +201,7 @@
                     <xsl:attribute name="toDir">${build}/repo/services/</xsl:attribute>
                 </copy>
             </target>
-            <target depends="make.repo" name="start.server" if="jars.ok">
+            <target name="start.server" depends="make.repo" if="jars.ok">
                 <java classname="org.apache.axis2.transport.http.SimpleHTTPServer" fork="true">
                     <arg>
                         <xsl:attribute name="value">${build}/repo</xsl:attribute>
@@ -214,7 +211,7 @@
                     </classpath>
                 </java>
             </target>
-            <target if="jars.ok" name="run.test" depends="compile.test">
+            <target name="run.test" depends="compile.test" if="jars.ok">
                 <path id="test.class.path">
                     <pathelement>
                         <xsl:attribute name="location">${lib}/${name}-test-client.jar</xsl:attribute>
