@@ -18,6 +18,11 @@
 package org.apache.axis2.description;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMNode;
+import org.apache.axiom.om.OMAttribute;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -46,6 +51,7 @@ import org.apache.axis2.transport.TransportListener;
 import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.util.XMLUtils;
+import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,9 +78,12 @@ import javax.wsdl.xml.WSDLReader;
 import javax.wsdl.xml.WSDLWriter;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
+import java.io.ByteArrayInputStream;
 import java.net.SocketException;
 import java.net.URL;
 import java.security.PrivilegedAction;
@@ -1017,7 +1026,7 @@ public class AxisService extends AxisDescription {
     private void getWSDL2(OutputStream out, String[] serviceURL) throws AxisFault {
         AxisService2WSDL2 axisService2WSDL2 = new AxisService2WSDL2(this, serviceURL);
         try {
-            OMElement wsdlElement = axisService2WSDL2.generateOM();
+            OMElement wsdlElement = axisService2WSDL2.toWSDL20();
             wsdlElement.serialize(out);
             out.flush();
             out.close();

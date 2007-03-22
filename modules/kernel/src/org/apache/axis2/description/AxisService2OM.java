@@ -12,6 +12,7 @@ import org.apache.axis2.namespace.Constants;
 import org.apache.axis2.util.ExternalPolicySerializer;
 import org.apache.axis2.util.PolicyUtil;
 import org.apache.axis2.util.XMLUtils;
+import org.apache.axis2.util.WSDLSerializationUtil;
 import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.neethi.Policy;
@@ -131,25 +132,18 @@ public class AxisService2OM implements Java2WSDLConstants {
 
         policiesInDefinitions = new HashMap();
 
-        Map nameSpaceMap = axisService.getNameSpacesMap();
-        Iterator keys = nameSpaceMap.keySet().iterator();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            if ("".equals(key)) {
-                ele.declareDefaultNamespace((String) nameSpaceMap.get(key));
-            } else {
-                ele.declareNamespace((String) nameSpaceMap.get(key), key);
-            }
-        }
+        Map namespaceMap = axisService.getNameSpacesMap();
+        WSDLSerializationUtil.populateNamespaces(ele, namespaceMap);
         soap = ele.declareNamespace(URI_WSDL11_SOAP, SOAP11_PREFIX);
         soap12 = ele.declareNamespace(URI_WSDL12_SOAP, SOAP12_PREFIX);
         http = ele.declareNamespace(HTTP_NAMESPACE, HTTP_PREFIX);
         mime = ele.declareNamespace(MIME_NAMESPACE, MIME_PREFIX);
-        String prefix = getPrefix(axisService.getTargetNamespace());
+        String prefix = WSDLSerializationUtil.getPrefix(axisService.getTargetNamespace(), namespaceMap);
         if (prefix == null || "".equals(prefix)) {
             prefix = DEFAULT_TARGET_NAMESPACE_PREFIX;
         }
-        axisService.getNameSpacesMap().put(prefix,
+
+        namespaceMap.put(prefix,
                                            axisService.getTargetNamespace());
         tns = ele.declareNamespace(axisService.getTargetNamespace(), prefix);
 
@@ -314,8 +308,8 @@ public class AxisService2OM implements Java2WSDLConstants {
                 throw new RuntimeException(ELEMENT_ATTRIBUTE_NAME
                         + " is null for " + header.getMessage());
             }
-            messagePart.addAttribute(ELEMENT_ATTRIBUTE_NAME, getPrefix(header
-                    .getElement().getNamespaceURI())
+            messagePart.addAttribute(ELEMENT_ATTRIBUTE_NAME, WSDLSerializationUtil.getPrefix(header
+                    .getElement().getNamespaceURI(), axisService.getNameSpacesMap())
                     + ":" + header.getElement().getLocalPart(), null);
         }
     }
@@ -336,7 +330,7 @@ public class AxisService2OM implements Java2WSDLConstants {
                 messageElement.addChild(messagePart);
                 messagePart.addAttribute(ATTRIBUTE_NAME, "part1", null);
                 messagePart.addAttribute(ELEMENT_ATTRIBUTE_NAME,
-                                         getPrefix(schemaElementName.getNamespaceURI()) + ":"
+                                         WSDLSerializationUtil.getPrefix(schemaElementName.getNamespaceURI(), axisService.getNameSpacesMap()) + ":"
                                                  + schemaElementName.getLocalPart(), null);
             }
         }
@@ -943,21 +937,9 @@ public class AxisService2OM implements Java2WSDLConstants {
             extElement.addAttribute("part", header.part(), null);
         }
         if (header.getMessage() != null) {
-            extElement.addAttribute("message", getPrefix(targetNamespace) + ":"
+            extElement.addAttribute("message", WSDLSerializationUtil.getPrefix(targetNamespace, axisService.getNameSpacesMap()) + ":"
                     + header.getMessage().getLocalPart(), null);
         }
-    }
-
-    private String getPrefix(String targetNameSpace) {
-        Map map = axisService.getNameSpacesMap();
-        Iterator keys = map.keySet().iterator();
-        while (keys.hasNext()) {
-            String key = (String) keys.next();
-            if (map.get(key).equals(targetNameSpace)) {
-                return key;
-            }
-        }
-        return null;
     }
 
     private void addWSAWActionAttribute(OMElement element, String action) {

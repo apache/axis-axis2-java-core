@@ -19,11 +19,21 @@
 package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.WSDLSerializationUtil;
+import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.wsdl.SOAPModuleMessage;
+import org.apache.axis2.wsdl.HTTPHeaderMessage;
+import org.apache.axis2.wsdl.SOAPHeaderMessage;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMAbstractFactory;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 public class AxisBindingMessage extends AxisDescription {
 
@@ -34,6 +44,17 @@ public class AxisBindingMessage extends AxisDescription {
     private Map options;
 
     private AxisMessage axisMessage;
+
+    // Used to indicate whether this message is a fault or not. Needed for the WSDL 2.0 serializer
+    private boolean fault = false;
+
+    public boolean isFault() {
+        return fault;
+    }
+
+    public void setFault(boolean fault) {
+        this.fault = fault;
+    }
 
     public String getName() {
         return name;
@@ -93,6 +114,86 @@ public class AxisBindingMessage extends AxisDescription {
     public boolean isEngaged(QName moduleName) {
         throw new UnsupportedOperationException("axisMessage.isEngaged(qName) is not supported");
 
+    }
+
+    /**
+     * Generates the bindingMessage element (can be input, output, infault or outfault)
+     * @param tns - The targetnamespace
+     * @param wsoap - The SOAP namespace (WSDL 2.0)
+     * @param whttp - The HTTP namespace (WSDL 2.0)
+     * @param nameSpaceMap - The namespacemap of the service
+     * @return The generated bindingMessage element
+     */
+    public OMElement toWSDL20(OMNamespace tns, OMNamespace wsoap, OMNamespace whttp,
+                              Map nameSpaceMap) {
+        String property;
+        ArrayList list;
+        OMFactory omFactory = OMAbstractFactory.getOMFactory();
+        OMElement bindingMessageElement;
+
+        // If this is a fault, create a fault element and add fault specific properties
+        if (this.isFault()) {
+
+            if (this.getParent() instanceof AxisBinding) {
+                bindingMessageElement =
+                        omFactory.createOMElement(WSDL2Constants.FAULT_LOCAL_NAME, null);
+            } else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(this.getDirection())) {
+                bindingMessageElement =
+                        omFactory.createOMElement(WSDL2Constants.IN_FAULT_LOCAL_NAME, null);
+            } else {
+                bindingMessageElement =
+                        omFactory.createOMElement(WSDL2Constants.OUT_FAULT_LOCAL_NAME, null);
+            }
+            bindingMessageElement.addAttribute(omFactory.createOMAttribute(
+                    WSDL2Constants.ATTRIBUTE_REF, null, tns.getPrefix() + ":" + this.name));
+            // Fault specific properties
+            property = (String) this.options.get(WSDL2Constants.ATTR_WSOAP_CODE);
+            if (property != null) {
+                bindingMessageElement.addAttribute(omFactory.createOMAttribute(
+                        WSDL2Constants.ATTRIBUTE_CODE, wsoap, property));
+            }
+            property = (String) this.options.get(WSDL2Constants.ATTR_WSOAP_SUBCODES);
+            if (property != null) {
+                bindingMessageElement.addAttribute(omFactory.createOMAttribute(
+                        WSDL2Constants.ATTRIBUTE_SUBCODES, wsoap, property));
+            }
+            Integer code = (Integer) this.options.get(WSDL2Constants.ATTR_WHTTP_CODE);
+            if (code != null) {
+                bindingMessageElement.addAttribute(omFactory.createOMAttribute(
+                        WSDL2Constants.ATTRIBUTE_CODE, whttp, code.toString()));
+            }
+
+            //Checks whether the message is an input message
+        } else if (WSDLConstants.WSDL_MESSAGE_DIRECTION_IN.equals(this.getDirection())) {
+            bindingMessageElement =
+                    omFactory.createOMElement(WSDL2Constants.IN_PUT_LOCAL_NAME, null);
+
+            //Message should be an output message
+        } else {
+            bindingMessageElement =
+                    omFactory.createOMElement(WSDL2Constants.OUT_PUT_LOCAL_NAME, null);
+        }
+
+
+        // Populate common properties
+        property = (String) this.options.get(WSDL2Constants.ATTR_WHTTP_CONTENT_ENCODING);
+        if (property != null) {
+            bindingMessageElement.addAttribute(omFactory.createOMAttribute(
+                    WSDL2Constants.ATTRIBUTE_CONTENT_ENCODING, whttp, property));
+        }
+        list = (ArrayList) this.options.get(WSDL2Constants.ATTR_WHTTP_HEADER);
+        if (list != null && list.size() > 0) {
+            WSDLSerializationUtil.addHTTPHeaderElements(omFactory, list, whttp, bindingMessageElement, nameSpaceMap);
+        }
+        list = (ArrayList) this.options.get(WSDL2Constants.ATTR_WSOAP_HEADER);
+        if (list != null && list.size() > 0) {
+            WSDLSerializationUtil.addSOAPHeaderElements(omFactory, list, wsoap, bindingMessageElement, nameSpaceMap);
+        }
+        list = (ArrayList) this.options.get(WSDL2Constants.ATTR_WSOAP_MODULE);
+        if (list != null && list.size() > 0) {
+            WSDLSerializationUtil.addSOAPModuleElements(omFactory, list, wsoap, bindingMessageElement);
+        }
+        return bindingMessageElement;
     }
 }
 

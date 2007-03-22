@@ -20,6 +20,10 @@ package org.apache.axis2.description;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMAbstractFactory;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
@@ -107,5 +111,23 @@ public class AxisEndpoint extends AxisDescription {
     public boolean isEngaged(QName moduleName) {
         throw new UnsupportedOperationException("axisMessage.isEngaged(qName) is not supported");
 
+    }
+
+    public OMElement toWSDL20(OMNamespace tns, OMNamespace whttp) {
+        String property;
+        OMFactory omFactory = OMAbstractFactory.getOMFactory();
+        OMElement endpointElement = omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, null);
+        endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME, null, this.getName()));
+        endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.BINDING_LOCAL_NAME, null, tns.getPrefix() + ":" + getBinding().getName().getLocalPart()));
+        endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, getEndpointURL()));
+        property = (String) this.options.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_TYPE);
+        if (property != null) {
+           endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_AUTHENTICATION_TYPE, whttp, property));
+        }
+        property = (String)options.get(WSDL2Constants.ATTR_WHTTP_AUTHENTICATION_REALM);
+        if (property != null) {
+           endpointElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_AUTHENTICATION_REALM, whttp, property));
+        }
+        return endpointElement;
     }
 }

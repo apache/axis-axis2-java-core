@@ -367,6 +367,9 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private void populatePortType(PortType wsdl4jPortType) throws AxisFault {
         List wsdl4jOperations = wsdl4jPortType.getOperations();
 
+        // Added to use in ?wsdl2 as the interface name
+        axisService.addParameter(new Parameter(WSDL2Constants.INTERFACE_LOCAL_NAME,
+                                               wsdl4jPortType.getQName().getLocalPart()));
         if (wsdl4jOperations.size() < 1) {
             throw new AxisFault("No operation found in the portType element");
         }
@@ -506,6 +509,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
                         axisOperation.getFaultMessages());
 
                 AxisBindingMessage axisBindingFaultMessage = new AxisBindingMessage();
+                axisBindingFaultMessage.setFault(true);
                 axisBindingFaultMessage.setAxisMessage(faultMessage);
                 axisBindingFaultMessage.setParent(axisBindingOperation);
 

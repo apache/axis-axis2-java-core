@@ -41,6 +41,7 @@ public class WSDL20DefaultValueHolder {
         defaultValuesMap.put(WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
                              ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR_DEFAULT);
         defaultValuesMap.put(WSDLConstants.WSDL_1_1_STYLE, WSDLConstants.STYLE_DOC);
+        defaultValuesMap.put(WSDL2Constants.ATTR_WSOAP_MEP,WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT);
     }
 
     public static String getDefaultValue(String name) {

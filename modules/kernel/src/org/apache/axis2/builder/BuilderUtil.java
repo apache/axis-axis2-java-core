@@ -77,7 +77,6 @@ public class BuilderUtil {
             AxisMessage axisMessage =
                     axisOperation.getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
             xmlSchemaElement = axisMessage.getSchemaElement();
-        }
 
         if (xmlSchemaElement == null) {
             // if there is no schema its piece of cake !! add these to the soap body in any order you like.
@@ -162,6 +161,7 @@ public class BuilderUtil {
                 }
             }
         }
+    }
         return soapEnvelope;
     }
 
