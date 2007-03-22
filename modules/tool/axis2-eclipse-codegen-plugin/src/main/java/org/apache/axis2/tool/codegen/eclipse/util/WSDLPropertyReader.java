@@ -109,4 +109,12 @@ public class WSDLPropertyReader {
 		
 		return returnList;
 	}
+
+	/**
+	 * public method to get loaded wsdl Definition
+	 * @return
+	 */
+	public Definition getWsdlDefinition() {
+		return wsdlDefinition;
+	}
 }

@@ -26,6 +26,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.wsdl.Definition;
+
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.tool.codegen.WSDL2JavaGenerator;
 import org.apache.axis2.tool.codegen.eclipse.plugin.CodegenWizardPlugin;
@@ -39,6 +41,7 @@ import org.apache.axis2.tool.codegen.eclipse.ui.ToolSelectionPage;
 import org.apache.axis2.tool.codegen.eclipse.ui.WSDLFileSelectionPage;
 import org.apache.axis2.tool.codegen.eclipse.util.SettingsConstants;
 import org.apache.axis2.tool.codegen.eclipse.util.UIConstants;
+import org.apache.axis2.tool.codegen.eclipse.util.WSDLPropertyReader;
 import org.apache.axis2.tool.core.JarFileWriter;
 import org.apache.axis2.tool.core.SrcCompiler;
 import org.apache.axis2.util.CommandLineOptionConstants;
@@ -246,7 +249,14 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                  //Fix for the CodeGenConfiguration Contructor Change
                  //CodeGenConfiguration codegenConfig = new CodeGenConfiguration(service, optionsMap);
                  CodeGenConfiguration codegenConfig = new CodeGenConfiguration(optionsMap);
-                 codegenConfig.setAxisService(service);
+                 codegenConfig.addAxisService(service);
+                 
+                 //set the wsdl definision for codegen config for skeleton generarion.
+                 WSDLPropertyReader reader = new WSDLPropertyReader();
+                 reader.readWSDL(wsdlSelectionPage.getFileName());
+                 Definition wsdlDefinition = reader.getWsdlDefinition();
+                 codegenConfig.setWsdlDefinition(wsdlDefinition);
+                 
                  //set the baseURI
                  codegenConfig.setBaseURI(generator.getBaseUri(wsdlSelectionPage.getFileName()));
                  monitor.worked(1);

@@ -199,6 +199,7 @@ public class WSDL2JavaGenerator {
 			WSDL11ToAxisServiceBuilder builder = new WSDL11ToAxisServiceBuilder(url.openConnection().getInputStream());
 					
 			builder.setBaseUri(getBaseUri(wsdlURI));
+			builder.setCodegen(true);
 			return builder.populateService();
     }
 
