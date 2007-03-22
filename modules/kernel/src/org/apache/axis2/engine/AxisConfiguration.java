@@ -276,7 +276,14 @@ public class AxisConfiguration extends AxisDescription {
         while (services.hasNext()) {
             axisService = (AxisService) services.next();
             String serviceName = axisService.getName();
-            addToAllServicesMap(serviceName, axisService);
+            if (allServices.get(serviceName) != null) {
+                 throw new AxisFault(Messages.getMessage(
+                    "twoservicecannothavesamename", axisService.getName()));
+            }
+             if (axisService.getSchematargetNamespace() == null) {
+                   axisService
+                    .setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
+             }
         }
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
@@ -300,7 +307,7 @@ public class AxisConfiguration extends AxisDescription {
 
             Map endpoints = axisService.getEndpoints();
             String serviceName = axisService.getName();
-            allServices.put(serviceName, axisService);
+            addToAllServicesMap(serviceName, axisService);
             if (endpoints != null) {
                 Iterator endpointNameIter = endpoints.keySet().iterator();
                 while (endpointNameIter.hasNext()) {
@@ -316,18 +323,8 @@ public class AxisConfiguration extends AxisDescription {
         // serviceGroups.put(axisServiceGroup.getServiceGroupName(),
         // axisServiceGroup);
         addChild(axisServiceGroup);
-    }
-
-    public void addToAllServicesMap(String serviceName, AxisService axisService) throws AxisFault {
-        if (allServices.get(serviceName) != null) {
-            throw new AxisFault(Messages.getMessage(
-                    "twoservicecannothavesamename", axisService.getName()));
-        }
-        if (axisService.getSchematargetNamespace() == null) {
-            axisService
-                    .setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
-        }
-    }
+    }public void addToAllServicesMap(String serviceName, AxisService axisService) {
+    allServices.put(serviceName, axisService);}
 
     public AxisServiceGroup removeServiceGroup(String serviceGroupName) throws AxisFault {
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) getChild(serviceGroupName);
@@ -735,8 +732,7 @@ public class AxisConfiguration extends AxisDescription {
 
             while (servics.hasNext()) {
                 AxisService axisService = (AxisService) servics.next();
-
-                allServices.put(axisService.getName(), axisService);
+                addToAllServicesMap(axisService.getName(), axisService);
             }
         }
 

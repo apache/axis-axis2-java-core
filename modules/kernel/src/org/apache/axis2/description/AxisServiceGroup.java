@@ -120,6 +120,38 @@ public class AxisServiceGroup extends AxisDescription {
 
         service.setLastupdate();
         addChild(service);
+    }
+
+    public void addToGroup(AxisService service) throws Exception{
+          if (service == null) {
+            return;
+        }
+        service.setParent(this);
+
+        AxisConfiguration axisConfig = (AxisConfiguration) getParent();
+
+        if (axisConfig != null) {
+            Iterator modules = this.engagedModules.iterator();
+
+            while (modules.hasNext()) {
+                QName moduleName = (QName) modules.next();
+                AxisModule axisModule = axisConfig.getModule(moduleName);
+
+                if (axisModule != null) {
+                    Module moduleImpl = axisModule.getModule();
+                    if (moduleImpl != null) {
+                        // notyfying module for service engagement
+                        moduleImpl.engageNotify(service);
+                    }
+                    service.engageModule(axisModule, axisConfig);
+                } else {
+                    throw new AxisFault(Messages.getMessage(
+                            "modulenotavailble", moduleName.getLocalPart()));
+                }
+            }
+        }
+        service.setLastupdate();
+        addChild(service);
         if(axisConfig!=null){
             axisConfig.addToAllServicesMap(service.getName(),service);
         }

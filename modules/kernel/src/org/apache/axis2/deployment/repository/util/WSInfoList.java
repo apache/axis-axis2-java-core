@@ -197,10 +197,8 @@ public class WSInfoList implements DeploymentConstants {
     public void update() throws DeploymentException {
         synchronized (deployer) {
             checkForUndeployedServices();
-
             deployer.unDeploy();
             deployer.doDeploy();
-
         }
     }
 
@@ -211,7 +209,6 @@ public class WSInfoList implements DeploymentConstants {
      */
     private WSInfo getFileItem(String filename) {
         int sise = jarList.size();
-
         for (int i = 0; i < sise; i++) {
             WSInfo wsInfo = (WSInfo) jarList.get(i);
 
@@ -219,7 +216,6 @@ public class WSInfoList implements DeploymentConstants {
                 return wsInfo;
             }
         }
-
         return null;
     }
 

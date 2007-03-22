@@ -198,7 +198,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     DeploymentClassLoader deploymentClassLoader =
                             new DeploymentClassLoader(
                                     new URL[]{moduleurl},
-                                    axisConfig.getModuleClassLoader());
+                                    axisConfig.getModuleClassLoader(),false);
                     AxisModule module = new AxisModule();
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);
@@ -244,7 +244,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         try {
             serviceGroup.setServiceGroupName(serviceName);
             DeploymentClassLoader serviceClassLoader = new DeploymentClassLoader(
-                    new URL[]{servicesURL}, axisConfig.getServiceClassLoader());
+                    new URL[]{servicesURL}, axisConfig.getServiceClassLoader(),false);
             String metainf = "meta-inf";
             serviceGroup.setServiceGroupClassLoader(serviceClassLoader);
             //processing wsdl.list
@@ -552,25 +552,29 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     }
 
     public void doDeploy() throws DeploymentException {
-        if (wsToDeploy.size() > 0) {
-            for (int i = 0; i < wsToDeploy.size(); i++) {
-                DeploymentFileData currentDeploymentFile = (DeploymentFileData) wsToDeploy.get(i);
-                String type = currentDeploymentFile.getType();
-                if (TYPE_SERVICE.equals(type)) {
-
-                    serviceDeployer.deploy(currentDeploymentFile);
-                } else if (TYPE_MODULE.equals(type)) {
-                    moduleDeployer.deploy(currentDeploymentFile);
-                } else {
-                    Deployer deployer = (Deployer) extensioToDeployerMappingMap.get(type);
-                    if (deployer != null) {
-                        deployer.deploy(currentDeploymentFile);
+        try {
+            if (wsToDeploy.size() > 0) {
+                for (int i = 0; i < wsToDeploy.size(); i++) {
+                    DeploymentFileData currentDeploymentFile = (DeploymentFileData) wsToDeploy.get(i);
+                    String type = currentDeploymentFile.getType();
+                    if (TYPE_SERVICE.equals(type)) {
+                        serviceDeployer.deploy(currentDeploymentFile);
+                    } else if (TYPE_MODULE.equals(type)) {
+                        moduleDeployer.deploy(currentDeploymentFile);
+                    } else {
+                        Deployer deployer = (Deployer) extensioToDeployerMappingMap.get(type);
+                        if (deployer != null) {
+                            deployer.deploy(currentDeploymentFile);
+                        }
                     }
-                }
 
+                }
             }
+        }catch(Exception e){
+            e.printStackTrace();
+        } finally {
+            wsToDeploy.clear();
         }
-        wsToDeploy.clear();
     }
 
     /**

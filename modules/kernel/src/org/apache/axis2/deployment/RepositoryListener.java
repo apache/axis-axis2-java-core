@@ -272,8 +272,6 @@ public class RepositoryListener implements DeploymentConstants {
     /** Method invoked from the scheduler to start the listener. */
     public void startListener() {
         checkServices();
-        loadOtherDirectories();
-
         try {
             update();
         } catch (DeploymentException e) {
