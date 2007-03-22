@@ -609,7 +609,7 @@ public class JAXBUtils {
                             // Only classes that represent data and can be marshalled 
                             // by JAXB should be added.
                             if(!clazz.isInterface()
-                                    && ClassUtils.getDefaultPublicConstructor(clazz) != null
+                                    && (clazz.isEnum() || ClassUtils.getDefaultPublicConstructor(clazz) != null)
                                     && !ClassUtils.isJAXWSClass(clazz)
                                     && !java.lang.Exception.class.isAssignableFrom(clazz)){
                                 if (log.isDebugEnabled()) {
