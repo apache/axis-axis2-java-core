@@ -50,9 +50,7 @@ public class JSONSearchModel {
     public String searchYahoo(String query, String format) {
         try {
             snippet = beginHTML;
-//            String epr = "http://localhost:8060/WebSearchService/V1/webSearch";
             String epr = "http://api.search.yahoo.com/WebSearchService/V1/webSearch";
-//            File configFile = new File("modules/json/test-resources/axis2.xml");
             File configFile = new File("resources/axis2.xml");
             ConfigurationContext configurationContext = ConfigurationContextFactory
                     .createConfigurationContextFromFileSystem(null, configFile
@@ -65,7 +63,6 @@ public class JSONSearchModel {
             options.setProperty(Constants.Configuration.MESSAGE_TYPE, "text/javascript");
             options.setProperty(Constants.Configuration.HTTP_METHOD, Constants.Configuration.HTTP_METHOD_GET);
             OMElement response = client.sendReceive(getPayloadForYahooSearchCall(query, format));
-            System.out.println(response);
             generateSnippet(response);
             return snippet;
 
