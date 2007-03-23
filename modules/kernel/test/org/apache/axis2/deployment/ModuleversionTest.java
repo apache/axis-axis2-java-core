@@ -29,7 +29,8 @@ import java.util.Iterator;
 public class ModuleversionTest extends TestCase {
 
     public void testDefautModuleVersion() throws AxisFault {
-        String filename = "./test-resources/deployment/moduleVersion/Test1/axis2.xml";
+        String filename = System.getProperty("basedir") +
+                "/test-resources/deployment/moduleVersion/Test1/axis2.xml";
         AxisConfiguration ac =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, filename)
                         .getAxisConfiguration();

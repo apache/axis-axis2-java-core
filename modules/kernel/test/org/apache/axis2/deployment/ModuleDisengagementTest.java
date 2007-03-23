@@ -36,9 +36,8 @@ public class ModuleDisengagementTest extends TestCase {
     QName opName = new QName("testOperation");
 
     protected void setUp() throws Exception {
-//        String filename =
-//                System.getProperty("basedir") + "/test-resources/deployment/moduleDisEngegeRepo";
-        String filename = "./test-resources/deployment/moduleDisEngegeRepo";
+        String filename =
+                System.getProperty("basedir") + "/test-resources/deployment/moduleDisEngegeRepo";
         er = ConfigurationContextFactory.
                 createConfigurationContextFromFileSystem(filename, null).getAxisConfiguration();
         AxisService testService = new AxisService();
