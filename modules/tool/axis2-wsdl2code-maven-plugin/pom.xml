@@ -26,6 +26,7 @@
     <relativePath>../../parent/pom.xml</relativePath>    
   </parent>
   <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.axis2.maven2</groupId>
   <artifactId>axis2-wsdl2code-maven-plugin</artifactId>
   <name>Apache Axis 2.0 - tool - WSDL2Code Maven Plugin</name>
   <packaging>maven-plugin</packaging>
@@ -71,7 +72,12 @@
       <groupId>org.apache.axis2</groupId>
       <artifactId>axis2-java2wsdl</artifactId>
 		<version>${version}</version>
-	</dependency>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.axis2</groupId>
+      <artifactId>axis2-xmlbeans</artifactId>
+      <version>${version}</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -85,7 +91,7 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
       <version>1.1</version>
-    </dependency>
+      </dependency>
   </dependencies>
       <distributionManagement>
         <repository>

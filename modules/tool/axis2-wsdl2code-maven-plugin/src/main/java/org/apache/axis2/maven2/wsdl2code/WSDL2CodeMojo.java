@@ -195,8 +195,6 @@ public class WSDL2CodeMojo extends AbstractMojo
 
     private static final InheritedArtifact[] inheritedArtifacts =
     {
-    	new InheritedArtifact( "org.apache.axis2", "axis2-common" ),
-    	new InheritedArtifact( "org.apache.axis2", "axis2-core" ),
     	new InheritedArtifact( "org.apache.ws.commons.axiom", "axiom-api" ),
     	new InheritedArtifact( "org.apache.ws.commons.axiom", "axiom-impl" ),
     	new InheritedArtifact( "org.apache.ws.commons", "neethi" ),
@@ -207,6 +205,12 @@ public class WSDL2CodeMojo extends AbstractMojo
     private static final InheritedArtifact[] adbArtifacts =
     {
     	new InheritedArtifact( "org.apache.axis2", "axis2-adb" )
+    };
+    
+    private static final InheritedArtifact[] xbeanArtifacts = 
+    {
+        new InheritedArtifact( "org.apache.axis2", "axis2-xmlbeans" ),
+        new InheritedArtifact( "xmlbeans", "xbean")
     };
 
     /**
@@ -376,7 +380,7 @@ public class WSDL2CodeMojo extends AbstractMojo
     			sb.append(uriPackageName);
     		}
     	}
-    	return sb.toString();
+    	return (sb.length() != 0) ? sb.toString() : null;
     }
     
     /**
@@ -391,6 +395,11 @@ public class WSDL2CodeMojo extends AbstractMojo
     }
 
     public void execute() throws MojoFailureException, MojoExecutionException {
+        
+        fixCompileSourceRoots();
+        fixDependencies();
+        showDependencies();
+        
     	Map commandLineOptions = this.fillOptionMap();
     	CommandLineOptionParser parser =
                     new CommandLineOptionParser(commandLineOptions);
@@ -405,10 +414,6 @@ public class WSDL2CodeMojo extends AbstractMojo
 			t.printStackTrace();
 			throw new MojoExecutionException(e.getMessage(), e);
 		}
-
-		fixCompileSourceRoots();
-		fixDependencies();
-		showDependencies();
     }
 
     private void showDependencies()
@@ -455,7 +460,10 @@ public class WSDL2CodeMojo extends AbstractMojo
 		list.addAll( Arrays.asList( inheritedArtifacts ) );
 		if ( "adb".equals( databindingName ) ) {
 			list.addAll( Arrays.asList( adbArtifacts ) );
-		}
+		} else if ("xmlbeans".equals( databindingName ) ) {
+            list.addAll(  Arrays.asList( xbeanArtifacts ) );
+        }
+        
 		return (InheritedArtifact[]) list.toArray( new InheritedArtifact[ list.size() ] );
 	}
 

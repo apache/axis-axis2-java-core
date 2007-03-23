@@ -18,6 +18,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.neethi.Constants;
 import org.apache.neethi.Policy;
 import org.apache.neethi.PolicyReference;
+import org.apache.neethi.PolicyRegistry;
+import org.apache.neethi.PolicyRegistryImpl;
 import org.apache.ws.commons.schema.utils.NamespaceMap;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAP11Constants;
@@ -235,6 +237,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
             // setting target name space
             axisService.setTargetNamespace(wsdl4jDefinition.getTargetNamespace());
             axisService.setNameSpacesMap(new NamespaceMap(wsdl4jDefinition.getNamespaces()));
+            
             Service wsdl4jService = findService(wsdl4jDefinition);
             Binding binding = findBinding(wsdl4jDefinition, wsdl4jService);
 
@@ -554,9 +557,13 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         // setup the schemaMap
         schemaMap = getSchemaMap(wsdl4jDefinition.getTypes());
-
+        
+        
+        setPolicyRegistryFromService(axisService);
+        processPoliciesInDefintion(wsdl4jDefinition);
+        
         setupComplete = true; // if any part of setup fails, don't mark
-        // setupComplete
+        // setupComplete        
     }
 
 
@@ -2094,7 +2101,7 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
     private int getPolicyAttachmentPoint(AxisDescription description,
                                          String originOfExtensibilityElements) {
         int result = -1; // Attachment Point Not Identified
-        if (description instanceof AxisService) {
+        if (description instanceof AxisService || description instanceof AxisEndpoint || description instanceof AxisBinding) {
             // wsdl:service
             if (SERVICE.equals(originOfExtensibilityElements)) {
                 result = PolicyInclude.SERVICE_POLICY;
@@ -2375,4 +2382,21 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
 
     }
+    
+//    private void processPoliciesInDefinition() {
+//        
+//        Object obj;
+//        for (Iterator iterator = wsdl4jDefinition.getExtensibilityElements().iterator(); iterator.hasNext();) {
+//            obj = iterator.next();
+//            
+//            if (obj instanceof UnknownExtensibilityElement) {
+//                Element e = ((UnknownExtensibilityElement) obj).getElement();
+//                if (WSDLConstants.WSDL11Constants.POLICY.getNamespaceURI().equals(e.getNamespaceURI()) &&
+//                        WSDLConstants.WSDL11Constants.POLICY.getLocalPart().equals(e.getLocalName())) {
+//                    Policy p = (Policy) PolicyUtil.getPolicyComponent(e);
+//                    reg.register(p.getId(), p);
+//                }
+//            }
+//        }
+//    }
 }
