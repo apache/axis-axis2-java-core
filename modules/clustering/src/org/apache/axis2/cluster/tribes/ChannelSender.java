@@ -34,9 +34,9 @@ public class ChannelSender {
         log.debug("Group size " + group.length);
         // send the message
 
-        for (int i = 0; i < group.length; i++) {
-            printMember(group[i]);
-        }
+//        for (int i = 0; i < group.length; i++) {
+//            printMember(group[i]);
+//        }
 
         if (group.length > 0) {
             try {

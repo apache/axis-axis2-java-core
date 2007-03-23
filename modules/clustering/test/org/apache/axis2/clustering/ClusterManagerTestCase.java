@@ -54,6 +54,8 @@ public abstract class ClusterManagerTestCase extends TestCase {
     
 	protected void setUp() throws Exception {
 
+		Thread.sleep(3000);
+		
 		clusterManager1 = getClusterManager();
 		clusterManager2 = getClusterManager();
 
@@ -68,8 +70,8 @@ public abstract class ClusterManagerTestCase extends TestCase {
 		contextManagerListener2 = new DefaultContextManagerListener ();
 		clusterManager2.getContextManager(). addContextManagerListener (contextManagerListener2);	
 
-		clusterManager1.getConfigurationManager().setConfigurationContext(configurationContext1.getAxisConfiguration());
-		clusterManager2.getConfigurationManager().setConfigurationContext(configurationContext2.getAxisConfiguration());
+		clusterManager1.getConfigurationManager().setConfigurationContext (configurationContext1);
+		clusterManager2.getConfigurationManager().setConfigurationContext(configurationContext2);
 		
 		configurationManagerListener1 = new TestConfigurationManagerListener ();
 		clusterManager1.getConfigurationManager().addConfigurationManagerListener(configurationManagerListener1);
@@ -93,8 +95,8 @@ public abstract class ClusterManagerTestCase extends TestCase {
 
 		//Initiating ClusterManagers
 		try {
-			clusterManager1.init(configurationContext1);
-			clusterManager2.init(configurationContext2);
+			clusterManager1.init();
+			clusterManager2.init();
 		} catch (ClusteringFault e) {
 			String message = "Could not initialize ClusterManagers. Please check the network connection";
 			if (log.isErrorEnabled())
@@ -106,6 +108,8 @@ public abstract class ClusterManagerTestCase extends TestCase {
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		clusterManager1.shutdown();
+		clusterManager2.shutdown();
 	}
 
 }

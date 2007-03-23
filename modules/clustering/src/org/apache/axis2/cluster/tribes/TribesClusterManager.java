@@ -32,10 +32,7 @@ import org.apache.axis2.cluster.tribes.context.TribesContextManager;
 import org.apache.axis2.cluster.tribes.info.TransientTribesChannelInfo;
 import org.apache.axis2.cluster.tribes.info.TransientTribesMemberInfo;
 import org.apache.axis2.cluster.tribes.util.TribesUtil;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.catalina.tribes.Channel;
 import org.apache.catalina.tribes.ChannelException;
 import org.apache.catalina.tribes.ManagedChannel;
@@ -48,11 +45,13 @@ public class TribesClusterManager implements ClusterManager {
 
 	private TribesConfigurationManager configurationManager = null;
 	private TribesContextManager contextManager = null;
-	private ConfigurationContext configContext = null;
 	private ContextUpdater updater;
 	private static long timeout = 1000L; // this should be configured in the axis2.xml
 	private HashMap parameters = null;
-
+	Channel channel = null;
+	TransientTribesChannelInfo channelInfo = null;
+	TransientTribesMemberInfo memberInfo = null;
+	
     private static final Log log = LogFactory.getLog(TribesClusterManager.class);
 
     public TribesClusterManager () {
@@ -69,29 +68,21 @@ public class TribesClusterManager implements ClusterManager {
 		return configurationManager;
 	}
 
-	public void init(ConfigurationContext configurationContext) throws ClusteringFault {
+	public void init() throws ClusteringFault {
 		log.debug("Initializing tribes");
-		this.configContext = configurationContext;
 		ChannelSender sender = new ChannelSender ();
 
         ChannelListener listener = new ChannelListener (configurationManager, contextManager);
 
-		TransientTribesChannelInfo channelInfo = new TransientTribesChannelInfo();
-		TransientTribesMemberInfo memberInfo = new TransientTribesMemberInfo();
-
-		configurationContext.setProperty("MEMBER_INFO", memberInfo);
-		configurationContext.setProperty("CHANNEL_INFO", channelInfo);
+		channelInfo = new TransientTribesChannelInfo();
+		memberInfo = new TransientTribesMemberInfo();
 
 		contextManager.setSender(sender);
         configurationManager.setSender(sender);
 
-        contextManager.setConfigurationContext(configurationContext);
-        configurationManager.setConfigurationContext(configurationContext);
-
-
         try {
 			ManagedChannel channel = new GroupChannel();
-
+			this.channel = channel;
 			channel.addChannelListener (listener);
 			channel.addChannelListener(channelInfo);
 			channel.addMembershipListener(memberInfo);
@@ -110,26 +101,24 @@ public class TribesClusterManager implements ClusterManager {
 			listener.setUpdater(updater);
 			listener.setContextManager(contextManager);
 
-//			registerTribesInfoService(configurationContext);
-
 		} catch (ChannelException e) {
 			String message = "Error starting Tribes channel";
 			throw new ClusteringFault (message, e);
 		}
 	}
 
-	private void registerTribesInfoService(ConfigurationContext configContext2) throws ClusteringFault {
-		try {
-			AxisService service = AxisService.createService(
-					"org.apache.axis2.cluster.tribes.info.TribesInfoWebService", configContext
-							.getAxisConfiguration(), RPCMessageReceiver.class);
-
-			configContext.getAxisConfiguration().addService(service);
-		} catch (AxisFault e) {
-			String message = "Unable to create Tribes info web service";
-			throw new ClusteringFault (message, e);
-		}
-	}
+//	private void registerTribesInfoService(ConfigurationContext configContext2) throws ClusteringFault {
+//		try {
+//			AxisService service = AxisService.createService(
+//					"org.apache.axis2.cluster.tribes.info.TribesInfoWebService", configContext
+//							.getAxisConfiguration(), RPCMessageReceiver.class);
+//
+//			configContext.getAxisConfiguration().addService(service);
+//		} catch (AxisFault e) {
+//			String message = "Unable to create Tribes info web service";
+//			throw new ClusteringFault (message, e);
+//		}
+//	}
 
 	public void setConfigurationManager(ConfigurationManager configurationManager) {
 		this.configurationManager = (TribesConfigurationManager) configurationManager;
@@ -173,4 +162,15 @@ public class TribesClusterManager implements ClusterManager {
 		parameters.remove(param.getName());
 	}
 
+	public void shutdown() throws ClusteringFault {
+		if (channel!=null) {
+			try {
+				channel.stop(Channel.DEFAULT);
+			} catch (ChannelException e) {
+				throw new ClusteringFault (e);
+			}
+		}
+	}
+
+	
 }
