@@ -353,6 +353,13 @@
     	    <classpath location="${compiled.classes.dir}"/>
     	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/SOAPActionTest.wsdl"/>
     	</java>
+    	
+    	<echo>Generating java from rpclitenum.wsdl</echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    	    <classpath refid="maven.runtime.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+    	    <arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/rpclitenum.wsdl"/>
+    	</java>
 			  </tasks>
             </configuration>
             <goals>
@@ -766,6 +773,19 @@
 			   <include name="org/apache/axis2/jaxws/server/**"/>
 			</fileset>
 		</copy>	
+
+		<copy toDir="target/test-classes/services/RPCLitEnumService/">
+			<fileset dir="target/test-classes">
+			   <include name="org/apache/axis2/jaxws/rpclit/enumtype/**"/>
+			</fileset>
+			<fileset dir="test/org/apache/axis2/jaxws/rpclit/enumtype">
+			   <include name="META-INF/**"/>
+			</fileset>
+			<fileset dir="target/classes">
+			   <include name="org/apache/axis2/jaxws/server/**"/>
+			</fileset>
+		</copy>	
+
         <copy toDir="target/test-classes/">
              <fileset dir="test-resources/">
                <include name="**/*.properties"/>
