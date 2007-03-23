@@ -377,7 +377,11 @@ public class Utils {
         AxisOperation operation;
         String opName = jmethod.getSimpleName();
         if (jmethod.getReturnType().isVoidType()) {
-            operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_ONLY);
+            if (jmethod.getExceptionTypes().length > 0) {
+                operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY);
+            } else {
+                operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_ONLY);
+            }
         } else {
             operation = AxisOperationFactory.getAxisOperation(WSDLConstants.MEP_CONSTANT_IN_OUT);
             AxisMessage outMessage = operation.getMessage(

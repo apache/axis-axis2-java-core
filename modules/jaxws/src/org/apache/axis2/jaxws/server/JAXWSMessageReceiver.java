@@ -99,18 +99,16 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
             //needs to be done here is setting up all of the javax.xml.ws.* 
             //properties for the MessageContext.
             
-            if (isMepInOnly(mep)) {
-            	endpointCtlr.invoke(ic);
-            }
-            else{
-	            ic = endpointCtlr.invoke(ic);
-                
-                // If this is a two-way exchange, there should already be a 
+            ic = endpointCtlr.invoke(ic);
+            MessageContext responseMsgCtx = ic.getResponseMessageContext();
+
+            //If there is a fault it could be Robust In-Only
+            if (!isMepInOnly(mep)|| hasFault(responseMsgCtx)) {
+                // If this is a two-way exchange, there should already be a
                 // JAX-WS MessageContext for the response.  We need to pull 
                 // the Message data out of there and set it on the Axis2 
                 // MessageContext.
-                MessageContext responseMsgCtx = ic.getResponseMessageContext();
-                org.apache.axis2.context.MessageContext axisResponseMsgCtx = 
+                org.apache.axis2.context.MessageContext axisResponseMsgCtx =
                     responseMsgCtx.getAxisMessageContext(); 
                 
                 MessageUtils.putMessageOnMessageContext(responseMsgCtx.getMessage(), axisResponseMsgCtx);
@@ -156,7 +154,14 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
           throw faultToReturn;
         }
     }
-    
+
+    private boolean hasFault(MessageContext responseMsgCtx) {
+        if(responseMsgCtx == null || responseMsgCtx.getMessage()==null){
+            return false;
+        }
+        return responseMsgCtx.getMessage().isFault();
+    }
+
     private boolean isMepInOnly(String mep){
     	boolean inOnly = mep.equals(WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY) || 
             mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY) || 
