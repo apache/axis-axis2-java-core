@@ -57,8 +57,8 @@ import java.util.Map;
 public class AxisConfiguration extends AxisDescription {
 
     private static final Log log = LogFactory.getLog(AxisConfiguration.class);
-    /*
-     * To store data locators configured
+    /* 
+     * To store configured data locators
      */
     private HashMap dataLocators = new HashMap();
     private HashMap dataLocatorClassNames = new HashMap();
@@ -67,10 +67,10 @@ public class AxisConfiguration extends AxisDescription {
      */
     // private final HashMap defaultModules = new HashMap();
     //
-    // to store all the availble modules (including version)
+    // To store all the available modules (including version)
     private final HashMap allModules = new HashMap();
 
-    // to store mapping between default version to module name
+    // To store mapping between default version and module name
     private final HashMap nameToversionMap = new HashMap();
 
     // private final HashMap serviceGroups = new HashMap();
@@ -134,7 +134,7 @@ public class AxisConfiguration extends AxisDescription {
 
     private ClassLoader systemClassLoader;
 
-    //to keep tarck of system start or not
+    //To keep track of whether the system has started or not
     private boolean start;
 
     private ArrayList targetResolvers;
@@ -234,11 +234,11 @@ public class AxisConfiguration extends AxisDescription {
      */
     public void removeModule(QName module) {
         allModules.remove(module);
-        // TODO dis-engage has to be done here
+        // TODO disengage has to be done here
     }
 
     /**
-     * Adds module configuration, if there is moduleConfig tag in service.
+     * Adds module configuration, if there is a moduleConfig tag in service.
      *
      * @param moduleConfiguration
      */
@@ -377,10 +377,10 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Engages the default module version corresponding to given module name ,
+     * Engages the default module version corresponding to the given module name,
      * or if the module name contains version number in it then it will engage
-     * the correct module. Both of the below two cases are valid 1.
-     * engageModule("addressing"); 2. engageModule("addressing-1.23");
+     * the correct module. Both the below cases are valid : -
+     * 1. engageModule("addressing"); 2. engageModule("addressing-1.23");
      *
      * @deprecate Please use the String version instead
      * @param moduleref QName of module to engage
@@ -409,7 +409,7 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Engages a module using give name and its version ID.
+     * Engages a module using given name and its version ID.
      *
      * @param moduleName
      * @param versionID
@@ -457,8 +457,8 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * To dis-engage module from the system, this will remove all the handlers
-     * belongs to this module from all the handler chains
+     * To dis-engage a module from the system. This will remove all the handlers
+     * belonging to this module from all the handler chains.
      *
      * @param module
      */
@@ -492,7 +492,7 @@ public class AxisConfiguration extends AxisDescription {
                     axisObserver.serviceUpdate(event, service);
                 }
             } catch (Throwable e) {
-                // No need to stop the system due to this , So log and ignore
+                // No need to stop the system due to this, so log and ignore
                 log.debug(e);
             }
         }
@@ -507,7 +507,7 @@ public class AxisConfiguration extends AxisDescription {
             try {
                 axisObserver.moduleUpdate(event, moule);
             } catch (Throwable e) {
-                // No need to stop the system due to this , So log and ignore
+                // No need to stop the system due to this, so log and ignore
                 log.debug(e);
             }
         }
@@ -522,7 +522,7 @@ public class AxisConfiguration extends AxisDescription {
             try {
                 axisObserver.serviceGroupUpdate(event, serviceGroup);
             } catch (Throwable e) {
-                // No need to stop the system due to this , So log and ignore
+                // No need to stop the system due to this, so log and ignore
                 log.debug(e);
             }
         }
@@ -624,12 +624,12 @@ public class AxisConfiguration extends AxisDescription {
 //    }
 
     /**
-     * Method getModule. first it will check whether the given module is there
-     * in the hashMap , if so just return that and the name can be either with
-     * version string or without vresion string <p/> if it not found and , the
-     * nane does not have version string in it then try to check whether default
-     * vresion of module available in the sytem for the give name , if so return
-     * that
+     * Method getModule. First it will check whether the given module is there
+     * in the hashMap, if so returns that and the name, which can be either with
+     * version string or without version string. <p/> If its not found and the
+     * name does not contain the version string in it then checks whether the default
+     * version of the module is available in the sytem for the given name, then returns
+     * that.
      *
      * @param name
      * @return Returns ModuleDescription.
@@ -639,7 +639,7 @@ public class AxisConfiguration extends AxisDescription {
         if (module != null) {
             return module;
         }
-        // checking whether the version string seperator is not there in the
+        // checks whether the version string seperator is not there in the
         // module name
         String moduleName = name;
         String defaultModuleVersion = getDefaultModuleVersion(moduleName);
@@ -653,7 +653,7 @@ public class AxisConfiguration extends AxisDescription {
         return null;
     }
 
-    // the class loder that become the parent of all the modules
+    // the class loader that becomes the parent of all the modules
     public ClassLoader getModuleClassLoader() {
         return this.moduleClassLoader;
     }
@@ -714,8 +714,8 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Service can start and stop , if once stop we can not acess that , so we
-     * need a way to get the service even if service is not active
+     * Service can start and stop, once stopped it cannot be accessed, so we
+     * need a way to get the service even if service is not active.
      *
      * @return AxisService
      */
@@ -728,7 +728,7 @@ public class AxisConfiguration extends AxisDescription {
         }
     }
 
-    // the class loder that become the parent of all the services
+    // The class loader that becomes the parent of all the services
     public ClassLoader getServiceClassLoader() {
         return this.serviceClassLoader;
     }
@@ -744,7 +744,7 @@ public class AxisConfiguration extends AxisDescription {
         return getChildren();
     }
 
-    // to get all the services in the system
+    // To get all the services in the system
     public HashMap getServices() {
         Iterator sgs = getServiceGroups();
 
@@ -761,7 +761,7 @@ public class AxisConfiguration extends AxisDescription {
         return allServices;
     }
 
-    // the class loder which become the top most parent of all the modules and
+    // The class loader which become the top most parent of all the modules and
     // services
     public ClassLoader getSystemClassLoader() {
         return this.systemClassLoader;
@@ -832,10 +832,10 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Adds a dafault module version , which can be done either programatically
-     * or by using axis2.xml . The default module version is important if user
-     * asks to engage a module without given version ID, in which case, we will
-     * engage the default version.
+     * Adds a default module version, which can be done either programmatically
+     * or by using axis2.xml. The default module version is important if user
+     * asks to engage a module without given version ID, in which case,
+     * the default version is engaged.
      *
      * @param moduleName
      * @param moduleVersion
@@ -942,10 +942,10 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * getTargetResolverChain returns and instance of
+     * getTargetResolverChain returns an instance of
      * TargetResolver which iterates over the registered
      * TargetResolvers, calling each one in turn when
-     * resolveTarget is called
+     * resolveTarget is called.
      */
     public TargetResolver getTargetResolverChain() {
         if (targetResolvers.isEmpty()) {
@@ -983,7 +983,7 @@ public class AxisConfiguration extends AxisDescription {
     }
 
     /**
-     * Allow to define/configure Data Locator for specified dialect at Axis 2 Configuration.
+     * Allows to define/configure Data Locator for specified dialect at Axis 2 Configuration.
      *
      * @param dialect-  an absolute URI represents the format and version of data
      * @param classname - class name of the Data Locator configured to support retrieval
@@ -995,7 +995,7 @@ public class AxisConfiguration extends AxisDescription {
 
     /**
      * For internal used only! To store instance of DataLocator when it is first loaded. This allows to
-     * re-use DataLocator after it is initially loaded.
+     * reuse of the DataLocator after it is initially loaded.
      *
      * @param dialect-    an absolute URI represents the format and version of data
      * @param dataLocator - specified an DataLocator instance  to support retrieval
@@ -1022,8 +1022,8 @@ public class AxisConfiguration extends AxisDescription {
 
 
     /**
-     * Checks whether some one has changed the system pre-defined phases
-     * for all the flows. If they have been changed,throws a DeploymentException.
+     * Checks whether the system pre-defined phases
+     * for all the flows, have been changed. If they have been changed, throws a DeploymentException.
      *
      * @throws org.apache.axis2.deployment.DeploymentException
      *

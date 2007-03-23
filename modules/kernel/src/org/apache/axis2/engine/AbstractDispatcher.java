@@ -38,7 +38,10 @@ import org.apache.commons.logging.LogFactory;
  * to find the service for an incoming SOAP message.
  * <p/>
  * In Axis2, a chain of dispatchers is setup. Each tries to
- * dispatch and returns without throwing an exception, in case, it fails.
+ * dispatch and return without throwing an exception, in case it fails
+ * to find the service or operation. Dispatchers look for services, operations,
+ * or both.
+ * 
  */
 public abstract class AbstractDispatcher extends AbstractHandler {
 
