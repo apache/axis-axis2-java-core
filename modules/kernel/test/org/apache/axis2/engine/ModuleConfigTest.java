@@ -36,9 +36,9 @@ import java.io.InputStream;
 public class ModuleConfigTest extends TestCase {
 
     AxisConfiguration ar;
-    String axis2xml = "./target/test-resources/deployment/moduleConfig/axis2.xml";
-    String repo = "./target/test-resources/deployment/moduleConfig";
-
+    String axis2xml = System.getProperty("basedir") +
+            "/target/test-resources/deployment/moduleConfig/axis2.xml";
+    String repo = System.getProperty("basedir") + "/target/test-resources/deployment/moduleConfig";
 
     public void testModuleConfigAtAxisConfig() {
         try {
