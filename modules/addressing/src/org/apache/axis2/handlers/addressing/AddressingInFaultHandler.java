@@ -28,8 +28,6 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -38,8 +36,6 @@ import javax.xml.namespace.QName;
  * into understandable AxisFault objects.
  */
 public class AddressingInFaultHandler extends AbstractHandler implements AddressingConstants {
-
-    private static final Log log = LogFactory.getLog(AddressingInFaultHandler.class);
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         String action = msgContext.getWSAAction();

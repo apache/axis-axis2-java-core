@@ -17,7 +17,6 @@
 package org.apache.axis2.deployment;
 
 import org.apache.axiom.attachments.utils.IOUtils;
-import org.apache.axis2.classloader.JarFileUrlStreamHandler;
 import org.apache.axis2.deployment.util.Utils;
 
 import java.io.ByteArrayInputStream;
@@ -81,15 +80,9 @@ public class DeploymentClassLoader extends URLClassLoader {
      */
     protected Class findClass(String name) throws ClassNotFoundException {
         Class clazz;
-        boolean foundClass;
         try {
             clazz = super.findClass(name);
-            foundClass = true;
-            return clazz;
         } catch (ClassNotFoundException e) {
-            foundClass = false;
-        }
-        if (!foundClass) {
             byte raw[];
             try {
                 String completeFileName = name;
@@ -101,17 +94,13 @@ public class DeploymentClassLoader extends URLClassLoader {
                 if (raw == null) {
                     throw new ClassNotFoundException("Class Not found : " + name);
                 }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            } catch (Exception ex) {
+                // TODO: This, or throw new ClassNotFoundException?
+                throw new RuntimeException(ex);
             }
             clazz = defineClass(name, raw, 0, raw.length);
-            foundClass = true;
-            return clazz;
         }
-        if (!foundClass) {
-            throw new ClassNotFoundException("Class Not found : " + name);
-        }
-        return null;
+        return clazz;
     }
 
     /**
@@ -127,10 +116,10 @@ public class DeploymentClassLoader extends URLClassLoader {
             for (int i = 0; embedded_jars != null && i < embedded_jars.size(); i++) {
                 String libjar_name = (String) embedded_jars.get(i);
                 try {
-                InputStream in = getJarAsStream(libjar_name);
-                ZipInputStream zin = new ZipInputStream(in);
-                ZipEntry entry;
-                String entryName = "";
+                    InputStream in = getJarAsStream(libjar_name);
+                    ZipInputStream zin = new ZipInputStream(in);
+                    ZipEntry entry;
+                    String entryName;
                     while ((entry = zin.getNextEntry()) != null) {
                         entryName = entry.getName();
                         if (entryName != null &&
@@ -168,7 +157,7 @@ public class DeploymentClassLoader extends URLClassLoader {
             InputStream in = getJarAsStream(libjar_name);
             ZipInputStream zin = new ZipInputStream(in);
             ZipEntry entry;
-            String entryName = "";
+            String entryName;
                 while ((entry = zin.getNextEntry()) != null) {
                     entryName = entry.getName();
                     if (entryName != null &&
@@ -217,7 +206,7 @@ public class DeploymentClassLoader extends URLClassLoader {
     private byte[] getBytes(InputStream in, String resource) throws Exception {
         ZipInputStream zin = new ZipInputStream(in);
         ZipEntry entry;
-        String entryName = "";
+        String entryName;
         while ((entry = zin.getNextEntry()) != null) {
             entryName = entry.getName();
             if (entryName != null &&
