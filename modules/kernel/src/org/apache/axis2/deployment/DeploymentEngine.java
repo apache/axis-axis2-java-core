@@ -579,9 +579,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
                 }
             }
-        }catch(Exception e){
-            e.printStackTrace();
-        } finally {
+        }finally {
             wsToDeploy.clear();
         }
     }
