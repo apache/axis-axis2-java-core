@@ -126,7 +126,7 @@ public class ServiceGroupBuilder extends DescriptionBuilder {
                         throw new DeploymentException(
                                 Messages.getMessage(DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
                     } else {
-                        axisServiceGroup.addModuleref(new QName(refName));
+                        axisServiceGroup.addModuleref(refName);
                     }
                 }
             }

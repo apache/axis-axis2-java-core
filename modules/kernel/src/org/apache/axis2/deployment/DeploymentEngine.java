@@ -591,7 +591,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
      */
     public void engageModules() throws AxisFault {
         for (Iterator iterator = axisConfig.getGlobalModules().iterator(); iterator.hasNext();) {
-            QName name = (QName) iterator.next();
+            String name = (String) iterator.next();
             axisConfig.engageModule(name);
         }
     }

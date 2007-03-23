@@ -23,14 +23,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.dataretrieval.AxisDataLocator;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.deployment.util.PhasesInfo;
-import org.apache.axis2.description.AxisDescription;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.ModuleConfiguration;
-import org.apache.axis2.description.TransportInDescription;
-import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.phaseresolver.PhaseResolver;
 import org.apache.axis2.transport.MessageFormatter;
@@ -43,13 +36,7 @@ import org.apache.ws.java2wsdl.Java2WSDLConstants;
 import javax.xml.namespace.QName;
 import java.net.URL;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class AxisConfiguration
@@ -232,7 +219,7 @@ public class AxisConfiguration extends AxisDescription {
      *
      * @param module
      */
-    public void removeModule(QName module) {
+    public void removeModule(String module) {
         allModules.remove(module);
         // TODO disengage has to be done here
     }
@@ -276,13 +263,13 @@ public class AxisConfiguration extends AxisDescription {
             axisService = (AxisService) services.next();
             String serviceName = axisService.getName();
             if (allServices.get(serviceName) != null) {
-                 throw new AxisFault(Messages.getMessage(
-                    "twoservicecannothavesamename", axisService.getName()));
+                throw new AxisFault(Messages.getMessage(
+                        "twoservicecannothavesamename", axisService.getName()));
             }
-             if (axisService.getSchematargetNamespace() == null) {
-                   axisService
-                    .setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
-             }
+            if (axisService.getSchematargetNamespace() == null) {
+                axisService
+                        .setSchematargetNamespace(Java2WSDLConstants.AXIS2_XSD);
+            }
         }
         services = axisServiceGroup.getServices();
         while (services.hasNext()) {
@@ -322,8 +309,11 @@ public class AxisConfiguration extends AxisDescription {
         // serviceGroups.put(axisServiceGroup.getServiceGroupName(),
         // axisServiceGroup);
         addChild(axisServiceGroup);
-    }public void addToAllServicesMap(String serviceName, AxisService axisService) {
-    allServices.put(serviceName, axisService);}
+    }
+
+    public void addToAllServicesMap(String serviceName, AxisService axisService) {
+        allServices.put(serviceName, axisService);
+    }
 
     public AxisServiceGroup removeServiceGroup(String serviceGroupName) throws AxisFault {
         AxisServiceGroup axisServiceGroup = (AxisServiceGroup) getChild(serviceGroupName);
@@ -350,12 +340,11 @@ public class AxisConfiguration extends AxisDescription {
      * @param transport
      * @throws AxisFault
      */
-    public void addTransportIn(TransportInDescription transport)
-            throws AxisFault {
+    public void addTransportIn(TransportInDescription transport) throws AxisFault {
         if (transport.getReceiver() == null) {
             throw new AxisFault(
                     "Transport Receiver can not be null for the transport "
-                            + transport.getName());
+                    + transport.getName());
         }
         transportsIn.put(transport.getName(), transport);
     }
@@ -371,7 +360,7 @@ public class AxisConfiguration extends AxisDescription {
         if (transport.getSender() == null) {
             throw new AxisFault(
                     "Transport sender can not be null for the transport "
-                            + transport.getName());
+                    + transport.getName());
         }
         transportsOut.put(transport.getName(), transport);
     }
@@ -382,9 +371,9 @@ public class AxisConfiguration extends AxisDescription {
      * the correct module. Both the below cases are valid : -
      * 1. engageModule("addressing"); 2. engageModule("addressing-1.23");
      *
-     * @deprecate Please use the String version instead
      * @param moduleref QName of module to engage
      * @throws AxisFault
+     * @deprecated Please use the String version instead
      */
     public void engageModule(QName moduleref) throws AxisFault {
         engageModule(moduleref.getLocalPart());

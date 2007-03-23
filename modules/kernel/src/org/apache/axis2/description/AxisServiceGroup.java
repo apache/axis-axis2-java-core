@@ -24,7 +24,6 @@ import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.modules.Module;
 import org.apache.axis2.util.Utils;
 
-import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -79,7 +78,7 @@ public class AxisServiceGroup extends AxisDescription {
         moduleConfigmap.put(moduleConfiguration.getModuleName(), moduleConfiguration);
     }
 
-    public void addModuleref(QName moduleref) {
+    public void addModuleref(String moduleref) {
         modulesList.add(moduleref);
     }
 
@@ -121,8 +120,8 @@ public class AxisServiceGroup extends AxisDescription {
         addChild(service);
     }
 
-    public void addToGroup(AxisService service) throws Exception{
-          if (service == null) {
+    public void addToGroup(AxisService service) throws Exception {
+        if (service == null) {
             return;
         }
         service.setParent(this);
@@ -150,8 +149,8 @@ public class AxisServiceGroup extends AxisDescription {
         }
         service.setLastupdate();
         addChild(service);
-        if(axisConfig!=null){
-            axisConfig.addToAllServicesMap(service.getName(),service);
+        if (axisConfig != null) {
+            axisConfig.addToAllServicesMap(service.getName(), service);
         }
     }
 
@@ -240,7 +239,7 @@ public class AxisServiceGroup extends AxisDescription {
 
     public String getServiceGroupName() {
         // Note: if the serviceGroupName is not set, then this could be null.
-        // If the serviceGroupName has not been set and a service is added to this group, 
+        // If the serviceGroupName has not been set and a service is added to this group,
         // then the serviceGroupName will default to the name of the first service
         return serviceGroupName;
     }
@@ -264,7 +263,7 @@ public class AxisServiceGroup extends AxisDescription {
 
     public Object getKey() {
         // Note: if the serviceGroupName is not set, then this could be null.
-        // If the serviceGroupName has not been set and a service is added to this group, 
+        // If the serviceGroupName has not been set and a service is added to this group,
         // then the serviceGroupName will default to the name of the first service
         return this.serviceGroupName;
     }
@@ -274,10 +273,11 @@ public class AxisServiceGroup extends AxisDescription {
         if (module == null) {
             return false;
         }
-        Iterator engagedModuleItr = engagedModules.iterator();
-        while (engagedModuleItr.hasNext()) {
-            QName axisModule = (QName) engagedModuleItr.next();
-            if (axisModule.getLocalPart().equals(module.getName())) {
+
+        for (Iterator engagedModuleItr = engagedModules.iterator();
+             engagedModuleItr.hasNext();) {
+            String axisModule = (String) engagedModuleItr.next();
+            if (axisModule.equals(module.getName())) {
                 return true;
             }
         }

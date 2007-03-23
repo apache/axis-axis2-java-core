@@ -308,8 +308,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
             OMElement moduleref = (OMElement) moduleRefs.next();
             OMAttribute moduleRefAttribute = moduleref.getAttribute(new QName(TAG_REFERENCE));
             String refName = moduleRefAttribute.getAttributeValue();
-
-            globalModules.add(new QName(refName));
+            globalModules.add(refName);
         }
     }
 
