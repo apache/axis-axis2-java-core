@@ -211,9 +211,9 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         outHandler.invoke(msgCtxt);
 
         assertEquals("http://whatever.org", defaultEnvelope.getHeader()
-                .getFirstChildWithName(new QName(WSA_TO)).getText());
+                .getFirstChildWithName(Final.QNAME_WSA_TO).getText());
         Iterator iterator =
-                defaultEnvelope.getHeader().getChildrenWithName(new QName(WSA_RELATES_TO));
+                defaultEnvelope.getHeader().getChildrenWithName(Final.QNAME_WSA_RELATES_TO);
         int i = 0;
         while (iterator.hasNext()) {
             iterator.next();
@@ -253,9 +253,9 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         outHandler.invoke(msgCtxt);
 
         assertEquals("http://whatever.org", defaultEnvelope.getHeader()
-                .getFirstChildWithName(new QName(WSA_TO)).getText());
+                .getFirstChildWithName(Final.QNAME_WSA_TO).getText());
         Iterator iterator =
-                defaultEnvelope.getHeader().getChildrenWithName(new QName(WSA_RELATES_TO));
+                defaultEnvelope.getHeader().getChildrenWithName(Final.QNAME_WSA_RELATES_TO);
         int i = 0;
         while (iterator.hasNext()) {
             iterator.next();
@@ -290,9 +290,9 @@ public class AddressingOutHandlerTest extends TestCase implements AddressingCons
         outHandler.invoke(msgCtxt);
 
         assertEquals("http://oldEPR.org", defaultEnvelope.getHeader()
-                .getFirstChildWithName(new QName(WSA_TO)).getText());
+                .getFirstChildWithName(Final.QNAME_WSA_TO).getText());
         Iterator iterator =
-                defaultEnvelope.getHeader().getChildrenWithName(new QName(WSA_RELATES_TO));
+                defaultEnvelope.getHeader().getChildrenWithName(Final.QNAME_WSA_RELATES_TO);
         int i = 0;
         while (iterator.hasNext()) {
             iterator.next();

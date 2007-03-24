@@ -165,6 +165,12 @@ public interface AddressingConstants {
         static final QName WSAW_USING_ADDRESSING =
                 new QName(WSAW_NAMESPACE, USING_ADDRESSING);
         static final QName WSAW_ANONYMOUS = new QName(WSAW_NAMESPACE, USING_ADDRESSING);
+
+        final QName QNAME_WSA_TO = new QName(WSA_NAMESPACE, WSA_TO);
+        final QName QNAME_WSA_FROM = new QName(WSA_NAMESPACE, WSA_FROM);
+        final QName QNAME_WSA_REPLY_TO = new QName(WSA_NAMESPACE, WSA_REPLY_TO);
+        final QName QNAME_WSA_RELATES_TO = new QName(WSA_NAMESPACE, WSA_RELATES_TO);
+        final QName QNAME_WSA_MESSAGE_ID = new QName(WSA_NAMESPACE, WSA_MESSAGE_ID);
     }
 
 
@@ -198,5 +204,11 @@ public interface AddressingConstants {
 
         static final QName WSAW_USING_ADDRESSING =
                 new QName(WSA_NAMESPACE, USING_ADDRESSING);
+
+        final QName QNAME_WSA_TO = new QName(WSA_NAMESPACE, WSA_TO);
+        final QName QNAME_WSA_FROM = new QName(WSA_NAMESPACE, WSA_FROM);
+        final QName QNAME_WSA_REPLY_TO = new QName(WSA_NAMESPACE, WSA_REPLY_TO);
+        final QName QNAME_WSA_RELATES_TO = new QName(WSA_NAMESPACE, WSA_RELATES_TO);
+        final QName QNAME_WSA_MESSAGE_ID = new QName(WSA_NAMESPACE, WSA_MESSAGE_ID);
     }
 }
