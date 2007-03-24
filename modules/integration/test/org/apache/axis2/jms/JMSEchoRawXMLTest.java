@@ -56,12 +56,12 @@ import javax.xml.stream.XMLStreamException;
 
 public class JMSEchoRawXMLTest extends TestCase {
     private EndpointReference targetEPR =
-            new EndpointReference("jms:/EchoXMLService?"+JMSConstants.CONFAC_JNDI_NAME_PARAM+"=ConnectionFactory&java.naming.factory.initial=org.apache.activemq.jndi.ActiveMQInitialContextFactory&java.naming.provider.url=tcp://localhost:61616");
+            new EndpointReference("jms:/dynamicQueues/EchoXMLService?"+JMSConstants.CONFAC_JNDI_NAME_PARAM+"=ConnectionFactory&java.naming.factory.initial=org.apache.activemq.jndi.ActiveMQInitialContextFactory&java.naming.provider.url=tcp://localhost:61616");
     private QName serviceName = new QName("EchoXMLService");
     private QName operationName = new QName("echoOMElement");
 
 
-    String destination = "EchoXMLService";
+    String destination = "dynamicQueues/EchoXMLService";
     BrokerService broker = new BrokerService();
 
     private AxisService clientService;
@@ -81,6 +81,7 @@ public class JMSEchoRawXMLTest extends TestCase {
     protected void setUp() throws Exception {
         // Start ActiveMQ embedded broker
         broker.setUseJmx(false);
+        broker.setPersistent(false);
         broker.addConnector("tcp://localhost:61616");
         broker.start();
 
@@ -94,7 +95,7 @@ public class JMSEchoRawXMLTest extends TestCase {
         Parameter param = new Parameter();
         param.setName(JMSConstants.DEST_PARAM);
         param.setValue(destination);
-        service.getParameters().add(param);
+        service.addParameter(param);
         UtilsJMSServer.deployService(service);
         clientService = Utils.createSimpleServiceforClient(serviceName,
                 Echo.class.getName(),
@@ -180,24 +181,18 @@ public class JMSEchoRawXMLTest extends TestCase {
     public void testEchoXMLCompleteSync() throws Exception {
         ConfigurationContext configContext = UtilServer.createClientConfigurationContext("target/test-resources/jms-enabled-client-repository");
 
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/axis2/services/EchoXMLService", "my");
-        OMElement payloadElement = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.setText("Isaac Asimov, The Foundation Trilogy");
-        payloadElement.addChild(value);
+        OMElement payload = createPayload();
 
         Options options = new Options();
         options.setTo(targetEPR);
         options.setAction(Constants.AXIS2_NAMESPACE_URI+"/"+operationName.getLocalPart());
         options.setTransportInProtocol(Constants.TRANSPORT_JMS);
-        options.setUseSeparateListener(true);
-        options.setTimeOutInMilliSeconds(60*60*1000);
+        //options.setUseSeparateListener(true);
+        options.setTimeOutInMilliSeconds(30*1000);
 
         ServiceClient sender = new ServiceClient(configContext, clientService);
         sender.setOptions(options);
-        OMElement result = sender.sendReceive(operationName, payloadElement);
+        OMElement result = sender.sendReceive(operationName, payload);
 
         result.serialize(StAXUtils.createXMLStreamWriter(
                 System.out));

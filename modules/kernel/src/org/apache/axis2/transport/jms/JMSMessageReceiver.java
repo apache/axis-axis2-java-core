@@ -19,6 +19,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
@@ -130,7 +131,7 @@ public class JMSMessageReceiver implements MessageListener {
                 destinationName = ((Topic) dest).getTopicName();
             }
 
-            String serviceName = jmsConFac.getServiceNameForDestination(destinationName);
+            String serviceName = jmsConFac.getServiceByDestination(destinationName);
 
             // hack to get around the crazy Active MQ dynamic queue and topic issues
             if (serviceName == null) {
@@ -165,6 +166,7 @@ public class JMSMessageReceiver implements MessageListener {
 
             msgContext.setServerSide(true);
             msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
+            msgContext.setMessageID(message.getJMSMessageID());
 
             String soapAction = JMSUtils.getProperty(message, JMSConstants.SOAPACTION);
             if (soapAction != null) {
@@ -173,6 +175,14 @@ public class JMSMessageReceiver implements MessageListener {
 
             msgContext.setEnvelope(
                     JMSUtils.getSOAPEnvelope(message, msgContext, in));
+
+            // set correlation id
+            String correlationId = message.getJMSCorrelationID();
+            if (correlationId != null && correlationId.length() > 0) {
+                msgContext.setProperty(JMSConstants.JMS_COORELATION_ID, correlationId);
+                msgContext.setRelationships(
+                    new RelatesTo[] { new RelatesTo(correlationId) });
+            }
 
             return msgContext;
 

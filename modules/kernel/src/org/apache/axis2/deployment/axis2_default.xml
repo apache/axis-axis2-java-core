@@ -118,8 +118,8 @@
     <!-- Transport Outs -->
     <!-- ================================================= -->
 
-    <!--<transportSender name="jms"-->
-                     <!--class="org.apache.axis2.transport.jms.JMSSender"/>-->
+    <transportSender name="jms"
+                     class="org.apache.axis2.transport.jms.JMSSender"/>
     <transportSender name="tcp"
                      class="org.apache.axis2.transport.tcp.TCPTransportSender"/>
     <transportSender name="local"

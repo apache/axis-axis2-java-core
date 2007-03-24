@@ -115,7 +115,8 @@ public class JMSEchoRawXMLOneWayTest extends TestCase {
 		if (USE_EMBEDDED_BROKER) {
 	        broker = new BrokerService();
 	        broker.setUseJmx(false);
-	        // To enable security for embedded broker please
+            broker.setPersistent(false);
+            // To enable security for embedded broker please
 	        // follow http://issues.apache.org/activemq/browse/AMQ-982
 	        //broker.setPlugins(new BrokerPlugin[] { new JaasAuthenticationPlugin () });	        
 	        broker.addConnector(PROVIDER_URL);
