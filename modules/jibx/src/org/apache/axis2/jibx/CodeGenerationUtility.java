@@ -60,6 +60,7 @@ import org.jibx.binding.model.MappingElement;
 import org.jibx.binding.model.ModelVisitor;
 import org.jibx.binding.model.NamespaceElement;
 import org.jibx.binding.model.ValidationContext;
+import org.jibx.binding.model.ValidationProblem;
 import org.jibx.runtime.JiBXException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -243,6 +244,14 @@ public class CodeGenerationUtility {
                 IncludePrevalidationVisitor ipv = new IncludePrevalidationVisitor(vctx);
                 vctx.tourTree(binding, ipv);
                 if (vctx.getErrorCount() != 0 || vctx.getFatalCount() != 0) {
+                    ArrayList probs = vctx.getProblems();
+                    System.err.println("Errors in generated binding:");
+                    for (int j = 0; j < probs.size(); j++) {
+                        ValidationProblem prob = (ValidationProblem)probs.get(j);
+                        System.err.print(prob.getSeverity() >=
+                            ValidationProblem.ERROR_LEVEL ? "Error: " : "Warning: ");
+                        System.err.println(prob.getDescription());
+                    }
                     throw new RuntimeException("invalid jibx binding definition file " + path);
                 }
             }
@@ -298,7 +307,7 @@ public class CodeGenerationUtility {
             Map complexTypeMap = new HashMap();
             Map bindingMap = new HashMap();
             if (binding != null) {
-                collectTopLevelComponents(binding, null, elementMap,
+                collectTopLevelComponents(binding, "", elementMap,
                     complexTypeMap, simpleTypeMap, bindingMap);
             }
             
@@ -337,8 +346,11 @@ public class CodeGenerationUtility {
                     ArrayList headers = inmsg.getSoapHeaders();
                     for (int i = 0; i < headers.size(); i++) {
                         SOAPHeaderMessage header = (SOAPHeaderMessage)headers.get(i);
-                        mappedclass = mapMessage(header, elementMap);
-                        objins.add(mappedclass);
+                        String cname = mapMessage(header, elementMap);
+                        objins.add(cname);
+                        if (mappedclass == null && isLookupClass(cname)) {
+                            mappedclass = cname;
+                        }
                     }
                 }
                 if (WSDLUtil.isOutputPresentForMEP(mep)) {
@@ -349,8 +361,11 @@ public class CodeGenerationUtility {
                     ArrayList headers = outmsg.getSoapHeaders();
                     for (int i = 0; i < headers.size(); i++) {
                         SOAPHeaderMessage header = (SOAPHeaderMessage)headers.get(i);
-                        mappedclass = mapMessage(header, elementMap);
-                        objouts.add(mappedclass);
+                        String cname = mapMessage(header, elementMap);
+                        objouts.add(cname);
+                        if (mappedclass == null && isLookupClass(cname)) {
+                            mappedclass = cname;
+                        }
                     }
                 }
                 if (unwrap) {
@@ -381,20 +396,29 @@ public class CodeGenerationUtility {
                     
                     // concrete mappings, just save the mapped class name(s)
                     if (inmsg != null) {
-                        mappedclass = mapMessage(inmsg, elementMap);
-                        objins.add(mappedclass);
+                        String cname = mapMessage(inmsg, elementMap);
+                        objins.add(cname);
+                        if (mappedclass == null && isLookupClass(cname)) {
+                            mappedclass = cname;
+                        }
                     }
                     if (outmsg != null) {
-                        mappedclass = mapMessage(outmsg, elementMap);
-                        objouts.add(mappedclass);
+                        String cname = mapMessage(outmsg, elementMap);
+                        objouts.add(cname);
+                        if (mappedclass == null && isLookupClass(cname)) {
+                            mappedclass = cname;
+                        }
                     }
                     
                 }
                 
                 // always handle faults as wrapped
                 for (Iterator iter = op.getFaultMessages().iterator(); iter.hasNext();) {
-                    mappedclass = mapMessage((AxisMessage)iter.next(), elementMap);
-                    objfaults.add(mappedclass);
+                    String cname = mapMessage((AxisMessage)iter.next(), elementMap);
+                    objfaults.add(cname);
+                    if (mappedclass == null && isLookupClass(cname)) {
+                        mappedclass = cname;
+                    }
                 }
             }
             
@@ -540,10 +564,17 @@ public class CodeGenerationUtility {
                     }
                 }
             }
-            if (mappedclass == null) {
-                mappedclass = "";
+            
+            // set binding lookup parameters
+            if (binding.getName() != null && binding.getTargetPackage() != null) {
+                bindinit.setAttribute("binding-name", binding.getName());
+                bindinit.setAttribute("binding-package", binding.getTargetPackage());
+            } else {
+                if (mappedclass == null) {
+                    mappedclass = "";
+                }
+                bindinit.setAttribute("bound-class", mappedclass);
             }
-            bindinit.setAttribute("bound-class", mappedclass);
             
             // include binding namespaces in initialization data
             for (Iterator iter = nsMap.keySet().iterator(); iter.hasNext();) {
@@ -588,6 +619,19 @@ public class CodeGenerationUtility {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    /**
+     * Check if a class is potentially usable for looking up binding
+     * information.
+     *
+     * @param type fully-qualified type name
+     * @return <code>true</code> if potentially usable, <code>false</code> if
+     * not
+     */
+    private static boolean isLookupClass(String type) {
+        return !type.startsWith("java.") && !type.startsWith("javax.") &&
+            !type.startsWith("org.w3c.");
     }
     
     /**
@@ -708,10 +752,12 @@ public class CodeGenerationUtility {
                     param.setAttribute("name", itemname.getLocalPart());
                     param.setAttribute("java-name", toJavaName(itemname.getLocalPart(), nameset));
                     param.setAttribute("nillable", Boolean.toString(element.isNillable()));
-                    param.setAttribute("optional", Boolean.toString(element.getMinOccurs() == 0));
+                    boolean optional = element.getMinOccurs() == 0;
+                    param.setAttribute("optional", Boolean.toString(optional));
                     boolean isarray = element.getMaxOccurs() > 1;
                     param.setAttribute("array", Boolean.toString(isarray));
                     String javatype;
+                    String createtype;
                     if (element.getSchemaType() instanceof XmlSchemaSimpleType) {
                         
                         // simple type translates to format element in binding
@@ -721,13 +767,13 @@ public class CodeGenerationUtility {
                                 qname + ": no format definition found for type " +
                                 typename + " (used by element " + itemname + ')');
                         }
-                        javatype = format.getTypeName();
+                        javatype = createtype = format.getTypeName();
                         param.setAttribute("form", "simple");
                         param.setAttribute("serializer", format.getSerializerName());
                         param.setAttribute("deserializer", format.getDeserializerName());
                         
                         // convert primitive types to wrapper types for nillable
-                        if (element.isNillable() && s_wrapperMap.containsKey(javatype)) {
+                        if ((optional || element.isNillable()) && s_wrapperMap.containsKey(javatype)) {
                             param.setAttribute("wrapped-primitive", "true");
                             param.setAttribute("value-method", javatype + "Value");
                             javatype = (String)s_wrapperMap.get(javatype);
@@ -761,6 +807,10 @@ public class CodeGenerationUtility {
                             typeMappedClassMap.put(typename, tindex);
                         }
                         javatype = mapping.getClassName();
+                        createtype = mapping.getCreateType();
+                        if (createtype == null) {
+                            createtype = javatype;
+                        }
                         param.setAttribute("form", "complex");
                         param.setAttribute("type-index", tindex.toString());
                         
@@ -788,6 +838,8 @@ public class CodeGenerationUtility {
                         }
                     }
                     param.setAttribute("java-type", javatype);
+                    param.setAttribute("create-type", createtype);
+                    
                     boolean isobj = !s_primitiveSet.contains(javatype);
                     String fulltype = javatype;
                     if (isarray) {
@@ -942,7 +994,7 @@ public class CodeGenerationUtility {
      * 
      * @param binding
      * @param dns default namespace to be used unless overridden
-     * (<code>null</code> if none)
+     * (empty string if none)
      * @param elementMap map from element names to concrete mapping components
      * of binding
      * @param complexTypeMap map from type names to abstract mapping

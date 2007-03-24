@@ -165,6 +165,9 @@
                       <xsl:value-of select="out-wrapper/return-element/@java-type"/> result = results[i];
                       if (result == null) {
             <xsl:choose>
+              <xsl:when test="out-wrapper/return-element/@optional='true'">
+                          // just skip optional element
+              </xsl:when>
               <xsl:when test="out-wrapper/return-element/@nillable='true'">
                           org.apache.axiom.om.OMElement child = factory.createOMElement("<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>");
                           org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
@@ -227,7 +230,9 @@
           <xsl:when test="out-wrapper/return-element/@form='complex'">
               if (result == null) {
             <xsl:choose>
-              <xsl:when test="out-wrapper/return-element/@optional='true'"/>
+              <xsl:when test="out-wrapper/return-element/@optional='true'">
+                          // just skip optional element
+              </xsl:when>
               <xsl:when test="out-wrapper/return-element/@nillable='true'">
                   org.apache.axiom.om.OMElement child = factory.createOMElement("<xsl:value-of select='out-wrapper/return-element/@name'/>", "<xsl:value-of select='out-wrapper/return-element/@ns'/>", "<xsl:value-of select='out-wrapper/return-element/@prefix'/>");
                   org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
@@ -503,7 +508,9 @@
   <xsl:template name="marshal-array">
     if (<xsl:value-of select="@java-name"/> == null || <xsl:value-of select="@java-name"/>.length == 0) {
     <xsl:choose>
-      <xsl:when test="@optional='true'"></xsl:when>
+      <xsl:when test="@optional='true'">
+          // just skip optional element
+      </xsl:when>
       <xsl:when test="@nillable='true'">
         child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>");
         org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
@@ -548,20 +555,23 @@
   <!-- Marshal a simple value to a non-repeated element -->
   <xsl:template name="marshal-value">
     <xsl:choose>
-      <xsl:when test="@object='true' and @nillable='true'">
+      <xsl:when test="@object='true'">
         if (<xsl:value-of select="@java-name"/> == null) {
+        <xsl:choose>
+          <xsl:when test="@optional='true'">
+            // just skip optional element
+          </xsl:when>
+          <xsl:when test="@nillable='true'">
             child = factory.createOMElement("<xsl:value-of select='@name'/>", "<xsl:value-of select='@ns'/>", "<xsl:value-of select='@prefix'/>");
             org.apache.axiom.om.OMNamespace xsins = factory.createOMNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
             child.declareNamespace(xsins);
             child.addAttribute("nil", "true", xsins);
             wrapper.addChild(child);
-        } else {
-        <xsl:call-template name="serialize-value-to-child"/>
-        }
-      </xsl:when>
-      <xsl:when test="@object='true'">
-        if (<xsl:value-of select="@java-name"/> == null) {
+          </xsl:when>
+          <xsl:otherwise>
             throw new org.apache.axis2.AxisFault("Null value for <xsl:value-of select='@java-name'/>");
+          </xsl:otherwise>
+        </xsl:choose>
         } else {
         <xsl:call-template name="serialize-value-to-child"/>
         }
@@ -704,11 +714,14 @@
             String message = null;
             try {
     <xsl:choose>
-      <xsl:when test="@bound-class=''">
-                factory = new org.apache.axis2.jibx.NullBindingFactory();
+      <xsl:when test="string-length(normalize-space(@binding-name)) > 0">
+                factory = org.jibx.runtime.BindingDirectory.getFactory("<xsl:value-of select="@binding-name"/>", "<xsl:value-of select="@binding-package"/>", <xsl:choose><xsl:when test="string-length(normalize-space(/class/@name))>0"><xsl:value-of select="/class/@name"/></xsl:when><xsl:otherwise><xsl:value-of select="/interface/@name"/></xsl:otherwise></xsl:choose>.class.getClassLoader());
+      </xsl:when>
+      <xsl:when test="string-length(normalize-space(@bound-class)) > 0">
+                factory = org.jibx.runtime.BindingDirectory.getFactory(<xsl:value-of select="@bound-class"/>.class);
       </xsl:when>
       <xsl:otherwise>
-                factory = org.jibx.runtime.BindingDirectory.getFactory(<xsl:value-of select="@bound-class"/>.class);
+                factory = new org.apache.axis2.jibx.NullBindingFactory();
       </xsl:otherwise>
     </xsl:choose>
                 message = null;
@@ -886,7 +899,7 @@
         <xsl:value-of select="@deserializer"/>(uctx.parseElementText("<xsl:value-of select="@ns"/>", "<xsl:value-of select="@name"/>"))
       </xsl:when>
       <xsl:when test="@form='complex'">
-        uctx.getUnmarshaller(_type_index<xsl:value-of select="@type-index"/>).unmarshal(new <xsl:value-of select="@java-type"/>(), uctx)
+        uctx.getUnmarshaller(_type_index<xsl:value-of select="@type-index"/>).unmarshal(new <xsl:value-of select="@create-type"/>(), uctx)
       </xsl:when>
     </xsl:choose>
   </xsl:template>
