@@ -526,8 +526,7 @@ public class AxisConfigBuilder extends DescriptionBuilder {
                     // adding to axis2 config
                     axisConfig.addTransportOut(transportout);
                 } catch (NoClassDefFoundError e) {
-                    log.debug(Messages.getMessage("errorinloadingts", clasName), e);
-                    throw new DeploymentException(e);
+                    log.info(Messages.getMessage("errorinloadingts", clasName), e);
                 } catch (ClassNotFoundException e) {
                     log.debug(Messages.getMessage("errorinloadingts", clasName), e);
                     throw new DeploymentException(e);
