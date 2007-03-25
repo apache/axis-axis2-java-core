@@ -194,7 +194,7 @@ public class WSInfoList implements DeploymentConstants {
     /**
      *
      */
-    public void update() throws DeploymentException {
+    public void update() {
         synchronized (deployer) {
             checkForUndeployedServices();
             deployer.unDeploy();

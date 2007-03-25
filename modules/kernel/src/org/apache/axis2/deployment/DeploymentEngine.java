@@ -560,20 +560,28 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         wsToUnDeploy.add(file);
     }
 
-    public void doDeploy() throws DeploymentException {
+    public void doDeploy() {
         try {
             if (wsToDeploy.size() > 0) {
                 for (int i = 0; i < wsToDeploy.size(); i++) {
                     DeploymentFileData currentDeploymentFile = (DeploymentFileData) wsToDeploy.get(i);
                     String type = currentDeploymentFile.getType();
                     if (TYPE_SERVICE.equals(type)) {
-                        serviceDeployer.deploy(currentDeploymentFile);
+                        try {
+                            serviceDeployer.deploy(currentDeploymentFile);
+                        } catch (DeploymentException e) {
+                            log.debug(e);
+                        }
                     } else if (TYPE_MODULE.equals(type)) {
                         moduleDeployer.deploy(currentDeploymentFile);
                     } else {
                         Deployer deployer = (Deployer) extensioToDeployerMappingMap.get(type);
                         if (deployer != null) {
-                            deployer.deploy(currentDeploymentFile);
+                            try {
+                                deployer.deploy(currentDeploymentFile);
+                            } catch (DeploymentException e) {
+                                log.debug(e);
+                            }
                         }
                     }
 
@@ -641,7 +649,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         scheduler.schedule(new SchedulerTask(listener), new DeploymentIterator());
     }
 
-    public void unDeploy() throws DeploymentException {
+    public void unDeploy() {
         try {
             if (wsToUnDeploy.size() > 0) {
                 for (int i = 0; i < wsToUnDeploy.size(); i++) {

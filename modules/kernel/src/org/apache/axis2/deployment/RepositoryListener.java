@@ -148,11 +148,7 @@ public class RepositoryListener implements DeploymentConstants {
             cl = cl.getParent();
         }
 
-        try {
-            deploymentEngine.doDeploy();
-        } catch (DeploymentException e) {
-            // no need to do anything here, it has already been logged at the DeploymentEngine call
-        }
+        deploymentEngine.doDeploy();
     }
 
     /**
@@ -186,12 +182,7 @@ public class RepositoryListener implements DeploymentConstants {
     public void checkServices() {
         findServicesInDirectory();
         loadOtherDirectories();
-
-        try {
-            update();
-        } catch (DeploymentException e) {
-            // no need to log anything here, it has been logged at DeploymentEngine
-        }
+        update();
     }
 
     /**
@@ -202,11 +193,7 @@ public class RepositoryListener implements DeploymentConstants {
         wsInfoList.init();
         checkModules();
         directoryToExtensionMappingMap = deploymentEngine.getDirectoryToExtensionMappingMap();
-        try {
-            deploymentEngine.doDeploy();
-        } catch (DeploymentException e) {
-            // no need to do anything here, it has already been logged
-        }
+        deploymentEngine.doDeploy();
     }
 
     //This will load the files from the directories
@@ -272,15 +259,11 @@ public class RepositoryListener implements DeploymentConstants {
     /** Method invoked from the scheduler to start the listener. */
     public void startListener() {
         checkServices();
-        try {
-            update();
-        } catch (DeploymentException e) {
-            // no need to log the exception once again
-        }
+        update();
     }
 
     /** Updates WSInfoList object. */
-    public void update() throws DeploymentException {
+    public void update() {
         wsInfoList.update();
     }
 
