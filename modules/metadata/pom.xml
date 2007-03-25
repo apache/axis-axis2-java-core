@@ -45,6 +45,12 @@
             <artifactId>axis2-jaxws-api</artifactId>
 			<version>${version}</version>
         </dependency>
+		<dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-saaj</artifactId>
+			<version>${version}</version>
+			<scope>test</scope>
+        </dependency>
 		 <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
