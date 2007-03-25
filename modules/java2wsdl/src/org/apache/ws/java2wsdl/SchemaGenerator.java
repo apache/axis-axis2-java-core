@@ -595,6 +595,7 @@ public class SchemaGenerator implements Java2WSDLConstants {
                 targetNamespacePrefix = generatePrefix();
             }
 
+            
             xmlSchema = new XmlSchema(targetNamespace, xmlSchemaCollection);
             xmlSchema.setAttributeFormDefault(getAttrFormDefaultSetting());
             xmlSchema.setElementFormDefault(getElementFormDefaultSetting());
