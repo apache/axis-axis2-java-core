@@ -582,7 +582,7 @@ public class ServiceBuilder extends DescriptionBuilder {
                         throw new DeploymentException(
                                 Messages.getMessage(DeploymentErrorMsgs.MODULE_NOT_FOUND, refName));
                     } else {
-                        service.addModuleref(new QName(refName));
+                        service.addModuleref(refName);
                     }
                 }
             }

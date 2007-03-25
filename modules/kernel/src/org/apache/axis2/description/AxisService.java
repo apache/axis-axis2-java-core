@@ -467,7 +467,7 @@ public class AxisService extends AxisDescription {
         }
     }
 
-    public void addModuleref(QName moduleref) {
+    public void addModuleref(String moduleref) {
         moduleRefs.add(moduleref);
     }
 
