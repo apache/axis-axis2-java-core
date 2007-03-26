@@ -32,8 +32,8 @@
          request.getSession().setAttribute(Constants.MODULE_MAP,null);
          if(moduleCol != null && moduleCol.size() > 0) {
              for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
-                 QName axisOperation = (QName) iterator.next();
-                 modulename = axisOperation.getLocalPart();
+                 String axisOperation = (String) iterator.next();
+                 modulename = axisOperation;
 		if (!wroteUL){
 			wroteUL = true;
 %>
