@@ -24,6 +24,7 @@ import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.util.Counter;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
@@ -44,7 +45,6 @@ import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.wsdl.WSDLConstants;
-import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicLong;
 
 
 import javax.wsdl.Definition;
@@ -66,7 +66,7 @@ public class ServiceClient {
     public static final String ANON_SERVICE = "anonService";
 
     /** Counter used to generate the anonymous service name. */
-    private static AtomicLong anonServiceCounter = new AtomicLong(0);
+    private static Counter anonServiceCounter = new Counter();
 
 
     /**
