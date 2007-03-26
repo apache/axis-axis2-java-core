@@ -24,6 +24,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.engine.AxisEngine;
+import org.apache.axis2.util.MessageContextBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -220,9 +221,22 @@ public class JMSMessageReceiver implements MessageListener {
             try {
                 log.debug("Delegating JMS message for processing to the Axis engine");
                 if (msgCtx.getEnvelope().getBody().hasFault()) {
+                    log.debug("Fault Message received. Processing the SOAP fault");
                     engine.receiveFault(msgCtx);
+                    
                 } else {
-                    engine.receive(msgCtx);
+                    try {
+                        log.debug("SOAP message received. Processing the SOAP message");
+                        engine.receive(msgCtx);
+                        
+                    } catch (AxisFault e) {
+                        log.debug("Exception occured when receiving the SOAP message", e);
+                        if (msgCtx.isServerSide()) {
+                            
+                            MessageContext faultContext = MessageContextBuilder.createFaultMessageContext(msgCtx, e);
+                            engine.sendFault(faultContext);
+                        }
+                    }
                 }
             } catch (AxisFault af) {
                 log.error("JMS Worker [" + Thread.currentThread().getName() +

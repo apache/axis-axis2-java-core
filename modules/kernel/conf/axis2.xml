@@ -10,7 +10,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.        
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
@@ -33,14 +33,14 @@
     <!--This will give out the timout of the configuration contexts, in milliseconds-->
     <parameter name="ConfigContextTimeoutInterval">30000</parameter>
 
-    <!--During a fault, stacktrace can be sent with the fault message. The following flag will control -->
-    <!--that behaviour.-->
+    <!--During a fault, stack trace can be sent with the fault message. The following flag will control -->
+    <!--that behavior.-->
     <parameter name="sendStacktraceDetailsWithFaults">false</parameter>
 
-    <!--If there aren't any information available to find out the fault reason, we set the message of the expcetion-->
+    <!--If there aren't any information available to find out the fault reason, we set the message of the exception-->
     <!--as the faultreason/Reason. But when a fault is thrown from a service or some where, it will be -->
     <!--wrapped by different levels. Due to this the initial exception message can be lost. If this flag-->
-    <!--is set then, Axis2 tries to get the first exception and set its message as the faultreason/Reason.-->
+    <!--is set, then Axis2 tries to get the first exception and set its message as the faultreason/Reason.-->
     <parameter name="DrillDownToRootCauseForFaultReason">false</parameter>
 
     <parameter name="userName">admin</parameter>
@@ -57,7 +57,7 @@
     <!--root which can configured using the following contextRoot parameter-->
     <!--<parameter name="contextRoot">axis2</parameter>-->
 
-    <!--Our HTTP endpoints can handle both REST and SOAP. Following parameters can be used to distingiush those endpoints-->
+    <!--Our HTTP endpoints can handle both REST and SOAP. Following parameters can be used to distinguiush those endpoints-->
     <!--In case of a servlet, if you change this you have to manually change the settings of your servlet container to map this -->
     <!--context path to proper Axis2 servlets-->
     <!--<parameter name="servicePath">services</parameter>-->
@@ -66,7 +66,7 @@
     <!-- Following parameter will completely disable REST handling in Axis2-->
     <parameter name="disableREST" locked="true">false</parameter>
 
-    <!-- If you have a frontend host which exposes this webservice using a different public URL  -->
+    <!-- If you have a front end host which exposes this webservice using a different public URL  -->
     <!-- use this parameter to override autodetected url -->
     <!--<parameter name="httpFrontendHostUrl">https://someotherhost/context</parameter>-->
 
@@ -79,10 +79,10 @@
     <!-- ================================================= -->
     <!-- Message Receivers -->
     <!-- ================================================= -->
-    <!--This is the Deafult Message Receiver for the system , if you want to have MessageReceivers for -->
+    <!--This is the deafult MessageReceiver for the system , if you want to have MessageReceivers for -->
     <!--all the other MEP implement it and add the correct entry to here , so that you can refer from-->
     <!--any operation -->
-    <!--Note : You can ovride this for particular service by adding the same element with your requirement-->
+    <!--Note : You can ovrride this for a particular service by adding the same element with your requirement-->
      <messageReceivers>
         <messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-only"
                          class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
@@ -136,7 +136,7 @@
             requestTcpNoDelay:  true to maximize performance and minimize latency                                   (default true)
                                 false to minimize bandwidth consumption by combining segments
             requestCoreThreadPoolSize:  number of threads available for request processing (unless queue fills up)  (default 25)
-            requestMaxThreadPoolSize:  number of threads available for request processing if queue fills us         (default 150)
+            requestMaxThreadPoolSize:  number of threads available for request processing if queue fills up         (default 150)
                                        note that default queue never fills up:  see HttpFactory
             threadKeepAliveTime:  time to keep threads in excess of core size alive while inactive                  (default 180)
                                   note that no such threads can exist with default unbounded request queue
@@ -187,7 +187,7 @@
                        class="org.apache.axis2.transport.tcp.TCPServer">
         <parameter name="port">6060</parameter-->>
         <!--If you want to give your own host address for EPR generation-->
-        <!--uncommet following paramter , and set as you required.-->
+        <!--uncomment the following paramter , and set it as you required.-->
         <!--<parameter name="hostname">tcp://myApp.com/ws</parameter>-->
     <!-- /transportReceiver -->
 
@@ -216,7 +216,7 @@
     <transportSender name="jms"
                      class="org.apache.axis2.transport.jms.JMSSender"/>
 
-    <!-- Uncomment this one with the appropriate papameters to enable the SMTP transport Receiver
+    <!-- Uncomment this one with the appropriate parameters to enable the SMTP transport Receiver
    <transportSender name="mailto" class="org.apache.axis2.transport.mail.MailTransportSender">
        <parameter name="transport.mail.smtp.host">127.0.0.1</parameter>
        <parameter name="transport.mail.smtp.user">axis2</parameter>
@@ -258,7 +258,7 @@
     <!-- Phases  -->
     <!-- ================================================= -->
     <phaseOrder type="InFlow">
-        <!--  System pre defined phases       -->
+        <!--  System predefined phases       -->
         <phase name="Transport">
             <handler name="RequestURIBasedDispatcher"
                      class="org.apache.axis2.engine.RequestURIBasedDispatcher">
@@ -296,8 +296,8 @@
                 <order phase="Dispatch"/>
             </handler>
         </phase>
-        <!--  System pre defined phases       -->
-        <!--   After Postdispatch phase module author or or service author can add any phase he want      -->
+        <!--  System predefined phases       -->
+        <!--   After Postdispatch phase module author or service author can add any phase he want      -->
         <phase name="OperationInPhase"/>
 	<phase name="soapmonitorPhase"/>
     </phaseOrder>
