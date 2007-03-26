@@ -50,6 +50,7 @@ import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
+import org.apache.axis2.jaxws.server.EndpointController;
 import org.apache.axis2.jaxws.utility.ClassUtils;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
 import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
@@ -187,7 +188,7 @@ public class ProviderDispatcher extends JavaDispatcher{
 
         // Create the response MessageContext
         MessageContext responseMsgCtx = null;
-        if (!isOneWay(mc.getAxisMessageContext())) {
+        if (!EndpointController.isOneWay(mc.getAxisMessageContext())) {
             if (faultThrown) {
                 // If a fault was thrown, we need to create a slightly different
                 // MessageContext, than in the response path.
@@ -416,21 +417,4 @@ public class ProviderDispatcher extends JavaDispatcher{
         return blockFactory;
     }
     
-    /*
-     * Determine if this is a one-way invocation or not.
-     */
-    private boolean isOneWay(org.apache.axis2.context.MessageContext mc) {
-        if (mc != null) {
-            AxisOperation op = mc.getAxisOperation();
-            String mep = op.getMessageExchangePattern();
-            
-            if (mep.equals(WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY) || 
-                mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY) || 
-                mep.equals(WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY) || 
-                mep.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

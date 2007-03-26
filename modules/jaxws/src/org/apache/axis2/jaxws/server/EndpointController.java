@@ -31,6 +31,7 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.java.security.AccessController;
@@ -44,6 +45,8 @@ import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.DescriptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
+import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
@@ -57,12 +60,11 @@ import org.apache.axis2.jaxws.server.dispatcher.EndpointDispatcher;
 import org.apache.axis2.jaxws.server.dispatcher.factory.EndpointDispatcherFactory;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.EndpointLifecycleManager;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
-import org.apache.axis2.jaxws.server.endpoint.lifecycle.impl.EndpointLifecycleManagerImpl;
 import org.apache.axis2.jaxws.spi.Constants;
+import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
+import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-
 
 /**
  * The EndpointController is the server side equivalent to the
@@ -78,8 +80,12 @@ import org.apache.commons.logging.LogFactory;
 public class EndpointController {
     
     private static final Log log = LogFactory.getLog(EndpointController.class);
-	private static final String PARAM_SERVICE_CLASS = "ServiceClass";
-    public EndpointController() {}
+    
+    private static final String PARAM_SERVICE_CLASS = "ServiceClass";
+    
+    public EndpointController() {
+        //do nothing
+    }
 
     /**
      * This method is used to start the JAX-WS invocation of a target endpoint.
@@ -137,20 +143,29 @@ public class EndpointController {
             // the request message if appropriate.
             saveRequestMessage(requestMsgCtx);
             
-            // Invoke inbound application handlers.
-            invokeInboundHandlers(requestMsgCtx);
- 
-            // Dispatch to the 
-            EndpointDispatcher dispatcher = getEndpointDispatcher(implClass, serviceInstance); 
-            try {
-                responseMsgContext = dispatcher.invoke(requestMsgCtx);
-            } finally {
-                // Passed pivot point
-                requestMsgCtx.getMessage().setPostPivot();
-            }
+            // Invoke inbound application handlers.  It's safe to use the first object on the iterator because there is
+            // always exactly one EndpointDescription on a server invoke
+            boolean success = HandlerInvokerUtils.invokeInboundHandlers(requestMsgCtx, serviceDesc.getEndpointDescriptions_AsCollection().iterator().next(), HandlerChainProcessor.MEP.REQUEST, isOneWay(requestMsgCtx.getAxisMessageContext()));
+
+            if (success) {
             
-            // Invoke outbound application handlers
-            invokeOutboundHandlers(requestMsgCtx);
+            	// Dispatch to the 
+            	EndpointDispatcher dispatcher = getEndpointDispatcher(implClass, serviceInstance); 
+            	try {
+            		responseMsgContext = dispatcher.invoke(requestMsgCtx);
+            	} finally {
+            		// Passed pivot point
+            		requestMsgCtx.getMessage().setPostPivot();
+            	}
+            
+            	// Invoke outbound application handlers.  It's safe to use the first object on the iterator because there is
+            	// always exactly one EndpointDescription on a server invoke
+            	HandlerInvokerUtils.invokeOutboundHandlers(responseMsgContext, serviceDesc.getEndpointDescriptions_AsCollection().iterator().next(), HandlerChainProcessor.MEP.RESPONSE, false);
+            } else { // the inbound handler chain must have had a problem, and we've reversed directions
+            	responseMsgContext = MessageContextUtils.createResponseMessageContext(requestMsgCtx);
+            	// since we've reversed directions, the message has "become a response message" (section 9.3.2.1, footnote superscript 2)
+            	responseMsgContext.setMessage(requestMsgCtx.getMessage());
+            }
             
         } catch (Exception e) {
             // TODO for now, throw it.  We probably should try to make an XMLFault object and set it on the message
@@ -165,68 +180,6 @@ public class EndpointController {
         return ic;
     }
     
-    /**
-     * Invoke Inbound Handlers
-     * @param requestMsgCtx
-     */
-    private void invokeInboundHandlers(MessageContext requestMsgCtx) {
-        // Stubbed out code
-        int numHandlers = 0;
-        
-        javax.xml.ws.handler.MessageContext handlerMessageContext = null;
-        if (numHandlers > 0) {
-            handlerMessageContext =findOrCreateMessageContext(requestMsgCtx);
-        }
-        
-        // TODO Invoke Handlers
-    }
-    
-    
-    
-    /**
-     * Invoke OutboundHandlers
-     * @param responseMsgCtx
-     */
-    private void invokeOutboundHandlers(MessageContext responseMsgCtx) {
-        // Stubbed out code
-        int numHandlers = 0;
-        
-        javax.xml.ws.handler.MessageContext handlerMessageContext = null;
-        if (numHandlers > 0) {
-            handlerMessageContext =findOrCreateMessageContext(responseMsgCtx);
-        }
-        
-        // TODO Invoke Handlers
-    }
-    
-    /**
-     * Find or Create Handler Message Context
-     * @param mc
-     * @return javax.xml.ws.handler.MessageContext
-     */
-    private javax.xml.ws.handler.MessageContext findOrCreateMessageContext(MessageContext mc) {
-        // See if a soap message context is already present on the WebServiceContext
-        javax.xml.ws.handler.MessageContext handlerMessageContext = null;
-        ServiceContext serviceContext = mc.getAxisMessageContext().getServiceContext();
-        WebServiceContext ws = (WebServiceContext)serviceContext.getProperty(EndpointLifecycleManagerImpl.WEBSERVICE_MESSAGE_CONTEXT);
-        if (ws != null) {
-            handlerMessageContext = ws.getMessageContext();
-        }
-        if (handlerMessageContext == null) {
-            handlerMessageContext = createSOAPMessageContext(mc);
-        }
-        return handlerMessageContext; 
-    }
-    
-    /**
-     * @param mc
-     * @return new SOAPMessageContext
-     */
-    private javax.xml.ws.handler.MessageContext createSOAPMessageContext(MessageContext mc){
-        SoapMessageContext soapMessageContext = (SoapMessageContext)MessageContextFactory.createSoapMessageContext(mc);
-        ContextUtils.addProperties(soapMessageContext, mc);
-        return soapMessageContext;
-     }
     /*
 	 * Get the appropriate EndpointDispatcher for a given service endpoint.
 	 */
@@ -316,8 +269,8 @@ public class EndpointController {
             return sd;
         }
         else {
-            ServiceDescription sd = DescriptionFactory.
-                createServiceDescriptionFromServiceImpl(implClass, axisSvc);
+            ServiceDescription sd = DescriptionFactory.createServiceDescriptionFromServiceImpl(implClass, axisSvc);
+                //createServiceDescriptionFromServiceImpl(implClass, axisSvc);
             return sd;
         }
     }
@@ -371,7 +324,7 @@ public class EndpointController {
    */
    private void saveRequestMessage(MessageContext requestMsgContext) {
        
-       // TESTING...FORCE SAVING THE REQUEST MESSAGE
+       // TODO: TESTING...FORCE SAVING THE REQUEST MESSAGE
        // requestMsgContext.getAxisMessageContext().setProperty(Constants.SAVE_REQUEST_MSG, Boolean.TRUE);
        // END TESTING
        
@@ -415,5 +368,23 @@ public class EndpointController {
        // String text = requestMsgContext.getMessage().getAsOMElement().toString();
        // System.out.println("Persist Message" + text);
        // END TESTING
+   }
+   
+   /*
+    * Determine if this is a one-way invocation or not.
+    */
+   public static boolean isOneWay(org.apache.axis2.context.MessageContext mc) {
+       if (mc != null) {
+           AxisOperation op = mc.getAxisOperation();
+           String mep = op.getMessageExchangePattern();
+           
+           if (mep.equals(WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY) || 
+               mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY) || 
+               mep.equals(WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY) || 
+               mep.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY)) {
+               return true;
+           }
+       }
+       return false;
    }
 }

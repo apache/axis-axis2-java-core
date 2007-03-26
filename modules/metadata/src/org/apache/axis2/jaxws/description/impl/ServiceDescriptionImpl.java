@@ -21,6 +21,7 @@ import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -78,7 +79,7 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     private WSDLWrapper wsdlWrapper; 
     private WSDLWrapper generatedWsdlWrapper;
     
-    private Hashtable<QName, EndpointDescriptionImpl> endpointDescriptions = new Hashtable<QName, EndpointDescriptionImpl>();
+    private Map<QName, EndpointDescription> endpointDescriptions = new HashMap<QName, EndpointDescription>();
     
     private static final Log log = LogFactory.getLog(ServiceDescriptionImpl.class);
 
@@ -352,6 +353,10 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
         return endpointDescriptions.values().toArray(new EndpointDescriptionImpl[0]);
     }
     
+    public Collection<EndpointDescription> getEndpointDescriptions_AsCollection() {
+        return endpointDescriptions.values();
+    }
+    
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.description.ServiceDescription#getEndpointDescription(javax.xml.namespace.QName)
      */
@@ -377,15 +382,13 @@ class ServiceDescriptionImpl implements ServiceDescription, ServiceDescriptionWS
     public EndpointDescription[] getEndpointDescription(Class seiClass) {
         EndpointDescription[] returnEndpointDesc = null;
         ArrayList<EndpointDescriptionImpl> matchingEndpoints = new ArrayList<EndpointDescriptionImpl>();
-        Enumeration<EndpointDescriptionImpl> endpointEnumeration = endpointDescriptions.elements();
-        while (endpointEnumeration.hasMoreElements()) {
-            EndpointDescriptionImpl endpointDescription = endpointEnumeration.nextElement();
+        for (EndpointDescription endpointDescription: endpointDescriptions.values()) {
             EndpointInterfaceDescription endpointInterfaceDesc = endpointDescription.getEndpointInterfaceDescription();
             // Note that Dispatch endpoints will not have an endpointInterface because the do not have an associated SEI
             if (endpointInterfaceDesc != null) {
                 Class endpointSEIClass = endpointInterfaceDesc.getSEIClass(); 
                 if (endpointSEIClass != null && endpointSEIClass.equals(seiClass)) {
-                    matchingEndpoints.add(endpointDescription);
+                    matchingEndpoints.add((EndpointDescriptionImpl) endpointDescription);
                 }
             }
         }

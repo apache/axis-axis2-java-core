@@ -19,6 +19,7 @@
 package org.apache.axis2.jaxws.sample;
 
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import junit.framework.TestCase;
 import org.apache.axis2.jaxws.sample.addnumbers.AddNumbersPortType;
@@ -41,13 +42,40 @@ public class AddNumbersTests extends TestCase {
                     axisEndpoint);	
 			int total = proxy.addNumbers(10,10);
 			
-			System.out.println("Total =" +total);
+            assertEquals("With handler manipulation, total should be 2 less than a proper sumation.", 18, total);
+			System.out.println("Total (after handler manipulation) = " +total);
 			System.out.println("----------------------------------");
 		} catch(Exception e) {
 			e.printStackTrace();
 			fail();
 		}
 	}
+    
+    public void testAddNumbersWithFault() {
+        try{
+            System.out.println("----------------------------------");
+            System.out.println("test: " + getName());
+            
+            AddNumbersService service = new AddNumbersService();
+            AddNumbersPortType proxy = service.getAddNumbersPort();
+            
+            BindingProvider p = (BindingProvider)proxy;
+            p.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, 
+                    axisEndpoint);  
+            // value 99 triggers the handler to throw an exception, but does
+            // NOT trigger the AddNumbersHandler.handlefault method.
+            // The spec does not call the handlefault method of a handler that
+            // causes a flow reversal
+            int total = proxy.addNumbers(99,10);
+            
+            fail("We should have got an exception due to the handler.");
+        } catch(Exception e) {
+            e.printStackTrace();
+            assertTrue("Exception should be SOAPFaultException", e instanceof SOAPFaultException);
+            assertEquals(((SOAPFaultException)e).getMessage(), "I don't like the value 99");
+        }
+        System.out.println("----------------------------------");
+    }
     
     public void testOneWay() {
         try {

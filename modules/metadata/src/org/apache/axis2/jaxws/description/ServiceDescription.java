@@ -1,5 +1,6 @@
 package org.apache.axis2.jaxws.description;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -47,6 +48,8 @@ import org.apache.axis2.context.ConfigurationContext;
 
 public interface ServiceDescription {
     public abstract EndpointDescription[] getEndpointDescriptions();
+    
+    public abstract Collection<EndpointDescription> getEndpointDescriptions_AsCollection();
 
     public abstract EndpointDescription getEndpointDescription(QName portQName);
 

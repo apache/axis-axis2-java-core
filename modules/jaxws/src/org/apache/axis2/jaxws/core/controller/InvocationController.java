@@ -152,7 +152,7 @@ public abstract class InvocationController {
      */
     public Response invokeAsync(InvocationContext ic) {
         if (log.isDebugEnabled()) {
-            log.debug("Invocation pattern: asynchronous(callback)");
+            log.debug("Invocation pattern: asynchronous(polling)");
         }
         
         // Check to make sure we at least have a valid InvocationContext

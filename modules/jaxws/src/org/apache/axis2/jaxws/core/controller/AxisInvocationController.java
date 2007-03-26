@@ -216,7 +216,7 @@ public class AxisInvocationController extends InvocationController {
                 || opClient.getOptions().isUseSeparateListener()) {
             configureAsyncListener(opClient, request.getAxisMessageContext());
         }
-		else {
+	else {
             if (log.isDebugEnabled()) {
                 log.debug("Asynchronous message exchange not enabled.  The invocation will be synchronous.");
             }
@@ -292,6 +292,11 @@ public class AxisInvocationController extends InvocationController {
         if((useAsyncMep != null && useAsyncMep.booleanValue()) 
                 || opClient.getOptions().isUseSeparateListener()) {
             configureAsyncListener(opClient, request.getAxisMessageContext());
+        }
+        else {
+            if (log.isDebugEnabled()) {
+                log.debug("Asynchronous message exchange not enabled.  The invocation will be synchronous.");
+            }
         }
         
         AsyncResponse resp = ic.getAsyncResponseListener(); 

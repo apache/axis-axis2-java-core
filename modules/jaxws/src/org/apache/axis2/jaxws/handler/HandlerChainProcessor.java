@@ -1,7 +1,30 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.axis2.jaxws.handler;
 
 import java.util.ArrayList;
 
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.Handler;
@@ -12,6 +35,11 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
+import org.apache.axis2.jaxws.message.Protocol;
+import org.apache.axis2.jaxws.message.XMLFault;
+import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
+import org.apache.axis2.jaxws.utility.SAAJFactory;
 
 public class HandlerChainProcessor {
 
@@ -40,7 +68,7 @@ public class HandlerChainProcessor {
 	private final static int OTHER_EXCEPTION = 3;
 	// save it if Handler.handleMessage throws one in HandlerChainProcessor.handleMessage
 	private RuntimeException savedException;
-
+	
 	/*
 	 * HandlerChainProcess expects null, empty list, or an already-sorted
 	 * list.  If the chain passed into here came from our HandlerChainResolver,
@@ -94,7 +122,7 @@ public class HandlerChainProcessor {
 	 * 1.  Has the MessageContext.MESSAGE_OUTBOUND_PROPERTY changed, indicating reversal of message direction
 	 * 2.  Has the message been converted to a fault message? (indicated by a flag in the message)
 	 */
-	public void processChain(MessageContext mc, Direction direction, MEP mep, boolean expectResponse) {
+	public MessageContext processChain(MessageContext mc, Direction direction, MEP mep, boolean expectResponse) {
 		// make sure it's set:
 		mc.put(MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction == Direction.OUT));
 		
@@ -117,6 +145,9 @@ public class HandlerChainProcessor {
 				callGenericHandlers(mep, expectResponse, logicalLength-1, 0, direction);
 			}
 		}
+		// message context may have been changed to be response, and message converted
+		// according to the JAXWS spec 9.3.2.1 footnote 2
+		return this.mc;
 	}
 	
 	
@@ -139,7 +170,7 @@ public class HandlerChainProcessor {
 
 		if (direction == Direction.OUT) {
 			while ((i <= end) && (result == SUCCESSFUL)) {
-				result = handleMessage(((Handler)handlers.get(i)), mc, direction, expectResponse);
+				result = handleMessage(((Handler)handlers.get(i)), direction, expectResponse);
 				newStart = i-1;
 				newStart_inclusive = i;
 				newEnd = 0;
@@ -149,7 +180,7 @@ public class HandlerChainProcessor {
 		}
 		else { // IN case
 			while ((i >= end) && (result == SUCCESSFUL)) {
-				result = handleMessage(((Handler)handlers.get(i)), mc, direction, expectResponse);
+				result = handleMessage(((Handler)handlers.get(i)), direction, expectResponse);
 				newStart = i+1;
 				newStart_inclusive = i;
 				newEnd = handlers.size()-1;
@@ -192,8 +223,8 @@ public class HandlerChainProcessor {
 	
 	/*
 	 * callGenericHandlers_avoidRecursion should ONLY be called from one place.
-	 * We can safely assume no false returns and no exceptions will be thrown
-	 * from here since the handlers we will be calling have all already
+	 * TODO:  We cannot necessarily assume no false returns and no exceptions will be
+     * thrown from here even though the handlers we will be calling have all already
 	 * succeeded in callGenericHandlers.
 	 */
 	private void callGenericHandlers_avoidRecursion(int start,
@@ -217,7 +248,7 @@ public class HandlerChainProcessor {
 	 * If an exception is thrown and a response is expected, the MessageContext is updated with the handler information
 	 * @returns SUCCESSFUL if successfully, UNSUCCESSFUL if false, EXCEPTION if exception thrown
 	 */
-	private int handleMessage(Handler handler, MessageContext mc, Direction direction,
+	private int handleMessage(Handler handler, Direction direction,
 			boolean expectResponse) throws RuntimeException {
 		try {
 			boolean success = handler.handleMessage(mc);
@@ -231,9 +262,10 @@ public class HandlerChainProcessor {
 		} catch (RuntimeException re) {  // RuntimeException and ProtocolException
 			savedException = re;
 			if (expectResponse)
+                // mark it as reverse direction
 				mc.put(MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction != Direction.OUT));
 			if (ProtocolException.class.isAssignableFrom(re.getClass())) {
-				convertToFaultMessage(mc, re);
+				convertToFaultMessage(re);
 				return PROTOCOL_EXCEPTION;
 			}
 			return OTHER_EXCEPTION;
@@ -276,7 +308,7 @@ public class HandlerChainProcessor {
 	 * opposite direction as this call to callHandleFault, and thus
 	 * should be closed.
 	 */
-	public void processFault(SOAPMessageContext mc, Direction direction) {
+	public void processFault(MessageContext mc, Direction direction) {
 		
 		// direction.IN = client
 		// direction.OUT = server
@@ -336,10 +368,48 @@ public class HandlerChainProcessor {
 	}
 	
 	
-	private void convertToFaultMessage(MessageContext mc, Exception e) {
-		// TODO: implement
+	private void convertToFaultMessage(Exception e) {
+
 		// need to check if message is already a fault message or not,
 		// probably by way of a flag (isFault) in the MessageContext or Message
+        try {
+            
+        	/* TODO TODO TODO
+        	 * There has GOT to be a better way to do this.
+        	 */
+
+        	// TODO how do we figure out the soap version on the MessageContext without
+        	// using the message itself?  Reason for not using the message itself is that
+        	// most of the SAAJ methods in Axis2 that we need are unimplemented.
+        	// for testing, I'm gonna use soap11.
+        	Protocol protocol = Protocol.soap11;
+        	
+        	if (protocol == Protocol.soap11 || protocol == Protocol.soap12) {
+                String protocolNS = (protocol == Protocol.soap11) ? 
+                        SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE : 
+                            SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE;
+        	
+                // The following set of instructions is used to avoid 
+                // some unimplemented methods in the Axis2 SAAJ implementation
+                XMLFault xmlFault = MethodMarshallerUtils.createXMLFaultFromSystemException(e);
+                javax.xml.soap.MessageFactory mf = SAAJFactory.createMessageFactory(protocolNS);
+                SOAPMessage message = mf.createMessage();
+                SOAPBody body = message.getSOAPBody();
+                SOAPFault soapFault = XMLFaultUtils.createSAAJFault(xmlFault, body);
+                
+                // TODO something is wrong here.  The message should be a response message, not
+                // a request message.  I don't see how to change that.  (see the debugger...)
+                // TODO probably also need to turn on message.WRITE_XML_DECLARATION
+                ((SoapMessageContext)mc).setMessage(message);
+                
+        	} else {
+        		// TODO throw an exception, because we only support SOAP11 and SOAP12, I think.
+        	}
+
+        } catch (SOAPException soapex) {
+            // TODO not too sure what to do here.
+        }
+
 	}
 	
 
