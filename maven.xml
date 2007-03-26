@@ -3,7 +3,7 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License");dis
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -452,17 +452,24 @@
         </ant:copy>
 
         <!-- Copy the saaj jar -->
+        <!-- This should only happen if jdk version is 1.5 - sumedha
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/saaj/target/axis2-saaj-${pom.currentVersion}.jar"/>
         </ant:copy>
+        -->
 
         <!-- Copy the jibx jar -->
         <ant:copy toDir="target/temp/war/lib">
             <ant:fileset file="modules/jibx/target/axis2-jibx-${pom.currentVersion}.jar"/>
         </ant:copy>
 
+        <!-- Copy the fastinfoset jar -->
+        <ant:copy toDir="target/temp/war/lib">
+            <ant:fileset file="modules/fastinfoset/target/axis2-fastinfoset-${pom.currentVersion}.jar"/>
+        </ant:copy>
+            
         <!-- Copy items that depend on JDK1.5  -->
-        <j:if test="${ant.java.version == '1.5'}">
+        <j:if test="${javaVersion == '1.5'}">
 
             <ant:copy toDir="target/temp/war/lib">
                 <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
@@ -722,12 +729,33 @@
             <ant:fileset file="modules/spring/target/axis2-spring-${pom.currentVersion}.jar"/>
             <ant:fileset
                     file="modules/soapmonitor/target/axis2-soapmonitor-${pom.currentVersion}.jar"/>
+            <ant:fileset file="modules/fastinfoset/target/axis2-fastinfoset-${pom.currentVersion}.jar"/>
         </ant:copy>
 
         <!-- Copy items that depend on JDK1.5  -->
-        <j:if test="${ant.java.version == '1.5'}">
+        <j:if test="${javaVersion == '1.5'}">
             <ant:copy toDir="${std.bin.temp.dir}/lib">
                 <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
+            </ant:copy>
+
+            <ant:copy toDir="${std.bin.temp.dir}/lib">
+                <ant:fileset file="modules/metadata/target/axis2-metadata-${pom.currentVersion}.jar"/>
+            </ant:copy>
+
+            <ant:copy toDir="${std.bin.temp.dir}/lib">
+                <ant:fileset file="modules/jaxws/target/axis2-jaxws-${pom.currentVersion}.jar"/>
+            </ant:copy>
+
+            <ant:copy toDir="${std.bin.temp.dir}/lib">
+                <ant:fileset file="modules/jaxws-api/target/axis2-jaxws-api-${pom.currentVersion}.jar"/>
+            </ant:copy>
+
+            <ant:copy toDir="${std.bin.temp.dir}/lib">
+                <ant:fileset file="modules/saaj-api/target/axis2-saaj-api-${pom.currentVersion}.jar"/>
+            </ant:copy>
+
+            <ant:copy toDir="${std.bin.temp.dir}/lib">
+                <ant:fileset file="modules/saaj/target/axis2-saaj-${pom.currentVersion}.jar"/>
             </ant:copy>
         </j:if>
 
@@ -1055,7 +1083,7 @@
             <ant:fileset file="modules/java2wsdl/target/axis2-java2wsdl-${pom.currentVersion}.jar"/>
         </ant:copy>
         <!-- Copy items that depend on JDK1.5  -->
-        <j:if test="${ant.java.version == '1.5'}">
+        <j:if test="${javaVersion == '1.5'}">
             <ant:copy toDir="${destdir}">
                 <ant:fileset file="modules/jaxbri/target/axis2-jaxbri-${pom.currentVersion}.jar"/>
             </ant:copy>

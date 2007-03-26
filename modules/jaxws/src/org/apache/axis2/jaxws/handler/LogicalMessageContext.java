@@ -38,7 +38,11 @@ public class LogicalMessageContext extends ProtectedMessageContext
 		super(mc);
 	}
 
-	public LogicalMessage getSource() {
-        return null;
-    }
+	public LogicalMessage getMessage() {
+           return null;
+        }
+
+        public LogicalMessage getSource(){
+           return null;
+        }
 }
