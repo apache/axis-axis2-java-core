@@ -87,7 +87,7 @@
 <%
     for (Iterator iteratorm = engagedModules.iterator(); iteratorm.hasNext();) {
         AxisModule axisOperation = (AxisModule) iteratorm.next();
-        moduleName = axisOperation.getName().getLocalPart();
+        moduleName = axisOperation.getName();
         if (!modules_present) {
             modules_present = true;
 %>
@@ -121,7 +121,7 @@
     <%
         for (Iterator iterator2 = engagedModules.iterator(); iterator2.hasNext();) {
             AxisModule moduleDecription = (AxisModule) iterator2.next();
-            moduleName = moduleDecription.getName().getLocalPart();
+            moduleName = moduleDecription.getName();
     %><li><%=moduleName%> :: <a href="axis2-admin/disengageModule?type=operation&serviceName=<%=serviceName%>&operation=<%=axisOperation.getName().getLocalPart()%>&module=<%=moduleName%>">Disengage</a></li><br><%
     }
 %></ul><%

@@ -40,7 +40,7 @@
              for (Iterator iterator = moduleNames.iterator(); iterator.hasNext();) {
                  foundModules = true;
                  AxisModule  moduleQName = (AxisModule) iterator.next();
-                 modulename = moduleQName.getName().getLocalPart();
+                 modulename = moduleQName.getName();
                  moduleDescription = moduleQName.getModuleDescription();
                  if(moduleDescription==null){
                      moduleDescription = "[ --  No module description found  --]";

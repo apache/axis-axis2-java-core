@@ -46,7 +46,7 @@
                         Collection moduleCol = moduels.values();
                         for (Iterator iterator = moduleCol.iterator(); iterator.hasNext();) {
                             AxisModule axisOperation = (AxisModule) iterator.next();
-                            String modulename = axisOperation.getName().getLocalPart();
+                            String modulename = axisOperation.getName();
                     %> <option align="left" value="<%=modulename%>"><%=modulename%></option>
                     <%
                         }

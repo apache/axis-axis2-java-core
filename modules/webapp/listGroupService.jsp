@@ -66,7 +66,7 @@
   <%
     for (Iterator iteratorm = engagedModules.iterator(); iteratorm.hasNext();) {
       AxisModule axisOperation = (AxisModule) iteratorm.next();
-      moduleName = axisOperation.getName().getLocalPart();
+      moduleName = axisOperation.getName();
   %><li><%=moduleName%></li>
   <%
     }%>
@@ -91,7 +91,7 @@
   <%
     for (Iterator iterator2 = engagedModules.iterator(); iterator2.hasNext();) {
       AxisModule moduleDecription = (AxisModule) iterator2.next();
-      moduleName = moduleDecription.getName().getLocalPart();
+      moduleName = moduleDecription.getName();
   %><li><%=moduleName%></li><br><%
   }
 %></ul><%
