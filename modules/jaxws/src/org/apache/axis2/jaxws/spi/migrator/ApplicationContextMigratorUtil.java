@@ -26,8 +26,13 @@ import java.util.Map;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-public class ContextPropertyMigratorUtil {
+public class ApplicationContextMigratorUtil {
+    
+    private static final Log log = LogFactory.getLog(ApplicationContextMigrator.class);
     
     /**
      * Register a new ContextPropertyMigrator.
@@ -38,16 +43,19 @@ public class ContextPropertyMigratorUtil {
      *                              the list of migrators.
      * @param migrator
      */
-    public static void addContextPropertyMigrator(ConfigurationContext configurationContext, 
+    public static void addApplicationContextMigrator(ConfigurationContext configurationContext, 
                                                   String contextMigratorListID, 
-                                                  ContextPropertyMigrator migrator) {
-        List<ContextPropertyMigrator> migratorList = (List<ContextPropertyMigrator>) configurationContext.getProperty(contextMigratorListID);
+                                                  ApplicationContextMigrator migrator) {
+        List<ApplicationContextMigrator> migratorList = (List<ApplicationContextMigrator>) configurationContext.getProperty(contextMigratorListID);
 
         if (migratorList == null) {
-            migratorList = new LinkedList<ContextPropertyMigrator>();
+            migratorList = new LinkedList<ApplicationContextMigrator>();
             configurationContext.setProperty(contextMigratorListID, migratorList);
         }
       
+        if (log.isDebugEnabled()) {
+            log.debug("Adding ApplicationContextMigrator: " + migrator.getClass().getName());
+        }
         migratorList.add(migrator);
     }
 
@@ -64,16 +72,22 @@ public class ContextPropertyMigratorUtil {
             throw ExceptionFactory.makeWebServiceException("Null MessageContext");
         }
         
-        ConfigurationContext configCtx = messageContext.getServiceDescription().getAxisConfigContext();
-        List<ContextPropertyMigrator> migratorList = (List<ContextPropertyMigrator>) configCtx.getProperty(contextMigratorListID);
+        ServiceDescription sd = messageContext.getServiceDescription();
+        if (sd != null) {
+            ConfigurationContext configCtx = sd.getAxisConfigContext();
+            List<ApplicationContextMigrator> migratorList = (List<ApplicationContextMigrator>) configCtx.getProperty(contextMigratorListID);
         
-        if (migratorList != null) {
-            ListIterator<ContextPropertyMigrator> itr = migratorList.listIterator();
-            while (itr.hasNext()) {
-                ContextPropertyMigrator cpm = itr.next();
-                cpm.migratePropertiesToMessageContext(requestContext, messageContext);
+            if (migratorList != null) {
+                ListIterator<ApplicationContextMigrator> itr = migratorList.listIterator();
+                while (itr.hasNext()) {
+                    ApplicationContextMigrator cpm = itr.next();
+                    if (log.isDebugEnabled()) {
+                        log.debug("migrator: " + cpm.getClass().getName() + ".migratePropertiesToMessageContext");
+                    }
+                    cpm.migratePropertiesToMessageContext(requestContext, messageContext);
+                }
             }
-        }        
+        }
     }
     
     /**
@@ -89,15 +103,21 @@ public class ContextPropertyMigratorUtil {
             throw ExceptionFactory.makeWebServiceException("Null MessageContext");
         }
         
-        ConfigurationContext configCtx = messageContext.getServiceDescription().getAxisConfigContext();
-        List<ContextPropertyMigrator> migratorList = (List<ContextPropertyMigrator>) configCtx.getProperty(contextMigratorListID);
-        
-        if (migratorList != null) {
-            ListIterator<ContextPropertyMigrator> itr = migratorList.listIterator();
-            while (itr.hasNext()) {
-                ContextPropertyMigrator cpm = itr.next();
-                cpm.migratePropertiesFromMessageContext(responseContext, messageContext);
-            }
+        ServiceDescription sd = messageContext.getServiceDescription();
+        if (sd != null) {
+            ConfigurationContext configCtx = sd.getAxisConfigContext();
+            List<ApplicationContextMigrator> migratorList = (List<ApplicationContextMigrator>) configCtx.getProperty(contextMigratorListID);
+            
+            if (migratorList != null) {
+                ListIterator<ApplicationContextMigrator> itr = migratorList.listIterator();
+                while (itr.hasNext()) {
+                    ApplicationContextMigrator cpm = itr.next();
+                    if (log.isDebugEnabled()) {
+                        log.debug("migrator: " + cpm.getClass().getName() + ".migratePropertiesFromMessageContext");
+                    }
+                    cpm.migratePropertiesFromMessageContext(responseContext, messageContext);
+                }
+            }            
         }        
     }
 }

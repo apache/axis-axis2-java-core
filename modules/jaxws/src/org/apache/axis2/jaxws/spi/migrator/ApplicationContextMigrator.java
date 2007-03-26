@@ -35,7 +35,7 @@ import org.apache.axis2.jaxws.core.MessageContext;
  *          be injected 
  *
  */
-public interface ContextPropertyMigrator {
+public interface ApplicationContextMigrator {
     
     /**
      * Is called to handle property migration FROM the user context (BindingProvider client context or server

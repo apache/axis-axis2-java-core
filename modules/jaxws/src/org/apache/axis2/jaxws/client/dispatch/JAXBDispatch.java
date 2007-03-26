@@ -23,6 +23,7 @@ import javax.xml.ws.Service.Mode;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -53,7 +54,8 @@ public class JAXBDispatch<T> extends BaseDispatch<T> {
     }
     
     public AsyncResponse createAsyncResponseListener() {
-        JAXBDispatchAsyncListener listener = new JAXBDispatchAsyncListener();
+        ServiceDescription sd = getEndpointDescription().getServiceDescription();
+        JAXBDispatchAsyncListener listener = new JAXBDispatchAsyncListener(sd);
         listener.setJAXBContext(jaxbContext);
         listener.setMode(mode);
         return listener;

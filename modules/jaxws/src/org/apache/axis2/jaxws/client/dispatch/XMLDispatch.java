@@ -26,6 +26,7 @@ import javax.xml.ws.Service.Mode;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -60,7 +61,9 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         if (log.isDebugEnabled()) {
             log.debug("Creating new AsyncListener for XMLDispatch");
         }
-        XMLDispatchAsyncListener al = new XMLDispatchAsyncListener();
+        
+        ServiceDescription sd = getEndpointDescription().getServiceDescription();
+        XMLDispatchAsyncListener al = new XMLDispatchAsyncListener(sd);
         al.setMode(mode);
         al.setType(type);
         al.setBlockFactoryType(blockFactoryType);

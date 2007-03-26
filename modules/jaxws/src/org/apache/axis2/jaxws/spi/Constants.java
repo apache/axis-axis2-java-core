@@ -46,6 +46,10 @@ public class Constants {
     //
     public static final String SAVED_REQUEST_MSG_TEXT = "org.apache.axis2.jaxws.spi.SAVED_REQUEST_MSG_TEXT";
     
+    // Value = Collection
+    // Usage: A list of ApplicationContextMigrator objects that are to be called for an invocation.
+    public static final String APPLICATION_CONTEXT_MIGRATOR_LIST_ID = "org.apache.axis2.jaxws.spi.ApplicationContextMigrators";
+
     /**
      * Intentionally Private
      */

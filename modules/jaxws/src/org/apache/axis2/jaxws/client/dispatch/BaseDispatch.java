@@ -44,7 +44,9 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.XMLFault;
+import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
+import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -104,6 +106,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Create the MessageContext to hold the actual request message and its
             // associated properties
             MessageContext requestMsgCtx = new MessageContext();
+            requestMsgCtx.setServiceDescription(getEndpointDescription().getServiceDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
             
             Message requestMsg = null;
@@ -117,13 +120,23 @@ public abstract class BaseDispatch<T> extends BindingProvider
             setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);            
             
-            // Copy the properties from the request context into the MessageContext
-            requestMsgCtx.getProperties().putAll(requestContext);
+            // Migrate the properties from the client request context bag to
+            // the request MessageContext.
+            ApplicationContextMigratorUtil.performMigrationToMessageContext(
+                    Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
+                    getRequestContext(), requestMsgCtx);
             
             // Send the request using the InvocationController
             ic.invoke(invocationContext);
             
             MessageContext responseMsgCtx = invocationContext.getResponseMessageContext();
+            responseMsgCtx.setServiceDescription(requestMsgCtx.getServiceDescription());
+            
+            // Migrate the properties from the response MessageContext back
+            // to the client response context bag.
+            ApplicationContextMigratorUtil.performMigrationFromMessageContext(
+                    Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
+                    getResponseContext(), responseMsgCtx);
             
             if (hasFaultResponse(responseMsgCtx)) {
                 WebServiceException wse = BaseDispatch.getFaultResponse(responseMsgCtx);
@@ -167,6 +180,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Create the MessageContext to hold the actual request message and its
             // associated properties
             MessageContext requestMsgCtx = new MessageContext();
+            requestMsgCtx.setServiceDescription(getEndpointDescription().getServiceDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
             
             Message requestMsg = null;
@@ -180,8 +194,11 @@ public abstract class BaseDispatch<T> extends BindingProvider
             setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
             
-            // Copy the properties from the request context into the MessageContext
-            requestMsgCtx.getProperties().putAll(requestContext);
+            // Migrate the properties from the client request context bag to
+            // the request MessageContext.
+            ApplicationContextMigratorUtil.performMigrationToMessageContext(
+                    Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
+                    getRequestContext(), requestMsgCtx);
             
             // Send the request using the InvocationController
             ic.invokeOneWay(invocationContext);
@@ -220,6 +237,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Create the MessageContext to hold the actual request message and its
             // associated properties
             MessageContext requestMsgCtx = new MessageContext();
+            requestMsgCtx.setServiceDescription(getEndpointDescription().getServiceDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
             
             Message requestMsg = null;
@@ -233,8 +251,11 @@ public abstract class BaseDispatch<T> extends BindingProvider
             setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
             
-            // Copy the properties from the request context into the MessageContext
-            requestMsgCtx.getProperties().putAll(requestContext);
+            // Migrate the properties from the client request context bag to
+            // the request MessageContext.
+            ApplicationContextMigratorUtil.performMigrationToMessageContext(
+                    Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
+                    getRequestContext(), requestMsgCtx);
             
             // Setup the Executor that will be used to drive async responses back to 
             // the client.
@@ -284,6 +305,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Create the MessageContext to hold the actual request message and its
             // associated properties
             MessageContext requestMsgCtx = new MessageContext();
+            requestMsgCtx.setServiceDescription(getEndpointDescription().getServiceDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
             
             Message requestMsg = null;
@@ -296,9 +318,12 @@ public abstract class BaseDispatch<T> extends BindingProvider
             
             setupMessageProperties(requestMsg);
             requestMsgCtx.setMessage(requestMsg);
-            
-            // Copy the properties from the request context into the MessageContext
-            requestMsgCtx.getProperties().putAll(requestContext);
+
+            // Migrate the properties from the client request context bag to
+            // the request MessageContext.
+            ApplicationContextMigratorUtil.performMigrationToMessageContext(
+                    Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
+                    getRequestContext(), requestMsgCtx);
             
             // Setup the Executor that will be used to drive async responses back to 
             // the client.

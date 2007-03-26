@@ -20,6 +20,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 
 
 /**
@@ -35,8 +36,8 @@ public class ProxyAsyncListener extends AsyncResponse {
     OperationDescription operationDesc = null;
     
 	public ProxyAsyncListener(OperationDescription opDesc) {
-		super();
-        operationDesc = opDesc;
+	    super(opDesc.getEndpointInterfaceDescription().getEndpointDescription().getServiceDescription());
+            operationDesc = opDesc;
 	}
 	
 	public JAXWSProxyHandler getHandler() {

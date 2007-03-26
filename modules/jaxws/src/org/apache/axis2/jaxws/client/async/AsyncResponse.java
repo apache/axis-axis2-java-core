@@ -30,6 +30,9 @@ import javax.xml.ws.Response;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.spi.Constants;
+import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -51,13 +54,15 @@ public abstract class AsyncResponse implements Response {
     private MessageContext faultMessageContext;    
     private MessageContext response;
     
+    private ServiceDescription serviceDescription;
     private Map<String, Object> responseContext;
     
     private CountDownLatch latch;
     private boolean cacheValid = false;
     private Object cachedObject = null;
     
-    protected AsyncResponse() {
+    protected AsyncResponse(ServiceDescription sd) {
+        serviceDescription = sd;
         latch = new CountDownLatch(1);
     }
     
@@ -68,6 +73,7 @@ public abstract class AsyncResponse implements Response {
 
         fault = flt;
         faultMessageContext = faultCtx;
+        faultMessageContext.setServiceDescription(serviceDescription);
         
         // Probably a good idea to invalidate the cache
         cacheValid = false;
@@ -92,6 +98,7 @@ public abstract class AsyncResponse implements Response {
         }
         
         response = mc;
+        response.setServiceDescription(serviceDescription);
         latch.countDown();
         
         if (log.isDebugEnabled()) {
@@ -167,10 +174,6 @@ public abstract class AsyncResponse implements Response {
         return responseContext;
     }
     
-    private void initResponseContext() {
-        responseContext = new HashMap<String, Object>();
-    }
-    
     private Object processResponse() throws ExecutionException {
         // If the fault object is not null, then we've received a fault message and 
         // we need to process it in one of a number of forms.
@@ -220,7 +223,13 @@ public abstract class AsyncResponse implements Response {
             log.debug("Unmarshalled response object of type: " + obj.getClass());
         }
         
-        initResponseContext();
+        responseContext = new HashMap<String, Object>();
+        
+        // Migrate the properties from the response MessageContext back
+        // to the client response context bag.
+        ApplicationContextMigratorUtil.performMigrationFromMessageContext(
+                Constants.APPLICATION_CONTEXT_MIGRATOR_LIST_ID, 
+                responseContext, response);
         
         return obj;
     }
