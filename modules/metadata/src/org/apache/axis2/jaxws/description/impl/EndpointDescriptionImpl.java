@@ -1,18 +1,20 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.axis2.jaxws.description.impl;
 
@@ -1177,57 +1179,51 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
      * 
      */
     public HandlerChainsType getHandlerChain() {
-    	
-    	// TODO: This needs to work for DBC or class
+        // TODO: This needs to work for DBC or class
+        if (handlerChainsType == null) {
+            getAnnoHandlerChainAnnotation();
+            if (handlerChainAnnotation != null) {
+                String handlerFileName = handlerChainAnnotation.file();
+                
+                // TODO RAS & NLS
+                if (log.isDebugEnabled()) {
+                    log.debug("EndpointDescriptionImpl.getHandlerList: fileName: "
+                            + handlerFileName
+                            + " className: "    
+                            + composite.getClassName());
+                }
 
-		if (handlerChainsType == null) {
-			
-			getAnnoHandlerChainAnnotation();
-			if (handlerChainAnnotation != null) {
+                InputStream is = DescriptionUtils.openHandlerConfigStream(
+                        handlerFileName, 
+                        composite.getClassName(), 
+                        composite.getClassLoader());
 
-				String handlerFileName = handlerChainAnnotation.file();
-
-				// TODO RAS & NLS
-				if (log.isDebugEnabled()) {
-					log.debug("EndpointDescriptionImpl.getHandlerList: fileName: "
-									+ handlerFileName
-									+ " className: "
-									+ composite.getClassName());
-				}
-
-				InputStream is = DescriptionUtils.openHandlerConfigStream(
-														handlerFileName, 
-														composite.getClassName(), 
-														composite.getClassLoader());
-
-				try {
-
-					// All the classes we need should be part of this package
-					JAXBContext jc = JAXBContext
-							.newInstance("org.apache.axis2.jaxws.description.xml.handler", 
-										 this.getClass().getClassLoader());
-
-					Unmarshaller u = jc.createUnmarshaller();
+                try {
+                    // All the classes we need should be part of this package
+                    JAXBContext jc = JAXBContext.newInstance("org.apache.axis2.jaxws.description.xml.handler", 
+                            this.getClass().getClassLoader());
+                    
+                    Unmarshaller u = jc.createUnmarshaller();
 					
-					JAXBElement<?> o = (JAXBElement<?>)u.unmarshal(is);
-	                handlerChainsType = (HandlerChainsType) o.getValue();
+                    JAXBElement<?> o = (JAXBElement<?>)u.unmarshal(is);
+                    handlerChainsType = (HandlerChainsType) o.getValue();
 					
-				} catch (Exception e) {
-					throw ExceptionFactory
-							.makeWebServiceException("EndpointDescriptionImpl: getHandlerList: thrown when attempting to unmarshall JAXB content");
-				}
-			}
-		}
-		return handlerChainsType;
+                } catch (Exception e) {
+                    throw ExceptionFactory
+                    .makeWebServiceException("EndpointDescriptionImpl: getHandlerList: thrown when attempting to unmarshall JAXB content");
+                }
+            }
+        }
+        return handlerChainsType;
     }
     
     public HandlerChain getAnnoHandlerChainAnnotation() {
     	if (this.handlerChainAnnotation == null){
-    		if (getServiceDescriptionImpl().isDBCMap()) {
-    			handlerChainAnnotation = composite.getHandlerChainAnnot();
-    		} else {
-    			//TODO: Implement this for reflection
-    		}
+    	    if (getServiceDescriptionImpl().isDBCMap()) {
+    	        handlerChainAnnotation = composite.getHandlerChainAnnot();
+    	    } else {
+    	        //TODO: Implement this for reflection
+    	    }
     	}
     	
     	return handlerChainAnnotation;
@@ -1242,7 +1238,6 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
      * @return A List of handlers for this port.  The actual list is returned, and therefore can be modified.
      */
     public List<String> getHandlerList() {
-    	
         return handlerList;
     }
     

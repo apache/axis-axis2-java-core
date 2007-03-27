@@ -21,7 +21,6 @@ package org.apache.axis2.jaxws.description.impl;
 /**
  * 
  */
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +42,6 @@ import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.converter.JavaClassToDBCConverter;
 import org.apache.axis2.jaxws.description.validator.ServiceDescriptionValidator;
-import org.apache.axis2.jaxws.description.validator.ValidationFailures;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

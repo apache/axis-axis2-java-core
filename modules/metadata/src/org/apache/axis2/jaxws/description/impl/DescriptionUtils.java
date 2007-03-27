@@ -1,21 +1,21 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
-
-
 package org.apache.axis2.jaxws.description.impl;
 
 import static org.apache.axis2.jaxws.description.builder.MDQConstants.CONSTRUCTOR_METHOD;
@@ -32,7 +32,6 @@ import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
@@ -55,52 +54,50 @@ class DescriptionUtils {
         return qname == null || isEmpty(qname.getLocalPart());
     }
     
-	/**
-	 * @return Returns TRUE if we find just one WebMethod Annotation with exclude flag
-	 * set to false
-	 */
-	static boolean falseExclusionsExist(DescriptionBuilderComposite dbc) {
-		
-		MethodDescriptionComposite mdc = null;
-		Iterator<MethodDescriptionComposite> iter = dbc.getMethodDescriptionsList().iterator();
-		
-		while (iter.hasNext()) {
-			mdc = iter.next();
+    /**
+     * @return Returns TRUE if we find just one WebMethod Annotation with exclude flag
+     * set to false
+     */
+    static boolean falseExclusionsExist(DescriptionBuilderComposite dbc) {
+        MethodDescriptionComposite mdc = null;
+        Iterator<MethodDescriptionComposite> iter = dbc.getMethodDescriptionsList().iterator();
+        
+        while (iter.hasNext()) {
+            mdc = iter.next();
 
-			WebMethodAnnot wma = mdc.getWebMethodAnnot();
-			if (wma != null) {
-				if (wma.exclude() == false)
-					return true;
-			}
-		}
+            WebMethodAnnot wma = mdc.getWebMethodAnnot();
+            if (wma != null) {
+                if (wma.exclude() == false)
+                    return true;
+            }
+        }
 		
-		return false;
-	}
+        return false;   
+    }
 	
-	/**
-	 * Gathers all MethodDescriptionCompsite's that contain a WebMethod Annotation with the
-	 * exclude set to FALSE
-	 * @return Returns List<MethodDescriptionComposite> 
-	 */
-	static ArrayList<MethodDescriptionComposite> getMethodsWithFalseExclusions(DescriptionBuilderComposite dbc) {
+    /**
+     * Gathers all MethodDescriptionCompsite's that contain a WebMethod Annotation with the
+     * exclude set to FALSE
+     * @return Returns List<MethodDescriptionComposite> 
+     */
+    static ArrayList<MethodDescriptionComposite> getMethodsWithFalseExclusions(DescriptionBuilderComposite dbc) {
+        ArrayList<MethodDescriptionComposite> mdcList = new ArrayList<MethodDescriptionComposite>();
+        Iterator<MethodDescriptionComposite> iter = dbc.getMethodDescriptionsList().iterator(); 
+        
+        if (DescriptionUtils.falseExclusionsExist(dbc)) {
+            while (iter.hasNext()) {
+                MethodDescriptionComposite mdc = iter.next();
+                if (mdc.getWebMethodAnnot() != null) {
+                    if (mdc.getWebMethodAnnot().exclude() == false) {
+                        mdc.setDeclaringClass(dbc.getClassName());
+                        mdcList.add(mdc);
+                    }
+                }
+            }
+        }
 		
-		ArrayList<MethodDescriptionComposite> mdcList = new ArrayList<MethodDescriptionComposite>();
-		Iterator<MethodDescriptionComposite> iter = dbc.getMethodDescriptionsList().iterator(); 
-		
-		if (DescriptionUtils.falseExclusionsExist(dbc)) {
-			while (iter.hasNext()) {
-				MethodDescriptionComposite mdc = iter.next();
-				if (mdc.getWebMethodAnnot() != null) {
-					if (mdc.getWebMethodAnnot().exclude() == false) {
-						mdc.setDeclaringClass(dbc.getClassName());
-						mdcList.add(mdc);
-					}
-				}
-			}
-		}
-		
-		return mdcList;
-	}
+        return mdcList;
+    }
 	
 	/*
 	 * Check whether a MethodDescriptionComposite contains a WebMethod annotation with 
