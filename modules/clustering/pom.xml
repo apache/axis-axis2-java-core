@@ -42,12 +42,12 @@
 		<version>${version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomcat.tribes</groupId>
+      <groupId>org.apache.tomcat</groupId>
       <artifactId>tribes</artifactId>
 		<version>${tomcat.tribes.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomcat.juli</groupId>
+      <groupId>org.apache.tomcat</groupId>
       <artifactId>juli</artifactId>
 		<version>${tomcat.juli.version}</version>
     </dependency>

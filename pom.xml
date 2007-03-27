@@ -65,7 +65,8 @@
 				<module>modules/saaj</module>
 				<module>modules/jaxws-api</module>
 				<module>modules/jaxws</module>
-			</modules>
+                <module>modules/clustering</module>
+            </modules>
 		</profile>
 		<profile>
 			<id>java16</id>
@@ -79,7 +80,8 @@
 				<module>modules/saaj</module>
 				<module>modules/jaxws-api</module>
 				<module>modules/jaxws</module>
-			</modules>
+                <module>modules/clustering</module>
+            </modules>
 		</profile>
 	</profiles>
 
