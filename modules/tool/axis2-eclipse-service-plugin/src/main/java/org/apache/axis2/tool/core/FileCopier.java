@@ -36,14 +36,13 @@ public class FileCopier extends Copy{
         if (sourceFile.isFile())
             this.setFile(sourceFile);
         else {
-            FileSet fileset = new FileSet();
-            fileset.setDir(sourceFile);
-            if (filter!=null){
-                if (filter.matches("\\.\\w*")){
-                    fileset.setIncludes("*/**/*"+filter); 
-                }
-            }
-            
+        	 FileSet fileset = new FileSet();
+	            fileset.setDir(sourceFile);
+	            if (filter!=null){
+	                if (filter.matches("\\.\\w*")){
+	                	fileset.setIncludes("**/*"+filter); 
+	                }
+	            }
             this.addFileset(fileset);
         }
         this.setTodir(destinationDirectory);

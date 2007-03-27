@@ -148,11 +148,13 @@ public class Controller {
         
         outputFolder = new File(page3Bean.getOutputFolderName());
         outputFileName = page3Bean.getOutputFileName();
-        if (!outputFileName.toLowerCase().endsWith(".jar")) {
-            outputFileName = outputFileName + ".jar";
+        if (!outputFileName.toLowerCase().endsWith(".jar") && !outputFileName.toLowerCase().endsWith(".aar")) {
+            outputFileName = outputFileName + ".aar";
         }
 
         File tempFileFolder = null;
+        String xmlFilter = ".xml";
+        String wsdlFilter = ".wsdl";
 
         try {
             //create a temporary directory and copy the files
@@ -169,14 +171,14 @@ public class Controller {
             //copy the classes
             copier.copyFiles(classFileFolder, tempFileFolder,page1Bean.getFilter());
             //copy the service.xml
-            copier.copyFiles(serviceFile, metaInfFolder,null);
+            copier.copyFiles(serviceFile, metaInfFolder,xmlFilter);
             //copy the libs
             for (int i=0;i < fileList.size();i++){
                copier.copyFiles((File)fileList.get(i),libFolder,null); 
             }
             
             if (isWSDLAvailable){
-                new FileCopier().copyFiles(wsdlFile, metaInfFolder,null);
+                new FileCopier().copyFiles(wsdlFile, metaInfFolder,wsdlFilter);
             }
             //jar the temp directory. the output folder will be created if missing
             new JarFileWriter().writeJarFile(outputFolder,

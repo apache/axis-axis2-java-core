@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
 
  public class ServiceArchiveOutputLocationPage extends AbstractServiceWizardPage {
 
-     private static final String DEFAULT_JAR_NAME = "my_service.aar";
+     private static final String DEFAULT_JAR_NAME = "my_service";
      private Text outputFileLocationTextBox;
      private Button browseButton;
      private Text outputFileNameTextbox;
