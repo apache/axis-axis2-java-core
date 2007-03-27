@@ -345,8 +345,9 @@ public class AttachmentTest extends TestCase {
 		HttpClient client = new HttpClient();
 		GetMethod method = new GetMethod(url);
 
+	        client.getHttpConnectionManager().getParams().setConnectionTimeout(3000);		
 		method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, 
-				new DefaultHttpMethodRetryHandler(3, false));
+				new DefaultHttpMethodRetryHandler(1, false));
 
 		try {
 			int statusCode = client.executeMethod(method);
