@@ -74,7 +74,23 @@
         <defaultGoal>jar</defaultGoal>
         <nagEmailAddress></nagEmailAddress>
         <sourceDirectory>src</sourceDirectory>
-	<unitTestSourceDirectory>test</unitTestSourceDirectory>
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <includes>
+                    <include>**/resource.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>../../</directory>
+                <targetPath>META-INF</targetPath>
+                <includes>
+                  <include>NOTICE.txt</include>
+                  <include>LICENSE.txt</include>
+                </includes>
+            </resource>
+        </resources>
+        <unitTestSourceDirectory>test</unitTestSourceDirectory>
         <unitTest>
             <includes>
                 <include>**/*Tests.java</include>
@@ -99,8 +115,6 @@
                 </resource>
             </resources>
         </unitTest>
-
-
     </build>
     
     <reports>
