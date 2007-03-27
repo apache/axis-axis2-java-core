@@ -26,8 +26,8 @@ import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Binding;
 import javax.xml.ws.ProtocolException;
 import javax.xml.ws.Response;
-import javax.xml.ws.Service.Mode;
 import javax.xml.ws.WebServiceException;
+import javax.xml.ws.Service.Mode;
 import javax.xml.ws.http.HTTPBinding;
 import javax.xml.ws.soap.SOAPBinding;
 
@@ -43,7 +43,6 @@ import org.apache.axis2.jaxws.core.controller.InvocationController;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.message.Message;
-import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
@@ -106,7 +105,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Create the MessageContext to hold the actual request message and its
             // associated properties
             MessageContext requestMsgCtx = new MessageContext();
-            requestMsgCtx.setServiceDescription(getEndpointDescription().getServiceDescription());
+            requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
             
             Message requestMsg = null;
@@ -130,7 +129,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             ic.invoke(invocationContext);
             
             MessageContext responseMsgCtx = invocationContext.getResponseMessageContext();
-            responseMsgCtx.setServiceDescription(requestMsgCtx.getServiceDescription());
+            responseMsgCtx.setEndpointDescription(requestMsgCtx.getEndpointDescription());
             
             // Migrate the properties from the response MessageContext back
             // to the client response context bag.
@@ -180,7 +179,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Create the MessageContext to hold the actual request message and its
             // associated properties
             MessageContext requestMsgCtx = new MessageContext();
-            requestMsgCtx.setServiceDescription(getEndpointDescription().getServiceDescription());
+            requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
             
             Message requestMsg = null;
@@ -237,7 +236,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Create the MessageContext to hold the actual request message and its
             // associated properties
             MessageContext requestMsgCtx = new MessageContext();
-            requestMsgCtx.setServiceDescription(getEndpointDescription().getServiceDescription());
+            requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
             
             Message requestMsg = null;
@@ -305,7 +304,7 @@ public abstract class BaseDispatch<T> extends BindingProvider
             // Create the MessageContext to hold the actual request message and its
             // associated properties
             MessageContext requestMsgCtx = new MessageContext();
-            requestMsgCtx.setServiceDescription(getEndpointDescription().getServiceDescription());
+            requestMsgCtx.setEndpointDescription(getEndpointDescription());
             invocationContext.setRequestMessageContext(requestMsgCtx);
             
             Message requestMsg = null;

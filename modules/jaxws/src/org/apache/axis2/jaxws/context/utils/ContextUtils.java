@@ -21,23 +21,19 @@ package org.apache.axis2.jaxws.context.utils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.wsdl.PortType;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext.Scope;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
-import org.apache.axis2.jaxws.description.EndpointInterfaceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
@@ -55,7 +51,7 @@ public class ContextUtils {
      * @param soapMessageContext 
      * @param jaxwsMessageContext
      */
-	public static void addProperties(SOAPMessageContext soapMessageContext, MessageContext jaxwsMessageContext){
+    public static void addProperties(SOAPMessageContext soapMessageContext, MessageContext jaxwsMessageContext){
         org.apache.axis2.context.MessageContext axisMsgContext = jaxwsMessageContext.getAxisMessageContext();
            
         // Copy Axis2 MessageContext options.  It's possible that some set of Axis2 handlers
@@ -65,9 +61,9 @@ public class ContextUtils {
         soapMessageContext.putAll(props);
         
         // Set the WSDL properties
-		ServiceDescription sd = jaxwsMessageContext.getServiceDescription();
-		URL wsdlLocation = ((ServiceDescriptionWSDL) sd).getWSDLLocation();
-		if (wsdlLocation != null && !"".equals(wsdlLocation)){
+        ServiceDescription sd = jaxwsMessageContext.getEndpointDescription().getServiceDescription();
+        URL wsdlLocation = ((ServiceDescriptionWSDL) sd).getWSDLLocation();
+        if (wsdlLocation != null && !"".equals(wsdlLocation)){
             URI wsdlLocationURI = null;
             try {
                 wsdlLocationURI = wsdlLocation.toURI();
@@ -76,44 +72,44 @@ public class ContextUtils {
                 // TODO: NLS/RAS
                 log.warn("Unable to convert WSDL location URL to URI.  URL: " + wsdlLocation.toString() + "; Service: " + sd.getServiceQName() , ex);
             }
-		    soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlLocationURI);
-			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, Scope.APPLICATION);
+            soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, wsdlLocationURI);
+            soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, Scope.APPLICATION);
         }
 		
-		if(sd!=null){
-			soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, sd.getServiceQName());
-			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_SERVICE,Scope.APPLICATION );
-			if(log.isDebugEnabled()){
-				log.debug("WSDL_SERVICE :"+sd.getServiceQName());
-			}
-		}
+        if (sd!=null) {
+            soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, sd.getServiceQName());
+            soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_SERVICE,Scope.APPLICATION );
+            if(log.isDebugEnabled()) {
+                log.debug("WSDL_SERVICE :"+sd.getServiceQName());
+            }
+        }
 		
 		
-		// If we are running within a servlet container, then JAX-WS requires that the
+        // If we are running within a servlet container, then JAX-WS requires that the
         // servlet related properties be set on the MessageContext
-		soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT, axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT));
-		soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT, Scope.APPLICATION);
-		if(log.isDebugEnabled()){
-			if(axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT) != null){
-				log.debug("Servlet Context Set");
-			}
-			else{
-				log.debug("Servlet Context not found");
-			}
-		}  
+        soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT, axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT));
+        soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.SERVLET_CONTEXT, Scope.APPLICATION);
+        if(log.isDebugEnabled()){
+            if(axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETCONTEXT) != null){
+                log.debug("Servlet Context Set");
+            }
+            else{
+                log.debug("Servlet Context not found");
+            }
+        }  
 		
-		HttpServletRequest req = (HttpServletRequest)axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
-		if(req == null){
-			if(log.isDebugEnabled()){
-				log.debug("HTTPServletRequest not found");
-			}
-		}
-		if(req != null){
-			soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_REQUEST, req);
-			soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.SERVLET_REQUEST, Scope.APPLICATION);
-			if(log.isDebugEnabled()){
-				log.debug("SERVLET_REQUEST Set");
-			}
+        HttpServletRequest req = (HttpServletRequest)axisMsgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
+        if(req == null){
+            if(log.isDebugEnabled()){
+                log.debug("HTTPServletRequest not found");
+            }
+        }
+        if(req != null){
+            soapMessageContext.put(javax.xml.ws.handler.MessageContext.SERVLET_REQUEST, req);
+            soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.SERVLET_REQUEST, Scope.APPLICATION);
+            if(log.isDebugEnabled()){
+                log.debug("SERVLET_REQUEST Set");
+            }
 			
 			String pathInfo = req.getPathInfo();
 			soapMessageContext.put(javax.xml.ws.handler.MessageContext.PATH_INFO, pathInfo);

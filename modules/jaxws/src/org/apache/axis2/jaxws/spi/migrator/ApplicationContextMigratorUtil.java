@@ -72,7 +72,7 @@ public class ApplicationContextMigratorUtil {
             throw ExceptionFactory.makeWebServiceException("Null MessageContext");
         }
         
-        ServiceDescription sd = messageContext.getServiceDescription();
+        ServiceDescription sd = messageContext.getEndpointDescription().getServiceDescription();
         if (sd != null) {
             ConfigurationContext configCtx = sd.getAxisConfigContext();
             List<ApplicationContextMigrator> migratorList = (List<ApplicationContextMigrator>) configCtx.getProperty(contextMigratorListID);
@@ -103,7 +103,7 @@ public class ApplicationContextMigratorUtil {
             throw ExceptionFactory.makeWebServiceException("Null MessageContext");
         }
         
-        ServiceDescription sd = messageContext.getServiceDescription();
+        ServiceDescription sd = messageContext.getEndpointDescription().getServiceDescription();
         if (sd != null) {
             ConfigurationContext configCtx = sd.getAxisConfigContext();
             List<ApplicationContextMigrator> migratorList = (List<ApplicationContextMigrator>) configCtx.getProperty(contextMigratorListID);

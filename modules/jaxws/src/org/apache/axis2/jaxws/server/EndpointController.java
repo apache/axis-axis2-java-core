@@ -1,44 +1,38 @@
 /*
- * Copyright 2004,2005 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.axis2.jaxws.server;
 
+import java.io.StringReader;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.WebServiceException;
 import javax.xml.ws.http.HTTPBinding;
 
-import java.io.StringReader;
-import java.security.PrivilegedExceptionAction;
-import java.security.PrivilegedActionException;
-
-import org.apache.axiom.om.impl.builder.StAXBuilder;
 import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axiom.soap.SOAPEnvelope;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
-import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.binding.SOAPBinding;
-import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
-import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
@@ -47,7 +41,6 @@ import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
 import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
-import org.apache.axis2.jaxws.handler.SoapMessageContext;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
@@ -101,10 +94,10 @@ public class EndpointController {
         Class implClass = loadServiceImplClass(implClassName, 
                  requestMsgCtx.getClassLoader());
             
-        ServiceDescription serviceDesc = getServiceDescription(requestMsgCtx, implClass);
-        requestMsgCtx.setServiceDescription(serviceDesc);
+        EndpointDescription endpointDesc = getEndpointDescription(requestMsgCtx, implClass);
+        requestMsgCtx.setEndpointDescription(endpointDesc);
 
-        if (!bindingTypesMatch(requestMsgCtx, serviceDesc)) {
+        if (!bindingTypesMatch(requestMsgCtx, endpointDesc.getServiceDescription())) {
             Protocol protocol = requestMsgCtx.getMessage().getProtocol();
             // only if protocol is soap12 and MISmatches the endpoint do we halt processing
             if (protocol.equals(Protocol.soap12)) {
@@ -145,7 +138,10 @@ public class EndpointController {
             
             // Invoke inbound application handlers.  It's safe to use the first object on the iterator because there is
             // always exactly one EndpointDescription on a server invoke
-            boolean success = HandlerInvokerUtils.invokeInboundHandlers(requestMsgCtx, serviceDesc.getEndpointDescriptions_AsCollection().iterator().next(), HandlerChainProcessor.MEP.REQUEST, isOneWay(requestMsgCtx.getAxisMessageContext()));
+            boolean success = HandlerInvokerUtils.invokeInboundHandlers(requestMsgCtx, 
+                                                                        requestMsgCtx.getEndpointDescription(), 
+                                                                        HandlerChainProcessor.MEP.REQUEST, 
+                                                                        isOneWay(requestMsgCtx.getAxisMessageContext()));
 
             if (success) {
             
@@ -160,7 +156,9 @@ public class EndpointController {
             
             	// Invoke outbound application handlers.  It's safe to use the first object on the iterator because there is
             	// always exactly one EndpointDescription on a server invoke
-            	HandlerInvokerUtils.invokeOutboundHandlers(responseMsgContext, serviceDesc.getEndpointDescriptions_AsCollection().iterator().next(), HandlerChainProcessor.MEP.RESPONSE, false);
+            	HandlerInvokerUtils.invokeOutboundHandlers(responseMsgContext, 
+                                                           requestMsgCtx.getEndpointDescription(), 
+                                                           HandlerChainProcessor.MEP.RESPONSE, false);
             } else { // the inbound handler chain must have had a problem, and we've reversed directions
             	responseMsgContext = MessageContextUtils.createResponseMessageContext(requestMsgCtx);
             	// since we've reversed directions, the message has "become a response message" (section 9.3.2.1, footnote superscript 2)
@@ -256,7 +254,7 @@ public class EndpointController {
      * Gets the ServiceDescription associated with the request that is currently
      * being processed. 
      */
-    private ServiceDescription getServiceDescription(MessageContext mc, Class implClass) {
+    private EndpointDescription getEndpointDescription(MessageContext mc, Class implClass) {
         AxisService axisSvc = mc.getAxisMessageContext().getAxisService();
         
         //Check to see if we've already created a ServiceDescription for this
@@ -265,13 +263,13 @@ public class EndpointController {
         if (axisSvc.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER) != null) {
             Parameter param = axisSvc.getParameter(EndpointDescription.AXIS_SERVICE_PARAMETER);
             
-            ServiceDescription sd = ((EndpointDescription) param.getValue()).getServiceDescription();
-            return sd;
+            EndpointDescription ed = (EndpointDescription) param.getValue();
+            return ed;
         }
         else {
             ServiceDescription sd = DescriptionFactory.createServiceDescriptionFromServiceImpl(implClass, axisSvc);
-                //createServiceDescriptionFromServiceImpl(implClass, axisSvc);
-            return sd;
+            EndpointDescription ed = sd.getEndpointDescriptions_AsCollection().iterator().next();
+            return ed;
         }
     }
     

@@ -72,7 +72,7 @@ public class EndpointLifecycleManagerImpl implements EndpointLifecycleManager {
         
 		// Get the ServiceDescription and injectionDesc which contain
         // cached information
-        ServiceDescription serviceDesc = mc.getServiceDescription();
+        ServiceDescription serviceDesc = mc.getEndpointDescription().getServiceDescription();
         ResourceInjectionServiceRuntimeDescription injectionDesc = null;
         if (serviceDesc != null) {
             injectionDesc = 

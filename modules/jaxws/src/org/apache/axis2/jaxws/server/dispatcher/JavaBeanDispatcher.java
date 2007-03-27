@@ -1,24 +1,25 @@
 /*
- * Copyright 2006 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.axis2.jaxws.server.dispatcher;
 
 import java.lang.reflect.Method;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -28,7 +29,6 @@ import org.apache.axis2.jaxws.core.util.MessageContextUtils;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.factory.MethodMarshallerFactory;
@@ -148,7 +148,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
     
     private void initialize(MessageContext mc){
     	mc.setOperationName(mc.getAxisMessageContext().getAxisOperation().getName());
-        endpointDesc = getEndpointDescription(mc);
+        endpointDesc = mc.getEndpointDescription();
         mc.setOperationDescription(getOperationDescription(mc));
         //methodMarshaller = null;
     }
@@ -161,9 +161,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
      *  to Endpoint-based implementation (i.e. not to Proxy-based ones)s
      */
     private OperationDescription getOperationDescription(MessageContext mc) {
-    	ServiceDescription sd = mc.getServiceDescription();
-        EndpointDescription[] eds = sd.getEndpointDescriptions();
-        EndpointDescription ed = eds[0];
+    	EndpointDescription ed = mc.getEndpointDescription();
         EndpointInterfaceDescription eid = ed.getEndpointInterfaceDescription();
         
         OperationDescription[] ops = eid.getDispatchableOperation(mc.getOperationName());
@@ -187,6 +185,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         return op;        
     }
     
+    /*
     private ServiceDescription getServiceDescription(MessageContext mc){
     	return mc.getServiceDescription();
     }
@@ -197,7 +196,7 @@ public class JavaBeanDispatcher extends JavaDispatcher {
         EndpointDescription ed = eds[0];
         return ed;
     }
-    
+    */
     
     private MethodMarshaller getMethodMarshaller(Protocol protocol, OperationDescription operationDesc){
     	javax.jws.soap.SOAPBinding.Style styleOnSEI = endpointDesc.getEndpointInterfaceDescription().getSoapBindingStyle();

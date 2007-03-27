@@ -30,7 +30,7 @@ import javax.xml.ws.Response;
 
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.description.ServiceDescription;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.commons.logging.Log;
@@ -54,15 +54,15 @@ public abstract class AsyncResponse implements Response {
     private MessageContext faultMessageContext;    
     private MessageContext response;
     
-    private ServiceDescription serviceDescription;
+    private EndpointDescription endpointDescription;
     private Map<String, Object> responseContext;
     
     private CountDownLatch latch;
     private boolean cacheValid = false;
     private Object cachedObject = null;
     
-    protected AsyncResponse(ServiceDescription sd) {
-        serviceDescription = sd;
+    protected AsyncResponse(EndpointDescription ed) {
+        endpointDescription = ed;
         latch = new CountDownLatch(1);
     }
     
@@ -73,7 +73,7 @@ public abstract class AsyncResponse implements Response {
 
         fault = flt;
         faultMessageContext = faultCtx;
-        faultMessageContext.setServiceDescription(serviceDescription);
+        faultMessageContext.setEndpointDescription(endpointDescription);
         
         // Probably a good idea to invalidate the cache
         cacheValid = false;
@@ -98,7 +98,7 @@ public abstract class AsyncResponse implements Response {
         }
         
         response = mc;
-        response.setServiceDescription(serviceDescription);
+        response.setEndpointDescription(endpointDescription);
         latch.countDown();
         
         if (log.isDebugEnabled()) {

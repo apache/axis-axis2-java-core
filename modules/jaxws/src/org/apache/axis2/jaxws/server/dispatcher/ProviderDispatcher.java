@@ -1,20 +1,21 @@
 /*
- * Copyright 2006 The Apache Software Foundation.
- * Copyright 2006 International Business Machines Corp.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *      
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
-
 package org.apache.axis2.jaxws.server.dispatcher;
 
 import java.lang.reflect.ParameterizedType;
@@ -23,15 +24,12 @@ import java.security.PrivilegedAction;
 
 import javax.activation.DataSource;
 import javax.xml.bind.JAXBContext;
-import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 
-import org.apache.axiom.om.OMElement;
-import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
@@ -42,9 +40,7 @@ import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
-import org.apache.axis2.jaxws.message.databinding.JAXBBlockContext;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
-import org.apache.axis2.jaxws.message.factory.JAXBBlockFactory;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.factory.SOAPEnvelopeBlockFactory;
 import org.apache.axis2.jaxws.message.factory.SourceBlockFactory;
@@ -52,8 +48,6 @@ import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.registry.FactoryRegistry;
 import org.apache.axis2.jaxws.server.EndpointController;
 import org.apache.axis2.jaxws.utility.ClassUtils;
-import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2004_Constants;
-import org.apache.axis2.wsdl.WSDLConstants.WSDL20_2006Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -75,21 +69,21 @@ public class ProviderDispatcher extends JavaDispatcher{
     private static Log log = LogFactory.getLog(ProviderDispatcher.class);
     
     private BlockFactory blockFactory = null;
-	private Class providerType = null;
+    private Class providerType = null;
     private Provider providerInstance = null;
     private Service.Mode providerServiceMode = null;
     private Message message = null;
     private Protocol messageProtocol;
 
 	
-	/**
-	 * Constructor
-	 * @param _class
-	 * @param serviceInstance
-	 */
-	public ProviderDispatcher(Class _class, Object serviceInstance) {
-		super(_class, serviceInstance);
-	}
+    /**
+     * Constructor
+     * @param _class
+     * @param serviceInstance
+     */
+    public ProviderDispatcher(Class _class, Object serviceInstance) {
+        super(_class, serviceInstance);
+    }
     
     /* (non-Javadoc)
      * @see org.apache.axis2.jaxws.server.EndpointDispatcher#execute()
@@ -106,7 +100,7 @@ public class ProviderDispatcher extends JavaDispatcher{
         providerType = getProviderType();
         
         // REVIEW: This assumes there is only one endpoint description on the service.  Is that always the case?
-        EndpointDescription endpointDesc = mc.getServiceDescription().getEndpointDescriptions()[0];
+        EndpointDescription endpointDesc = mc.getEndpointDescription();
         
         // Now that we know what kind of Provider we have, we can create the 
         // right type of Block for the request parameter data
