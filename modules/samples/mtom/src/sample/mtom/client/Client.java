@@ -30,11 +30,11 @@ import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionParser;
 import org.apache.axis2.util.OptionsValidator;
 
-import sample.mtom.service.MTOMSampleStub;
-import sample.mtom.service.MTOMSampleStub.AttachmentRequest;
-import sample.mtom.service.MTOMSampleStub.AttachmentResponse;
-import sample.mtom.service.MTOMSampleStub.AttachmentType;
-import sample.mtom.service.MTOMSampleStub.Base64Binary;
+import sample.mtom.service.MTOMSampleMTOMSampleSOAP11Port_httpStub;
+import sample.mtom.service.MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentRequest;
+import sample.mtom.service.MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentResponse;
+import sample.mtom.service.MTOMSampleMTOMSampleSOAP11Port_httpStub.AttachmentType;
+import sample.mtom.service.MTOMSampleMTOMSampleSOAP11Port_httpStub.Base64Binary;
 
 public class Client {
 
@@ -78,7 +78,7 @@ public class Client {
 		// uncomment the following if you need to capture the messages from
 		// TCPMON. Please look at http://ws.apache.org/commons/tcpmon/tcpmontutorial.html
 		// to learn how to setup tcpmon
-		MTOMSampleStub serviceStub = new MTOMSampleStub(
+		MTOMSampleMTOMSampleSOAP11Port_httpStub serviceStub = new MTOMSampleMTOMSampleSOAP11Port_httpStub(
 				//"http://localhost:8081/axis2/rest/MTOMSample"
 		);
 
