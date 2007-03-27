@@ -434,8 +434,7 @@ public class SchemaCompiler {
 
         String writtenClassName = writer.write(xsElt, processedTypemap, metainf);
         //register the class name
-        xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
-                writtenClassName);
+        xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY, writtenClassName);
         processedElementMap.put(xsElt.getQName(), writtenClassName);
     }
 
@@ -503,10 +502,10 @@ public class SchemaCompiler {
 
                     innerElementMap.put(xsElt.getQName(), className);
 
-                    //store in the schema map
-                    schemaType.addMetaInfo(
-                            SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
-                            className);
+                    // always store the class name in the element meta Info itself
+                    // this details only needed by the unwrappig to set the complex type
+                    schemaType.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY, className);
+                    xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY, className);
 
                     if (baseSchemaTypeMap.containsValue(className)) {
                         schemaType.addMetaInfo(
@@ -541,7 +540,7 @@ public class SchemaCompiler {
                                 xsElt.getQName(),
                                 className);
 
-                        //store in the schema map
+                        //store in the schema map to retrive in the unwrapping
                         xsElt.addMetaInfo(
                                 SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                                 className);
@@ -604,6 +603,9 @@ public class SchemaCompiler {
                 this.processedElementRefMap.put(referenceEltQName, javaClassName);
                 referencedElement.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
                         javaClassName);
+                // set the element class name to be used in unwrapping
+                xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                                javaClassName);
             } else {
                 //this referenced element has an anon type and that anon type has been already
                 //processed. But in this case we need it to be a seperate class since this
@@ -633,6 +635,9 @@ public class SchemaCompiler {
 
                     processedTypemap.put(generatedTypeName, javaclassName);
                     this.processedElementRefMap.put(referenceEltQName, javaclassName);
+                    // set the class name to be used in unwrapping
+                    xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                                javaclassName);
 
                 }
             }
@@ -652,6 +657,9 @@ public class SchemaCompiler {
                     String className = findClassName(schemaTypeName, isArray(xsElt));
                     //since this is a inner element we should add it to the inner element map
                     innerElementMap.put(xsElt.getQName(), className);
+                    // set the class name to be used in unwrapping
+                    xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                                className);
                 } else {
                     this.processedElementList.add(xsElt.getQName());
                 }
@@ -660,6 +668,9 @@ public class SchemaCompiler {
                 if (!isOuter) {
                     String className = findClassName(schemaTypeName, isArray(xsElt));
                     innerElementMap.put(xsElt.getQName(), className);
+                    // set the class name to be used in unwrapping
+                    xsElt.addMetaInfo(SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                                className);
                 } else {
                     this.processedElementList.add(xsElt.getQName());
                 }
@@ -1499,6 +1510,12 @@ public class SchemaCompiler {
                     if (use.indexOf("optional") != -1) {
                         metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
                     }
+
+                    String className = findClassName(schemaTypeName, false);
+
+                    att.addMetaInfo(
+                            SchemaConstants.SchemaCompilerInfoHolder.CLASSNAME_KEY,
+                            className);
                     // after
                 } else {
                     XmlSchemaType type = getType(parentSchema, schemaTypeName);

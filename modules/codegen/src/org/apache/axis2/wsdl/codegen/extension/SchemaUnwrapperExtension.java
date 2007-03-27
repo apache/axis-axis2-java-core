@@ -59,11 +59,13 @@ import java.util.List;
  */
 public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
+    private CodeGenConfiguration codeGenConfiguration;
     /**
      * @param configuration
      * @throws CodeGenerationException
      */
     public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
+        this.codeGenConfiguration = configuration;
         if (!configuration.isParametersWrapped()) {
 
             // A check to avoid nasty surprises - Since unwrapping is not
@@ -91,11 +93,13 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
                                     WSDLConstants.INPUT_PART_QNAME_SUFFIX);
                         }
                         // get the out put parameter details as well to unwrap the responses
-                        if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
-                            walkSchema(op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE),
-                                    WSDLConstants.OUTPUT_PART_QNAME_SUFFIX);
+                        //TODO: support xmlbeans
+                        if (configuration.getDatabindingType().equals("adb")) {
+                            if (WSDLUtil.isOutputPresentForMEP(op.getMessageExchangePattern())) {
+                                walkSchema(op.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE),
+                                        WSDLConstants.OUTPUT_PART_QNAME_SUFFIX);
+                            }
                         }
-
                     }
                 }
             }
@@ -128,7 +132,12 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
         XmlSchemaElement schemaElement = message.getSchemaElement();
         XmlSchemaType schemaType = schemaElement.getSchemaType();
 
-        handleAllCasesOfComplexTypes(schemaType, message, partNameList, qnameSuffix);
+
+        handleAllCasesOfComplexTypes(schemaType,
+                message,
+                partNameList,
+                qnameSuffix);
+
 
         try {
             //set in the axis message that the unwrapping was success
@@ -160,24 +169,46 @@ public class SchemaUnwrapperExtension extends AbstractCodeGenerationExtension {
 
         // if a complex type name exits for a element then
         // we keep that complex type to support unwrapping
-        String complexType = "";
         if (schemaType instanceof XmlSchemaComplexType) {
             XmlSchemaComplexType cmplxType = (XmlSchemaComplexType) schemaType;
             if (cmplxType.getContentModel() == null) {
-                if (cmplxType.getParticle() != null){
+                if (cmplxType.getParticle() != null) {
                     processXMLSchemaSequence(cmplxType.getParticle(), message, partNameList, qnameSuffix);
                 }
             } else {
                 // now lets handle case with extensions
                 processComplexContentModel(cmplxType, message, partNameList, qnameSuffix);
             }
+            // handle attributes here
+            processAttributes(cmplxType, message, partNameList, qnameSuffix);
 
-
-        } else {
+         } else {
             //we've no idea how to unwrap a non complexType!!!!!!
             throw new CodeGenerationException(CodegenMessages.getMessage("extension.unsupportedSchemaFormat",
                     "unknown", "complexType"));
         }
+    }
+
+    private void processAttributes(XmlSchemaComplexType complexType,
+                                   AxisMessage message,
+                                   List partNameList,
+                                   String qnameSuffix){
+        QName opName = ((AxisOperation) message.getParent()).getName();
+        XmlSchemaObjectCollection xmlObjectCollection = complexType.getAttributes();
+        XmlSchemaObject item;
+        XmlSchemaAttribute xmlSchemaAttribute;
+        for (Iterator iter = xmlObjectCollection.getIterator(); iter.hasNext();){
+            item = (XmlSchemaObject) iter.next();
+            if (item instanceof XmlSchemaAttribute){
+                xmlSchemaAttribute = (XmlSchemaAttribute) item;
+                String partName = xmlSchemaAttribute.getName();
+                partNameList.add(
+                            WSDLUtil.getPartQName(opName.getLocalPart(),
+                                    qnameSuffix,
+                                    partName));
+            }
+        }
+
     }
 
     private void processComplexContentModel(XmlSchemaComplexType cmplxType,

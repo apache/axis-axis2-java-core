@@ -92,6 +92,37 @@
             <xsd:element name="Request6" type="tns:ChildComplexType"/>
             <xsd:element name="Response6" type="tns:ChildComplexType"/>
 
+            <xsd:element name="Request7" >
+                <xsd:complexType>
+                    <xsd:attribute name="attrib1" type="xsd:string"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="Response7" >
+                  <xsd:complexType>
+                    <xsd:attribute name="attrib1" type="xsd:string"/>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="Request8">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="param1" type="xsd:string"/>
+                        <xsd:element name="param2" type="xsd:string"/>
+                    </xsd:sequence>
+                    <xsd:attribute name="attrib1" type="xsd:string"/>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="Response8">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="param1" type="xsd:string"/>
+                        <xsd:element name="param2" type="xsd:string"/>
+                    </xsd:sequence>
+                    <xsd:attribute name="attrib1" type="xsd:string"/>
+                </xsd:complexType>
+            </xsd:element>
+
             <xsd:complexType name="AbstractComplexType">
                 <xsd:sequence>
                     <xsd:element name="param1" type="xsd:anyType"/>
@@ -153,6 +184,20 @@
         <wsdl:part element="tns:Response6" name="parameters"/>
     </wsdl:message>
 
+    <wsdl:message name="OperationRequestMessage7">
+        <wsdl:part element="tns:Request7" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="OperationResponseMessage7">
+        <wsdl:part element="tns:Response7" name="parameters"/>
+    </wsdl:message>
+
+    <wsdl:message name="OperationRequestMessage8">
+        <wsdl:part element="tns:Request8" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="OperationResponseMessage8">
+        <wsdl:part element="tns:Response8" name="parameters"/>
+    </wsdl:message>
+
     <wsdl:message name="FaultMessage">
         <wsdl:part element="tns:Request1" name="parameters"/>
     </wsdl:message>
@@ -181,6 +226,16 @@
         <wsdl:operation name="Operation6">
             <wsdl:input message="tns:OperationRequestMessage6"/>
             <wsdl:output message="tns:OperationResponseMessage6"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="Operation9">
+            <wsdl:input message="tns:OperationRequestMessage7"/>
+            <wsdl:output message="tns:OperationResponseMessage7"/>
+        </wsdl:operation>
+
+        <wsdl:operation name="Operation10">
+            <wsdl:input message="tns:OperationRequestMessage8"/>
+            <wsdl:output message="tns:OperationResponseMessage8"/>
         </wsdl:operation>
 
         <wsdl:operation name="Operation7">
@@ -249,19 +304,37 @@
             </wsdl:output>
         </wsdl:operation>
         <wsdl:operation name="Operation7">
-            <soap:operation soapAction="http://www.example.org/wsdltest/Operation6"/>
+            <soap:operation soapAction="http://www.example.org/wsdltest/Operation7"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
         </wsdl:operation>
         <wsdl:operation name="Operation8">
-            <soap:operation soapAction="http://www.example.org/wsdltest/Operation6"/>
+            <soap:operation soapAction="http://www.example.org/wsdltest/Operation8"/>
             <wsdl:input>
                 <soap:body use="literal"/>
             </wsdl:input>
             <wsdl:fault name="TestFault">
                 <soap:body use="literal" name="TestFault"/>
             </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="Operation9">
+            <soap:operation soapAction="http://www.example.org/wsdltest/Operation9"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Operation10">
+            <soap:operation soapAction="http://www.example.org/wsdltest/Operation10"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
         </wsdl:operation>
     </wsdl:binding>
     <wsdl:service name="DocumentUnwrappingTestService">
