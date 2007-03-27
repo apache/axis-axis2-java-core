@@ -18,23 +18,28 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
+import static org.apache.axis2.jaxws.description.builder.MDQConstants.CONSTRUCTOR_METHOD;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis2.java.security.AccessController;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 import org.apache.axis2.jaxws.description.builder.WebMethodAnnot;
+import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import static org.apache.axis2.jaxws.description.builder.MDQConstants.CONSTRUCTOR_METHOD;
 
 /**
  * Utilities used throughout the Description package.
@@ -236,5 +241,77 @@ class DescriptionUtils {
     	}
     	return true;
     }
+   
+    /**
+     * This is a helper method that will open a stream to an @HandlerChain configuration
+     * file.
+     * @param configFile - The path to the file
+     * @param className - The class in which the annotation was declared. This is used in
+     * case the file path is relative.
+     * @param classLoader - ClassLoader used to load relative file paths.
+     * @return
+     */
+    public static InputStream openHandlerConfigStream(String configFile, String className, ClassLoader 
+    		classLoader) {
+    	InputStream configStream = null;
+    	URL configURL;
+    	if(log.isDebugEnabled()) {
+    		log.debug("Attempting to load @HandlerChain configuration file: " + configFile + 
+    				" relative to class: " + className);
+    	}
+    	try {
+    		configURL = new URL(configFile);
+    		if(configURL != null) {
+    			if(log.isDebugEnabled()) {
+    				log.debug("Found absolute @HandlerChain configuration file: " + configFile);
+    			}
+    			configStream = configURL.openStream();
+    		}
+    	}
+    	catch(MalformedURLException e) {
+    		// try another method to obtain a stream to the configuration file
+    	}
+    	catch(IOException e) {
+    		// report this since it was a valid URL but the openStream caused a problem
+    		ExceptionFactory.makeWebServiceException(Messages.getMessage("hcConfigLoadFail", 
+    				configFile, className, e.toString()));
+    	}
+    	if(configStream == null) {
+    		if(log.isDebugEnabled()) {
+    			log.debug("@HandlerChain.file attribute referes to a relative location: " 
+    					+ configFile);
+    		}
+    		className = className.replace(".", "/");
+    		try {
+    			if(log.isDebugEnabled()) {
+    				log.debug("Resolving @HandlerChain configuration file: " + configFile + 
+    						" relative to class file: " + className);
+    			}
+    			URI uri = new URI(className);
+    			uri = uri.resolve(configFile);
+    			String resolvedPath = uri.toString();
+    			if(log.isDebugEnabled()) {
+    				log.debug("@HandlerChain.file resolved file path location: " + resolvedPath);
+    			}
+    			configStream = classLoader.getResourceAsStream(resolvedPath);
+    		}
+    		catch(URISyntaxException e) {
+    			ExceptionFactory.makeWebServiceException(Messages.getMessage("hcConfigLoadFail", 
+        				configFile, className, e.toString()));
+    		}
+    	}
+    	if(configStream == null) {
+    		ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainNS", 
+    				configFile, className));
+    	}
+    	else {
+    		if(log.isDebugEnabled()) {
+    			log.debug("@HandlerChain configuration file: " + configFile + " in class: " + 
+    					className + " was successfully loaded.");
+    		}
+    	}
+    	return configStream;
+    }
+
 
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import java.io.InputStream;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
@@ -34,6 +36,9 @@ import javax.wsdl.extensions.http.HTTPBinding;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.wsdl.extensions.soap12.SOAP12Binding;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Service;
@@ -64,6 +69,7 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.WsdlComposite;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.util.WSDL4JWrapper;
 import org.apache.commons.logging.Log;
@@ -135,6 +141,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     private WebService          webServiceAnnotation;
     private WebServiceProvider  webServiceProviderAnnotation;
 
+    //ANNOTATION: @HandlerChain
+    private HandlerChain		handlerChainAnnotation;
+    private HandlerChainsType	handlerChainsType;
+    
     // Information common to both WebService and WebServiceProvider annotations
     private String              annotation_WsdlLocation;
     private String              annotation_ServiceName;
@@ -211,6 +221,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
 
         buildDescriptionHierachy();
         addAnonymousAxisOperations();
+        
         // This will set the serviceClient field after adding the AxisService to the AxisConfig
         getServiceClient();
         // Give the configuration builder a chance to finalize configuration for this service
@@ -371,6 +382,7 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
         addToAxisService();
 
         buildEndpointDescriptionFromAnnotations();
+        
         
         // The anonymous AxisOperations are currently NOT added here.  The reason 
         // is that (for now) this is a SERVER-SIDE code path, and the anonymous operations
@@ -1157,7 +1169,70 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     // ===========================================
     // ANNOTATION: HandlerChain
     // ===========================================
+    
+    /**
+     * Returns a schema derived java class containing the the handler configuration filel
+     *  
+     * @return HandlerChainsType This is the top-level element for the Handler configuration file
+     * 
+     */
+    public HandlerChainsType getHandlerChain() {
+    	
+    	// TODO: This needs to work for DBC or class
 
+		if (handlerChainsType == null) {
+			
+			getAnnoHandlerChainAnnotation();
+			if (handlerChainAnnotation != null) {
+
+				String handlerFileName = handlerChainAnnotation.file();
+
+				// TODO RAS & NLS
+				if (log.isDebugEnabled()) {
+					log.debug("EndpointDescriptionImpl.getHandlerList: fileName: "
+									+ handlerFileName
+									+ " className: "
+									+ composite.getClassName());
+				}
+
+				InputStream is = DescriptionUtils.openHandlerConfigStream(
+														handlerFileName, 
+														composite.getClassName(), 
+														composite.getClassLoader());
+
+				try {
+
+					// All the classes we need should be part of this package
+					JAXBContext jc = JAXBContext
+							.newInstance("org.apache.axis2.jaxws.description.xml.handler", 
+										 this.getClass().getClassLoader());
+
+					Unmarshaller u = jc.createUnmarshaller();
+					
+					JAXBElement<?> o = (JAXBElement<?>)u.unmarshal(is);
+	                handlerChainsType = (HandlerChainsType) o.getValue();
+					
+				} catch (Exception e) {
+					throw ExceptionFactory
+							.makeWebServiceException("EndpointDescriptionImpl: getHandlerList: thrown when attempting to unmarshall JAXB content");
+				}
+			}
+		}
+		return handlerChainsType;
+    }
+    
+    public HandlerChain getAnnoHandlerChainAnnotation() {
+    	if (this.handlerChainAnnotation == null){
+    		if (getServiceDescriptionImpl().isDBCMap()) {
+    			handlerChainAnnotation = composite.getHandlerChainAnnot();
+    		} else {
+    			//TODO: Implement this for reflection
+    		}
+    	}
+    	
+    	return handlerChainAnnotation;
+    }
+    
     /**
      * Returns a live list describing the handlers on this port.
      * TODO: This is currently returning List<String>, but it should return a HandlerDescritpion
@@ -1167,8 +1242,10 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
      * @return A List of handlers for this port.  The actual list is returned, and therefore can be modified.
      */
     public List<String> getHandlerList() {
+    	
         return handlerList;
     }
+    
     private Definition getWSDLDefinition() {
         return ((ServiceDescriptionWSDL) getServiceDescription()).getWSDLDefinition();
     }
