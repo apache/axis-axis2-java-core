@@ -50,13 +50,13 @@ public class OutOnlyAxisOperation extends AxisOperation {
         QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
         this.setName(tmpName);
         createMessage();
-        setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_OUT_ONLY);
+        setMessageExchangePattern(WSDL2Constants.MEP_URI_OUT_ONLY);
     }
 
     public OutOnlyAxisOperation(QName name) {
         super(name);
         createMessage();
-        setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_OUT_ONLY);
+        setMessageExchangePattern(WSDL2Constants.MEP_URI_OUT_ONLY);
     }
 
     public void addMessage(AxisMessage message, String label) {

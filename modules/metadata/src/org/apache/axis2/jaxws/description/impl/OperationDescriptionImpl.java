@@ -47,6 +47,7 @@ import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisOperationFactory;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescriptionJava;
 import org.apache.axis2.jaxws.description.EndpointInterfaceDescription;
@@ -210,9 +211,9 @@ class OperationDescriptionImpl implements OperationDescription, OperationDescrip
         AxisOperation newAxisOperation = null;	
         try {
             if (isOneWay()) {               
-                newAxisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY);
+                newAxisOperation = AxisOperationFactory.getOperationDescription(WSDL2Constants.MEP_URI_IN_ONLY);
             } else {
-                newAxisOperation = AxisOperationFactory.getOperationDescription(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT);
+                newAxisOperation = AxisOperationFactory.getOperationDescription(WSDL2Constants.MEP_URI_IN_OUT);
             }
             //TODO: There are several other MEP's, such as: OUT_ONLY, IN_OPTIONAL_OUT, OUT_IN, OUT_OPTIONAL_IN, ROBUST_OUT_ONLY,
             //                                              ROBUST_IN_ONLY

@@ -39,12 +39,12 @@ public class RobustOutOnlyAxisOperation extends OutInAxisOperation {
         //setup a temporary name
         QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
         this.setName(tmpName);
-        setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY);
+        setMessageExchangePattern(WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY);
     }
 
     public RobustOutOnlyAxisOperation(QName name) {
         super(name);
-        setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY);
+        setMessageExchangePattern(WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY);
     }
 
     public OperationClient createClient(ServiceContext sc, Options options) {

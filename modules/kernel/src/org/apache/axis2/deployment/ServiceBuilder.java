@@ -32,6 +32,7 @@ import org.apache.axis2.description.InOutAxisOperation;
 import org.apache.axis2.description.ModuleConfiguration;
 import org.apache.axis2.description.ParameterInclude;
 import org.apache.axis2.description.PolicyInclude;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.engine.ServiceLifeCycle;
@@ -648,12 +649,12 @@ public class ServiceBuilder extends DescriptionBuilder {
                 }
                 op_descrip.setName(new QName(opname));
                 String MEP = op_descrip.getMessageExchangePattern();
-                if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP) ||
-                        WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                        WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                        WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                        WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
-                        WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(MEP)) {
+                if (WSDL2Constants.MEP_URI_IN_ONLY.equals(MEP) ||
+                        WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                        WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                        WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                        WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(MEP) ||
+                        WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
                     AxisMessage inaxisMessage = op_descrip
                             .getMessage(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
                     if (inaxisMessage != null) {
@@ -661,11 +662,11 @@ public class ServiceBuilder extends DescriptionBuilder {
                     }
                 }
 
-                if (WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(MEP) ||
-                        WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                        WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                        WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
-                        WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(MEP)) {
+                if (WSDL2Constants.MEP_URI_OUT_ONLY.equals(MEP) ||
+                        WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                        WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                        WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP) ||
+                        WSDL2Constants.MEP_URI_IN_OUT.equals(MEP)) {
                     AxisMessage outAxisMessage = op_descrip
                             .getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE);
                     if (outAxisMessage != null) {

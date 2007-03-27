@@ -30,42 +30,42 @@ public class AxisOperationFactory implements WSDLConstants {
         switch (mepURI) {
             case WSDLConstants.MEP_CONSTANT_IN_ONLY : {
                 abOpdesc = new InOnlyAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_IN_ONLY);
+                abOpdesc.setMessageExchangePattern(WSDL2Constants.MEP_URI_IN_ONLY);
                 break;
             }
             case WSDLConstants.MEP_CONSTANT_OUT_ONLY : {
                 abOpdesc = new OutOnlyAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_OUT_ONLY);
+                abOpdesc.setMessageExchangePattern(WSDL2Constants.MEP_URI_OUT_ONLY);
                 break;
             }
             case WSDLConstants.MEP_CONSTANT_IN_OUT : {
                 abOpdesc = new InOutAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_IN_OUT);
+                abOpdesc.setMessageExchangePattern(WSDL2Constants.MEP_URI_IN_OUT);
                 break;
             }
             case WSDLConstants.MEP_CONSTANT_IN_OPTIONAL_OUT : {
                 abOpdesc = new InOutAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT);
+                abOpdesc.setMessageExchangePattern(WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT);
                 break;
             }
             case WSDLConstants.MEP_CONSTANT_ROBUST_IN_ONLY : {
                 abOpdesc = new InOutAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY);
+                abOpdesc.setMessageExchangePattern(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY);
                 break;
             }
             case WSDLConstants.MEP_CONSTANT_OUT_IN : {
                 abOpdesc = new OutInAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_OUT_IN);
+                abOpdesc.setMessageExchangePattern(WSDL2Constants.MEP_URI_OUT_IN);
                 break;
             }
             case WSDLConstants.MEP_CONSTANT_OUT_OPTIONAL_IN : {
                 abOpdesc = new OutInAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN);
+                abOpdesc.setMessageExchangePattern(WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN);
                 break;
             }
             case WSDLConstants.MEP_CONSTANT_ROBUST_OUT_ONLY : {
                 abOpdesc = new RobustOutOnlyAxisOperation();
-                abOpdesc.setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY);
+                abOpdesc.setMessageExchangePattern(WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY);
                 break;
             }
             default : {
@@ -78,28 +78,36 @@ public class AxisOperationFactory implements WSDLConstants {
     //FIXME add in the latest MEP URIs AND needs to double check on about the mep we had in 2004
     public static AxisOperation getOperationDescription(String mepURI) throws AxisFault {
         AxisOperation abOpdesc;
-        if (WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mepURI) ||
+        if (WSDL2Constants.MEP_URI_IN_ONLY.equals(mepURI) ||
+                WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mepURI) ||
                 WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(mepURI)) {
             abOpdesc = new InOnlyAxisOperation();
-        } else if (WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(mepURI) ||
+        } else if (WSDL2Constants.MEP_URI_OUT_ONLY.equals(mepURI) ||
+                WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(mepURI) ||
                 WSDL20_2004_Constants.MEP_URI_OUT_ONLY.equals(mepURI)) {
             abOpdesc = new OutOnlyAxisOperation();
-        } else if (WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mepURI) ||
+        } else if (WSDL2Constants.MEP_URI_IN_OUT.equals(mepURI) ||
+                WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mepURI) ||
                 WSDL20_2004_Constants.MEP_URI_IN_OUT.equals(mepURI)) {
             abOpdesc = new InOutAxisOperation();
-        } else if (WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI) ||
+        } else if (WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI) ||
+                WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI) ||
                 WSDL20_2004_Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mepURI)) {
             abOpdesc = new InOutAxisOperation();
-        } else if (WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mepURI) ||
+        } else if (WSDL2Constants.MEP_URI_OUT_IN.equals(mepURI) ||
+                WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mepURI) ||
                 WSDL20_2004_Constants.MEP_URI_OUT_IN.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
-        } else if (WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI) ||
+        } else if (WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI) ||
+                WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI) ||
                 WSDL20_2004_Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
-        } else if (WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) ||
+        } else if (WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) ||
+                WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI) ||
                 WSDL20_2004_Constants.MEP_URI_ROBUST_OUT_ONLY.equals(mepURI)) {
             abOpdesc = new OutInAxisOperation();
-        } else if (WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) ||
+        } else if (WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) ||
+                WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI) ||
                 WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY.equals(mepURI)) {
             abOpdesc = new InOnlyAxisOperation();
         } else {

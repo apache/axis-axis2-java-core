@@ -49,12 +49,12 @@ public class OutInAxisOperation extends TwoChannelAxisOperation {
         //setup a temporary name
         QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
         this.setName(tmpName);
-        setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_OUT_IN);
+        setMessageExchangePattern(WSDL2Constants.MEP_URI_OUT_IN);
     }
 
     public OutInAxisOperation(QName name) {
         super(name);
-        setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_OUT_IN);
+        setMessageExchangePattern(WSDL2Constants.MEP_URI_OUT_IN);
     }
 
     public void addMessageContext(MessageContext msgContext,

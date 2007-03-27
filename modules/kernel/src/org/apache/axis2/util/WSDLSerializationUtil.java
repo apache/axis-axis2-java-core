@@ -69,9 +69,9 @@ public class WSDLSerializationUtil {
     public static String getElementName(AxisMessage axisMessage, Map nameSpaceMap) {
         QName elementQName = axisMessage.getElementQName();
         if (elementQName == null) {
-            return WSDLConstants.WSDL20_2006Constants.NMTOKEN_NONE;
+            return WSDL2Constants.NMTOKEN_NONE;
         } else if (Constants.XSD_ANY.equals(elementQName)) {
-            return WSDLConstants.WSDL20_2006Constants.NMTOKEN_ANY;
+            return WSDL2Constants.NMTOKEN_ANY;
         } else {
             String prefix =
                     WSDLSerializationUtil.getPrefix(elementQName.getNamespaceURI(), nameSpaceMap);

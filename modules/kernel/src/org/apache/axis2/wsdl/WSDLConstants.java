@@ -143,47 +143,90 @@ public interface WSDLConstants {
 
     public static interface WSDL20_2006Constants {
 
-        // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#in-only
+        /**
+         * http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#in-only
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_IN_ONLY
+         */
         public String MEP_URI_IN_ONLY = "http://www.w3.org/2006/01/wsdl/in-only";
-        // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#robust-in-only
+        /**
+         * http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#robust-in-only
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_ROBUST_IN_ONLY
+         */
         public String MEP_URI_ROBUST_IN_ONLY = "http://www.w3.org/2006/01/wsdl/robust-in-only";
-        // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#in-out
+        /**
+         * http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#in-out
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_IN_OUT
+         */
         public String MEP_URI_IN_OUT = "http://www.w3.org/2006/01/wsdl/in-out";
-        // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#in-opt-out
+        /**
+         * http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#in-opt-out
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT
+         */
         public String MEP_URI_IN_OPTIONAL_OUT = "http://www.w3.org/2006/01/wsdl/in-opt-out";
-        // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#out-only
+        /**
+         * http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#out-only
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_OUT_ONLY
+         */
         public String MEP_URI_OUT_ONLY = "http://www.w3.org/2006/01/wsdl/out-only";
-        // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#robust-out-only
+        /**
+         * http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#robust-out-only
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY
+         */
         public String MEP_URI_ROBUST_OUT_ONLY = "http://www.w3.org/2006/01/wsdl/robust-out-only";
-        // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#out-in
+        /**
+         * http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#out-in
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_OUT_IN
+         */
         public String MEP_URI_OUT_IN = "http://www.w3.org/2006/01/wsdl/out-in";
-        // http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#out-opt-in
+        /**
+         * http://www.w3.org/TR/2006/CR-wsdl20-adjuncts-20060327/#out-opt-in
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN
+         */
         public String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/2006/01/wsdl/out-opt-in";
-        public String DEFAULT_NAMESPACE_URI = "http://www.w3.org/2006/01/wsdl";
-
-        public String NMTOKEN_ANY = "#any";
-        public String NMTOKEN_NONE = "#none";
-        public String NMTOKEN_OTHER = "#other";
-        public String NMTOKEN_ELEMENT = "#element";
 
     }
 
     public static interface WSDL20_2004_Constants {
 
+        /**
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_IN_ONLY
+         */
         public String MEP_URI_IN_ONLY = "http://www.w3.org/2004/08/wsdl/in-only";
+
+        /**
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_ROBUST_IN_ONLY
+         */
         public String MEP_URI_ROBUST_IN_ONLY = "http://www.w3.org/2004/08/wsdl/robust-in-only";
+
+        /**
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_IN_OUT
+         */
+
         public String MEP_URI_IN_OUT = "http://www.w3.org/2004/08/wsdl/in-out";
+
+        /**
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT
+         */
         public String MEP_URI_IN_OPTIONAL_OUT = "http://www.w3.org/2004/08/wsdl/in-opt-out";
+
+        /**
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_OUT_ONLY
+         */
         public String MEP_URI_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/out-only";
+
+        /**
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY
+         */
         public String MEP_URI_ROBUST_OUT_ONLY = "http://www.w3.org/2004/08/wsdl/robust-out-only";
+
+        /**
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_OUT_IN
+         */
         public String MEP_URI_OUT_IN = "http://www.w3.org/2004/08/wsdl/out-in";
+
+        /**
+         * @deprecated Please use org.apache.axis2.description.WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN
+         */
         public String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/2004/08/wsdl/out-opt-in";
-        public String DEFAULT_NAMESPACE_URI = "http://www.w3.org/2004/08/wsdl";
-
-        public String NMTOKEN_ANY = "#any";
-        public String NMTOKEN_NONE = "#none";
-        public String NMTOKEN_OTHER = "#other";
-        public String NMTOKEN_ELEMENT = "#element";
-
     }
 }

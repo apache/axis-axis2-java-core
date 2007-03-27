@@ -20,15 +20,14 @@ package org.apache.axis2.description;
 
 public interface WSDL2Constants {
 
-    String WSDL_NAMESPACE = "http://www.w3.org/2006/01/wsdl";
+    String WSDL_NAMESPACE = "http://www.w3.org/ns/wsdl";
     String DEFAULT_WSDL_NAMESPACE_PREFIX = "wsdl2";
     String DESCRIPTION = "description";
-    String URI_WSDL2_SOAP = "http://www.w3.org/2006/01/wsdl/soap";
-    String URI_WSDL2_HTTP = "http://www.w3.org/2006/01/wsdl/http";
-    String URI_WSDL2_EXTENSIONS = "http://www.w3.org/2006/01/wsdl-extensions";
+    String URI_WSDL2_SOAP = "http://www.w3.org/ns/wsdl/soap";
+    String URI_WSDL2_HTTP = "http://www.w3.org/ns/wsdl/http";
+    String URI_WSDL2_EXTENSIONS = "http://www.w3.org/ns/wsdl-extensions";
     String SOAP_PREFIX = "wsoap";
     String HTTP_PREFIX = "whttp";
-    String URI_WSDL2_SOAP_ENV = "http://www.w3.org/2003/05/soap-envelope";
     String WSDL_EXTENTION_PREFIX = "wsdlx";
     String SOAP_ENV_PREFIX = "soap";
     String DEFAULT_TARGET_NAMESPACE_PREFIX = "axis2";
@@ -87,8 +86,6 @@ public interface WSDL2Constants {
     String HTTP_PROTOCAL = "http://www.w3.org/2003/05/soap/bindings/HTTP";
     String SERVICE_LOCAL_NAME = "service";
 
-    String URI_HTTP_SOAP12 = "http://www.w3.org/2003/05/soap/bindings/HTTP";
-    String URI_HTTP_SOAP11 = "http://www.w3.org/2006/01/soap11/bindings/HTTP";
     String URI_WSOAP_MEP = "http://www.w3.org/2003/05/soap/mep/soap-response/";
 
     String ATTR_WSOAP_PROTOCOL = "wsoap:protocol";
@@ -131,4 +128,18 @@ public interface WSDL2Constants {
     String LEGAL_CHARACTERS_IN_PATH = "-._~!$'()*+,;=:@";
     String LEGAL_CHARACTERS_IN_QUERY = "-._~!$'()*+,;=:@/?";
     String TEMPLATE_ENCODE_ESCAPING_CHARACTER = "!";
+
+    public String MEP_URI_IN_ONLY = "http://www.w3.org/ns/wsdl/in-only";
+    public String MEP_URI_ROBUST_IN_ONLY = "http://www.w3.org/ns/wsdl/robust-in-only";
+    public String MEP_URI_IN_OUT = "http://www.w3.org/ns/wsdl/in-out";
+    public String MEP_URI_IN_OPTIONAL_OUT = "http://www.w3.org/ns/wsdl/in-opt-out";
+    public String MEP_URI_OUT_ONLY = "http://www.w3.org/ns/wsdl/out-only";
+    public String MEP_URI_ROBUST_OUT_ONLY = "http://www.w3.org/ns/wsdl/robust-out-only";
+    public String MEP_URI_OUT_IN = "http://www.w3.org/ns/wsdl/out-in";
+    public String MEP_URI_OUT_OPTIONAL_IN = "http://www.w3.org/ns/wsdl/out-opt-in";
+
+    public String NMTOKEN_ANY = "#any";
+    public String NMTOKEN_NONE = "#none";
+    public String NMTOKEN_OTHER = "#other";
+    public String NMTOKEN_ELEMENT = "#element";
 }

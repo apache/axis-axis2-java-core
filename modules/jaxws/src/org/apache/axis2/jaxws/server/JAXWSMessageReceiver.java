@@ -24,6 +24,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisEngine;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -164,7 +165,9 @@ private static final Log log = LogFactory.getLog(JAXWSMessageReceiver.class);
 
     private boolean isMepInOnly(String mep){
     	boolean inOnly = mep.equals(WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY) || 
-            mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY) || 
+            mep.equals(WSDL20_2004_Constants.MEP_URI_IN_ONLY) ||
+            mep.equals(WSDL2Constants.MEP_URI_IN_ONLY) ||
+            mep.equals(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY) ||
             mep.equals(WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY) || 
             mep.equals(WSDL20_2006Constants.MEP_URI_IN_ONLY);
         return inOnly;

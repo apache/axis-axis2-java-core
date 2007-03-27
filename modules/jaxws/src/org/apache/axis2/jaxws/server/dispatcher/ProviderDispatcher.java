@@ -30,6 +30,7 @@ import javax.xml.ws.Provider;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.core.util.MessageContextUtils;
@@ -248,7 +249,7 @@ public class ProviderDispatcher extends JavaDispatcher{
 	/**
 	 * Set the parameter for a given endpoint invocation
 	 * 
-	 * @param _parameter
+	 * @param msg
 	 */
 	public void setMessage(Message msg) {
 		this.message = msg;

@@ -1,5 +1,7 @@
 package org.apache.axis2.wsdl;
 
+import org.apache.axis2.description.WSDL2Constants;
+
 import javax.xml.namespace.QName;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -30,11 +32,11 @@ public class WSDLUtil {
      */
     public static boolean isInputPresentForMEP(String mep) {
         return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(mep) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(mep) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(mep) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(mep) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mep) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY.equals(mep);
+                WSDL2Constants.MEP_URI_IN_ONLY.equals(mep) ||
+                WSDL2Constants.MEP_URI_IN_OUT.equals(mep) ||
+                WSDL2Constants.MEP_URI_OUT_IN.equals(mep) ||
+                WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(mep) ||
+                WSDL2Constants.MEP_URI_ROBUST_IN_ONLY.equals(mep);
     }
 
     /**
@@ -43,12 +45,12 @@ public class WSDLUtil {
      * @param MEP
      */
     public static boolean isOutputPresentForMEP(String MEP) {
-        return WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT.equals(MEP) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_IN.equals(MEP) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_ONLY.equals(MEP) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
-                WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP);
+        return WSDL2Constants.MEP_URI_IN_OPTIONAL_OUT.equals(MEP) ||
+                WSDL2Constants.MEP_URI_IN_OUT.equals(MEP) ||
+                WSDL2Constants.MEP_URI_OUT_IN.equals(MEP) ||
+                WSDL2Constants.MEP_URI_OUT_ONLY.equals(MEP) ||
+                WSDL2Constants.MEP_URI_OUT_OPTIONAL_IN.equals(MEP) ||
+                WSDL2Constants.MEP_URI_ROBUST_OUT_ONLY.equals(MEP);
     }
 
     /**

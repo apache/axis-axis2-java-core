@@ -38,6 +38,7 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
 import org.apache.axis2.description.WSDLToAxisServiceBuilder;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.namespace.Constants;
@@ -313,7 +314,7 @@ public class ArchiveReader implements DeploymentConstants {
                                 ((OMElement) XMLUtils.toOM(in)).getNamespace();
                         if (documentElementNS != null) {
                             WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
-                            if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI
+                            if (WSDL2Constants.WSDL_NAMESPACE
                                     .equals(documentElementNS.getNamespaceURI())) {
                                 // we have a WSDL 2.0 document here.
                                 wsdlToAxisServiceBuilder = new WSDL20ToAxisServiceBuilder(
@@ -406,7 +407,7 @@ public class ArchiveReader implements DeploymentConstants {
                 OMNamespace documentElementNS = ((OMElement) XMLUtils.toOM(in)).getNamespace();
                 if (documentElementNS != null) {
                     WSDLToAxisServiceBuilder wsdlToAxisServiceBuilder = null;
-                    if (WSDLConstants.WSDL20_2006Constants.DEFAULT_NAMESPACE_URI
+                    if (WSDL2Constants.WSDL_NAMESPACE
                             .equals(documentElementNS.getNamespaceURI())) {
                         // we have a WSDL 2.0 document here.
                         in2 = new FileInputStream(file1);

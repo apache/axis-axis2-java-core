@@ -830,8 +830,8 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         if (axisOperation == null) {
             URI pattern = operation.getMessageExchangePattern();
-            String MEP = pattern.toString();
-            if (MEP == null) {
+            String MEP;
+            if (pattern == null) {
                 MEP = WSDL20DefaultValueHolder.getDefaultValue(WSDL2Constants.ATTR_WSOAP_MEP);
             } else {
                 MEP = pattern.toString();
@@ -842,9 +842,7 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         }
 
         // assuming the style of the operations of WSDL 2.0 is always document, for the time being :)
-        axisOperation.setMessageExchangePattern(operation.getMessageExchangePattern().toString());
-
-//         The following can be used to capture the wsdlx:safe attribute
+        // The following can be used to capture the wsdlx:safe attribute
 
         InterfaceOperationExtensionsImpl interfaceOperationExtensions;
         try {
@@ -920,12 +918,12 @@ public class WSDL20ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
         String messageContentModelName = messageReference.getMessageContentModel();
         QName elementQName = null;
 
-        if (WSDLConstants.WSDL20_2006Constants.NMTOKEN_ELEMENT.equals(messageContentModelName)) {
+        if (WSDL2Constants.NMTOKEN_ELEMENT.equals(messageContentModelName)) {
             elementQName = messageReference.getElementDeclaration().getName();
-        } else if (WSDLConstants.WSDL20_2006Constants.NMTOKEN_ANY.equals(messageContentModelName)) {
+        } else if (WSDL2Constants.NMTOKEN_ANY.equals(messageContentModelName)) {
             elementQName = Constants.XSD_ANY;
         } else
-        if (WSDLConstants.WSDL20_2006Constants.NMTOKEN_NONE.equals(messageContentModelName)) {
+        if (WSDL2Constants.NMTOKEN_NONE.equals(messageContentModelName)) {
             // nothing to do here keep the message element as null
         } else {
             throw new AxisFault("Sorry we do not support " + messageContentModelName +

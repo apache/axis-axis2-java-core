@@ -35,6 +35,7 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.Flow;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
@@ -374,7 +375,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
     protected MessageReceiver loadDefaultMessageReceiver(String mepURL, AxisService service) {
         MessageReceiver messageReceiver;
         if (mepURL == null) {
-            mepURL = WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT;
+            mepURL = WSDL2Constants.MEP_URI_IN_OUT;
         }
         if (service != null) {
             messageReceiver = service.getMessageReceiver(mepURL);

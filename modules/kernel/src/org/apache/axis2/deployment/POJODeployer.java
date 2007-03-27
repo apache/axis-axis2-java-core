@@ -6,6 +6,7 @@ import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.util.Loader;
 import org.apache.axis2.wsdl.WSDLConstants;
@@ -115,14 +116,14 @@ public class POJODeployer implements Deployer {
                                 MessageReceiver messageReceiver =
                                         (MessageReceiver) inOnlyMessageReceiver.newInstance();
                                 messageReciverMap.put(
-                                        WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY,
+                                        WSDL2Constants.MEP_URI_IN_ONLY,
                                         messageReceiver);
                                 Class inoutMessageReceiver = Loader.loadClass(
                                         "org.apache.axis2.rpc.receivers.RPCMessageReceiver");
                                 MessageReceiver inOutmessageReceiver =
                                         (MessageReceiver) inoutMessageReceiver.newInstance();
                                 messageReciverMap.put(
-                                        WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT,
+                                        WSDL2Constants.MEP_URI_IN_OUT,
                                         inOutmessageReceiver);
                                 AxisService axisService = AxisService.createService(className,
                                                                                     configCtx.getAxisConfiguration(),
@@ -234,7 +235,8 @@ public class POJODeployer implements Deployer {
             if (MEP != null) {
                 try {
                     if (WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY.equals(MEP)
-                            || WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(MEP)) {
+                            || WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_ONLY.equals(MEP)
+                            || WSDL2Constants.MEP_URI_IN_ONLY.equals(MEP)) {
                         Class inOnlyMessageReceiver = Loader.loadClass(
                                 "org.apache.axis2.rpc.receivers.RPCInOnlyMessageReceiver");
                         MessageReceiver messageReceiver =

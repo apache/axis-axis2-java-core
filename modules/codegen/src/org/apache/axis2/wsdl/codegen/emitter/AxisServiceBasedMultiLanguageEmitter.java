@@ -23,6 +23,7 @@ import org.apache.axis2.wsdl.codegen.writer.SkeletonInterfaceWriter;
 import org.apache.axis2.wsdl.codegen.writer.SkeletonWriter;
 import org.apache.axis2.wsdl.codegen.writer.TestClassWriter;
 import org.apache.axis2.wsdl.codegen.writer.WSDL11Writer;
+import org.apache.axis2.wsdl.codegen.writer.WSDL20Writer;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.util.Constants;
 import org.apache.axis2.wsdl.util.MessagePartInformationHolder;
@@ -136,11 +137,11 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         //populate the MEP -> class map
         mepToClassMap = new HashMap();
-        mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY,
+        mepToClassMap.put(WSDL2Constants.MEP_URI_IN_ONLY,
                 "org.apache.axis2.receivers.AbstractInMessageReceiver");
-        mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY,
+        mepToClassMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,
                 "org.apache.axis2.receivers.AbstractRobustInMessageReceiver");
-        mepToClassMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT,
+        mepToClassMap.put(WSDL2Constants.MEP_URI_IN_OUT,
                 "org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver");
 
         //populate the MEP -> suffix map
@@ -149,13 +150,19 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 MESSAGE_RECEIVER_SUFFIX + "InOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_ONLY,
                 MESSAGE_RECEIVER_SUFFIX + "InOnly");
+        mepToSuffixMap.put(WSDL2Constants.MEP_URI_IN_ONLY,
+                MESSAGE_RECEIVER_SUFFIX + "InOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_ROBUST_IN_ONLY,
                 MESSAGE_RECEIVER_SUFFIX + "RobustInOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_ROBUST_IN_ONLY,
                 MESSAGE_RECEIVER_SUFFIX + "RobustInOnly");
+        mepToSuffixMap.put(WSDL2Constants.MEP_URI_ROBUST_IN_ONLY,
+                MESSAGE_RECEIVER_SUFFIX + "RobustInOnly");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2004_Constants.MEP_URI_IN_OUT,
                 MESSAGE_RECEIVER_SUFFIX + "InOut");
         mepToSuffixMap.put(WSDLConstants.WSDL20_2006Constants.MEP_URI_IN_OUT,
+                MESSAGE_RECEIVER_SUFFIX + "InOut");
+        mepToSuffixMap.put(WSDL2Constants.MEP_URI_IN_OUT,
                 MESSAGE_RECEIVER_SUFFIX + "InOut");
         //register the other types as necessary
     }
@@ -1318,9 +1325,14 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         //switch between the correct writer
         if (CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
                 equals(codeGenConfiguration.getWSDLVersion())) {
-
-            // TODO : We can not write WSDL 2.0 documents. Even WSDL20Writer implementation is wrong.
-            // wait till Woden implements it.
+            // Woden cannot serialize the WSDL as yet, so lets serialize the axisService for now.
+            
+            WSDL20Writer wsdl20Writer = new WSDL20Writer(
+                    codeGenConfiguration.isFlattenFiles() ?
+                            getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
+                            getOutputDirectory(codeGenConfiguration.getOutputLocation(),
+                                    codeGenConfiguration.getResourceLocation()));
+            wsdl20Writer.writeWSDL(axisService);
 
         } else {
             // here we are going to write the wsdl and its imports
@@ -2115,7 +2127,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
 
         String bindingType = null;
         if (axisBinding != null){
-            axisBinding.getType();
+            bindingType = axisBinding.getType();
         }
 
         if (WSDL2Constants.URI_WSOAP_MEP.equalsIgnoreCase(mep)) {

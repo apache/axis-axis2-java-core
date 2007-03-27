@@ -41,13 +41,13 @@ public class InOnlyAxisOperation extends AxisOperation {
         QName tmpName = new QName(this.getClass().getName() + "_" + UUIDGenerator.getUUID());
         this.setName(tmpName);
         createMessage();
-        setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_IN_ONLY);
+        setMessageExchangePattern(WSDL2Constants.MEP_URI_IN_ONLY);
     }
 
     public InOnlyAxisOperation(QName name) {
         super(name);
         createMessage();
-        setMessageExchangePattern(WSDL20_2006Constants.MEP_URI_IN_ONLY);
+        setMessageExchangePattern(WSDL2Constants.MEP_URI_IN_ONLY);
     }
 
     public void addMessage(AxisMessage message, String label) {
