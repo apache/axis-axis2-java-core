@@ -15,11 +15,11 @@
  */
 package sample.addressbook.adbclient;
 
-import sample.addressbook.stub.AddressBookServiceStub;
-import sample.addressbook.stub.AddressBookServiceStub.AddEntry;
-import sample.addressbook.stub.AddressBookServiceStub.Entry;
-import sample.addressbook.stub.AddressBookServiceStub.FindEntry;
-import sample.addressbook.stub.AddressBookServiceStub.FindEntryResponse;
+import sample.addressbook.stub.AddressBookServiceAddressBookServiceSOAP11Port_httpStub;
+import sample.addressbook.stub.AddressBookServiceAddressBookServiceSOAP11Port_httpStub.AddEntry;
+import sample.addressbook.stub.AddressBookServiceAddressBookServiceSOAP11Port_httpStub.Entry;
+import sample.addressbook.stub.AddressBookServiceAddressBookServiceSOAP11Port_httpStub.FindEntry;
+import sample.addressbook.stub.AddressBookServiceAddressBookServiceSOAP11Port_httpStub.FindEntryResponse;
 
 
 public class AddressBookADBClient {
@@ -29,13 +29,13 @@ public class AddressBookADBClient {
     public static void main(String[] args) {
 
         try {
-            AddressBookServiceStub stub;
+            AddressBookServiceAddressBookServiceSOAP11Port_httpStub stub;
 
             if (args != null && args.length != 0) {
-                stub = new AddressBookServiceStub(args[0]);
+                stub = new AddressBookServiceAddressBookServiceSOAP11Port_httpStub(args[0]);
                 
             } else {
-                stub = new AddressBookServiceStub(URL);
+                stub = new AddressBookServiceAddressBookServiceSOAP11Port_httpStub(URL);
             }
             
             AddEntry addEntry = new AddEntry();
