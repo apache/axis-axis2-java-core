@@ -1521,20 +1521,25 @@ public class SchemaCompiler {
                     XmlSchemaType type = getType(parentSchema, schemaTypeName);
                     if (type instanceof XmlSchemaSimpleType) {
                         XmlSchemaSimpleType simpleType = (XmlSchemaSimpleType) type;
-                        // we only support simple type restriction
-                        if (!isAlreadyProcessed(schemaTypeName)) {
-                            //process simple type
-                            processSimpleSchemaType(simpleType, null, parentSchema, null);
+
+                        if ((simpleType != null) &&
+                                (simpleType.getContent() instanceof XmlSchemaSimpleTypeRestriction)) {
+                            // we only support simple type restriction
+                            if (!isAlreadyProcessed(schemaTypeName)) {
+                                //process simple type
+                                processSimpleSchemaType(simpleType, null, parentSchema, null);
+                            }
+                            metainf.registerMapping(att.getQName(),
+                                    schemaTypeName,
+                                    processedTypemap.get(schemaTypeName).toString(),
+                                    SchemaConstants.ATTRIBUTE_TYPE);
+                            // add optional attribute status if set
+                            String use = att.getUse().getValue();
+                            if (use.indexOf("optional") != -1) {
+                                metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                            }
                         }
-                        metainf.registerMapping(att.getQName(),
-                                schemaTypeName,
-                                processedTypemap.get(schemaTypeName).toString(),
-                                SchemaConstants.ATTRIBUTE_TYPE);
-                        // add optional attribute status if set
-                        String use = att.getUse().getValue();
-                        if (use.indexOf("optional") != -1) {
-                            metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
-                        }
+
                     }
                 }
             }

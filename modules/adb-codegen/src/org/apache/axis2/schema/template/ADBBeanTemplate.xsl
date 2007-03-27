@@ -2164,7 +2164,7 @@
                 public static <xsl:value-of select="$name"/> fromValue(<xsl:value-of select="$propertyType"/> value)
                       throws java.lang.IllegalArgumentException {
                     <xsl:value-of select="$name"/> enumeration = (<xsl:value-of select="$name"/>)
-                <xsl:choose>
+                       <xsl:choose>
                            <xsl:when test="@primitive">
                              _table_.get(value + "");
                            </xsl:when>
