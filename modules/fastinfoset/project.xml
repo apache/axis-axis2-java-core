@@ -24,12 +24,22 @@
     <name>Apache Axis 2.0 - Fast Infoset</name>
     <groupId>org.apache.axis2</groupId>
     <description>Axis2 Fast Infoset module</description>
-
+    
     <dependencies>
         <dependency>
             <groupId>com.sun.xml.fastinfoset</groupId>
             <artifactId>FastInfoset</artifactId>
             <version>${fastinfoset.version}</version>
+            <type>jar</type>
+            <properties>
+                <module>true</module>
+            </properties>
+            <url>https://maven-repository.dev.java.net/nonav/repository/</url>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.fastinfoset</groupId>
+            <artifactId>FastInfoset</artifactId>
+            <version>1.1.1</version><!-- Version for JVM 1.4.x -->
             <type>jar</type>
             <properties>
                 <module>true</module>

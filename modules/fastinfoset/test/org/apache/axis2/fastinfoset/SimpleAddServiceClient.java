@@ -32,7 +32,6 @@ import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddInts;
 import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddIntsResponse;
 import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddStrings;
 import org.apache.axis2.fastinfoset.xsd.SimpleAddServiceStub.AddStringsResponse;
-import org.apache.axis2.transport.http.HTTPConstants;
 
 public class SimpleAddServiceClient {
 	
