@@ -62,16 +62,13 @@ import org.apache.axis2.jaxws.proxy.ProxyTests;
 import org.apache.axis2.jaxws.proxy.RPCProxyTests;
 import org.apache.axis2.jaxws.proxy.SOAP12ProxyTests;
 import org.apache.axis2.jaxws.rpclit.enumtype.tests.RPCLitEnumTests;
-import org.apache.axis2.jaxws.sample.AddNumbersTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
 import org.apache.axis2.jaxws.sample.BareTests;
 import org.apache.axis2.jaxws.sample.DLWMinTests;
 import org.apache.axis2.jaxws.sample.FaultsServiceTests;
 import org.apache.axis2.jaxws.sample.FaultyWebServiceTests;
 import org.apache.axis2.jaxws.sample.MtomSampleTests;
-import org.apache.axis2.jaxws.sample.MtomSampleByteArrayTests;
 import org.apache.axis2.jaxws.sample.NonWrapTests;
-import org.apache.axis2.jaxws.sample.ParallelAsyncTests;
 import org.apache.axis2.jaxws.sample.WSGenTests;
 import org.apache.axis2.jaxws.sample.WrapTests;
 import org.apache.axis2.jaxws.security.BasicAuthSecurityTests;
@@ -137,8 +134,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(JAXBProviderTests.class);
         suite.addTestSuite(ProxyTests.class);
         suite.addTestSuite(ProxyNonWrappedTests.class);
-// TODO: Fix me. Test fails in latest svn
-//        suite.addTestSuite(RPCProxyTests.class);
+        suite.addTestSuite(RPCProxyTests.class);
         suite.addTestSuite(GorillaDLWProxyTests.class);
         suite.addTestSuite(SOAP12ProxyTests.class);
         suite.addTestSuite(ExceptionFactoryTests.class);
