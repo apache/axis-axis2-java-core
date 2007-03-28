@@ -251,7 +251,7 @@ public class WSDLSerializationUtil {
         }
         OMElement serviceElement = null;
         for (int i = 0; i < eprs.length; i++) {
-            serviceElement = omFactory.createOMElement(WSDL2Constants.ENDPOINT_LOCAL_NAME, null);
+            serviceElement = omFactory.createOMElement(WSDL2Constants.SERVICE_LOCAL_NAME, null);
             serviceElement.addAttribute(omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_NAME,
                                                                     null, axisService.getName()));
             serviceElement.addAttribute(omFactory.createOMAttribute(
@@ -287,8 +287,8 @@ public class WSDLSerializationUtil {
                     WSDL2Constants.ATTRIBUTE_NAME, null,
                     WSDL2Constants.DEFAULT_HTTP_ENDPOINT_NAME));
             httpEndpointElement.addAttribute(omFactory.createOMAttribute(
-                    WSDL2Constants.BINDING_LOCAL_NAME, null, axisService.getName() +
-                    Java2WSDLConstants.HTTP_BINDING));
+                    WSDL2Constants.BINDING_LOCAL_NAME, null,
+                    tns.getPrefix() + ":" + axisService.getName() + Java2WSDLConstants.HTTP_BINDING));
             httpEndpointElement.addAttribute(
                     omFactory.createOMAttribute(WSDL2Constants.ATTRIBUTE_ADDRESS, null, eprs[i]));
             serviceElement.addChild(httpEndpointElement);

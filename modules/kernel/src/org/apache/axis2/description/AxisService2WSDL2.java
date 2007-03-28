@@ -45,6 +45,8 @@ public class AxisService2WSDL2 implements WSDL2Constants {
         // Declare all the defined namespaces in the document
         WSDLSerializationUtil.populateNamespaces(descriptionElement, nameSpacesMap);
 
+        descriptionElement.declareNamespace(axisService.getTargetNamespace(), axisService.getTargetNamespacePrefix());
+
         // Need to add the targetnamespace as an attribute according to the wsdl 2.0 spec
         OMAttribute targetNamespace = omFactory
                 .createOMAttribute(WSDL2Constants.TARGET_NAMESPACE, null,
