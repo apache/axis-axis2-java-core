@@ -371,6 +371,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         HttpServletResponse response =
                 (HttpServletResponse) msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE);
         if (response != null) {
+
+            //TODO : Check for SOAP 1.2!
+            
             SOAPFaultCode code = faultContext.getEnvelope().getBody().getFault().getCode();
             OMElement valueElement = null;
             if (code != null) {

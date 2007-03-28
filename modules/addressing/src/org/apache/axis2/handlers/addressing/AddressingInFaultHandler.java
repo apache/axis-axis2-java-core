@@ -22,6 +22,9 @@ import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPFaultReason;
 import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axiom.soap.SOAPFaultDetail;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPFaultSubCode;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -29,7 +32,7 @@ import org.apache.axis2.addressing.AddressingFaultsHelper;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 
-import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 /**
  * This class is used to extract WS-Addressing Spec defined Faults and FaultDetail and convert them
@@ -43,94 +46,72 @@ public class AddressingInFaultHandler extends AbstractHandler implements Address
         if (Final.WSA_FAULT_ACTION.equals(action)
                 || Final.WSA_SOAP_FAULT_ACTION.equals(action)
                 || Submission.WSA_FAULT_ACTION.equals(action)) {
-            String faultLocalName = getFaultLocalName(msgContext);
-            String faultDetailString = getWSAFaultDetailString(msgContext);
+            SOAPEnvelope envelope = msgContext.getEnvelope();
+            SOAPFault fault = envelope.getBody().getFault();
 
-            if (faultLocalName != null) {
-                String newReason = AddressingFaultsHelper
-                        .getMessageForAxisFault(faultLocalName, faultDetailString);
+            if (fault == null) {
+                throw new AxisFault("Problem");
+            }
 
-                if (newReason != null) {
-                    SOAPEnvelope envelope = msgContext.getEnvelope();
-                    SOAPFault fault = envelope.getBody().getFault();
+            SOAPFactory sf = ((SOAPFactory) envelope.getOMFactory());
+            SOAPFaultDetail detail = null;
 
-                    SOAPFactory sf = ((SOAPFactory) envelope.getOMFactory());
-                    SOAPFaultReason sfr = sf.createSOAPFaultReason();
-                    if (envelope.getNamespace().getNamespaceURI()
-                            .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-                        sfr.setText(newReason);
-                    } else {
-                        SOAPFaultText sft = sf.createSOAPFaultText();
-                        sft.setText(newReason);
-                        sfr.addSOAPText(sft);
-                    }
-                    if (fault != null) {
-                        // else call the on error method with the fault
-                        AxisFault axisFault = new AxisFault(fault.getCode(), sfr,
-                                                            fault.getNode(), fault.getRole(),
-                                                            fault.getDetail());
-                        msgContext.setProperty(Constants.INBOUND_FAULT_OVERRIDE, axisFault);
+            if (msgContext.isSOAP11()) {
+                SOAPHeader header = envelope.getHeader();
+                OMElement element = header.getFirstChildWithName(Final.QNAME_WSA_HEADER_DETAIL);
+                if (element != null) {
+                    detail = sf.createSOAPFaultDetail(fault);
+                    Iterator i = element.getChildElements();
+                    while (i.hasNext()) {
+                        OMElement detailElement = (OMElement)i.next();
+                        detail.addDetailEntry(detailElement);
                     }
                 }
+            } else {
+                detail = fault.getDetail();
+            }
+
+            String faultDetailString = null;
+            if (detail != null) {
+                OMElement element = detail.getFirstElement();
+                if (element != null) {
+                    faultDetailString = element.getText();
+                }
+            }
+
+            String faultLocalName;
+            SOAPFaultCode code = fault.getCode();
+            SOAPFaultSubCode subCode = code.getSubCode();
+            if (subCode == null) {
+                faultLocalName = code.getTextAsQName().getLocalPart();
+            } else {
+                while (subCode.getSubCode() != null) {
+                    subCode = subCode.getSubCode();
+                }
+                faultLocalName = subCode.getValue().getTextAsQName().getLocalPart();
+            }
+
+            String newReason = AddressingFaultsHelper
+                    .getMessageForAxisFault(faultLocalName, faultDetailString);
+
+            if (newReason != null) {
+                SOAPFaultReason sfr = sf.createSOAPFaultReason();
+                if (envelope.getNamespace().getNamespaceURI()
+                        .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+                    sfr.setText(newReason);
+                } else {
+                    SOAPFaultText sft = sf.createSOAPFaultText();
+                    sft.setText(newReason);
+                    sfr.addSOAPText(sft);
+                }
+                // else call the on error method with the fault
+                AxisFault axisFault = new AxisFault(fault.getCode(), sfr,
+                                                    fault.getNode(), fault.getRole(),
+                                                    detail);
+                msgContext.setProperty(Constants.INBOUND_FAULT_OVERRIDE, axisFault);
             }
         }
 
         return InvocationResponse.CONTINUE;
-    }
-
-    private String getFaultLocalName(MessageContext msgContext) {
-        SOAPEnvelope envelope = msgContext.getEnvelope();
-        SOAPFault fault = envelope.getBody().getFault();
-        QName faultCodeQName = null;
-        String result = null;
-        if (fault != null) {
-            if (envelope.getNamespace().getNamespaceURI()
-                    .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-                faultCodeQName = fault.getCode().getTextAsQName();
-            } else {
-                faultCodeQName = fault.getCode().getValue().getTextAsQName();
-            }
-            if (fault.getCode().getSubCode() != null) {
-                faultCodeQName = fault.getCode().getSubCode().getValue().getTextAsQName();
-                if (fault.getCode().getSubCode().getSubCode() != null) {
-                    faultCodeQName =
-                            fault.getCode().getSubCode().getSubCode().getValue().getTextAsQName();
-                }
-            }
-        }
-        if (faultCodeQName != null) {
-            result = faultCodeQName.getLocalPart();
-        }
-        return result;
-    }
-
-    private String getWSAFaultDetailString(MessageContext msgContext) {
-        SOAPEnvelope envelope = msgContext.getEnvelope();
-        OMElement faultDetailElement = null;
-        String result = null;
-
-        if (msgContext.isSOAP11()) {
-            SOAPHeader header = envelope.getHeader();
-            faultDetailElement = header.getFirstChildWithName(new QName(Final.FAULT_HEADER_DETAIL));
-            if (faultDetailElement != null) {
-                result = faultDetailElement.getFirstElement().getText();
-            }
-        } else {
-            SOAPFault fault = envelope.getBody().getFault();
-            if (fault != null) {
-                if (fault.getDetail() != null) {
-                    faultDetailElement = fault.getDetail()
-                            .getFirstChildWithName(new QName(Final.FAULT_PROBLEM_ACTION_NAME));
-                    if (faultDetailElement == null) {
-                        faultDetailElement = fault.getDetail().getFirstChildWithName(
-                                new QName(Final.FAULT_HEADER_PROB_HEADER_QNAME));
-                    }
-                }
-            }
-            if (faultDetailElement != null) {
-                result = faultDetailElement.getText();
-            }
-        }
-        return result;
     }
 }

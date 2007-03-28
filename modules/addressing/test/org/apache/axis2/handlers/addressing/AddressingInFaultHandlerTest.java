@@ -16,11 +16,18 @@ package org.apache.axis2.handlers.addressing;
 
 import junit.framework.TestCase;
 import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
+import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.util.TestUtil;
+
+import javax.xml.namespace.QName;
+import java.util.List;
 
 public class AddressingInFaultHandlerTest extends TestCase {
 
@@ -34,9 +41,14 @@ public class AddressingInFaultHandlerTest extends TestCase {
     public void testInvalidAddressingHeaderWsaToSOAP11() throws Exception {
         AxisFault af = getFaultForTest("InvalidAddressingHeader", true);
         assertNotNull(af);
-        assertEquals("The server failed to process the WS-Addressing header: " + "wsa:To" +
-                " [Reason]: A header representing a Message Addressing Property is not valid and the message cannot be processed",
-                     af.getMessage());
+        assertEquals("Wrong fault code!",
+                     AddressingConstants.Final.QNAME_INVALID_HEADER,
+                     af.getFaultCode());
+        OMElement probHeaderDetail = af.getFaultDetailElement().getFirstChildWithName(
+                AddressingConstants.Final.QNAME_PROBLEM_HEADER);
+        assertNotNull(probHeaderDetail);
+        assertEquals(AddressingConstants.Final.QNAME_WSA_TO,
+                     probHeaderDetail.getTextAsQName());
     }
 
     public void testMissingActionSOAP11() throws Exception {
@@ -47,9 +59,14 @@ public class AddressingInFaultHandlerTest extends TestCase {
     public void testInvalidAddressingHeaderWsaToSOAP12() throws Exception {
         AxisFault af = getFaultForTest("InvalidAddressingHeader", false);
         assertNotNull(af);
-        assertEquals("The server failed to process the WS-Addressing header: " + "wsa:To" +
-                " [Reason]: A header representing a Message Addressing Property is not valid and the message cannot be processed",
-                     af.getMessage());
+        assertEquals("Wrong fault code", SOAP12Constants.QNAME_SENDER_FAULTCODE, af.getFaultCode());
+        List subCodes = af.getFaultSubCodes();
+        assertNotNull(subCodes);
+        assertEquals(1, subCodes.size());
+        assertEquals("Wrong fault subcode",
+                     new QName(AddressingConstants.Final.WSA_NAMESPACE,
+                               AddressingConstants.Final.FAULT_INVALID_HEADER),
+                     subCodes.get(0));
     }
 
     public void testMissingActionSOAP12() throws Exception {

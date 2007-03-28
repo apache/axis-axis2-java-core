@@ -485,9 +485,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 		if(soapFaultSubCode != null){
 			SOAPFaultValueImpl soapFaultValueimpl = new SOAP12FaultValueImpl(soapFaultSubCode,soapFactory);
 			soapFaultValueimpl.setText(subcode.getPrefix() +":" + subcode.getLocalPart());
-			OMNamespace  omNamespace = new OMNamespaceImpl(subcode.getNamespaceURI()
-					,this.element.getPrefix());
-			soapFaultValueimpl.setNamespace(omNamespace);
+			soapFaultValueimpl.declareNamespace(subcode.getNamespaceURI(), subcode.getPrefix());
 		}
     }
     
@@ -506,36 +504,13 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     public QName getFaultCodeAsQName() {
         SOAPFaultCode soapFaultCode = this.fault.getCode();
         if (soapFaultCode != null) {
-            String prefix = "";
-            String localPart = "";
-            String uri = "";
-            String text = "";
-            if(this.element.getOMFactory() instanceof SOAP11Factory) {
-                text = soapFaultCode.getText();
-            } else if(this.element.getOMFactory() instanceof SOAP12Factory){
-                text = soapFaultCode.getValue().getText();
+            if (this.element.getOMFactory() instanceof SOAP11Factory) {
+                return soapFaultCode.getTextAsQName();
+            } else {
+                return soapFaultCode.getValue().getTextAsQName();
             }
-            
-            if(text.indexOf(":") > 0) {
-                prefix = text.substring(0, text.indexOf(":"));
-                localPart = text.substring(text.indexOf(":") + 1);
-
-                if(this.element.getOMFactory() instanceof SOAP11Factory){
-                	uri  = soapFaultCode.findNamespaceURI(prefix).getNamespaceURI();
-                } else if(this.element.getOMFactory() instanceof SOAP12Factory){
-                    OMNamespace namespace = soapFaultCode.getValue().getNamespace();
-                    if (namespace != null) {
-                        uri = soapFaultCode.getValue().getNamespace().getNamespaceURI();
-                    } else {
-                        uri = this.fault.getNamespace().getNamespaceURI();
-                    }    
-                }
-            }
-
-            QName qname = new QName(uri, localPart, prefix);
-            return qname;
-    	}
-    	return null;
+        }
+        return null;
     }
 
     /**
@@ -692,36 +667,15 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     		throw new UnsupportedOperationException();
     	}
     	ArrayList faultSubcodes = new ArrayList();
-    	SOAPFaultSubCode firstSubCodeElement = this.fault.getCode().getSubCode();
-    	if(firstSubCodeElement != null){
-    		String text = firstSubCodeElement.getValue().getText();
-    		String prefix = text.substring(0,text.indexOf(":"));
-    		String localPart =  text.substring(text.indexOf(":")+1);
-    		String uri = firstSubCodeElement.getValue().getNamespace().getNamespaceURI();
-    		
-    		QName qname = new QName(uri,localPart,prefix);
+    	SOAPFaultSubCode subCodeElement = this.fault.getCode().getSubCode();
+    	while (subCodeElement != null){
+    		QName qname = subCodeElement.getValue().getTextAsQName();
     		faultSubcodes.add(qname);
-    		faultSubcodes = getChildSubCodes(firstSubCodeElement,faultSubcodes);
+    		subCodeElement = subCodeElement.getSubCode();
     	}
     	return faultSubcodes.iterator();
     }
 
-    private ArrayList getChildSubCodes(SOAPFaultSubCode firstSubCodeElement
-    		,ArrayList faultSubCodes){
-    	SOAPFaultSubCode  soapFaultSubCode = firstSubCodeElement.getSubCode();
-    	if( soapFaultSubCode != null){
-    		String text = soapFaultSubCode.getValue().getText();
-    		String prefix = text.substring(0,text.indexOf(":"));
-    		String localPart =  text.substring(text.indexOf(":")+1);
-    		String uri = soapFaultSubCode.getValue().getNamespace().getNamespaceURI();
-    		
-    		QName qname = new QName(uri,localPart,prefix);
-    		faultSubCodes.add(qname);
-    	}
-    	return faultSubCodes;
-    }
-    
-    
     /**
      * Returns true if this SOAPFault has a Detail subelement and false otherwise.
      */
@@ -791,7 +745,6 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
     		soapFaultCode.setText(prefix + ":" + qname.getLocalPart());
     		OMNamespace omNamespace = new OMNamespaceImpl(qname.getNamespaceURI(),
     				qname.getPrefix());
-    		soapFaultCode.setNamespace(omNamespace);
     		soapFaultCode.declareNamespace(omNamespace);
     	} else if (this.element.getOMFactory() instanceof SOAP12Factory) {
     		SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
@@ -799,7 +752,7 @@ public class SOAPFaultImpl extends SOAPBodyElementImpl implements SOAPFault {
 			soapFaultValue.setText(prefix + ":" + qname.getLocalPart());
 			OMNamespace omNamespace = new OMNamespaceImpl(qname.getNamespaceURI(),
     						qname.getPrefix());
-			soapFaultValue.setNamespace(omNamespace);
+			soapFaultValue.declareNamespace(omNamespace);
 		}
     }
 

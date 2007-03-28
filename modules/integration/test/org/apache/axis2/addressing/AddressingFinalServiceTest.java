@@ -101,88 +101,6 @@ public class AddressingFinalServiceTest extends UtilServerBasedTestCase implemen
         return service;
     }
 
-    protected void tearDown() throws Exception {
-        UtilServer.unDeployService(serviceName);
-        UtilServer.unDeployService(new QName("RedirectReceiverService"));
-        UtilServer.unDeployClientService();
-    }
-
-    public static AxisService createSimpleOneWayServiceforClient(QName serviceName,
-                                                                 String className,
-                                                                 QName opName)
-            throws AxisFault {
-        AxisService service = new AxisService(serviceName.getLocalPart());
-
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(Constants.SERVICE_CLASS, className));
-
-        AxisOperation axisOp = new OutOnlyAxisOperation(opName);
-
-        axisOp.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
-        axisOp.setStyle(WSDLConstants.STYLE_RPC);
-        service.addOperation(axisOp);
-
-        return service;
-    }
-
-    public void testEchoToReplyTo() throws Exception {
-        OMElement method = createEchoOMElement("this message should not cause a fault.");
-        ServiceClient sender = null;
-
-        try {
-            sender = createServiceClient();
-            sender.fireAndForget(operationName, method);
-            System.out.println("send the reqest");
-            int index = 0;
-            while (!RedirectReceiver.hasReceivedResponse()) {
-                Thread.sleep(100);
-                index++;
-                if (index > 45) {
-                    throw new AxisFault(
-                            "Tests was failed as redirected response not received in time");
-                }
-            }
-        } finally {
-            if (sender != null)
-                sender.cleanup();
-        }
-    }
-
-    public void testFaultToFaultTo() throws Exception {
-        OMElement method = createEchoOMElement("fault");
-        ServiceClient sender = null;
-
-        try {
-            sender = createServiceClient();
-            sender.fireAndForget(operationName, method);
-            System.out.println("send the reqest");
-            int index = 0;
-            while (!RedirectReceiver.hasReceivedFault()) {
-                Thread.sleep(100);
-                index++;
-                if (index > 45) {
-                    throw new AxisFault(
-                            "Tests was failed as redirected fault not received in time");
-                }
-            }
-        } finally {
-            if (sender != null)
-                sender.cleanup();
-        }
-    }
-
-    private OMElement createEchoOMElement(String text) {
-        OMFactory fac = OMAbstractFactory.getOMFactory();
-
-        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-        OMElement method = fac.createOMElement("echoOMElement", omNs);
-        OMElement value = fac.createOMElement("myValue", omNs);
-        value.setText(text);
-        method.addChild(value);
-
-        return method;
-    }
-
     private ServiceClient createServiceClient() throws AxisFault {
         AxisService service =
                 createSimpleOneWayServiceforClient(serviceName,
@@ -207,25 +125,40 @@ public class AddressingFinalServiceTest extends UtilServerBasedTestCase implemen
         return sender;
     }
 
-    public void testUsingAddressingRequired() throws Exception {
-        echoService.setWSAddressingFlag("required");
+    protected void tearDown() throws Exception {
+        UtilServer.unDeployService(serviceName);
+        UtilServer.unDeployService(new QName("RedirectReceiverService"));
+        UtilServer.unDeployClientService();
+    }
 
-        OMElement method = createEchoOMElement("this message should cause a fault.");
-        ServiceClient sender = null;
+    public static AxisService createSimpleOneWayServiceforClient(QName serviceName,
+                                                                 String className,
+                                                                 QName opName)
+            throws AxisFault {
+        AxisService service = new AxisService(serviceName.getLocalPart());
 
-        try {
-            sender = createNoAddressingServiceClient();
-            try {
-                sender.sendReceive(operationName, method);
-                fail("Should have received a specific fault");
-            } catch (AxisFault af) {
-                af.printStackTrace();
-                assertEquals("The wsa:Action header is required when WS-Addressing is in use but was not sent.", af.getMessage());
-            }
-        } finally {
-            if (sender != null)
-                sender.cleanup();
-        }
+        service.setClassLoader(Thread.currentThread().getContextClassLoader());
+        service.addParameter(new Parameter(Constants.SERVICE_CLASS, className));
+
+        AxisOperation axisOp = new OutOnlyAxisOperation(opName);
+
+        axisOp.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
+        axisOp.setStyle(WSDLConstants.STYLE_RPC);
+        service.addOperation(axisOp);
+
+        return service;
+    }
+
+    private OMElement createEchoOMElement(String text) {
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMElement method = fac.createOMElement("echoOMElement", omNs);
+        OMElement value = fac.createOMElement("myValue", omNs);
+        value.setText(text);
+        method.addChild(value);
+
+        return method;
     }
 
     private ServiceClient createNoAddressingServiceClient() throws AxisFault {
@@ -267,6 +200,75 @@ public class AddressingFinalServiceTest extends UtilServerBasedTestCase implemen
         sender.engageModule("addressing");
 
         return sender;
+    }
+
+    // Tests
+
+    public void testEchoToReplyTo() throws Exception {
+        OMElement method = createEchoOMElement("this message should not cause a fault.");
+        ServiceClient sender = null;
+
+        try {
+            sender = createServiceClient();
+            sender.fireAndForget(operationName, method);
+            System.out.println("sent the request");
+            int index = 0;
+            while (!RedirectReceiver.hasReceivedResponse()) {
+                Thread.sleep(1000);
+                index++;
+                if (index > 45) {
+                    throw new AxisFault(
+                            "Tests was failed as redirected response not received in time");
+                }
+            }
+        } finally {
+            if (sender != null)
+                sender.cleanup();
+        }
+    }
+
+    public void testFaultToFaultTo() throws Exception {
+        OMElement method = createEchoOMElement("fault");
+        ServiceClient sender = null;
+
+        try {
+            sender = createServiceClient();
+            sender.fireAndForget(operationName, method);
+            System.out.println("sent the request");
+            int index = 0;
+            while (!RedirectReceiver.hasReceivedFault()) {
+                Thread.sleep(1000);
+                index++;
+                if (index > 45) {
+                    throw new AxisFault(
+                            "Tests was failed as redirected fault not received in time");
+                }
+            }
+        } finally {
+            if (sender != null)
+                sender.cleanup();
+        }
+    }
+
+    public void testUsingAddressingRequired() throws Exception {
+        echoService.setWSAddressingFlag("required");
+
+        OMElement method = createEchoOMElement("this message should cause a fault.");
+        ServiceClient sender = null;
+
+        try {
+            sender = createNoAddressingServiceClient();
+            try {
+                sender.sendReceive(operationName, method);
+                fail("Should have received a specific fault");
+            } catch (AxisFault af) {
+                af.printStackTrace();
+                assertEquals("The wsa:Action header is required when WS-Addressing is in use but was not sent.", af.getMessage());
+            }
+        } finally {
+            if (sender != null)
+                sender.cleanup();
+        }
     }
 
     public void testSyncResponseAddressing() throws Exception {

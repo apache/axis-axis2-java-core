@@ -289,98 +289,86 @@ public class SOAPFaultTest extends TestCase {
             fail("Unexpected Exception : " + e);
         }
     }
-    
-    public void testAppendSubCode() {
-        try 
-        {
-            MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-            SOAPMessage soapMessage = fac.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
-            SOAPBody body = envelope.getBody();
-            SOAPFault soapFault = body.addFault();
-            QName qname = new QName("http://example.com", "myfault1", "flt1");
-            soapFault.appendFaultSubcode(qname);
 
-            QName qname2 = new QName("http://example2.com", "myfault2", "flt2");
-            soapFault.appendFaultSubcode(qname2);
-            
-            QName qname3 = new QName("http://example3.com", "myfault3", "flt3");
-            soapFault.appendFaultSubcode(qname3);
+    public void testAppendSubCode() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+        SOAPBody body = envelope.getBody();
+        SOAPFault soapFault = body.addFault();
+        QName qname = new QName("http://example.com", "myfault1", "flt1");
+        soapFault.appendFaultSubcode(qname);
 
-            soapMessage.saveChanges();
-            
-            Iterator faultSubCodes = soapFault.getFaultSubcodes();
-            assertNotNull(faultSubCodes);
-            
-        } catch (SOAPException e) {
-            fail("Unexpected Exception Occurred : " + e);
-        }
+        QName qname2 = new QName("http://example2.com", "myfault2", "flt2");
+        soapFault.appendFaultSubcode(qname2);
+
+        QName qname3 = new QName("http://example3.com", "myfault3", "flt3");
+        soapFault.appendFaultSubcode(qname3);
+
+        soapMessage.saveChanges();
+
+        Iterator faultSubCodes = soapFault.getFaultSubcodes();
+        assertNotNull(faultSubCodes);
     }
     
-    public void testAppendFaultSubCode(){
-    	try {
-    		MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-    		SOAPMessage soapMessage = fac.createMessage();
-    		SOAPPart soapPart = soapMessage.getSOAPPart();
-    		SOAPEnvelope envelope = soapPart.getEnvelope();
-    		envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
-    		SOAPBody body = envelope.getBody();
-    		SOAPFault sf = body.addFault();
+    public void testAppendFaultSubCode() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        envelope.addNamespaceDeclaration("cwmp", "http://cwmp.com");
+        SOAPBody body = envelope.getBody();
+        SOAPFault sf = body.addFault();
 
-    		QName expected1 = new QName("http://example.com", "myfault1", "flt1");
-    		QName expected2 = new QName("http://example.com", "myfault2", "flt2");
-    		boolean found1 = false;
-    		boolean found2 = false;
+        QName expected1 = new QName("http://example.com", "myfault1", "flt1");
+        QName expected2 = new QName("http://example.com", "myfault2", "flt2");
+        boolean found1 = false;
+        boolean found2 = false;
 
-    		//Appending fault Subcode
-    		sf.appendFaultSubcode(expected1);
-    		//Appending a second fault Subcode
-    		sf.appendFaultSubcode(expected2);
+        //Appending fault Subcode
+        sf.appendFaultSubcode(expected1);
+        //Appending a second fault Subcode
+        sf.appendFaultSubcode(expected2);
 
-    		//Getting FaultSubCodes from SOAPFault
-    		Iterator i = sf.getFaultSubcodes();
-    		int j = 0;
-    		while (i.hasNext()){	
-    			Object o = i.next();
-    			if (o instanceof QName){
-    				QName actual = (QName)o; 
-    				if(actual != null){
-    					if (actual.equals(expected1)){
-    						if (!found1){
-    							found1=true;
-    							//System.out.println("Subcode= '"+actual+"'");
-    						} else {
-    							//System.out.println("Received a duplicate Subcode :'"+actual+"'");
-    						} 
-    					} else if (actual.equals(expected2)){
-    						if (!found2){
-    							found2=true;
-    							//System.out.println("Subcode= '"+actual+"'");
-    						} else {
-    							//System.out.println("Received a duplicate Subcode :'"+actual+"'");
-    						} 
-    					} 
-    				} 
-    			} 
-    			j++;
-    		}
-    		if (j<1){
-    			fail("No Subcode was returned");
-    		}
-    		if (j>2){
-    			fail("More than two Subcodes were returned");
-    		}
-    		if (!found1){
-    			fail("The following Subcode was not received: '"+expected1+"'");
-    		}
-    		if (!found2){
-    			fail("The following Subcode was not received: '"+expected2+"'");
-    		}
-    	} catch(Exception e) {
-    		fail("Exception: " + e);
-    	}
+        //Getting FaultSubCodes from SOAPFault
+        Iterator i = sf.getFaultSubcodes();
+        int j = 0;
+        while (i.hasNext()){
+            Object o = i.next();
+            if (o != null && o instanceof QName){
+                QName actual = (QName)o;
+                if (actual.equals(expected1)){
+                    if (!found1){
+                        found1=true;
+                        //System.out.println("Subcode= '"+actual+"'");
+                    } else {
+                        //System.out.println("Received a duplicate Subcode :'"+actual+"'");
+                    }
+                } else if (actual.equals(expected2)){
+                    if (!found2){
+                        found2=true;
+                        //System.out.println("Subcode= '"+actual+"'");
+                    } else {
+                        //System.out.println("Received a duplicate Subcode :'"+actual+"'");
+                    }
+                }
+            }
+            j++;
+        }
+        if (j<1){
+            fail("No Subcode was returned");
+        }
+        if (j>2){
+            fail("More than two Subcodes were returned");
+        }
+        if (!found1){
+            fail("The following Subcode was not received: '"+expected1+"'");
+        }
+        if (!found2){
+            fail("The following Subcode was not received: '"+expected2+"'");
+        }
     }
     
     public void _testGetFaultReasonTexts() {
@@ -464,16 +452,14 @@ public class SOAPFaultTest extends TestCase {
         	int j = 0;
         	while (i.hasNext()){	
         		Object o = i.next();
-        		if (o instanceof String){
-        			String actual = (String)o; 
-        			if(actual != null){
-        				if (actual.equals(expected)){
-        					if (!found){
-        						found=true;
-        					} 
-        				} 
-        			}
-        		} 
+        		if (o != null && o instanceof String){
+                    String actual = (String)o;
+                    if (actual.equals(expected)){
+                        if (!found){
+                            found=true;
+                        }
+                    }
+                }
         		j++;
         	}
         	if (j<1){
@@ -491,57 +477,51 @@ public class SOAPFaultTest extends TestCase {
     }
     
 
-    public void testAddFaultReasonText4() {
-    	try {
-    		MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-    		SOAPMessage soapMessage = fac.createMessage();
-    		SOAPPart soapPart = soapMessage.getSOAPPart();
-    		SOAPEnvelope envelope = soapPart.getEnvelope();
-    		SOAPBody body = envelope.getBody();
-    		SOAPFault sf = body.addFault();
+    public void testAddFaultReasonText4() throws Exception {
+        MessageFactory fac = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage soapMessage = fac.createMessage();
+        SOAPPart soapPart = soapMessage.getSOAPPart();
+        SOAPEnvelope envelope = soapPart.getEnvelope();
+        SOAPBody body = envelope.getBody();
+        SOAPFault sf = body.addFault();
 
 
-    		String expected1 = "Its my fault";
-    		String expected2 = "Its my fault again";
-    		boolean found1 = false;
-    		boolean found2 = false;
-    		sf.addFaultReasonText(expected1, Locale.UK);
-    		sf.addFaultReasonText(expected2, Locale.ENGLISH);
-    		Iterator i = sf.getFaultReasonTexts();
-    		int j = 0;
-    		while (i.hasNext()){	
-    			Object o = i.next();
-    			if (o instanceof String){
-    				String actual = (String)o; 
-    				if(actual != null){
-    					if (actual.equals(expected1)){
-    						if (!found1){
-    							found1=true;
-    						}
-    					}else if (actual.equals(expected2)){
-    						if (!found2){
-    							found2=true;
-    						}
-    					} 
-    				}
-    			}
-    			j++;
-    		}
-    		if (j<1){
-    			fail("No reason text was returned");
-    		}
-    		if (j>2){
-    			fail("More than two reason texts were returned");
-    		}
-    		if (!found1){
-    			fail("The following Reason text was not received: '"+expected1+"'");
-    		}
-    		if (!found2){
-    			fail("The following Reason text was not received: '"+expected2+"'");
-    		}
-    	} catch (SOAPException e) {
-    		fail("Unexpected Exception Occurred : " + e);
-    	}
+        String expected1 = "Its my fault";
+        String expected2 = "Its my fault again";
+        boolean found1 = false;
+        boolean found2 = false;
+        sf.addFaultReasonText(expected1, Locale.UK);
+        sf.addFaultReasonText(expected2, Locale.ENGLISH);
+        Iterator i = sf.getFaultReasonTexts();
+        int j = 0;
+        while (i.hasNext()){
+            Object o = i.next();
+            if (o != null && o instanceof String){
+                String actual = (String)o;
+                if (actual.equals(expected1)){
+                    if (!found1){
+                        found1=true;
+                    }
+                } else if (actual.equals(expected2)){
+                    if (!found2){
+                        found2=true;
+                    }
+                }
+            }
+            j++;
+        }
+        if (j<1){
+            fail("No reason text was returned");
+        }
+        if (j>2){
+            fail("More than two reason texts were returned");
+        }
+        if (!found1){
+            fail("The following Reason text was not received: '"+expected1+"'");
+        }
+        if (!found2){
+            fail("The following Reason text was not received: '"+expected2+"'");
+        }
     }
     
     
@@ -882,22 +862,18 @@ public class SOAPFaultTest extends TestCase {
     }
     
     
-    public void testSetGetFaultCodeAsQName1() {
-    	try {
-    		SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
-    		SOAPFault sf = fac.createFault();
+    public void testSetGetFaultCodeAsQName1() throws Exception {
+        SOAPFactory fac = SOAPFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL);
+        SOAPFault sf = fac.createFault();
 
-    		QName name = new QName("http://example.com", "myfault", "flt");
-    		sf.setFaultCode(name);
-    		QName name2 = sf.getFaultCodeAsQName();
+        QName name = new QName("http://example.com", "myfault", "flt");
+        sf.setFaultCode(name);
+        QName name2 = sf.getFaultCodeAsQName();
 
-    		assertNotNull(name2);
-    		assertEquals(name2.getLocalPart(), name.getLocalPart());
-    		assertEquals(name2.getPrefix(), name.getPrefix());
-    		assertEquals(name2.getNamespaceURI(), name.getNamespaceURI());
-    	}catch(Exception e){
-    		fail(e.getMessage());
-    	}
+        assertNotNull(name2);
+        assertEquals(name2.getLocalPart(), name.getLocalPart());
+        assertEquals(name2.getPrefix(), name.getPrefix());
+        assertEquals(name2.getNamespaceURI(), name.getNamespaceURI());
     }
     
    

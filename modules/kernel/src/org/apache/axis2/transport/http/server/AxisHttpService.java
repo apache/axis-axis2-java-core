@@ -166,6 +166,7 @@ public class AxisHttpService extends HttpService {
                 if (AddressingHelper.isFaultRedirected(this.msgContext)) {
                     response.setStatusLine(new BasicStatusLine(ver, 202, "Accepted"));
                 } else {
+                    // TODO: Why isn't this a SOAP fault?
                     response.setStatusLine(new BasicStatusLine(ver, 500, "Internal server error"));
                     String msg = ex.getMessage();
                     StringEntity entity;

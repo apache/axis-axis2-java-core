@@ -27,9 +27,7 @@ import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFault;
 import org.apache.axiom.soap.SOAPFaultCode;
 import org.apache.axiom.soap.SOAPFaultDetail;
-import org.apache.axiom.soap.SOAPFaultNode;
 import org.apache.axiom.soap.SOAPFaultReason;
-import org.apache.axiom.soap.SOAPFaultRole;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axiom.soap.SOAPProcessingException;
@@ -59,7 +57,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class MessageContextBuilder {
 
@@ -179,7 +176,8 @@ public class MessageContextBuilder {
             newmsgCtx.setWSAAction(inMessageContext.getWSAAction());
         }
 
-        newmsgCtx.setAxisMessage(ao.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
+        if (ao != null)
+            newmsgCtx.setAxisMessage(ao.getMessage(WSDLConstants.MESSAGE_LABEL_OUT_VALUE));
 
         newmsgCtx.setDoingMTOM(inMessageContext.isDoingMTOM());
         newmsgCtx.setServiceGroupContextId(inMessageContext.getServiceGroupContextId());
@@ -442,12 +440,8 @@ public class MessageContextBuilder {
         } else if (soapException != null) {
             soapFaultCode = soapException.getFaultCode();
         } else if (axisFault != null) {
-
-            Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null &&
-                    faultElementsMap.get(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME) != null) {
-                fault.setCode((SOAPFaultCode) faultElementsMap
-                        .get(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME));
+            if (axisFault.getFaultCodeElement() != null) {
+                fault.setCode(axisFault.getFaultCodeElement());
             } else {
                 QName faultCodeQName = axisFault.getFaultCode();
                 if (faultCodeQName != null) {
@@ -492,11 +486,8 @@ public class MessageContextBuilder {
         } else if (soapException != null) {
             message = soapException.getMessage();
         } else if (axisFault != null) {
-            Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null &&
-                    faultElementsMap.get(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME) != null) {
-                fault.setReason((SOAPFaultReason) faultElementsMap
-                        .get(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME));
+            if (axisFault.getFaultReasonElement() != null) {
+                fault.setReason(axisFault.getFaultReasonElement());
             } else {
                 message = axisFault.getReason();
                 if (message == null || "".equals(message)) {
@@ -523,11 +514,8 @@ public class MessageContextBuilder {
         if (faultRole != null) {
             fault.getRole().setText((String) faultRole);
         } else if (axisFault != null) {
-            Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null &&
-                    faultElementsMap.get(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME) != null) {
-                fault.setRole((SOAPFaultRole) faultElementsMap
-                        .get(SOAP12Constants.SOAP_FAULT_ROLE_LOCAL_NAME));
+            if (axisFault.getFaultRoleElement() != null) {
+                fault.setRole(axisFault.getFaultRoleElement());
             }
         }
 
@@ -535,11 +523,8 @@ public class MessageContextBuilder {
         if (faultNode != null) {
             fault.getNode().setText((String) faultNode);
         } else if (axisFault != null) {
-            Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null &&
-                    faultElementsMap.get(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME) != null) {
-                fault.setNode((SOAPFaultNode) faultElementsMap
-                        .get(SOAP12Constants.SOAP_FAULT_NODE_LOCAL_NAME));
+            if (axisFault.getFaultNodeElement() != null) {
+                fault.setNode(axisFault.getFaultNodeElement());
             }
         }
 
@@ -566,11 +551,8 @@ public class MessageContextBuilder {
         if (faultDetail != null) {
             fault.setDetail((SOAPFaultDetail) faultDetail);
         } else if (axisFault != null) {
-            Map faultElementsMap = axisFault.getFaultElements();
-            if (faultElementsMap != null &&
-                    faultElementsMap.get(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME) != null) {
-                fault.setDetail((SOAPFaultDetail) faultElementsMap
-                        .get(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME));
+            if (axisFault.getFaultDetailElement() != null) {
+                fault.setDetail(axisFault.getFaultDetailElement());
             } else {
                 OMElement detail = axisFault.getDetail();
                 if (detail != null) {

@@ -55,50 +55,38 @@ public class SAAJDetailTest extends TestCase {
     /*
      * for soap version 1.1
      */
-    public void testAddDetailEntry() {
-    	try 
-    	{
-    		//Add a SOAPFault object to the SOAPBody
-    		SOAPFault sf = body.addFault();
-    		//Add a Detail object to the SOAPFault object
-    		Detail d = sf.addDetail();
-    		QName name = new QName("http://www.wombat.org/trader", 
-    				"GetLastTradePrice", "WOMBAT");
-    		//Add a DetailEntry object to the Detail object
-    		DetailEntry de = d.addDetailEntry(name);
-    		assertNotNull(de);
-    		assertTrue(de instanceof DetailEntry);
-    	} catch (Exception e) {
-    		fail("Exception: " + e);
-    	}
+    public void testAddDetailEntry() throws Exception {
+        //Add a SOAPFault object to the SOAPBody
+        SOAPFault sf = body.addFault();
+        //Add a Detail object to the SOAPFault object
+        Detail d = sf.addDetail();
+        QName name = new QName("http://www.wombat.org/trader",
+                               "GetLastTradePrice", "WOMBAT");
+        //Add a DetailEntry object to the Detail object
+        DetailEntry de = d.addDetailEntry(name);
+        assertNotNull(de);
+        assertTrue(de instanceof DetailEntry);
     }
 
     /*
      * for soap version 1.2
      */
-    public void testAddDetailEntry2() {
-    	try 
-    	{
-            msg = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
-            sp = msg.getSOAPPart();
-            envelope = sp.getEnvelope();
-            body = envelope.getBody();
+    public void testAddDetailEntry2() throws Exception {
+        msg = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
+        sp = msg.getSOAPPart();
+        envelope = sp.getEnvelope();
+        body = envelope.getBody();
     		
-    		//Add a SOAPFault object to the SOAPBody
-    		SOAPFault sf = body.addFault();
-    		//Add a Detail object to the SOAPFault object
-    		Detail d = sf.addDetail();
-    		QName name = new QName("http://www.wombat.org/trader", 
-    				"GetLastTradePrice", "WOMBAT");
-    		//Add a DetailEntry object to the Detail object
-    		DetailEntry de = d.addDetailEntry(name);
-    		//Successfully created DetailEntry object
-    		assertNotNull(de);
-    		assertTrue(de instanceof DetailEntry);
-    	} catch (Exception e) {
-    		fail("Exception: " + e);
-    	}
+        //Add a SOAPFault object to the SOAPBody
+        SOAPFault sf = body.addFault();
+        //Add a Detail object to the SOAPFault object
+        Detail d = sf.addDetail();
+        QName name = new QName("http://www.wombat.org/trader",
+                               "GetLastTradePrice", "WOMBAT");
+        //Add a DetailEntry object to the Detail object
+        DetailEntry de = d.addDetailEntry(name);
+        //Successfully created DetailEntry object
+        assertNotNull(de);
+        assertTrue(de instanceof DetailEntry);
     }
-    
-    
 }

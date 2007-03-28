@@ -169,7 +169,7 @@ public class CommonsHTTPTransportSender extends AbstractHandler implements
                 }
 
                 if (value != null && JavaUtils.isTrueExplicitly(value)) {
-                    if (msgContext.isSOAP11() != true) {
+                    if (!msgContext.isSOAP11()) {
                         msgContext.setProperty(Constants.Configuration.DISABLE_SOAP_ACTION,
                                                Boolean.TRUE);
                     }

@@ -171,6 +171,9 @@ public interface AddressingConstants {
         final QName QNAME_WSA_REPLY_TO = new QName(WSA_NAMESPACE, WSA_REPLY_TO);
         final QName QNAME_WSA_RELATES_TO = new QName(WSA_NAMESPACE, WSA_RELATES_TO);
         final QName QNAME_WSA_MESSAGE_ID = new QName(WSA_NAMESPACE, WSA_MESSAGE_ID);
+        final QName QNAME_WSA_HEADER_DETAIL = new QName(WSA_NAMESPACE, FAULT_HEADER_DETAIL);
+        final QName QNAME_PROBLEM_HEADER = new QName(WSA_NAMESPACE, FAULT_HEADER_PROB_HEADER_QNAME);
+        final QName QNAME_INVALID_HEADER = new QName(WSA_NAMESPACE, FAULT_INVALID_HEADER);
     }
 
 
