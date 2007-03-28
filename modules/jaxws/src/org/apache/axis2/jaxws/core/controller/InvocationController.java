@@ -22,10 +22,15 @@ import java.util.concurrent.Future;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Response;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.core.util.MessageContextUtils;
+import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
+import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
 import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.util.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -91,15 +96,24 @@ public abstract class InvocationController {
 
         request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.SYNC);
         
-        // TODO: Place-holder for running the JAX-WS request handler chain
+        // Invoke outbound handlers.
+        // TODO uncomment, and get the EndpointDescription from the request context, which should soon be available
+        boolean success = true; //HandlerInvokerUtils.invokeOutboundHandlers(request, request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+
+        if (success) {
+        	prepareRequest(request);
+        	response = doInvoke(request);
+        	prepareResponse(response);
         
-        prepareRequest(request);
-        response = doInvoke(request);
-        prepareResponse(response);
+        	// Invoke inbound handlers.
+        	// TODO uncomment, and get the EndpointDescription from the request context, which should soon be available
+        	//HandlerInvokerUtils.invokeInboundHandlers(response, request.getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
+        } else { // the outbound handler chain must have had a problem, and we've reversed directions
+        	response = MessageContextUtils.createResponseMessageContext(request);
+        	// since we've reversed directions, the message has "become a response message" (section 9.3.2.1, footnote superscript 2)
+        	response.setMessage(request.getMessage());
+        }
         ic.setResponseMessageContext(response);
-        
-        // TODO: Place-holder for running the JAX-WS response handler chain
-        
         return ic;
     }
     
@@ -130,11 +144,15 @@ public abstract class InvocationController {
         
         MessageContext request = ic.getRequestMessageContext();
         request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ONEWAY);
-        
-        // TODO: Place-holder to run the JAX-WS request handler chain
-        
-        prepareRequest(request);
-        doInvokeOneWay(request);
+
+        // Invoke outbound handlers.
+        // TODO uncomment, and get the EndpointDescription from the request context, which should soon be available
+        boolean success = true; //HandlerInvokerUtils.invokeOutboundHandlers(request, request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+
+        if (success) {
+        	prepareRequest(request);
+            doInvokeOneWay(request);
+        }
         return;
     }
     
@@ -167,10 +185,24 @@ public abstract class InvocationController {
         MessageContext request = ic.getRequestMessageContext();
         request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_POLLING);
 
-        // TODO: Place-holder for running the JAX-WS request handler chain
+        Response resp = null;
         
-        prepareRequest(request);
-        Response resp = doInvokeAsync(request);
+        // Invoke outbound handlers.
+        // TODO uncomment, and get the EndpointDescription from the request context, which should soon be available
+        boolean success = true; //HandlerInvokerUtils.invokeOutboundHandlers(request, request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        if (success) {
+        	prepareRequest(request);
+        	resp = doInvokeAsync(request);
+        } else { // the outbound handler chain must have had a problem, and we've reversed directions
+        	// since we've reversed directions, the message has "become a response message" (section 9.3.2.1, footnote superscript 2)
+
+        	// TODO we know the message is a fault message, we should
+        	// convert it to an exception and throw it.
+        	// something like:
+        	
+        	//throw new AxisFault(request.getMessage());
+        }
+
         return resp;
     }
     
@@ -211,11 +243,24 @@ public abstract class InvocationController {
 
         MessageContext request = ic.getRequestMessageContext();
         request.getProperties().put(Constants.INVOCATION_PATTERN, InvocationPattern.ASYNC_CALLBACK);
+
+        Future<?> future = null;
         
-        // TODO: Place-holder for running the JAX-WS request handler chain
-        
-        prepareRequest(request);
-        Future<?> future = doInvokeAsync(request, asyncHandler);
+        // Invoke outbound handlers.
+        // TODO uncomment, and get the EndpointDescription from the request context, which should soon be available
+        boolean success = true; //HandlerInvokerUtils.invokeOutboundHandlers(request, request.getEndpointDescription(), HandlerChainProcessor.MEP.REQUEST, false);
+        if (success) {
+        	prepareRequest(request);
+        	future = doInvokeAsync(request, asyncHandler);
+        } else { // the outbound handler chain must have had a problem, and we've reversed directions
+        	// since we've reversed directions, the message has "become a response message" (section 9.3.2.1, footnote superscript 2)
+
+        	// TODO we know the message is a fault message, we should
+        	// convert it to an exception and throw it.
+        	// something like:
+
+        	//throw new AxisFault(request.getMessage());
+        }
         return future;        
     }
     

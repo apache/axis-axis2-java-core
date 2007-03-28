@@ -31,6 +31,8 @@ import javax.xml.ws.Response;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.handler.HandlerChainProcessor;
+import org.apache.axis2.jaxws.handler.HandlerInvokerUtils;
 import org.apache.axis2.jaxws.spi.Constants;
 import org.apache.axis2.jaxws.spi.migrator.ApplicationContextMigratorUtil;
 import org.apache.commons.logging.Log;
@@ -199,6 +201,12 @@ public abstract class AsyncResponse implements Response {
             }
             return cachedObject;
         }
+        
+        // TODO: IMPORTANT: this is the right call here, but beware that the messagecontext may be turned into
+        // a fault context with a fault message.  We need to check for this and, if necessary, make an exception and throw it.
+        // Invoke inbound handlers.
+        // TODO: integrate -- uncomment line
+        //HandlerInvokerUtils.invokeInboundHandlers(response, response.getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
 
         // TODO: Check the type of the object to make sure it corresponds with
         // the parameterized generic type.
@@ -236,8 +244,11 @@ public abstract class AsyncResponse implements Response {
     
     private Throwable processFaultResponse() {
         // A faultMessageContext means that there could possibly be a SOAPFault
-        // on the MessateContext that we need to unmarshall.
+        // on the MessageContext that we need to unmarshall.
         if (faultMessageContext != null) {
+        	// Invoke inbound handlers.
+            // TODO: integrate -- uncomment line
+            //HandlerInvokerUtils.invokeInboundHandlers(response, response.getEndpointDescription(), HandlerChainProcessor.MEP.RESPONSE, false);
             Throwable t = getFaultResponse(faultMessageContext);
             if (t != null) {  
                 return t;

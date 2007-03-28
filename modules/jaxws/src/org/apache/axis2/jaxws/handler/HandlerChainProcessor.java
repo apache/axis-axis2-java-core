@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.ProtocolException;
@@ -38,8 +39,11 @@ import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.marshaller.impl.alt.MethodMarshallerUtils;
 import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
+import org.apache.axis2.jaxws.message.util.MessageUtils;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
+import org.apache.axis2.jaxws.util.SoapUtils;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
+import org.apache.axis2.saaj.SOAPFactoryImpl;
 
 public class HandlerChainProcessor {
 
@@ -265,7 +269,7 @@ public class HandlerChainProcessor {
                 // mark it as reverse direction
 				mc.put(MessageContext.MESSAGE_OUTBOUND_PROPERTY, (direction != Direction.OUT));
 			if (ProtocolException.class.isAssignableFrom(re.getClass())) {
-				convertToFaultMessage(re);
+				convertToFaultMessage(mc, re);
 				return PROTOCOL_EXCEPTION;
 			}
 			return OTHER_EXCEPTION;
@@ -368,7 +372,7 @@ public class HandlerChainProcessor {
 	}
 	
 	
-	private void convertToFaultMessage(Exception e) {
+	public static void convertToFaultMessage(MessageContext mc, Exception e) {
 
 		// need to check if message is already a fault message or not,
 		// probably by way of a flag (isFault) in the MessageContext or Message

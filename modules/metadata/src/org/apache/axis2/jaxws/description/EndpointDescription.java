@@ -28,6 +28,7 @@ import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
 /**
  * An EndpointDescription corresponds to a particular Service Implementation. It
@@ -91,6 +92,9 @@ public interface EndpointDescription {
      * @return
      */
     public abstract String getBindingType();
+    
+    public abstract HandlerChainsType getHandlerChain();
+    
     /**
      * Set the binding type FOR A CLIENT.  The BindingType annotation is not valid on the client per
      * the JAX-WS spec.  The value can be set via addPort(...) for a Dispatch client or via TBD for
@@ -108,7 +112,7 @@ public interface EndpointDescription {
     public void setEndpointAddress(String endpointAddress);
     public abstract String getEndpointAddress();
     
-    public abstract List<String> getHandlerList();
+    //public abstract List<String> getHandlerList();
     public abstract QName getPortQName();
     public abstract QName getServiceQName();
     public abstract Service.Mode getServiceMode(); 

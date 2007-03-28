@@ -18,11 +18,15 @@
  */
 package org.apache.axis2.jaxws.handler;
 
+import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
@@ -33,8 +37,10 @@ import javax.xml.ws.handler.soap.SOAPHandler;
 import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.EndpointDescription;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainType;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerType;
 import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -59,13 +65,13 @@ public class HandlerResolverImpl implements HandlerResolver {
 	 */
 
 	// we'll need to refer to this object to get the port, and thus handlers
-	private ServiceDelegate delegate;
+	private EndpointDescription endpointDesc;
 
-	public HandlerResolverImpl(ServiceDelegate delegate) {
-		this.delegate = delegate;
+	public HandlerResolverImpl(EndpointDescription ed) {
+		this.endpointDesc = ed;
 	}
 
-	public List<Handler> getHandlerChain(PortInfo portinfo) {
+	public ArrayList<Handler> getHandlerChain(PortInfo portinfo) {
 		// TODO:  would check and/or build cache here if implemented later
 		return resolveHandlers(portinfo);
 	}
@@ -79,9 +85,12 @@ public class HandlerResolverImpl implements HandlerResolver {
 	 * running the annotated PostConstruct method, sorting the list, resolving the list,
 	 * and returning it
 	 */
-	private List<Handler> resolveHandlers(PortInfo portinfo) throws WebServiceException {
-		EndpointDescription edesc = delegate.getServiceDescription().getEndpointDescription(portinfo.getPortName());
+	private ArrayList<Handler> resolveHandlers(PortInfo portinfo) throws WebServiceException {
 		
+        // our implementation already has a reference to the EndpointDescription,
+        // which is where one might bet the portinfo object.  We still have the 
+        // passed-in variable, however, due to the spec
+        
 		ArrayList handlers = new ArrayList<Handler>();
 		ArrayList logicalHandlers = new ArrayList<Handler>();
 		ArrayList protocolHandlers = new ArrayList<Handler>();
@@ -94,41 +103,56 @@ public class HandlerResolverImpl implements HandlerResolver {
 		 * chain.
 		 */
 		
-		for (String portHandler : edesc.getHandlerList()) {
-			Handler handlerClass;
-			// instantiate portHandler class
-			try {
-				// TODO: ok to use system classloader?
-				handlerClass = (Handler) loadClass(portHandler).newInstance();
-				callHandlerPostConstruct(handlerClass);
-			} catch (ClassNotFoundException e) {
-				// TODO: should we just ignore this problem?
-				// TODO: NLS log and throw
-				throw ExceptionFactory.makeWebServiceException(e);
-			} catch (InstantiationException ie) {
-				// TODO: should we just ignore this problem?
-				// TODO: NLS log and throw
-				throw ExceptionFactory.makeWebServiceException(ie);
-			} catch (IllegalAccessException e) {
-				// TODO: should we just ignore this problem?
-				// TODO: NLS log and throw
-				throw ExceptionFactory.makeWebServiceException(e);
-			}
-			
-			// 9.2.1.2 sort them by Logical, then SOAP
-			if (LogicalHandler.class.isAssignableFrom(handlerClass.getClass()))
-				logicalHandlers.add((LogicalHandler)handlerClass);
-			else if (SOAPHandler.class.isAssignableFrom(handlerClass.getClass()))
-				// instanceof ProtocolHandler
-				protocolHandlers.add((SOAPHandler)handlerClass);
-			else if (Handler.class.isAssignableFrom(handlerClass.getClass())) {
-				// TODO: NLS better error message
-				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainErr1", handlerClass.getClass().getName()));
-			} else {
-				// TODO: NLS better error message
-				throw ExceptionFactory.makeWebServiceException(Messages.getMessage("handlerChainErr2", handlerClass.getClass().getName()));
-			}
-		}
+        HandlerChainsType handlerCT = endpointDesc.getHandlerChain();
+        
+        Iterator it = handlerCT == null ? null : handlerCT.getHandlerChain().iterator();
+        
+        while ((it != null) && (it.hasNext())) {
+            List<HandlerType> handlerTypeList = ((HandlerChainType) it.next()).getHandler();
+            Iterator ht = handlerTypeList.iterator();
+            while (ht.hasNext()) {
+                // TODO review: need to check for null getHandlerClass() return?
+                // or will schema not allow it?
+                String portHandler = ((HandlerType) ht.next()).getHandlerClass().getValue();
+                Handler handlerClass;
+                // instantiate portHandler class
+                try {
+                    // TODO: ok to use system classloader?
+                    handlerClass = (Handler) loadClass(portHandler).newInstance();
+                    callHandlerPostConstruct(handlerClass.getClass());
+                } catch (ClassNotFoundException e) {
+                    // TODO: should we just ignore this problem?
+                    // TODO: NLS log and throw
+                    throw ExceptionFactory.makeWebServiceException(e);
+                } catch (InstantiationException ie) {
+                    // TODO: should we just ignore this problem?
+                    // TODO: NLS log and throw
+                    throw ExceptionFactory.makeWebServiceException(ie);
+                } catch (IllegalAccessException e) {
+                    // TODO: should we just ignore this problem?
+                    // TODO: NLS log and throw
+                    throw ExceptionFactory.makeWebServiceException(e);
+                }
+
+                // 9.2.1.2 sort them by Logical, then SOAP
+                if (LogicalHandler.class.isAssignableFrom(handlerClass.getClass()))
+                    logicalHandlers.add((LogicalHandler) handlerClass);
+                else if (SOAPHandler.class.isAssignableFrom(handlerClass.getClass()))
+                    // instanceof ProtocolHandler
+                    protocolHandlers.add((SOAPHandler) handlerClass);
+                else if (Handler.class.isAssignableFrom(handlerClass.getClass())) {
+                    // TODO: NLS better error message
+                    throw ExceptionFactory.makeWebServiceException(Messages
+                            .getMessage("handlerChainErr1", handlerClass
+                                    .getClass().getName()));
+                } else {
+                    // TODO: NLS better error message
+                    throw ExceptionFactory.makeWebServiceException(Messages
+                            .getMessage("handlerChainErr2", handlerClass
+                                    .getClass().getName()));
+                }
+            }
+        }
 		
 		handlers.addAll(logicalHandlers);
 		handlers.addAll(protocolHandlers);
@@ -138,6 +162,7 @@ public class HandlerResolverImpl implements HandlerResolver {
 	
 	private static Class loadClass(String clazz) throws ClassNotFoundException {
 		try {
+            // TODO: review:  necessary to use static method getSystemClassLoader in this class?
 			return forName(clazz, true, ClassLoader.getSystemClassLoader());
 		} catch (ClassNotFoundException e) {
 			throw e;
@@ -168,6 +193,7 @@ public class HandlerResolverImpl implements HandlerResolver {
         
         return cl;
     }
+
     
     /**
      * @return ClassLoader
@@ -192,45 +218,19 @@ public class HandlerResolverImpl implements HandlerResolver {
         
         return cl;
     }
+    
+
+	private static void callHandlerPostConstruct(Class handlerClass) {
+        // TODO implement -- copy or make utils from ResourceInjectionServiceRuntimeDescriptionBuilder
+    }
 
 
-	private static void callHandlerPostConstruct(Object handlerClass) {
-		/*
-		 * TODO apparently there's no javax.annotation.* package in Java
-		 * EE 5 ?? We need to call @PostConstruct method on handler if present
-		for (Method method : handlerClass.getClass().getMethods()) {
-			if (method.getAnnotation(javax.annotation.PostConstruct.class) != null) {
-				try {
-					method.invoke(handlerClass, new Object [0]);
-					break;
-				} catch (Exception e) {
-					// TODO: log it, but otherwise ignore
-				}
-			}
-		}
-		*/
-	}
-	
 	/*
 	 * Helper method to destroy all instantiated Handlers once the runtime
 	 * is done with them.
 	 */
 	public static void destroyHandlers(List<Handler> handlers) {
-		/*
-		 * TODO apparently there's no javax.annotation.* package in Java
-		 * EE 5 ?? We need to call @PostConstruct method on handler if present
-		for (Handler handler: handlers) {
-			for (Method method: handler.getClass().getMethods()) {
-				if (method.getAnnotation(javax.annotation.PreDestroy.class) != null) {
-					try {
-						method.invoke(handlerClass, new Object[0]);
-						break;
-					} catch (Exception e) {
-						// TODO: log it, but otherwise ignore
-					}
-				}
-			}
-		}
-		*/
+	    // TODO implement -- copy or make utils from ResourceInjectionServiceRuntimeDescriptionBuilder
+        // CALL the PreDestroy annotated method for each handler
 	}
 }

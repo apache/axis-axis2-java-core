@@ -171,11 +171,6 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     // Default BindingType.value per JAXWS Spec Sec 7.8 "javax.xml.ws.BindingType" pg 83 
     // and Sec 1.4 "SOAP Transport and Transfer Bindings" pg 119
     public static final String  BindingType_DEFAULT = javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING;
-    
-    // ANNOTATION: @HandlerChain
-    // TODO: @HandlerChain support
-    // TODO: This needs to be a collection of handler descriptions; use JAX-WS Appendix B Handler Chain Configuration File Schema as a starting point
-    private ArrayList<String> handlerList = new ArrayList<String>();
 
     /**
      * Create an EndpointDescription based on the WSDL port.  Note that per the JAX-WS Spec (Final Release, 4/19/2006
@@ -1193,10 +1188,16 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
                             + composite.getClassName());
                 }
 
+                String className = getServiceDescriptionImpl().isDBCMap() ? 
+                        composite.getClassName():implOrSEIClass.getName();
+
+                ClassLoader classLoader = getServiceDescriptionImpl().isDBCMap() ? 
+                        composite.getClassLoader() : this.getClass().getClassLoader();
+                
                 InputStream is = DescriptionUtils.openHandlerConfigStream(
                         handlerFileName, 
-                        composite.getClassName(), 
-                        composite.getClassLoader());
+                        className, 
+                        classLoader);
 
                 try {
                     // All the classes we need should be part of this package
@@ -1222,24 +1223,27 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
     	    if (getServiceDescriptionImpl().isDBCMap()) {
     	        handlerChainAnnotation = composite.getHandlerChainAnnot();
     	    } else {
-    	        //TODO: Implement this for reflection
+    	        if (implOrSEIClass != null) {
+    	            handlerChainAnnotation = (HandlerChain) implOrSEIClass.getAnnotation(HandlerChain.class);
+    	        }
     	    }
     	}
     	
     	return handlerChainAnnotation;
     }
     
-    /**
+    /*
      * Returns a live list describing the handlers on this port.
      * TODO: This is currently returning List<String>, but it should return a HandlerDescritpion
      * object that can represent a handler description from various Metadata (annotation, deployment descriptors, etc);
      * use JAX-WS Appendix B Handler Chain Configuration File Schema as a starting point for HandlerDescription.
      *  
      * @return A List of handlers for this port.  The actual list is returned, and therefore can be modified.
-     */
+    
     public List<String> getHandlerList() {
         return handlerList;
     }
+    */
     
     private Definition getWSDLDefinition() {
         return ((ServiceDescriptionWSDL) getServiceDescription()).getWSDLDefinition();
@@ -1622,9 +1626,6 @@ class EndpointDescriptionImpl implements EndpointDescription, EndpointDescriptio
 	        string.append("Is proxy-based: " + (isEndpointBased() == true));
 	        string.append(sameline);
 	        string.append("Is WSDL fully specified: " + (isWSDLFullySpecified() == true));
-	        //
-	        string.append(newline);
-	        string.append("Handler List: " + getHandlerList());
 	        //
 	        string.append(newline);
 	        string.append("AxisService: " + getAxisService());

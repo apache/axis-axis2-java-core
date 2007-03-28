@@ -157,6 +157,7 @@ public class JAXWSProxyHandler extends BindingProvider implements
         // Create and configure the request MessageContext
         InvocationContext requestIC = InvocationContextFactory.createInvocationContext(null);
         MessageContext request = createRequest(method, args);
+        request.setEndpointDescription(getEndpointDescription());
         request.setOperationDescription(operationDesc);
         
         // Enable MTOM on the Message if the property was set on the SOAPBinding.

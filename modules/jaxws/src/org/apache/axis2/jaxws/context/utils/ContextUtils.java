@@ -62,6 +62,7 @@ public class ContextUtils {
         
         // Set the WSDL properties
         ServiceDescription sd = jaxwsMessageContext.getEndpointDescription().getServiceDescription();
+        if (sd!=null) {
         URL wsdlLocation = ((ServiceDescriptionWSDL) sd).getWSDLLocation();
         if (wsdlLocation != null && !"".equals(wsdlLocation)){
             URI wsdlLocationURI = null;
@@ -76,7 +77,6 @@ public class ContextUtils {
             soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_DESCRIPTION, Scope.APPLICATION);
         }
 		
-        if (sd!=null) {
             soapMessageContext.put(javax.xml.ws.handler.MessageContext.WSDL_SERVICE, sd.getServiceQName());
             soapMessageContext.setScope(javax.xml.ws.handler.MessageContext.WSDL_SERVICE,Scope.APPLICATION );
             if(log.isDebugEnabled()) {

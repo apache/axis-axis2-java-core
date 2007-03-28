@@ -133,6 +133,13 @@
     	    <classpath location="${compiled.classes.dir}"/>
     	   	<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbers.wsdl"/>
     	</java>
+    	<ant:echo>Generating java from AddNumbersHandler.wsdl</ant:echo>
+    	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
+    	    <jvmarg line="${maven.junit.jvmargs2}"/>
+    	    <classpath refid="maven.dependency.classpath"/>
+    	    <classpath location="${compiled.classes.dir}"/>
+    	   	<arg line="-d ${schema.generated.src.dir} -quiet -wsdl ${wsdl.source.dir}/AddNumbersHandler.wsdl"/>
+    	</java>
     	<ant:echo>Generating java from async_doclitwr.wsdl</ant:echo>
     	<java classname="com.sun.tools.xjc.Driver" fork="true"> 
     	    <jvmarg line="${maven.junit.jvmargs2}"/>
@@ -565,6 +572,18 @@
 			</ant:fileset>
 		</ant:copy>
 		
+		<ant:copy toDir="target/test-classes/services/AddNumbersHandlerService/">
+			<ant:fileset dir="target/test-classes">
+			   <ant:include name="org/apache/axis2/jaxws/sample/addnumbershandler/**"/>
+			</ant:fileset>
+			<ant:fileset dir="test/org/apache/axis2/jaxws/sample/addnumbershandler">
+			   <ant:include name="META-INF/**"/>
+			</ant:fileset>
+			<ant:fileset dir="target/classes">
+			   <ant:include name="org/apache/axis2/jaxws/server/**"/>
+			</ant:fileset>
+		</ant:copy>
+
 		<ant:copy toDir="target/test-classes/services/GreeterService/">
 			<ant:fileset dir="target/test-classes">
 			   <ant:include name="org/apache/axis2/jaxws/sample/dlwmin/**"/>

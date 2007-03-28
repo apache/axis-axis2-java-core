@@ -20,6 +20,7 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.apache.axis2.jaxws.anytype.tests.AnyTypeTests;
 import org.apache.axis2.jaxws.attachments.MTOMSerializationTests;
 import org.apache.axis2.jaxws.client.ClientConfigTests;
@@ -62,6 +63,8 @@ import org.apache.axis2.jaxws.proxy.ProxyTests;
 import org.apache.axis2.jaxws.proxy.RPCProxyTests;
 import org.apache.axis2.jaxws.proxy.SOAP12ProxyTests;
 import org.apache.axis2.jaxws.rpclit.enumtype.tests.RPCLitEnumTests;
+import org.apache.axis2.jaxws.sample.AddNumbersHandlerTests;
+import org.apache.axis2.jaxws.sample.AddNumbersTests;
 import org.apache.axis2.jaxws.sample.AddressBookTests;
 import org.apache.axis2.jaxws.sample.BareTests;
 import org.apache.axis2.jaxws.sample.DLWMinTests;
@@ -151,7 +154,8 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(WrapTests.class);
         suite.addTestSuite(DLWMinTests.class);
         suite.addTestSuite(NonAnonymousComplexTypeTests.class);
-        //suite.addTestSuite(AddNumbersTests.class);
+        suite.addTestSuite(AddNumbersTests.class);
+        suite.addTestSuite(AddNumbersHandlerTests.class);
         
         // TODO: This test intermittently fails on Linux and with trace enabled.
         //suite.addTestSuite(ParallelAsyncTests.class);
@@ -174,7 +178,7 @@ public class JAXWSTest extends TestCase {
         suite.addTestSuite(SchemaReaderTests.class);
         suite.addTestSuite(RPCLitEnumTests.class);
         suite.addTestSuite(BindingProviderTests.class);
-        
+
         // Start (and stop) the server only once for all the tests
         TestSetup testSetup = new TestSetup(suite) {
             public void setUp() {
