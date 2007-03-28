@@ -117,7 +117,7 @@ public class OptionPanel extends JPanel implements ActionListener {
 }
 
 
-class OptionLayout   implements LayoutManager {
+class OptionLayout  implements LayoutManager {
 
     public OptionLayout (){
 
@@ -143,9 +143,11 @@ class OptionLayout   implements LayoutManager {
     }
 
     public void layoutContainer(Container parent) {
+
         Insets insets = parent.getInsets();
 
         Component c;
+
         c = parent.getComponent(0);
         if (c.isVisible()) {
             c.setBounds(insets.left + 24, insets.top +20,200, 24);
@@ -178,14 +180,15 @@ class OptionLayout   implements LayoutManager {
         if (c.isVisible()) {
             c.setBounds(insets.left + 225, insets.top + 140, 275, 24);
         }
-        /*c = parent.getComponent(8);
-    if (c.isVisible()) {
-        c.setBounds(insets.left + 24, insets.top + 150, 200, 24);
-    }
-    c = parent.getComponent(9);
-    if (c.isVisible()) {
-        c.setBounds(insets.left + 225, insets.top + 150, 275, 24);
-    }    */
+        c = parent.getComponent(8);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 24, insets.top + 180, 200, 24);
+        }
+        c = parent.getComponent(9);
+        if (c.isVisible()) {
+            c.setBounds(insets.left + 225, insets.top + 180, 275, 24);
+        }
+
 
 
     }

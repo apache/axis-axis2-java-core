@@ -47,7 +47,7 @@ import java.util.*;
 
 public class CodegenBean {
 
-    private String WSDLFileName = null;
+    private String WSDLFileName =null ;
     private String output = ".";
     private String packageName = URLProcessor.DEFAULT_PACKAGE;
     private String language = "java";
@@ -63,15 +63,21 @@ public class CodegenBean {
     private String portName;
     private String databindingName;
 
-    public void setNamespace2packageList(String namespace2packageList) {
-        this.namespace2packageList = namespace2packageList;
-    }
-
     private String namespace2packageList;
+
+    private Definition wsdlDefinition = null;
 
     private boolean defaultClient = true;
 
     Project project;
+
+    private boolean isServerSideInterface = true;
+
+    public void setNamespace2packageList(String namespace2packageList) {
+        this.namespace2packageList = namespace2packageList;
+    }
+
+
 
     public boolean isServerSideInterface() {
         return isServerSideInterface;
@@ -81,7 +87,7 @@ public class CodegenBean {
         isServerSideInterface = serverSideInterface;
     }
 
-    private boolean isServerSideInterface = true;
+
 
 
     public boolean isDefaultClient() {
@@ -216,16 +222,16 @@ public class CodegenBean {
                     CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION, getStringArray(serviceName)));
         }
         //server side interface  mapping
-       if (isServerSideInterface){
-	       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, new CommandLineOption(
-	    		   CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, new String[0]));
-       }
+        if (isServerSideInterface){
+            optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, new CommandLineOption(
+                    CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_INTERFACE_OPTION, new String[0]));
+        }
 
         //ns2pkg mapping
-       if (namespace2packageList!= null){
-	       optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION, new CommandLineOption(
-	    		   CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION, getStringArray(namespace2packageList)));
-       }
+        if (namespace2packageList!= null){
+            optionMap.put(CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION, new CommandLineOption(
+                    CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION, getStringArray(namespace2packageList)));
+        }
         return optionMap;
 
     }
@@ -278,6 +284,7 @@ public class CodegenBean {
                 new WSDL11ToAxisServiceBuilder(url.openConnection().getInputStream());
 
         builder.setBaseUri(getBaseUri(wsdlURI));
+        builder.setCodegen(true);
         return builder.populateService();
     }
 
@@ -367,6 +374,7 @@ public class CodegenBean {
             }
             CodeGenConfiguration codegenConfig = new CodeGenConfiguration(fillOptionMap());
             codegenConfig.addAxisService(getAxisService(WSDLFileName));
+            codegenConfig.setWsdlDefinition(wsdlDefinition);
             //set the baseURI
             codegenConfig.setBaseURI(getBaseUri(WSDLFileName));
             new CodeGenerationEngine(codegenConfig).generate();
@@ -374,6 +382,7 @@ public class CodegenBean {
             try {
                 CodeGenConfiguration codegenConfig = new CodeGenConfiguration(fillOptionMap());
                 codegenConfig.addAxisService(getAxisService(WSDLFileName));
+                codegenConfig.setWsdlDefinition(wsdlDefinition);
                 //set the baseURI
                 codegenConfig.setBaseURI(getBaseUri(WSDLFileName));
                 new CodeGenerationEngine(codegenConfig).generate();
@@ -388,14 +397,13 @@ public class CodegenBean {
         }
     }
 
-    private Definition wsdlDefinition = null;
+
 
     public void readWSDL() throws WSDLException {
 
+        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+        wsdlDefinition = reader.readWSDL(WSDLFileName) ;
 
-            WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-            wsdlDefinition = reader.readWSDL(WSDLFileName);
-        
     }
 
     //get the default package derived by the targetNamespace
@@ -455,14 +463,13 @@ public class CodegenBean {
 
     public void setProject(Project project) {
         this.project = project;
-        System.out.println();
     }
 
 
     public File getTemp() {
 
         String time = Calendar.getInstance().getTime().toString().replace(':', '-');
-        File temp = new File(getActiveProject().getProjectFile().getParent().getPath() + File.separator + "temp-" + time);
+        File temp = new File( getActiveProject().getProjectFilePath() + File.separator + "temp-" + time);
         return temp;
     }
 
@@ -490,24 +497,16 @@ public class CodegenBean {
         return null;
     }
 
-    /**
+    /*
 	 * Returns the namespace map from definition
 	 * @return
 	 */
-	public Collection getDefinitionNamespaceMap(){
+    public Collection getDefinitionNamespaceMap(){
 
         Map namespaces = wsdlDefinition.getNamespaces();
-        ArrayList list = new ArrayList();
-        String target = wsdlDefinition.getTargetNamespace();
-        Iterator iterator = namespaces.values().iterator();
-        while (iterator.hasNext())
-        {
-            String namespace = (String)iterator.next();
-            if (!(namespace.equalsIgnoreCase(target)))
-                list.add(namespace);
-        }
-        return list;
-	}
+        return namespaces.values() ;
+
+    }
 
 
 }

@@ -62,14 +62,13 @@ public class BottomPanel extends JPanel implements ActionListener {
             if (java2WSDLFrame.plMiddle .isVisible() ) {
 
                 if(java2WSDLFrame.plMiddle.testLoading()){
-                    java2WSDLFrame.increasePanelID();
+
                     java2WSDLFrame.setPanel();
                 }else
                     setEnable(false,false,false,true);
 
             }else if(java2WSDLFrame.opPanel.isVisible()){
 
-                java2WSDLFrame.increasePanelID();
                 java2WSDLFrame.setPanel();
 
             }

@@ -85,7 +85,7 @@ public class SecondFrame extends JPanel implements ActionListener {
         setFont(new Font("Helvetica", Font.PLAIN, 12));
         setLayout(customLayout);
 
-       
+
 
         lblLangauge = new JLabel("Select the output language");
         add(lblLangauge);
@@ -215,19 +215,20 @@ public class SecondFrame extends JPanel implements ActionListener {
     }
 
     /**
-	 * Loads the namespaces
-	 * @param namespaceMap
-	 */
-	private void loadNamespaces(Collection namespaceMap){
-		Iterator namespaces = namespaceMap.iterator();
+     * Loads the namespaces
+     * @param namespaceMap
+     */
+    private void loadNamespaces(Collection namespaceMap){
+
+        Iterator namespaces = namespaceMap.iterator();
         Object tableData [][] = new Object[namespaceMap.size()][2];
         int i = 0;
         while(namespaces.hasNext()){
 
-           String namespace = (String)namespaces.next();
-           tableData[i][0] = namespace;
-           tableData[i][1] = getPackageFromNamespace(namespace);
-           i++;
+            String namespace = (String)namespaces.next();
+            tableData[i][0] = namespace;
+            tableData[i][1] = getPackageFromNamespace(namespace);
+            i++;
         }
 
         model.setTableData(tableData);
@@ -236,11 +237,11 @@ public class SecondFrame extends JPanel implements ActionListener {
     }
 
     /**
-	 * get the package derived by  Namespace
-	 */
-	public String getPackageFromNamespace(String namespace){
-		return  URLProcessor.makePackageName(namespace);
-	}
+     * get the package derived by  Namespace
+     */
+    public String getPackageFromNamespace(String namespace){
+        return  URLProcessor.makePackageName(namespace);
+    }
 
     public void fillBean() {
         int index = cmbLan.getSelectedIndex();
@@ -273,12 +274,12 @@ public class SecondFrame extends JPanel implements ActionListener {
 
         if (clientSide.isSelected()){
 
-        if (rdasync.isSelected()) {
-            codegenBean.setAsyncOnly(true);
-        }
-        else if (rdsyn.isSelected()) {
-            codegenBean.setSyncOnly(true);
-        }
+            if (rdasync.isSelected()) {
+                codegenBean.setAsyncOnly(true);
+            }
+            else if (rdsyn.isSelected()) {
+                codegenBean.setSyncOnly(true);
+            }
         }
         else if (serverSide.isSelected()) {
 
@@ -289,21 +290,21 @@ public class SecondFrame extends JPanel implements ActionListener {
             if (serverSideInterface.isSelected())
                 codegenBean.setServerSideInterface(true);
             else
-               codegenBean.setServerSideInterface(false);
+                codegenBean.setServerSideInterface(false);
         }
         else {
-        codegenBean.setGenerateAll(true);
+            codegenBean.setGenerateAll(true);
 
 
-}
+        }
         if (chkTestCase.isSelected()) {
             codegenBean.setTestCase(true);
         }
         else
-        codegenBean.setTestCase(false);
+            codegenBean.setTestCase(false);
         codegenBean.setPackageName(txtPacakgeName.getText());
         codegenBean.setServiceName(cmbServiceName.getSelectedItem().toString());
-        codegenBean.setServiceName(cmbPortName.getSelectedItem().toString());
+        codegenBean.setPortName(cmbPortName.getSelectedItem().toString());
         codegenBean.setNamespace2packageList(getNs2PkgMapping());
     }
 
@@ -311,19 +312,19 @@ public class SecondFrame extends JPanel implements ActionListener {
 	 * get the package to namespace mappings
 	 * @return
 	 */
-	public String getNs2PkgMapping(){
-		String returnList="";
-		String packageValue;
-		for (int i=0;i<table.getRowCount();i++){
-			packageValue = (String)table.getValueAt(i,1);
-				returnList = returnList +
-				             ("".equals(returnList)?"":",") +
-				             (String)table.getValueAt(i,0)+ "=" + packageValue;
+    public String getNs2PkgMapping(){
+        String returnList="";
+        String packageValue;
+        for (int i=0;i<table.getRowCount();i++){
+            packageValue = (String)table.getValueAt(i,1);
+            returnList = returnList +
+                    ("".equals(returnList)?"":",") +
+                    (String)table.getValueAt(i,0)+ "=" + packageValue;
 
 
-		}
-		return "".equals(returnList)?null:returnList;
-	}
+        }
+        return "".equals(returnList)?null:returnList;
+    }
 
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
@@ -331,12 +332,12 @@ public class SecondFrame extends JPanel implements ActionListener {
             int selindex = cmbServiceName.getSelectedIndex();
             if (selindex>=0)
             {
-            java.util.List ports = codegenBean.getPortNameList((QName) serviceNameList.get(selindex));
-            cmbPortName.removeAllItems();
-            for (int i = 0; i < ports.size(); i++) {
-                String portName = (String) ports.get(i);
-                cmbPortName.addItem(portName);
-            }
+                java.util.List ports = codegenBean.getPortNameList((QName) serviceNameList.get(selindex));
+                cmbPortName.removeAllItems();
+                for (int i = 0; i < ports.size(); i++) {
+                    String portName = (String) ports.get(i);
+                    cmbPortName.addItem(portName);
+                }
             }
         }
         else if (obj == serverSide){
@@ -350,7 +351,7 @@ public class SecondFrame extends JPanel implements ActionListener {
             }
             else
             {
-               rdasync.setEnabled(false);
+                rdasync.setEnabled(false);
                 rdBoth.setEnabled(false);
                 rdsyn.setEnabled(false);
                 chkTestCase.setEnabled(false);
@@ -377,7 +378,7 @@ public class SecondFrame extends JPanel implements ActionListener {
                 serverSideInterface.setEnabled(false);
             }
         }
-         else if (obj == all){
+        else if (obj == all){
             if(all.isSelected()){
                 rdasync.setEnabled(false);
                 rdBoth.setEnabled(false);

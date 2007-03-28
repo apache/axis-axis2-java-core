@@ -17,7 +17,7 @@ public class Java2WSDLFrame extends JFrame {
     OutputPanel outPanel;
 
 
-    private int panleID = 0;
+    private int panleID = 1;
     private ClassLoader classLoader;
     Project project;
 
@@ -82,9 +82,6 @@ public class Java2WSDLFrame extends JFrame {
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
-    public void increasePanelID() {
-        panleID++;
-    }
 
     public void generatecode() throws Exception {
 
@@ -99,7 +96,7 @@ public class Java2WSDLFrame extends JFrame {
         switch (panleID) {
             case 1:{
                 this.imgPanel .setCaptions(" Java source/classpath selection" ,
-                        "  Welcome to the Axis2 Java source code generation wizard.");
+                        "  Select the classes and the libraries.");
 
                 this.plMiddle .setVisible(true);
 
@@ -112,23 +109,21 @@ public class Java2WSDLFrame extends JFrame {
                 break;
             }
             case 2: {
-                this.imgPanel .setCaptions("  Options"
-                        , " Select from custom or default");
-
+                this.imgPanel .setCaptions(" Java to WSDL Options " ,
+                        "  Set the Options for the generator.");
                 this.plMiddle .setVisible(false);
 
                 this.opPanel.setVisible(true);
 
                 this.outPanel .setVisible(false);
 
-                plBottom.setEnable(true,true, false, true);
+                plBottom.setEnable(true,true, true, true);
 
                 break;
             }
             case 3: {
-                this.imgPanel .setCaptions("  Options"
-                        , " Select from custom or default");
-
+                this.imgPanel .setCaptions(" WSDL file Output location " ,
+                        "  Select the location for the generated WSDL.");
                 this.plMiddle .setVisible(false);
 
                 this.opPanel.setVisible(false);
@@ -148,33 +143,48 @@ public class Java2WSDLFrame extends JFrame {
             case 1: {
 
                 this.imgPanel .setCaptions(" Java source/classpath selection" ,
-                        "  Welcome to the Axis2 Java source code generation wizard.");
+                        "  Select the classes and the libraries.");
+
                 this.opPanel.setVisible(false);
+
                 this.plMiddle.setVisible(true);
+
                 this.outPanel.setVisible(false);
+
                 BottomPanel.setEnable(false,true, false, true);
+
                 break;
             }
 
             case 2: {
 
-                this.imgPanel .setCaptions("  Options"
-                        , " Select from custom or default");
+                this.imgPanel .setCaptions(" Java to WSDL Options " ,
+                        "  Set the Options for the generator.");
+
                 this.plMiddle .setVisible(false);
+
                 this.outPanel.setVisible(false);
+
                 this.opPanel.setVisible(true);
-                BottomPanel.setEnable(true,true, false, true);
+
+                BottomPanel.setEnable(true,true, true, true);
+
                 break;
             }
 
             case 3: {
 
-                this.imgPanel .setCaptions("  Options"
-                        , " Select from custom or default");
+                this.imgPanel .setCaptions(" WSDL file Output location " ,
+                        "  Select the location for the generated WSDL.");
+
                 this.plMiddle .setVisible(false);
+
                 this.outPanel.setVisible(true);
+
                 this.opPanel.setVisible(false);
+
                 BottomPanel.setEnable(true,false, true, true);
+
                 break;
 
             }
@@ -230,7 +240,7 @@ class windowLayout implements LayoutManager{
         }
         c = parent.getComponent(1);
         if (c.isVisible()) {
-            c.setBounds(insets.left, insets.top + 525, 500, 50);             
+            c.setBounds(insets.left, insets.top + 525, 500, 50);
         }
 
     }

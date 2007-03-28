@@ -143,7 +143,7 @@ public class Java2CodeFrame extends JFrame {
         } catch (Exception e1) {
             throw e1;
         }
-        
+
     }
 
     public void copyDirectory(File srcDir, File destDir) throws IOException {
@@ -193,7 +193,7 @@ public class Java2CodeFrame extends JFrame {
             compiler.compileSource(temp.getAbsolutePath());
             String wsdl = codegenBean.getWSDLFileName();
             final String name = wsdl.substring(wsdl.lastIndexOf(File.separatorChar) + 1, wsdl.lastIndexOf(".")) + "-stub";
-            final File lib = new File(codegenBean.getActiveProject().getProjectFile().getParent().getPath() + File.separator + "lib");
+            final File lib = new File(codegenBean.getActiveProject().getProjectFilePath() + File.separator + "lib");
             if (!lib.isDirectory()) {
                 lib.mkdir();
             }
@@ -224,7 +224,7 @@ public class Java2CodeFrame extends JFrame {
                         }
                     });
         } catch (Exception e1) {
-           throw e1;
+            throw e1;
         }
         finally {
 
@@ -242,7 +242,7 @@ public class Java2CodeFrame extends JFrame {
                 } catch (WSDLException e) {
                     JOptionPane.showMessageDialog(this, "An error occured while parsing the " +
                             "specified WSDL. Please make sure that the selected file is a valid WSDL.",
-                    "Error!", JOptionPane.ERROR_MESSAGE);
+                            "Error!", JOptionPane.ERROR_MESSAGE);
                     panleID--;
                     break;
                 }
@@ -251,7 +251,7 @@ public class Java2CodeFrame extends JFrame {
                 this.secondPanel.setVisible(false);
                 this.plMiddle.setVisible(false);
                 if (this.optionPane.codegenBean == null)
-                this.optionPane.setCodeGenBean(codegenBean);
+                    this.optionPane.setCodeGenBean(codegenBean);
                 this.optionPane.setVisible(true);
                 this.outputpane.setVisible(false);
                 BottomPanel.setEnable(true,true, false, true);
@@ -263,7 +263,7 @@ public class Java2CodeFrame extends JFrame {
 
                 this.secondPanel.setVisible(true);
                 if(this.secondPanel.codegenBean == null)
-                this.secondPanel.setCodeGenBean(codegenBean);
+                    this.secondPanel.setCodeGenBean(codegenBean);
                 this.secondPanel.setStatus();
                 this.plMiddle.setVisible(false);
                 this.optionPane.setVisible(false);
@@ -276,7 +276,7 @@ public class Java2CodeFrame extends JFrame {
                 if (this.optionPane.radCustom.isSelected() && (result = validatePackageNames()) != null)
                 {
                     JOptionPane.showMessageDialog(this, "The package name " + result + " is not a valid package name",
-                                "Error!!!", JOptionPane.INFORMATION_MESSAGE);
+                            "Error!!!", JOptionPane.INFORMATION_MESSAGE);
                     panleID--;
                     break;
                 }
@@ -297,29 +297,29 @@ public class Java2CodeFrame extends JFrame {
 
     public String validatePackageNames(){
         if (!validatePackageName(this.secondPanel.txtPacakgeName.getText()))
-        return this.secondPanel.txtPacakgeName.getText();
+            return this.secondPanel.txtPacakgeName.getText();
 
         for(int count=0;count<this.secondPanel.table.getRowCount();count++){
             if(!validatePackageName((String)this.secondPanel.table.getValueAt(count,1)))
-            return (String)this.secondPanel.table.getValueAt(count,1);
+                return (String)this.secondPanel.table.getValueAt(count,1);
         }
         return null;
     }
 
-     public boolean validatePackageName(String name){
+    public boolean validatePackageName(String name){
 
-       if(name.matches("[a-z]([a-z0-9_]+\\.?)+[a-z0-9_]"))
-       return true;
+        if(name.matches("[a-z]([a-z0-9_]+\\.?)+[a-z0-9_]"))
+            return true;
 
-       return false;
-   }
+        return false;
+    }
 
     public void backButtonImpl(){
         panleID--;
         switch (panleID) {
             case 0: {
                 panel_3.setCaptions("  WSDL selection page"
-                , "  Welcome to the Axis2 code generation wizard. Select the WSDL file");
+                        , "  Welcome to the Axis2 code generation wizard. Select the WSDL file");
                 this.secondPanel.setVisible(false);
                 this.plMiddle.setVisible(true);
 

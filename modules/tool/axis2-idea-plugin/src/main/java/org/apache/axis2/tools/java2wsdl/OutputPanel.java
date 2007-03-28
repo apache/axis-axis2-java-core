@@ -29,7 +29,7 @@ public class OutputPanel extends JPanel implements ActionListener {
 
         this.wsdlgenBean=wsdlgenBean;
 
-        OptionLayout customLayout=new OptionLayout();
+        OutputLayout customLayout=new OutputLayout();
         setLayout(customLayout);
 
         setFont(new Font("Helvetica", Font.PLAIN, 12));
@@ -77,8 +77,6 @@ public class OutputPanel extends JPanel implements ActionListener {
 
     }
 
-
-
     public void actionPerformed(ActionEvent e){
 
     }
@@ -111,37 +109,38 @@ class OutputLayout implements LayoutManager{
         Insets insets = parent.getInsets();
 
         Component c;
+
         c = parent.getComponent(0);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 30, 400, 24);
+            c.setBounds(insets.left + 24, insets.top + 10, 400, 24);
         }
         c = parent.getComponent(1);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 80, 400, 24);
+            c.setBounds(insets.left + 24, insets.top + 40, 400, 24);
         }
         c = parent.getComponent(2);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 110, 400, 24);
+            c.setBounds(insets.left + 24, insets.top + 70, 400, 24);
         }
         c = parent.getComponent(3);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 140, 100, 24);
+            c.setBounds(insets.left + 24, insets.top + 110, 100, 24);
         }
         c = parent.getComponent(4);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 200, insets.top + 140, 200, 24);
+            c.setBounds(insets.left + 130, insets.top + 110, 290, 24);
         }
         c = parent.getComponent(5);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 350, insets.top + 140, 80, 24);
+            c.setBounds(insets.left + 420, insets.top + 110, 80, 24);
         }
         c = parent.getComponent(6);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 24, insets.top + 170, 100, 24);
+            c.setBounds(insets.left + 24, insets.top + 150, 100, 24);
         }
-        c = parent.getComponent(6);
+        c = parent.getComponent(7);
         if (c.isVisible()) {
-            c.setBounds(insets.left + 200, insets.top + 170, 200, 24);
+            c.setBounds(insets.left + 130, insets.top + 150, 290, 24);
         }
     }
 }

@@ -35,11 +35,11 @@ public class MiddlePanel extends JPanel implements ActionListener, MouseListener
     DefaultListModel listModel;
 
     private String hint ="Hint : Please give the fully qualified class name, example :com.foo.BarService\n" +
-                        "        Then add the folder or the jar file which contains that class file.\n" +
-                        "        Finally check whether the class file can be loaded from the plugin.\n\n" +
-                        "        If the class that you are going to load contains any dependencies\n" +
-                        "        on other axis2 libraries ( for example like axiom*.jar), please add those\n" +
-                        "        libraries as well and try to load the class.";
+            "        Then add the folder or the jar file which contains that class file.\n" +
+            "        Finally check whether the class file can be loaded from the plugin.\n\n" +
+            "        If the class that you are going to load contains any dependencies\n" +
+            "        on other axis2 libraries ( for example like axiom*.jar), please add those\n" +
+            "        libraries as well and try to load the class.";
 
     final JFileChooser FileChooser =new JFileChooser();
     final JFileChooser DirChooser=new JFileChooser();
@@ -162,7 +162,6 @@ public class MiddlePanel extends JPanel implements ActionListener, MouseListener
     }
     private void setDefaultPathAndName(File file)  {
         String defualtOutPutPath=file.getParent();
-        System.out.println(defualtOutPutPath );
         wsdlgenBean.setOutputLocation(defualtOutPutPath );
         wsdlgenBean.setOutputWSDLName("services.wsdl");
 
