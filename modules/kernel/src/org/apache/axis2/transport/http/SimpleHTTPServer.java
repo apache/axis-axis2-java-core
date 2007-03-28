@@ -135,7 +135,7 @@ public class SimpleHTTPServer implements TransportListener {
         args = optionsParser.getRemainingArgs();
         // first check if we should print usage
         if ((optionsParser.isFlagSet('?') > 0) || (optionsParser.isFlagSet('h') > 0) ||
-                args == null || args.length == 0 || args.length > 3) {
+            args == null || args.length == 0 || args.length > 3) {
             printUsage();
         }
         String paramPort = optionsParser.isValueSet('p');
@@ -156,7 +156,7 @@ public class SimpleHTTPServer implements TransportListener {
 
         System.out.println("[SimpleHTTPServer] Starting");
         System.out.println("[SimpleHTTPServer] Using the Axis2 Repository "
-                + new File(repository).getAbsolutePath());
+                           + new File(repository).getAbsolutePath());
         System.out.println("[SimpleHTTPServer] Listening on port " + port);
         try {
             ConfigurationContext configctx = ConfigurationContextFactory
@@ -251,7 +251,7 @@ public class SimpleHTTPServer implements TransportListener {
         if (hostAddress != null) {
             if (embedded != null) {
                 return new EndpointReference[]{new EndpointReference(hostAddress + "/" +
-                        configurationContext.getServiceContextPath() + "/" + serviceName)};
+                                                                     configurationContext.getServiceContextPath() + "/" + serviceName)};
             } else {
                 throw new AxisFault("Unable to generate EPR for the transport : http");
             }
@@ -272,8 +272,8 @@ public class SimpleHTTPServer implements TransportListener {
         }
         if (embedded != null) {
             return new EndpointReference[]{new EndpointReference("http://" + localAddress + ":" +
-                    (embedded.getPort())
-                    + "/" + configurationContext.getServiceContextPath() + "/" + serviceName)};
+                                                                 (embedded.getPort())
+                                                                 + "/" + configurationContext.getServiceContextPath() + "/" + serviceName)};
         } else {
             throw new AxisFault("Unable to generate EPR for the transport : http");
         }
@@ -342,5 +342,9 @@ public class SimpleHTTPServer implements TransportListener {
     public SessionContext getSessionContext(MessageContext messageContext) {
         String sessionKey = (String) messageContext.getProperty(HTTPConstants.COOKIE_STRING);
         return this.sessionManager.getSessionContext(sessionKey);
+    }
+
+    public void destroy() {
+        this.configurationContext = null;
     }
 }

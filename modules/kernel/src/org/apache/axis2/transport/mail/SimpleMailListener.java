@@ -27,11 +27,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.builder.BuilderUtil;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.*;
 import org.apache.axis2.context.MessageContext;
-import org.apache.axis2.context.SessionContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.description.TransportOutDescription;
@@ -43,12 +40,7 @@ import org.apache.axis2.util.threadpool.DefaultThreadFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.URLName;
+import javax.mail.*;
 import javax.mail.internet.MimeMessage;
 import javax.xml.stream.XMLStreamException;
 import java.io.File;
@@ -434,5 +426,9 @@ public class SimpleMailListener implements Runnable, TransportListener {
 
     public SessionContext getSessionContext(MessageContext messageContext) {
         return null;
+    }
+
+    public void destroy() {
+        this.configurationContext = null;
     }
 }

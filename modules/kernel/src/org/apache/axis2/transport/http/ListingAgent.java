@@ -38,7 +38,6 @@ import org.apache.ws.commons.schema.XmlSchema;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.namespace.QName;
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -47,11 +46,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ListingAgent extends AbstractAgent {
 
@@ -105,7 +100,7 @@ public class ListingAgent extends AbstractAgent {
         String query = httpServletRequest.getQueryString();
         if (query != null) {
             if (query.indexOf("?wsdl2") > 0 || query.indexOf("?wsdl") > 0 ||
-                    query.indexOf("?xsd") > 0) {
+                query.indexOf("?xsd") > 0) {
                 processListService(httpServletRequest, httpServletResponse);
             } else {
                 super.handle(httpServletRequest, httpServletResponse);
@@ -155,12 +150,12 @@ public class ListingAgent extends AbstractAgent {
     }
 
     public void processExplicitSchemaAndWSDL(HttpServletRequest req,
-                                       HttpServletResponse res)
+                                             HttpServletResponse res)
             throws IOException, ServletException {
         HashMap services = configContext.getAxisConfiguration().getServices();
         String filePart = req.getRequestURL().toString();
         String schema = filePart.substring(filePart.lastIndexOf("/") + 1,
-                filePart.length());
+                                           filePart.length());
         if ((services != null) && !services.isEmpty()) {
             Iterator i = services.values().iterator();
             while (i.hasNext()) {
@@ -181,7 +176,7 @@ public class ListingAgent extends AbstractAgent {
     /**
      * Copies the input stream to the output stream
      *
-     * @param stream the <code>InputStream</code>
+     * @param stream  the <code>InputStream</code>
      * @param ostream the <code>OutputStream</code>
      */
     public static void copy(InputStream stream, OutputStream ostream) throws IOException {
@@ -317,7 +312,7 @@ public class ListingAgent extends AbstractAgent {
 
                             res.setContentType("text/html");
                             String outStr = "<b>No policy found for id="
-                                    + idParam + "</b>";
+                                            + idParam + "</b>";
                             out.write(outStr.getBytes());
                         }
 
@@ -351,7 +346,7 @@ public class ListingAgent extends AbstractAgent {
 
                             res.setContentType("text/html");
                             String outStr = "<b>No effective policy for "
-                                    + serviceName + " servcie</b>";
+                                            + serviceName + " servcie</b>";
                             out.write(outStr.getBytes());
                         }
                     }
@@ -448,8 +443,8 @@ public class ListingAgent extends AbstractAgent {
         public EndpointReference[] getEPRsForService(String serviceName, String ip)
                 throws AxisFault {
             return new EndpointReference[]{new EndpointReference(schema + "://" + ip + ":" + port +
-                    "/" + axisConf.getServiceContextPath() + "/" +
-                    serviceName)};  //To change body of implemented methods use File | Settings | File Templates.
+                                                                 "/" + axisConf.getServiceContextPath() + "/" +
+                                                                 serviceName)};  //To change body of implemented methods use File | Settings | File Templates.
         }
 
         public EndpointReference getEPRForService(String serviceName, String ip) throws AxisFault {
@@ -474,6 +469,8 @@ public class ListingAgent extends AbstractAgent {
             return sessionContext;
         }
 
+        public void destroy() {
+        }
 
     }
 

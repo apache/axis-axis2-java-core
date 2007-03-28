@@ -19,7 +19,6 @@ package org.apache.axis2.deployment;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.deployment.repository.util.ArchiveReader;
 import org.apache.axis2.deployment.repository.util.DeploymentFileData;
@@ -28,30 +27,19 @@ import org.apache.axis2.deployment.scheduler.DeploymentIterator;
 import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.Utils;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Flow;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
+import org.apache.axis2.description.*;
 import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
+import org.apache.axis2.util.JavaUtils;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -71,10 +59,14 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         DeploymentEngine.webLocationString = webLocationString;
     }
 
-    /** Support for hot update is controlled by this flag */
+    /**
+     * Support for hot update is controlled by this flag
+     */
     protected boolean hotUpdate = true;
 
-    /** Support for hot deployment is controlled by this flag */
+    /**
+     * Support for hot deployment is controlled by this flag
+     */
     protected boolean hotDeployment = true;
 
     /**
@@ -132,7 +124,11 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         prepareRepository(repoDir);
         // setting the CLs
         setClassLoaders(repoDir);
-        repoListener = new RepositoryListener(this, false);
+        if (repoListener == null) {
+            repoListener = new RepositoryListener(this, false);
+        } else {
+            repoListener.init2(false);
+        }
         org.apache.axis2.util.Utils
                 .calculateDefaultModuleVersion(axisConfig.getModules(), axisConfig);
         try {
@@ -208,7 +204,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                     DeploymentClassLoader deploymentClassLoader =
                             new DeploymentClassLoader(
                                     new URL[]{moduleurl},
-                                    axisConfig.getModuleClassLoader(),false);
+                                    axisConfig.getModuleClassLoader(), false);
                     AxisModule module = new AxisModule();
                     module.setModuleClassLoader(deploymentClassLoader);
                     module.setParent(axisConfig);
@@ -254,7 +250,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         try {
             serviceGroup.setServiceGroupName(serviceName);
             DeploymentClassLoader serviceClassLoader = new DeploymentClassLoader(
-                    new URL[]{servicesURL}, axisConfig.getServiceClassLoader(),false);
+                    new URL[]{servicesURL}, axisConfig.getServiceClassLoader(), false);
             String metainf = "meta-inf";
             serviceGroup.setServiceGroupClassLoader(serviceClassLoader);
             //processing wsdl.list
@@ -467,7 +463,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             ArrayList list = axisService.getModules();
 
             for (int i = 0; i < list.size(); i++) {
-                AxisModule module = axisConfig.getModule((String)list.get(i));
+                AxisModule module = axisConfig.getModule((String) list.get(i));
 
                 if (module == null) {
                     throw new DeploymentException(
@@ -588,7 +584,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
 
                 }
             }
-        }finally {
+        } finally {
             wsToDeploy.clear();
         }
     }

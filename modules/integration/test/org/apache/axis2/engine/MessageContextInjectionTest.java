@@ -112,6 +112,9 @@ public class MessageContextInjectionTest extends TestCase implements TestConstan
             public SessionContext getSessionContext(MessageContext messageContext) {
                 return null;
             }
+
+            public void destroy() {
+            }
         });
         config.addTransportIn(tIn);
 

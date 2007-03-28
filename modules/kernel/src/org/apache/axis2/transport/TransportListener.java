@@ -58,4 +58,6 @@ public interface TransportListener {
      * @return SessionContext
      */
     SessionContext getSessionContext(MessageContext messageContext);
+    
+    void destroy();
 }

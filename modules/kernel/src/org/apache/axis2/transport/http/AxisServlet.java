@@ -373,7 +373,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         if (response != null) {
 
             //TODO : Check for SOAP 1.2!
-            
             SOAPFaultCode code = faultContext.getEnvelope().getBody().getFault().getCode();
             OMElement valueElement = null;
             if (code != null) {
@@ -416,8 +415,8 @@ public class AxisServlet extends HttpServlet implements TransportListener {
             listenerManager.addListener(transportInDescription, true);
             listenerManager.start();
             ListenerManager.defaultConfigurationContext = configContext;
-            agent = new ListingAgent(configContext);
-
+	        agent = new ListingAgent(configContext);
+            
             initParams();
 
         } catch (Exception e) {
@@ -499,6 +498,9 @@ public class AxisServlet extends HttpServlet implements TransportListener {
      * @param req
      */
     public void initContextRoot(HttpServletRequest req) {
+        if(contextRoot != null && contextRoot.trim().length() != 0){
+            return;
+        }
         boolean findContext = true;
         String findContextParameter = servletConfig.getInitParameter("axis2.find.context");
         if (findContextParameter != null) {
@@ -510,7 +512,7 @@ public class AxisServlet extends HttpServlet implements TransportListener {
                 contextRoot = configContext.getContextRoot();
             }
         }
-        if (contextRoot == null || "".equals(contextRoot)) {
+        if (contextRoot == null || contextRoot.trim().length() == 0) {
             String[] parts = JavaUtils.split(req.getContextPath(), '/');
             if (parts != null) {
                 for (int i = 0; i < parts.length; i++) {

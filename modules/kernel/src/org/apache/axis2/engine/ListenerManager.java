@@ -115,14 +115,15 @@ public class ListenerManager {
      * To start all the transports
      */
     public synchronized void start() {
-        Iterator transportNames = configctx.getAxisConfiguration().
-                getTransportsIn().values().iterator();
-        while (transportNames.hasNext()) {
+
+        for (Iterator transportNames =
+                configctx.getAxisConfiguration().getTransportsIn().values().iterator();
+             transportNames.hasNext();) {
             try {
                 TransportInDescription transportIn = (TransportInDescription) transportNames.next();
                 TransportListener listener = transportIn.getReceiver();
                 if (listener != null &&
-                        startedTransports.get(transportIn.getName()) == null) {
+                    startedTransports.get(transportIn.getName()) == null) {
                     listener.init(configctx, transportIn);
                     listener.start();
                     if (startedTransports.get(transportIn.getName()) == null) {
@@ -149,9 +150,10 @@ public class ListenerManager {
         if (stopped) {
             return;
         }
-        Iterator itr_st = startedTransports.values().iterator();
-        while (itr_st.hasNext()) {
-            TransportListener transportListener = (TransportListener) itr_st.next();
+
+        for (Iterator iter = startedTransports.values().iterator();
+             iter.hasNext();) {
+            TransportListener transportListener = (TransportListener) iter.next();
             transportListener.stop();
         }
 
@@ -181,8 +183,8 @@ public class ListenerManager {
         }
         configctx.cleanupContexts();
         /*Shut down the services*/
-        Iterator services = configctx.getAxisConfiguration().getServices().values().iterator();
-        while (services.hasNext()) {
+        for (Iterator services = configctx.getAxisConfiguration().getServices().values().iterator();
+             services.hasNext();) {
             AxisService axisService = (AxisService) services.next();
             ServiceLifeCycle serviceLifeCycle = axisService.getServiceLifeCycle();
             if (serviceLifeCycle != null) {
@@ -197,8 +199,8 @@ public class ListenerManager {
      * @param started : whether transport Listener running or not
      * @throws AxisFault : will throw AxisFault if something goes wrong
      */
-    public synchronized void addListener(TransportInDescription trsIn, boolean started)
-            throws AxisFault {
+    public synchronized void addListener(TransportInDescription trsIn,
+                                         boolean started) throws AxisFault {
         configctx.getAxisConfiguration().addTransportIn(trsIn);
         TransportListener transportListener = trsIn.getReceiver();
         if (transportListener != null) {
@@ -217,6 +219,19 @@ public class ListenerManager {
 
     public boolean isStopped() {
         return stopped;
+    }
+
+    public void destroy() throws AxisFault {
+        stop();
+        this.configctx.setTransportManager(null);
+        for (Iterator iter = startedTransports.values().iterator();
+             iter.hasNext();) {
+            TransportListener transportListener = (TransportListener) iter.next();
+            transportListener.destroy();
+        }
+        this.startedTransports.clear();
+        this.configctx = null;
+        defaultConfigurationContext = null;
     }
 
     static class ListenerManagerShutdownThread extends Thread {

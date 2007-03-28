@@ -55,6 +55,10 @@ public class RepositoryListener implements DeploymentConstants {
     public RepositoryListener(DeploymentEngine deploymentEngine, boolean isClasspath) {
         this.deploymentEngine = deploymentEngine;
         wsInfoList = new WSInfoList(deploymentEngine);
+        init2(isClasspath);
+    }
+
+    public void init2(boolean isClasspath) {
         if (!isClasspath) {
             init();
         }

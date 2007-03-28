@@ -33,7 +33,6 @@ import org.apache.axis2.transport.http.server.HttpUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -212,7 +211,7 @@ public class TCPServer implements Runnable, TransportListener {
             // todo this has to fix
             return new EndpointReference[]{
                     new EndpointReference("tcp://" + ip + ":" + (serversocket.getLocalPort())
-                            + "/" + contextPath + "/" + serviceName)};
+                                          + "/" + contextPath + "/" + serviceName)};
         } else {
             log.debug("Unable to generate EPR for the transport tcp");
             return null;
@@ -221,5 +220,9 @@ public class TCPServer implements Runnable, TransportListener {
 
     public SessionContext getSessionContext(MessageContext messageContext) {
         return null;
+    }
+
+    public void destroy() {
+        this.configContext = null;
     }
 }

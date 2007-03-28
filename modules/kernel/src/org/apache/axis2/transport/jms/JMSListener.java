@@ -25,12 +25,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.SessionContext;
-import org.apache.axis2.description.AxisModule;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterIncludeImpl;
-import org.apache.axis2.description.TransportInDescription;
+import org.apache.axis2.description.*;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.AxisEvent;
 import org.apache.axis2.engine.AxisObserver;
@@ -41,11 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.jms.JMSException;
 import javax.naming.Context;
 import javax.naming.NamingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * The JMS Transport listener implementation. A JMS Listner will hold one or
@@ -97,7 +88,7 @@ public class JMSListener implements TransportListener {
     /**
      * The Axis2 Configuration context
      */
-    private ConfigurationContext axisConf = null;
+    private ConfigurationContext configCtx = null;
 
     /**
      * This is the TransportListener initialization method invoked by Axis2
@@ -109,7 +100,7 @@ public class JMSListener implements TransportListener {
                      TransportInDescription transprtIn) {
 
         // save reference to the configuration context
-        this.axisConf = axisConf;
+        this.configCtx = axisConf;
 
         // initialize the defined connection factories
         initializeConnectionFactories(transprtIn);
@@ -117,7 +108,7 @@ public class JMSListener implements TransportListener {
         // if no connection factories are defined, we cannot listen
         if (connectionFactories.isEmpty()) {
             log.warn("No JMS connection factories are defined." +
-                    "Will not listen for any JMS messages");
+                     "Will not listen for any JMS messages");
             return;
         }
 
@@ -149,9 +140,9 @@ public class JMSListener implements TransportListener {
         JMSConnectionFactory cf = getConnectionFactory(service);
         if (cf == null) {
             String msg = "Service " + service.getName() + " does not specify" +
-                    "a JMS connection factory or refers to an invalid factory. " +
-                    "This service is being marked as faulty and will not be " +
-                    "available over the JMS transport";
+                         "a JMS connection factory or refers to an invalid factory. " +
+                         "This service is being marked as faulty and will not be " +
+                         "available over the JMS transport";
             log.warn(msg);
             JMSUtils.markServiceAsFaulty(
                     service.getName(), msg, service.getAxisConfiguration());
@@ -218,7 +209,7 @@ public class JMSListener implements TransportListener {
                 pi.deserializeParameters((OMElement) param.getValue());
             } catch (AxisFault axisFault) {
                 handleException("Error reading Parameters for JMS connection " +
-                        "factory" + jmsConFactory.getName(), axisFault);
+                                "factory" + jmsConFactory.getName(), axisFault);
             }
 
             // read connection facotry properties
@@ -256,7 +247,7 @@ public class JMSListener implements TransportListener {
                 connectionFactories.put(jmsConFactory.getName(), jmsConFactory);
             } catch (NamingException e) {
                 handleException("Error connecting to JMS connection factory : " +
-                        jmsConFactory.getJndiName(), e);
+                                jmsConFactory.getJndiName(), e);
             }
         }
     }
@@ -303,13 +294,13 @@ public class JMSListener implements TransportListener {
         while (iter.hasNext()) {
             JMSConnectionFactory conFac = (JMSConnectionFactory) iter.next();
             JMSMessageReceiver msgRcvr =
-                    new JMSMessageReceiver(conFac, workerPool, axisConf);
+                    new JMSMessageReceiver(conFac, workerPool, configCtx);
 
             try {
                 conFac.listen(msgRcvr);
             } catch (JMSException e) {
                 handleException("Error starting connection factory : " +
-                        conFac.getName(), e);
+                                conFac.getName(), e);
             }
         }
     }
@@ -363,9 +354,9 @@ public class JMSListener implements TransportListener {
         JMSConnectionFactory cf = getConnectionFactory(service);
         if (cf == null) {
             String msg = "Service " + service.getName() + " does not specify" +
-                    "a JMS connection factory or refers to an invalid factory." +
-                    "This service is being marked as faulty and will not be " +
-                    "available over the JMS transport";
+                         "a JMS connection factory or refers to an invalid factory." +
+                         "This service is being marked as faulty and will not be " +
+                         "available over the JMS transport";
             log.warn(msg);
             JMSUtils.markServiceAsFaulty(
                     service.getName(), msg, service.getAxisConfiguration());
@@ -376,7 +367,7 @@ public class JMSListener implements TransportListener {
         try {
             cf.listenOnDestination(destination);
             log.info("Started listening on destination : " + destination +
-                    " for service " + service.getName());
+                     " for service " + service.getName());
 
         } catch (JMSException e) {
             handleException(
@@ -396,9 +387,9 @@ public class JMSListener implements TransportListener {
         JMSConnectionFactory cf = getConnectionFactory(service);
         if (cf == null) {
             String msg = "Service " + service.getName() + " does not specify" +
-                    "a JMS connection factory or refers to an invalid factory." +
-                    "This service is being marked as faulty and will not be " +
-                    "available over the JMS transport";
+                         "a JMS connection factory or refers to an invalid factory." +
+                         "This service is being marked as faulty and will not be " +
+                         "available over the JMS transport";
             log.warn(msg);
             JMSUtils.markServiceAsFaulty(
                     service.getName(), msg, service.getAxisConfiguration());
@@ -482,11 +473,15 @@ public class JMSListener implements TransportListener {
     }
 
     public ConfigurationContext getConfigurationContext() {
-        return this.axisConf;
+        return this.configCtx;
     }
 
 
     public SessionContext getSessionContext(MessageContext messageContext) {
         return null;
+    }
+
+    public void destroy() {
+        this.configCtx = null;
     }
 }
