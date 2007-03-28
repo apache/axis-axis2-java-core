@@ -317,25 +317,26 @@ public class WSDL11ToAxisServiceBuilder extends WSDLToAxisServiceBuilder {
 
         for (Iterator iterator = wsdl4jPorts.values().iterator(); iterator.hasNext();) {
             port = (Port) iterator.next();
-            // we process the port only if it has the same port type as the selected binding
-            currentBinding = wsdl4jDefinition.getBinding(port.getBinding().getQName());
-            if (currentBinding.getPortType().getQName().equals(binding.getPortType().getQName())) {
-                axisEndpoint = new AxisEndpoint();
-                axisEndpoint.setName(port.getName());
+            // if the user has picked a port then we have to process only that port
+            if ((this.portName == null) || (this.portName.equals(port.getName()))) {
+                // we process the port only if it has the same port type as the selected binding
+                currentBinding = wsdl4jDefinition.getBinding(port.getBinding().getQName());
+                if (currentBinding.getPortType().getQName().equals(binding.getPortType().getQName())) {
+                    axisEndpoint = new AxisEndpoint();
+                    axisEndpoint.setName(port.getName());
 
-                if (axisService.getEndpointName() == null &&
-                        bindingName.equals(port.getBinding().getQName())) {
-                    populateEndpoint(axisEndpoint, port, true);
-                    axisService.setEndpointName(axisEndpoint.getName());
-                    axisService.setBindingName(axisEndpoint.getBinding().getName().getLocalPart());
+                    if (axisService.getEndpointName() == null &&
+                            bindingName.equals(port.getBinding().getQName())) {
+                        populateEndpoint(axisEndpoint, port, true);
+                        axisService.setEndpointName(axisEndpoint.getName());
+                        axisService.setBindingName(axisEndpoint.getBinding().getName().getLocalPart());
                     } else {
-                    populateEndpoint(axisEndpoint, port, false);
+                        populateEndpoint(axisEndpoint, port, false);
+                    }
+                    axisService.addEndpoint(port.getName(), axisEndpoint);
                 }
-                axisService.addEndpoint(port.getName(), axisEndpoint);
             }
-
         }
-
     }
 
     /**

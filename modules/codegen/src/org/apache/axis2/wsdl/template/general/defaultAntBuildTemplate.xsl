@@ -42,7 +42,7 @@
                 <xsl:attribute name="value">${project.base.dir}/<xsl:value-of select="$resource"/></xsl:attribute>
             </property>
             <property name="name">
-                <xsl:attribute name="value"><xsl:value-of select="@servicename"/></xsl:attribute>
+                <xsl:attribute name="value">Services</xsl:attribute>
             </property>
 
             <property name="jars.ok" value=""></property>

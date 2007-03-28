@@ -66,10 +66,10 @@
 				 target="make.repo"/>
 		<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="target/perf"
 				 target="jar.client"/>
-		 <ant:move file="target/perf/build/lib/PerfPortType-test-client.jar" 
+		 <ant:move file="target/perf/build/lib/Services-test-client.jar" 
 			  tofile="target/perf/build/lib/PerfSoapService-test-client.jar" />
 			  
-		  <ant:move file="target/perf/build/lib/PerfPortType.aar" 
+		  <ant:move file="target/perf/build/lib/Services.aar" 
 			  tofile="target/perf/build/lib/PerfSoapService.aar" />
 			  
 		 <ant:path id="samples.wsdl.perf.client.jar"
