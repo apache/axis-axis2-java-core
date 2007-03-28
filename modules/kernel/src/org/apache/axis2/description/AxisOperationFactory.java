@@ -113,7 +113,6 @@ public class AxisOperationFactory implements WSDLConstants {
         } else {
             throw new AxisFault(Messages.getMessage("unSupportedMEP", "ID is " + mepURI));
         }
-        abOpdesc.setMessageExchangePattern(mepURI);
         return abOpdesc;
     }
 }
