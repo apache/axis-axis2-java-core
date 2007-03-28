@@ -85,8 +85,7 @@ public class SOAPFactoryImpl extends SOAPFactory {
         } else {
             omdomFactory = (OMDOMFactory) DOOMAbstractFactory.getSOAP11Factory();
         }
-        OMNamespace ns = omdomFactory.createOMNamespace(null, null);
-        OMElement omElement = omdomFactory.createOMElement(localName, ns);
+        OMElement omElement = omdomFactory.createOMElement(new QName(localName));
         return new SOAPElementImpl((ElementImpl) omElement);
     }
 
