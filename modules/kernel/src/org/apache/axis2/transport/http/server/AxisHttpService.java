@@ -189,10 +189,13 @@ public class AxisHttpService extends HttpService {
             HttpInetConnection inetconn = (HttpInetConnection) conn;
             InetAddress address = inetconn.getRemoteAddress();
             this.msgContext.setProperty(MessageContext.REMOTE_ADDR, address.getHostAddress());
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Remote address of the connection : " + address);
             }
         }
+        this.msgContext.setProperty(MessageContext.TRANSPORT_ADDR,
+                ((DefaultHttpConnectionFactory.Axis2HttpServerConnection)conn).getLocalIPAddress());
         super.handleRequest(conn, context);
     }
 

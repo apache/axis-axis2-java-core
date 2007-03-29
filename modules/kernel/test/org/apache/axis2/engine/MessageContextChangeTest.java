@@ -38,6 +38,7 @@ public class MessageContextChangeTest extends TestCase {
             new FieldDescription("int", "OUT_FLOW"),
             new FieldDescription("int", "OUT_FAULT_FLOW"),
             new FieldDescription("java.lang.String", "REMOTE_ADDR"),
+            new FieldDescription("java.lang.String", "TRANSPORT_ADDR"),
             new FieldDescription("java.lang.String", "TRANSPORT_HEADERS"),
             new FieldDescription("org.apache.axiom.attachments.Attachments", "attachments"),
             new FieldDescription("java.lang.String", "TRANSPORT_OUT"),

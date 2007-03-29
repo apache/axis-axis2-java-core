@@ -144,7 +144,7 @@ public class MessageContext extends AbstractContext implements Externalizable {
     public final static int OUT_FAULT_FLOW = 4;
 
     public static final String REMOTE_ADDR = "REMOTE_ADDR";
-
+    public static final String TRANSPORT_ADDR = "TRANSPORT_ADDR";
     public static final String TRANSPORT_HEADERS = "TRANSPORT_HEADERS";
 
 

@@ -59,6 +59,7 @@ public class DefaultHttpConnectionFactory implements HttpConnectionFactory {
         public Axis2HttpServerConnection() {
             super();
         }
+        //((InetAddress)socket.getLocalAddress()).getHostAddress()
 
         public String getRemoteIPAddress() {
             java.net.SocketAddress sa = socket.getRemoteSocketAddress();
@@ -69,13 +70,32 @@ public class DefaultHttpConnectionFactory implements HttpConnectionFactory {
             }
         }
 
+         public String getLocalIPAddress() {
+            java.net.SocketAddress sa = socket.getLocalSocketAddress();
+            if (sa instanceof java.net.InetSocketAddress) {
+                return ((java.net.InetSocketAddress) sa).getAddress().getHostAddress()
+                        + ":" + socket.getLocalPort();
+            } else {
+                return sa.toString();
+            }
+        }
+
         public String getRemoteHostName() {
             java.net.SocketAddress sa = socket.getRemoteSocketAddress();
             if (sa instanceof java.net.InetSocketAddress) {
                 return ((java.net.InetSocketAddress) sa).getHostName();
             } else {
-                return sa
-                        .toString(); // fail-safe and fall back to something which one can use in place of the host name
+                return sa.toString();
+                // fail-safe and fall back to something which one can use in place of the host name
+            }
+        }
+         public String getLocalHostName() {
+            java.net.SocketAddress sa = socket.getLocalSocketAddress();
+            if (sa instanceof java.net.InetSocketAddress) {
+                return ((java.net.InetSocketAddress) sa).getHostName();
+            } else {
+                return sa.toString();
+                // fail-safe and fall back to something which one can use in place of the host name
             }
         }
     }

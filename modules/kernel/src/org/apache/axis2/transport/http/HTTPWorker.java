@@ -207,6 +207,10 @@ public class HTTPWorker implements Worker {
                 pi = RESTUtil.processXMLRequest(msgContext, inentity.getContent(),
                                                 outbuffer.getOutputStream(), contentType);
             } else {
+                String ip = (String)msgContext.getProperty(MessageContext.TRANSPORT_ADDR);
+                if(ip!=null){
+                    uri = ip + uri;
+                }
                 pi = HTTPTransportUtils.processHTTPPostRequest(msgContext, inentity.getContent(),
                                                                outbuffer.getOutputStream(),
                                                                contentType, soapAction, uri);
