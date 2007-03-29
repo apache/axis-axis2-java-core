@@ -1618,10 +1618,7 @@ public class AxisService extends AxisDescription {
                                                   axisService.getSchematargetNamespacePrefix());
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
             axisService.setElementFormDefault(false);
-            excludeOpeartion.add("init");
-            excludeOpeartion.add("setOperationContext");
-            excludeOpeartion.add("destroy");
-            excludeOpeartion.add("startUp");
+            Utils.addExclueMethods(excludeOpeartion);
             schemaGenerator.setExcludeMethods(excludeOpeartion);
             axisService.addSchema(schemaGenerator.generateSchema());
             axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());
@@ -1766,10 +1763,7 @@ public class AxisService extends AxisDescription {
                                                   axisService.getSchematargetNamespacePrefix());
             schemaGenerator.setElementFormDefault(Java2WSDLConstants.FORM_DEFAULT_UNQUALIFIED);
             axisService.setElementFormDefault(false);
-            excludeOpeartion.add("init");
-            excludeOpeartion.add("setOperationContext");
-            excludeOpeartion.add("destroy");
-            excludeOpeartion.add("startUp");
+            Utils.addExclueMethods(excludeOpeartion);
             schemaGenerator.setExcludeMethods(excludeOpeartion);
             axisService.addSchema(schemaGenerator.generateSchema());
             axisService.setSchematargetNamespace(schemaGenerator.getSchemaTargetNameSpace());

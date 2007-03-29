@@ -231,10 +231,7 @@ public class ServiceBuilder extends DescriptionBuilder {
             if (excludeops == null) {
                 excludeops = new ArrayList();
             }
-            excludeops.add("init");
-            excludeops.add("setOperationContext");
-            excludeops.add("startUp");
-            excludeops.add("destroy");
+            Utils.addExclueMethods(excludeops);
 
             //<schema targetNamespace="http://x.y.z"/>
             // setting the PolicyInclude
