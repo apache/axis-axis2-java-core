@@ -8,11 +8,11 @@
 </head>
 
 <body>
-<h1 class="title">Generating a Web Service Client using Axis2 and
-XmlBeans</h1>
+<h1 class="title">Generating a Web Service Client using Apache Axis2 and
+XMLBeans</h1>
 
-<p>This document explains how to generate a Web service client using Axis2
-and XmlBeans data binding. The service has the following WSDL:</p>
+<p>This document explains how to generate a Web service client using Apache
+Axis2 and XMLBeans data binding. The service has the following WSDL:</p>
 
 <p><b>Code Listing 1: The WSDL file</b></p>
 <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
@@ -203,40 +203,41 @@ and XmlBeans data binding. The service has the following WSDL:</p>
   &lt;/wsdl:service&gt;
 &lt;/wsdl:definitions&gt;</pre>
 
-<p>Notice that the document defines four operations, DoInOnly, NoParameters,
-TwoWayOneParameterEcho, and MultipleParametersAddItem. Each of the clients
-will include methods for calling each of these operations.</p>
+<p>Note that the document defines four operations, DoInOnly, NoParameters,
+TwoWayOneParameterEcho, and MultipleParametersAddItem. Each client will
+include methods for calling each of these operations.</p>
 
-<p>(You can get more information on WSDL at <a
+<p>(For more information on WSDL, refer to: <a
 href="http://www.w3.org/2002/ws/desc/">http://www.w3.org/2002/ws/desc/</a>
 .)</p>
 
 <p><b>The short story:</b></p>
 <ol>
-  <li>If you have not done it already, <a
-    href="http://ws.apache.org/axis2/download/1_1/download.cgi#std-bin">download</a>
-    and unpack the Apache Axis2 Standard Distribution.</li>
+  <li><a
+    href="http://ws.apache.org/axis2/download/1_1/download.cgi#std-bin">Download</a>
+    and unpack the Apache Axis2 Standard Distribution, if you have not done
+    so already.</li>
   <li>Create the client classes with the following command:<br />
 
     <pre>%AXIS2_HOME%\bin\WSDL2Java -uri Axis2UserGuide.wsdl -p org.apache.axis2.axis2userguide -d xmlbeans -s</pre>
   </li>
   <li>Create the client (for example, Client.java) and save it in the
     org/apache/axis2/axis2userguide directory.</li>
-  <li>Build the client by typing: ant jar.client.</li>
-  <li>Make sure all of the jar files in the Axis2 lib directory are on the
+  <li>Build the client by typing: <code>ant jar.client.</code></li>
+  <li>Make sure all the .jar files in the Axis2 lib directory are in the
     CLASSPATH.</li>
   <li>Assuming you have a corresponding service, run the client by adding the
     generated Axis2UserGuideService-test-client.jar file in build/lib to the
-    CLASSPATH and typing:
-    <pre>java org.apache.axis2.axis2userguide.Client</pre>
-  </li>
+    CLASSPATH and type: <code>java
+    org.apache.axis2.axis2userguide.Client</code></li>
 </ol>
 
 <p><b>The long story:</b></p>
 
-<p>If you have not done it already, <a
-href="http://ws.apache.org/axis2/download/1_1/download.cgi#std-bin">download</a>
-and unpack the Apache Axis2 Standard Distribution. The <a
+<p><a
+href="http://ws.apache.org/axis2/download/1_1/download.cgi#std-bin">Download</a>
+and unpack the Apache Axis2 Standard Distribution, if you have not done so
+already. The <a
 href="http://ws.apache.org/axis2/download/1_1/download.cgi#war">WAR
 distribution</a> does not include the necessary utilities for generating
 code, such as WSDL2Java.</p>
@@ -246,7 +247,7 @@ classes for each object it must model. For example, generating a client for
 this WSDL file created 642 files and folders. A small number of these files
 are directly related to the actual client you're creating. The rest are
 related to the processing of XML, and include data bound objects for schemas,
-encodings and other objects needed to process messages.</p>
+encodings, and other objects needed to process messages.</p>
 
 <p>To generate the client, issue the following command in Listing 2.</p>
 
@@ -255,14 +256,14 @@ encodings and other objects needed to process messages.</p>
 
 <p>This command analyzes the WSDL file and creates the stubs in the package
 org.apache.axis2.axis2userguide. The options specify that you want the
-XMLBeans data binding method (-d), and synchronous, or blocking, methods
-(-s). In other words, when the client makes an In-Out call to the service, it
-will wait for a response before continuing.</p>
+XMLBeans data binding method (-d), and synchronous or blocking methods (-s).
+In other words, when the client makes an In-Out call to the service, it will
+wait for a response before continuing.</p>
 
 <p>Once you run this command, you will see several new items in the
 directory. The first is the build.xml file, which contains the instructions
 for <a href="http://ant.apache.org/">Ant</a> to compile the generated
-classes. The second is the src directory, which contains all of the generated
+classes. The second is the src directory, which contains all the generated
 classes. The third is the resources directory, which includes files related
 to the actual data binding process.</p>
 
@@ -379,22 +380,23 @@ which include inner classes for the objects they contain. The process is
 still the same -- you create a request, and send it using the stub -- the
 code is just a bit more complex.</p>
 
-<p>To build the client, type: ant jar.client</p>
+<p>To build the client, type: <code>ant jar.client</code></p>
 
 <p>This action creates two new directories, build and test. The test
-directory will be empty, but the build directory contains two versions of the
-client. The first version, in the lib directory, consists of two jar files,
-one containing the Client class and the stub implementations, and the other
-containing the XMLBeans-related classes. The second version, in the classes
-directory, consists of just the raw classes.</p>
+directory will be empty, but the build directory will contain two versions of
+the client. The first version in the lib directory consists of two .jar
+files, one containing the Client class and the stub implementations, and the
+other containing the XMLBeans-related classes. The second version in the
+classes directory consists of just the raw classes.</p>
 
-<p>Make sure all of the jar files in the Axis2 lib directory are on the
+<p>Make sure all the .jar files in the Axis2 lib directory are on the
 classpath.</p>
 
-<p>If you have a service corresponding to this client -- if you don't, check
+<p>If you have a service corresponding to this client (if you don't, check
 out the <a href="userguide-buildingservices.html">Building Services</a>
-document -- you can run the client by adding the two jar files to your
-classpath and typing: java org.apache.axis2.axis2userguide.Client</p>
+document) you can run the client by adding the two .jar files to your
+classpath and typing:
+<code>java.org.apache.axis2.axis2userguide.Client</code></p>
 
 <p>You should see the response in a console window of your servlet container.
 It should look something like this:</p>
