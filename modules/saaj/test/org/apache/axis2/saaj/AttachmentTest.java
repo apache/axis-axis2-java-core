@@ -344,7 +344,7 @@ public class AttachmentTest extends TestCase {
 	private boolean isNetworkedResourceAvailable(String url){
 		HttpClient client = new HttpClient();
 		GetMethod method = new GetMethod(url);
-
+        client.getHttpConnectionManager().getParams().setConnectionTimeout(3000);		
 	        client.getHttpConnectionManager().getParams().setConnectionTimeout(3000);		
 		method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, 
 				new DefaultHttpMethodRetryHandler(1, false));

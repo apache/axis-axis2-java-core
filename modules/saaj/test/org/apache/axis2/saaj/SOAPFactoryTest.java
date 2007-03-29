@@ -29,13 +29,17 @@ import javax.xml.soap.SOAPFault;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 
 /**
  * 
  */
 public class SOAPFactoryTest extends TestCase {
+	private static final Log log = LogFactory.getLog(SOAPFactoryTest.class);
     public void testCreateDetail() {
         try {
             SOAPFactory sf = SOAPFactory.newInstance();
@@ -96,7 +100,7 @@ public class SOAPFactoryTest extends TestCase {
     	    if(sf == null) {
     	    	fail("could not create SOAPFactory object");
     	    }
-    	    System.out.println("Create a DOMElement");
+    	    log.info("Create a DOMElement");
     	    DocumentBuilderFactory dbfactory = DocumentBuilderFactory.newInstance();
     	    DocumentBuilder builder = dbfactory.newDocumentBuilder();
     	    Document document = builder.newDocument();
@@ -172,7 +176,7 @@ public class SOAPFactoryTest extends TestCase {
     		//Expect FaultCode="+SOAPConstants.SOAP_RECEIVER_FAULT
     		Iterator i = sf.getFaultReasonTexts();
     		if(i == null) {
-    			System.out.println("Call to getFaultReasonTexts() returned null iterator");
+    			log.info("Call to getFaultReasonTexts() returned null iterator");
     		}
     		String reason = "";
     		while(i.hasNext()) {
@@ -201,7 +205,7 @@ public class SOAPFactoryTest extends TestCase {
     		while(i.hasNext()){
     			reason += (String)i.next();
     		}
-    		System.out.println("Actual ReasonText="+reason);
+    		log.info("Actual ReasonText="+reason);
     		assertNotNull(reason);
     		assertTrue(reason.indexOf("This is the fault reason.") > -1);
     		assertTrue(fc.equals(SOAPConstants.SOAP_RECEIVER_FAULT));

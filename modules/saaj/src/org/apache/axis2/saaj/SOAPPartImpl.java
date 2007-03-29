@@ -37,27 +37,22 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.axiom.attachments.Attachments;
-import org.apache.axiom.attachments.utils.IOUtils;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.MTOMConstants;
-import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
-import org.apache.axiom.om.impl.builder.StAXBuilder;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axiom.soap.SOAPFactory;
-import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.builder.MTOMStAXSOAPModelBuilder;
+import org.apache.axiom.soap.impl.builder.StAXSOAPModelBuilder;
 import org.apache.axiom.soap.impl.dom.soap11.SOAP11Factory;
 import org.apache.axiom.soap.impl.dom.soap12.SOAP12Factory;
+import org.apache.axis2.builder.BuilderUtil;
 import org.apache.axis2.saaj.util.IDGenerator;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.builder.BuilderUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
@@ -866,74 +861,60 @@ public class SOAPPartImpl extends SOAPPart {
     }
 
     public String getInputEncoding() {
-        // TODO - Fixme.
     	//return ((DeferredDocumentImpl)(((DOMSource)this.source).getNode())).getInputEncoding();
     	return this.envelope.getEncodingStyle();
     }
 
     public String getXmlEncoding() {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        return document.getXmlEncoding();
     }
 
     public boolean getXmlStandalone() {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        return document.getXmlStandalone();
     }
 
     public void setXmlStandalone(boolean xmlStandalone) throws DOMException {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    	document.setXmlStandalone(xmlStandalone);
     }
 
     public String getXmlVersion() {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        return document.getXmlVersion();
     }
 
     public void setXmlVersion(String xmlVersion) throws DOMException {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        document.setXmlVersion(xmlVersion);
     }
 
     public boolean getStrictErrorChecking() {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        return document.getStrictErrorChecking();
     }
 
     public void setStrictErrorChecking(boolean strictErrorChecking) {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        document.setStrictErrorChecking(strictErrorChecking);
     }
 
     public String getDocumentURI() {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        return document.getDocumentURI();
     }
 
     public void setDocumentURI(String documentURI) {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        document.setDocumentURI(documentURI);
     }
 
     public Node adoptNode(Node source) throws DOMException {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    	return document.adoptNode(source);
     }
 
     public DOMConfiguration getDomConfig() {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        return document.getDomConfig();
     }
 
     public void normalizeDocument() {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        document.normalizeDocument();
     }
 
     public Node renameNode(Node n, String namespaceURI, String qualifiedName) throws DOMException {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        return document.renameNode(n, namespaceURI, qualifiedName);
     }
 
     /**
@@ -1339,63 +1320,51 @@ public class SOAPPartImpl extends SOAPPart {
      */
 
     public String getBaseURI() {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        return document.getBaseURI();
     }
 
-    public short compareDocumentPosition(Node arg0) throws DOMException {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    public short compareDocumentPosition(Node node) throws DOMException {
+        return document.compareDocumentPosition(node);
     }
 
     public String getTextContent() throws DOMException {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+        return document.getTextContent();
     }
 
-    public void setTextContent(String arg0) throws DOMException {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    public void setTextContent(String textContent) throws DOMException {
+        document.setTextContent(textContent);
     }
 
-    public boolean isSameNode(Node arg0) {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    public boolean isSameNode(Node other) {
+        return document.isSameNode(other);
     }
 
-    public String lookupPrefix(String arg0) {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    public String lookupPrefix(String namespaceURI) {
+        return document.lookupPrefix(namespaceURI);
     }
 
-    public boolean isDefaultNamespace(String arg0) {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    public boolean isDefaultNamespace(String namespaceURI) {
+        return document.isDefaultNamespace(namespaceURI);
     }
 
-    public String lookupNamespaceURI(String arg0) {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    public String lookupNamespaceURI(String prefix) {
+        return document.lookupNamespaceURI(prefix);
     }
 
-    public boolean isEqualNode(Node arg0) {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    public boolean isEqualNode(Node node) {
+        return document.isEqualNode(node);
     }
 
-    public Object getFeature(String arg0, String arg1) {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    public Object getFeature(String feature, String version) {
+    	return document.getFeature(feature, version);
     }
 
-    public Object setUserData(String arg0, Object arg1, UserDataHandler arg2) {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    public Object setUserData(String key, Object data, UserDataHandler handler) {
+    	return document.setUserData(key, data, handler);
     }
 
-    public Object getUserData(String arg0) {
-        // TODO - Fixme.
-        throw new UnsupportedOperationException("TODO");
+    public Object getUserData(String key) {
+        return document.getUserData(key);
     }
 
     public String getValue() {
