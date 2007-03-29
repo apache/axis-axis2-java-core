@@ -282,7 +282,16 @@ public class ConverterUtil {
     }
 
     public static boolean convertToBoolean(String s) {
-        return Boolean.valueOf(s).booleanValue();
+
+        boolean returnValue = false;
+        if ((s != null) && (s.length() > 0)){
+            if ("1".equals(s) || s.toLowerCase().equals("true")){
+                returnValue = true;
+            } else if (!"0".equals(s) && !s.toLowerCase().equals("false")){
+                throw new RuntimeException("in valid string -" + s + " for boolean value");
+            }
+        }
+        return returnValue;
     }
 
     public static String convertToAnySimpleType(String s) {

@@ -5,22 +5,22 @@
 
     <xs:element name="TestElement1">
         <xs:complexType>
-            <xs:attribute name="attribute1" type="xs:int" use="optional"/>
+            <xs:attribute name="attribute1" type="xs:int" />
         </xs:complexType>
     </xs:element>
     <xs:element name="TestElement2">
         <xs:complexType>
-            <xs:attribute name="attribute1" type="xs:int"/>
+            <xs:attribute name="attribute1" type="xs:int" use="required"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="TestElement3">
         <xs:complexType>
-            <xs:attribute name="attribute1" type="xs:string" use="optional"/>
+            <xs:attribute name="attribute1" type="xs:string"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="TestElement4">
         <xs:complexType>
-            <xs:attribute name="attribute1"  type="xs:string"/>
+            <xs:attribute name="attribute1"  type="xs:string"  use="required"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="TestAttributeSimpleType">

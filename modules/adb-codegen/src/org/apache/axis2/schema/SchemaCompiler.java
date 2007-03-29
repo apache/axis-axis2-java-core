@@ -89,6 +89,10 @@ public class SchemaCompiler {
     public static final String ANY_ELEMENT_FIELD_NAME = "extraElement";
     public static final String EXTRA_ATTRIBUTE_FIELD_NAME = "extraAttributes";
 
+    public static final String USE_OPTIONAL = "optional";
+    public static final String USE_REQUIRED = "required";
+    public static final String USE_NONE = "none";
+
     private static int typeCounter = 0;
 
     /**
@@ -1507,8 +1511,8 @@ public class SchemaCompiler {
 
                     // add optional attribute status if set
                     String use = att.getUse().getValue();
-                    if (use.indexOf("optional") != -1) {
-                        metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
+                    if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)){
+                       metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
                     }
 
                     String className = findClassName(schemaTypeName, false);
@@ -1535,7 +1539,7 @@ public class SchemaCompiler {
                                     SchemaConstants.ATTRIBUTE_TYPE);
                             // add optional attribute status if set
                             String use = att.getUse().getValue();
-                            if (use.indexOf("optional") != -1) {
+                            if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
                                 metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
                             }
                         }
@@ -1578,7 +1582,7 @@ public class SchemaCompiler {
                                     type.toString(), SchemaConstants.ATTRIBUTE_TYPE);
                             // add optional attribute status if set
                             String use = att.getUse().getValue();
-                            if (use.indexOf("optional") != -1) {
+                            if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
                                 metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
                             }
                         }
@@ -1603,7 +1607,7 @@ public class SchemaCompiler {
                         SchemaConstants.ATTRIBUTE_TYPE);
                 // add optional attribute status if set
                 String use = att.getUse().getValue();
-                if (use.indexOf("optional") != -1) {
+                if (USE_NONE.equals(use) || USE_OPTIONAL.equals(use)) {
                     metainf.addtStatus(att.getQName(), SchemaConstants.OPTIONAL_TYPE);
                 }
             }
