@@ -20,21 +20,21 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-/**
- * Custom class for supporting XSD data type NMTokens
- */
+/** Custom class for supporting XSD data type NMTokens */
 public class NMTokens extends NCName {
     private static final long serialVersionUID = -2435854824216181165L;
-	private NMToken[] tokens;
+    private NMToken[] tokens;
 
     public NMTokens() {
         super();
     }
+
     /**
      * ctor for NMTokens
-     * @exception IllegalArgumentException will be thrown if validation fails
+     *
+     * @throws IllegalArgumentException will be thrown if validation fails
      */
-    public NMTokens (String stValue) throws IllegalArgumentException {
+    public NMTokens(String stValue) throws IllegalArgumentException {
         setValue(stValue);
     }
 
@@ -42,7 +42,7 @@ public class NMTokens extends NCName {
         StringTokenizer tokenizer = new StringTokenizer(stValue);
         int count = tokenizer.countTokens();
         tokens = new NMToken[count];
-        for(int i=0;i<count;i++){
+        for (int i = 0; i < count; i++) {
             tokens[i] = new NMToken(tokenizer.nextToken());
         }
     }
@@ -58,9 +58,8 @@ public class NMTokens extends NCName {
     }
 
     /**
-     * NMTokens can be equal without having identical ordering because
-     * they represent a set of references.  Hence we have to compare
-     * values here as a set, not a list.
+     * NMTokens can be equal without having identical ordering because they represent a set of
+     * references.  Hence we have to compare values here as a set, not a list.
      *
      * @param object an <code>Object</code> value
      * @return a <code>boolean</code> value
@@ -84,8 +83,8 @@ public class NMTokens extends NCName {
     }
 
     /**
-     * Returns the sum of the hashcodes of the underlying tokens, an
-     * operation which is not sensitive to ordering.
+     * Returns the sum of the hashcodes of the underlying tokens, an operation which is not
+     * sensitive to ordering.
      *
      * @return an <code>int</code> value
      */

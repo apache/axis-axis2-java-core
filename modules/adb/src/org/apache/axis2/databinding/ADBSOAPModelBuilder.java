@@ -25,19 +25,17 @@ import org.apache.axis2.util.StreamWrapper;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
-/**
- * Builds a SOAPEnvelope around an ADB pull parser
- */
+/** Builds a SOAPEnvelope around an ADB pull parser */
 public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
-    
+
     public ADBSOAPModelBuilder(XMLStreamReader parser, SOAPFactory factory) {
         super(new Envelope(parser).
                 getPullParser(
                 new QName(factory.getSoapVersionURI(),
-                        SOAPConstants.SOAPENVELOPE_LOCAL_NAME,
-                        SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX)),
-                factory,
-                factory.getSoapVersionURI());
+                          SOAPConstants.SOAPENVELOPE_LOCAL_NAME,
+                          SOAPConstants.SOAP_DEFAULT_NAMESPACE_PREFIX)),
+              factory,
+              factory.getSoapVersionURI());
     }
 
     public SOAPEnvelope getEnvelope() {
@@ -54,16 +52,18 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
 
         public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName) {
             java.util.ArrayList elementList = new java.util.ArrayList();
-            elementList.add(new QName(qName.getNamespaceURI(), "Header", SOAPConstants.BODY_NAMESPACE_PREFIX));
+            elementList.add(new QName(qName.getNamespaceURI(), "Header",
+                                      SOAPConstants.BODY_NAMESPACE_PREFIX));
             elementList.add(new Header());
-            elementList.add(new QName(qName.getNamespaceURI(), "Body", SOAPConstants.BODY_NAMESPACE_PREFIX));
+            elementList.add(new QName(qName.getNamespaceURI(), "Body",
+                                      SOAPConstants.BODY_NAMESPACE_PREFIX));
             elementList.add(body);
             return
                     new StreamWrapper(new org.apache.axis2.databinding.utils.reader.
-                    ADBXMLStreamReaderImpl(qName, elementList.toArray(), null));
+                            ADBXMLStreamReaderImpl(qName, elementList.toArray(), null));
         }
     }
-    
+
     protected void identifySOAPVersion(String soapVersionURIFromTransport) {
         //Do nothing
     }
@@ -80,7 +80,9 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
             java.util.ArrayList elementList = new java.util.ArrayList();
             elementList.add(qName);
             elementList.add(child);
-            return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), null);
+            return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName,
+                                                                                        elementList.toArray(),
+                                                                                        null);
         }
     }
 
@@ -88,7 +90,9 @@ public class ADBSOAPModelBuilder extends StAXSOAPModelBuilder {
             implements org.apache.axis2.databinding.ADBBean {
         public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName) {
             java.util.ArrayList elementList = new java.util.ArrayList();
-            return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName, elementList.toArray(), null);
+            return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName,
+                                                                                        elementList.toArray(),
+                                                                                        null);
         }
     }
 

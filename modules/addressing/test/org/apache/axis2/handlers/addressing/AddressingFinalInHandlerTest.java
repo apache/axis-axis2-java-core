@@ -264,7 +264,7 @@ public class AddressingFinalInHandlerTest extends AddressingInHandlerTestBase {
     private void assertEPRHasCorrectMetadata(EndpointReference epr) {
         ArrayList metadata = epr.getMetaData();
         if (metadata != null) {
-            OMElement md = (OMElement) metadata.get(0);
+            OMElement md = (OMElement)metadata.get(0);
             assertEquals(md.getQName(),
                          new QName("http://ws.apache.org/namespaces/axis2", "MetaExt"));
             assertEquals(md.getText(), "123456789");

@@ -45,7 +45,7 @@ public class AddressingFinalInHandler extends AddressingInHandler {
                                                    String namespace) {
         Iterator headerBlocks = header.getChildElements();
         while (headerBlocks.hasNext()) {
-            OMElement headerElement = (OMElement) headerBlocks.next();
+            OMElement headerElement = (OMElement)headerBlocks.next();
             OMAttribute isRefParamAttr =
                     headerElement.getAttribute(new QName(namespace, "IsReferenceParameter"));
             if (log.isTraceEnabled()) {

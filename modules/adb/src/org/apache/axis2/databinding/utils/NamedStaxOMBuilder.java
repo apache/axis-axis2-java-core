@@ -30,7 +30,6 @@ public class NamedStaxOMBuilder {
     private QName nameToMatch;
 
     /**
-     *
      * @param xmlStreamReader
      * @param nameToMatch
      */
@@ -43,21 +42,21 @@ public class NamedStaxOMBuilder {
     /**
      *
      */
-    public OMElement getOMElement(){
+    public OMElement getOMElement() {
         //force to build within the given QName
         boolean done = false;
         int depth = 0;
-        while(!done){
-            if (reader.getEventType()==XMLStreamConstants.END_ELEMENT){
+        while (!done) {
+            if (reader.getEventType() == XMLStreamConstants.END_ELEMENT) {
                 depth--;
-            }else if (reader.getEventType()==XMLStreamConstants.START_ELEMENT){
+            } else if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
                 depth++;
             }
 
-            if (depth==0 && reader.getEventType()==XMLStreamConstants.END_ELEMENT &&
-                    nameToMatch.equals(reader.getName())){
+            if (depth == 0 && reader.getEventType() == XMLStreamConstants.END_ELEMENT &&
+                    nameToMatch.equals(reader.getName())) {
                 done = true;
-            }else{
+            } else {
                 builder.next();
             }
 
@@ -65,7 +64,6 @@ public class NamedStaxOMBuilder {
 
         return builder.getDocumentElement();
     }
-
 
 
 }

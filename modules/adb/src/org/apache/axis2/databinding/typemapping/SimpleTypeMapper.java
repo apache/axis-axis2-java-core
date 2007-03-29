@@ -17,17 +17,20 @@
 
 package org.apache.axis2.databinding.typemapping;
 
+import org.apache.axiom.attachments.utils.DataHandlerUtils;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.OMText;
-import org.apache.axiom.om.OMDataSource;
-import org.apache.axiom.attachments.utils.DataHandlerUtils;
 
-import javax.xml.namespace.QName;
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
+import javax.xml.namespace.QName;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.TimeZone;
 
 public class SimpleTypeMapper {
 
@@ -112,13 +115,13 @@ public class SimpleTypeMapper {
     }
 
     public static DataHandler getDataHandler(OMElement element) {
-        OMNode node =element.getFirstOMChild();
+        OMNode node = element.getFirstOMChild();
         if (node instanceof OMText) {
-            OMText txt = (OMText) node;
-            if(txt.isOptimized()){
-                return (DataHandler) txt.getDataHandler();
+            OMText txt = (OMText)node;
+            if (txt.isOptimized()) {
+                return (DataHandler)txt.getDataHandler();
             } else {
-               return (DataHandler) DataHandlerUtils.getDataHandlerFromText(txt.getText(),null);  
+                return (DataHandler)DataHandlerUtils.getDataHandlerFromText(txt.getText(), null);
             }
         }
         return null;
@@ -150,13 +153,15 @@ public class SimpleTypeMapper {
         String objClassName = obj.getName();
         return isSimpleType(objClassName);
     }
-    public static boolean isDataHandler(Class obj){
+
+    public static boolean isDataHandler(Class obj) {
         return "javax.activation.DataHandler".equals(obj.getName());
     }
 
     public static boolean isCollection(Class obj) {
         return java.util.Collection.class.isAssignableFrom(obj);
     }
+
     public static boolean isSimpleType(String objClassName) {
         if (objClassName.equals(STRING)) {
             return true;
@@ -204,9 +209,9 @@ public class SimpleTypeMapper {
                 obj instanceof Double) {
             double data;
             if (obj instanceof Float) {
-                data = ((Float) obj).doubleValue();
+                data = ((Float)obj).doubleValue();
             } else {
-                data = ((Double) obj).doubleValue();
+                data = ((Double)obj).doubleValue();
             }
             if (Double.isNaN(data)) {
                 return "NaN";
@@ -220,7 +225,7 @@ public class SimpleTypeMapper {
         } else if (obj instanceof Calendar) {
             SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
             zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-            return zulu.format(((Calendar) obj).getTime());
+            return zulu.format(((Calendar)obj).getTime());
         } else if (obj instanceof Date) {
             SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
             zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -257,9 +262,9 @@ public class SimpleTypeMapper {
         }
         // convert what we have validated so far
         try {
-                SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-                date = zulu.parse(source.substring(0, 19) + ".000Z");
+            SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
+            date = zulu.parse(source.substring(0, 19) + ".000Z");
         } catch (Exception e) {
             throw new NumberFormatException(e.toString());
         }

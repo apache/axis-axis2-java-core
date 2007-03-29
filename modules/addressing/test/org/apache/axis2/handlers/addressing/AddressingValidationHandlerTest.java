@@ -127,7 +127,7 @@ public class AddressingValidationHandlerTest extends TestCase implements Address
         } catch (AxisFault axisFault) {
             // Confirm this is the correct fault
             assertEquals("Wrong fault code",
-                         new QName(Final.WSA_NAMESPACE, 
+                         new QName(Final.WSA_NAMESPACE,
                                    Final.FAULT_ADDRESSING_HEADER_REQUIRED),
                          axisFault.getFaultCode());
             return;

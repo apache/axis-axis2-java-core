@@ -47,7 +47,7 @@ public class AddressingModule implements Module {
         if (moduleConfig != null) {
             List list = moduleConfig.getParameters();
             for (int i = 0, size = list.size(); i < size; i++) {
-                Parameter param = (Parameter) list.get(i);
+                Parameter param = (Parameter)list.get(i);
                 arg1.addParameter(param);
 
                 if (log.isTraceEnabled()) {

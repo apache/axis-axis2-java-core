@@ -16,8 +16,7 @@
 package org.apache.axis2.databinding.types;
 
 /**
- * Custom class for supporting primitive XSD data type Token.
- * token represents tokenized strings.
+ * Custom class for supporting primitive XSD data type Token. token represents tokenized strings.
  * The base type of token is normalizedString.
  *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#token">XML Schema 3.3.2</a>
@@ -26,13 +25,14 @@ public class Token extends NormalizedString {
 
     private static final long serialVersionUID = -7370524740514465467L;
 
-	public Token() {
+    public Token() {
         super();
     }
 
     /**
      * ctor for Token
-     * @exception IllegalArgumentException will be thrown if validation fails
+     *
+     * @throws IllegalArgumentException will be thrown if validation fails
      */
     public Token(String stValue) throws IllegalArgumentException {
         try {
@@ -42,29 +42,25 @@ public class Token extends NormalizedString {
             // recast normalizedString exception as token exception
             throw new IllegalArgumentException(
                     //Messages.getMessage("badToken00") +
-                     "data=[" + stValue + "]");
+                    "data=[" + stValue + "]");
         }
     }
 
     /**
-     *
      * validate the value against the xsd definition
-     *
-     * The value space of token is the set of strings that do not
-     * contain the line feed (#xA) nor tab (#x9) characters, that
-     * have no leading or trailing spaces (#x20) and that have no
-     * internal sequences of two or more spaces. The lexical space
-     * of token is the set of strings that do not contain the line
-     * feed (#xA) nor tab (#x9) characters, that have no leading or
-     * trailing spaces (#x20) and that have no internal sequences of two
-     * or more spaces.
+     * <p/>
+     * The value space of token is the set of strings that do not contain the line feed (#xA) nor
+     * tab (#x9) characters, that have no leading or trailing spaces (#x20) and that have no
+     * internal sequences of two or more spaces. The lexical space of token is the set of strings
+     * that do not contain the line feed (#xA) nor tab (#x9) characters, that have no leading or
+     * trailing spaces (#x20) and that have no internal sequences of two or more spaces.
      */
     public static boolean isValid(String stValue) {
         int scan;
         // check to see if we have a string to review
-        if (  (stValue == null) || (stValue.length() == 0)  )
+        if ((stValue == null) || (stValue.length() == 0))
             return true;
-            
+
         // no leading space
         if (stValue.charAt(0) == 0x20)
             return false;
@@ -73,15 +69,15 @@ public class Token extends NormalizedString {
         if (stValue.charAt(stValue.length() - 1) == 0x20)
             return false;
 
-        for (scan=0; scan < stValue.length(); scan++) {
+        for (scan = 0; scan < stValue.length(); scan++) {
             char cDigit = stValue.charAt(scan);
             switch (cDigit) {
                 case 0x09:
                 case 0x0A:
                     return false;
                 case 0x20:
-                   // no doublspace
-                    if (scan+1 < stValue.length())
+                    // no doublspace
+                    if (scan + 1 < stValue.length())
                         if (stValue.charAt(scan + 1) == 0x20) {
                             return false;
                         }
@@ -91,18 +87,18 @@ public class Token extends NormalizedString {
         }
         return true;
     }
-    
+
     /**
-     *
      * validates the data and sets the value for the object.
+     *
      * @param stValue String value
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {
         if (!Token.isValid(stValue))
             throw new IllegalArgumentException(
-               //Messages.getMessage("badToken00") +
-               " data=[" + stValue + "]");
+                    //Messages.getMessage("badToken00") +
+                    " data=[" + stValue + "]");
         m_value = stValue;
     }
 

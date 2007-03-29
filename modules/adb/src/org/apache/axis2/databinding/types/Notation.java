@@ -19,14 +19,15 @@ package org.apache.axis2.databinding.types;
 /**
  * Custom class for supporting XSD data type NOTATION.
  *
- * @see <a href="http://www.w3.org/TR/xmlschema-1/#element-notation">XML Schema Part 1: 3.12 Notation Declarations</a>
+ * @see <a href="http://www.w3.org/TR/xmlschema-1/#element-notation">XML Schema Part 1: 3.12
+ *      Notation Declarations</a>
  */
 
 public class Notation implements java.io.Serializable {
-	
+
     private static final long serialVersionUID = 2393074651972192536L;
-    
-	NCName name;
+
+    NCName name;
     URI publicURI;
     URI systemURI;
 
@@ -66,7 +67,7 @@ public class Notation implements java.io.Serializable {
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof Notation))
             return false;
-        Notation other = (Notation) obj;
+        Notation other = (Notation)obj;
         if (name == null) {
             if (other.name != null) {
                 return false;
@@ -92,10 +93,9 @@ public class Notation implements java.io.Serializable {
     }
 
     /**
-     * Returns the sum of the hashcodes of {name,publicURI,systemURI}
-     * for whichever properties in that set is non null.  This is
-     * consistent with the implementation of equals, as required by
-     * {@link java.lang.Object#hashCode() Object.hashCode}.
+     * Returns the sum of the hashcodes of {name,publicURI,systemURI} for whichever properties in
+     * that set is non null.  This is consistent with the implementation of equals, as required by
+     * {@link Object#hashCode() Object.hashCode}.
      *
      * @return an <code>int</code> value
      */

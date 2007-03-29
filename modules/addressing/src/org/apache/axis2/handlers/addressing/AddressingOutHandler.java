@@ -135,7 +135,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
 
             messageContext = mc;
             envelope = mc.getEnvelope();
-            factory = (SOAPFactory) envelope.getOMFactory();
+            factory = (SOAPFactory)envelope.getOMFactory();
 
             header = envelope.getHeader();
 
@@ -199,12 +199,12 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             if (messageID != null && !isAddressingHeaderAlreadyAvailable(WSA_MESSAGE_ID, false))
             {//optional
                 OMElement oe = processStringInfo(messageID, WSA_MESSAGE_ID);
-                ArrayList attributes = (ArrayList) messageContextOptions
+                ArrayList attributes = (ArrayList)messageContextOptions
                         .getProperty(AddressingConstants.MESSAGEID_ATTRIBUTES);
                 if (attributes != null && !attributes.isEmpty()) {
                     Iterator attrIterator = attributes.iterator();
                     while (attrIterator.hasNext()) {
-                        AttributeHelper.importOMAttribute((OMAttribute) attrIterator.next(), oe);
+                        AttributeHelper.importOMAttribute((OMAttribute)attrIterator.next(), oe);
                     }
                 }
             }
@@ -263,13 +263,13 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                     }
                     // Otherwise just add the header
                     OMElement oe = processStringInfo(action, WSA_ACTION);
-                    ArrayList attributes = (ArrayList) messageContextOptions
+                    ArrayList attributes = (ArrayList)messageContextOptions
                             .getProperty(AddressingConstants.ACTION_ATTRIBUTES);
                     if (attributes != null && !attributes.isEmpty()) {
                         Iterator attrIterator = attributes.iterator();
                         while (attrIterator.hasNext()) {
                             AttributeHelper
-                                    .importOMAttribute((OMAttribute) attrIterator.next(), oe);
+                                    .importOMAttribute((OMAttribute)attrIterator.next(), oe);
                         }
                     }
                 }
@@ -314,7 +314,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                                 Iterator attributes =
                                         relatesTo[i].getExtensibilityAttributes().iterator();
                                 while (attributes.hasNext()) {
-                                    OMAttribute oma = (OMAttribute) attributes.next();
+                                    OMAttribute oma = (OMAttribute)attributes.next();
                                     AttributeHelper.importOMAttribute(oma, relatesToHeader);
                                 }
                             }
@@ -393,7 +393,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                     if (epr.getAddressAttributes() != null) {
                         Iterator addressAttributes = epr.getAddressAttributes().iterator();
                         while (addressAttributes.hasNext()) {
-                            OMAttribute attr = (OMAttribute) addressAttributes.next();
+                            OMAttribute attr = (OMAttribute)addressAttributes.next();
                             AttributeHelper.importOMAttribute(attr, toHeaderBlock);
                         }
                     }
@@ -465,7 +465,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
             if (referenceInformation != null && parent != null) {
                 Iterator iterator = referenceInformation.values().iterator();
                 while (iterator.hasNext()) {
-                    OMElement omElement = (OMElement) iterator.next();
+                    OMElement omElement = (OMElement)iterator.next();
                     parent.addChild(
                             ElementHelper.importOMElement(omElement, parent.getOMFactory()));
                     if (isFinalAddressingNamespace) {
@@ -496,7 +496,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 if (replaceHeaders) {
                     Iterator iterator = header.getChildrenWithName(qname);
                     while (iterator.hasNext()) {
-                        OMElement addressingHeader = (OMElement) iterator.next();
+                        OMElement addressingHeader = (OMElement)iterator.next();
                         addressingHeader.detach();
                     }
                 }
@@ -529,7 +529,7 @@ public class AddressingOutHandler extends AbstractHandler implements AddressingC
                 List headers = header.getHeaderBlocksWithNSURI(addressingNamespace);
 
                 for (int i = 0, size = headers.size(); i < size; i++) {
-                    SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock) headers.get(i);
+                    SOAPHeaderBlock soapHeaderBlock = (SOAPHeaderBlock)headers.get(i);
                     soapHeaderBlock.setMustUnderstand(true);
                     if (log.isTraceEnabled()) {
                         log.trace(

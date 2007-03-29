@@ -2,10 +2,13 @@ package org.apache.axis2.databinding.utils;
 
 import junit.framework.TestCase;
 
-import java.util.*;
 import java.math.BigInteger;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -24,9 +27,7 @@ import java.text.SimpleDateFormat;
 
 public class ConverterUtilTest extends TestCase {
 
-    /**
-     * Test conversion of Big Integer
-     */
+    /** Test conversion of Big Integer */
     public void testBigInteger() {
         List l = new ArrayList();
         l.add("23445");
@@ -42,9 +43,7 @@ public class ConverterUtilTest extends TestCase {
 
     }
 
-    /**
-     * integer arrays
-     */
+    /** integer arrays */
     public void testInt() {
         List l = new ArrayList();
         l.add("23445");
@@ -60,9 +59,7 @@ public class ConverterUtilTest extends TestCase {
 
     }
 
-    /**
-     * boolean arrays
-     */
+    /** boolean arrays */
     public void testBool() {
         List l = new ArrayList();
         l.add("true");
@@ -118,13 +115,13 @@ public class ConverterUtilTest extends TestCase {
 
     }
 
-    public void testConvertToDateString(){
+    public void testConvertToDateString() {
         Date date = new Date();
         String dateString = ConverterUtil.convertToString(date);
         System.out.println("Date ==> " + dateString);
     }
 
-    public void testConvertToDate(){
+    public void testConvertToDate() {
 
         Date date;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd Z");

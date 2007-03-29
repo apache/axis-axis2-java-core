@@ -18,15 +18,12 @@ package org.apache.axis2.databinding.types;
 
 import org.apache.axis2.databinding.utils.ConverterUtil;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.namespace.QName;
-import java.util.Date;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 
-/**
- * this class is the super class of all the union simple types
- */
+/** this class is the super class of all the union simple types */
 public abstract class Union {
     // object to store values
     protected Object localObject;

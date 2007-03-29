@@ -22,10 +22,8 @@ import java.util.List;
  * limitations under the License.
  */
 
-/**
- * A state machine that reads arrays with simple content. returns a string array
- */
-public class SimpleArrayReaderStateMachine implements States,Constants {
+/** A state machine that reads arrays with simple content. returns a string array */
+public class SimpleArrayReaderStateMachine implements States, Constants {
 
     private QName elementNameToTest = null;
     private int currentState = INIT_STATE;
@@ -35,15 +33,13 @@ public class SimpleArrayReaderStateMachine implements States,Constants {
 
     private List list = new ArrayList();
 
-    /**
-     * @return an array of strings
-     */
+    /** @return an array of strings */
     public String[] getTextArray() {
         return (String[])list.toArray(new String[list.size()]);
     }
 
 
-    public void setNillable(){
+    public void setNillable() {
         nillable = true;
     }
 
@@ -56,14 +52,14 @@ public class SimpleArrayReaderStateMachine implements States,Constants {
     }
 
     /**
-     * Resets the state machine. Once the reset is called
-     * the state machine is good enough for a fresh run
+     * Resets the state machine. Once the reset is called the state machine is good enough for a
+     * fresh run
      */
-    public void reset(){
+    public void reset() {
         elementNameToTest = null;
         currentState = INIT_STATE;
         nillable = false;
-        list=new ArrayList();
+        list = new ArrayList();
     }
 
     public void setElementNameToTest(QName elementNameToTest) {
@@ -72,125 +68,123 @@ public class SimpleArrayReaderStateMachine implements States,Constants {
 
     /**
      * public read method - reads a given reader to extract the text value
+     *
      * @param reader
      */
     public void read(XMLStreamReader reader) throws XMLStreamException {
 
-        do{
+        do {
             updateState(reader);
 
             //test for the nillable attribute
-            if (currentState==START_ELEMENT_FOUND_STATE &&
-                    nillable){
-                if (TRUE.equals(reader.getAttributeValue(XSI_NAMESPACE,NIL))){
+            if (currentState == START_ELEMENT_FOUND_STATE &&
+                    nillable) {
+                if (TRUE.equals(reader.getAttributeValue(XSI_NAMESPACE, NIL))) {
                     list.add(null);
                     //force the state to be null found
-                    currentState= NULLED_STATE;
+                    currentState = NULLED_STATE;
                 }
             }
 
-            if (currentState==TEXT_FOUND_STATE){
+            if (currentState == TEXT_FOUND_STATE) {
                 //read the text value and store it in the list
                 list.add(reader.getText());
             }
             //increment the parser only if the  state is
             //not finished
-            if (currentState!=FINISHED_STATE
-                    && currentState!= ILLEGAL_STATE){
+            if (currentState != FINISHED_STATE
+                    && currentState != ILLEGAL_STATE) {
                 reader.next();
             }
 
-        }while(currentState!=FINISHED_STATE
-                && currentState!= ILLEGAL_STATE);
+        } while (currentState != FINISHED_STATE
+                && currentState != ILLEGAL_STATE);
 
-        if (currentState==ILLEGAL_STATE){
+        if (currentState == ILLEGAL_STATE) {
             throw new RuntimeException("Illegal state!");
         }
 
     }
 
 
-
-
-
-    private void updateState(XMLStreamReader reader) throws XMLStreamException{
+    private void updateState(XMLStreamReader reader) throws XMLStreamException {
         int event = reader.getEventType();
 
-        switch (currentState){
+        switch (currentState) {
 
             case INIT_STATE:
-                if (event== XMLStreamConstants.START_DOCUMENT){
+                if (event == XMLStreamConstants.START_DOCUMENT) {
                     currentState = STARTED_STATE;
-                }else if (event== XMLStreamConstants.START_ELEMENT){
-                    if (elementNameToTest.equals(reader.getName())){
+                } else if (event == XMLStreamConstants.START_ELEMENT) {
+                    if (elementNameToTest.equals(reader.getName())) {
                         currentState = START_ELEMENT_FOUND_STATE;
-                    }else{
+                    } else {
                         //we found a start element that does not have
                         //the name of the element
 
-                        currentState = canbeAbsent?
-                                     FINISHED_STATE:
-                                     STARTED_STATE;
+                        currentState = canbeAbsent ?
+                                FINISHED_STATE :
+                                STARTED_STATE;
                     }
-                }else if (event==XMLStreamConstants.END_ELEMENT){
+                } else if (event == XMLStreamConstants.END_ELEMENT) {
                     // an end element is found at the init state
                     // we should break the process here ?
-                    if (!elementNameToTest.equals(reader.getName())){
-                        currentState = FINISHED_STATE ;
+                    if (!elementNameToTest.equals(reader.getName())) {
+                        currentState = FINISHED_STATE;
                     }
                 }
                 break;
 
             case STARTED_STATE:
-                if (event==XMLStreamConstants.END_ELEMENT){
-                    if (elementNameToTest.equals(reader.getName())){
+                if (event == XMLStreamConstants.END_ELEMENT) {
+                    if (elementNameToTest.equals(reader.getName())) {
                         currentState = ILLEGAL_STATE;
-                    }else{
+                    } else {
                         currentState = FINISHED_STATE;
                     }
-                }else if  (event==XMLStreamConstants.START_ELEMENT){
+                } else if (event == XMLStreamConstants.START_ELEMENT) {
                     QName name = reader.getName();
-                    if (elementNameToTest.equals(name)){
+                    if (elementNameToTest.equals(name)) {
                         currentState = START_ELEMENT_FOUND_STATE;
                     }
                 }
                 break;
 
             case START_ELEMENT_FOUND_STATE:
-                if (event==XMLStreamConstants.CHARACTERS){
-                    currentState  = TEXT_FOUND_STATE;
+                if (event == XMLStreamConstants.CHARACTERS) {
+                    currentState = TEXT_FOUND_STATE;
                 }
                 break;
 
             case TEXT_FOUND_STATE:
-                if (event==XMLStreamConstants.END_ELEMENT){
-                    if (elementNameToTest.equals(reader.getName())){
+                if (event == XMLStreamConstants.END_ELEMENT) {
+                    if (elementNameToTest.equals(reader.getName())) {
                         currentState = END_ELEMENT_FOUND_STATE;
-                    }else{
+                    } else {
                         currentState = ILLEGAL_STATE;
                     }
-                }else if (event==XMLStreamConstants.CHARACTERS){
+                } else if (event == XMLStreamConstants.CHARACTERS) {
                     //another char event -
                     //so append it to the current text
                 }
                 break;
             case NULLED_STATE:
                 //read upto the end and set the state to END_ELEMENT_FOUND_STATE
-                while (event!= XMLStreamConstants.END_ELEMENT){
-                    event=reader.next();
+                while (event != XMLStreamConstants.END_ELEMENT) {
+                    event = reader.next();
                 }
                 currentState = END_ELEMENT_FOUND_STATE;
                 break;
             case END_ELEMENT_FOUND_STATE:
-                if (event==XMLStreamConstants.START_ELEMENT ) {
+                if (event == XMLStreamConstants.START_ELEMENT) {
                     //restart the parsing
-                    if (elementNameToTest.equals(reader.getName())){
+                    if (elementNameToTest.equals(reader.getName())) {
                         currentState = START_ELEMENT_FOUND_STATE;
-                    }else{
+                    } else {
                         currentState = FINISHED_STATE;
                     }
                     //another end element found after end-element
-                }else if (event==XMLStreamConstants.END_ELEMENT ) {
+                } else if (event == XMLStreamConstants.END_ELEMENT) {
                     currentState = FINISHED_STATE;
                     //end  document found
                 }
@@ -200,15 +194,15 @@ public class SimpleArrayReaderStateMachine implements States,Constants {
                 //characters found - if this is a characters event that was in the correct place then
                 //it would have been handled already. we need to check whether this is a ignorable
                 //whitespace and if not push the state machine to a illegal state.
-                if (event==XMLStreamConstants.CHARACTERS){
-                    if (reader.getText().trim().length()==0){
+                if (event == XMLStreamConstants.CHARACTERS) {
+                    if (reader.getText().trim().length() == 0) {
                         //the text is empty - don't change the state
-                    }else{
+                    } else {
                         //we do NOT handle mixed content
                         currentState = ILLEGAL_STATE;
                     }
 
-                } else{
+                } else {
                     currentState = ILLEGAL_STATE;
                 }
 

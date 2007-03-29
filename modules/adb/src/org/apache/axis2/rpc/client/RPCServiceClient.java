@@ -33,7 +33,8 @@ public class RPCServiceClient extends ServiceClient {
 
     private boolean notNullService;
 
-    public RPCServiceClient(ConfigurationContext configContext, AxisService service) throws AxisFault {
+    public RPCServiceClient(ConfigurationContext configContext, AxisService service)
+            throws AxisFault {
         super(configContext, service);
         if (service != null) {
             notNullService = true;
@@ -54,16 +55,16 @@ public class RPCServiceClient extends ServiceClient {
     /**
      * Return value can be a single a object or an object array (itself an object) , but it is
      * difficulty to figure the return object correctly unless we have TyepMapping in the client
-     * side too. Until it is finalized lets return OMElement as return value. And the retuen
-     * value will be the body first element user has to deal with that and create
-     * his own object out of that.
+     * side too. Until it is finalized lets return OMElement as return value. And the retuen value
+     * will be the body first element user has to deal with that and create his own object out of
+     * that.
      *
      * @param opName Operation QName (to get the body wrapper element)
      * @param args   Arraylist of objects
      * @return Response OMElement
      */
     public OMElement invokeBlocking(QName opName, Object [] args) throws AxisFault {
-        OMElement omElement = BeanUtil.getOMElement(opName, args, null, false, null );
+        OMElement omElement = BeanUtil.getOMElement(opName, args, null, false, null);
         if (notNullService) {
             return super.sendReceive(opName, omElement);
         }
@@ -73,21 +74,22 @@ public class RPCServiceClient extends ServiceClient {
     /**
      * @param opName      Operation QName (to get the body wrapper element)
      * @param args        Arraylist of objects
-     * @param returnTypes , this array contains the JavaTypes for the return object , it could be one
-     *                    or more depending on the return type , most of the type array will contain just one element
-     *                    It should be noted that the array should only contains JavaTypes NOT real object , what this
-     *                    methods does is , get the body first element , and if it contains more than one childern take
-     *                    ith element and convert that to ith javatype and fill the return arrya
-     *                    the array will look like as follows
-     *                    [Integer, String, MyBean , etc]
-     * @return Object array , whic will contains real object , but the object can either be simple type
-     *         object or the JavaBeans, thats what this method can handle right now
-     *         the return array will contains [10, "Axis2Echo", {"foo","baa","11"}]
+     * @param returnTypes , this array contains the JavaTypes for the return object , it could be
+     *                    one or more depending on the return type , most of the type array will
+     *                    contain just one element It should be noted that the array should only
+     *                    contains JavaTypes NOT real object , what this methods does is , get the
+     *                    body first element , and if it contains more than one childern take ith
+     *                    element and convert that to ith javatype and fill the return arrya the
+     *                    array will look like as follows [Integer, String, MyBean , etc]
+     * @return Object array , whic will contains real object , but the object can either be simple
+     *         type object or the JavaBeans, thats what this method can handle right now the return
+     *         array will contains [10, "Axis2Echo", {"foo","baa","11"}]
      * @throws AxisFault
      */
 
-    public Object[]  invokeBlocking(QName opName, Object [] args, Class [] returnTypes) throws AxisFault {
-        OMElement omElement = BeanUtil.getOMElement(opName, args, null, false, null );
+    public Object[]  invokeBlocking(QName opName, Object [] args, Class [] returnTypes)
+            throws AxisFault {
+        OMElement omElement = BeanUtil.getOMElement(opName, args, null, false, null);
         OMElement response;
         if (notNullService) {
             response = super.sendReceive(opName, omElement);
@@ -95,15 +97,14 @@ public class RPCServiceClient extends ServiceClient {
             response = super.sendReceive(omElement);
         }
         return BeanUtil.deserialize(response, returnTypes,
-                new DefaultObjectSupplier());
+                                    new DefaultObjectSupplier());
     }
 
     /**
      * Invoke the nonblocking/Asynchronous call
      *
      * @param opName
-     * @param args     -  This should be OM Element (payload)
-     *                 invocation behaves accordingly
+     * @param args     -  This should be OM Element (payload) invocation behaves accordingly
      * @param callback
      * @throws org.apache.axis2.AxisFault
      */
@@ -112,7 +113,7 @@ public class RPCServiceClient extends ServiceClient {
                                   Object [] args,
                                   Callback callback)
             throws AxisFault {
-        OMElement omElement = BeanUtil.getOMElement(opName, args, null, false, null );
+        OMElement omElement = BeanUtil.getOMElement(opName, args, null, false, null);
         //call the underline implementation
         if (notNullService) {
             super.sendReceiveNonBlocking(opName, omElement, callback);
@@ -123,7 +124,7 @@ public class RPCServiceClient extends ServiceClient {
 
     public void invokeRobust(QName opName,
                              Object [] args) throws AxisFault {
-        OMElement omElement = BeanUtil.getOMElement(opName, args, null, false, null );
+        OMElement omElement = BeanUtil.getOMElement(opName, args, null, false, null);
         //call the underline implementation
         if (notNullService) {
             super.sendRobust(opName, omElement);

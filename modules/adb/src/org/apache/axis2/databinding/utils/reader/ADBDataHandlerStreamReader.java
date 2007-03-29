@@ -1,12 +1,12 @@
 package org.apache.axis2.databinding.utils.reader;
 
+import org.apache.axis2.databinding.utils.ConverterUtil;
+
 import javax.activation.DataHandler;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
-
-import org.apache.axis2.databinding.utils.ConverterUtil;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -50,17 +50,18 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
 
     /**
      * Return the right properties for the optimization
+     *
      * @param propKey
      * @throws IllegalArgumentException
      */
     public Object getProperty(String propKey) throws IllegalArgumentException {
-        if (OPTIMIZATION_ENABLED.equals(propKey)){
+        if (OPTIMIZATION_ENABLED.equals(propKey)) {
             return Boolean.TRUE;
         }
-        if (state==TEXT_STATE){
-            if (IS_BINARY.equals(propKey)){
+        if (state == TEXT_STATE) {
+            if (IS_BINARY.equals(propKey)) {
                 return Boolean.TRUE;
-            }else if (DATA_HANDLER.equals(propKey)){
+            } else if (DATA_HANDLER.equals(propKey)) {
                 return value;
             }
         }
@@ -71,9 +72,9 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     public int next() throws XMLStreamException {
         //no need to handle null here. it should have been handled
         //already
-        switch (state){
+        switch (state) {
             case START_ELEMENT_STATE:
-                state=TEXT_STATE;
+                state = TEXT_STATE;
                 return CHARACTERS;
             case END_ELEMENT_STATE:
                 //oops, not supposed to happen!
@@ -91,14 +92,14 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     }
 
     public String getElementText() throws XMLStreamException {
-        if (state==START_ELEMENT){
+        if (state == START_ELEMENT) {
             //move to the end state and return the value
             state = END_ELEMENT_STATE;
-            if (convertedText==null){
+            if (convertedText == null) {
                 convertedText = ConverterUtil.getStringFromDatahandler(value);
             }
             return convertedText;
-        }else{
+        } else {
             throw new XMLStreamException();
         }
 
@@ -109,7 +110,7 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     }
 
     public boolean hasNext() throws XMLStreamException {
-        return (state!=END_ELEMENT_STATE);
+        return (state != END_ELEMENT_STATE);
     }
 
     public void close() throws XMLStreamException {
@@ -121,15 +122,15 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     }
 
     public boolean isStartElement() {
-        return (state==START_ELEMENT_STATE);
+        return (state == START_ELEMENT_STATE);
     }
 
     public boolean isEndElement() {
-        return (state==END_ELEMENT_STATE);
+        return (state == END_ELEMENT_STATE);
     }
 
     public boolean isCharacters() {
-        return (state==TEXT_STATE);
+        return (state == TEXT_STATE);
     }
 
     public boolean isWhiteSpace() {
@@ -173,15 +174,15 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     }
 
     public int getNamespaceCount() {
-        return (nsDeclared)?1:0;
+        return (nsDeclared) ? 1 : 0;
     }
 
     public String getNamespacePrefix(int i) {
-        return (nsDeclared && i==0)?name.getPrefix():null;
+        return (nsDeclared && i == 0) ? name.getPrefix() : null;
     }
 
     public String getNamespaceURI(int i) {
-        return (nsDeclared && i==0)?name.getNamespaceURI():null;
+        return (nsDeclared && i == 0) ? name.getNamespaceURI() : null;
     }
 
     public NamespaceContext getNamespaceContext() {
@@ -189,7 +190,7 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     }
 
     public int getEventType() {
-        switch (state){
+        switch (state) {
             case START_ELEMENT_STATE:
                 return START_ELEMENT;
             case END_ELEMENT_STATE:
@@ -204,25 +205,25 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     }
 
     public String getText() {
-        if (state==TEXT_STATE){
-            if (convertedText==null){
+        if (state == TEXT_STATE) {
+            if (convertedText == null) {
                 convertedText =
                         ConverterUtil.getStringFromDatahandler(value);
             }
             return convertedText;
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
 
     public char[] getTextCharacters() {
-        if (state==TEXT_STATE){
-            if (convertedText==null){
+        if (state == TEXT_STATE) {
+            if (convertedText == null) {
                 convertedText =
                         ConverterUtil.getStringFromDatahandler(value);
             }
             return convertedText.toCharArray();
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -233,22 +234,22 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     }
 
     public int getTextStart() {
-        if (state==TEXT_STATE){
+        if (state == TEXT_STATE) {
             return 0;
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
 
     public int getTextLength() {
-        if (state==TEXT_STATE){
-            if (convertedText==null){
+        if (state == TEXT_STATE) {
+            if (convertedText == null) {
                 convertedText =
                         ConverterUtil.getStringFromDatahandler(value);
             }
             return convertedText.length();
-        }else{
-            throw new  IllegalStateException();
+        } else {
+            throw new IllegalStateException();
         }
 
     }
@@ -258,11 +259,11 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     }
 
     public boolean hasText() {
-        return (state==TEXT_STATE);
+        return (state == TEXT_STATE);
     }
 
     public Location getLocation() {
-        return new Location(){
+        return new Location() {
             public int getLineNumber() {
                 return 0;
             }
@@ -286,17 +287,17 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     }
 
     public QName getName() {
-        if (state!=TEXT_STATE){
+        if (state != TEXT_STATE) {
             return name;
-        }else{
+        } else {
             return null;
         }
     }
 
     public String getLocalName() {
-        if (state!=TEXT_STATE){
+        if (state != TEXT_STATE) {
             return name.getLocalPart();
-        }else{
+        } else {
             return null;
         }
     }
@@ -307,18 +308,18 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     }
 
     public String getNamespaceURI() {
-        if (state!=TEXT_STATE){
+        if (state != TEXT_STATE) {
             return name.getNamespaceURI();
-        }else{
+        } else {
             return null;
         }
 
     }
 
     public String getPrefix() {
-        if (state!=TEXT_STATE){
+        if (state != TEXT_STATE) {
             return name.getPrefix();
-        }else{
+        } else {
             return null;
         }
     }
@@ -348,7 +349,7 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     }
 
     public boolean isDone() {
-        return (state==END_ELEMENT_STATE);
+        return (state == END_ELEMENT_STATE);
     }
 
     public void addNamespaceContext(NamespaceContext nsContext) {
@@ -358,10 +359,11 @@ public class ADBDataHandlerStreamReader implements ADBXMLStreamReader {
     public void init() {
         //just add the current elements namespace and prefix to the this
         //elements nscontext
-        addToNsMap(name.getPrefix(),name.getNamespaceURI());
+        addToNsMap(name.getPrefix(), name.getNamespaceURI());
 
 
     }
+
     /**
      * @param prefix
      * @param uri

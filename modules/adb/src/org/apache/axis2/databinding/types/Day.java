@@ -31,26 +31,21 @@ public class Day implements Serializable {
     int day;
     String timezone;
 
-    /**
-     * Constructs a Day with the given values
-     * No timezone is specified
-     */
+    /** Constructs a Day with the given values No timezone is specified */
     public Day(int day) throws NumberFormatException {
         setValue(day);
     }
 
     /**
-     * Constructs a Day with the given values, including a timezone string
-     * The timezone is validated but not used.
+     * Constructs a Day with the given values, including a timezone string The timezone is validated
+     * but not used.
      */
     public Day(int day, String timezone)
             throws NumberFormatException {
         setValue(day, timezone);
     }
 
-    /**
-     * Construct a Day from a String in the format ---DD[timezone]
-     */
+    /** Construct a Day from a String in the format ---DD[timezone] */
     public Day(String source) throws NumberFormatException {
         if (source.length() < 5) {
             throw new NumberFormatException();
@@ -65,16 +60,14 @@ public class Day implements Serializable {
         }
 
         setValue(Integer.parseInt(source.substring(3, 5)),
-                source.substring(5));
+                 source.substring(5));
     }
 
     public int getDay() {
         return day;
     }
 
-    /**
-     * Set the day
-     */
+    /** Set the day */
     public void setDay(int day) {
         // validate day
         if (day < 1 || day > 31) {
@@ -139,7 +132,7 @@ public class Day implements Serializable {
 
     public boolean equals(Object obj) {
         if (!(obj instanceof Day)) return false;
-        Day other = (Day) obj;
+        Day other = (Day)obj;
         if (this == obj) return true;
 
         boolean equals = (this.day == other.day);
@@ -150,8 +143,7 @@ public class Day implements Serializable {
     }
 
     /**
-     * Return the value of day XORed with the hashCode of timezone
-     * iff one is defined.
+     * Return the value of day XORed with the hashCode of timezone iff one is defined.
      *
      * @return an <code>int</code> value
      */

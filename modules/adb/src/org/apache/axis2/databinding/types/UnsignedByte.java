@@ -16,7 +16,6 @@
 package org.apache.axis2.databinding.types;
 
 
-
 /**
  * Custom class for supporting primitive XSD data type UnsignedByte
  *
@@ -27,24 +26,24 @@ public class UnsignedByte extends UnsignedShort {
 
     private static final long serialVersionUID = 4631754787145526759L;
 
-	public UnsignedByte() {
+    public UnsignedByte() {
 
     }
 
     /**
      * ctor for UnsignedByte
-     * @exception Exception will be thrown if validation fails
+     *
+     * @throws Exception will be thrown if validation fails
      */
     public UnsignedByte(long sValue) throws NumberFormatException {
-      setValue(sValue);
+        setValue(sValue);
     }
 
     public UnsignedByte(String sValue) throws NumberFormatException {
-      setValue(Long.parseLong(sValue));
+        setValue(Long.parseLong(sValue));
     }
 
     /**
-     *
      * validates the data and sets the value for the object.
      *
      * @param sValue the number to set
@@ -52,14 +51,14 @@ public class UnsignedByte extends UnsignedShort {
     public void setValue(long sValue) throws NumberFormatException {
         if (!UnsignedByte.isValid(sValue))
             throw new NumberFormatException(
-                   // Messages.getMessage("badUnsignedByte00") +
+                    // Messages.getMessage("badUnsignedByte00") +
                     String.valueOf(sValue) + "]");
         lValue = new Long(sValue);
     }
 
     /**
-     *
      * validate the value against the xsd value space definition
+     *
      * @param sValue number to check against range
      */
     public static boolean isValid(long sValue) {

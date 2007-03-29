@@ -1,6 +1,9 @@
 package org.apache.axis2.rpc.receivers;
 
-import org.apache.axiom.om.*;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
 import org.apache.axiom.om.util.Base64;
@@ -11,15 +14,15 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.databinding.utils.reader.NullXMLStreamReader;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.util.StreamWrapper;
-import org.apache.ws.java2wsdl.utils.TypeTable;
+import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaElement;
 import org.apache.ws.commons.schema.XmlSchemaObjectCollection;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
-import org.apache.ws.commons.schema.XmlSchemaComplexType;
+import org.apache.ws.java2wsdl.utils.TypeTable;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
@@ -59,13 +62,13 @@ public class RPCUtil {
         if (resObject != null) {
             //simple type
             if (resObject instanceof OMElement) {
-                OMElement result = (OMElement) resObject;
+                OMElement result = (OMElement)resObject;
                 bodyContent = fac.createOMElement(
                         method.getName() + "Response", ns);
                 OMElement resWrapper;
                 if (qualified) {
                     resWrapper = fac.createOMElement(RETURN_WRAPPER, ns.getNamespaceURI(),
-                            ns.getPrefix());
+                                                     ns.getPrefix());
                 } else {
                     resWrapper = fac.createOMElement(RETURN_WRAPPER, null);
                 }
@@ -93,7 +96,7 @@ public class RPCUtil {
                     returnWrapper = new QName(RETURN_WRAPPER);
                 }
                 XMLStreamReader xr = BeanUtil.getPullParser(resObject,
-                        returnWrapper, typeTable, qualified);
+                                                            returnWrapper, typeTable, qualified);
                 StAXOMBuilder stAXOMBuilder =
                         OMXMLBuilderFactory.createStAXOMBuilder(
                                 OMAbstractFactory.getOMFactory(), new StreamWrapper(xr));
@@ -109,7 +112,8 @@ public class RPCUtil {
     }
 
     public static Object[] processRequest(OMElement methodElement,
-                                          Method method, ObjectSupplier objectSupplier) throws AxisFault {
+                                          Method method, ObjectSupplier objectSupplier)
+            throws AxisFault {
         Class[] parameters = method.getParameterTypes();
         return BeanUtil.deserialize(methodElement, parameters, objectSupplier);
     }
@@ -120,15 +124,15 @@ public class RPCUtil {
                                                TypeTable typeTable) {
         if (qualified) {
             return BeanUtil.getOMElement(resname, objs,
-                    new QName(resname.getNamespaceURI(),
-                            RETURN_WRAPPER,
-                            resname.getPrefix()),
-                    qualified,
-                    typeTable);
+                                         new QName(resname.getNamespaceURI(),
+                                                   RETURN_WRAPPER,
+                                                   resname.getPrefix()),
+                                         qualified,
+                                         typeTable);
         } else {
             return BeanUtil.getOMElement(resname, objs,
-                    new QName(RETURN_WRAPPER), qualified,
-                    typeTable);
+                                         new QName(RETURN_WRAPPER), qualified,
+                                         typeTable);
         }
     }
 
@@ -137,16 +141,16 @@ public class RPCUtil {
                                                        TypeTable typeTable) {
         if (qualified) {
             return BeanUtil.getOMElement(resname, objs,
-                    new QName(resname.getNamespaceURI(),
-                            RETURN_WRAPPER,
-                            resname.getPrefix()),
-                    qualified,
-                    typeTable);
+                                         new QName(resname.getNamespaceURI(),
+                                                   RETURN_WRAPPER,
+                                                   resname.getPrefix()),
+                                         qualified,
+                                         typeTable);
         } else {
             return BeanUtil.getOMElement(resname, objs,
-                    new QName(RETURN_WRAPPER),
-                    qualified,
-                    typeTable);
+                                         new QName(RETURN_WRAPPER),
+                                         qualified,
+                                         typeTable);
         }
     }
 
@@ -159,13 +163,13 @@ public class RPCUtil {
                                        OMElement bodyContent,
                                        MessageContext outMessage
     ) throws Exception {
-         QName elementQName = outMessage.getAxisMessage().getElementQName();
+        QName elementQName = outMessage.getAxisMessage().getElementQName();
         if (resObject == null) {
             QName resName;
             if (service.isElementFormDefault()) {
                 resName = new QName(service.getSchematargetNamespace(),
-                        RETURN_WRAPPER,
-                        service.getSchematargetNamespacePrefix());
+                                    RETURN_WRAPPER,
+                                    service.getSchematargetNamespacePrefix());
             } else {
                 resName = new QName(RETURN_WRAPPER);
             }
@@ -175,19 +179,19 @@ public class RPCUtil {
                     OMXMLBuilderFactory.createStAXOMBuilder(
                             OMAbstractFactory.getSOAP11Factory(), parser);
             ns = fac.createOMNamespace(service.getSchematargetNamespace(),
-                    service.getSchematargetNamespacePrefix());
+                                       service.getSchematargetNamespacePrefix());
             OMElement bodyChild = fac.createOMElement(method.getName() + "Response", ns);
             bodyChild.addChild(stAXOMBuilder.getDocumentElement());
             envelope.getBody().addChild(bodyChild);
         } else {
             if (resObject instanceof Object[]) {
                 QName resName = new QName(elementQName.getNamespaceURI(),
-                        method.getName() + "Response",
-                        elementQName.getPrefix());
+                                          method.getName() + "Response",
+                                          elementQName.getPrefix());
                 OMElement bodyChild = RPCUtil.getResponseElement(resName,
-                        (Object[]) resObject,
-                        service.isElementFormDefault(),
-                        service.getTypeTable());
+                                                                 (Object[])resObject,
+                                                                 service.isElementFormDefault(),
+                                                                 service.getTypeTable());
                 envelope.getBody().addChild(bodyChild);
             } else {
                 if (resObject.getClass().isArray()) {
@@ -195,7 +199,7 @@ public class RPCUtil {
                     Object objArray [];
                     if (resObject instanceof byte[]) {
                         objArray = new Object[1];
-                        objArray[0] = Base64.encode((byte[]) resObject);
+                        objArray[0] = Base64.encode((byte[])resObject);
                     } else {
                         objArray = new Object[length];
                         for (int i = 0; i < length; i++) {
@@ -204,52 +208,55 @@ public class RPCUtil {
                     }
 
                     QName resName = new QName(elementQName.getNamespaceURI(),
-                            method.getName() + "Response",
-                            elementQName.getPrefix());
+                                              method.getName() + "Response",
+                                              elementQName.getPrefix());
                     OMElement bodyChild = RPCUtil.getResponseElementForArray(resName,
-                            objArray, service.isElementFormDefault(), service.getTypeTable());
+                                                                             objArray,
+                                                                             service.isElementFormDefault(),
+                                                                             service.getTypeTable());
                     envelope.getBody().addChild(bodyChild);
                 } else {
-                    if(SimpleTypeMapper.isCollection(resObject.getClass())){
-                        Collection collection = (Collection) resObject;
+                    if (SimpleTypeMapper.isCollection(resObject.getClass())) {
+                        Collection collection = (Collection)resObject;
                         int size = collection.size();
                         Object values [] = new Object[size];
                         int count = 0;
-                        for (Iterator iterator = collection.iterator(); iterator.hasNext();)
-                        {
+                        for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
                             values[count] = iterator.next();
                             count ++;
 
                         }
                         QName resName = new QName(elementQName.getNamespaceURI(),
-                                method.getName() + "Response",
-                                elementQName.getPrefix());
+                                                  method.getName() + "Response",
+                                                  elementQName.getPrefix());
                         OMElement bodyChild = RPCUtil.getResponseElement(resName,
-                                values,
-                                service.isElementFormDefault(),
-                                service.getTypeTable());
+                                                                         values,
+                                                                         service.isElementFormDefault(),
+                                                                         service.getTypeTable());
                         envelope.getBody().addChild(bodyChild);
-                    } else if (SimpleTypeMapper.isDataHandler(resObject.getClass())){
-                        OMElement resElemt =  fac.createOMElement(method.getName() + "Response" ,ns);
-                        OMText text = fac.createOMText(resObject,true);
+                    } else if (SimpleTypeMapper.isDataHandler(resObject.getClass())) {
+                        OMElement resElemt = fac.createOMElement(method.getName() + "Response", ns);
+                        OMText text = fac.createOMText(resObject, true);
                         OMElement returnElement;
-                        if(service.isElementFormDefault()){
-                            returnElement=   fac.createOMElement(RETURN_WRAPPER ,ns);
+                        if (service.isElementFormDefault()) {
+                            returnElement = fac.createOMElement(RETURN_WRAPPER, ns);
                         } else {
-                            returnElement=   fac.createOMElement(RETURN_WRAPPER ,null);
+                            returnElement = fac.createOMElement(RETURN_WRAPPER, null);
                         }
                         returnElement.addChild(text);
                         resElemt.addChild(returnElement);
                         envelope.getBody().addChild(resElemt);
-                    }  else {
+                    } else {
                         if (service.isElementFormDefault()) {
                             RPCUtil.processResponse(fac, resObject, bodyContent, ns,
-                                    envelope, method, service.isElementFormDefault(),
-                                    service.getTypeTable());
+                                                    envelope, method,
+                                                    service.isElementFormDefault(),
+                                                    service.getTypeTable());
                         } else {
                             RPCUtil.processResponse(fac, resObject, bodyContent, ns,
-                                    envelope, method, service.isElementFormDefault(),
-                                    null);
+                                                    envelope, method,
+                                                    service.isElementFormDefault(),
+                                                    null);
                         }
                     }
                 }
@@ -260,22 +267,24 @@ public class RPCUtil {
 
     /**
      * This can be used to get the part name of the response
+     *
      * @param outMessage : AxisMessage
      * @return String
      */
-    private static  String getReturnName(AxisMessage outMessage){
-        if(outMessage!=null){
-            Object element=  outMessage.getSchemaElement();
-            if(element instanceof XmlSchemaComplexType){
-                XmlSchemaComplexType xmlSchemaComplexType = (XmlSchemaComplexType) element;
+    private static String getReturnName(AxisMessage outMessage) {
+        if (outMessage != null) {
+            Object element = outMessage.getSchemaElement();
+            if (element instanceof XmlSchemaComplexType) {
+                XmlSchemaComplexType xmlSchemaComplexType = (XmlSchemaComplexType)element;
                 Object particle = xmlSchemaComplexType.getParticle();
-                if(particle instanceof XmlSchemaSequence ){
-                    XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence) particle;
+                if (particle instanceof XmlSchemaSequence) {
+                    XmlSchemaSequence xmlSchemaSequence = (XmlSchemaSequence)particle;
                     Object items = xmlSchemaSequence.getItems();
-                    if(items instanceof XmlSchemaObjectCollection){
-                        XmlSchemaObjectCollection xmlSchemaObjectCollection = (XmlSchemaObjectCollection) items;
-                        Object schemaElement=  xmlSchemaObjectCollection.getItem(0);
-                        if(schemaElement instanceof XmlSchemaElement){
+                    if (items instanceof XmlSchemaObjectCollection) {
+                        XmlSchemaObjectCollection xmlSchemaObjectCollection =
+                                (XmlSchemaObjectCollection)items;
+                        Object schemaElement = xmlSchemaObjectCollection.getItem(0);
+                        if (schemaElement instanceof XmlSchemaElement) {
                             return ((XmlSchemaElement)schemaElement).getName();
                         }
                     }

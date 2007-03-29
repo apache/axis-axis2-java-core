@@ -1,9 +1,9 @@
 package org.apache.axis2.databinding.utils.reader;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.Location;
-import javax.xml.namespace.QName;
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
+import javax.xml.stream.Location;
+import javax.xml.stream.XMLStreamException;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -47,15 +47,15 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     public Object getProperty(String key) throws IllegalArgumentException {
         //since optimization is a global property
         //we've to implement it everywhere
-        if (OPTIMIZATION_ENABLED.equals(key)){
+        if (OPTIMIZATION_ENABLED.equals(key)) {
             return Boolean.TRUE;
-        }else if (state==TEXT_STATE){
-            if (IS_BINARY.equals(key)){
+        } else if (state == TEXT_STATE) {
+            if (IS_BINARY.equals(key)) {
                 return Boolean.FALSE;
-            }else{
+            } else {
                 return null;
             }
-        }else{
+        } else {
             return null;
         }
     }
@@ -63,9 +63,9 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     public int next() throws XMLStreamException {
         //no need to handle null here. it should have been handled
         //already
-        switch (state){
+        switch (state) {
             case START_ELEMENT_STATE:
-                state=TEXT_STATE;
+                state = TEXT_STATE;
                 return CHARACTERS;
             case END_ELEMENT_STATE:
                 //oops, not supposed to happen!
@@ -83,11 +83,11 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     }
 
     public String getElementText() throws XMLStreamException {
-        if (state==START_ELEMENT){
+        if (state == START_ELEMENT) {
             //move to the end state and return the value
             state = END_ELEMENT_STATE;
             return value;
-        }else{
+        } else {
             throw new XMLStreamException();
         }
 
@@ -98,7 +98,7 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     }
 
     public boolean hasNext() throws XMLStreamException {
-        return (state!=END_ELEMENT_STATE);
+        return (state != END_ELEMENT_STATE);
     }
 
     public void close() throws XMLStreamException {
@@ -110,15 +110,15 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     }
 
     public boolean isStartElement() {
-        return (state==START_ELEMENT_STATE);
+        return (state == START_ELEMENT_STATE);
     }
 
     public boolean isEndElement() {
-        return (state==END_ELEMENT_STATE);
+        return (state == END_ELEMENT_STATE);
     }
 
     public boolean isCharacters() {
-        return (state==TEXT_STATE);
+        return (state == TEXT_STATE);
     }
 
     public boolean isWhiteSpace() {
@@ -162,15 +162,15 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     }
 
     public int getNamespaceCount() {
-        return (nsDeclared)?1:0;
+        return (nsDeclared) ? 1 : 0;
     }
 
     public String getNamespacePrefix(int i) {
-        return (nsDeclared && i==0)?name.getPrefix():null;
+        return (nsDeclared && i == 0) ? name.getPrefix() : null;
     }
 
     public String getNamespaceURI(int i) {
-        return (nsDeclared && i==0)?name.getNamespaceURI():null;
+        return (nsDeclared && i == 0) ? name.getNamespaceURI() : null;
     }
 
     public NamespaceContext getNamespaceContext() {
@@ -178,7 +178,7 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     }
 
     public int getEventType() {
-        switch (state){
+        switch (state) {
             case START_ELEMENT_STATE:
                 return START_ELEMENT;
             case END_ELEMENT_STATE:
@@ -193,17 +193,17 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     }
 
     public String getText() {
-        if (state==TEXT_STATE){
+        if (state == TEXT_STATE) {
             return value;
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
 
     public char[] getTextCharacters() {
-        if (state==TEXT_STATE){
+        if (state == TEXT_STATE) {
             return value.toCharArray();
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
@@ -214,18 +214,18 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     }
 
     public int getTextStart() {
-        if (state==TEXT_STATE){
+        if (state == TEXT_STATE) {
             return 0;
-        }else{
+        } else {
             throw new IllegalStateException();
         }
     }
 
     public int getTextLength() {
-        if (state==TEXT_STATE){
+        if (state == TEXT_STATE) {
             return value.length();
-        }else{
-            throw new  IllegalStateException();
+        } else {
+            throw new IllegalStateException();
         }
 
     }
@@ -235,11 +235,11 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     }
 
     public boolean hasText() {
-        return (state==TEXT_STATE);
+        return (state == TEXT_STATE);
     }
 
     public Location getLocation() {
-        return new Location(){
+        return new Location() {
             public int getLineNumber() {
                 return 0;
             }
@@ -263,17 +263,17 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     }
 
     public QName getName() {
-        if (state!=TEXT_STATE){
+        if (state != TEXT_STATE) {
             return name;
-        }else{
+        } else {
             return null;
         }
     }
 
     public String getLocalName() {
-        if (state!=TEXT_STATE){
+        if (state != TEXT_STATE) {
             return name.getLocalPart();
-        }else{
+        } else {
             return null;
         }
     }
@@ -284,18 +284,18 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     }
 
     public String getNamespaceURI() {
-        if (state!=TEXT_STATE){
+        if (state != TEXT_STATE) {
             return name.getNamespaceURI();
-        }else{
+        } else {
             return null;
         }
 
     }
 
     public String getPrefix() {
-        if (state!=TEXT_STATE){
+        if (state != TEXT_STATE) {
             return name.getPrefix();
-        }else{
+        } else {
             return null;
         }
     }
@@ -325,7 +325,7 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     }
 
     public boolean isDone() {
-        return (state==END_ELEMENT_STATE);
+        return (state == END_ELEMENT_STATE);
     }
 
     public void addNamespaceContext(NamespaceContext nsContext) {
@@ -335,10 +335,11 @@ public class NameValuePairStreamReader implements ADBXMLStreamReader {
     public void init() {
         //just add the current elements namespace and prefix to the this
         //elements nscontext
-        addToNsMap(name.getPrefix(),name.getNamespaceURI());
+        addToNsMap(name.getPrefix(), name.getNamespaceURI());
 
 
     }
+
     /**
      * @param prefix
      * @param uri

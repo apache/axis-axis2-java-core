@@ -16,23 +16,25 @@
 package org.apache.axis2.databinding.types;
 
 
-
 /**
  * Custom class for supporting XSD data type Entity
+ *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#ENTITY">XML Schema 3.3.11 ENTITY</a>
  */
 public class Entity extends NCName {
-	
+
     private static final long serialVersionUID = -4868410883856961942L;
-    
-	public Entity() {
+
+    public Entity() {
         super();
     }
+
     /**
      * ctor for Entity
-     * @exception IllegalArgumentException will be thrown if validation fails
+     *
+     * @throws IllegalArgumentException will be thrown if validation fails
      */
-    public Entity (String stValue) throws IllegalArgumentException {
+    public Entity(String stValue) throws IllegalArgumentException {
         super(stValue);
     }
 }

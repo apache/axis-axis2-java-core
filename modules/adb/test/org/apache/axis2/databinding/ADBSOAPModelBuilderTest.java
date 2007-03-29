@@ -67,7 +67,8 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
         propertyList.add("Apache");
         QName projectQName = new QName("Person");
 
-        XMLStreamReader pullParser =new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
+        XMLStreamReader pullParser =
+                new ADBXMLStreamReaderImpl(projectQName, propertyList.toArray(), null);
         ADBSOAPModelBuilder builder = new ADBSOAPModelBuilder(
                 pullParser, OMAbstractFactory.getSOAP11Factory());
 
@@ -110,7 +111,7 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
 
         String s2 = writer.toString();
 
-        assertXMLEqual(s2,xml);
+        assertXMLEqual(s2, xml);
     }
 
     private SOAPEnvelope getTestEnvelope() {
@@ -123,13 +124,14 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
 
         ADBSOAPModelBuilder builder = new ADBSOAPModelBuilder(request
                 .getPullParser(CreateAccountRequest.MY_QNAME),
-                OMAbstractFactory.getSOAP11Factory());
+                                                              OMAbstractFactory.getSOAP11Factory());
 
         return builder.getEnvelope();
     }
 
     public void testConvertToDOOM2() throws Exception {
-        String xml = "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><ns1:createAccountRequest xmlns:ns1=\"http://www.wso2.com/types\"><ns1:clientinfo><name xmlns=\"\">bob</name><ssn xmlns=\"\">123456789</ssn></ns1:clientinfo><password xmlns=\"\">passwd</password></ns1:createAccountRequest></soapenv:Body></soapenv:Envelope>";
+        String xml =
+                "<?xml version='1.0' encoding='utf-8'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Header /><soapenv:Body><ns1:createAccountRequest xmlns:ns1=\"http://www.wso2.com/types\"><ns1:clientinfo><name xmlns=\"\">bob</name><ssn xmlns=\"\">123456789</ssn></ns1:clientinfo><password xmlns=\"\">passwd</password></ns1:createAccountRequest></soapenv:Body></soapenv:Envelope>";
 
         CreateAccountRequest request = new CreateAccountRequest();
         ClientInfo clientInfo = new ClientInfo();
@@ -140,11 +142,14 @@ public class ADBSOAPModelBuilderTest extends XMLTestCase {
 
         ADBSOAPModelBuilder builder = new ADBSOAPModelBuilder(request
                 .getPullParser(CreateAccountRequest.MY_QNAME),
-                OMAbstractFactory.getSOAP11Factory());
+                                                              OMAbstractFactory.getSOAP11Factory());
 
         SOAPEnvelope env = builder.getEnvelope();
 
-        StAXSOAPModelBuilder builder2 = new StAXSOAPModelBuilder(getTestEnvelope().getXMLStreamReaderWithoutCaching(), DOOMAbstractFactory.getSOAP11Factory(), SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
+        StAXSOAPModelBuilder builder2 = new StAXSOAPModelBuilder(
+                getTestEnvelope().getXMLStreamReaderWithoutCaching(),
+                DOOMAbstractFactory.getSOAP11Factory(),
+                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI);
         SOAPEnvelope envelope = builder2.getSOAPEnvelope();
         envelope.build();
 

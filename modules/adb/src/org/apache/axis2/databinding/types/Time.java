@@ -16,15 +16,13 @@
 package org.apache.axis2.databinding.types;
 
 
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-/**
- * Class that represents the xsd:time XML Schema type
- */
+/** Class that represents the xsd:time XML Schema type */
 public class Time implements java.io.Serializable {
 
     private static final long serialVersionUID = -9022201555535589908L;
@@ -34,8 +32,8 @@ public class Time implements java.io.Serializable {
     private String originalString;
 
     /**
-     * a shared java.text.SimpleDateFormat instance used for parsing the basic
-     * component of the timestamp
+     * a shared java.text.SimpleDateFormat instance used for parsing the basic component of the
+     * timestamp
      */
     private static SimpleDateFormat zulu =
             new SimpleDateFormat("HH:mm:ss.SSS'Z'");
@@ -44,17 +42,13 @@ public class Time implements java.io.Serializable {
         zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
-    /**
-     * Initializes with a Calender. Year, month and date are ignored.
-     */
+    /** Initializes with a Calender. Year, month and date are ignored. */
     public Time(Calendar value) {
         this._value = value;
         _value.set(0, 0, 0);      // ignore year, month, date
     }
 
-    /**
-     * Converts a string formatted as HH:mm:ss[.SSS][+/-offset]
-     */
+    /** Converts a string formatted as HH:mm:ss[.SSS][+/-offset] */
     public Time(String value) throws NumberFormatException {
         _value = makeValue(value);
         this.isFromString = true;
@@ -90,9 +84,7 @@ public class Time implements java.io.Serializable {
         _value.set(0, 0, 0);      // ignore year, month, date
     }
 
-    /**
-     * Utility function that parses xsd:time strings and returns a Date object
-     */
+    /** Utility function that parses xsd:time strings and returns a Date object */
     private Calendar makeValue(String source) throws NumberFormatException {
 
         // cannonical form of the times is  hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
@@ -160,8 +152,8 @@ public class Time implements java.io.Serializable {
 
 
     /**
-     * Returns the time as it would be in GMT. This is accurate to the
-     * seconds. Milliseconds probably gets lost.
+     * Returns the time as it would be in GMT. This is accurate to the seconds. Milliseconds
+     * probably gets lost.
      *
      * @return Returns String.
      */
@@ -183,7 +175,7 @@ public class Time implements java.io.Serializable {
     public boolean equals(Object obj) {
         if (obj == null) return false;
         if (!(obj instanceof Time)) return false;
-        Time other = (Time) obj;
+        Time other = (Time)obj;
         if (this == obj) return true;
 
         boolean _equals;

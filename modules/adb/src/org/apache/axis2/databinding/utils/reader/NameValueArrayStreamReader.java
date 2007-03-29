@@ -1,10 +1,9 @@
 package org.apache.axis2.databinding.utils.reader;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.Location;
-import javax.xml.namespace.QName;
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
+import javax.xml.stream.Location;
+import javax.xml.stream.XMLStreamException;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -29,7 +28,8 @@ public class NameValueArrayStreamReader implements ADBXMLStreamReader {
     private static final int FINAL_END_ELEMENT_STATE = 3;
     private static final int START_ELEMENT_STATE_WITH_NULL = 4;
 
-    private static final QName NIL_QNAME = new QName("http://www.w3.org/2001/XMLSchema-instance", "nil", "xsi");
+    private static final QName NIL_QNAME =
+            new QName("http://www.w3.org/2001/XMLSchema-instance", "nil", "xsi");
     private static final String NIL_VALUE_TRUE = "true";
 
 
@@ -62,16 +62,14 @@ public class NameValueArrayStreamReader implements ADBXMLStreamReader {
         return null;
     }
 
-    /**
-     * @throws XMLStreamException
-     */
+    /** @throws XMLStreamException  */
     public int next() throws XMLStreamException {
         switch (state) {
             case START_ELEMENT_STATE:
-                if (values.length>0){
+                if (values.length > 0) {
                     state = TEXT_STATE;
                     return CHARACTERS;
-                }else{
+                } else {
                     state = FINAL_END_ELEMENT_STATE;
                     return END_ELEMENT;
                 }
@@ -155,7 +153,7 @@ public class NameValueArrayStreamReader implements ADBXMLStreamReader {
     }
 
     public String getAttributeNamespace(int i) {
-        if (state == START_ELEMENT_STATE_WITH_NULL  && i == 0)
+        if (state == START_ELEMENT_STATE_WITH_NULL && i == 0)
             return NIL_QNAME.getNamespaceURI();
         if (state == START_ELEMENT_STATE) {
             return null;
@@ -212,7 +210,7 @@ public class NameValueArrayStreamReader implements ADBXMLStreamReader {
 
     public String getNamespacePrefix(int i) {
         if (state == START_ELEMENT_STATE_WITH_NULL
-                && isXsiNamespacePresent() && i==0)
+                && isXsiNamespacePresent() && i == 0)
             return NIL_QNAME.getPrefix();
         else
             return null;
@@ -220,7 +218,7 @@ public class NameValueArrayStreamReader implements ADBXMLStreamReader {
 
     public String getNamespaceURI(int i) {
         if (state == START_ELEMENT_STATE_WITH_NULL
-                && isXsiNamespacePresent() && i==0)
+                && isXsiNamespacePresent() && i == 0)
             return NIL_QNAME.getNamespaceURI();
         else
             return null;
@@ -404,9 +402,7 @@ public class NameValueArrayStreamReader implements ADBXMLStreamReader {
         }
     }
 
-    /**
-     * Test whether the xsi namespace is present
-     */
+    /** Test whether the xsi namespace is present */
     private boolean isXsiNamespacePresent() {
         return (namespaceContext.getNamespaceURI(NIL_QNAME.getPrefix()) != null);
     }
