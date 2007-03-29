@@ -89,7 +89,7 @@ public interface DeploymentConstants {
     String TAG_EXTRACT_SERVICE_ARCHIVE = "extractServiceArchive";
     String TAG_DISPATCH_ORDER = "dispatchOrder";
     String TAG_DISPATCHER = "dispatcher";
-    String TAG_DESCRIPTION = "description";
+    String TAG_DESCRIPTION = "Description";
     String TAG_CLASS_NAME = "class";
     String TAG_AFTER = "after";
     String TAG_BEFORE = "before";
