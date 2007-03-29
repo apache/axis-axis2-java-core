@@ -26,12 +26,12 @@
     <description>XMLBeans data binding support for Axis2</description>
 
     <dependencies>
-       <dependency>
+        <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
             <version>${axiom.version}</version>
         </dependency>
-       
+
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
@@ -48,7 +48,7 @@
             <artifactId>axis2-kernel</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-	  <dependency>
+        <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
             <version>${pom.currentVersion}</version>
@@ -76,7 +76,7 @@
                 <module>true</module>
             </properties>
         </dependency>
-	<dependency>
+        <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <version>${commons.fileupload.version}</version>
@@ -128,7 +128,7 @@
             </properties>
             <url>http://www.ibiblio.org/maven/xmlunit/jars/</url>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>annogen</groupId>
             <artifactId>annogen</artifactId>
             <version>${annogen.version}</version>
@@ -152,7 +152,7 @@
                 <module>true</module>
             </properties>
         </dependency>
-	  <dependency>
+        <dependency>
             <groupId>org.apache.woden</groupId>
             <artifactId>woden</artifactId>
             <version>${woden.version}</version>
@@ -175,14 +175,14 @@
                     <include>**/*.xsd</include>
                 </includes>
             </resource>
-             <resource>
-        <directory>../../</directory>
-        <targetPath>META-INF</targetPath>
-        <includes>
-          <include>NOTICE.txt</include>
-        <include>LICENSE.txt</include>
-      </includes>
-   </resource>
+            <resource>
+                <directory>../../</directory>
+                <targetPath>META-INF</targetPath>
+                <includes>
+                    <include>NOTICE.txt</include>
+                    <include>LICENSE.txt</include>
+                </includes>
+            </resource>
         </resources>
     </build>
 </project>

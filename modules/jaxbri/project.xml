@@ -26,7 +26,7 @@
     <description>JAXB-RI data binding support for Axis 2.0</description>
 
     <dependencies>
-       <dependency>
+        <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
             <version>${axiom.version}</version>
@@ -46,7 +46,7 @@
             <artifactId>axis2-kernel</artifactId>
             <version>${pom.currentVersion}</version>
         </dependency>
-	  <dependency>
+        <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-java2wsdl</artifactId>
             <version>${pom.currentVersion}</version>
@@ -99,18 +99,27 @@
             <version>${jaxbri.version}</version>
         </dependency>
     </dependencies>
-    
-     <build>
-         <resources>
-	     <resource>
-		<directory>../../</directory>
-		<targetPath>META-INF</targetPath>
-		<includes>
-		    <include>NOTICE.txt</include>
-		    <include>LICENSE.txt</include>
-		</includes>
-	    </resource>
-	</resources>
-    </build>													
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.xsl</include>
+                    <include>**/*.xsd</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>../../</directory>
+                <targetPath>META-INF</targetPath>
+                <includes>
+                    <include>NOTICE.txt</include>
+                    <include>LICENSE.txt</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
     <reports/>
 </project>
