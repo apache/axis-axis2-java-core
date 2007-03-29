@@ -94,6 +94,7 @@ public class ArchiveReader implements DeploymentConstants {
             axisService.setClassLoader(currentFile.getClassLoader());
 
             ServiceBuilder serviceBuilder = new ServiceBuilder(configCtx, axisService);
+            serviceBuilder.setWsdlServiceMap(wsdlServices);
             AxisService service = serviceBuilder.populateService(rootElement);
 
             ArrayList serviceList = new ArrayList();

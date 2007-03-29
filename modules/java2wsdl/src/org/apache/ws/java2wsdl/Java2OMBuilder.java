@@ -372,14 +372,12 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     null);
 
             OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME, wsdl);
-            addExtensionElement(fac, input, soap, SOAP_BODY, SOAP_USE, use,
-                    "namespace", targetNamespace);
+            addExtensionElement(fac, input, soap, SOAP_BODY, SOAP_USE, use);
             operation.addChild(input);
 
             if (!jmethod.getReturnType().isVoidType()) {
                 OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME, wsdl);
-                addExtensionElement(fac, output, soap, SOAP_BODY, SOAP_USE, use,
-                        "namespace", targetNamespace);
+                addExtensionElement(fac, output, soap, SOAP_BODY, SOAP_USE, use);
                 operation.addChild(output);
             }
 
@@ -387,8 +385,7 @@ public class Java2OMBuilder implements Java2WSDLConstants {
 
                 OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
                 fault.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName() + "Fault", null);
-                addExtensionElement(fac, fault, soap, SOAP_BODY, SOAP_USE, use,
-                        "namespace", targetNamespace);
+                addExtensionElement(fac, fault, soap, SOAP_BODY, SOAP_USE, use);
                 operation.addChild(fault);
             }
         }
@@ -422,22 +419,19 @@ public class Java2OMBuilder implements Java2WSDLConstants {
                     null);
 
             OMElement input = fac.createOMElement(IN_PUT_LOCAL_NAME, wsdl);
-            addExtensionElement(fac, input, soap12, SOAP_BODY, SOAP_USE, use,
-                    "namespace", targetNamespace);
+            addExtensionElement(fac, input, soap12, SOAP_BODY, SOAP_USE, use);
             operation.addChild(input);
 
             if (!jmethod.getReturnType().isVoidType()) {
                 OMElement output = fac.createOMElement(OUT_PUT_LOCAL_NAME, wsdl);
-                addExtensionElement(fac, output, soap12, SOAP_BODY, SOAP_USE, use,
-                        "namespace", targetNamespace);
+                addExtensionElement(fac, output, soap12, SOAP_BODY, SOAP_USE, use);
                 operation.addChild(output);
             }
             if (jmethod.getExceptionTypes().length > 0) {
 
                 OMElement fault = fac.createOMElement(FAULT_LOCAL_NAME, wsdl);
                 fault.addAttribute(ATTRIBUTE_NAME, jmethod.getSimpleName() + "Fault", null);
-                addExtensionElement(fac, fault, soap12, SOAP_BODY, SOAP_USE, use,
-                        "namespace", targetNamespace);
+                addExtensionElement(fac, fault, soap12, SOAP_BODY, SOAP_USE, use);
                 operation.addChild(fault);
             }
         }

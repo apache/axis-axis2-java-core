@@ -60,6 +60,7 @@ import java.util.Map;
 public class ServiceBuilder extends DescriptionBuilder {
     private static final Log log = LogFactory.getLog(ServiceBuilder.class);
     private AxisService service;
+    private HashMap wsdlServiceMap = new HashMap();
 
     public ServiceBuilder(ConfigurationContext configCtx, AxisService service) {
         this.service = service;
@@ -79,6 +80,27 @@ public class ServiceBuilder extends DescriptionBuilder {
     public AxisService populateService(OMElement service_element) throws DeploymentException {
         try {
             // Processing service level parameters
+             OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTRIBUTE_NAME));
+
+            // If the service name is explicitly specified in the services.xml
+            // then use that as the service name
+            if (serviceNameatt != null) {
+                if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
+                    AxisService wsdlService = (AxisService) wsdlServiceMap.get(serviceNameatt.getAttributeValue());
+                    if(wsdlService!=null){
+                        service = wsdlService;
+                        service.setWsdlFound(true);
+                        service.setCustomWsdl(true);
+                    }
+                    service.setName(serviceNameatt.getAttributeValue());
+                    //To be on the safe side
+                    if (service.getServiceDescription() == null) {
+                        service.setServiceDescription(serviceNameatt.getAttributeValue());
+                    }
+                }
+            }
+
+
             Iterator itr = service_element.getChildrenWithName(new QName(TAG_PARAMETER));
             processParameters(itr, service, service.getParent());
 
@@ -97,24 +119,11 @@ public class ServiceBuilder extends DescriptionBuilder {
                     service.setServiceDescription(descriptionElement.getText());
                 }
             } else {
-                OMAttribute serviceNameatt =
+                serviceNameatt =
                         service_element.getAttribute(new QName(ATTRIBUTE_NAME));
 
                 if (serviceNameatt != null) {
                     if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
-                        service.setServiceDescription(serviceNameatt.getAttributeValue());
-                    }
-                }
-            }
-            OMAttribute serviceNameatt = service_element.getAttribute(new QName(ATTRIBUTE_NAME));
-
-            // If the service name is explicitly specified in the services.xml
-            // then use that as the service name
-            if (serviceNameatt != null) {
-                if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
-                    service.setName(serviceNameatt.getAttributeValue());
-                    //To be on the safe side
-                    if (service.getServiceDescription() == null) {
                         service.setServiceDescription(serviceNameatt.getAttributeValue());
                     }
                 }
@@ -787,5 +796,9 @@ public class ServiceBuilder extends DescriptionBuilder {
 
         }
 
+    }
+
+    public void setWsdlServiceMap(HashMap wsdlServiceMap) {
+        this.wsdlServiceMap = wsdlServiceMap;
     }
 }
