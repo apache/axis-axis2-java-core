@@ -28,12 +28,10 @@ import org.apache.axis2.deployment.scheduler.Scheduler;
 import org.apache.axis2.deployment.scheduler.SchedulerTask;
 import org.apache.axis2.deployment.util.Utils;
 import org.apache.axis2.description.*;
-import org.apache.axis2.description.WSDL2Constants;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.util.JavaUtils;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -162,28 +160,34 @@ public abstract class DeploymentEngine implements DeploymentConstants {
         try {
             String path = servicesPath == null ? DeploymentConstants.SERVICE_PATH : servicesPath;
             if (!path.endsWith("/")) {
-                path = path + "/";
+                path += "/";
+            }
+            String repoPath = repoURL.getPath();
+            if (!repoPath.endsWith("/")) {
+                repoPath += "/";
+                repoURL = new URL(repoURL.getProtocol() + "://" + repoPath);
             }
             URL servicesDir = new URL(repoURL, path);
             URL filelisturl = new URL(servicesDir, "services.list");
             ArrayList files = getFileList(filelisturl);
-            Iterator fileIterator = files.iterator();
-            while (fileIterator.hasNext()) {
+
+            for (Iterator fileIterator = files.iterator();
+                 fileIterator.hasNext();) {
                 String fileUrl = (String) fileIterator.next();
                 if (fileUrl.endsWith(".aar")) {
                     AxisServiceGroup serviceGroup = new AxisServiceGroup();
                     URL servicesURL = new URL(servicesDir, fileUrl);
-                    ArrayList servicelist = populateService(serviceGroup,
-                                                            servicesURL,
-                                                            fileUrl.substring(0, fileUrl.indexOf(
-                                                                    ".aar")));
+                    ArrayList servicelist =
+                            populateService(serviceGroup,
+                                            servicesURL,
+                                            fileUrl.substring(0, fileUrl.indexOf(".aar")));
                     addServiceGroup(serviceGroup, servicelist, servicesURL, null, axisConfig);
                 }
             }
         } catch (MalformedURLException e) {
-            log.info(e.getMessage());
+            log.error(e.getMessage());
         } catch (IOException e) {
-            log.info(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
@@ -192,6 +196,11 @@ public abstract class DeploymentEngine implements DeploymentConstants {
             String path = modulesPath == null ? DeploymentConstants.MODULE_PATH : modulesPath;
             if (!path.endsWith("/")) {
                 path = path + "/";
+            }
+            String repoPath = repoURL.getPath();
+            if (!repoPath.endsWith("/")) {
+                repoPath += "/";
+                repoURL = new URL(repoURL.getProtocol() + "://" + repoPath);
             }
             URL moduleDir = new URL(repoURL, path);
             URL filelisturl = new URL(moduleDir, "modules.list");
@@ -418,8 +427,7 @@ public abstract class DeploymentEngine implements DeploymentConstants {
                                        ArrayList serviceList,
                                        URL serviceLocation,
                                        DeploymentFileData currentDeploymentFile,
-                                       AxisConfiguration axisConfiguration)
-            throws AxisFault {
+                                       AxisConfiguration axisConfiguration) throws AxisFault {
         fillServiceGroup(serviceGroup, serviceList, serviceLocation, axisConfiguration);
         axisConfiguration.addServiceGroup(serviceGroup);
         if (currentDeploymentFile != null) {
