@@ -894,9 +894,12 @@
         <ant:mkdir dir="${docs.temp.dir}/xdocs"/>
         <ant:mkdir dir="${docs.temp.dir}/javadocs"/>
 
-        <ant:copy toDir="${docs.temp.dir}/xdocs">
+	<echo message="Applying dynamic label filter..."></echo>
+	<ant:filter filtersfile="xdocs/dynamic-labels.properties" />
+        <ant:copy toDir="${docs.temp.dir}/xdocs" filtering="on" overwrite="true" >
             <ant:fileset dir="xdocs"/>
         </ant:copy>
+
 
         <ant:copy toDir="${docs.temp.dir}/javadocs">
             <ant:fileset dir="target/apidocs"/>
@@ -966,7 +969,7 @@
     <!-- ================================================================ -->
     <!--- Create the Java Docs -->
     <!-- ================================================================ -->
-    <goal name="javadocs" prereqs="jar,init, create-lib">
+   <goal name="javadocs" prereqs="jar,init, create-lib">
         <ant:javadoc packagenames="org.apache.axis2.*"
                      defaultexcludes="yes"
                      destdir="target/apidocs"
@@ -1202,4 +1205,5 @@
     </define:taglib>
 
 </project>
+
 
