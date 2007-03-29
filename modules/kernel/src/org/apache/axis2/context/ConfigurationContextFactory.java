@@ -117,16 +117,7 @@ public class ConfigurationContextFactory {
             configContext.setServicePath(Constants.DEFAULT_SERVICES_PATH);
         }
 
-        Parameter restPathParam = axisConfig.getParameter(Constants.PARAM_REST_PATH);
-        if (restPathParam != null) {
-            String restPath = ((String) restPathParam.getValue()).trim();
-            if (restPath.length() > 0) {
-                configContext.setRESTPath(restPath);
-            }
-        } else {
-            configContext.setRESTPath(Constants.DEFAULT_REST_PATH);
-        }
-        Parameter contextPath = axisConfig.getParameter(Constants.PARAM_CONTEXT_ROOT);
+       Parameter contextPath = axisConfig.getParameter(Constants.PARAM_CONTEXT_ROOT);
         if (contextPath != null) {
             String cpath = ((String) contextPath.getValue()).trim();
             if (cpath.length() > 0) {

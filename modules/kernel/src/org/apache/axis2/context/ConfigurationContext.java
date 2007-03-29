@@ -62,7 +62,6 @@ public class ConfigurationContext extends AbstractContext {
     //To specify url mapping for services
     private String contextRoot;
     private String servicePath;
-    private String restPath;
 
     private String cachedServicePath = null;
 
@@ -529,20 +528,6 @@ public class ConfigurationContext extends AbstractContext {
         return path;
     }
 
-    public String getRESTContextPath() {
-        String ctxRoot = getContextRoot();
-        String path = "/";
-        if (!ctxRoot.equals("/")) {
-            path = ctxRoot + "/";
-        }
-        if (restPath == null || restPath.trim().length() == 0) {
-            throw new IllegalArgumentException("service path cannot be null or empty");
-        } else {
-            path += restPath.trim();
-        }
-        return path;
-    }
-
     public String getServicePath() {
         if (servicePath == null || servicePath.trim().length() == 0) {
             throw new IllegalArgumentException("service path cannot be null or empty");
@@ -550,19 +535,8 @@ public class ConfigurationContext extends AbstractContext {
         return servicePath.trim();
     }
 
-    public String getRESTPath() {
-        if (restPath == null || restPath.trim().length() == 0) {
-            throw new IllegalArgumentException("REST path cannot be null or empty");
-        }
-        return restPath.trim();
-    }
-
     public void setServicePath(String servicePath) {
         this.servicePath = servicePath;
-    }
-
-    public void setRESTPath(String restPath) {
-        this.restPath = restPath;
     }
 
     public String getContextRoot() {

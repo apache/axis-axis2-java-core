@@ -85,7 +85,6 @@ public class AxisService2OM implements Java2WSDLConstants {
     private ExternalPolicySerializer serializer;
 
     private HashMap messagesMap;
-    private String restPath;
 
     public AxisService2OM(AxisService service, String[] serviceEndpointURLs,
                           String style, String use, String servicePath) {
@@ -121,8 +120,6 @@ public class AxisService2OM implements Java2WSDLConstants {
     }
 
     public OMElement generateOM() throws Exception {
-
-        initURLResolving();
 
         OMFactory fac = OMAbstractFactory.getOMFactory();
         wsdl = fac.createOMNamespace(WSDL_NAMESPACE,
@@ -205,26 +202,6 @@ public class AxisService2OM implements Java2WSDLConstants {
                 .iterator(), definition);
 
         return ele;
-    }
-
-    /**
-     * the EPR list of AxisService contains REST EPRs as well. Those REST EPRs will be used to generated HTTPBinding
-     * and rest of the EPRs will be used to generate SOAP 1.1 and 1.2 bindings. Let's first initialize those set of
-     * EPRs now to be used later, especially when we generate the WSDL.
-     */
-    private void initURLResolving() {
-        Parameter restPathParam =
-                axisService.getParameter(org.apache.axis2.Constants.PARAM_REST_PATH);
-        if (restPathParam != null) {
-            restPath = ((String) restPathParam.getValue()).trim();
-            if (restPath.length() <= 0) {
-                restPath = org.apache.axis2.Constants.DEFAULT_REST_PATH;
-            }
-        } else {
-            restPath = org.apache.axis2.Constants.DEFAULT_REST_PATH;
-        }
-
-        // now search for REST urls in the passed urls list and remove them
     }
 
     private void generateMessages(OMFactory fac, OMElement defintions) {
@@ -460,7 +437,7 @@ public class AxisService2OM implements Java2WSDLConstants {
             throws Exception {
         for (int i = 0; i < serviceEndpointURLs.length; i++) {
             String urlString = serviceEndpointURLs[i];
-            if (urlString == null || urlString.indexOf(restPath) == -1) {
+            if (urlString != null) {
                 String protocol = urlString == null ? null : new URI(urlString)
                         .getScheme();
                 if (urlString == null) {
@@ -491,8 +468,7 @@ public class AxisService2OM implements Java2WSDLConstants {
         String[] exposedEPRs = axisService.getEPRs();
         for (int i = 0; i < exposedEPRs.length; i++) {
             String urlString = serviceEndpointURLs[i];
-            if (urlString != null && urlString.startsWith("http") &&
-                    (urlString.indexOf(restPath) > -1)) {
+            if (urlString != null && urlString.startsWith("http")) {
                 OMElement port = fac.createOMElement(PORT, wsdl);
                 service.addChild(port);
                 String name = axisService.getName() + HTTP_PORT;
@@ -514,7 +490,7 @@ public class AxisService2OM implements Java2WSDLConstants {
             throws Exception {
         for (int i = 0; i < serviceEndpointURLs.length; i++) {
             String urlString = serviceEndpointURLs[i];
-            if (urlString == null || urlString.indexOf(restPath) == -1) {
+            if (urlString != null) {
                 String protocol = urlString == null ? null : new URI(urlString)
                         .getScheme();
                 if (urlString == null) {

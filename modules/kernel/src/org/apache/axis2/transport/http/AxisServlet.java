@@ -562,21 +562,13 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         }
 
 
-        EndpointReference soapEndpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
+        EndpointReference endpoint = new EndpointReference("http://" + ip + ":" + port + '/' +
                 configContext
                         .getServiceContextPath() +
                 "/" +
                 serviceName);
 
-        if (!disableREST) {
-            EndpointReference restEndpoint =
-                    new EndpointReference("http://" + ip + ":" + port + '/' +
-                            configContext.getRESTContextPath() + "/" + serviceName);
-            return new EndpointReference[]{soapEndpoint, restEndpoint};
-        } else {
-            return new EndpointReference[]{soapEndpoint};
-        }
-
+        return new EndpointReference[]{endpoint};
     }
 
     /**
@@ -629,11 +621,6 @@ public class AxisServlet extends HttpServlet implements TransportListener {
         msgContext.setServerSide(true);
 
         if (!invocationType) {
-            String restPath = configContext.getRESTPath();
-            if (restPath != null && requestURI.indexOf(restPath) != -1) {
-                requestURI =
-                        requestURI.replaceFirst(restPath, configContext.getServiceContextPath());
-            }
             String query = request.getQueryString();
             if (query != null) {
                 requestURI = requestURI + "?" + query;
