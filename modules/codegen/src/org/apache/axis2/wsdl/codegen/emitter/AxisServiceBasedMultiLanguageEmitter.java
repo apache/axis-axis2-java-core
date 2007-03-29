@@ -330,7 +330,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (this.axisService.getEndpoints().size() > 1){
            localPart = makeJavaClassName(axisService.getName() + axisService.getEndpointName());
         } else {
-           localPart = makeJavaClassName(axisService.getName()); 
+           localPart = makeJavaClassName(axisService.getName());
         }
         return packageName + "." + localPart + STUB_SUFFIX;
     }
@@ -1326,7 +1326,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         if (CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
                 equals(codeGenConfiguration.getWSDLVersion())) {
             // Woden cannot serialize the WSDL as yet, so lets serialize the axisService for now.
-            
+
             WSDL20Writer wsdl20Writer = new WSDL20Writer(
                     codeGenConfiguration.isFlattenFiles() ?
                             getOutputDirectory(codeGenConfiguration.getOutputLocation(), null) :
@@ -1641,25 +1641,32 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
     }
 
     /**
-     * Adds the short type name to the given parameter element
-     * if the type has no '.' characters in its name
-     * the type itself is taken as the shorttype
-     *
+     * set the short type as it is in the data binding
      * @param paramElement
+     * @param xmlName
      */
-    protected void addShortType(Element paramElement, String type) {
-        if (type != null && type.indexOf('.') != -1) {
+
+
+    protected void addShortType(Element paramElement, String xmlName) {
+
+        if (xmlName != null) {
+            String javaName;
+            if (JavaUtils.isJavaKeyword(xmlName)) {
+                javaName = JavaUtils.makeNonJavaKeyword(xmlName);
+            } else {
+                javaName = JavaUtils.capitalizeFirstChar(JavaUtils
+                        .xmlNameToJava(xmlName));
+            }
             addAttribute(paramElement.getOwnerDocument(),
                     "shorttype",
-                    type.substring(type.lastIndexOf('.') + 1),
+                    javaName,
                     paramElement);
         } else {
             addAttribute(paramElement.getOwnerDocument(),
                     "shorttype",
-                    type == null ? "" : type,
+                    "",
                     paramElement);
         }
-
     }
 
     /**
@@ -2657,7 +2664,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                         : typeMapping, paramElement);
 
                 //add the short name
-                addShortType(paramElement, typeMapping);
+                addShortType(paramElement, (msg.getElementQName() == null) ? null: msg.getElementQName().getLocalPart());
 
                 String attribValue = (String) instantiatableMessageClassNames.
                         get(msg.getElementQName());
@@ -2836,7 +2843,7 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
                 paramElement);
 
         //adds the short type
-        addShortType(paramElement, paramType);
+        addShortType(paramElement, (paramQName == null)? null : paramQName.getLocalPart());
 
         // add an extra attribute to say whether the type mapping is the default
         if (mapper.getDefaultMappingName().equals(paramType)) {
@@ -2904,7 +2911,8 @@ public class AxisServiceBasedMultiLanguageEmitter implements Emitter {
         addAttribute(doc, "type", typeMappingStr, paramElement);
 
         //adds the short type
-        addShortType(paramElement, typeMappingStr);
+        addShortType(paramElement,
+                (outputMessage.getElementQName() == null)? null : outputMessage.getElementQName().getLocalPart());
 
         // add an extra attribute to say whether the type mapping is the default
         if (mapper.getDefaultMappingName().equals(typeMappingStr)) {
