@@ -17,7 +17,11 @@
 		<fileset dir="${axis2.home}/lib">
 			<include name="*.jar" />
 		</fileset>
-    </path>
+		<!--add downloaded spring jars to classpath-->
+		<fileset dir="lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
 
 	<path id="client.class.path">
 		<pathelement location="${dest.dir.classes}" />
@@ -28,6 +32,7 @@
 
 	<target name="clean">
 		<delete dir="${dest.dir}" />
+		<delete dir="lib"/>
 	</target>
 
 	<target name="prepare" depends="clean">
@@ -37,7 +42,7 @@
 		<mkdir dir="${dest.dir.classes}" />
 
 		<mkdir dir="${dest.dir.classes}/META-INF" />
-
+		<antcall target="download.jars"/>
 	</target>
 
 	<target name="generate.service" depends="prepare">
@@ -81,4 +86,27 @@
 		<copy file="${dest.dir}/${service-name}.aar" todir="${catalina-modules}" />
 	</target>
 
+        <!--We are not shipping spring jar with the release. This target can be used to
+        download spring jar to run this sample.-->
+	<target name="checkSpringJarAvailability">
+	    <!--if either one of jar is not available, spring_available will set to false-->
+	    <condition property="spring_available">
+		<and>
+		        <available file="lib/spring-core-1.2.8.jar" />
+			<available file="lib/spring-context-1.2.8.jar" />			
+	         	<available file="lib/spring-beans-1.2.8.jar" />
+		</and>
+	    </condition>
+	</target>
+
+	<target name="download.jars" depends="checkSpringJarAvailability" unless="spring_available">
+	    <echo message="Spring jars not available.Downloading...."/>
+	    <mkdir dir="lib"/>
+            <get src="http://ws.zones.apache.org/repository/org.springframework/jars/spring-core-1.2.8.jar"
+	             dest="lib/spring-core-1.2.8.jar" verbose="true"/>
+	    <get src="http://ws.zones.apache.org/repository/org.springframework/jars/spring-context-1.2.8.jar"
+	             dest="lib/spring-context-1.2.8.jar" verbose="true"/>
+	    <get src="http://ws.zones.apache.org/repository/org.springframework/jars/spring-beans-1.2.8.jar"
+	             dest="lib/spring-beans-1.2.8.jar" verbose="true"/>
+	</target>
 </project>
