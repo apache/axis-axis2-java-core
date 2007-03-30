@@ -184,17 +184,21 @@
     		</classpath>	
 	</javac>
 	
-	<!-- create the Axis2_Service_Archiver.jar -->
+	<!--Make available the resources for the plugin -->
           <copy todir="${service.plugin.output.dir}/class">
             <fileset dir="${service.output.dir}/${source.dir.name}" >
                 <include name="**/ServiceResources.properties" />
+		<exclude name="**/*.class" />
             </fileset>
           </copy>
 
-	  <jar destfile="${service.plugin.output.dir}/Axis2_Service_Archiver.jar" 
+          <!-- create the Axis2_Service_Archiver.jar -->
+	  <jar destfile="${service.plugin.output.dir}/Axis_Service_Archiver.jar" 
 	       basedir="${service.plugin.output.dir}/class"
            includes="org/apache/**"
           />
+	<delete dir="${service.plugin.output.dir}/src"></delete>
+	<delete dir="${service.plugin.output.dir}/class"></delete>
     </target>
 
     <!--Install the service plugin -->
