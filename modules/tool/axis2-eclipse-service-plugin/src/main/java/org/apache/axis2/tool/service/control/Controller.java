@@ -105,6 +105,7 @@ public class Controller {
             												 page2Bean.getSelectedMethodNames());
             String serviceFileString = serviceXMLCreater.toString();
             	serviceFile = new File(currentUserDir + File.separator + fileName);
+            if (serviceFile.exists()){serviceFile.delete();}
             FileWriter serviceXMLFileWriter = new FileWriter(serviceFile, true);
             BufferedWriter writer = new BufferedWriter(serviceXMLFileWriter) ;
             writer.write(serviceFileString) ;
@@ -159,6 +160,7 @@ public class Controller {
         try {
             //create a temporary directory and copy the files
             tempFileFolder = new File("Service-copy");
+            if (tempFileFolder.exists()){deleteDir(tempFileFolder);}
             tempFileFolder.mkdir();
             
             File metaInfFolder = new File(tempFileFolder, "META-INF");
@@ -167,14 +169,18 @@ public class Controller {
             File libFolder = new File(tempFileFolder,"lib");
             libFolder.mkdir();
             
-            FileCopier copier = new FileCopier();
+            FileCopier classFilecopier = new FileCopier();
             //copy the classes
-            copier.copyFiles(classFileFolder, tempFileFolder,page1Bean.getFilter());
+            classFilecopier.copyFiles(classFileFolder, tempFileFolder,page1Bean.getFilter());
+            
             //copy the service.xml
-            copier.copyFiles(serviceFile, metaInfFolder,xmlFilter);
+            FileCopier serviceXMLcopier = new FileCopier();
+            serviceXMLcopier.copyFiles(serviceFile, metaInfFolder,xmlFilter);
+            
             //copy the libs
+            FileCopier libCopier = new FileCopier();
             for (int i=0;i < fileList.size();i++){
-               copier.copyFiles((File)fileList.get(i),libFolder,null); 
+            	libCopier.copyFiles((File)fileList.get(i),libFolder,null); 
             }
             
             if (isWSDLAvailable){
