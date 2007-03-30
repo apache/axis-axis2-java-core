@@ -37,7 +37,7 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public class RESTClient {
 
-    private static String toEpr = "http://localhost:8080/axis2/rest/MyService";
+    private static String toEpr = "http://localhost:8080/axis2/services/MyService";
 
     public static void main(String[] args) throws AxisFault {
 

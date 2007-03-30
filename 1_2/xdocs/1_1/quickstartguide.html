@@ -294,13 +294,13 @@ of services at:</p>
 
 <p>Once the URLs are working, quickly test the service. Try pointing your
 browser to the following URL:</p>
-<pre>http://localhost:8080/axis2/rest/StockQuoteService/getPrice?symbol=IBM</pre>
+<pre>http://localhost:8080/axis2/services/StockQuoteService/getPrice?symbol=IBM</pre>
 
 <p>You will get the following response:</p>
 <pre>&lt;ns:getPriceResponse xmlns:ns="http://pojo.service.quickstart.samples/xsd"&gt;&lt;ns:return&gt;42&lt;/ns:return&gt;&lt;/ns:getPriceResponse&gt;</pre>
 
 <p>If you invoke the update method as,</p>
-<pre>http://localhost:8080/axis2/rest/StockQuoteService/update?symbol=IBM&amp;price=100</pre>
+<pre>http://localhost:8080/axis2/services/StockQuoteService/update?symbol=IBM&amp;price=100</pre>
 and then execute the first getPrice URL, you will see that the price has got
 updated. <a name="axiom"></a>
 

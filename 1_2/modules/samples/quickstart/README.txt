@@ -31,13 +31,13 @@ directory.
 Running the Client
 ==================
 - From your browser, If you point to the following URL:
-http://localhost:8080/axis2/rest/StockQuoteService/getPrice?symbol=IBM
+http://localhost:8080/axis2/services/StockQuoteService/getPrice?symbol=IBM
 
 You will get the following response:
 <ns:getPriceResponse><ns:return>42.0</ns:return></ns:getPriceResponse>
 
 - If you invoke the update method like so:
-http://localhost:8080/axis2/rest/StockQuoteService/update?symbol=IBM&price=100
+http://localhost:8080/axis2/services/StockQuoteService/update?symbol=IBM&price=100
 
 And then execute the first getPrice url. You can see that the price got updated.
 
