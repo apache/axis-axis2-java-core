@@ -108,14 +108,14 @@ using the <code>ant</code> command from &lt;AXIS2_HOME&gt;/samples/userguide,
 to the directory &lt;J2EE_HOME&gt;/webapps/axis2-1.1/WEB-INF/services (Note
 that if you installed a SNAPSHOT version of Axis2, this location might take a
 form such as
-&lt;J2EE_HOME&gt;/webapps/axis2-1.1.1-SNAPSHOT/WEB-INF/services)</p>
+&lt;J2EE_HOME&gt;/webapps/axis2-@axis2_version@-SNAPSHOT/WEB-INF/services)</p>
 
 <p>Your client can come in any number of forms, from a collection of files to
 a single *.jar file. The important thing is to ensure that all the
 appropriate classes are on the classpath. In addition to the classes that
 pertain to the actual client, you must also add the Axis2 jar files into the
 CLASSPATH. Normally you will do this by downloading and unpacking the <a
-href="http://ws.apache.org/axis2/download/1_1/download.cgi#std-bin">Axis2
+href="http://ws.apache.org/axis2/download/@axis2_version_dir@/download.cgi#std-bin">Axis2
 Standard Distribution</a> and adding the *.jar files in the lib directory to
 your CLASSPATH, but you also have the option to run your client using the
 axis2.bat (or axis2.sh) script, which takes care of it for you. For example,

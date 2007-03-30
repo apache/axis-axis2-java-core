@@ -69,7 +69,7 @@ follows:</p>
 
 <p>The code for the document can be found at Axis2_HOME/samples/pojoguide and
 Axis2_HOME/samples/pojoguidespring once you extract the <a
-href="../../download/1_1_1/download.html#std-bin">Axis2 Standard
+href="../../download/@axis2_version_dir@/download.html#std-bin">Axis2 Standard
 Distribution</a>. (It is better to get it now as it will help you to follow
 along.) Let's get started.</p>
 <a name="pojo"></a>
@@ -206,14 +206,14 @@ into too much detail on the build.xml file that you'll be using.) </p>
 </ul>
 
 <p>Before you can build the source, you'll need to download the Axis2
-1.1.1-bin and 1.1.1-war distributions from <a
-href="../../download/1_1_1/download.html">here</a>. Then modify the following
+@axis2_version@-bin and @axis2_version@-war distributions from <a
+href="../../download/@axis2_version_dir@/download.html">here</a>. Then modify the following
 line inside the build.xml file (in the Axis2_HOME/samples/pojoguide directory
-in the extracted Axis2 1.1.1 Standard Binary (bin) Distribution) :</p>
+in the extracted Axis2 @axis2_version@ Standard Binary (bin) Distribution) :</p>
 <pre>&lt;property name="axis2.home" value="c:\apps\axis2" /&gt;</pre>
 
 <p>This modification contains the path to the root of the unzipped Axis2
-1.1.1-bin <a href="../../download/1_1_1/download.html#std-bin">download</a>.
+@axis2_version@-bin <a href="../../download/@axis2_version_dir@/download.html#std-bin">download</a>.
 With that explanation, you'll now build the source by typing the following:
 ant</p>
 
@@ -234,7 +234,7 @@ development.</p>
 
 <p>Now get a <a href="http://tomcat.apache.org/">Tomcat</a> distribution (I
 used v5.5), and start it up by running <em>bin/startup.bat</em> or
-<em>bin/startup.sh</em>. Once it's running, deploy the Axis2 1.1.1-war by
+<em>bin/startup.sh</em>. Once it's running, deploy the Axis2 @axis2_version@-war by
 copying the axis2.war file to Tomcat's webapps directory. Tomcat will proceed
 by deploying axis2 and un-archiving it into the webapps directory. Now copy
 the WeatherService directory that was created at the time of building our
@@ -545,7 +545,7 @@ The Spring Framework is now up and ready for our WeatherSpringService.</p>
 <h3>Build and Deploy Using Apache Axis2 and Tomcat</h3>
 
 <p> Your POJO is now ready for primetime within the Spring Framework. Before
-you build, you'll first need to make sure the axis2-spring-1.1.1.jar and
+you build, you'll first need to make sure the axis2-spring-@axis2_version@.jar and
 spring.jar files are in the project's <em>Axis2_HOME/lib</em> directory.</p>
 
 <p><strong>Note:</strong> The service will not deploy if you add the above
@@ -574,7 +574,7 @@ already been set by the Spring framework at startup.</p>
 
 <p>Thus, you should get the following as output from the client:</p>
 <p><pre>run.client:
-    [javac] Compiling 1 source file to C:\axis2-1.1.1\samples\pojoguidespring\build\cl
+    [javac] Compiling 1 source file to C:\axis2-@axis2_version@\samples\pojoguidespring\build\cl
 asses
      <b>[java] Temperature               : 89.9
      [java] Forecast                  : Sunny
