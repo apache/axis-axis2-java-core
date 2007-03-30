@@ -88,6 +88,8 @@ public class ServiceBuilder extends DescriptionBuilder {
                 if (!"".equals(serviceNameatt.getAttributeValue().trim())) {
                     AxisService wsdlService = (AxisService) wsdlServiceMap.get(serviceNameatt.getAttributeValue());
                     if(wsdlService!=null){
+                        wsdlService.setClassLoader(service.getClassLoader());
+                        wsdlService.setParent(service.getParent());
                         service = wsdlService;
                         service.setWsdlFound(true);
                         service.setCustomWsdl(true);
