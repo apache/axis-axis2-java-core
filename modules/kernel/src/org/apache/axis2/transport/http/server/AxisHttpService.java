@@ -73,7 +73,6 @@ public class AxisHttpService extends HttpService {
 
     private final MessageContext msgContext;
     private final ConfigurationContext configurationContext;
-    private final SessionManager sessionManager;
     private final Worker worker;
 
     public AxisHttpService(
@@ -81,7 +80,6 @@ public class AxisHttpService extends HttpService {
             final ConnectionReuseStrategy connStrategy,
             final HttpResponseFactory responseFactory,
             final ConfigurationContext configurationContext,
-            final SessionManager sessionManager,
             final Worker worker) {
         super(httpProcessor, connStrategy, responseFactory);
         if (worker == null) {
@@ -90,11 +88,7 @@ public class AxisHttpService extends HttpService {
         if (configurationContext == null) {
             throw new IllegalArgumentException("Configuration context may not be null");
         }
-        if (sessionManager == null) {
-            throw new IllegalArgumentException("Session manager may not be null");
-        }
         this.configurationContext = configurationContext;
-        this.sessionManager = sessionManager;
         this.worker = worker;
 
         this.msgContext = ContextFactory.createMessageContext(configurationContext);

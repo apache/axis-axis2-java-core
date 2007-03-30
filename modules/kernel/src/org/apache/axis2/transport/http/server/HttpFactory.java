@@ -44,8 +44,8 @@ import org.apache.axis2.transport.http.HTTPWorkerFactory;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpResponseFactory;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.DefaultHttpParams;
 import org.apache.http.impl.DefaultHttpResponseFactory;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
@@ -261,7 +261,7 @@ public class HttpFactory {
      * Create and set the parameters applied to incoming request connections
      */
     public HttpParams newRequestConnectionParams() {
-        HttpParams params = new DefaultHttpParams();
+        HttpParams params = new BasicHttpParams();
         params
                 .setIntParameter(HttpConnectionParams.SO_TIMEOUT, requestSocketTimeout)
                 .setBooleanParameter(HttpConnectionParams.TCP_NODELAY, requestTcpNoDelay)

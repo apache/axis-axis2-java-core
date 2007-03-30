@@ -59,7 +59,6 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
     private final WorkerFactory workerfactory;
     private final HttpParams params;
     private final List processors;
-    private final SessionManager sessionManager;
 
     private HttpFactory httpFactory = null;
 
@@ -82,7 +81,6 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
             throw new IllegalArgumentException("HTTP parameters may not be null");
         }
         this.configurationContext = configurationContext;
-        this.sessionManager = new SessionManager();
         this.executor = executor;
         this.workerfactory = workerfactory;
         this.params = params;
@@ -157,7 +155,6 @@ public class DefaultHttpConnectionManager implements HttpConnectionManager {
                 connStrategy,
                 responseFactory,
                 this.configurationContext,
-                this.sessionManager,
                 this.workerfactory.newWorker());
         httpService.setParams(this.params);
 
