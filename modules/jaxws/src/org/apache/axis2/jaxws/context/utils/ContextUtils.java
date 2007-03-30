@@ -62,10 +62,11 @@ public class ContextUtils {
         Map props = axisMsgContext.getOptions().getProperties();
         soapMessageContext.putAll(props);
 
-        if (jaxwsMessageContext.getEndpointDescription()!=null) {
+        EndpointDescription description = jaxwsMessageContext.getEndpointDescription();
+        if (description !=null) {
             // Set the WSDL properties
             ServiceDescription sd =
-                    jaxwsMessageContext.getEndpointDescription().getServiceDescription();
+                    description.getServiceDescription();
             if (sd != null) {
                 URL wsdlLocation = ((ServiceDescriptionWSDL)sd).getWSDLLocation();
                 if (wsdlLocation != null && !"".equals(wsdlLocation)) {
