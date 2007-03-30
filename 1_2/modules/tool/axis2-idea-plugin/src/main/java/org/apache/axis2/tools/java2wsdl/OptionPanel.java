@@ -4,12 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
+import java.awt.event.MouseListener ;
+import java.awt.event.MouseEvent ;
 import org.apache.axis2.tools.bean.NamespaceFinder ;
 import org.apache.axis2.tools.bean.WsdlgenBean;
 
 
-public class OptionPanel extends JPanel implements ActionListener {
+public class OptionPanel extends JPanel implements ActionListener,MouseListener {
 
     private   JLabel lblNsp;
     private   JLabel lblNspPrefix;
@@ -17,11 +18,11 @@ public class OptionPanel extends JPanel implements ActionListener {
     private   JLabel lblSchemaTargetNspPrefix;
     private   JLabel lblService;
 
-    private   JTextField txtNsp;
-    private   JTextField txtNspPrefix;
-    private   JTextField txtSchemaTargetNsp;
-    private   JTextField txtSchemaTargetNspPrefix;
-    private   JTextField txtService;
+    JTextField txtNsp;
+    JTextField txtNspPrefix;
+    JTextField txtSchemaTargetNsp;
+    JTextField txtSchemaTargetNspPrefix;
+    JTextField txtService;
 
     Java2WSDLFrame java2WSDLFrame;
     WsdlgenBean wsdlgenBean;
@@ -67,6 +68,8 @@ public class OptionPanel extends JPanel implements ActionListener {
 
         txtService =new JTextField();
         add(txtService );
+        txtService .addActionListener(this);
+        txtService.addMouseListener(this);
 
         setSize(getPreferredSize());
 
@@ -94,10 +97,57 @@ public class OptionPanel extends JPanel implements ActionListener {
 
 
     public void actionPerformed(ActionEvent e) {
-
+        Object obj=e.getSource();
+        if(obj ==txtService ){
+            if (txtService .getText() != null && !txtService.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,true, true, true);
+                wsdlgenBean.setServiceName(txtService.getText().trim());
+            }
+        }
     }
 
+    public void mouseClicked(MouseEvent e) {
+        Object obj = e.getSource();
+        if(obj ==txtService ){
+            if (txtService .getText() != null && !txtService.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,true, true, true);
+                wsdlgenBean.setServiceName(txtService.getText().trim());
+            }
+        }
+    }
 
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+        Object obj = e.getSource();
+        if(obj ==txtService ){
+            if (txtService .getText() != null && !txtService.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,true, true, true);
+                wsdlgenBean.setServiceName(txtService.getText().trim());
+            }
+        }
+    }
+
+    public void mousePressed(MouseEvent e) {
+        Object obj = e.getSource();
+        if(obj ==txtService ){
+            if (txtService .getText() != null && !txtService.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,true, true, true);
+                wsdlgenBean.setServiceName(txtService.getText().trim());
+            }
+        }
+    }
+
+    public void mouseReleased(MouseEvent e) {
+        Object obj = e.getSource();
+        if(obj ==txtService ){
+            if (txtService .getText() != null && !txtService.getText().trim().equals("")) {
+                BottomPanel.setEnable(true,true, true, true);
+                wsdlgenBean.setServiceName(txtService.getText().trim());
+            }
+        }
+    }
     public void setDefaultNamespaces(String fullyQualifiedClassName){
         this.txtNsp.setText(NamespaceFinder.getTargetNamespaceFromClass(fullyQualifiedClassName));
         this.txtSchemaTargetNsp .setText(NamespaceFinder.getSchemaTargetNamespaceFromClass(fullyQualifiedClassName) );
@@ -107,7 +157,7 @@ public class OptionPanel extends JPanel implements ActionListener {
         setNamespaceDefaults();
     }
 
-    private void setNamespaceDefaults(){
+    public void setNamespaceDefaults(){
         wsdlgenBean.setTargetNamespace(txtNsp.getText() );
         wsdlgenBean.setTargetNamespacePrefix(txtNspPrefix .getText() );
         wsdlgenBean.setSchemaTargetNamespace(txtSchemaTargetNsp .getText() );
