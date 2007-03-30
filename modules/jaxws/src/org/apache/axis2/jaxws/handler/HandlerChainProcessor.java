@@ -25,6 +25,7 @@ import org.apache.axis2.jaxws.message.Protocol;
 import org.apache.axis2.jaxws.message.XMLFault;
 import org.apache.axis2.jaxws.message.util.XMLFaultUtils;
 import org.apache.axis2.jaxws.utility.SAAJFactory;
+import java.util.List;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPConstants;
@@ -44,19 +45,15 @@ public class HandlerChainProcessor {
 
     public enum Direction {
         IN, OUT
-    }
-
-    ;
+    };
 
     // the type of message, not indicative of one-way vs. request-response
     public enum MEP {
         REQUEST, RESPONSE
-    }
-
-    ;
+    };
 
     private MessageContext mc;
-    private ArrayList<Handler> handlers = null;
+    private List<Handler> handlers = null;
 
     // track start/end of logical and protocol handlers in the list
     // The two scenarios are:  1) run logical handlers only, 2) run all handlers
@@ -79,7 +76,7 @@ public class HandlerChainProcessor {
       * it may not be sorted.  The processChain and processFault methods check
       * for this by calling verifyChain.
       */
-    public HandlerChainProcessor(ArrayList<Handler> chain) {
+    public HandlerChainProcessor(List<Handler> chain) {
         if (chain == null) {
             handlers = new ArrayList<Handler>();
         } else

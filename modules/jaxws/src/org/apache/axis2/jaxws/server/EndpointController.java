@@ -154,6 +154,9 @@ public class EndpointController {
                     requestMsgCtx.getMessage().setPostPivot();
                 }
 
+                // The response MessageContext should be set on the InvocationContext
+                ic.setResponseMessageContext(responseMsgContext);
+
                 // Invoke outbound application handlers.  It's safe to use the first object on the iterator because there is
                 // always exactly one EndpointDescription on a server invoke
                 HandlerInvokerUtils.invokeOutboundHandlers(responseMsgContext,
@@ -166,6 +169,9 @@ public class EndpointController {
                         MessageContextUtils.createResponseMessageContext(requestMsgCtx);
                 // since we've reversed directions, the message has "become a response message" (section 9.3.2.1, footnote superscript 2)
                 responseMsgContext.setMessage(requestMsgCtx.getMessage());
+
+                // The response MessageContext should be set on the InvocationContext
+                ic.setResponseMessageContext(responseMsgContext);
             }
 
         } catch (Exception e) {
@@ -174,9 +180,6 @@ public class EndpointController {
         } finally {
             restoreRequestMessage(requestMsgCtx);
         }
-
-        // The response MessageContext should be set on the InvocationContext
-        ic.setResponseMessageContext(responseMsgContext);
 
         return ic;
     }

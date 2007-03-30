@@ -23,6 +23,7 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.context.factory.MessageContextFactory;
 import org.apache.axis2.jaxws.context.utils.ContextUtils;
 import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.core.InvocationContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
@@ -34,20 +35,24 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 import java.util.ArrayList;
+import java.util.List;
 
 public class HandlerInvokerUtils {
 
     /**
      * Invoke Inbound Handlers
      *
-     * @param requestMsgCtx
+     * @param msgCtx
      */
     public static boolean invokeInboundHandlers(MessageContext msgCtx,
                                                 EndpointDescription endpointDesc,
                                                 HandlerChainProcessor.MEP mep, boolean isOneWay) {
 
-        HandlerResolverImpl hResolver = new HandlerResolverImpl(endpointDesc);
-        ArrayList<Handler> handlers = hResolver.getHandlerChain(endpointDesc.getPortInfo());
+        List<Handler> handlers = msgCtx.getInvocationContext().getHandlers();
+        if(handlers == null) {
+            HandlerResolverImpl hResolver = new HandlerResolverImpl(endpointDesc);
+            handlers = hResolver.getHandlerChain(endpointDesc.getPortInfo());
+        }
 
         int numHandlers = handlers.size();
 
@@ -113,8 +118,15 @@ public class HandlerInvokerUtils {
         // TODO you may need to hard-code add some handlers until we
         // actually have useful code under EndpointDescription.getHandlerList()
 
-        HandlerResolverImpl hResolver = new HandlerResolverImpl(endpointDesc);
-        ArrayList<Handler> handlers = hResolver.getHandlerChain(endpointDesc.getPortInfo());
+        List<Handler> handlers = null;
+        InvocationContext ic = msgCtx.getInvocationContext();
+        if(ic != null) {
+            handlers = ic.getHandlers();
+        }
+        if(handlers == null) {
+            HandlerResolverImpl hResolver = new HandlerResolverImpl(endpointDesc);
+            handlers = hResolver.getHandlerChain(endpointDesc.getPortInfo());
+        }
 
         int numHandlers = handlers.size();
 
