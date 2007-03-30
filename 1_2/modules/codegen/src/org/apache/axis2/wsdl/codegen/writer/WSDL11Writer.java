@@ -1,9 +1,7 @@
 package org.apache.axis2.wsdl.codegen.writer;
 
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.FileWriter;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
@@ -12,15 +10,13 @@ import org.w3c.dom.NamedNodeMap;
 import javax.wsdl.Definition;
 import javax.wsdl.Import;
 import javax.wsdl.Types;
+import javax.wsdl.Service;
 import javax.wsdl.extensions.schema.Schema;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Map;
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -81,7 +77,7 @@ public class WSDL11Writer {
     }
 
     private void writeWSDL(Definition definition,
-                           String fileName,
+                           String serviceName,
                            Map changedMap) throws Exception {
         // first process the imports and save them.
         Map imports = definition.getImports();
@@ -104,9 +100,44 @@ public class WSDL11Writer {
         // finally save the file
         WSDLWriter wsdlWriter = WSDLFactory.newInstance().newWSDLWriter();
         File outputFile = FileWriter.createClassFile(baseFolder,
-                null, fileName, ".wsdl");
+                null, serviceName, ".wsdl");
         FileOutputStream out = new FileOutputStream(outputFile);
-        wsdlWriter.writeWSDL(definition, out);
+
+        // we have a catch here
+        // if there are multimple services in the definition object
+        // we have to write only the relavent service.
+
+
+        if (definition.getServices().size() > 1){
+           List removedServices = new ArrayList();
+           List servicesList = new ArrayList();
+
+           Map services = definition.getServices();
+           // populate the services list
+           for (Iterator iter = services.values().iterator();iter.hasNext();){
+               servicesList.add(iter.next());
+           }
+           Service service;
+           for (Iterator iter = servicesList.iterator();iter.hasNext();){
+               service = (Service) iter.next();
+               if (!service.getQName().getLocalPart().equals(serviceName)){
+                   definition.removeService(service.getQName());
+                   removedServices.add(service);
+               }
+           }
+
+           //now we have only the required service so write it
+           wsdlWriter.writeWSDL(definition, out);
+
+           // again add the removed services
+           for (Iterator iter = removedServices.iterator(); iter.hasNext();){
+               service = (Service) iter.next();
+               definition.addService(service);
+           }
+        } else {
+           // no problem proceed normaly
+           wsdlWriter.writeWSDL(definition, out);
+        }
         out.flush();
         out.close();
     }
