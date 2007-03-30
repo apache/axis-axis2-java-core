@@ -266,8 +266,6 @@ public class Constants extends org.apache.axis2.namespace.Constants {
         public static final String CONTENT_TYPE = "ContentType";
         public static final String CONTENT_TYPE_OF_FAULT = "ContentTypeOfFault";
 
-        public static final String IS_USING_SEPARATE_LISTENER = "IsUsingSeparateListener";
-
         public static final String CONFIG_CONTEXT_TIMOUT_INTERVAL = "ConfigContextTimeoutInterval";
 
         public static final String TRANSPORT_IN_URL = "TransportInURL";

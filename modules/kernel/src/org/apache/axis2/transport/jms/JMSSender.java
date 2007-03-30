@@ -22,6 +22,8 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.TransportOutDescription;
+import org.apache.axis2.description.WSDL2Constants;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.transport.TransportSender;
 import org.apache.commons.logging.Log;
@@ -38,8 +40,13 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.xml.stream.XMLStreamException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.Context;
+import javax.naming.NameNotFoundException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Hashtable;
 
 /**
  * The TransportSender for JMS
@@ -83,17 +90,6 @@ public class JMSSender extends AbstractHandler implements TransportSender {
                     msgContext.getProperty(Constants.OUT_TRANSPORT_INFO);
         }
 
-        // should we wait and listen for a response?
-        boolean waitForResponse = false;
-
-        Object seprLisn = msgContext.getProperty(
-                Constants.Configuration.IS_USING_SEPARATE_LISTENER);
-        if (Boolean.TRUE.equals(seprLisn)) {
-            waitForResponse = false;
-        } else if (!msgContext.isServerSide()) {
-            waitForResponse = !msgContext.getOptions().isUseSeparateListener();
-        }
-
         // get the ConnectionFactory to be used for the send
         ConnectionFactory connectionFac = transportInfo.getConnectionFactory();
 
@@ -119,14 +115,45 @@ public class JMSSender extends AbstractHandler implements TransportSender {
             MessageProducer producer = session.createProducer(dest);
             Destination replyDest = null;
 
+            boolean waitForResponse =
+                msgContext.getOperationContext() != null &&
+                WSDL2Constants.MEP_URI_OUT_IN.equals(
+                    msgContext.getOperationContext().getAxisOperation().getMessageExchangePattern());
+
             if (waitForResponse) {
-                try {
-                    // create temporary queue to receive reply
-                    replyDest = session.createTemporaryQueue();
-                    message.setJMSReplyTo(replyDest);
-                } catch (JMSException e) {
-                    handleException("Error creating temporary queue for response");
+                String replyToJNDIName = (String) msgContext.getProperty(JMSConstants.REPLY_PARAM);
+                if (replyToJNDIName != null && replyToJNDIName.length() > 0) {
+                    Context context = null;
+                    Hashtable props = JMSUtils.getProperties(targetAddress);
+                    try {
+                        context = new InitialContext(props);
+                    } catch (NamingException e) {
+                        handleException("Could not get the initial context", e);
+                    }
+
+                    try {
+                        replyDest = (Destination) context.lookup(replyToJNDIName);
+
+                    } catch (NameNotFoundException e) {
+                        log.warn("Cannot get or lookup JMS response destination : " +
+                            replyToJNDIName + " : " + e.getMessage() +
+                            ". Attempting to create a Queue named : " + replyToJNDIName);
+                        replyDest = session.createQueue(replyToJNDIName);
+
+                    } catch (NamingException e) {
+                        handleException("Cannot get JMS response destination : " +
+                            replyToJNDIName + " : ", e);
+                    }
+
+                } else {
+                    try {
+                        // create temporary queue to receive reply
+                        replyDest = session.createTemporaryQueue();
+                    } catch (JMSException e) {
+                        handleException("Error creating temporary queue for response");
+                    }
                 }
+                message.setJMSReplyTo(replyDest);
             }
 
             try {

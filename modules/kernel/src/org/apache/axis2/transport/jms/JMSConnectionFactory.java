@@ -17,6 +17,7 @@ package org.apache.axis2.transport.jms;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.axis2.addressing.EndpointReference;
 
 import javax.jms.*;
 import javax.naming.Context;
@@ -176,8 +177,38 @@ public class JMSConnectionFactory {
      * @param serviceName     the service to which it belongs
      */
     public void addDestination(String destinationJndi, String serviceName) {
+
         serviceJNDINameMapping.put(destinationJndi, serviceName);
-        serviceDestinationMapping.put(getDestinationName(destinationJndi), serviceName);
+        String destinationName = getDestinationName(destinationJndi);
+        log.warn("JMS Destination with JNDI name : " + destinationJndi + " does not exist");
+
+        Connection con = null;
+        try {
+            con = conFactory.createConnection();
+            Session session = con.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            Queue queue = session.createQueue(destinationJndi);
+            destinationName = queue.getQueueName();
+            log.warn("JMS Destination with JNDI name : " + destinationJndi + " created");
+            
+        } catch (JMSException e) {
+            log.error("Unable to create a Destination with JNDI name : " + destinationJndi, e);
+            // mark service as faulty
+            JMSUtils.markServiceAsFaulty(
+                (String) serviceJNDINameMapping.get(destinationJndi),
+                "Error looking up JMS destination : " + destinationJndi,
+                msgRcvr.getAxisConf().getAxisConfiguration());
+
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (JMSException ignore) {}
+            }
+        }
+
+        serviceDestinationMapping.put(destinationName, serviceName);
+        log.info("Mapping JNDI name : " + destinationJndi + " and JMS Destination name : " +
+            destinationName + " against service : " + serviceName);
     }
 
     /**
@@ -377,6 +408,28 @@ public class JMSConnectionFactory {
                 " to map its corresponding provider specific Destination name");
         }
         return null;
+    }
+
+    /**
+     * Return the EPR for the JMS Destination with the given JNDI name and using
+     * this connection factory
+     * @param destination the JNDI name of the JMS Destionation
+     * @return the EPR
+     */
+    public EndpointReference getEPRForDestination(String destination) {
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(JMSConstants.JMS_PREFIX).append(destination);
+        sb.append("?").append(JMSConstants.CONFAC_JNDI_NAME_PARAM).
+                append("=").append(getJndiName());
+        Iterator props = getProperties().keySet().iterator();
+        while (props.hasNext()) {
+            String key = (String) props.next();
+            String value = (String) getProperties().get(key);
+            sb.append("&").append(key).append("=").append(value);
+        }
+
+        return new EndpointReference(sb.toString());
     }
 
     public String getServiceByDestination(String destinationName) {

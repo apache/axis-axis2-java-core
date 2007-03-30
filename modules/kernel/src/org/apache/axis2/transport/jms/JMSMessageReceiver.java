@@ -19,6 +19,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.Executor;
 import org.apache.axiom.om.util.UUIDGenerator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.addressing.RelatesTo;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ContextFactory;
@@ -101,8 +102,14 @@ public class JMSMessageReceiver implements MessageListener {
     public void onMessage(Message message) {
         // directly create a new worker and delegate processing
         try {
-            log.debug("Received JMS message to destination : " +
-                    message.getJMSDestination());
+            if (log.isDebugEnabled()) {
+                StringBuffer sb = new StringBuffer();
+                sb.append("Received JMS message to destination : " + message.getJMSDestination());                
+                sb.append("\nMessage ID : " + message.getJMSMessageID());
+                sb.append("\nCorrelation ID : " + message.getJMSCorrelationID());
+                sb.append("\nReplyTo ID : " + message.getJMSReplyTo());
+                log.debug(sb.toString());
+            }
         } catch (JMSException e) {
             e.printStackTrace();
         }
@@ -168,6 +175,19 @@ public class JMSMessageReceiver implements MessageListener {
             msgContext.setServerSide(true);
             msgContext.setServiceGroupContextId(UUIDGenerator.getUUID());
             msgContext.setMessageID(message.getJMSMessageID());
+
+            Destination replyTo = message.getJMSReplyTo();
+            String jndiDestinationName = null;
+            if (replyTo == null) {
+                Parameter param = msgContext.getAxisService().getParameter(JMSConstants.REPLY_PARAM);
+                if (param != null && param.getValue() != null) {
+                    jndiDestinationName = (String) param.getValue();
+                }
+            }
+
+            if (jndiDestinationName != null) {
+                msgContext.setReplyTo(jmsConFac.getEPRForDestination(jndiDestinationName));
+            }
 
             String soapAction = JMSUtils.getProperty(message, JMSConstants.SOAPACTION);
             if (soapAction != null) {
