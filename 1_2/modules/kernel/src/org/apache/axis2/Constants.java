@@ -320,5 +320,7 @@ public class Constants extends org.apache.axis2.namespace.Constants {
          */
         public static final String MESSAGE_TYPE = "messageType";
 
+        public static final String SOAP_RESPONSE_MEP = "soapResponseMEP";
+
     }
 }

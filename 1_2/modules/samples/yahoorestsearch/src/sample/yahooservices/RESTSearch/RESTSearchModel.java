@@ -47,7 +47,7 @@ public class RESTSearchModel {
     public String searchYahoo(String query, String format) {
         try {
             snippet = beginHTML;
-            String epr = "http://api.search.yahoo.com/WebSearchService/V1/webSearch";
+            String epr = "http://search.yahooapis.com/WebSearchService/V1/webSearch";
 
             ServiceClient client = new ServiceClient();
             Options options = new Options();
@@ -55,6 +55,7 @@ public class RESTSearchModel {
             options.setTo(new EndpointReference(epr));
             options.setProperty(Constants.Configuration.ENABLE_REST, Constants.VALUE_TRUE);
             options.setProperty(Constants.Configuration.HTTP_METHOD, Constants.Configuration.HTTP_METHOD_GET);
+	    options.setProperty(Constants.Configuration.MESSAGE_TYPE,org.apache.axis2.transport.http.HTTPConstants.MEDIA_TYPE_X_WWW_FORM);
 
             //if post is through GET of HTTP
             OMElement response = client.sendReceive(getPayloadForYahooSearchCall(query, format));
