@@ -202,17 +202,21 @@
     		</classpath>	
 	</javac>
 	
-	<!-- create the Axis2CodegenWizard.jar -->
+	<!--Make available the resources for the plugin -->
         <copy todir="${codegen.plugin.output.dir}/class">
             <fileset dir="${codegen.output.dir}/${source.dir.name}" >
 		<include name="**/Codegen.properties" />
+		<exclude name="**/*.class" />
 	    </fileset>
         </copy>
       
+	<!-- create the Axis2CodegenWizard.jar -->
         <jar destfile="${codegen.plugin.output.dir}/Axis2CodegenWizard.jar" 
 	       basedir="${codegen.plugin.output.dir}/class"
            includes="org/apache/**"
           />
+	<delete dir="${codegen.plugin.output.dir}/src"></delete>
+	<delete dir="${codegen.plugin.output.dir}/class"></delete>
     </target>
 
     <!--Install the codegen plugin -->
