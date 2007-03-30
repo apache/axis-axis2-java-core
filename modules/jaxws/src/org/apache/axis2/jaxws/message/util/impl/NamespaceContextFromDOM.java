@@ -16,92 +16,90 @@
  */
 package org.apache.axis2.jaxws.message.util.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.xml.namespace.NamespaceContext;
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import javax.xml.namespace.NamespaceContext;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /**
- * Namespace information available at the current scope.
- * Utility class for XMLStreamReaderFromDOM
- * @see org.apache.axis2.jaxws.message.util.impl.XMLStreamReaderFromDOM
+ * Namespace information available at the current scope. Utility class for XMLStreamReaderFromDOM
+ *
+ * @see XMLStreamReaderFromDOM
  */
 public class NamespaceContextFromDOM implements NamespaceContext {
 
-	private Element element;
-	/**
-	 * @param element representing the current scope
-	 */
-	NamespaceContextFromDOM(Element element) {
-		this.element = element;
-	}
+    private Element element;
 
-	/* (non-Javadoc)
-	 * @see javax.xml.namespace.NamespaceContext#getPrefix(java.lang.String)
-	 */
-	public String getPrefix(String namespaceURI) {
-		return element.lookupPrefix(namespaceURI);
-	}
+    /** @param element representing the current scope */
+    NamespaceContextFromDOM(Element element) {
+        this.element = element;
+    }
 
-	/* (non-Javadoc)
-	 * @see javax.xml.namespace.NamespaceContext#getPrefixes(java.lang.String)
-	 */
-	public Iterator getPrefixes(String namespaceURI) {
-		if (element instanceof javax.xml.soap.SOAPElement) {
-			Iterator it = ((javax.xml.soap.SOAPElement)element).getVisibleNamespacePrefixes();
-			ArrayList list = new ArrayList();
-			while (it.hasNext()) {
-				String prefix = (String) it.next();
-				if (getNamespaceURI(prefix).equals(namespaceURI)) {
-					if (prefix != null && prefix.length() == 0) {
-						prefix = null;
-					}
-					list.add(prefix);
-				}
-			}
-			return list.iterator();
-		} else {
-			ArrayList list = new ArrayList();
-			Node node = element;
-			while (node != null) {
-				if (node instanceof Element) {
-					// Walk the attributes looking for namespace declarations
-					NamedNodeMap attrs =((Element) node).getAttributes();
-					for (int i=0; i<attrs.getLength(); i++) {
-						Attr attr = (Attr) attrs.item(i);
-						if (attr.getNodeValue().equals(namespaceURI)) {
-							String name = attr.getNodeName();
-							
-							if (name.startsWith("xmlns")) {
-								String prefix = "";
-								if (name.startsWith("xmlns:")) {
-									prefix = name.substring(6);
-								}
-								// Found a namespace declaration with the prefix.
-								// Make sure this is not overridden by a declaration 
-								// in a closer scope.
-								if (!list.contains(prefix) &&
-										getNamespaceURI(prefix).equals(namespaceURI)) {
-									list.add(prefix);
-								}
-							}
-						}
-					}
-				}
-				// Pop up to the parent node
-				node = node.getParentNode();
-			}
-			return list.iterator();
-		}
-	}
+    /* (non-Javadoc)
+      * @see javax.xml.namespace.NamespaceContext#getPrefix(java.lang.String)
+      */
+    public String getPrefix(String namespaceURI) {
+        return element.lookupPrefix(namespaceURI);
+    }
 
-	public String getNamespaceURI(String prefix) {
-		return element.lookupNamespaceURI(prefix);
-	}
+    /* (non-Javadoc)
+      * @see javax.xml.namespace.NamespaceContext#getPrefixes(java.lang.String)
+      */
+    public Iterator getPrefixes(String namespaceURI) {
+        if (element instanceof javax.xml.soap.SOAPElement) {
+            Iterator it = ((javax.xml.soap.SOAPElement)element).getVisibleNamespacePrefixes();
+            ArrayList list = new ArrayList();
+            while (it.hasNext()) {
+                String prefix = (String)it.next();
+                if (getNamespaceURI(prefix).equals(namespaceURI)) {
+                    if (prefix != null && prefix.length() == 0) {
+                        prefix = null;
+                    }
+                    list.add(prefix);
+                }
+            }
+            return list.iterator();
+        } else {
+            ArrayList list = new ArrayList();
+            Node node = element;
+            while (node != null) {
+                if (node instanceof Element) {
+                    // Walk the attributes looking for namespace declarations
+                    NamedNodeMap attrs = ((Element)node).getAttributes();
+                    for (int i = 0; i < attrs.getLength(); i++) {
+                        Attr attr = (Attr)attrs.item(i);
+                        if (attr.getNodeValue().equals(namespaceURI)) {
+                            String name = attr.getNodeName();
+
+                            if (name.startsWith("xmlns")) {
+                                String prefix = "";
+                                if (name.startsWith("xmlns:")) {
+                                    prefix = name.substring(6);
+                                }
+                                // Found a namespace declaration with the prefix.
+                                // Make sure this is not overridden by a declaration
+                                // in a closer scope.
+                                if (!list.contains(prefix) &&
+                                        getNamespaceURI(prefix).equals(namespaceURI)) {
+                                    list.add(prefix);
+                                }
+                            }
+                        }
+                    }
+                }
+                // Pop up to the parent node
+                node = node.getParentNode();
+            }
+            return list.iterator();
+        }
+    }
+
+    public String getNamespaceURI(String prefix) {
+        return element.lookupNamespaceURI(prefix);
+    }
 
 }

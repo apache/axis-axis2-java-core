@@ -21,23 +21,23 @@ import org.apache.axis2.jaxws.runtime.description.marshal.impl.MarshalServiceRun
 
 public class MarshalServiceRuntimeDescriptionFactory {
 
-    /**
-     * intentionally private
-     */
-    private MarshalServiceRuntimeDescriptionFactory() {}
+    /** intentionally private */
+    private MarshalServiceRuntimeDescriptionFactory() {
+    }
 
     /**
      * Get or create MarshalServiceRuntimeDescription
+     *
      * @param serviceDesc
      * @param implClass
      * @return MarshalServiceRuntimeDescription
      */
     public static MarshalServiceRuntimeDescription get(ServiceDescription serviceDesc) {
         String key = MarshalServiceRuntimeDescriptionBuilder.getKey();
-        MarshalServiceRuntimeDescription  desc = 
-            (MarshalServiceRuntimeDescription ) 
-                serviceDesc.getServiceRuntimeDesc(key);
-        
+        MarshalServiceRuntimeDescription desc =
+                (MarshalServiceRuntimeDescription)
+                        serviceDesc.getServiceRuntimeDesc(key);
+
         if (desc == null) {
             desc = MarshalServiceRuntimeDescriptionBuilder.create(serviceDesc);
             serviceDesc.setServiceRuntimeDesc(desc);

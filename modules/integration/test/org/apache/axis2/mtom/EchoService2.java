@@ -34,7 +34,8 @@ public class EchoService2 {
     public OMElement mtomSample(OMElement element) throws Exception {
 
         Attachments attachments = null;
-        attachments = (Attachments) MessageContext.getCurrentMessageContext().getProperty(MTOMConstants.ATTACHMENTS);
+        attachments = (Attachments)MessageContext.getCurrentMessageContext()
+                .getProperty(MTOMConstants.ATTACHMENTS);
         // Get image data
         IncomingAttachmentStreams streams = attachments.getIncomingAttachmentStreams();
         IncomingAttachmentInputStream stream = streams.getNextStream();

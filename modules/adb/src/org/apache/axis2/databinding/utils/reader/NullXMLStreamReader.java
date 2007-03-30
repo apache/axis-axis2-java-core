@@ -4,7 +4,6 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -30,8 +29,9 @@ public class NullXMLStreamReader implements ADBXMLStreamReader {
     private static final int END_ELEMENT_STATE = 2;
 
 
-    private static final QName NIL_QNAME = new QName("http://www.w3.org/2001/XMLSchema-instance","nil","xsi");
-    private static final String NIL_VALUE_TRUE ="true";
+    private static final QName NIL_QNAME =
+            new QName("http://www.w3.org/2001/XMLSchema-instance", "nil", "xsi");
+    private static final String NIL_VALUE_TRUE = "true";
 
     private int currentState = START_ELEMENT;
 
@@ -40,24 +40,24 @@ public class NullXMLStreamReader implements ADBXMLStreamReader {
     }
 
     public Object getProperty(String key) throws IllegalArgumentException {
-         //since optimization is a global property
+        //since optimization is a global property
         //we've to implement it everywhere
-        if (OPTIMIZATION_ENABLED.equals(key)){
-               return Boolean.TRUE;
-           }else{
-               return null;
-           }
+        if (OPTIMIZATION_ENABLED.equals(key)) {
+            return Boolean.TRUE;
+        } else {
+            return null;
+        }
     }
 
     public int next() throws XMLStreamException {
         int returnEvent = START_DOCUMENT;
-        switch(currentState){
+        switch (currentState) {
             case START_ELEMENT_STATE:
                 currentState = END_ELEMENT_STATE;
-                returnEvent =  END_ELEMENT;
+                returnEvent = END_ELEMENT;
                 break;
             case END_ELEMENT_STATE:
-               throw new XMLStreamException("parser completed!");
+                throw new XMLStreamException("parser completed!");
 
         }
 
@@ -77,7 +77,7 @@ public class NullXMLStreamReader implements ADBXMLStreamReader {
     }
 
     public boolean hasNext() throws XMLStreamException {
-        return (currentState!=END_ELEMENT_STATE);
+        return (currentState != END_ELEMENT_STATE);
 
     }
 
@@ -86,20 +86,20 @@ public class NullXMLStreamReader implements ADBXMLStreamReader {
     }
 
     public String getNamespaceURI(String string) {
-        if (outerQName.getPrefix()!=null &&
-                outerQName.getPrefix().equals(string)){
+        if (outerQName.getPrefix() != null &&
+                outerQName.getPrefix().equals(string)) {
             return outerQName.getNamespaceURI();
-        }else{
+        } else {
             return null;
         }
     }
 
     public boolean isStartElement() {
-        return (currentState==START_ELEMENT_STATE);
+        return (currentState == START_ELEMENT_STATE);
     }
 
     public boolean isEndElement() {
-        return (currentState==END_ELEMENT_STATE);
+        return (currentState == END_ELEMENT_STATE);
     }
 
     public boolean isCharacters() {
@@ -111,8 +111,8 @@ public class NullXMLStreamReader implements ADBXMLStreamReader {
     }
 
     public String getAttributeValue(String string, String string1) {
-        if (string== null){//null namespace - ignore it
-            if (NIL_QNAME.getLocalPart().equals(string1)){
+        if (string == null) {//null namespace - ignore it
+            if (NIL_QNAME.getLocalPart().equals(string1)) {
                 return NIL_VALUE_TRUE;
             }
         }
@@ -124,19 +124,19 @@ public class NullXMLStreamReader implements ADBXMLStreamReader {
     }
 
     public QName getAttributeName(int i) {
-        return (i==0)? NIL_QNAME:null;
+        return (i == 0) ? NIL_QNAME : null;
     }
 
     public String getAttributeNamespace(int i) {
-        return (i==0)? NIL_QNAME.getNamespaceURI():null;
+        return (i == 0) ? NIL_QNAME.getNamespaceURI() : null;
     }
 
     public String getAttributeLocalName(int i) {
-        return (i==0)? NIL_QNAME.getLocalPart():null;
+        return (i == 0) ? NIL_QNAME.getLocalPart() : null;
     }
 
     public String getAttributePrefix(int i) {
-        return (i==0)? NIL_QNAME.getPrefix():null;
+        return (i == 0) ? NIL_QNAME.getPrefix() : null;
     }
 
     public String getAttributeType(int i) {
@@ -144,7 +144,7 @@ public class NullXMLStreamReader implements ADBXMLStreamReader {
     }
 
     public String getAttributeValue(int i) {
-        return (i==0)? NIL_VALUE_TRUE:null;
+        return (i == 0) ? NIL_VALUE_TRUE : null;
     }
 
     public boolean isAttributeSpecified(int i) {
@@ -169,16 +169,16 @@ public class NullXMLStreamReader implements ADBXMLStreamReader {
 
     public int getEventType() {
         int returnEvent = START_DOCUMENT;
-        switch(currentState){
+        switch (currentState) {
             case START_ELEMENT_STATE:
-                returnEvent =  START_ELEMENT;
+                returnEvent = START_ELEMENT;
                 break;
             case END_ELEMENT_STATE:
-                returnEvent =  END_ELEMENT;
+                returnEvent = END_ELEMENT;
                 break;
 
         }
-       return returnEvent;
+        return returnEvent;
     }
 
     public String getText() {
@@ -210,7 +210,7 @@ public class NullXMLStreamReader implements ADBXMLStreamReader {
     }
 
     public Location getLocation() {
-        return new Location(){
+        return new Location() {
             public int getLineNumber() {
                 return 0;
             }
@@ -278,7 +278,7 @@ public class NullXMLStreamReader implements ADBXMLStreamReader {
     }
 
     public boolean isDone() {
-        return (currentState==END_ELEMENT_STATE);
+        return (currentState == END_ELEMENT_STATE);
     }
 
     public void addNamespaceContext(NamespaceContext nsContext) {

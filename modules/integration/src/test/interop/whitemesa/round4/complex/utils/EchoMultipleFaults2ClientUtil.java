@@ -31,11 +31,12 @@ public class EchoMultipleFaults2ClientUtil implements SunClientUtil {
         SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
 
         OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/","SOAP-ENC");
-        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
-        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema","xsd");
-        reqEnv.declareNamespace("http://soapinterop.org/types","m0");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
+        reqEnv.declareNamespace("http://soapinterop.org/types", "m0");
 
         OMElement method = fac.createOMElement("echoMultipleFaults2", omNs);
         method.declareNamespace(envNs);

@@ -32,12 +32,13 @@ public class EchoMultipleFaults1ClientUtil implements SunGroupHClientUtil {
 
         OMElement method = fac.createOMElement("echoMultipleFaults1", omNs);
         OMNamespace soapEnvNS = method.declareNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
-        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", soapEnvNS);
+                                                        SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
+        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                            soapEnvNS);
 
-        method.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
-        method.declareNamespace("http://soapinterop.org/types","ns2");
-        method.declareNamespace("http://schemas.xmlsoap.org/wsdl/","wsdl");
+        method.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        method.declareNamespace("http://soapinterop.org/types", "ns2");
+        method.declareNamespace("http://schemas.xmlsoap.org/wsdl/", "wsdl");
 
         OMElement value = fac.createOMElement("whichFault", null);
         method.addChild(value);
@@ -47,10 +48,10 @@ public class EchoMultipleFaults1ClientUtil implements SunGroupHClientUtil {
         OMElement value4 = fac.createOMElement("Item", null);
         OMElement value5 = fac.createOMElement("Item", null);
 
-        value2.addAttribute("soapenc:arrayType","nsa:float[3]",null);
-        value2.addAttribute("soapenc:offset","[0]",null);
-        value2.addAttribute("xmlns:soapenc","http://schemas.xmlsoap.org/soap/encoding/",null);
-        value2.addAttribute("xmlns:nsa","http://www.w3.org/2001/XMLSchema",null);
+        value2.addAttribute("soapenc:arrayType", "nsa:float[3]", null);
+        value2.addAttribute("soapenc:offset", "[0]", null);
+        value2.addAttribute("xmlns:soapenc", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        value2.addAttribute("xmlns:nsa", "http://www.w3.org/2001/XMLSchema", null);
 
 
         value.addChild(fac.createOMText(value, "10"));
@@ -66,7 +67,6 @@ public class EchoMultipleFaults1ClientUtil implements SunGroupHClientUtil {
 
         method.addChild(value1);
         method.addChild(value2);
-
 
 
         return method;

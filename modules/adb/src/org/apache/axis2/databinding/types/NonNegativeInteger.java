@@ -27,7 +27,8 @@ import java.util.Random;
 public class NonNegativeInteger extends BigInteger {
 
     private static final long serialVersionUID = -484577860351406054L;
-	public NonNegativeInteger(byte[] val) {
+
+    public NonNegativeInteger(byte[] val) {
         super(val);
         checkValidity();
     } // ctor
@@ -57,33 +58,35 @@ public class NonNegativeInteger extends BigInteger {
         checkValidity();
     } // ctor
 
-    /**
-     * validate the value against the xsd definition
-     */
+    /** validate the value against the xsd definition */
     private BigInteger zero = new BigInteger("0");
+
     private void checkValidity() {
         if (compareTo(zero) < 0) {
             throw new NumberFormatException(
 //                    Messages.getMessage("badNonNegInt00") +
-                     ":  " + this);
+":  " + this);
         }
     } // checkValidity
-    
+
     /**
      * Work-around for http://developer.java.sun.com/developer/bugParade/bugs/4378370.html
+     *
      * @return BigIntegerRep
      * @throws ObjectStreamException
-     */ 
+     */
     public Object writeReplace() throws ObjectStreamException {
         return new BigIntegerRep(toByteArray());
     }
-    
+
     protected static class BigIntegerRep implements java.io.Serializable {
         private static final long serialVersionUID = -6135065605514678689L;
-		private byte[] array;
+        private byte[] array;
+
         protected BigIntegerRep(byte[] array) {
             this.array = array;
         }
+
         protected Object readResolve() throws java.io.ObjectStreamException {
             return new NonNegativeInteger(array);
         }

@@ -27,9 +27,7 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import java.io.File;
 
-/**
- * white Mesa Cr interop test
- */
+/** white Mesa Cr interop test */
 public class BodyElements {
 
     public static OMElement bodySingle(boolean optimized) {

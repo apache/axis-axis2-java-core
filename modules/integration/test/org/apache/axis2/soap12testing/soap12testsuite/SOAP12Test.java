@@ -39,37 +39,56 @@ public class SOAP12Test extends TestCase {
 
     public void testWithoutFaults() {
 
-        assertTrue("SOAP 1.2 Test : - Test No. 1  Failed", comparator.compare("1", client.getRelpy(8008,"SOAP12TestServiceC", "1")));
-        assertTrue("SOAP 1.2 Test : - Test No. 2  Failed", comparator.compare("2", client.getRelpy(8008,"SOAP12TestServiceC", "2")));
-        assertTrue("SOAP 1.2 Test : - Test No. 3  Failed", comparator.compare("3", client.getRelpy(8008,"SOAP12TestServiceC", "3")));
-        assertTrue("SOAP 1.2 Test : - Test No. 4  Failed", comparator.compare("4", client.getRelpy(8008,"SOAP12TestServiceC", "4")));
-        assertTrue("SOAP 1.2 Test : - Test No. 5  Failed", comparator.compare("5", client.getRelpy(8008,"SOAP12TestServiceC", "5")));
+        assertTrue("SOAP 1.2 Test : - Test No. 1  Failed",
+                   comparator.compare("1", client.getRelpy(8008, "SOAP12TestServiceC", "1")));
+        assertTrue("SOAP 1.2 Test : - Test No. 2  Failed",
+                   comparator.compare("2", client.getRelpy(8008, "SOAP12TestServiceC", "2")));
+        assertTrue("SOAP 1.2 Test : - Test No. 3  Failed",
+                   comparator.compare("3", client.getRelpy(8008, "SOAP12TestServiceC", "3")));
+        assertTrue("SOAP 1.2 Test : - Test No. 4  Failed",
+                   comparator.compare("4", client.getRelpy(8008, "SOAP12TestServiceC", "4")));
+        assertTrue("SOAP 1.2 Test : - Test No. 5  Failed",
+                   comparator.compare("5", client.getRelpy(8008, "SOAP12TestServiceC", "5")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 10  Failed", comparator.compare("10", client.getRelpy(8008,"SOAP12TestServiceC", "10")));
-        assertTrue("SOAP 1.2 Test : - Test No. 11  Failed", comparator.compare("11", client.getRelpy(8008,"SOAP12TestServiceC", "11")));
+        assertTrue("SOAP 1.2 Test : - Test No. 10  Failed",
+                   comparator.compare("10", client.getRelpy(8008, "SOAP12TestServiceC", "10")));
+        assertTrue("SOAP 1.2 Test : - Test No. 11  Failed",
+                   comparator.compare("11", client.getRelpy(8008, "SOAP12TestServiceC", "11")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 15  Failed", comparator.compare("15", client.getRelpy(8008,"SOAP12TestServiceC", "15")));
+        assertTrue("SOAP 1.2 Test : - Test No. 15  Failed",
+                   comparator.compare("15", client.getRelpy(8008, "SOAP12TestServiceC", "15")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 19  Failed", comparator.compare("19", client.getRelpy(8008,"SOAP12TestServiceC", "19")));
+        assertTrue("SOAP 1.2 Test : - Test No. 19  Failed",
+                   comparator.compare("19", client.getRelpy(8008, "SOAP12TestServiceC", "19")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 22  Failed", comparator.compare("22", client.getRelpy(8008,"SOAP12TestServiceC", "22")));
+        assertTrue("SOAP 1.2 Test : - Test No. 22  Failed",
+                   comparator.compare("22", client.getRelpy(8008, "SOAP12TestServiceC", "22")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 29  Failed", comparator.compare("29", client.getRelpy(8008,"SOAP12TestServiceC", "29")));
+        assertTrue("SOAP 1.2 Test : - Test No. 29  Failed",
+                   comparator.compare("29", client.getRelpy(8008, "SOAP12TestServiceC", "29")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 31  Failed", comparator.compare("31", client.getRelpy(8008,"SOAP12TestServiceC", "31")));
+        assertTrue("SOAP 1.2 Test : - Test No. 31  Failed",
+                   comparator.compare("31", client.getRelpy(8008, "SOAP12TestServiceC", "31")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 34  Failed", comparator.compare("34", client.getRelpy(8008,"SOAP12TestServiceC", "34")));
+        assertTrue("SOAP 1.2 Test : - Test No. 34  Failed",
+                   comparator.compare("34", client.getRelpy(8008, "SOAP12TestServiceC", "34")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 37  Failed", comparator.compare("37", client.getRelpy(8008,"SOAP12TestServiceC", "37")));
+        assertTrue("SOAP 1.2 Test : - Test No. 37  Failed",
+                   comparator.compare("37", client.getRelpy(8008, "SOAP12TestServiceC", "37")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 40  Failed", comparator.compare("40", client.getRelpy(8008,"SOAP12TestServiceC", "40")));
+        assertTrue("SOAP 1.2 Test : - Test No. 40  Failed",
+                   comparator.compare("40", client.getRelpy(8008, "SOAP12TestServiceC", "40")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 66  Failed", comparator.compare("66", client.getRelpy(8008,"SOAP12TestServiceC", "66")));
+        assertTrue("SOAP 1.2 Test : - Test No. 66  Failed",
+                   comparator.compare("66", client.getRelpy(8008, "SOAP12TestServiceC", "66")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 68  Failed", comparator.compare("68", client.getRelpy(8008,"SOAP12TestServiceC", "68")));
+        assertTrue("SOAP 1.2 Test : - Test No. 68  Failed",
+                   comparator.compare("68", client.getRelpy(8008, "SOAP12TestServiceC", "68")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 74  Failed", comparator.compare("74", client.getRelpy(8008,"SOAP12TestServiceC", "74")));
+        assertTrue("SOAP 1.2 Test : - Test No. 74  Failed",
+                   comparator.compare("74", client.getRelpy(8008, "SOAP12TestServiceC", "74")));
 
-        assertTrue("SOAP 1.2 Test : - Test No. 78  Failed", comparator.compare("78", client.getRelpy(8008,"SOAP12TestServiceC", "78")));
+        assertTrue("SOAP 1.2 Test : - Test No. 78  Failed",
+                   comparator.compare("78", client.getRelpy(8008, "SOAP12TestServiceC", "78")));
     }
 }

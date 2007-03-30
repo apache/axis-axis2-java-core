@@ -1,10 +1,10 @@
 package org.apache.axis2.databinding.utils.reader;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.Location;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.namespace.QName;
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
+import javax.xml.stream.Location;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -21,7 +21,7 @@ import javax.xml.namespace.NamespaceContext;
  * limitations under the License.
  */
 
-public class WrappingXMLStreamReader implements ADBXMLStreamReader{
+public class WrappingXMLStreamReader implements ADBXMLStreamReader {
 
     private XMLStreamReader reader;
 
@@ -33,7 +33,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
         try {
             return !hasNext();
         } catch (XMLStreamException e) {
-             throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -42,7 +42,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public int next() throws XMLStreamException {
-         return reader.next();
+        return reader.next();
     }
 
     public void require(int i, String string, String string1) throws XMLStreamException {
@@ -50,7 +50,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public String getElementText() throws XMLStreamException {
-       return reader.getElementText();
+        return reader.getElementText();
     }
 
     public int nextTag() throws XMLStreamException {
@@ -62,7 +62,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public void close() throws XMLStreamException {
-         reader.close();
+        reader.close();
     }
 
     public String getNamespaceURI(String string) {
@@ -70,7 +70,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public boolean isStartElement() {
-         return reader.isStartElement();
+        return reader.isStartElement();
     }
 
     public boolean isEndElement() {
@@ -78,7 +78,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public boolean isCharacters() {
-       return reader.isCharacters();
+        return reader.isCharacters();
     }
 
     public boolean isWhiteSpace() {
@@ -86,7 +86,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public String getAttributeValue(String string, String string1) {
-        return reader.getAttributeValue(string,string1);
+        return reader.getAttributeValue(string, string1);
     }
 
     public int getAttributeCount() {
@@ -98,7 +98,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public String getAttributeNamespace(int i) {
-       return reader.getAttributeNamespace(i);
+        return reader.getAttributeNamespace(i);
     }
 
     public String getAttributeLocalName(int i) {
@@ -106,7 +106,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public String getAttributePrefix(int i) {
-       return reader.getAttributeLocalName(i);
+        return reader.getAttributeLocalName(i);
     }
 
     public String getAttributeType(int i) {
@@ -126,11 +126,11 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public String getNamespacePrefix(int i) {
-          return reader.getNamespacePrefix(i);
+        return reader.getNamespacePrefix(i);
     }
 
     public String getNamespaceURI(int i) {
-          return reader.getNamespaceURI(i);
+        return reader.getNamespaceURI(i);
     }
 
     public NamespaceContext getNamespaceContext() {
@@ -138,7 +138,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public int getEventType() {
-       return reader.getEventType();
+        return reader.getEventType();
     }
 
     public String getText() {
@@ -146,11 +146,11 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public char[] getTextCharacters() {
-       return reader.getTextCharacters();
+        return reader.getTextCharacters();
     }
 
     public int getTextCharacters(int i, char[] chars, int i1, int i2) throws XMLStreamException {
-        return reader.getTextCharacters(i,chars,i1,i2);
+        return reader.getTextCharacters(i, chars, i1, i2);
     }
 
     public int getTextStart() {
@@ -174,7 +174,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public QName getName() {
-         return reader.getName();
+        return reader.getName();
     }
 
     public String getLocalName() {
@@ -182,15 +182,15 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public boolean hasName() {
-         return reader.hasName();
+        return reader.hasName();
     }
 
     public String getNamespaceURI() {
-         return reader.getNamespaceURI();
+        return reader.getNamespaceURI();
     }
 
     public String getPrefix() {
-         return reader.getPrefix();
+        return reader.getPrefix();
     }
 
     public String getVersion() {
@@ -202,7 +202,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public boolean standaloneSet() {
-       return reader.standaloneSet();
+        return reader.standaloneSet();
     }
 
     public String getCharacterEncodingScheme() {
@@ -210,7 +210,7 @@ public class WrappingXMLStreamReader implements ADBXMLStreamReader{
     }
 
     public String getPITarget() {
-         return reader.getPITarget();
+        return reader.getPITarget();
     }
 
     public String getPIData() {

@@ -6,12 +6,12 @@ import org.apache.axiom.om.util.StAXUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -36,9 +36,10 @@ public abstract class ADBHelperDataSource implements OMDataSource {
 
     /**
      * Constructor taking in an ADBBean
+     *
      * @param bean
      */
-    protected ADBHelperDataSource(Object bean,QName parentQName,String helperClassName) {
+    protected ADBHelperDataSource(Object bean, QName parentQName, String helperClassName) {
         this.bean = bean;
         this.parentQName = parentQName;
         this.helperClassName = helperClassName;
@@ -46,20 +47,21 @@ public abstract class ADBHelperDataSource implements OMDataSource {
 
 
     /**
-     * @see OMDataSource#serialize(java.io.OutputStream, org.apache.axiom.om.OMOutputFormat)
      * @param output
      * @param format
      * @throws javax.xml.stream.XMLStreamException
+     *
+     * @see OMDataSource#serialize(java.io.OutputStream, org.apache.axiom.om.OMOutputFormat)
      */
     public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
-       serialize(StAXUtils.createXMLStreamWriter(output));
+        serialize(StAXUtils.createXMLStreamWriter(output));
     }
 
     /**
-     * @see OMDataSource#serialize(java.io.Writer, org.apache.axiom.om.OMOutputFormat)
      * @param writer
      * @param format
      * @throws XMLStreamException
+     * @see OMDataSource#serialize(java.io.Writer, org.apache.axiom.om.OMOutputFormat)
      */
     public void serialize(Writer writer, OMOutputFormat format) throws XMLStreamException {
         serialize(StAXUtils.createXMLStreamWriter(writer));
@@ -67,31 +69,32 @@ public abstract class ADBHelperDataSource implements OMDataSource {
 
     /**
      * This needs to be generated inside the ADB bean
-     * @see OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
+     *
      * @param xmlWriter
      * @throws XMLStreamException
+     * @see OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
      */
     public abstract void serialize(XMLStreamWriter xmlWriter)
             throws XMLStreamException;
 
 
     /**
-     * @see org.apache.axiom.om.OMDataSource#getReader()
      * @throws XMLStreamException
+     * @see org.apache.axiom.om.OMDataSource#getReader()
      */
     public XMLStreamReader getReader() throws XMLStreamException {
         // since only ADBBeans related to elements can be serialized
         try {
             Class helperClass = Class.forName(helperClassName);
-            Method method = helperClass.getMethod("getPullParser",new Class[]{Object.class,
-                                               QName.class});
-            return (XMLStreamReader)method.invoke(null,new Object[]{bean,parentQName});
+            Method method = helperClass.getMethod("getPullParser", new Class[] { Object.class,
+                    QName.class });
+            return (XMLStreamReader)method.invoke(null, new Object[] { bean, parentQName });
         } catch (ClassNotFoundException e) {
             throw new XMLStreamException(e);
         } catch (NoSuchMethodException e) {
-           throw new XMLStreamException(e);
+            throw new XMLStreamException(e);
         } catch (IllegalAccessException e) {
-             throw new XMLStreamException(e);
+            throw new XMLStreamException(e);
         } catch (InvocationTargetException e) {
             throw new XMLStreamException(e);
         }

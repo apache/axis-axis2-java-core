@@ -27,12 +27,8 @@ import org.apache.axis2.modules.Module;
 import org.apache.axis2.modules.ModulePolicyExtension;
 import org.apache.axis2.modules.PolicyExtension;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
-import org.apache.axis2.wsdl.util.Constants;
-import org.apache.neethi.All;
 import org.apache.neethi.Assertion;
-import org.apache.neethi.ExactlyOne;
 import org.apache.neethi.Policy;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -40,7 +36,6 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,24 +46,29 @@ public class PolicyEvaluator implements CodeGenExtension {
 
     /**
      * Init method to initialization
+     *
      * @param configuration
      * @param namespace2ExtsMap
      */
     private void init(CodeGenConfiguration configuration, Map namespace2ExtsMap) {
 
-       // adding default PolicyExtensions
-       namespace2ExtsMap.put("http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization",
-               new MTOMPolicyExtension(configuration));
-       namespace2ExtsMap.put("http://schemas.xmlsoap.org/ws/2004/09/policy/encoding",
-               new EncodePolicyExtension());
+        // adding default PolicyExtensions
+        namespace2ExtsMap
+                .put("http://schemas.xmlsoap.org/ws/2004/09/policy/optimizedmimeserialization",
+                     new MTOMPolicyExtension(configuration));
+        namespace2ExtsMap.put("http://schemas.xmlsoap.org/ws/2004/09/policy/encoding",
+                              new EncodePolicyExtension());
 
-       //set the policy handling template 
-       configuration.putProperty("policyExtensionTemplate", "/org/apache/axis2/wsdl/template/java/PolicyExtensionTemplate.xsl");
+        //set the policy handling template
+        configuration.putProperty("policyExtensionTemplate",
+                                  "/org/apache/axis2/wsdl/template/java/PolicyExtensionTemplate.xsl");
 
 
         String repository = configuration.getRepositoryPath();
 
-        if (repository == null) {    return;    }
+        if (repository == null) {
+            return;
+        }
 
 
         try {
@@ -81,7 +81,7 @@ public class PolicyEvaluator implements CodeGenExtension {
             for (Iterator iterator = axisConfiguration.getModules().values()
                     .iterator(); iterator.hasNext();) {
 
-                AxisModule axisModule = (AxisModule) iterator.next();
+                AxisModule axisModule = (AxisModule)iterator.next();
                 String[] namespaces = axisModule.getSupportedPolicyNamespaces();
 
                 if (namespaces == null) {
@@ -93,7 +93,7 @@ public class PolicyEvaluator implements CodeGenExtension {
                     continue;
                 }
 
-                PolicyExtension ext = ((ModulePolicyExtension) module).getPolicyExtension();
+                PolicyExtension ext = ((ModulePolicyExtension)module).getPolicyExtension();
 
                 for (int i = 0; i < namespaces.length; i++) {
                     namespace2ExtsMap.put(namespaces[i], ext);
@@ -109,8 +109,8 @@ public class PolicyEvaluator implements CodeGenExtension {
     public void engage(CodeGenConfiguration configuration) {
 
         Map namespace2ExtMap = new HashMap();
-         //initialize
-        init(configuration,namespace2ExtMap);
+        //initialize
+        init(configuration, namespace2ExtMap);
 
         Document document = getEmptyDocument();
         Element rootElement = document.createElement("module-codegen-policy-extensions");
@@ -123,9 +123,9 @@ public class PolicyEvaluator implements CodeGenExtension {
         List axisServices = configuration.getAxisServices();
         AxisService axisService;
         for (Iterator servicesIter = axisServices.iterator(); servicesIter.hasNext();) {
-            axisService = (AxisService) servicesIter.next();
+            axisService = (AxisService)servicesIter.next();
             for (Iterator iterator = axisService.getOperations(); iterator.hasNext();) {
-                axisOperation = (AxisOperation) iterator.next();
+                axisOperation = (AxisOperation)iterator.next();
                 opName = axisOperation.getName();
 
                 policyInclude = axisOperation.getPolicyInclude();
@@ -137,57 +137,58 @@ public class PolicyEvaluator implements CodeGenExtension {
             }
         }
 
-
         // TODO: think about this how can we support this
         configuration.putProperty("module-codegen-policy-extensions", rootElement);
     }
 
     /**
      * Process policies
+     *
      * @param document
      * @param rootElement
      * @param policy
      * @param opName
      */
     private void processPolicies(Document document, Element rootElement,
-                                 Policy policy, QName opName,Map ns2Exts) {
+                                 Policy policy, QName opName, Map ns2Exts) {
 
         HashMap map = new HashMap();
-        
+
         for (Iterator iterator = policy.getAlternatives(); iterator.hasNext();) {
-            
+
             String targetNamesapce = null;
             Assertion assertion;
             List assertionList;
-            
-            for (Iterator assertions = ((List) iterator.next()).iterator(); assertions.hasNext();) {
-              
-                assertion = (Assertion) assertions.next();
+
+            for (Iterator assertions = ((List)iterator.next()).iterator(); assertions.hasNext();) {
+
+                assertion = (Assertion)assertions.next();
                 targetNamesapce = assertion.getName().getNamespaceURI();
-                
-                if ((assertionList = (List) map.get(targetNamesapce)) == null)  {
+
+                if ((assertionList = (List)map.get(targetNamesapce)) == null) {
                     assertionList = new ArrayList();
-                    map.put(targetNamesapce,assertionList);
+                    map.put(targetNamesapce, assertionList);
                 }
-                
+
                 assertionList.add(assertions);
             }
-            
+
             // here we pick the first policy alternative and ignor the rest
             break;
         }
-                
+
         for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
-            String targetNamespace = (String) iterator.next();
-            PolicyExtension policyExtension = (PolicyExtension) ns2Exts.get(targetNamespace);
+            String targetNamespace = (String)iterator.next();
+            PolicyExtension policyExtension = (PolicyExtension)ns2Exts.get(targetNamespace);
 
             if (policyExtension == null) {
                 System.err.println("cannot find a PolicyExtension to process "
                         + targetNamespace + "type assertions");
                 continue;
             }
-            
-            policyExtension.addMethodsToStub(document, rootElement, opName, (List) map.get(targetNamespace));
+
+            policyExtension.addMethodsToStub(document, rootElement, opName,
+                                             (List)map.get(targetNamespace));
         }
     }
 
@@ -211,8 +212,9 @@ public class PolicyEvaluator implements CodeGenExtension {
             this.configuration = configuration;
         }
 
-        public void addMethodsToStub(Document document, Element element, QName operationName, List assertions) {
-            
+        public void addMethodsToStub(Document document, Element element, QName operationName,
+                                     List assertions) {
+
             // FIXME
 
 //            if (!setOnce) {
@@ -235,7 +237,8 @@ public class PolicyEvaluator implements CodeGenExtension {
     }
 
     class EncodePolicyExtension implements PolicyExtension {
-        public void addMethodsToStub(Document document, Element element, QName operationName, List assertions) {
+        public void addMethodsToStub(Document document, Element element, QName operationName,
+                                     List assertions) {
             // TODO implement encoding
         }
     }

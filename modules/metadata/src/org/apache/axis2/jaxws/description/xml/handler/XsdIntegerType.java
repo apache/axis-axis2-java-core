@@ -8,7 +8,6 @@
 
 package org.apache.axis2.jaxws.description.xml.handler;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -17,19 +16,18 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigInteger;
 
 
 /**
- * 
- * 
- * 	This type adds an "id" attribute to xsd:integer.
- * 
- *       
- * 
+ * This type adds an "id" attribute to xsd:integer.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for xsdIntegerType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="xsdIntegerType">
  *   &lt;simpleContent>
@@ -39,13 +37,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "xsdIntegerType", propOrder = {
-    "value"
-})
+        "value"
+        })
 public class XsdIntegerType {
 
     @XmlValue
@@ -57,11 +53,8 @@ public class XsdIntegerType {
 
     /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @return possible object is {@link BigInteger }
      */
     public BigInteger getValue() {
         return value;
@@ -69,11 +62,8 @@ public class XsdIntegerType {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link BigInteger }
-     *     
+     *
+     * @param value allowed object is {@link BigInteger }
      */
     public void setValue(BigInteger value) {
         this.value = value;
@@ -81,11 +71,8 @@ public class XsdIntegerType {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -93,11 +80,8 @@ public class XsdIntegerType {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;

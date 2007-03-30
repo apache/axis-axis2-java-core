@@ -18,9 +18,9 @@ package org.apache.axis2.wsdl.codegen.extension;
 
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
+import org.apache.axis2.wsdl.databinding.CDefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
-import org.apache.axis2.wsdl.databinding.CDefaultTypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 public class DefaultDatabindingExtension extends AbstractDBProcessingExtension {
@@ -35,20 +35,21 @@ public class DefaultDatabindingExtension extends AbstractDBProcessingExtension {
 
             if (mapper == null) {
                 //this shouldn't happen
-                throw new CodeGenerationException(CodegenMessages.getMessage("extension.noProperDatabinding"));
+                throw new CodeGenerationException(
+                        CodegenMessages.getMessage("extension.noProperDatabinding"));
             }
             return;
         }
         //the mapper has not been populated yet. since this extension is
         //registered for -d none, we have to generate a new type mapper
         //that serves only the default types
-        if (mapper ==null){
+        if (mapper == null) {
             if (configuration.getOutputLanguage() != null &&
                     !configuration.getOutputLanguage().trim().equals("") &&
                     configuration.getOutputLanguage().toLowerCase().equals("c")) {
                 configuration.setTypeMapper(new CDefaultTypeMapper());
 
-            }  else {
+            } else {
                 configuration.setTypeMapper(new DefaultTypeMapper());
             }
 

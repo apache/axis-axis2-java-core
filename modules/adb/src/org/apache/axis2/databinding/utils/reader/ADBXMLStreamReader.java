@@ -2,8 +2,8 @@ package org.apache.axis2.databinding.utils.reader;
 
 import org.apache.axis2.databinding.utils.Constants;
 
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLStreamReader;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -20,7 +20,7 @@ import javax.xml.namespace.NamespaceContext;
  * limitations under the License.
  */
 
-public interface ADBXMLStreamReader extends XMLStreamReader,Constants {
+public interface ADBXMLStreamReader extends XMLStreamReader, Constants {
 
     // this will help to handle Text within the current element.
     // user should pass the element text to the property list as this
@@ -28,20 +28,15 @@ public interface ADBXMLStreamReader extends XMLStreamReader,Constants {
     // so that it is not a valid XML name
     static final String ELEMENT_TEXT = "Element Text";
 
-    /**
-     * Extra method to query the state of the pullparser
-     */
-     boolean isDone();
+    /** Extra method to query the state of the pullparser */
+    boolean isDone();
+
+    /** add the parent namespace context to this parser */
+    void addNamespaceContext(NamespaceContext nsContext);
 
     /**
-     * add the parent namespace context to this parser
+     * Initiate the parser - this will do whatever the needed tasks to initiate the parser and must
+     * be called before attempting any specific parsing using this parser
      */
-     void addNamespaceContext(NamespaceContext nsContext);
-
-    /**
-     * Initiate the parser - this will do whatever the needed
-     * tasks to initiate the parser and must be called before
-     * attempting any specific parsing using this parser
-     */
-     void init();
+    void init();
 }

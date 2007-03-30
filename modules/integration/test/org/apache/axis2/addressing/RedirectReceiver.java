@@ -22,22 +22,24 @@ import org.apache.axiom.om.OMElement;
 public class RedirectReceiver {
 
     private static boolean responseRecieved = false;
-    public static boolean hasReceivedResponse(){
+
+    public static boolean hasReceivedResponse() {
         return responseRecieved;
     }
-    
+
     private static boolean faultRecieved = false;
-    public static boolean hasReceivedFault(){
+
+    public static boolean hasReceivedFault() {
         return faultRecieved;
     }
-    
+
     public void echoOMElementResponse(OMElement omEle) {
-        System.out.println("echoOMElementResponse: "+omEle);
+        System.out.println("echoOMElementResponse: " + omEle);
         responseRecieved = true;
     }
-    
+
     public void fault(OMElement omEle) {
-        System.out.println("fault: "+omEle);
+        System.out.println("fault: " + omEle);
         faultRecieved = true;
     }
 }

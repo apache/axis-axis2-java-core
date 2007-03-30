@@ -16,6 +16,8 @@
 
 package org.apache.axis2.engine;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAP12Constants;
 import org.apache.axis2.AxisFault;
@@ -34,8 +36,6 @@ import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.phaseresolver.PhaseMetadata;
 import org.apache.axis2.util.Utils;
 
-import javax.xml.namespace.QName;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,34 +43,25 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
- * This tests the saving and restoring of the Axis2 contexts from within a
- * handler.  This is a more thorough test of the serialization mechanisms
- * than the other unit tests, as the contexts are populated from the beginning
- * of the Axis2 execution path.
+ * This tests the saving and restoring of the Axis2 contexts from within a handler.  This is a more
+ * thorough test of the serialization mechanisms than the other unit tests, as the contexts are
+ * populated from the beginning of the Axis2 execution path.
  */
-public class MessageSaveAndRestoreTest extends UtilServerBasedTestCase implements TestConstants 
-{
-    public MessageSaveAndRestoreTest()
-    {
+public class MessageSaveAndRestoreTest extends UtilServerBasedTestCase implements TestConstants {
+    public MessageSaveAndRestoreTest() {
         super(MessageSaveAndRestoreTest.class.getName());
     }
 
-    public MessageSaveAndRestoreTest(String testName)
-    {
+    public MessageSaveAndRestoreTest(String testName) {
         super(testName);
     }
 
-    public static Test suite()
-    {
+    public static Test suite() {
         return getTestSetup(new TestSuite(MessageSaveAndRestoreTest.class));
     }
 
-    protected void setUp() throws Exception
-    {
+    protected void setUp() throws Exception {
         AxisService service = Utils.createSimpleService(TestConstants.serviceName,
                                                         Echo.class.getName(),
                                                         TestConstants.operationName);
@@ -82,11 +73,9 @@ public class MessageSaveAndRestoreTest extends UtilServerBasedTestCase implement
         phases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
         operation.setRemainingPhasesInFlow(phases);
         ArrayList phase = operation.getRemainingPhasesInFlow();
-        for (int i = 0; i < phase.size(); i++)
-        {
+        for (int i = 0; i < phase.size(); i++) {
             Phase phase1 = (Phase)phase.get(i);
-            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName()))
-            {
+            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName())) {
                 phase1.addHandler(inboundHandler);
             }
         }
@@ -95,24 +84,20 @@ public class MessageSaveAndRestoreTest extends UtilServerBasedTestCase implement
         phases.add(new Phase(PhaseMetadata.PHASE_POLICY_DETERMINATION));
         operation.setPhasesOutFlow(phases);
         phase = operation.getPhasesOutFlow();
-        for (int i = 0; i < phase.size(); i++)
-        {
+        for (int i = 0; i < phase.size(); i++) {
             Phase phase1 = (Phase)phase.get(i);
-            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName()))
-            {
+            if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName())) {
                 phase1.addHandler(outboundHandler);
             }
         }
     }
 
-    protected void tearDown() throws Exception
-    {
+    protected void tearDown() throws Exception {
         UtilServer.unDeployService(TestConstants.serviceName);
         UtilServer.unDeployClientService();
     }
 
-    public void testSaveAndRestoreOfMessage() throws Exception
-    {
+    public void testSaveAndRestoreOfMessage() throws Exception {
         OMElement payload = TestingUtils.createDummyOMElement();
         Options options = new Options();
         options.setTo(TestConstants.targetEPR);
@@ -132,83 +117,74 @@ public class MessageSaveAndRestoreTest extends UtilServerBasedTestCase implement
         TestingUtils.campareWithCreatedOMElement(result);
     }
 
-    private Handler inboundHandler = new AbstractHandler()
-    {
+    private Handler inboundHandler = new AbstractHandler() {
         private static final long serialVersionUID = 1L;
         private String stateProperty = "InboundHandlerState";
 
-        public InvocationResponse invoke(MessageContext messageContext) throws AxisFault
-        {
+        public InvocationResponse invoke(MessageContext messageContext) throws AxisFault {
             System.out.println("MessageSaveAndRestoreTest:Inbound handler invoked");
-            if (messageContext.getProperty(stateProperty) == null)
-            {
+            if (messageContext.getProperty(stateProperty) == null) {
                 System.out.println("MessageSaveAndRestoreTest:Suspending processing");
                 messageContext.setProperty(stateProperty, new Object());
                 messageContext.pause();
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                try
-                {
-                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+                try {
+                    ObjectOutputStream objectOutputStream =
+                            new ObjectOutputStream(byteArrayOutputStream);
                     objectOutputStream.writeObject(messageContext);
                     objectOutputStream.flush();
                     objectOutputStream.close();
                     byteArrayOutputStream.flush();
                     byteArrayOutputStream.close();
                 }
-                catch (IOException e)
-                {
+                catch (IOException e) {
                     e.printStackTrace();
                     fail("An error occurred when serializing the MessageContext");
                 }
-                new Worker(byteArrayOutputStream.toByteArray(), messageContext.getConfigurationContext()).start();
+                new Worker(byteArrayOutputStream.toByteArray(),
+                           messageContext.getConfigurationContext()).start();
                 return InvocationResponse.SUSPEND;
-            }
-            else
-            {
-                System.out.println("MessageSaveAndRestoreTest:Skipping previously invoked Inbound handler");
+            } else {
+                System.out.println(
+                        "MessageSaveAndRestoreTest:Skipping previously invoked Inbound handler");
             }
 
             return InvocationResponse.CONTINUE;
         }
-    };  
+    };
 
-    private Handler outboundHandler = new AbstractHandler()
-    {
+    private Handler outboundHandler = new AbstractHandler() {
         private static final long serialVersionUID = 1L;
 
-        public InvocationResponse invoke(MessageContext messageContext) throws AxisFault
-        {
+        public InvocationResponse invoke(MessageContext messageContext) throws AxisFault {
             System.out.println("MessageSaveAndRestoreTest:Outbound handler invoked");
             return InvocationResponse.CONTINUE;
         }
     };
 
-    private class Worker extends Thread
-    {
+    private class Worker extends Thread {
         private byte[] serializedMessageContext;
         private ConfigurationContext configurationContext;
 
-        public Worker(byte[] serializedMessageContext, ConfigurationContext configurationContext)
-        {
+        public Worker(byte[] serializedMessageContext, ConfigurationContext configurationContext) {
             this.serializedMessageContext = serializedMessageContext;
             this.configurationContext = configurationContext;
         }
 
-        public void run()
-        {
-            try
-            {
+        public void run() {
+            try {
                 System.out.println("MessageSaveAndRestoreTest:Worker thread started");
                 Thread.sleep(5000);
                 AxisEngine axisEngine = new AxisEngine(configurationContext);
                 System.out.println("MessageSaveAndRestoreTest:Resuming processing");
-                ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(serializedMessageContext));
-                MessageContext reconstitutedMessageContext = (MessageContext)objectInputStream.readObject();
+                ObjectInputStream objectInputStream =
+                        new ObjectInputStream(new ByteArrayInputStream(serializedMessageContext));
+                MessageContext reconstitutedMessageContext =
+                        (MessageContext)objectInputStream.readObject();
                 reconstitutedMessageContext.activate(configurationContext);
                 axisEngine.resume(reconstitutedMessageContext);
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 e.printStackTrace();
                 fail("An error occurred in the worker thread");
             }

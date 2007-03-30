@@ -1,8 +1,8 @@
 package org.apache.axis2.wsdl.util;
 
 import javax.xml.namespace.QName;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -20,11 +20,10 @@ import java.util.ArrayList;
  */
 
 /**
- * This class acts as the holder for the information
- * that is required to be attached to the AxisMessage
- * during unwrapping
+ * This class acts as the holder for the information that is required to be attached to the
+ * AxisMessage during unwrapping
  */
-public class MessagePartInformationHolder  {
+public class MessagePartInformationHolder {
 
     private QName operationName;
     private List partsList = new ArrayList();
@@ -45,6 +44,5 @@ public class MessagePartInformationHolder  {
         this.partsList = partsList;
     }
 
-    
 
 }

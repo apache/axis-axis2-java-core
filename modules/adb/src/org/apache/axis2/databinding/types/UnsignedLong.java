@@ -59,7 +59,8 @@ public class UnsignedLong extends java.lang.Number implements Comparable {
         // That detection must be performed here.
         try {
             if (stValue.charAt(0) == '\u002d') {
-                throw new NumberFormatException("A String that starts with a minus sign is not a valid representation of an UnsignedLong.");
+                throw new NumberFormatException(
+                        "A String that starts with a minus sign is not a valid representation of an UnsignedLong.");
             }
             setValue(new BigInteger(stValue));
         }
@@ -71,7 +72,8 @@ public class UnsignedLong extends java.lang.Number implements Comparable {
         catch (IndexOutOfBoundsException indexOutOfBoundsException) {
             // This could happen if stValue is empty when we attempt to detect a minus sign.
             // From the client's point of view, the empty String should cause a NumberFormatException.
-            throw new NumberFormatException("An empty string is not a valid representation of an UnsignedLong.");
+            throw new NumberFormatException(
+                    "An empty string is not a valid representation of an UnsignedLong.");
         }
 
     }
@@ -80,7 +82,7 @@ public class UnsignedLong extends java.lang.Number implements Comparable {
         if (!UnsignedLong.isValid(val)) {
             throw new IllegalArgumentException(
 //                    Messages.getMessage("badUnsignedLong00") +
-                    String.valueOf(val) + "]");
+String.valueOf(val) + "]");
         }
         this.lValue = val;
     }
@@ -112,7 +114,7 @@ public class UnsignedLong extends java.lang.Number implements Comparable {
 
     public synchronized boolean equals(Object obj) {
         if (!(obj instanceof UnsignedLong)) return false;
-        UnsignedLong other = (UnsignedLong) obj;
+        UnsignedLong other = (UnsignedLong)obj;
         if (this == obj) return true;
         if (__equalsCalc != null) {
             return (__equalsCalc == obj);
@@ -152,23 +154,29 @@ public class UnsignedLong extends java.lang.Number implements Comparable {
     }
 
     /**
-     * @return the value 0 if the argument is an UnsignedLong numerically equal to this UnsignedLong; a value less than 0 if the argument is an UnsignedLong numerically greater than this UnsignedLong; and a value greater than 0 if the argument is an UnsignedLong numerically less than this UnsignedLong.
+     * @return the value 0 if the argument is an UnsignedLong numerically equal to this
+     *         UnsignedLong; a value less than 0 if the argument is an UnsignedLong numerically
+     *         greater than this UnsignedLong; and a value greater than 0 if the argument is an
+     *         UnsignedLong numerically less than this UnsignedLong.
      */
     public int compareTo(Object o) {
-        int retVal = 0; // arbitrary default value in case of exception; required return value in case this object is equal to the specified object
+        int retVal =
+                0; // arbitrary default value in case of exception; required return value in case this object is equal to the specified object
 
         if (o == null || !(o instanceof UnsignedLong)) {
             throw new ClassCastException("The argument is not an UnsignedLong.");
         }
         // Only need to change retVal if this object is not equal to the specified object.
-        retVal = compare(longValue(), ((UnsignedLong) o).longValue());
+        retVal = compare(longValue(), ((UnsignedLong)o).longValue());
 
         return retVal;
 
     }
 
     /**
-     * @return the value 0 if thatLong is a long numerically equal to thisLong; a value less than 0 if thatLong is a long numerically greater than thisLong; and a value greater than 0 if thatLong is a long numerically less than thisLong (unsigned comparison).
+     * @return the value 0 if thatLong is a long numerically equal to thisLong; a value less than 0
+     *         if thatLong is a long numerically greater than thisLong; and a value greater than 0
+     *         if thatLong is a long numerically less than thisLong (unsigned comparison).
      */
     private static int compare(long thisLong, long thatLong) {
         // To avoid infinite recursion, do not instantiate UnsignedLong in this method, which may be called during UnsignedLong instantiation.

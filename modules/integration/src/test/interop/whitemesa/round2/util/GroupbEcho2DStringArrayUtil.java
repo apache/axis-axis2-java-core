@@ -32,11 +32,15 @@ public class GroupbEcho2DStringArrayUtil implements SunClientUtil {
 
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
-        OMNamespace encNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        OMNamespace encNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace typeNs =
+                reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
-        OMElement operation = omfactory.createOMElement("echo2DStringArray", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echo2DStringArray", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
         operation.declareNamespace(envNs);
         operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);

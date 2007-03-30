@@ -75,12 +75,14 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                                     methodElement.getNamespace().getNamespaceURI());
                         }
                     } else if (namespace != null) {
-                        throw new AxisFault("namespace mismatch. Axis Oepration expects non-namespace " +
-                                "qualified element. But received a namespace qualified element");
+                        throw new AxisFault(
+                                "namespace mismatch. Axis Oepration expects non-namespace " +
+                                        "qualified element. But received a namespace qualified element");
                     }
 
                     Object[] objectArray = RPCUtil.processRequest(methodElement, method,
-                            inMessage.getAxisService().getObjectSupplier());
+                                                                  inMessage
+                                                                          .getAxisService().getObjectSupplier());
                     method.invoke(obj, objectArray);
                 }
 
@@ -94,11 +96,11 @@ public class RPCInOnlyMessageReceiver extends AbstractInMessageReceiver {
                 msg = cause.getMessage();
                 if (msg == null) {
                     msg = "Exception occurred while trying to invoke service method " +
-                          method.getName();
+                            method.getName();
                 }
                 log.error(msg, e);
                 if (cause instanceof AxisFault) {
-                    throw (AxisFault) cause;
+                    throw (AxisFault)cause;
                 }
             }
             throw new AxisFault(msg);

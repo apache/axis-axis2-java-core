@@ -20,11 +20,8 @@ import java.io.File;
  * limitations under the License.
  */
 
-public abstract class AbstractPrettyPrinterExtension extends AbstractCodeGenerationExtension{
-     /**
-     * If the extension for property file changes it might effect this as
-     * well !!!
-     */
+public abstract class AbstractPrettyPrinterExtension extends AbstractCodeGenerationExtension {
+    /** If the extension for property file changes it might effect this as well !!! */
     protected String fileExtension = "";
 
     public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
@@ -38,14 +35,15 @@ public abstract class AbstractPrettyPrinterExtension extends AbstractCodeGenerat
 
     /**
      * Recursive procedure to prettify the files
+     *
      * @param file
      */
-    protected void prettify(File file){
+    protected void prettify(File file) {
         if (file.isFile() &&
                 file.exists() &&
-                file.getName().toLowerCase().endsWith(fileExtension)){
+                file.getName().toLowerCase().endsWith(fileExtension)) {
             prettifyFile(file);
-        }else if (file.isDirectory()){
+        } else if (file.isDirectory()) {
             File[] childFiles = file.listFiles();
             for (int i = 0; i < childFiles.length; i++) {
                 prettify(childFiles[i]);
@@ -56,6 +54,7 @@ public abstract class AbstractPrettyPrinterExtension extends AbstractCodeGenerat
 
     /**
      * Implement this to call the proper pretty printers
+     *
      * @param file
      */
     protected abstract void prettifyFile(File file);

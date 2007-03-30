@@ -16,13 +16,7 @@
 
 package org.apache.axis2.saaj;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Iterator;
+import junit.framework.TestCase;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -35,8 +29,13 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-
-import junit.framework.TestCase;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Iterator;
 
 public class AttachmentSerializationTest extends TestCase {
 
@@ -88,7 +87,7 @@ public class AttachmentSerializationTest extends TestCase {
         msg.addAttachmentPart(ap);
 
         // Second attachment
-        String jpgfilename = System.getProperty("basedir",".")+"/"+"test-resources/axis2.jpg";
+        String jpgfilename = System.getProperty("basedir", ".") + "/" + "test-resources/axis2.jpg";
         File myfile = new File(jpgfilename);
         FileDataSource fds = new FileDataSource(myfile);
         DataHandler dh = new DataHandler(fds);
@@ -103,18 +102,19 @@ public class AttachmentSerializationTest extends TestCase {
 
         int i = 0;
         for (Iterator iter = msg.getAttachments(); iter.hasNext();) {
-            AttachmentPart attachmentPart = (AttachmentPart) iter.next();
+            AttachmentPart attachmentPart = (AttachmentPart)iter.next();
             final Object content = attachmentPart.getDataHandler().getContent();
             if (content instanceof String) {
-                assertEquals(testText, (String) content);
+                assertEquals(testText, (String)content);
             } else if (content instanceof FileInputStream) {
 
                 // try to write to a File and check whether it is ok
-                final FileInputStream fis = (FileInputStream) content;
+                final FileInputStream fis = (FileInputStream)content;
                 byte[] b = new byte[15000];
                 final int lengthRead = fis.read(b);
                 FileOutputStream fos =
-                        new FileOutputStream(new File(System.getProperty("basedir",".")+"/"+"target/test-resources/atts-op" + (i++) + ".jpg"));
+                        new FileOutputStream(new File(System.getProperty("basedir", ".") + "/" +
+                                "target/test-resources/atts-op" + (i++) + ".jpg"));
                 fos.write(b, 0, lengthRead);
                 fos.flush();
                 fos.close();

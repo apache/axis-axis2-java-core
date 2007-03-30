@@ -21,22 +21,22 @@ public class Constants {
     public static final String URI_WSDL_SOAP11 = "http://schemas.xmlsoap.org/wsdl/soap/";
     public static final String URI_WSDL_SOAP12 = "http://schemas.xmlsoap.org/wsdl/soap12/";
     public static final String URI_WSDL_SOAP11_BODY = "http://schemas.xmlsoap.org/wsdl/soap/";
-    public static final String URI_WSDL_SOAP12_BODY ="http://schemas.xmlsoap.org/wsdl/soap12/";
+    public static final String URI_WSDL_SOAP12_BODY = "http://schemas.xmlsoap.org/wsdl/soap12/";
     public static final String URI_WSDL_SOAP11_HEADER = "http://schemas.xmlsoap.org/wsdl/soap/";
     public static final String URI_WSDL_SOAP12_HEADER = "http://schemas.xmlsoap.org/wsdl/soap12/";
     public static final String URI_WSDL_SOAP11_BINDING = "http://schemas.xmlsoap.org/wsdl/soap/";
-    public static final String URI_WSDL_SOAP12_BINDING ="http://schemas.xmlsoap.org/wsdl/soap12/";
+    public static final String URI_WSDL_SOAP12_BINDING = "http://schemas.xmlsoap.org/wsdl/soap12/";
 
     public static final String POLICY = "http://schemas.xmlsoap.org/ws/2004/09/policy";
     public static final String POLICY_REFERENCE = "http://schemas.xmlsoap.org/ws/2004/09/policy";
-    
+
     public static final String SCHEMA = "http://www.w3.org/2001/XMLSchema";
-    
+
     public static String AXIS2_REPO_PATH = "org.apache.axis2.jaxws.repo.path";
     public static String AXIS2_CONFIG_PATH = "org.apache.axis2.jaxws.config.path";
     public static String USE_ASYNC_MEP = "org.apache.axis2.jaxws.use.async.mep";
-    
+
     public static final String THREAD_CONTEXT_MIGRATOR_LIST_ID = "JAXWS-ThreadContextMigrator-List";
-    
+
     public static final String INVOCATION_PATTERN = "org.apache.axis2.jaxws.invocation.pattern";
 }

@@ -8,8 +8,6 @@
 
 package org.apache.axis2.jaxws.description.xml.handler;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -18,46 +16,45 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * 
- * 
- * 	The env-entryType is used to declare an application's
- * 	environment entry. The declaration consists of an optional
- * 	description, the name of the environment entry, a type
- * 	(optional if the value is injected, otherwise required), and
- * 	an optional value.
- * 
- * 	It also includes optional elements to define injection of
- * 	the named resource into fields or JavaBeans properties.
- * 
- * 	If a value is not specified and injection is requested,
- * 	no injection will occur and no entry of the specified name
- * 	will be created.  This allows an initial value to be
- * 	specified in the source code without being incorrectly
- * 	changed when no override has been specified.
- * 
- * 	If a value is not specified and no injection is requested,
- * 	a value must be supplied during deployment.
- * 
- * 	This type is used by env-entry elements.
- * 
- *       
- * 
+ * The env-entryType is used to declare an application's environment entry. The declaration consists
+ * of an optional description, the name of the environment entry, a type (optional if the value is
+ * injected, otherwise required), and an optional value.
+ * <p/>
+ * It also includes optional elements to define injection of the named resource into fields or
+ * JavaBeans properties.
+ * <p/>
+ * If a value is not specified and injection is requested, no injection will occur and no entry of
+ * the specified name will be created.  This allows an initial value to be specified in the source
+ * code without being incorrectly changed when no override has been specified.
+ * <p/>
+ * If a value is not specified and no injection is requested, a value must be supplied during
+ * deployment.
+ * <p/>
+ * This type is used by env-entry elements.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for env-entryType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="env-entryType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType"
+ * maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="env-entry-name" type="{http://java.sun.com/xml/ns/javaee}jndi-nameType"/>
- *         &lt;element name="env-entry-type" type="{http://java.sun.com/xml/ns/javaee}env-entry-type-valuesType" minOccurs="0"/>
- *         &lt;element name="env-entry-value" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
+ *         &lt;element name="env-entry-type" type="{http://java.sun.com/xml/ns/javaee}env-entry-type-valuesType"
+ * minOccurs="0"/>
+ *         &lt;element name="env-entry-value" type="{http://java.sun.com/xml/ns/javaee}xsdStringType"
+ * minOccurs="0"/>
  *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}resourceGroup"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
@@ -65,23 +62,22 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "env-entryType", propOrder = {
-    "description",
-    "envEntryName",
-    "envEntryType",
-    "envEntryValue",
-    "mappedName",
-    "injectionTarget"
-})
+        "description",
+        "envEntryName",
+        "envEntryType",
+        "envEntryValue",
+        "mappedName",
+        "injectionTarget"
+        })
 public class EnvEntryType {
 
     @XmlElement(namespace = "http://java.sun.com/xml/ns/javaee", required = true)
     protected List<DescriptionType> description;
-    @XmlElement(name = "env-entry-name", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "env-entry-name", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected JndiNameType envEntryName;
     @XmlElement(name = "env-entry-type", namespace = "http://java.sun.com/xml/ns/javaee")
     protected EnvEntryTypeValuesType envEntryType;
@@ -89,7 +85,8 @@ public class EnvEntryType {
     protected XsdStringType envEntryValue;
     @XmlElement(name = "mapped-name", namespace = "http://java.sun.com/xml/ns/javaee")
     protected XsdStringType mappedName;
-    @XmlElement(name = "injection-target", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "injection-target", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected List<InjectionTargetType> injectionTarget;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -98,25 +95,21 @@ public class EnvEntryType {
 
     /**
      * Gets the value of the description property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the description property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link DescriptionType }
      */
     public List<DescriptionType> getDescription() {
         if (description == null) {
@@ -127,11 +120,8 @@ public class EnvEntryType {
 
     /**
      * Gets the value of the envEntryName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JndiNameType }
-     *     
+     *
+     * @return possible object is {@link JndiNameType }
      */
     public JndiNameType getEnvEntryName() {
         return envEntryName;
@@ -139,11 +129,8 @@ public class EnvEntryType {
 
     /**
      * Sets the value of the envEntryName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JndiNameType }
-     *     
+     *
+     * @param value allowed object is {@link JndiNameType }
      */
     public void setEnvEntryName(JndiNameType value) {
         this.envEntryName = value;
@@ -151,11 +138,8 @@ public class EnvEntryType {
 
     /**
      * Gets the value of the envEntryType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EnvEntryTypeValuesType }
-     *     
+     *
+     * @return possible object is {@link EnvEntryTypeValuesType }
      */
     public EnvEntryTypeValuesType getEnvEntryType() {
         return envEntryType;
@@ -163,11 +147,8 @@ public class EnvEntryType {
 
     /**
      * Sets the value of the envEntryType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EnvEntryTypeValuesType }
-     *     
+     *
+     * @param value allowed object is {@link EnvEntryTypeValuesType }
      */
     public void setEnvEntryType(EnvEntryTypeValuesType value) {
         this.envEntryType = value;
@@ -175,11 +156,8 @@ public class EnvEntryType {
 
     /**
      * Gets the value of the envEntryValue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XsdStringType }
-     *     
+     *
+     * @return possible object is {@link XsdStringType }
      */
     public XsdStringType getEnvEntryValue() {
         return envEntryValue;
@@ -187,11 +165,8 @@ public class EnvEntryType {
 
     /**
      * Sets the value of the envEntryValue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XsdStringType }
-     *     
+     *
+     * @param value allowed object is {@link XsdStringType }
      */
     public void setEnvEntryValue(XsdStringType value) {
         this.envEntryValue = value;
@@ -199,11 +174,8 @@ public class EnvEntryType {
 
     /**
      * Gets the value of the mappedName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XsdStringType }
-     *     
+     *
+     * @return possible object is {@link XsdStringType }
      */
     public XsdStringType getMappedName() {
         return mappedName;
@@ -211,11 +183,8 @@ public class EnvEntryType {
 
     /**
      * Sets the value of the mappedName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XsdStringType }
-     *     
+     *
+     * @param value allowed object is {@link XsdStringType }
      */
     public void setMappedName(XsdStringType value) {
         this.mappedName = value;
@@ -223,25 +192,21 @@ public class EnvEntryType {
 
     /**
      * Gets the value of the injectionTarget property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the injectionTarget property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the injectionTarget property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getInjectionTarget().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link InjectionTargetType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link InjectionTargetType }
      */
     public List<InjectionTargetType> getInjectionTarget() {
         if (injectionTarget == null) {
@@ -252,11 +217,8 @@ public class EnvEntryType {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -264,11 +226,8 @@ public class EnvEntryType {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;

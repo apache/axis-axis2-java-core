@@ -34,7 +34,7 @@ public class WSDLValidatorExtension extends AbstractCodeGenerationExtension {
         }
 
         for (int i = 0; i < schemaList.size(); i++) {
-            XmlSchema s = (XmlSchema) schemaList.get(i);
+            XmlSchema s = (XmlSchema)schemaList.get(i);
             if (s.getIncludes().getCount() != 0) {
                 //there are some included - now see whether there are any
                 //elements or types declared!

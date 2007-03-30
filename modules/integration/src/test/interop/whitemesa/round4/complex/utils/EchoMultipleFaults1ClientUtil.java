@@ -31,7 +31,8 @@ public class EchoMultipleFaults1ClientUtil implements SunClientUtil {
         SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
 
         OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
 
         OMElement method = fac.createOMElement("echoMultipleFaults1", omNs);
         method.declareNamespace(envNs);

@@ -15,65 +15,62 @@
  */
 package org.apache.axis2.saaj;
 
-import java.util.Iterator;
-
 import org.apache.axiom.om.impl.dom.ElementImpl;
 
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 public class SOAPBodyElementImpl extends SOAPElementImpl implements SOAPBodyElement {
 
-    /**
-     * @param element
-     */
+    /** @param element  */
     public SOAPBodyElementImpl(ElementImpl element) {
         super(element);
     }
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
-        if (!(parent instanceof SOAPBody)){
+        if (!(parent instanceof SOAPBody)) {
             throw new IllegalArgumentException("Parent is not a SOAPBody");
         }
         this.parentElement = parent;
     }
 
     public SOAPElement addAttribute(QName qname, String value) throws SOAPException {
-    	return super.addAttribute(qname, value);
+        return super.addAttribute(qname, value);
     }
 
     public SOAPElement addChildElement(QName qname) throws SOAPException {
-    	return super.addChildElement(qname);
+        return super.addChildElement(qname);
     }
 
     public QName createQName(String localName, String prefix) throws SOAPException {
-    	return super.createQName(localName, prefix);
+        return super.createQName(localName, prefix);
     }
 
     public Iterator getAllAttributesAsQNames() {
-    	return super.getAllAttributesAsQNames();
+        return super.getAllAttributesAsQNames();
     }
 
     public String getAttributeValue(QName qname) {
-    	return super.getAttributeValue(qname);
+        return super.getAttributeValue(qname);
     }
 
     public Iterator getChildElements(QName qname) {
-    	return super.getChildElements(qname);
+        return super.getChildElements(qname);
     }
 
     public QName getElementQName() {
-    	return super.getElementQName();
+        return super.getElementQName();
     }
 
     public boolean removeAttribute(QName qname) {
-    	return super.removeAttribute(qname);
+        return super.removeAttribute(qname);
     }
 
     public SOAPElement setElementQName(QName newName) throws SOAPException {
-    	return super.setElementQName(newName);
+        return super.setElementQName(newName);
     }
 }

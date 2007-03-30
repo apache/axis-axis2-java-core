@@ -8,8 +8,6 @@
 
 package org.apache.axis2.jaxws.description.xml.handler;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -18,49 +16,45 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * 
- * 
- * 	The ejb-refType is used by ejb-ref elements for the
- * 	declaration of a reference to an enterprise bean's home or
- *         to the remote business interface of a 3.0 bean.
- * 	The declaration consists of:
- * 
- * 	    - an optional description
- * 	    - the EJB reference name used in the code of
- * 	      the Deployment Component that's referencing the enterprise
- * 	      bean.
- * 	    - the optional expected type of the referenced enterprise bean
- *             - the optional remote interface of the referenced enterprise bean
- *               or the remote business interface of the referenced enterprise
- *               bean
- * 	    - the optional expected home interface of the referenced
- *               enterprise bean.  Not applicable if this ejb-ref
- *               refers to the remote business interface of a 3.0 bean.
- * 	    - optional ejb-link information, used to specify the
- * 	      referenced enterprise bean
- *             - optional elements to define injection of the named enterprise
- *               bean into a component field or property
- * 
- *       
- * 
+ * The ejb-refType is used by ejb-ref elements for the declaration of a reference to an enterprise
+ * bean's home or to the remote business interface of a 3.0 bean. The declaration consists of:
+ * <p/>
+ * - an optional description - the EJB reference name used in the code of the Deployment Component
+ * that's referencing the enterprise bean. - the optional expected type of the referenced enterprise
+ * bean - the optional remote interface of the referenced enterprise bean or the remote business
+ * interface of the referenced enterprise bean - the optional expected home interface of the
+ * referenced enterprise bean.  Not applicable if this ejb-ref refers to the remote business
+ * interface of a 3.0 bean. - optional ejb-link information, used to specify the referenced
+ * enterprise bean - optional elements to define injection of the named enterprise bean into a
+ * component field or property
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for ejb-refType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="ejb-refType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType"
+ * maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="ejb-ref-name" type="{http://java.sun.com/xml/ns/javaee}ejb-ref-nameType"/>
- *         &lt;element name="ejb-ref-type" type="{http://java.sun.com/xml/ns/javaee}ejb-ref-typeType" minOccurs="0"/>
- *         &lt;element name="home" type="{http://java.sun.com/xml/ns/javaee}homeType" minOccurs="0"/>
- *         &lt;element name="remote" type="{http://java.sun.com/xml/ns/javaee}remoteType" minOccurs="0"/>
- *         &lt;element name="ejb-link" type="{http://java.sun.com/xml/ns/javaee}ejb-linkType" minOccurs="0"/>
+ *         &lt;element name="ejb-ref-type" type="{http://java.sun.com/xml/ns/javaee}ejb-ref-typeType"
+ * minOccurs="0"/>
+ *         &lt;element name="home" type="{http://java.sun.com/xml/ns/javaee}homeType"
+ * minOccurs="0"/>
+ *         &lt;element name="remote" type="{http://java.sun.com/xml/ns/javaee}remoteType"
+ * minOccurs="0"/>
+ *         &lt;element name="ejb-link" type="{http://java.sun.com/xml/ns/javaee}ejb-linkType"
+ * minOccurs="0"/>
  *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}resourceGroup"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
@@ -68,25 +62,24 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-refType", propOrder = {
-    "description",
-    "ejbRefName",
-    "ejbRefType",
-    "home",
-    "remote",
-    "ejbLink",
-    "mappedName",
-    "injectionTarget"
-})
+        "description",
+        "ejbRefName",
+        "ejbRefType",
+        "home",
+        "remote",
+        "ejbLink",
+        "mappedName",
+        "injectionTarget"
+        })
 public class EjbRefType {
 
     @XmlElement(namespace = "http://java.sun.com/xml/ns/javaee", required = true)
     protected List<DescriptionType> description;
-    @XmlElement(name = "ejb-ref-name", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "ejb-ref-name", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected EjbRefNameType ejbRefName;
     @XmlElement(name = "ejb-ref-type", namespace = "http://java.sun.com/xml/ns/javaee")
     protected EjbRefTypeType ejbRefType;
@@ -98,7 +91,8 @@ public class EjbRefType {
     protected EjbLinkType ejbLink;
     @XmlElement(name = "mapped-name", namespace = "http://java.sun.com/xml/ns/javaee")
     protected XsdStringType mappedName;
-    @XmlElement(name = "injection-target", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "injection-target", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected List<InjectionTargetType> injectionTarget;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -107,25 +101,21 @@ public class EjbRefType {
 
     /**
      * Gets the value of the description property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the description property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link DescriptionType }
      */
     public List<DescriptionType> getDescription() {
         if (description == null) {
@@ -136,11 +126,8 @@ public class EjbRefType {
 
     /**
      * Gets the value of the ejbRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbRefNameType }
-     *     
+     *
+     * @return possible object is {@link EjbRefNameType }
      */
     public EjbRefNameType getEjbRefName() {
         return ejbRefName;
@@ -148,11 +135,8 @@ public class EjbRefType {
 
     /**
      * Sets the value of the ejbRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbRefNameType }
-     *     
+     *
+     * @param value allowed object is {@link EjbRefNameType }
      */
     public void setEjbRefName(EjbRefNameType value) {
         this.ejbRefName = value;
@@ -160,11 +144,8 @@ public class EjbRefType {
 
     /**
      * Gets the value of the ejbRefType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbRefTypeType }
-     *     
+     *
+     * @return possible object is {@link EjbRefTypeType }
      */
     public EjbRefTypeType getEjbRefType() {
         return ejbRefType;
@@ -172,11 +153,8 @@ public class EjbRefType {
 
     /**
      * Sets the value of the ejbRefType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbRefTypeType }
-     *     
+     *
+     * @param value allowed object is {@link EjbRefTypeType }
      */
     public void setEjbRefType(EjbRefTypeType value) {
         this.ejbRefType = value;
@@ -184,11 +162,8 @@ public class EjbRefType {
 
     /**
      * Gets the value of the home property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link HomeType }
-     *     
+     *
+     * @return possible object is {@link HomeType }
      */
     public HomeType getHome() {
         return home;
@@ -196,11 +171,8 @@ public class EjbRefType {
 
     /**
      * Sets the value of the home property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link HomeType }
-     *     
+     *
+     * @param value allowed object is {@link HomeType }
      */
     public void setHome(HomeType value) {
         this.home = value;
@@ -208,11 +180,8 @@ public class EjbRefType {
 
     /**
      * Gets the value of the remote property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link RemoteType }
-     *     
+     *
+     * @return possible object is {@link RemoteType }
      */
     public RemoteType getRemote() {
         return remote;
@@ -220,11 +189,8 @@ public class EjbRefType {
 
     /**
      * Sets the value of the remote property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link RemoteType }
-     *     
+     *
+     * @param value allowed object is {@link RemoteType }
      */
     public void setRemote(RemoteType value) {
         this.remote = value;
@@ -232,11 +198,8 @@ public class EjbRefType {
 
     /**
      * Gets the value of the ejbLink property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EjbLinkType }
-     *     
+     *
+     * @return possible object is {@link EjbLinkType }
      */
     public EjbLinkType getEjbLink() {
         return ejbLink;
@@ -244,11 +207,8 @@ public class EjbRefType {
 
     /**
      * Sets the value of the ejbLink property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EjbLinkType }
-     *     
+     *
+     * @param value allowed object is {@link EjbLinkType }
      */
     public void setEjbLink(EjbLinkType value) {
         this.ejbLink = value;
@@ -256,11 +216,8 @@ public class EjbRefType {
 
     /**
      * Gets the value of the mappedName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XsdStringType }
-     *     
+     *
+     * @return possible object is {@link XsdStringType }
      */
     public XsdStringType getMappedName() {
         return mappedName;
@@ -268,11 +225,8 @@ public class EjbRefType {
 
     /**
      * Sets the value of the mappedName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XsdStringType }
-     *     
+     *
+     * @param value allowed object is {@link XsdStringType }
      */
     public void setMappedName(XsdStringType value) {
         this.mappedName = value;
@@ -280,25 +234,21 @@ public class EjbRefType {
 
     /**
      * Gets the value of the injectionTarget property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the injectionTarget property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the injectionTarget property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getInjectionTarget().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link InjectionTargetType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link InjectionTargetType }
      */
     public List<InjectionTargetType> getInjectionTarget() {
         if (injectionTarget == null) {
@@ -309,11 +259,8 @@ public class EjbRefType {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -321,11 +268,8 @@ public class EjbRefType {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;

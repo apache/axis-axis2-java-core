@@ -29,9 +29,9 @@ public class PolicyFileWriter extends ClassWriter {
 
     public void createOutFile(String packageName, String fileName) throws Exception {
         File outputFile = FileWriter.createClassFile(outputFileLocation,
-                packageName,
-                fileName,
-                ".xml");
+                                                     packageName,
+                                                     fileName,
+                                                     ".xml");
         //set the existing flag
         fileExists = outputFile.exists();
         if (!fileExists) {

@@ -16,8 +16,5 @@
 
 package org.apache.axis2.jibx.wrappers;
 
-import org.apache.axis2.jibx.beans.Book;
-
-public class AddBookInstanceResponse
-{
+public class AddBookInstanceResponse {
 }

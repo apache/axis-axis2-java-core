@@ -16,11 +16,11 @@
  */
 package org.apache.axis2.jaxws.description;
 
-import java.net.URL;
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.jaxws.ExceptionFactory;
+
+import javax.xml.namespace.QName;
+import java.net.URL;
 
 public class DescriptionKey {
 
@@ -33,7 +33,7 @@ public class DescriptionKey {
     private ConfigurationContext configContext = null;
 
     public DescriptionKey(QName serviceName, URL wsdlUrl, Class serviceClass,
-            ConfigurationContext configContext) {
+                          ConfigurationContext configContext) {
         super();
         this.serviceName = serviceName;
         this.wsdlUrl = wsdlUrl;
@@ -52,7 +52,7 @@ public class DescriptionKey {
             return false;
         }
 
-        DescriptionKey description = (DescriptionKey) o;
+        DescriptionKey description = (DescriptionKey)o;
 
         if (serviceName == null) {
             throw ExceptionFactory
@@ -61,9 +61,10 @@ public class DescriptionKey {
         }
 
         return description.serviceName.equals(this.serviceName)
-                && description.wsdlUrl !=null ? description.wsdlUrl.equals(this.wsdlUrl): this.wsdlUrl == null
-                && description.serviceClass == this.serviceClass
-                && description.configContext == this.configContext;
+                && description.wsdlUrl != null ? description.wsdlUrl.equals(this.wsdlUrl) :
+                this.wsdlUrl == null
+                        && description.serviceClass == this.serviceClass
+                        && description.configContext == this.configContext;
     }
 
     @Override

@@ -30,8 +30,8 @@ public class Server implements TestConstants {
         UtilServer.start();
         service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
     }
 

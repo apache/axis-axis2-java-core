@@ -24,7 +24,8 @@ public class RequestCounter {
     public static final String REQUEST_COUNT = "Request_Count";
 
     public void getRequestCount(MessageContext inMessageContext, MessageContext outMessageContext) {
-        Integer requestCount = (Integer) inMessageContext.getServiceGroupContext().getProperty(REQUEST_COUNT);
+        Integer requestCount =
+                (Integer)inMessageContext.getServiceGroupContext().getProperty(REQUEST_COUNT);
         if (requestCount == null) {
             requestCount = new Integer(1);
         } else {

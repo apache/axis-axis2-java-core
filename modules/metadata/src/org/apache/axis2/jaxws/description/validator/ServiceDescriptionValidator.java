@@ -18,9 +18,6 @@
  */
 package org.apache.axis2.jaxws.description.validator;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.axis2.jaxws.description.EndpointDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.description.ServiceDescriptionJava;
@@ -30,44 +27,43 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
  * 
  */
 public class ServiceDescriptionValidator extends Validator {
-    
+
     private ServiceDescription serviceDesc;
     private ServiceDescriptionJava serviceDescJava;
     private ServiceDescriptionWSDL serviceDescWSDL;
-    
+
     public ServiceDescriptionValidator(ServiceDescription toValidate) {
         serviceDesc = toValidate;
-        serviceDescJava = (ServiceDescriptionJava) serviceDesc;
-        serviceDescWSDL = (ServiceDescriptionWSDL) serviceDesc;
+        serviceDescJava = (ServiceDescriptionJava)serviceDesc;
+        serviceDescWSDL = (ServiceDescriptionWSDL)serviceDesc;
     }
-    
+
     /**
-     * Validate the ServiceDescription as follows
-     * 1) Validate that annotations and whatever WSDL is specified is valid
-     * 2) Validate that Java implementations are correc
-     *    a) Service Implementations match SEIs if specified
-     *    b) Operations match SEI methods
-     *    
+     * Validate the ServiceDescription as follows 1) Validate that annotations and whatever WSDL is
+     * specified is valid 2) Validate that Java implementations are correc a) Service
+     * Implementations match SEIs if specified b) Operations match SEI methods
+     *
      * @return true if the ServiceDescription is valid
      */
     public boolean validate() {
         if (getValidationLevel() == ValidationLevel.OFF) {
             return VALID;
         }
-        
+
         if (!validateEndpointDescriptions()) {
             return INVALID;
         }
-        
+
         return VALID;
     }
-    
+
     private boolean validateEndpointDescriptions() {
         boolean areAllValid = true;
         // Validate all the Endpoints that were created under this Service Description
         EndpointDescription[] endpointDescArray = serviceDesc.getEndpointDescriptions();
-        for (EndpointDescription endpointDesc:endpointDescArray) {
-            EndpointDescriptionValidator endpointValidator = new EndpointDescriptionValidator(endpointDesc);
+        for (EndpointDescription endpointDesc : endpointDescArray) {
+            EndpointDescriptionValidator endpointValidator =
+                    new EndpointDescriptionValidator(endpointDesc);
             boolean isEndpointValid = endpointValidator.validate();
             if (!isEndpointValid) {
                 addValidationFailure(endpointValidator, "Endpoint failed validation");
@@ -76,5 +72,5 @@ public class ServiceDescriptionValidator extends Validator {
         }
         return areAllValid;
     }
-    
+
 }

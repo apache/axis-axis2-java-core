@@ -16,42 +16,41 @@
  */
 package org.apache.axis2.jaxws.message.databinding.impl;
 
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.Block;
 import org.apache.axis2.jaxws.message.factory.XMLStringBlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockFactoryImpl;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
 /**
  * XMLStringFactoryImpl
- * 
+ * <p/>
  * Creates an XMLStringBlock
  */
 public class XMLStringBlockFactoryImpl extends BlockFactoryImpl implements XMLStringBlockFactory {
 
-	/**
-	 * Default Constructor required for Factory 
-	 */
-	public XMLStringBlockFactoryImpl() {
-		super();
-	}
+    /** Default Constructor required for Factory */
+    public XMLStringBlockFactoryImpl() {
+        super();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(java.lang.Object, java.lang.Object, javax.xml.namespace.QName)
-	 */
-	public Block createFrom(Object businessObject, Object context, QName qName) {
-		return new XMLStringBlockImpl((String) businessObject, qName, this);
-	}
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(java.lang.Object, java.lang.Object, javax.xml.namespace.QName)
+      */
+    public Block createFrom(Object businessObject, Object context, QName qName) {
+        return new XMLStringBlockImpl((String)businessObject, qName, this);
+    }
 
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(org.apache.axiom.om.OMElement, java.lang.Object, javax.xml.namespace.QName)
-	 */
-	public Block createFrom(OMElement omElement, Object context, QName qName) throws XMLStreamException {
-		return new XMLStringBlockImpl(omElement, qName, this);
-	}
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.BlockFactory#createFrom(org.apache.axiom.om.OMElement, java.lang.Object, javax.xml.namespace.QName)
+      */
+    public Block createFrom(OMElement omElement, Object context, QName qName)
+            throws XMLStreamException {
+        return new XMLStringBlockImpl(omElement, qName, this);
+    }
 
     public boolean isElement() {
         return false;

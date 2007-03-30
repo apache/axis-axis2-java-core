@@ -1,5 +1,7 @@
 package org.apache.axis2.async;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -25,9 +27,6 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /*
  * Copyright 2006 The Apache Software Foundation.
  *
@@ -47,109 +46,98 @@ import junit.framework.TestSuite;
  */
 
 public class AsyncServiceWithTransportFailureTest extends
-    UtilServerBasedTestCase implements TestConstants
-{
-  private static final Log log = LogFactory.getLog(AsyncServiceWithTransportFailureTest.class);
-  EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:0"
-      + "/axis2/services/EchoXMLService/echoOMElement");
+        UtilServerBasedTestCase implements TestConstants {
+    private static final Log log = LogFactory.getLog(AsyncServiceWithTransportFailureTest.class);
+    EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:0"
+            + "/axis2/services/EchoXMLService/echoOMElement");
 
-  protected AxisConfiguration engineRegistry;
-  protected MessageContext mc;
-  protected ServiceContext serviceContext;
-  protected AxisService service;
-  private boolean finish = false;
-  private boolean wasError = false;
+    protected AxisConfiguration engineRegistry;
+    protected MessageContext mc;
+    protected ServiceContext serviceContext;
+    protected AxisService service;
+    private boolean finish = false;
+    private boolean wasError = false;
 
-  public static Test suite()
-  {
-    return getTestSetup(new TestSuite(
-                                      AsyncServiceWithTransportFailureTest.class));
-  }
-
-  protected void setUp() throws Exception
-  {
-    service = Utils.createSimpleService(serviceName,
-                                        new AsyncMessageReceiver(),
-                                        Echo.class.getName(), operationName);
-    UtilServer.deployService(service);
-  }
-
-  protected void tearDown() throws Exception
-  {
-    UtilServer.unDeployService(serviceName);
-    UtilServer.unDeployClientService();
-  }
-
-  public void testEchoXMLCompleteASyncWithTransportFailure() throws Exception
-  {
-    System.out.println("Starting testEchoXMLCompleteASyncWithTransportFailure");
-    AxisService service = Utils.createSimpleServiceforClient(
-                                                             serviceName,
-                                                             Echo.class.getName(),
-                                                             operationName);
-
-    ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
-
-    OMFactory fac = OMAbstractFactory.getOMFactory();
-
-    OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-    OMElement method = fac.createOMElement("echoOMElement", omNs);
-    OMElement value = fac.createOMElement("myValue", omNs);
-    value.setText("Isaac Asimov, The Foundation Trilogy");
-    method.addChild(value);
-    ServiceClient sender = null;
-
-    try
-    {
-      Options options = new Options();
-      options.setTo(targetEPR);
-      options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-      options.setUseSeparateListener(true);
-      options.setAction(operationName.getLocalPart());
-
-      Callback callback = new Callback()
-      {
-        public void onComplete(AsyncResult result)
-        {
-          TestingUtils.campareWithCreatedOMElement(result.getResponseEnvelope().getBody().getFirstElement());
-          System.out.println("result = "
-              + result.getResponseEnvelope().getBody().getFirstElement());
-          finish = true;
-        }
-
-        public void onError(Exception e)
-        {
-          log.info(e.getMessage());
-          wasError = true;
-          finish = true;
-        }
-      };
-
-      sender = new ServiceClient(configcontext, service);
-      sender.setOptions(options);
-
-      sender.sendReceiveNonBlocking(operationName, method, callback);
-      System.out.println("send the request");
-      log.info("send the request");
-      int index = 0;
-      while (!finish)
-      {
-        Thread.sleep(1000);
-        index++;
-        if (index > 45)
-        {
-          throw new AxisFault("Server was shutdown, as the async response took too long to complete");
-        }
-        if (finish && !wasError)
-        {
-          fail("An error occurred during the transmission of the async request but the callback was not notified");
-        }
-      }
+    public static Test suite() {
+        return getTestSetup(new TestSuite(
+                AsyncServiceWithTransportFailureTest.class));
     }
-    finally
-    {
-      if (sender != null)
-        sender.cleanup();
+
+    protected void setUp() throws Exception {
+        service = Utils.createSimpleService(serviceName,
+                                            new AsyncMessageReceiver(),
+                                            Echo.class.getName(), operationName);
+        UtilServer.deployService(service);
     }
-  }
+
+    protected void tearDown() throws Exception {
+        UtilServer.unDeployService(serviceName);
+        UtilServer.unDeployClientService();
+    }
+
+    public void testEchoXMLCompleteASyncWithTransportFailure() throws Exception {
+        System.out.println("Starting testEchoXMLCompleteASyncWithTransportFailure");
+        AxisService service = Utils.createSimpleServiceforClient(
+                serviceName,
+                Echo.class.getName(),
+                operationName);
+
+        ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
+
+        OMFactory fac = OMAbstractFactory.getOMFactory();
+
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMElement method = fac.createOMElement("echoOMElement", omNs);
+        OMElement value = fac.createOMElement("myValue", omNs);
+        value.setText("Isaac Asimov, The Foundation Trilogy");
+        method.addChild(value);
+        ServiceClient sender = null;
+
+        try {
+            Options options = new Options();
+            options.setTo(targetEPR);
+            options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+            options.setUseSeparateListener(true);
+            options.setAction(operationName.getLocalPart());
+
+            Callback callback = new Callback() {
+                public void onComplete(AsyncResult result) {
+                    TestingUtils.campareWithCreatedOMElement(
+                            result.getResponseEnvelope().getBody().getFirstElement());
+                    System.out.println("result = "
+                            + result.getResponseEnvelope().getBody().getFirstElement());
+                    finish = true;
+                }
+
+                public void onError(Exception e) {
+                    log.info(e.getMessage());
+                    wasError = true;
+                    finish = true;
+                }
+            };
+
+            sender = new ServiceClient(configcontext, service);
+            sender.setOptions(options);
+
+            sender.sendReceiveNonBlocking(operationName, method, callback);
+            System.out.println("send the request");
+            log.info("send the request");
+            int index = 0;
+            while (!finish) {
+                Thread.sleep(1000);
+                index++;
+                if (index > 45) {
+                    throw new AxisFault(
+                            "Server was shutdown, as the async response took too long to complete");
+                }
+                if (finish && !wasError) {
+                    fail("An error occurred during the transmission of the async request but the callback was not notified");
+                }
+            }
+        }
+        finally {
+            if (sender != null)
+                sender.cleanup();
+        }
+    }
 }

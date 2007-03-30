@@ -16,52 +16,53 @@
  */
 package org.apache.axis2.jaxws.message.databinding.impl;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.ws.WebServiceException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.jaxws.message.databinding.OMBlock;
 import org.apache.axis2.jaxws.message.factory.BlockFactory;
 import org.apache.axis2.jaxws.message.impl.BlockImpl;
 
-/**
- * OMBlockImpl
- * Block with a business object that is an OMElement
- */
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.ws.WebServiceException;
+
+/** OMBlockImpl Block with a business object that is an OMElement */
 public class OMBlockImpl extends BlockImpl implements OMBlock {
 
-	
-	/**
-	 * Called by OMBlockFactory
-	 * @param busObject
-	 * @param factory
-	 */
-	OMBlockImpl(OMElement busObject, BlockFactory factory) {
-		super(busObject, 
-				null, 
-				busObject.getQName(),
-				factory);
-	}
-	
-	@Override
-	protected Object _getBOFromReader(XMLStreamReader reader, Object busContext) throws XMLStreamException, WebServiceException {
-		// Take a shortcut and return the OMElement 
-		return this.getOMElement();
-	}
 
-	@Override
-	protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext) throws XMLStreamException, WebServiceException {
-		OMElement om = (OMElement) busObj;
-		return om.getXMLStreamReader();
-	}
+    /**
+     * Called by OMBlockFactory
+     *
+     * @param busObject
+     * @param factory
+     */
+    OMBlockImpl(OMElement busObject, BlockFactory factory) {
+        super(busObject,
+              null,
+              busObject.getQName(),
+              factory);
+    }
 
-	@Override
-	protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer) throws XMLStreamException, WebServiceException {
-		OMElement om = (OMElement) busObject;
-		om.serialize(writer);
-	}
+    @Override
+    protected Object _getBOFromReader(XMLStreamReader reader, Object busContext)
+            throws XMLStreamException, WebServiceException {
+        // Take a shortcut and return the OMElement
+        return this.getOMElement();
+    }
+
+    @Override
+    protected XMLStreamReader _getReaderFromBO(Object busObj, Object busContext)
+            throws XMLStreamException, WebServiceException {
+        OMElement om = (OMElement)busObj;
+        return om.getXMLStreamReader();
+    }
+
+    @Override
+    protected void _outputFromBO(Object busObject, Object busContext, XMLStreamWriter writer)
+            throws XMLStreamException, WebServiceException {
+        OMElement om = (OMElement)busObject;
+        om.serialize(writer);
+    }
 
     public boolean isElementData() {
         return true;

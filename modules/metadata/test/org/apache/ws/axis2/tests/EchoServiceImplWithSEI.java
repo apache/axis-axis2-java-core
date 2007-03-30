@@ -18,15 +18,13 @@
 
 package org.apache.ws.axis2.tests;
 
-import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.jws.WebParam.Mode;
 import javax.xml.ws.Holder;
 
 /**
  * 
  */
-@WebService(serviceName = "EchoService", endpointInterface="org.apache.ws.axis2.tests.EchoPort")
+@WebService(serviceName = "EchoService", endpointInterface = "org.apache.ws.axis2.tests.EchoPort")
 public class EchoServiceImplWithSEI {
     public void echo(Holder<String> text) {
         return;

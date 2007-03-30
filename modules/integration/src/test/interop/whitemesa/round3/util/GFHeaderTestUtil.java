@@ -36,7 +36,8 @@ public class GFHeaderTestUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
-        OMElement operation = omfactory.createOMElement("echoStringParam", "http://soapinterop.org/xsd", null);
+        OMElement operation =
+                omfactory.createOMElement("echoStringParam", "http://soapinterop.org/xsd", null);
         reqEnv.getBody().addChild(operation);
         operation.addChild(omfactory.createOMText("apache axis2"));
         return reqEnv;

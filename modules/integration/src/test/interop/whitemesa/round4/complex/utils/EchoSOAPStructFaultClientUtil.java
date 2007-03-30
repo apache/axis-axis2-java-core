@@ -30,15 +30,18 @@ public class EchoSOAPStructFaultClientUtil implements SunClientUtil {
         SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
 
         OMNamespace omNs = reqEnv.declareNamespace("http://soapinterop.org/wsdl", "m");
-        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        OMNamespace typeNs =
+                reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
 
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         reqEnv.declareNamespace("http://soapinterop.org/types", "m0");
 
         OMElement method = fac.createOMElement("echoSOAPStructFault", omNs);
-        OMNamespace soapEnvNs = method.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
-        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", soapEnvNs);
+        OMNamespace soapEnvNs =
+                method.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                            soapEnvNs);
 
         reqEnv.getBody().addChild(method);
 

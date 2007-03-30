@@ -22,8 +22,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.DefaultObjectSupplier;
 import org.apache.axis2.databinding.utils.BeanUtil;
+import org.apache.axis2.engine.DefaultObjectSupplier;
 
 import javax.xml.stream.XMLStreamException;
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public class RPCServiceClass {
 //        child.addChild(fac.createOMText(child, b.getText()));
 //        bodyContent.addChild(child);
 ////        bodyContent.addChild(b);
-        return (OMElement) b.detach();
+        return (OMElement)b.detach();
     }
 
     public double divide(double a, double b) {
@@ -101,8 +101,8 @@ public class RPCServiceClass {
 
 
     /**
-     * This methods return mutiple object , so it creat an Object array and retuen that
-     * so , if a method want to return mutiple value , this way can be used
+     * This methods return mutiple object , so it creat an Object array and retuen that so , if a
+     * method want to return mutiple value , this way can be used
      *
      * @param obj
      * @return Object []
@@ -123,14 +123,17 @@ public class RPCServiceClass {
     }
 
     public MyBean beanOM(OMElement element, int val) throws AxisFault {
-        MyBean bean = (MyBean) BeanUtil.deserialize(MyBean.class, element , new DefaultObjectSupplier(), null);
+        MyBean bean = (MyBean)BeanUtil
+                .deserialize(MyBean.class, element, new DefaultObjectSupplier(), null);
         bean.setAge(val);
         return bean;
     }
 
     public boolean omrefs(OMElement element, OMElement element2) throws AxisFault {
-        MyBean bean = (MyBean) BeanUtil.deserialize(MyBean.class, element , new DefaultObjectSupplier(), null);
-        MyBean bean2 = (MyBean) BeanUtil.deserialize(MyBean.class, element2 , new DefaultObjectSupplier(), null);
+        MyBean bean = (MyBean)BeanUtil
+                .deserialize(MyBean.class, element, new DefaultObjectSupplier(), null);
+        MyBean bean2 = (MyBean)BeanUtil
+                .deserialize(MyBean.class, element2, new DefaultObjectSupplier(), null);
         return bean2 != null && bean != null;
     }
 
@@ -139,7 +142,7 @@ public class RPCServiceClass {
         for (int i = 0; i < list.size(); i++) {
             Object obj = list.get(i);
             if (obj instanceof OMElement) {
-                OMElement omElement = (OMElement) obj;
+                OMElement omElement = (OMElement)obj;
                 str = str + omElement.getText();
             }
         }
@@ -160,7 +163,7 @@ public class RPCServiceClass {
             Company company = com[i];
             res.add(company);
         }
-        return (Company []) res.toArray(new Company[res.size()]);
+        return (Company [])res.toArray(new Company[res.size()]);
     }
 
 
@@ -168,8 +171,9 @@ public class RPCServiceClass {
         ArrayList pss = com.getPersons();
         ArrayList tems = new ArrayList();
         for (int i = 0; i < pss.size(); i++) {
-            OMElement omElement = (OMElement) pss.get(i);
-            Person p = (Person) BeanUtil.deserialize(Person.class, omElement  , new DefaultObjectSupplier(), null);
+            OMElement omElement = (OMElement)pss.get(i);
+            Person p = (Person)BeanUtil
+                    .deserialize(Person.class, omElement, new DefaultObjectSupplier(), null);
             tems.add(p);
         }
         com.setPersons(tems);

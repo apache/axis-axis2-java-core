@@ -17,24 +17,19 @@
 package org.apache.axis2.jaxws.description;
 
 /**
- * A ServiceRuntimeDescription object contains immutable data that is needed during the 
- * runtime (i.e. to detect @Resource injection).  
- * The ServiceRuntimeDescription must be immutable so that it can safely accessed by 
- * multiple theads without synchronization.  
- * It cannot be used to store information that may not be available in different threads/
- * classloaders (i.e. it cannot have references to Class objects)
- * 
+ * A ServiceRuntimeDescription object contains immutable data that is needed during the runtime
+ * (i.e. to detect @Resource injection). The ServiceRuntimeDescription must be immutable so that it
+ * can safely accessed by multiple theads without synchronization. It cannot be used to store
+ * information that may not be available in different threads/ classloaders (i.e. it cannot have
+ * references to Class objects)
+ * <p/>
  * The actual ServiceRuntimeDescription objects are accessed via the key.
  */
 public interface ServiceRuntimeDescription {
-    
-   /**
-    * @return OperationDesc parent
-    */
+
+    /** @return OperationDesc parent */
     public ServiceDescription getServiceDescription();
-   
-   /**
-    * @return String 
-    */
+
+    /** @return String */
     public String getKey();
 }

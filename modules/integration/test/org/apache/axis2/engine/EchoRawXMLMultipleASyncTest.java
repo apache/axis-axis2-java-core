@@ -20,7 +20,6 @@ import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.client.async.AsyncResult;
@@ -45,7 +44,7 @@ public class EchoRawXMLMultipleASyncTest extends UtilServerBasedTestCase impleme
 
     private static final Log log = LogFactory.getLog(EchoRawXMLMultipleASyncTest.class);
     protected QName transportName = new QName("http://localhost/my",
-            "NullTransport");
+                                              "NullTransport");
 
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
@@ -69,8 +68,8 @@ public class EchoRawXMLMultipleASyncTest extends UtilServerBasedTestCase impleme
     protected void setUp() throws Exception {
         service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
     }
 
@@ -85,7 +84,8 @@ public class EchoRawXMLMultipleASyncTest extends UtilServerBasedTestCase impleme
         Options options = new Options();
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo",
                         "target/test-resources/integrationRepo/conf/axis2.xml");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
@@ -126,7 +126,8 @@ public class EchoRawXMLMultipleASyncTest extends UtilServerBasedTestCase impleme
         OMElement payload = TestingUtils.createDummyOMElement();
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo",
                         "target/test-resources/integrationRepo/conf/axis2.xml");
         ServiceClient sender = new ServiceClient(configContext, null);
         for (int i = 0; i < 5; i++) {

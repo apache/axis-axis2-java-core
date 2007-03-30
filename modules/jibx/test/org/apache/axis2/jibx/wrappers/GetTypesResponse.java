@@ -18,14 +18,13 @@ package org.apache.axis2.jibx.wrappers;
 
 import org.apache.axis2.jibx.beans.Type;
 
-public class GetTypesResponse
-{
+public class GetTypesResponse {
     private Type[] m_types;
-    
+
     public GetTypesResponse(Type[] types) {
         m_types = types;
     }
-    
+
     public Type[] getTypes() {
         return m_types;
     }

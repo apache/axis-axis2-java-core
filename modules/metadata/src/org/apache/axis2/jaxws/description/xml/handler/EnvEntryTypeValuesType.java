@@ -14,36 +14,25 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 	
- * 
- * 	  This type contains the fully-qualified Java type of the
- * 	  environment entry value that is expected by the
- * 	  application's code.
- * 
- * 	  The following are the legal values of env-entry-type-valuesType:
- * 
- * 	      java.lang.Boolean
- * 	      java.lang.Byte
- * 	      java.lang.Character
- * 	      java.lang.String
- * 	      java.lang.Short
- * 	      java.lang.Integer
- * 	      java.lang.Long
- * 	      java.lang.Float
- * 	      java.lang.Double
- * 
- * 	  Example:
- * 
- * 	  <env-entry-type>java.lang.Boolean</env-entry-type>
- * 
- * 	  
- *       
- * 
+ * This type contains the fully-qualified Java type of the environment entry value that is expected
+ * by the application's code.
+ * <p/>
+ * The following are the legal values of env-entry-type-valuesType:
+ * <p/>
+ * java.lang.Boolean java.lang.Byte java.lang.Character java.lang.String java.lang.Short
+ * java.lang.Integer java.lang.Long java.lang.Float java.lang.Double
+ * <p/>
+ * Example:
+ * <p/>
+ * <env-entry-type>java.lang.Boolean</env-entry-type>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for env-entry-type-valuesType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="env-entry-type-valuesType">
  *   &lt;simpleContent>
@@ -52,14 +41,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "env-entry-type-valuesType")
 public class EnvEntryTypeValuesType
-    extends String
-{
+        extends String {
 
 
 }

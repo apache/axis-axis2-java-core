@@ -14,19 +14,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- * 	The jndi-nameType type designates a JNDI name in the
- * 	Deployment Component's environment and is relative to the
- * 	java:comp/env context.  A JNDI name must be unique within the
- * 	Deployment Component.
- * 
- *       
- * 
+ * The jndi-nameType type designates a JNDI name in the Deployment Component's environment and is
+ * relative to the java:comp/env context.  A JNDI name must be unique within the Deployment
+ * Component.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for jndi-nameType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="jndi-nameType">
  *   &lt;simpleContent>
@@ -35,14 +32,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "jndi-nameType")
 public class JndiNameType
-    extends String
-{
+        extends String {
 
 
 }

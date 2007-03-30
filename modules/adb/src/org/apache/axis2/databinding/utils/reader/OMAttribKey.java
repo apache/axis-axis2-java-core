@@ -16,9 +16,8 @@ package org.apache.axis2.databinding.utils.reader;
  */
 
 /**
- * A dummy object that acts as the key for the OMAttribute in the
- * attribute array - this will be provided as part of the constants
- * 
+ * A dummy object that acts as the key for the OMAttribute in the attribute array - this will be
+ * provided as part of the constants
  */
 public class OMAttribKey {
 

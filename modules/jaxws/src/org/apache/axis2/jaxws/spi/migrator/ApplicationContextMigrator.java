@@ -18,41 +18,42 @@
  */
 package org.apache.axis2.jaxws.spi.migrator;
 
-import java.util.Map;
-
 import org.apache.axis2.jaxws.core.MessageContext;
 
+import java.util.Map;
+
 /**
- * The ContextPropertyMigrator is a utility interface that can be implemented to handle any 
- * transformation or migration that needs to happen between the internal JAX-WS MessageContext 
- * for a request or a response and the associated context for the client or the server.
- * 
- * client - On the client side, this will be called with the request or response context 
- *          from the BindingProvider instance.
- *          
+ * The ContextPropertyMigrator is a utility interface that can be implemented to handle any
+ * transformation or migration that needs to happen between the internal JAX-WS MessageContext for a
+ * request or a response and the associated context for the client or the server.
+ * <p/>
+ * client - On the client side, this will be called with the request or response context from the
+ * BindingProvider instance.
+ * <p/>
  * server - On the server side, this will be called with the javax.xml.ws.handler.MessageContext
- *          instance that the service endpoint will see.  This is the same context that will
- *          be injected 
- *
+ * instance that the service endpoint will see.  This is the same context that will be injected
  */
 public interface ApplicationContextMigrator {
-    
+
     /**
-     * Is called to handle property migration FROM the user context (BindingProvider client context or server
-     * MessageContext) TO a target internal org.apache.axis2.jaxws.core.MessageContext.
-     * 
+     * Is called to handle property migration FROM the user context (BindingProvider client context
+     * or server MessageContext) TO a target internal org.apache.axis2.jaxws.core.MessageContext.
+     *
      * @param userContext    - The source context that contains the user context properties.
      * @param messageContext - The target MessageContext to receive the properties.
      */
-    public void migratePropertiesToMessageContext(Map<String, Object> userContext, MessageContext messageContext);
-    
+    public void migratePropertiesToMessageContext(Map<String, Object> userContext,
+                                                  MessageContext messageContext);
+
     /**
-     * Is called to handle property migratom FROM the internal org.apache.axis2.jaxws.core.MessageContext TO a 
-     * target user context (BindingProvider client context or server MessageContext) that the user will access.
-     * 
-     * @param userContext     - The target user context to receive the properties.
-     * @param messageContext  - The source MessageContext that contains the property values.
+     * Is called to handle property migratom FROM the internal org.apache.axis2.jaxws.core.MessageContext
+     * TO a target user context (BindingProvider client context or server MessageContext) that the
+     * user will access.
+     *
+     * @param userContext    - The target user context to receive the properties.
+     * @param messageContext - The source MessageContext that contains the property values.
      */
-    public void migratePropertiesFromMessageContext(Map<String, Object> userContext, MessageContext messageContext);
+    public void migratePropertiesFromMessageContext(Map<String, Object> userContext,
+                                                    MessageContext messageContext);
 
 }

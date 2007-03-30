@@ -19,7 +19,11 @@ package org.apache.axis2.integration;
 import junit.framework.TestCase;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
@@ -130,8 +134,10 @@ public class UtilServer {
             throw new Exception("repository directory "
                     + file.getAbsolutePath() + " does not exists");
         }
-        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),
-                file.getAbsolutePath() + "/conf/axis2.xml");
+        return ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(file.getAbsolutePath(),
+                                                          file.getAbsolutePath() +
+                                                                  "/conf/axis2.xml");
     }
 
     public static ConfigurationContext getNewConfigurationContext(
@@ -141,8 +147,9 @@ public class UtilServer {
             throw new Exception("repository directory "
                     + file.getAbsolutePath() + " does not exists");
         }
-        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),
-                axis2xml);
+        return ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(file.getAbsolutePath(),
+                                                          axis2xml);
     }
 
     public static synchronized void stop() throws AxisFault {
@@ -176,14 +183,15 @@ public class UtilServer {
                 .createConfigurationContextFromFileSystem(
                         "target/test-resources/integrationRepo", null);
         AxisModule axisModule = DeploymentEngine.buildModule(file,
-                configContext.getAxisConfiguration());
+                                                             configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
 
         configContext.getAxisConfiguration().addService(service);
 
 
-        ServiceGroupContext serviceGroupContext = ContextFactory.createServiceGroupContext(configContext, (AxisServiceGroup) service.getParent());
-        return  ContextFactory.createServiceContext(serviceGroupContext,service);
+        ServiceGroupContext serviceGroupContext = ContextFactory
+                .createServiceGroupContext(configContext, (AxisServiceGroup)service.getParent());
+        return ContextFactory.createServiceContext(serviceGroupContext, service);
     }
 
     static class AddressingFilter implements FilenameFilter {
@@ -205,16 +213,18 @@ public class UtilServer {
         File file = getAddressingMARFile();
         TestCase.assertTrue(file.exists());
 
-        ConfigurationContext configContext = ConfigurationContextFactory .createConfigurationContextFromFileSystem(
-                "target/test-resources/integrationRepo",
-                "target/test-resources/integrationRepo/conf/axis2.xml");
+        ConfigurationContext configContext =
+                ConfigurationContextFactory .createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo",
+                        "target/test-resources/integrationRepo/conf/axis2.xml");
         AxisModule axisModule = DeploymentEngine.buildModule(file,
-                configContext.getAxisConfiguration());
+                                                             configContext.getAxisConfiguration());
         configContext.getAxisConfiguration().addModule(axisModule);
         return configContext;
     }
 
-    public static ConfigurationContext createClientConfigurationContext(String repo) throws AxisFault {
+    public static ConfigurationContext createClientConfigurationContext(String repo)
+            throws AxisFault {
         return ConfigurationContextFactory .createConfigurationContextFromFileSystem(
                 repo,
                 repo + "/conf/axis2.xml");
@@ -228,15 +238,16 @@ public class UtilServer {
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(clientHome, null);
         AxisModule axisModule = DeploymentEngine.buildModule(file,
-                configContext.getAxisConfiguration());
+                                                             configContext.getAxisConfiguration());
 
         configContext.getAxisConfiguration().addModule(axisModule);
 // sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
         configContext.getAxisConfiguration().addService(service);
-        ServiceGroupContext serviceGroupContext = ContextFactory.createServiceGroupContext(configContext,
-                (AxisServiceGroup) service.getParent());
-        return  ContextFactory.createServiceContext(serviceGroupContext,service);
+        ServiceGroupContext serviceGroupContext =
+                ContextFactory.createServiceGroupContext(configContext,
+                                                         (AxisServiceGroup)service.getParent());
+        return ContextFactory.createServiceContext(serviceGroupContext, service);
     }
 
 }

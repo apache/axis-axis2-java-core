@@ -1,7 +1,11 @@
 package org.apache.axis2.wsdl.codegen.extension;
 
 import junit.framework.TestCase;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisMessage;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOutAxisOperation;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.wsdl.WSDLUtil;
 import org.apache.axis2.wsdl.codegen.CodeGenerationException;
@@ -56,9 +60,7 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
         axisOperation.setParent(axisService);
     }
 
-    /**
-     * This refers to the schema-1.xsd which has an AddRequest element which is of complex type
-     */
+    /** This refers to the schema-1.xsd which has an AddRequest element which is of complex type */
     public void testScenarioOne() {
         String schemaLocation = "test-resources/schemas/schema-1.xsd";
 
@@ -67,11 +69,16 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
         assertTrue(axisMessage.getParameter(Constants.UNWRAPPED_KEY).getValue() == Boolean.TRUE);
 
         Parameter parameter = axisMessage.getParameter(Constants.UNWRAPPED_DETAILS);
-        MessagePartInformationHolder messagePartInformationHolder = (MessagePartInformationHolder) parameter.getValue();
+        MessagePartInformationHolder messagePartInformationHolder =
+                (MessagePartInformationHolder)parameter.getValue();
         List partsList = messagePartInformationHolder.getPartsList();
 
-        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_ONE)));
-        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_TWO)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION,
+                                                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                                            PARAMETER_ONE)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION,
+                                                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                                            PARAMETER_TWO)));
         assertTrue(partsList.size() == 2);
 
 
@@ -89,18 +96,22 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
         assertTrue(axisMessage.getParameter(Constants.UNWRAPPED_KEY).getValue() == Boolean.TRUE);
 
         Parameter parameter = axisMessage.getParameter(Constants.UNWRAPPED_DETAILS);
-        MessagePartInformationHolder messagePartInformationHolder = (MessagePartInformationHolder) parameter.getValue();
+        MessagePartInformationHolder messagePartInformationHolder =
+                (MessagePartInformationHolder)parameter.getValue();
         List partsList = messagePartInformationHolder.getPartsList();
 
-        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_ONE)));
-        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_TWO)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION,
+                                                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                                            PARAMETER_ONE)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION,
+                                                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                                            PARAMETER_TWO)));
         assertTrue(partsList.size() == 2);
     }
 
     /**
-     * 1. AddRequest is of AddRequestType
-     * 2. AddRequestType extends from AbstractParameterType
-     * 3. AbstractParameterType has primitive types only
+     * 1. AddRequest is of AddRequestType 2. AddRequestType extends from AbstractParameterType 3.
+     * AbstractParameterType has primitive types only
      */
     public void testScenarioThree() {
         String schemaLocation = "test-resources/schemas/schema-3.xsd";
@@ -110,19 +121,23 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
         assertTrue(axisMessage.getParameter(Constants.UNWRAPPED_KEY).getValue() == Boolean.TRUE);
 
         Parameter parameter = axisMessage.getParameter(Constants.UNWRAPPED_DETAILS);
-        MessagePartInformationHolder messagePartInformationHolder = (MessagePartInformationHolder) parameter.getValue();
+        MessagePartInformationHolder messagePartInformationHolder =
+                (MessagePartInformationHolder)parameter.getValue();
         List partsList = messagePartInformationHolder.getPartsList();
 
-        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_ONE)));
-        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_TWO)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION,
+                                                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                                            PARAMETER_ONE)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION,
+                                                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                                            PARAMETER_TWO)));
         assertTrue(partsList.size() == 2);
     }
 
     /**
-     * 1. AddRequest is of AddRequestType
-     * 2. AddRequestType extends from AbstractParameterType and it AddRequestType has more stuff defined in a sequence, in
-     * addition to the extension.
-     * 3. AbstractParameterType has primitive types only
+     * 1. AddRequest is of AddRequestType 2. AddRequestType extends from AbstractParameterType and
+     * it AddRequestType has more stuff defined in a sequence, in addition to the extension. 3.
+     * AbstractParameterType has primitive types only
      */
     public void testScenarioFour() {
         String schemaLocation = "test-resources/schemas/schema-4.xsd";
@@ -132,13 +147,22 @@ public class SchemaUnwrapperExtensionTest extends TestCase {
         assertTrue(axisMessage.getParameter(Constants.UNWRAPPED_KEY).getValue() == Boolean.TRUE);
 
         Parameter parameter = axisMessage.getParameter(Constants.UNWRAPPED_DETAILS);
-        MessagePartInformationHolder messagePartInformationHolder = (MessagePartInformationHolder) parameter.getValue();
+        MessagePartInformationHolder messagePartInformationHolder =
+                (MessagePartInformationHolder)parameter.getValue();
         List partsList = messagePartInformationHolder.getPartsList();
 
-        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_ONE)));
-        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_TWO)));
-        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_THREE)));
-        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION, WSDLConstants.INPUT_PART_QNAME_SUFFIX, PARAMETER_FOUR)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION,
+                                                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                                            PARAMETER_ONE)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION,
+                                                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                                            PARAMETER_TWO)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION,
+                                                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                                            PARAMETER_THREE)));
+        assertTrue(partsList.contains(WSDLUtil.getPartQName(ADD_OPERATION,
+                                                            WSDLConstants.INPUT_PART_QNAME_SUFFIX,
+                                                            PARAMETER_FOUR)));
         assertTrue(partsList.size() == 4);
     }
 

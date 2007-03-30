@@ -13,7 +13,11 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOnlyAxisOperation;
+import org.apache.axis2.description.OutOnlyAxisOperation;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.util.TestConstants;
@@ -43,18 +47,22 @@ import javax.xml.namespace.QName;
 *
 */
 
-public class AddressingSubmissionServiceTest extends UtilServerBasedTestCase implements TestConstants {
+public class AddressingSubmissionServiceTest extends UtilServerBasedTestCase
+        implements TestConstants {
 
     protected QName transportName = new QName("http://localhost/my",
-            "NullTransport");
+                                              "NullTransport");
     EndpointReference targetEPR = new EndpointReference(
-            "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis2/services/EchoXMLService/echoOMElement");
+            "http://127.0.0.1:" + (UtilServer.TESTING_PORT) +
+                    "/axis2/services/EchoXMLService/echoOMElement");
 
     EndpointReference replyTo = new EndpointReference(
-            "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis2/services/RedirectReceiverService/echoOMElementResponse");
+            "http://127.0.0.1:" + (UtilServer.TESTING_PORT) +
+                    "/axis2/services/RedirectReceiverService/echoOMElementResponse");
 
     EndpointReference faultTo = new EndpointReference(
-            "http://127.0.0.1:" + (UtilServer.TESTING_PORT) + "/axis2/services/RedirectReceiverService/fault");
+            "http://127.0.0.1:" + (UtilServer.TESTING_PORT) +
+                    "/axis2/services/RedirectReceiverService/fault");
 
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
@@ -68,9 +76,9 @@ public class AddressingSubmissionServiceTest extends UtilServerBasedTestCase imp
 
     protected void setUp() throws Exception {
         echoService = Utils.createSimpleService(serviceName,
-                new RawXMLINOutMessageReceiver(),
-                Echo.class.getName(),
-                operationName);
+                                                new RawXMLINOutMessageReceiver(),
+                                                Echo.class.getName(),
+                                                operationName);
         echoService.getOperation(operationName).setOutputAction("echoOMElementResponse");
         UtilServer.deployService(echoService);
 
@@ -82,14 +90,16 @@ public class AddressingSubmissionServiceTest extends UtilServerBasedTestCase imp
         AxisService service = new AxisService("RedirectReceiverService");
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        service.addParameter(new Parameter(Constants.SERVICE_CLASS, RedirectReceiver.class.getName()));
+        service.addParameter(
+                new Parameter(Constants.SERVICE_CLASS, RedirectReceiver.class.getName()));
 
         AxisOperation axisOp = new InOnlyAxisOperation(new QName("echoOMElementResponse"));
 
         axisOp.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
         axisOp.setStyle(WSDLConstants.STYLE_RPC);
         service.addOperation(axisOp);
-        service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI + "/" + "echoOMElementResponse", axisOp);
+        service.mapActionToOperation(Constants.AXIS2_NAMESPACE_URI + "/" + "echoOMElementResponse",
+                                     axisOp);
 
         AxisOperation axisOp2 = new InOnlyAxisOperation(new QName("fault"));
 
@@ -186,8 +196,8 @@ public class AddressingSubmissionServiceTest extends UtilServerBasedTestCase imp
     private ServiceClient createServiceClient() throws AxisFault {
         AxisService service =
                 createSimpleOneWayServiceforClient(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                                   Echo.class.getName(),
+                                                   operationName);
 
         ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
 
@@ -199,7 +209,8 @@ public class AddressingSubmissionServiceTest extends UtilServerBasedTestCase imp
         options.setAction(operationName.getLocalPart());
         options.setReplyTo(replyTo);
         options.setFaultTo(faultTo);
-        options.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, AddressingConstants.Submission.WSA_NAMESPACE);
+        options.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
+                            AddressingConstants.Submission.WSA_NAMESPACE);
 
         sender = new ServiceClient(configcontext, service);
         sender.setOptions(options);
@@ -211,8 +222,8 @@ public class AddressingSubmissionServiceTest extends UtilServerBasedTestCase imp
     private ServiceClient createSyncResponseServiceClient() throws AxisFault {
         AxisService service =
                 Utils.createSimpleServiceforClient(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                                   Echo.class.getName(),
+                                                   operationName);
 
         ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
         ServiceClient sender;
@@ -220,7 +231,8 @@ public class AddressingSubmissionServiceTest extends UtilServerBasedTestCase imp
         Options options = new Options();
         options.setTo(targetEPR);
         options.setAction(operationName.getLocalPart());
-        options.setProperty(AddressingConstants.WS_ADDRESSING_VERSION, AddressingConstants.Submission.WSA_NAMESPACE);
+        options.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
+                            AddressingConstants.Submission.WSA_NAMESPACE);
 
         sender = new ServiceClient(configcontext, service);
         sender.setOptions(options);
@@ -237,10 +249,10 @@ public class AddressingSubmissionServiceTest extends UtilServerBasedTestCase imp
         try {
             sender = createSyncResponseServiceClient();
             OMElement result = sender.sendReceive(operationName, method);
-            System.out.println("echoOMElementResponse: "+result);
+            System.out.println("echoOMElementResponse: " + result);
             QName name = new QName("http://localhost/my", "myValue");
             String value = result.getFirstChildWithName(name).getText();
-            
+
             assertEquals(test, value);
         } finally {
             if (sender != null)

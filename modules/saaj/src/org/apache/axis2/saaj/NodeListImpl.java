@@ -23,12 +23,11 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The <code>NodeList</code> interface provides the abstraction of an ordered
- * collection of nodes, without defining or constraining how this collection
- * is implemented. <code>NodeList</code> objects in the DOM are live.
- * <p>The items in the <code>NodeList</code> are accessible via an integral
- * index, starting from 0.
- * <p>See also the <a href='http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113'>Document Object Model (DOM) Level 2 Core Specification</a>.
+ * The <code>NodeList</code> interface provides the abstraction of an ordered collection of nodes,
+ * without defining or constraining how this collection is implemented. <code>NodeList</code>
+ * objects in the DOM are live. <p>The items in the <code>NodeList</code> are accessible via an
+ * integral index, starting from 0. <p>See also the <a href='http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113'>Document
+ * Object Model (DOM) Level 2 Core Specification</a>.
  */
 public class NodeListImpl implements NodeList {
 
@@ -37,9 +36,7 @@ public class NodeListImpl implements NodeList {
     public static final NodeList EMPTY_NODELIST = new NodeListImpl(
             Collections.EMPTY_LIST);
 
-    /**
-     * Constructor and Setter is intensionally made package access only.
-     */
+    /** Constructor and Setter is intensionally made package access only. */
     NodeListImpl() {
         mNodes = new ArrayList();
     }
@@ -60,26 +57,24 @@ public class NodeListImpl implements NodeList {
     }
 
     /**
-     * Returns the <code>index</code>th item in the collection. If
-     * <code>index</code> is greater than or equal to the number of nodes in
-     * the list, this returns <code>null</code>.
+     * Returns the <code>index</code>th item in the collection. If <code>index</code> is greater
+     * than or equal to the number of nodes in the list, this returns <code>null</code>.
      *
      * @param index Index into the collection.
-     * @return The node at the <code>index</code>th position in the
-     *         <code>NodeList</code>, or <code>null</code> if that is not a valid
-     *         index.
+     * @return The node at the <code>index</code>th position in the <code>NodeList</code>, or
+     *         <code>null</code> if that is not a valid index.
      */
     public Node item(int index) {
         if (mNodes != null && mNodes.size() > index) {
-            return (Node) mNodes.get(index);
+            return (Node)mNodes.get(index);
         } else {
             return null;
         }
     }
 
     /**
-     * The number of nodes in the list. The range of valid child node indices
-     * is 0 to <code>length-1</code> inclusive.
+     * The number of nodes in the list. The range of valid child node indices is 0 to
+     * <code>length-1</code> inclusive.
      */
     public int getLength() {
         return mNodes.size();

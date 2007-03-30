@@ -15,108 +15,76 @@
  */
 package org.apache.axis2.saaj.util;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.util.LinkedList;
-import java.util.List;
 import org.apache.axis2.Constants;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 
  */
 public class SAAJDataSource implements javax.activation.DataSource {
 
-    /**
-     * The content type. This defaults to
-     * <code>application/octet-stream</code>.
-     */
+    /** The content type. This defaults to <code>application/octet-stream</code>. */
     protected String contentType = "application/octet-stream";
 
-    /**
-     * The incoming source stream.
-     */
+    /** The incoming source stream. */
     private InputStream ss;
 
-    /**
-     * Field MIN_MEMORY_DISK_CACHED
-     */
+    /** Field MIN_MEMORY_DISK_CACHED */
     public static final int MIN_MEMORY_DISK_CACHED = -1;
 
-    /**
-     * Field MAX_MEMORY_DISK_CACHED
-     */
+    /** Field MAX_MEMORY_DISK_CACHED */
     public static final int MAX_MEMORY_DISK_CACHED = 16 * 1024;
 
-    /**
-     * Field maxCached
-     */
+    /** Field maxCached */
     protected int maxCached = MAX_MEMORY_DISK_CACHED;       // max in memory cached. Default.
 
-    /**
-     * Field diskCacheFile
-     */
+    /** Field diskCacheFile */
     protected java.io.File diskCacheFile = null;
 
     // A list of open input Streams.
 
-    /**
-     * Field readers
-     */
+    /** Field readers */
     protected java.util.WeakHashMap readers = new java.util.WeakHashMap();
 
-    /**
-     * Flag to show if the resources behind this have been deleted.
-     */
+    /** Flag to show if the resources behind this have been deleted. */
     protected boolean deleted;
 
-    /**
-     * Field READ_CHUNK_SZ
-     */
+    /** Field READ_CHUNK_SZ */
     public static final int READ_CHUNK_SZ = 32 * 1024;
 
 
-    /**
-     * The linked list to hold the in memory buffers.
-     */
+    /** The linked list to hold the in memory buffers. */
     protected java.util.LinkedList memorybuflist = new java.util.LinkedList();
 
-    /**
-     * Hold the last memory buffer.
-     */
+    /** Hold the last memory buffer. */
     protected byte[] currentMemoryBuf = null;
 
-    /**
-     * The number of bytes written to the above buffer.
-     */
+    /** The number of bytes written to the above buffer. */
     protected int currentMemoryBufSz;
 
-    /**
-     * The total size in bytes in this data source.
-     */
+    /** The total size in bytes in this data source. */
     protected long totalsz;
 
-    /**
-     * This is the cached disk stream.
-     */
+    /** This is the cached disk stream. */
     protected java.io.BufferedOutputStream cachediskstream;
 
-    /**
-     * If true the source input stream is now closed.
-     */
+    /** If true the source input stream is now closed. */
     protected boolean closed = false;
 
-    /**
-     * Constructor SAAJDataSource.
-     */
+    /** Constructor SAAJDataSource. */
     protected SAAJDataSource() {
     }
 
@@ -125,8 +93,8 @@ public class SAAJDataSource implements javax.activation.DataSource {
      *
      * @param ss          is the source input stream that is used to create this data source.
      * @param maxCached   This is the max memory that is to be used to cache the data.
-     * @param contentType the mime type for this data stream.
-     *                    by buffering you can some effiency in searching.
+     * @param contentType the mime type for this data stream. by buffering you can some effiency in
+     *                    searching.
      * @throws java.io.IOException
      */
     public SAAJDataSource(InputStream ss, int maxCached, String contentType)
@@ -139,8 +107,8 @@ public class SAAJDataSource implements javax.activation.DataSource {
      *
      * @param ss          is the source input stream that is used to create this data source.
      * @param maxCached   This is the max memory that is to be used to cache the data.
-     * @param contentType the mime type for this data stream.
-     *                    by buffering you can some effiency in searching.
+     * @param contentType the mime type for this data stream. by buffering you can some effiency in
+     *                    searching.
      * @param readall     if true will read in the whole source.
      * @throws java.io.IOException
      */
@@ -164,7 +132,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
         // for now read all in to disk.
         if (readall) {
             byte[] readbuffer = new byte[READ_CHUNK_SZ];
-            
+
             int read = 0;
             do {
                 read = ss.read(readbuffer);
@@ -178,8 +146,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
     }
 
     /**
-     * This method is a low level write.
-     * Close the stream.
+     * This method is a low level write. Close the stream.
      *
      * @throws java.io.IOException
      */
@@ -223,36 +190,36 @@ public class SAAJDataSource implements javax.activation.DataSource {
                             ? null
                             : mc.getStrProp(
                     MessageContext.ATTACHMENTS_DIR);*/
-                	
-                	
-                	MessageContext messageContext = MessageContext.getCurrentMessageContext();
-                	String attachementDir = "";
-                	attachementDir = (String)messageContext.getProperty
-                			(Constants.Configuration.ATTACHMENT_TEMP_DIR);
 
-                	if (attachementDir.equals("")) {
-                		Parameter param  = (Parameter)messageContext.getParameter
-                			(Constants.Configuration.ATTACHMENT_TEMP_DIR);
-                		if(param != null){
-                			attachementDir = (String)param.getValue();
-                		}
-                	}
-                    
+
+                    MessageContext messageContext = MessageContext.getCurrentMessageContext();
+                    String attachementDir = "";
+                    attachementDir = (String)messageContext.getProperty
+                            (Constants.Configuration.ATTACHMENT_TEMP_DIR);
+
+                    if (attachementDir.equals("")) {
+                        Parameter param = (Parameter)messageContext.getParameter
+                                (Constants.Configuration.ATTACHMENT_TEMP_DIR);
+                        if (param != null) {
+                            attachementDir = (String)param.getValue();
+                        }
+                    }
+
                     diskCacheFile = java.io.File.createTempFile("Axis", ".att",
                                                                 (attachementDir == null)
-                                                                ? null
-                                                                : new File(
-                                                                		attachementDir));
+                                                                        ? null
+                                                                        : new File(
+                                                                        attachementDir));
                     cachediskstream = new BufferedOutputStream(new FileOutputStream(diskCacheFile));
                     int listsz = ml.size();
 
                     // Write out the entire memory held store to disk.
                     for (java.util.Iterator it = ml.iterator();
                          it.hasNext();) {
-                        byte[] rbuf = (byte[]) it.next();
+                        byte[] rbuf = (byte[])it.next();
                         int bwrite = (listsz-- == 0)
-                                     ? currentMemoryBufSz
-                                     : rbuf.length;
+                                ? currentMemoryBufSz
+                                : rbuf.length;
                         cachediskstream.write(rbuf, 0, bwrite);
                         if (closed) {
                             cachediskstream.close();
@@ -280,9 +247,8 @@ public class SAAJDataSource implements javax.activation.DataSource {
     }
 
     /**
-     * This method is a low level write.
-     * Note it is designed to in the future to allow streaming to both memory
-     * AND to disk simultaneously.
+     * This method is a low level write. Note it is designed to in the future to allow streaming to
+     * both memory AND to disk simultaneously.
      *
      * @param data
      * @param length
@@ -297,7 +263,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
         int byteswritten = 0;
 
         if ((null != memorybuflist)
-            && (totalsz + length > maxCached)) {    // Cache to disk.
+                && (totalsz + length > maxCached)) {    // Cache to disk.
             if (null == cachediskstream) {               // Need to create a disk cache
                 flushToDisk();
             }
@@ -315,7 +281,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
                 // bytes to write is the min. between the remaining bytes and what is left in this buffer.
                 int bytes2write = Math.min((length - byteswritten),
                                            (currentMemoryBuf.length
-                                            - currentMemoryBufSz));
+                                                   - currentMemoryBufSz));
 
                 // copy the data.
                 System.arraycopy(data, byteswritten, currentMemoryBuf,
@@ -325,7 +291,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
                 currentMemoryBufSz += bytes2write;
 
                 if (byteswritten
-                    < length) {    // only get more if we really need it.
+                        < length) {    // only get more if we really need it.
                     currentMemoryBuf = new byte[READ_CHUNK_SZ];
                     currentMemoryBufSz = 0;
                     memorybuflist.add(currentMemoryBuf);    // add it to the chain.
@@ -341,9 +307,8 @@ public class SAAJDataSource implements javax.activation.DataSource {
 
 
     /**
-     * This method is a low level write.
-     * Writes only to memory
-     * 
+     * This method is a low level write. Writes only to memory
+     *
      * @param data
      * @param length
      * @throws java.io.IOException
@@ -367,7 +332,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
                 // bytes to write is the min. between the remaining bytes and what is left in this buffer.
                 int bytes2write = Math.min((length - byteswritten),
                                            (currentMemoryBuf.length
-                                            - currentMemoryBufSz));
+                                                   - currentMemoryBufSz));
 
                 // copy the data.
                 System.arraycopy(data, byteswritten, currentMemoryBuf,
@@ -377,7 +342,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
                 currentMemoryBufSz += bytes2write;
 
                 if (byteswritten
-                    < length) {    // only get more if we really need it.
+                        < length) {    // only get more if we really need it.
                     currentMemoryBuf = new byte[READ_CHUNK_SZ];
                     currentMemoryBufSz = 0;
                     memorybuflist.add(currentMemoryBuf);    // add it to the chain.
@@ -386,7 +351,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
         }
         totalsz += length;
     }
-    
+
     /**
      * get the filename of the content if it is cached to disk.
      *
@@ -424,46 +389,34 @@ public class SAAJDataSource implements javax.activation.DataSource {
 
 
     /**
-     * Inner class to handle getting an input stream to this data source
-     * Handles creating an input stream to the source.
+     * Inner class to handle getting an input stream to this data source Handles creating an input
+     * stream to the source.
      */
     private class SAAJInputStream extends java.io.InputStream {
 
-        /**
-         * bytes read.
-         */
+        /** bytes read. */
         protected long bread = 0;
 
-        /**
-         * The real stream.
-         */
+        /** The real stream. */
         private FileInputStream fileIS;
 
-        /**
-         * The position in the list were we are reading from.
-         */
+        /** The position in the list were we are reading from. */
         int currentIndex;
 
-        /**
-         * the buffer we are currently reading from.
-         */
+        /** the buffer we are currently reading from. */
         byte[] currentBuf;
 
-        /**
-         * The current position in there.
-         */
+        /** The current position in there. */
         int currentBufPos;
 
-        /**
-         * The read stream has been closed.
-         */
+        /** The read stream has been closed. */
         boolean readClosed;
 
         /**
          * Constructor Instream.
          *
-         * @throws java.io.IOException if the Instream could not be created or
-         *                             if the data source has been deleted
+         * @throws java.io.IOException if the Instream could not be created or if the data source
+         *                             has been deleted
          */
         protected SAAJInputStream() throws java.io.IOException {
             if (deleted) {
@@ -476,8 +429,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
          * Query for the number of bytes available for reading.
          *
          * @return the number of bytes left
-         * @throws java.io.IOException if this stream is not in a state that
-         *                             supports reading
+         * @throws java.io.IOException if this stream is not in a state that supports reading
          */
         public int available() throws java.io.IOException {
             if (deleted) {
@@ -506,9 +458,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
             }
         }
 
-        /**
-         * Not supported.
-         */
+        /** Not supported. */
         public boolean markSupported() {
             return false;
         }
@@ -553,7 +503,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
                 int bwritten = 0;
                 if (ml != null) {
                     if (null == currentBuf) {    // get the buffer we need to read from.
-                        currentBuf = (byte[]) ml.get(currentIndex);
+                        currentBuf = (byte[])ml.get(currentIndex);
                         currentBufPos = 0;    // start reading from the begining.
                     }
                     do {
@@ -563,7 +513,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
                         bwritten += bcopy;
                         currentBufPos += bcopy;
                         if (bwritten < skipped) {
-                            currentBuf = (byte[]) ml.get(++currentIndex);
+                            currentBuf = (byte[])ml.get(++currentIndex);
                             currentBufPos = 0;
                         }
                     } while (bwritten < skipped);
@@ -615,11 +565,12 @@ public class SAAJDataSource implements javax.activation.DataSource {
                 }
                 List ml = memorybuflist;
                 long longlen = len;
-                longlen = Math.min(longlen, totalsz - bread);    // Only return the number of bytes in the data store that is left.
+                longlen = Math.min(longlen, totalsz -
+                        bread);    // Only return the number of bytes in the data store that is left.
                 len = new Long(longlen).intValue();
                 if (ml != null) {
                     if (null == currentBuf) {    // Get the buffer we need to read from.
-                        currentBuf = (byte[]) ml.get(currentIndex);
+                        currentBuf = (byte[])ml.get(currentIndex);
                         currentBufPos = 0;    // New buffer start from the begining.
                     }
                     do {
@@ -632,7 +583,7 @@ public class SAAJDataSource implements javax.activation.DataSource {
                         bwritten += bcopy;
                         currentBufPos += bcopy;
                         if (bwritten < len) {    // Get the next buffer.
-                            currentBuf = (byte[]) ml.get(++currentIndex);
+                            currentBuf = (byte[])ml.get(++currentIndex);
                             currentBufPos = 0;
                         }
                     } while (bwritten < len);

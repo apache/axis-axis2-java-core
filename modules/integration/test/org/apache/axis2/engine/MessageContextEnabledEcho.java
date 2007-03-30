@@ -21,9 +21,10 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 public class MessageContextEnabledEcho {
     private MessageContext msgcts;
-	private static final Log log = LogFactory.getLog(MessageContextEnabledEcho.class);
+    private static final Log log = LogFactory.getLog(MessageContextEnabledEcho.class);
 
     public MessageContextEnabledEcho() {
     }

@@ -33,7 +33,8 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
-public class EchoRawXMLOnTwoChannelsSyncTest extends UtilServerBasedTestCase implements TestConstants {
+public class EchoRawXMLOnTwoChannelsSyncTest extends UtilServerBasedTestCase
+        implements TestConstants {
 
     public EchoRawXMLOnTwoChannelsSyncTest() {
         super(EchoRawXMLOnTwoChannelsSyncTest.class.getName());
@@ -50,8 +51,8 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends UtilServerBasedTestCase imp
     protected void setUp() throws Exception {
         AxisService service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
 
     }
@@ -64,8 +65,8 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends UtilServerBasedTestCase imp
     public void testEchoXMLCompleteSync() throws Exception {
         AxisService service =
                 Utils.createSimpleServiceforClient(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                                   Echo.class.getName(),
+                                                   operationName);
 
         ConfigurationContext configConetxt = UtilServer.createClientConfigurationContext();
 
@@ -93,35 +94,35 @@ public class EchoRawXMLOnTwoChannelsSyncTest extends UtilServerBasedTestCase imp
     }
 
     public void testEchoXMLCompleteSyncwithTwoTransport() throws Exception {
-          AxisService service =
-                  Utils.createSimpleServiceforClient(serviceName,
-                          Echo.class.getName(),
-                          operationName);
+        AxisService service =
+                Utils.createSimpleServiceforClient(serviceName,
+                                                   Echo.class.getName(),
+                                                   operationName);
 
-          ConfigurationContext configConetxt = UtilServer.createClientConfigurationContext();
+        ConfigurationContext configConetxt = UtilServer.createClientConfigurationContext();
 
-          OMFactory fac = OMAbstractFactory.getOMFactory();
+        OMFactory fac = OMAbstractFactory.getOMFactory();
 
-          OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
-          OMElement method = fac.createOMElement("echoOMElement", omNs);
-          OMElement value = fac.createOMElement("myValue", omNs);
-          value.setText("Isaac Asimov, The Foundation Trilogy");
-          method.addChild(value);
-          Options options = new Options();
-          options.setTo(targetEPR);
-          options.setTransportInProtocol(Constants.TRANSPORT_TCP);
-          options.setUseSeparateListener(true);
-          options.setAction(operationName.getLocalPart());
+        OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
+        OMElement method = fac.createOMElement("echoOMElement", omNs);
+        OMElement value = fac.createOMElement("myValue", omNs);
+        value.setText("Isaac Asimov, The Foundation Trilogy");
+        method.addChild(value);
+        Options options = new Options();
+        options.setTo(targetEPR);
+        options.setTransportInProtocol(Constants.TRANSPORT_TCP);
+        options.setUseSeparateListener(true);
+        options.setAction(operationName.getLocalPart());
 
-          ServiceClient sender = new ServiceClient(configConetxt, service);
-          sender.setOptions(options);
+        ServiceClient sender = new ServiceClient(configConetxt, service);
+        sender.setOptions(options);
 
-          OMElement result = sender.sendReceive(operationName, method);
+        OMElement result = sender.sendReceive(operationName, method);
 
-          TestingUtils.campareWithCreatedOMElement(result);
-          sender.cleanup();
+        TestingUtils.campareWithCreatedOMElement(result);
+        sender.cleanup();
 
-      }
+    }
 
 
 }

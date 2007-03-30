@@ -3,9 +3,9 @@ package org.apache.axis2.wsdl.codegen.writer;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.util.FileWriter;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Import;
@@ -16,7 +16,11 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+import java.util.ArrayList;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -53,9 +57,9 @@ public class WSDL11Writer {
             if (axisService != null) {
                 //create a output file
                 File outputFile = FileWriter.createClassFile(baseFolder,
-                        null,
-                        axisService.getName(),
-                        ".wsdl");
+                                                             null,
+                                                             axisService.getName(),
+                                                             ".wsdl");
                 FileOutputStream fos = new FileOutputStream(outputFile);
                 axisService.printWSDL(fos);
                 fos.flush();
@@ -85,10 +89,11 @@ public class WSDL11Writer {
             Vector importsVector = null;
             Import wsdlImport = null;
             String wsdlName = null;
-            for (Iterator improtsVectorIter = imports.values().iterator(); improtsVectorIter.hasNext();) {
-                importsVector = (Vector) improtsVectorIter.next();
+            for (Iterator improtsVectorIter = imports.values().iterator();
+                 improtsVectorIter.hasNext();) {
+                importsVector = (Vector)improtsVectorIter.next();
                 for (Iterator importsIter = importsVector.iterator(); importsIter.hasNext();) {
-                    wsdlImport = (Import) importsIter.next();
+                    wsdlImport = (Import)importsIter.next();
                     wsdlName = "wsdl_" + count++ + ".wsdl";
                     writeWSDL(wsdlImport.getDefinition(), wsdlName, changedMap);
                     wsdlImport.setLocationURI(wsdlName);
@@ -156,7 +161,7 @@ public class WSDL11Writer {
             for (Iterator iter = extensibilityElements.iterator(); iter.hasNext();) {
                 currentObject = iter.next();
                 if (currentObject instanceof Schema) {
-                    schema = (Schema) currentObject;
+                    schema = (Schema)currentObject;
                     changeLocations(schema.getElement(), changedScheamLocations);
                 }
             }
@@ -184,7 +189,7 @@ public class WSDL11Writer {
                 attributeValue = attribute.getNodeValue();
                 if (changedScheamLocations.get(attributeValue) != null) {
                     attribute.setNodeValue(
-                            (String) changedScheamLocations.get(attributeValue));
+                            (String)changedScheamLocations.get(attributeValue));
                 }
             }
         }

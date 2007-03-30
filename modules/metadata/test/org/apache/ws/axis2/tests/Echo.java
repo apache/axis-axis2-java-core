@@ -1,4 +1,3 @@
-
 package org.apache.ws.axis2.tests;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,9 +8,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for echo complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="echo">
  *   &lt;complexContent>
@@ -23,13 +22,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "echo", propOrder = {
-    "text"
-})
+        "text"
+        })
 public class Echo {
 
     @XmlElement(required = true, nillable = true)
@@ -37,11 +34,8 @@ public class Echo {
 
     /**
      * Gets the value of the text property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is {@link String }
      */
     public String getText() {
         return text;
@@ -49,11 +43,8 @@ public class Echo {
 
     /**
      * Sets the value of the text property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is {@link String }
      */
     public void setText(String value) {
         this.text = value;

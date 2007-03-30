@@ -16,46 +16,44 @@
  */
 package org.apache.axis2.jaxws.message.attachments;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.activation.DataHandler;
-import javax.xml.bind.attachment.AttachmentUnmarshaller;
-
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.message.Attachment;
 import org.apache.axis2.jaxws.message.Message;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.activation.DataHandler;
+import javax.xml.bind.attachment.AttachmentUnmarshaller;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * JAXBAttachmentUnmarshaller
- * 
- * An implementation of the <link>javax.xml.bind.attachment.AttachmentUnmarshaller</link>
- * that is used for deserializing XOP elements into their corresponding
- * binary data packages.
+ * <p/>
+ * An implementation of the <link>javax.xml.bind.attachment.AttachmentUnmarshaller</link> that is
+ * used for deserializing XOP elements into their corresponding binary data packages.
  */
 public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
 
     private static final Log log = LogFactory.getLog(JAXBAttachmentUnmarshaller.class);
-    
+
     private Message message;
-    
+
     @Override
     public boolean isXOPPackage() {
         // FIXME: This should really be set based on whether or not the 
         // incoming message is "application/xop+xml".  Please read the
         // javadoc for this method.
         boolean value = true;
-        if (log.isDebugEnabled()){ 
+        if (log.isDebugEnabled()) {
             log.debug("isXOPPackage returns " + value);
         }
         return value;
     }
-    
+
     @Override
     public byte[] getAttachmentAsByteArray(String cid) {
         if (log.isDebugEnabled()) {
@@ -83,7 +81,7 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
         if (log.isDebugEnabled()) {
             log.debug("Attempting to retrieve attachment [" + cid + "] as a DataHandler");
         }
-        
+
         List<Attachment> attachments = message.getAttachments();
         Iterator<Attachment> itr = attachments.iterator();
         while (itr.hasNext()) {
@@ -92,15 +90,16 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
                 return a.getDataHandler();
             }
         }
-        
+
         if (log.isDebugEnabled()) {
             log.debug("A dataHandler was not found for [" + cid + "]");
         }
         return null;
     }
-    
+
     /**
      * Set the message that holds the attachment data.
+     *
      * @param msg
      */
     public void setMessage(Message msg) {
@@ -109,6 +108,7 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
 
     /**
      * Read the bytes from the DataHandler
+     *
      * @param dh
      * @return byte[]
      * @throws IOException
@@ -125,7 +125,7 @@ public class JAXBAttachmentUnmarshaller extends AttachmentUnmarshaller {
         byte[] b = new byte[1024];
         int num = is.read(b);
         if (log.isDebugEnabled()) {
-            if (num <=0) {
+            if (num <= 0) {
                 log.debug("DataHandler InputStream contains no data. num=" + num);
             }
         }

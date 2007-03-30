@@ -15,10 +15,8 @@ package org.apache.axis2.wsdl.databinding;
  * limitations under the License.
  */
 
-/**
- * A simple exception that will be thrown if a type is not matched!
- */
-public class UnmatchedTypeException extends RuntimeException{
+/** A simple exception that will be thrown if a type is not matched! */
+public class UnmatchedTypeException extends RuntimeException {
 
     public UnmatchedTypeException() {
     }

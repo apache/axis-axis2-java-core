@@ -38,10 +38,13 @@ public class GELinkedListUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
 
-        OMElement operation = omfactory.createOMElement("echoLinkedList", "http://soapinterop.org/WSDLInteropTestRpcEnc", null);
+        OMElement operation = omfactory.createOMElement("echoLinkedList",
+                                                        "http://soapinterop.org/WSDLInteropTestRpcEnc",
+                                                        null);
         SOAPBody body = omfactory.createSOAPBody(reqEnv);
         body.addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                               null);
 
         OMElement part = omfactory.createOMElement("param0", "", null);
         part.addAttribute("xsi:type", "s:List", null);
@@ -58,7 +61,8 @@ public class GELinkedListUtil implements SunClientUtil {
 
 
         OMElement part2 = omfactory.createOMElement("item0", null);
-        part2.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        part2.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                           null);
 
         part2.addAttribute("xsi:type", "s:List", null);
         part2.addAttribute("id", "ID1", null);

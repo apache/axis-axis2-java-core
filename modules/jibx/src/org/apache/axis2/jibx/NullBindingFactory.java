@@ -24,16 +24,17 @@ import org.jibx.runtime.impl.MarshallingContext;
 import org.jibx.runtime.impl.UnmarshallingContext;
 
 public class NullBindingFactory implements IBindingFactory {
-    
+
     private static final String[] EMPTY_STRINGS = new String[0];
-    
+
     public IMarshallingContext createMarshallingContext() throws JiBXException {
         return new MarshallingContext(EMPTY_STRINGS, EMPTY_STRINGS, EMPTY_STRINGS, this);
     }
 
     public IUnmarshallingContext createUnmarshallingContext()
-        throws JiBXException {
-        return new UnmarshallingContext(0, EMPTY_STRINGS, EMPTY_STRINGS, EMPTY_STRINGS, EMPTY_STRINGS, this);
+            throws JiBXException {
+        return new UnmarshallingContext(0, EMPTY_STRINGS, EMPTY_STRINGS, EMPTY_STRINGS,
+                                        EMPTY_STRINGS, this);
     }
 
     public String getCompilerDistribution() {

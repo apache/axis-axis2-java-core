@@ -16,9 +16,8 @@
  */
 package org.apache.axis2.jaxws.utility;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
@@ -26,43 +25,42 @@ import javax.xml.ws.Service;
 import javax.xml.ws.WebFault;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceProvider;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-/**
- * Contains static Class utility methods related to method parameter/argument
- * marshalling.
- */
+/** Contains static Class utility methods related to method parameter/argument marshalling. */
 public class ClassUtils {
 
-	private static Log log = LogFactory.getLog(ClassUtils.class);
-	
-	
-	/**
-	 * Gets the RootCause for an throwable.
-	 * The root cause is defined as the first non-InvocationTargetException.
-	 * @param e Throwable
-	 * @return Throwable root cause
-	 */
-	public static Throwable getRootCause(Throwable e) {
+    private static Log log = LogFactory.getLog(ClassUtils.class);
+
+
+    /**
+     * Gets the RootCause for an throwable. The root cause is defined as the first
+     * non-InvocationTargetException.
+     *
+     * @param e Throwable
+     * @return Throwable root cause
+     */
+    public static Throwable getRootCause(Throwable e) {
         Throwable t = null;
-        
+
         if (e != null) {
             if (e instanceof InvocationTargetException) {
-                t = ((InvocationTargetException) e).getTargetException();
+                t = ((InvocationTargetException)e).getTargetException();
             } else {
                 t = null;
             }
-            
+
             if (t != null) {
                 e = getRootCause(t);
             }
         }
         return e;
     }
-	
-	private static HashMap loadClassMap = new HashMap();
+
+    private static HashMap loadClassMap = new HashMap();
+
     static {
         loadClassMap.put("byte", byte.class);
         loadClassMap.put("int", int.class);
@@ -74,23 +72,21 @@ public class ClassUtils {
         loadClassMap.put("char", char.class);
         loadClassMap.put("void", void.class);
     }
-    
-    /**
-     * Converts text of the form
-     * Foo[] to the proper class name for loading [LFoo
-     */
+
+    /** Converts text of the form Foo[] to the proper class name for loading [LFoo */
     private static HashMap loadableMap = new HashMap();
+
     static {
-        loadableMap.put("byte",    "B");
-        loadableMap.put("char",    "C");
-        loadableMap.put("double",  "D");
-        loadableMap.put("float",   "F");
-        loadableMap.put("int",     "I");
-        loadableMap.put("long",    "J");
-        loadableMap.put("short",   "S");
+        loadableMap.put("byte", "B");
+        loadableMap.put("char", "C");
+        loadableMap.put("double", "D");
+        loadableMap.put("float", "F");
+        loadableMap.put("int", "I");
+        loadableMap.put("long", "J");
+        loadableMap.put("short", "S");
         loadableMap.put("boolean", "Z");
     }
-    
+
     /**
      * @param text String
      * @return String that can be used for Class.forName
@@ -106,39 +102,36 @@ public class ClassUtils {
 
         // Now get the loadable name from the map or 
         // its L<className>;
-        String loadClass = (String) loadableMap.get(className);
+        String loadClass = (String)loadableMap.get(className);
         if (loadClass == null) {
             loadClass = "L" + className + ";";
         }
-        
+
         // Now prepend [ for each array dimension
         if (bracket > 0) {
             int i = text.indexOf("]");
             while (i > 0) {
                 loadClass = "[" + loadClass;
-                i = text.indexOf("]", i+1);
+                i = text.indexOf("]", i + 1);
             }
         }
         return loadClass;
     }
 
-    /**
-     * Converts text of the form
-     * [LFoo to the Foo[]
-     */
+    /** Converts text of the form [LFoo to the Foo[] */
     public static String getTextClassName(String text) {
         if (text == null ||
-            text.indexOf("[") != 0)
+                text.indexOf("[") != 0)
             return text;
         String className = "";
         int index = 0;
-        while(index < text.length() &&
-              text.charAt(index) == '[') {
+        while (index < text.length() &&
+                text.charAt(index) == '[') {
             index ++;
             className += "[]";
         }
         if (index < text.length()) {
-            if (text.charAt(index)== 'B')
+            if (text.charAt(index) == 'B')
                 className = "byte" + className;
             else if (text.charAt(index) == 'C')
                 className = "char" + className;
@@ -157,18 +150,17 @@ public class ClassUtils {
             else if (text.equals("void"))
                 className = "void";
             else {
-                className = text.substring(index+1, text.indexOf(";")) + className;
+                className = text.substring(index + 1, text.indexOf(";")) + className;
             }
         }
         return className;
     }
-    
+
     /**
      * @param primitive
      * @return java wrapper class or null
      */
-    public static Class getWrapperClass(Class primitive)
-    {
+    public static Class getWrapperClass(Class primitive) {
         if (primitive == int.class)
             return java.lang.Integer.class;
         else if (primitive == short.class)
@@ -185,17 +177,16 @@ public class ClassUtils {
             return java.lang.Float.class;
         else if (primitive == char.class)
             return java.lang.Character.class;
-        
+
         return null;
     }
-    
+
 
     /**
      * @param wrapper
      * @return primitive clas or null
      */
-    public static Class getPrimitiveClass(Class wrapper)
-    {
+    public static Class getPrimitiveClass(Class wrapper) {
         if (wrapper == java.lang.Integer.class)
             return int.class;
         else if (wrapper == java.lang.Short.class)
@@ -212,32 +203,34 @@ public class ClassUtils {
             return float.class;
         else if (wrapper == java.lang.Character.class)
             return char.class;
-        
+
         return null;
     }
-    
-    private static final Class[] noClass=new Class[] {};
-	/**
-	 * Get the default public constructor
-	 * @param clazz
-	 * @return Constructor or null
-	 */
-	public static Constructor getDefaultPublicConstructor(Class clazz) {
-		try {
+
+    private static final Class[] noClass = new Class[] { };
+
+    /**
+     * Get the default public constructor
+     *
+     * @param clazz
+     * @return Constructor or null
+     */
+    public static Constructor getDefaultPublicConstructor(Class clazz) {
+        try {
             return clazz.getConstructor(noClass);
-		} catch (Exception e) {
-			return null;
-		}
-	}
-    
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     /**
      * @param name of primitive type
-     * @return primitive Class or null 
+     * @return primitive Class or null
      */
     public static Class getPrimitiveClass(String text) {
-        return (Class) loadClassMap.get(text);
+        return (Class)loadClassMap.get(text);
     }
-    
+
     /**
      * @param cls
      * @return true if this is a JAX-WS or JAX-WS generated class
@@ -245,50 +238,49 @@ public class ClassUtils {
     public static final boolean isJAXWSClass(Class cls) {
         // TODO Processing all of these annotations is very expensive.  We need to cache the 
         // result in a static WeakHashMap<Class, Boolean>
-        
-        
+
         // Kinds of generated classes: Service, Provider, Impl, Exception, Holder
         // Or the class is in the jaxws.xml.ws package
-        
+
         // Check for Impl
-        WebService wsAnn = (WebService) cls.getAnnotation(WebService.class);
+        WebService wsAnn = (WebService)cls.getAnnotation(WebService.class);
         if (wsAnn != null) {
             return true;
         }
-        
+
         // Check for service
-        WebServiceClient wscAnn = (WebServiceClient) cls.getAnnotation(WebServiceClient.class);
+        WebServiceClient wscAnn = (WebServiceClient)cls.getAnnotation(WebServiceClient.class);
         if (wscAnn != null) {
             return true;
         }
-        
+
         // Check for provider
-        WebServiceProvider wspAnn = (WebServiceProvider) cls.getAnnotation(WebServiceProvider.class);
+        WebServiceProvider wspAnn = (WebServiceProvider)cls.getAnnotation(WebServiceProvider.class);
         if (wspAnn != null) {
             return true;
         }
-        
+
         // Check for Exception
-        WebFault wfAnn = (WebFault) cls.getAnnotation(WebFault.class);
+        WebFault wfAnn = (WebFault)cls.getAnnotation(WebFault.class);
         if (wfAnn != null) {
             return true;
         }
-        
+
         // Check for Holder
         if (Holder.class.isAssignableFrom(cls)) {
             return true;
         }
-        
+
         // Check for a javax.xml.ws.Service class instance
         if (Service.class.isAssignableFrom(cls)) {
             return true;
         }
-        
+
         if (cls.getPackage() != null && cls.getPackage().getName().startsWith("javax.xml.ws")) {
             return true;
         }
         return false;
     }
-    
+
 }
 

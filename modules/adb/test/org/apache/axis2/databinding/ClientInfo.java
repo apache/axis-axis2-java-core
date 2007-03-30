@@ -23,9 +23,7 @@
 
 package org.apache.axis2.databinding;
 
-/**
- * ClientInfo bean class
- */
+/** ClientInfo bean class */
 
 public class ClientInfo
         implements org.apache.axis2.databinding.ADBBean {
@@ -43,9 +41,7 @@ public class ClientInfo
     public ClientInfo() {
     }
 
-    /**
-     * field for Name
-     */
+    /** field for Name */
     protected java.lang.String localName;
 
 
@@ -70,9 +66,7 @@ public class ClientInfo
     }
 
 
-    /**
-     * field for Ssn
-     */
+    /** field for Ssn */
     protected java.lang.String localSsn;
 
 
@@ -97,9 +91,7 @@ public class ClientInfo
     }
 
 
-    /**
-     * databinding method to get an XML representation of this object
-     */
+    /** databinding method to get an XML representation of this object */
     public javax.xml.stream.XMLStreamReader getPullParser(javax.xml.namespace.QName qName) {
 
 
@@ -108,11 +100,12 @@ public class ClientInfo
 
 
         elementList.add(new javax.xml.namespace.QName("http://www.wso2.com/types",
-                "name"));
-        elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localName));
+                                                      "name"));
+        elementList
+                .add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localName));
 
         elementList.add(new javax.xml.namespace.QName("http://www.wso2.com/types",
-                "ssn"));
+                                                      "ssn"));
         elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(localSsn));
 
 
@@ -122,14 +115,11 @@ public class ClientInfo
 
     }
 
-    /**
-     * Factory class that keeps the parse method
-     */
+    /** Factory class that keeps the parse method */
     public static class Factory {
-        /**
-         * static method to create the object
-         */
-        public static ClientInfo parse(javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
+        /** static method to create the object */
+        public static ClientInfo parse(javax.xml.stream.XMLStreamReader reader)
+                throws java.lang.Exception {
             ClientInfo object = new ClientInfo();
             try {
                 int event = reader.getEventType();
@@ -150,7 +140,8 @@ public class ClientInfo
 
                             String content = reader.getElementText();
                             object.setName(
-                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
+                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
+                                            content));
                             count++;
 
 
@@ -161,7 +152,8 @@ public class ClientInfo
 
                             String content = reader.getElementText();
                             object.setSsn(
-                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(content));
+                                    org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
+                                            content));
                             count++;
 
 

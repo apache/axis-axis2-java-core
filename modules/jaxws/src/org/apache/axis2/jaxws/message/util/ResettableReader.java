@@ -16,38 +16,39 @@
  */
 package org.apache.axis2.jaxws.message.util;
 
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 
+import javax.xml.stream.XMLStreamReader;
+
 /**
- * ResettableReader
- * A resettable XMLStreamReader.  
+ * ResettableReader A resettable XMLStreamReader.
+ *
  * @see org.apache.axis2.jaxws.util.Reader
  */
 public class ResettableReader extends Reader {
 
-	OMElement omElement = null;
-	
-	/** 
-	 * Create resettable XMLStreamReader
-	 * @param reader
-	 * @param resettable
-	 */
-	public ResettableReader(XMLStreamReader reader) {
-		super(reader, true);
-		StAXOMBuilder builder = new StAXOMBuilder(reader);  
-		omElement = builder.getDocumentElement();
-		reset();
-	}
+    OMElement omElement = null;
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.util.Reader#newReader()
-	 */
-	@Override
-	protected XMLStreamReader newReader() {
-		return omElement.getXMLStreamReader();
-	}
+    /**
+     * Create resettable XMLStreamReader
+     *
+     * @param reader
+     * @param resettable
+     */
+    public ResettableReader(XMLStreamReader reader) {
+        super(reader, true);
+        StAXOMBuilder builder = new StAXOMBuilder(reader);
+        omElement = builder.getDocumentElement();
+        reset();
+    }
+
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.util.Reader#newReader()
+      */
+    @Override
+    protected XMLStreamReader newReader() {
+        return omElement.getXMLStreamReader();
+    }
 
 }

@@ -30,27 +30,29 @@ import java.net.URL;
 
 public class SOAP12TestClient {
 
-	private static final Log log = LogFactory.getLog(SOAP12TestClient.class);
+    private static final Log log = LogFactory.getLog(SOAP12TestClient.class);
 
-    public String getReply(int port, String webserviceName,String testNumber) {
+    public String getReply(int port, String webserviceName, String testNumber) {
         String replyMessage = "";
         try {
-            URL netUrl = new URL("http://localhost:"+port+"/axis2/services/"+webserviceName+"/echo");
+            URL netUrl = new URL(
+                    "http://localhost:" + port + "/axis2/services/" + webserviceName + "/echo");
 
-            Socket socket =  new Socket("127.0.0.1",port);
+            Socket socket = new Socket("127.0.0.1", port);
 
             SOAPCreater soapCreater = new SOAPCreater();
-            String requestMessage = soapCreater.getStringFromSOAPMessage(testNumber,netUrl);
+            String requestMessage = soapCreater.getStringFromSOAPMessage(testNumber, netUrl);
             PrintWriter out = new PrintWriter(
                     socket.getOutputStream());
             out.println(requestMessage);
             out.flush();
             out.close();
 
-            BufferedReader reader = new BufferedReader( new InputStreamReader(socket.getInputStream()));
+            BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(socket.getInputStream()));
             StringBuffer sb = new StringBuffer();
             String response = reader.readLine();
-            while( null != response ) {
+            while (null != response) {
                 sb.append(response.trim());
                 response = reader.readLine();
             }
@@ -65,12 +67,13 @@ public class SOAP12TestClient {
         return replyMessage;
     }
 
-    public InputStream getRelpy(int port,String webserviceName,String testNumber) {
+    public InputStream getRelpy(int port, String webserviceName, String testNumber) {
         try {
-            URL netUrl = new URL("http://localhost:"+port+"/axis2/services/"+webserviceName+"/echo");
-            Socket socket =  new Socket("127.0.0.1",port);
+            URL netUrl = new URL(
+                    "http://localhost:" + port + "/axis2/services/" + webserviceName + "/echo");
+            Socket socket = new Socket("127.0.0.1", port);
             SOAPCreater soapCreater = new SOAPCreater();
-            String requestMessage = soapCreater.getStringFromSOAPMessage(testNumber,netUrl);
+            String requestMessage = soapCreater.getStringFromSOAPMessage(testNumber, netUrl);
             PrintWriter out = new PrintWriter(
                     socket.getOutputStream());
             out.println(requestMessage);

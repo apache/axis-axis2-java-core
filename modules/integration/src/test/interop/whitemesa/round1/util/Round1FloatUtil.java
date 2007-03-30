@@ -30,14 +30,17 @@ public class Round1FloatUtil implements SunClientUtil {
         SOAPFactory omfactory = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
 
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace typeNs =
+                reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
 
-        OMElement operation = omfactory.createOMElement("echoFloat", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoFloat", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
         operation.declareNamespace(envNs);
         operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);

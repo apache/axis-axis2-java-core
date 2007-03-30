@@ -18,7 +18,6 @@ package org.apache.axis2.engine;
 
 //todo
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
@@ -80,7 +79,7 @@ public class OneWayRawXMLTest extends UtilServerBasedTestCase implements TestCon
         OMElement payload = TestingUtils.createDummyOMElement();
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null,null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
         ServiceClient sender = new ServiceClient(configContext, null);
 
         Options options = new Options();

@@ -18,27 +18,27 @@
 
 package org.apache.axis2.jaxws.description;
 
-import java.net.URL;
-
 import javax.wsdl.Definition;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
+import java.net.URL;
 
 /**
  * 
  */
 public class DescriptionTestUtils {
-    
+
     /*
-     * ========================================================================
-     * Test utility methods
-     * ========================================================================
-     */
+    * ========================================================================
+    * Test utility methods
+    * ========================================================================
+    */
 
     static public URL getWSDLURL() {
         return getWSDLURL("WSDLTests.wsdl");
-        
+
     }
+
     static public URL getWSDLURL(String wsdlFileName) {
         URL wsdlURL = null;
         // Get the URL to the WSDL file.  Note that 'basedir' is setup by Maven
@@ -47,11 +47,12 @@ public class DescriptionTestUtils {
         try {
             wsdlURL = new URL(urlString);
         } catch (Exception e) {
-            System.out.println("Caught exception creating WSDL URL :" + urlString + "; exception: " + e.toString());
+            System.out.println("Caught exception creating WSDL URL :" + urlString +
+                    "; exception: " + e.toString());
         }
         return wsdlURL;
     }
-    
+
     static Definition createWSDLDefinition(URL wsdlURL) {
         Definition wsdlDefinition = null;
         try {
@@ -60,7 +61,8 @@ public class DescriptionTestUtils {
             wsdlDefinition = reader.readWSDL(wsdlURL.toString());
         }
         catch (Exception e) {
-            System.out.println("*** ERROR ***: Caught exception trying to create WSDL Definition: " + e);
+            System.out.println(
+                    "*** ERROR ***: Caught exception trying to create WSDL Definition: " + e);
             e.printStackTrace();
         }
 

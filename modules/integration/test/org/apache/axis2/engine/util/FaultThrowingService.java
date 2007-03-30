@@ -2,7 +2,13 @@ package org.apache.axis2.engine.util;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.soap.*;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPFaultDetail;
+import org.apache.axiom.soap.SOAPFaultReason;
+import org.apache.axiom.soap.SOAPFaultText;
+import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 
@@ -35,14 +41,17 @@ public class FaultThrowingService {
     public OMElement echoWithFault(OMElement echoOMElement) throws AxisFault {
         String text = echoOMElement.getText();
         if (THROW_FAULT_AS_AXIS_FAULT.equalsIgnoreCase(text)) {
-            throw new AxisFault(new QName("http://test.org", "TestFault", "test"), "FaultReason", new Exception("This is a test Exception"));
+            throw new AxisFault(new QName("http://test.org", "TestFault", "test"), "FaultReason",
+                                new Exception("This is a test Exception"));
         } else if (THROW_FAULT_WITH_MSG_CTXT.equalsIgnoreCase(text)) {
             MessageContext inMessageContext = MessageContext.getCurrentMessageContext();
             initFaultInformation(inMessageContext);
 
             inMessageContext.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
-            inMessageContext.setProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, soapFaultReason);
-            inMessageContext.setProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, soapFaultDetail);
+            inMessageContext
+                    .setProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, soapFaultReason);
+            inMessageContext
+                    .setProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, soapFaultDetail);
             throw new AxisFault("Fake exception occurred !!");
         } else {
             return echoOMElement;

@@ -16,6 +16,9 @@
  */
 package org.apache.axis2.jaxws.utility;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,31 +31,27 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
- * Provides utilities to convert an object into a different kind of Object.
- * For example, convert a String[] into a List<String>
+ * Provides utilities to convert an object into a different kind of Object. For example, convert a
+ * String[] into a List<String>
  */
 public class ConvertUtils {
 
     private static final Log log = LogFactory.getLog(ConvertUtils.class);
+
     /**
-     * This method should return true if the convert method 
-     * will succeed.
-     * 
-     * Note that any changes to isConvertable() must also
-     * be accompanied by similar changes to convert()
-     * 
-     * @param obj source object or class
+     * This method should return true if the convert method will succeed.
+     * <p/>
+     * Note that any changes to isConvertable() must also be accompanied by similar changes to
+     * convert()
+     *
+     * @param obj  source object or class
      * @param dest destination class
      * @return boolean true if convert(..) can convert obj to the destination class
      */
-    public static boolean isConvertable(Object obj, Class dest)
-    {
+    public static boolean isConvertable(Object obj, Class dest) {
         Class src = null;
-        
+
         if (obj != null) {
             if (obj instanceof Class) {
                 src = (Class)obj;
@@ -60,20 +59,20 @@ public class ConvertUtils {
                 src = obj.getClass();
             }
         }
-        
+
         if (dest == null) {
             return false;
         }
-        
+
         if (src == null) {
             return true;
         }
-        
+
         // If we're directly assignable, we're good.
         if (dest.isAssignableFrom(src)) {
             return true;
         }
-        
+
         // If it's a wrapping conversion, we're good.
         if (JavaUtils.getWrapperClass(src) == dest) {
             return true;
@@ -81,26 +80,26 @@ public class ConvertUtils {
         if (JavaUtils.getWrapperClass(dest) == src) {
             return true;
         }
-        
+
         // If it's List -> Array or vice versa, we're good.
         if ((Collection.class.isAssignableFrom(src) || src.isArray()) &&
                 (Collection.class.isAssignableFrom(dest) || dest.isArray())) {
             return true;
         }
-        
+
         // Allow mapping of HashMaps to Hashtables
         if (src == HashMap.class && dest == Hashtable.class)
             return true;
-        
+
         // Allow mapping of Calendar to Date
         if (Calendar.class.isAssignableFrom(src) && dest == Date.class) {
             return true;
         }
-        
+
         if (src.isPrimitive()) {
-            return isConvertable(JavaUtils.getWrapperClass(src),dest);
+            return isConvertable(JavaUtils.getWrapperClass(src), dest);
         }
-        
+
         // If it's a MIME type mapping and we want a DataHandler,
         // then we're good.
         // REVIEW Do we want to support this
@@ -115,26 +114,24 @@ public class ConvertUtils {
         }
         */
 
-        
+
         return false;
     }
-    
-    /** 
+
+    /**
      * Utility function to convert an Object to some desired Class.
+     * <p/>
+     * Normally this is used for T[] to List<T> processing. Other conversions are also done (i.e.
+     * HashMap <->Hashtable, etc.)
+     * <p/>
+     * Use the isConvertable() method to determine if conversion is possible. Note that any changes
+     * to convert() must also be accompanied by similar changes to isConvertable()
      *
-     * Normally this is used for T[] to List<T> processing.
-     * Other conversions are also done (i.e. HashMap <->Hashtable, etc.)
-     * 
-     * Use the isConvertable() method to determine if conversion is possible.
-     * Note that any changes to convert() must also
-     * be accompanied by similar changes to isConvertable()
-     *
-     * @param arg the array to convert
+     * @param arg       the array to convert
      * @param destClass the actual class we want
      * @return object of destClass if conversion possible, otherwise returns arg
      */
-    public static Object convert(Object arg, Class destClass)
-    {
+    public static Object convert(Object arg, Class destClass) {
         if (destClass == null) {
             return arg;
         }
@@ -146,16 +143,14 @@ public class ConvertUtils {
         if (log.isDebugEnabled()) {
             String clsName = "null";
             if (arg != null) clsName = arg.getClass().getName();
-            log.debug("Converting an object of type " + clsName + " to an object of type " + 
+            log.debug("Converting an object of type " + clsName + " to an object of type " +
                     destClass.getName());
         }
 
-
         // Convert between Calendar and Date
         if (arg instanceof Calendar && destClass == Date.class) {
-            return ((Calendar) arg).getTime();
+            return ((Calendar)arg).getTime();
         }
-
 
         // Convert between HashMap and Hashtable
         if (arg instanceof HashMap && destClass == Hashtable.class) {
@@ -179,10 +174,10 @@ public class ConvertUtils {
 
         // Return if no conversion is available
         if (!(arg instanceof Collection ||
-              (arg != null && arg.getClass().isArray()))) {
+                (arg != null && arg.getClass().isArray()))) {
             return arg;
         }
-        
+
         if (arg == null) {
             return arg;
         }
@@ -193,7 +188,7 @@ public class ConvertUtils {
         if (arg.getClass().isArray()) {
             length = Array.getLength(arg);
         } else {
-            length = ((Collection) arg).size();
+            length = ((Collection)arg).size();
         }
         if (destClass.isArray()) {
             if (destClass.getComponentType().isPrimitive()) {
@@ -208,7 +203,7 @@ public class ConvertUtils {
                 } else {
                     int idx = 0;
                     for (Iterator i = ((Collection)arg).iterator();
-                            i.hasNext();) {
+                         i.hasNext();) {
                         Array.set(array, idx++, i.next());
                     }
                 }
@@ -232,15 +227,14 @@ public class ConvertUtils {
                 } else {
                     int idx = 0;
                     for (Iterator i = ((Collection)arg).iterator();
-                            i.hasNext();) {
+                         i.hasNext();) {
                         array[idx++] = convert(i.next(),
-                                           destClass.getComponentType());
+                                               destClass.getComponentType());
                     }
                 }
                 destValue = array;
             }
-        }
-        else if (Collection.class.isAssignableFrom(destClass)) {
+        } else if (Collection.class.isAssignableFrom(destClass)) {
             Collection newList = null;
             try {
                 // if we are trying to create an interface, build something
@@ -253,7 +247,7 @@ public class ConvertUtils {
                     newList = (Collection)destClass.newInstance();
                 }
             } catch (Exception e) {
-               // No FFDC code needed
+                // No FFDC code needed
                 // Couldn't build one for some reason... so forget it.
                 return arg;
             }
@@ -264,13 +258,12 @@ public class ConvertUtils {
                 }
             } else {
                 for (Iterator j = ((Collection)arg).iterator();
-                            j.hasNext();) {
+                     j.hasNext();) {
                     newList.add(j.next());
                 }
             }
             destValue = newList;
-        }
-        else {
+        } else {
             destValue = arg;
         }
         return destValue;

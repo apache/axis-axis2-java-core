@@ -33,18 +33,22 @@ import javax.xml.namespace.QName;
  */
 
 public class FaultHandler extends AbstractHandler {
-    public static final String FAULT_REASON = "This is a test fault message which happened suddenly";
-    public static final String DETAIL_MORE_INFO = "This error is a result due to a fake problem in Axis2 engine. Do not worry ;)";
+    public static final String FAULT_REASON =
+            "This is a test fault message which happened suddenly";
+    public static final String DETAIL_MORE_INFO =
+            "This error is a result due to a fake problem in Axis2 engine. Do not worry ;)";
     public static final String M_FAULT_EXCEPTION = "m:FaultException";
 
     public static final String ERR_HANDLING_WITH_MSG_CTXT = "ErrorHandlingWithParamsSetToMsgCtxt";
-    public static final String ERR_HANDLING_WITH_AXIS_FAULT = "ErrorHandlingWithParamsSetToAxisFault";
+    public static final String ERR_HANDLING_WITH_AXIS_FAULT =
+            "ErrorHandlingWithParamsSetToAxisFault";
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         // this handler will be used to check the fault handling of Axis2.
         // this will create some dummy faults and send
 
-        SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() : OMAbstractFactory.getSOAP12Factory();
+        SOAPFactory soapFac = msgContext.isSOAP11() ? OMAbstractFactory.getSOAP11Factory() :
+                OMAbstractFactory.getSOAP12Factory();
 
         // I have a sudden fake error ;)
         OMElement firstElement = msgContext.getEnvelope().getBody().getFirstElement();
@@ -55,16 +59,16 @@ public class FaultHandler extends AbstractHandler {
         if (ERR_HANDLING_WITH_MSG_CTXT.equals(firstElement.getLocalName())) {
             SOAPFaultCode soapFaultCode = soapFac.createSOAPFaultCode();
             soapFaultCode.declareNamespace("http://someuri.org", "m");
-            if(msgContext.isSOAP11()) {
+            if (msgContext.isSOAP11()) {
                 soapFaultCode.setText(M_FAULT_EXCEPTION);
             } else {
                 SOAPFaultValue soapFaultValue = soapFac.createSOAPFaultValue(soapFaultCode);
                 soapFaultValue.setText(M_FAULT_EXCEPTION);
             }
-            
+
             SOAPFaultReason soapFaultReason = soapFac.createSOAPFaultReason();
 
-            if(msgContext.isSOAP11()) {
+            if (msgContext.isSOAP11()) {
                 soapFaultReason.setText(FAULT_REASON);
             } else {
                 SOAPFaultText soapFaultText = soapFac.createSOAPFaultText();
@@ -82,8 +86,9 @@ public class FaultHandler extends AbstractHandler {
 
             throw new AxisFault("A dummy exception has occurred");
         } else if (ERR_HANDLING_WITH_AXIS_FAULT.equals(firstElement.getLocalName())) {
-            throw new AxisFault(new QName(M_FAULT_EXCEPTION), FAULT_REASON, null, null, detailEntry);
+            throw new AxisFault(new QName(M_FAULT_EXCEPTION), FAULT_REASON, null, null,
+                                detailEntry);
         }
-        return InvocationResponse.CONTINUE;        
+        return InvocationResponse.CONTINUE;
     }
 }

@@ -18,33 +18,32 @@
  */
 package org.apache.axis2.jaxws.handler;
 
+import org.apache.axis2.jaxws.core.MessageContext;
+import org.apache.axis2.jaxws.message.Message;
+
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.axis2.jaxws.core.MessageContext;
-import org.apache.axis2.jaxws.message.Message;
-
 /**
- * The <tt>ProtectedMessageContext</tt> is the version of the MessageContext
- * that will be given to application handlers as the handler list 
- * is traversed.  Access to internal properties is limited by the protections
- * built into this context.
- * 
+ * The <tt>ProtectedMessageContext</tt> is the version of the MessageContext that will be given to
+ * application handlers as the handler list is traversed.  Access to internal properties is limited
+ * by the protections built into this context.
  */
 public class ProtectedMessageContext implements javax.xml.ws.handler.MessageContext {
-    
+
     protected MessageContext msgContext;
     private Map<String, Scope> scope = new Hashtable<String, Scope>();
+
     public ProtectedMessageContext() {
         //do nothing
     }
-    
+
     public ProtectedMessageContext(MessageContext mc) {
         msgContext = mc;
     }
-    
+
     public Scope getScope(String s) {
         return scope.get(s);
     }
@@ -52,11 +51,11 @@ public class ProtectedMessageContext implements javax.xml.ws.handler.MessageCont
     public void setScope(String s, Scope scope) {
         this.scope.put(s, scope);
     }
-    
+
     //--------------------------------------------------
     // java.util.Map methods
     //--------------------------------------------------
-    
+
     public void clear() {
         msgContext.getProperties().clear();
     }
@@ -90,7 +89,7 @@ public class ProtectedMessageContext implements javax.xml.ws.handler.MessageCont
     }
 
     public void putAll(Map t) {
-        msgContext.getProperties().putAll(t);        
+        msgContext.getProperties().putAll(t);
     }
 
     public Object remove(Object key) {
@@ -104,11 +103,11 @@ public class ProtectedMessageContext implements javax.xml.ws.handler.MessageCont
     public Collection values() {
         return msgContext.getProperties().values();
     }
-    
-    protected Message getMessageObject(){
-    	if(this.msgContext!=null){
-    		return this.msgContext.getMessage();
-    	}
-    	return null;
+
+    protected Message getMessageObject() {
+        if (this.msgContext != null) {
+            return this.msgContext.getMessage();
+        }
+        return null;
     }
 }

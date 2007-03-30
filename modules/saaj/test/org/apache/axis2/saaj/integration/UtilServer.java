@@ -25,7 +25,6 @@ import org.apache.axis2.deployment.DeploymentEngine;
 import org.apache.axis2.description.AxisModule;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 
 import javax.xml.namespace.QName;
@@ -90,7 +89,8 @@ public class UtilServer {
             throw new Exception("repository directory "
                     + file.getAbsolutePath() + " does not exists");
         }
-        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(), null);
+        return ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(file.getAbsolutePath(), null);
     }
 
     public static synchronized void stop() throws AxisFault {
@@ -137,14 +137,14 @@ public class UtilServer {
         ConfigurationContext configContext = ConfigurationContextFactory
                 .createConfigurationContextFromFileSystem(clientHome, null);
         AxisModule axisModule = DeploymentEngine.buildModule(file,
-                configContext.getAxisConfiguration());
+                                                             configContext.getAxisConfiguration());
 
         configContext.getAxisConfiguration().addModule(axisModule);
         // sysContext.getAxisConfiguration().engageModule(moduleDesc.getName());
 
         configContext.getAxisConfiguration().addService(service);
 
-        return new ServiceGroupContext(configContext, (AxisServiceGroup) service.getParent())
+        return new ServiceGroupContext(configContext, (AxisServiceGroup)service.getParent())
                 .getServiceContext(service);
     }
 

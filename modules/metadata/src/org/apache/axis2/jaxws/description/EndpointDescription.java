@@ -18,102 +18,111 @@
 
 package org.apache.axis2.jaxws.description;
 
-import java.util.List;
-import java.util.TreeSet;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.handler.PortInfo;
 import javax.xml.ws.soap.SOAPBinding;
 
-import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.jaxws.description.xml.handler.HandlerChainsType;
-
 /**
- * An EndpointDescription corresponds to a particular Service Implementation. It
- * can correspond to either either a client to that impl or the actual service
- * impl.
- * 
- * The EndpointDescription contains information that is relevant to both a
- * Provider-based and SEI-based (aka Endpoint-based or Java-based) enpdoints.
- * SEI-based endpoints (whether they have an explicit or implcit SEI) will have
- * addtional metadata information in an EndpointInterfaceDescription class and
- * sub-hierachy; Provider-based endpoitns do not have such a hierachy.
- * 
+ * An EndpointDescription corresponds to a particular Service Implementation. It can correspond to
+ * either either a client to that impl or the actual service impl.
+ * <p/>
+ * The EndpointDescription contains information that is relevant to both a Provider-based and
+ * SEI-based (aka Endpoint-based or Java-based) enpdoints. SEI-based endpoints (whether they have an
+ * explicit or implcit SEI) will have addtional metadata information in an
+ * EndpointInterfaceDescription class and sub-hierachy; Provider-based endpoitns do not have such a
+ * hierachy.
+ * <p/>
  * <pre>
  * <b>EndpointDescription details</b>
- * 
- *     CORRESPONDS TO:      The endpoint (both Client and Server)      
- *         
+ * <p/>
+ *     CORRESPONDS TO:      The endpoint (both Client and Server)
+ * <p/>
  *     AXIS2 DELEGATE:      AxisService
- *     
+ * <p/>
  *     CHILDREN:            0..1 EndpointInterfaceDescription
- *     
+ * <p/>
  *     ANNOTATIONS:
  *         WebService [181]
  *         WebServiceProvider [224]
  *             ServicMode [224]
- *         BindingType [224]   
- *     
+ *         BindingType [224]
+ * <p/>
  *     WSDL ELEMENTS:
  *         port
- *         
- *  </pre>       
+ * <p/>
+ *  </pre>
  */
 
 public interface EndpointDescription {
 
-    public static final String AXIS_SERVICE_PARAMETER = "org.apache.axis2.jaxws.description.EndpointDescription";
+    public static final String AXIS_SERVICE_PARAMETER =
+            "org.apache.axis2.jaxws.description.EndpointDescription";
     public static final String DEFAULT_CLIENT_BINDING_ID = SOAPBinding.SOAP11HTTP_BINDING;
 
     public abstract AxisService getAxisService();
+
     public abstract ServiceClient getServiceClient();
-    
+
     public abstract ServiceDescription getServiceDescription();
+
     public abstract EndpointInterfaceDescription getEndpointInterfaceDescription();
-    
+
     /**
      * Returns the JAX-WS handler PortInfo object for this endpoint.
+     *
      * @return PortInfo
      */
     public abstract PortInfo getPortInfo();
-    
+
     public abstract boolean isProviderBased();
+
     public abstract boolean isEndpointBased();
-    
+
     public abstract String getName();
+
     public abstract String getTargetNamespace();
+
     /**
-     * Returns the binding type FOR A SERVER.  This is based on the BindingType annotation and/or the WSDL.
-     * This will return the default binding (SOAP11) if no annotation was specified on the server.
-     * This should NOT be called on the client since it will always return the default binding.  
-     * Use getClientBindingID() on clients.  
+     * Returns the binding type FOR A SERVER.  This is based on the BindingType annotation and/or
+     * the WSDL. This will return the default binding (SOAP11) if no annotation was specified on the
+     * server. This should NOT be called on the client since it will always return the default
+     * binding. Use getClientBindingID() on clients.
+     *
      * @return
      */
     public abstract String getBindingType();
-    
+
     public abstract HandlerChainsType getHandlerChain();
-    
+
     /**
      * Set the binding type FOR A CLIENT.  The BindingType annotation is not valid on the client per
      * the JAX-WS spec.  The value can be set via addPort(...) for a Dispatch client or via TBD for
      * a Proxy client.
      */
     public abstract void setClientBindingID(String clientBindingID);
+
     /**
-     * Return the binding type FOR A CLIENT.  This will return the default client binding type
-     * if called on the server.  Use getBindingType() on servers.
-     * @see setClientBindingID();
+     * Return the binding type FOR A CLIENT.  This will return the default client binding type if
+     * called on the server.  Use getBindingType() on servers.
+     *
      * @return String representing the client binding type
+     * @see setClientBindingID();
      */
     public abstract String getClientBindingID();
-    
+
     public void setEndpointAddress(String endpointAddress);
+
     public abstract String getEndpointAddress();
-    
+
     //public abstract List<String> getHandlerList();
     public abstract QName getPortQName();
+
     public abstract QName getServiceQName();
-    public abstract Service.Mode getServiceMode(); 
+
+    public abstract Service.Mode getServiceMode();
 }

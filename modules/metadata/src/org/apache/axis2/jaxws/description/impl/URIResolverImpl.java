@@ -18,28 +18,25 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.ws.commons.schema.resolver.URIResolver;
+import org.xml.sax.InputSource;
+
 import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.ws.commons.schema.resolver.URIResolver;
-import org.xml.sax.InputSource;
-
-/**
- * This class is used to locate xml schemas that are imported by wsdl documents.
- * 
- */
+/** This class is used to locate xml schemas that are imported by wsdl documents. */
 public class URIResolverImpl implements URIResolver {
-	
-	private final String HTTP_PROTOCOL = "http";
-	
-	private final String HTTPS_PROTOCOL = "https";
-	
-	private final String FILE_PROTOCOL = "file";
+
+    private final String HTTP_PROTOCOL = "http";
+
+    private final String HTTPS_PROTOCOL = "https";
+
+    private final String FILE_PROTOCOL = "file";
 
     private ClassLoader classLoader;
 
@@ -51,7 +48,7 @@ public class URIResolverImpl implements URIResolver {
     }
 
     public InputSource resolveEntity(String namespace, String schemaLocation,
-            String baseUri) {
+                                     String baseUri) {
 
         InputStream is = null;
         URI pathURI = null;
@@ -59,29 +56,28 @@ public class URIResolverImpl implements URIResolver {
             try {
                 // if the location is an absolute path, build a URL directly
                 // from it
-            	
+
                 if (isAbsolute(schemaLocation)) {
                     is = getInputStreamForURI(schemaLocation);
                 }
 
                 // Try baseURI + relavtive schema path combo
                 else {
-           			pathURI = new URI(baseUri);
+                    pathURI = new URI(baseUri);
                     String pathURIStr = schemaLocation;
                     // If this is absolute we need to resolve the path without the 
                     // scheme information
-                    if(pathURI.isAbsolute()) {
-                    	URL url = new URL(baseUri);
-                    	if(url != null) {
-                    		URI tempURI = new URI(url.getPath());
-                        	URI resolvedURI = tempURI.resolve(schemaLocation);
-                        	// Add back the scheme to the resolved path
-                        	pathURIStr = constructPath(url, resolvedURI);
-                    	}
-                    }
-                    else {
-                    	pathURI = pathURI.resolve(schemaLocation);
-                    	pathURIStr = pathURI.toString();
+                    if (pathURI.isAbsolute()) {
+                        URL url = new URL(baseUri);
+                        if (url != null) {
+                            URI tempURI = new URI(url.getPath());
+                            URI resolvedURI = tempURI.resolve(schemaLocation);
+                            // Add back the scheme to the resolved path
+                            pathURIStr = constructPath(url, resolvedURI);
+                        }
+                    } else {
+                        pathURI = pathURI.resolve(schemaLocation);
+                        pathURIStr = pathURI.toString();
                     }
                     // If path is absolute, build URL directly from it
                     if (isAbsolute(pathURIStr)) {
@@ -99,16 +95,15 @@ public class URIResolverImpl implements URIResolver {
                     }
                 }
             } catch (Exception e) {
-					
+
             }
         }
         return new InputSource(is);
     }
 
     /**
-     * Checks to see if the location given is an absolute (actual) or relative
-     * path.
-     * 
+     * Checks to see if the location given is an absolute (actual) or relative path.
+     *
      * @param location
      * @return
      */
@@ -118,17 +113,16 @@ public class URIResolverImpl implements URIResolver {
             absolute = true;
         } else if (location.indexOf(":\\") != -1) {
             absolute = true;
-        }
-        else if(location.indexOf("file:") != -1) {
-        	absolute = true;
+        } else if (location.indexOf("file:") != -1) {
+            absolute = true;
         }
         return absolute;
     }
 
     /**
-     * Gets input stream from the uri given. If we cannot find the stream,
-     * <code>null</code> is returned.
-     * 
+     * Gets input stream from the uri given. If we cannot find the stream, <code>null</code> is
+     * returned.
+     *
      * @param uri
      * @return
      */
@@ -141,7 +135,7 @@ public class URIResolverImpl implements URIResolver {
             streamURL = new URL(uri);
             is = streamURL.openStream();
         } catch (Throwable t) {
-			//Exception handling not needed
+            //Exception handling not needed
         }
 
         if (is == null) {
@@ -150,7 +144,7 @@ public class URIResolverImpl implements URIResolver {
                 streamURL = pathURI.toURL();
                 is = streamURL.openStream();
             } catch (Throwable t) {
-				//Exception handling not needed
+                //Exception handling not needed
             }
         }
 
@@ -165,32 +159,35 @@ public class URIResolverImpl implements URIResolver {
         }
         return is;
     }
-    
+
     private String constructPath(URL baseURL, URI resolvedURI) {
-    	String importLocation = null;
-    	URL url = null;
-    	try {
-    		// Allow for http or https
-    		if(baseURL.getProtocol() != null && (baseURL.getProtocol().equals(
-    				HTTP_PROTOCOL) || baseURL.getProtocol().equals(HTTPS_PROTOCOL))) {
-        		url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(),
-        				resolvedURI.toString());
-        	}
-    		// Check for file
-    		else if(baseURL.getProtocol()!= null && baseURL.getProtocol().equals(FILE_PROTOCOL)) {
-        		url = new URL(baseURL.getProtocol(), baseURL.getHost(), resolvedURI.toString());
-        	}
-    	}
-    	catch(MalformedURLException e) {
-    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("schemaImportError", 
-    				resolvedURI.toString(), baseURL.toString()), e);
-    	}
-    	if(url == null) {
-    		throw ExceptionFactory.makeWebServiceException(Messages.getMessage("schemaImportError", 
-    				resolvedURI.toString(), baseURL.toString()));
-    	}
-    	importLocation = url.toString();
-    	return importLocation;
+        String importLocation = null;
+        URL url = null;
+        try {
+            // Allow for http or https
+            if (baseURL.getProtocol() != null && (baseURL.getProtocol().equals(
+                    HTTP_PROTOCOL) || baseURL.getProtocol().equals(HTTPS_PROTOCOL))) {
+                url = new URL(baseURL.getProtocol(), baseURL.getHost(), baseURL.getPort(),
+                              resolvedURI.toString());
+            }
+            // Check for file
+            else if (baseURL.getProtocol() != null && baseURL.getProtocol().equals(FILE_PROTOCOL)) {
+                url = new URL(baseURL.getProtocol(), baseURL.getHost(), resolvedURI.toString());
+            }
+        }
+        catch (MalformedURLException e) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("schemaImportError",
+                                                                               resolvedURI.toString(),
+                                                                               baseURL.toString()),
+                                                           e);
+        }
+        if (url == null) {
+            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("schemaImportError",
+                                                                               resolvedURI.toString(),
+                                                                               baseURL.toString()));
+        }
+        importLocation = url.toString();
+        return importLocation;
     }
-    
+
 }

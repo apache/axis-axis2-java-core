@@ -22,8 +22,8 @@ import org.apache.commons.logging.LogFactory;
 
 public class Echo {
 
-	private static final Log log = LogFactory.getLog(Echo.class);
-    
+    private static final Log log = LogFactory.getLog(Echo.class);
+
     public Echo() {
     }
 

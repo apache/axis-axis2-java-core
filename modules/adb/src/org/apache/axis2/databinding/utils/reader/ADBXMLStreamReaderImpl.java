@@ -33,32 +33,24 @@ import java.util.Map;
  */
 
 /**
- * This is the new implementation of the ADBpullaparser. The approach here is simple
- * When the pull parser needs to generate events for a particular name-value(s) pair
- * it always handes over (delegates) the task to another pull parser which knows how
- * to deal with it
- * The common types of name value pairs we'll come across are
- * 1. String name/QName name - String value
- * 2. String name/QName name - String[] value
- * 3. OMElementkey - OMElement value
- * 4. QName name/String name  - ADBBean value
- * 5. QName name/String name  - Java bean
- * 5. QName name/String name  - Datahandler
+ * This is the new implementation of the ADBpullaparser. The approach here is simple When the pull
+ * parser needs to generate events for a particular name-value(s) pair it always handes over
+ * (delegates) the task to another pull parser which knows how to deal with it The common types of
+ * name value pairs we'll come across are 1. String name/QName name - String value 2. String
+ * name/QName name - String[] value 3. OMElementkey - OMElement value 4. QName name/String name  -
+ * ADBBean value 5. QName name/String name  - Java bean 5. QName name/String name  - Datahandler
  * <p/>
- * As for the attributes, these are the possible combinations in the
- * array
- * 1. String name/QName name - String value
- * 2. OMAttributeKey - OMAttribute
+ * As for the attributes, these are the possible combinations in the array 1. String name/QName name
+ * - String value 2. OMAttributeKey - OMAttribute
  * <p/>
- * Note that certain array methods have  been deliberately removed to avoid
- * complications. The generated code will take the trouble to lay the
- * elements of the array in the correct order
+ * Note that certain array methods have  been deliberately removed to avoid complications. The
+ * generated code will take the trouble to lay the elements of the array in the correct order
  * <p/>
  * <p/>
- * Hence there will be a parser impl that knows how to handle these types, and
- * this parent parser will always delegate these tasks to the child pullparasers
- * in effect this is one huge state machine that has only a few states and delegates
- * things down to the child parsers whenever possible
+ * Hence there will be a parser impl that knows how to handle these types, and this parent parser
+ * will always delegate these tasks to the child pullparasers in effect this is one huge state
+ * machine that has only a few states and delegates things down to the child parsers whenever
+ * possible
  * <p/>
  */
 public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
@@ -120,9 +112,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         this.typeTable = typeTable;
     }
 
-    /**
-     * add the namespace context
-     */
+    /** add the namespace context */
 
     public void addNamespaceContext(NamespaceContext nsContext) {
         // register the namespace context passed in to this
@@ -132,9 +122,8 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     }
 
     /**
-     * we need to split out the calling to the populate namespaces
-     * seperately since this needs to be done *after* setting the
-     * parent namespace context. We cannot assume it will happen at
+     * we need to split out the calling to the populate namespaces seperately since this needs to be
+     * done *after* setting the parent namespace context. We cannot assume it will happen at
      * construction!
      */
     public void init() {
@@ -199,9 +188,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         return 0;
     }
 
-    /**
-     * @throws XMLStreamException
-     */
+    /** @throws XMLStreamException  */
     public boolean hasNext() throws XMLStreamException {
         if (state == DELEGATED_STATE) {
             if (childReader.isDone()) {
@@ -292,12 +279,11 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     public int getAttributeCount() {
         return (state == DELEGATED_STATE) ?
                 childReader.getAttributeCount() :
-                ((attributes != null) && (state == START_ELEMENT_STATE) ? attributes.length / 2 : 0);
+                ((attributes != null) && (state == START_ELEMENT_STATE) ? attributes.length / 2 :
+                        0);
     }
 
-    /**
-     * @param i
-     */
+    /** @param i  */
     public QName getAttributeName(int i) {
         if (state == DELEGATED_STATE) {
             return childReader.getAttributeName(i);
@@ -321,7 +307,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                             // sure
                             throw new UnsupportedOperationException();
                         }
-                        OMAttribute att = (OMAttribute) omAttribObj;
+                        OMAttribute att = (OMAttribute)omAttribObj;
                         return att.getQName();
                     } else if (attribPointer instanceof OMAttribKey) {
                         Object omAttribObj = attributes[(i * 2) + 1];
@@ -332,13 +318,13 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                             // sure
                             throw new UnsupportedOperationException();
                         }
-                        OMAttribute att = (OMAttribute) omAttribObj;
+                        OMAttribute att = (OMAttribute)omAttribObj;
                         return att.getQName();
                         //case two - attrib name is a plain string
                     } else if (attribPointer instanceof String) {
-                        return new QName((String) attribPointer);
+                        return new QName((String)attribPointer);
                     } else if (attribPointer instanceof QName) {
-                        return (QName) attribPointer;
+                        return (QName)attribPointer;
                     } else {
                         return null;
                     }
@@ -423,7 +409,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                             // sure
                             throw new UnsupportedOperationException();
                         }
-                        OMAttribute att = (OMAttribute) omAttribObj;
+                        OMAttribute att = (OMAttribute)omAttribObj;
                         return att.getAttributeValue();
                     } else if (attribPointer instanceof OMAttribKey) {
                         if (omAttribObj == null ||
@@ -433,13 +419,13 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                             // sure
                             throw new UnsupportedOperationException();
                         }
-                        OMAttribute att = (OMAttribute) omAttribObj;
+                        OMAttribute att = (OMAttribute)omAttribObj;
                         return att.getAttributeValue();
                         //case two - attrib name is a plain string
                     } else if (attribPointer instanceof String) {
-                        return (String) omAttribObj;
+                        return (String)omAttribObj;
                     } else if (attribPointer instanceof QName) {
-                        return (String) omAttribObj;
+                        return (String)omAttribObj;
                     } else {
                         return null;
                     }
@@ -471,9 +457,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         }
     }
 
-    /**
-     * @param i
-     */
+    /** @param i  */
     public String getNamespacePrefix(int i) {
         if (state == DELEGATED_STATE) {
             return childReader.getNamespacePrefix(i);
@@ -492,12 +476,10 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 
     }
 
-    /**
-     * Get the prefix list from the hastable and take that into an array
-     */
+    /** Get the prefix list from the hastable and take that into an array */
     private String[] makePrefixArray() {
         String[] prefixes =
-                (String[]) declaredNamespaceMap.keySet().
+                (String[])declaredNamespaceMap.keySet().
                         toArray(new String[declaredNamespaceMap.size()]);
         Arrays.sort(prefixes);
         return prefixes;
@@ -509,7 +491,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         } else if (state != TEXT_STATE) {
             String namespacePrefix = getNamespacePrefix(i);
             return namespacePrefix == null ? null :
-                    (String) declaredNamespaceMap.get(namespacePrefix);
+                    (String)declaredNamespaceMap.get(namespacePrefix);
         } else {
             throw new IllegalStateException();
         }
@@ -545,7 +527,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         if (state == DELEGATED_STATE) {
             return childReader.getText();
         } else if (state == TEXT_STATE) {
-            return (String) properties[currentPropertyIndex - 1];
+            return (String)properties[currentPropertyIndex - 1];
         } else {
             throw new IllegalStateException();
         }
@@ -556,7 +538,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             return childReader.getTextCharacters();
         } else if (state == TEXT_STATE) {
             return properties[currentPropertyIndex - 1] == null ? new char[0] :
-                    ((String) properties[currentPropertyIndex - 1]).toCharArray();
+                    ((String)properties[currentPropertyIndex - 1]).toCharArray();
         } else {
             throw new IllegalStateException();
         }
@@ -605,9 +587,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         }
     }
 
-    /**
-     * check the validity of this implementation
-     */
+    /** check the validity of this implementation */
     public boolean hasText() {
         if (state == DELEGATED_STATE) {
             return childReader.hasText();
@@ -722,9 +702,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
 //////////////////////////////////////////////////////////////////////////
 
 
-    /**
-     * Populates a namespace context
-     */
+    /** Populates a namespace context */
     private void populateNamespaceContext() {
 
         //first add the current element namespace to the namespace context
@@ -743,26 +721,26 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
                 Object attribName = attributes[i];
                 if (attribName == null) {
                     //this should be the OMAttrib case!
-                    OMAttribute OMAttrib = (OMAttribute) attributes[i + 1];
+                    OMAttribute OMAttrib = (OMAttribute)attributes[i + 1];
                     OMNamespace namespace = OMAttrib.getNamespace();
                     if (namespace != null) {
                         addToNsMap(namespace.getPrefix(),
-                                namespace.getNamespaceURI());
+                                   namespace.getNamespaceURI());
                     }
                 } else if (attribName instanceof OMAttribKey) {
                     //this is definitely the OMAttribute case
-                    OMAttribute OMAttrib = (OMAttribute) attributes[i + 1];
+                    OMAttribute OMAttrib = (OMAttribute)attributes[i + 1];
                     OMNamespace namespace = OMAttrib.getNamespace();
                     if (namespace != null) {
                         addToNsMap(namespace.getPrefix(),
-                                namespace.getNamespaceURI());
+                                   namespace.getNamespaceURI());
                     }
                 } else if (attribName instanceof String) {
                     //ignore this case - Nothing to do
                 } else if (attribName instanceof QName) {
-                    QName attribQName = ((QName) attribName);
+                    QName attribQName = ((QName)attribName);
                     addToNsMap(attribQName.getPrefix(),
-                            attribQName.getNamespaceURI());
+                               attribQName.getNamespaceURI());
 
                 }
             }
@@ -783,8 +761,8 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
     }
 
     /**
-     * By far this should be the most important method in this class
-     * this method changes the state of the parser
+     * By far this should be the most important method in this class this method changes the state
+     * of the parser
      */
     public int next() throws XMLStreamException {
         int returnEvent = -1; //invalid state is the default state
@@ -860,10 +838,10 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             if (ELEMENT_TEXT.equals(propPointer)) {
                 textFound = true;
             } else {
-                propertyQName = new QName((String) propPointer);
+                propertyQName = new QName((String)propPointer);
             }
         } else if (propPointer instanceof QName) {
-            propertyQName = (QName) propPointer;
+            propertyQName = (QName)propPointer;
         } else if (propPointer instanceof OMElementKey) {
             // ah - in this case there's nothing to be done
             //about the propertyQName in this case - we'll just leave
@@ -894,7 +872,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             //we've a special pullparser for a datahandler!
         } else if (propertyValue instanceof DataHandler) {
             childReader = new ADBDataHandlerStreamReader(propertyQName,
-                    (DataHandler) propertyValue);
+                                                         (DataHandler)propertyValue);
             childReader.addNamespaceContext(this.namespaceContext);
             childReader.init();
 
@@ -902,32 +880,32 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             //strings are handled by the NameValuePairStreamReader
             childReader =
                     new NameValuePairStreamReader(propertyQName,
-                            (String) propertyValue);
+                                                  (String)propertyValue);
             childReader.addNamespaceContext(this.namespaceContext);
             childReader.init();
         } else if (propertyValue instanceof String[]) {
             //string[] are handled by the  NameValueArrayStreamReader
             //if the array is empty - skip it
-            if (((String[]) propertyValue).length == 0) {
+            if (((String[])propertyValue).length == 0) {
                 //advance the index
                 currentPropertyIndex = currentPropertyIndex + 2;
                 return processProperties();
             } else {
                 childReader =
                         new NameValueArrayStreamReader(propertyQName,
-                                (String[]) propertyValue);
+                                                       (String[])propertyValue);
                 childReader.addNamespaceContext(this.namespaceContext);
                 childReader.init();
             }
 
         } else if (propertyValue instanceof ADBBean) {
             //ADBbean has it's own method to get a reader
-            XMLStreamReader reader = ((ADBBean) propertyValue).
+            XMLStreamReader reader = ((ADBBean)propertyValue).
                     getPullParser(propertyQName);
             // we know for sure that this is an ADB XMLStreamreader.
             // However we need to make sure that it is compatible
             if (reader instanceof ADBXMLStreamReader) {
-                childReader = (ADBXMLStreamReader) reader;
+                childReader = (ADBXMLStreamReader)reader;
                 childReader.addNamespaceContext(this.namespaceContext);
                 childReader.init();
             } else {
@@ -939,7 +917,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             //OMElements do not provide the kind of parser we need
             //there is no other option than wrapping
             childReader = new WrappingXMLStreamReader(
-                    ((OMElement) propertyValue).getXMLStreamReader());
+                    ((OMElement)propertyValue).getXMLStreamReader());
             //we cannot register the namespace context here!!
 
         } else {
@@ -947,7 +925,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
             //the thing as a bean and try generating events from it
             childReader = new WrappingXMLStreamReader
                     (BeanUtil.getPullParser(propertyValue,
-                            propertyQName, typeTable, qualified));
+                                            propertyQName, typeTable, qualified));
             //we cannot register the namespace context here
         }
 
@@ -959,9 +937,7 @@ public class ADBXMLStreamReaderImpl implements ADBXMLStreamReader {
         return childReader.getEventType();
     }
 
-    /**
-     * are we done ?
-     */
+    /** are we done ? */
     public boolean isDone() {
         return (state == END_ELEMENT_STATE);
     }

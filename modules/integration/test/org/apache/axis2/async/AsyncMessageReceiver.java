@@ -7,7 +7,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.i18n.Messages;
 import org.apache.axis2.receivers.AbstractInOutAsyncMessageReceiver;
 
@@ -52,16 +51,16 @@ public class AsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
                     args = new Object[0];
                 } else if (parameters.length == 1) {
                     OMElement omElement = msgContext.getEnvelope().getBody().getFirstElement();
-                    args = new Object[]{omElement};
+                    args = new Object[] { omElement };
                 } else {
                     throw new AxisFault(Messages.getMessage("rawXmlProivdeIsLimited"));
                 }
 
-                OMElement result = (OMElement) method.invoke(obj, args);
+                OMElement result = (OMElement)method.invoke(obj, args);
                 AxisService service = msgContext.getAxisService();
                 service.getTargetNamespace();
                 result.declareNamespace(service.getTargetNamespace(),
-                        service.getTargetNamespacePrefix());
+                                        service.getTargetNamespacePrefix());
                 OMElement bodyContent;
 
                 SOAPFactory fac = getSOAPFactory(msgContext);
@@ -76,7 +75,7 @@ public class AsyncMessageReceiver extends AbstractInOutAsyncMessageReceiver {
                 newmsgContext.setEnvelope(envelope);
             } else {
                 throw new AxisFault(Messages.getMessage("methodNotImplemented",
-                        opDesc.getName().toString()));
+                                                        opDesc.getName().toString()));
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

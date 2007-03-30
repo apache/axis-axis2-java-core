@@ -15,6 +15,8 @@
  */
 package org.apache.axis2.saaj;
 
+import junit.framework.TestCase;
+
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Node;
 import javax.xml.soap.SAAJResult;
@@ -24,8 +26,6 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -48,14 +48,14 @@ public class SAAJResultTest extends TestCase {
         headerEle.setActor("actor-URI");
     }
 
-    
+
     public void testGetResult() {
-    	try{
-    		SAAJResult sr = new SAAJResult();
-    		Node node = sr.getResult();
-    		assertNull(node);
-    	} catch (Exception e) {
-    		fail("Exception: " + e);
-    	}
+        try {
+            SAAJResult sr = new SAAJResult();
+            Node node = sr.getResult();
+            assertNull(node);
+        } catch (Exception e) {
+            fail("Exception: " + e);
+        }
     }
 }

@@ -44,7 +44,7 @@ public class AddressingMessages {
                     : MessagesConstants.rootBundle;
 
 
-    /** ** NO NEED TO CHANGE ANYTHING BELOW **** */
+    /** * NO NEED TO CHANGE ANYTHING BELOW **** */
 
     private static final MessageBundle messageBundle =
             new MessageBundle(projectName, packageName, resourceName,

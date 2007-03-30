@@ -17,48 +17,43 @@
 package org.apache.axis2.jaxws.runtime.description.marshal;
 
 /**
- * Description of FaultBean for a FaultDescription.
- * The FaultBean is used to marshal and unmarshal the exception.  The FaultBean
- * is determined via annotation, faultInfo and package introspection.
+ * Description of FaultBean for a FaultDescription. The FaultBean is used to marshal and unmarshal
+ * the exception.  The FaultBean is determined via annotation, faultInfo and package introspection.
  */
 public interface FaultBeanDesc {
-    
+
     /**
-     * Get the class name of the fault bean for the FaultDescription.
-     * Note that the FaultBean may not be a bean.  It can be a non-bean (i.e. String or int)
-     * 
-     * Algorithm:
-     *   1) The class defined on @WebFault of the exception
-     *   2) If not present or invalid, the class defined by getFaultInfo.
-     *   3) If not present, the class is found by looking for the
-     *      a class named <exceptionName>Bean in the interface's package.
-     *   4) If not present, the class is found by looking for the
-     *      a class named <exceptionName>Bean in the interface + jaxws package
-     * @return 
+     * Get the class name of the fault bean for the FaultDescription. Note that the FaultBean may
+     * not be a bean.  It can be a non-bean (i.e. String or int)
+     * <p/>
+     * Algorithm: 1) The class defined on @WebFault of the exception 2) If not present or invalid,
+     * the class defined by getFaultInfo. 3) If not present, the class is found by looking for the a
+     * class named <exceptionName>Bean in the interface's package. 4) If not present, the class is
+     * found by looking for the a class named <exceptionName>Bean in the interface + jaxws package
+     *
+     * @return
      */
     public String getFaultBeanClassName();
-    
+
     /**
-     * Get the local name of the fault bean.
-     * Algorithm:
-     *   1) The name defined on the @WebFault of the exception.
-     *   2) If not present, the name defined via the @XmlRootElement of the fault bean class.
-     *   3) If not present, the <exceptionName>Bean
+     * Get the local name of the fault bean. Algorithm: 1) The name defined on the @WebFault of the
+     * exception. 2) If not present, the name defined via the @XmlRootElement of the fault bean
+     * class. 3) If not present, the <exceptionName>Bean
+     *
      * @return local name
      */
     public String getFaultBeanLocalName();
-    
-   
+
+
     /**
-     * Get the targetNamespace of the fault bean.
-     * Algorithm:
-     *   1) The namespace defined on the @WebFault of the exception.
-     *   2) If not present, the namespace defined via the @XmlRootElement of the class name.
-     *   3) If not present, the namespace of the method's declared class + "/jaxws"
+     * Get the targetNamespace of the fault bean. Algorithm: 1) The namespace defined on the
+     * @WebFault of the exception. 2) If not present, the namespace defined via the @XmlRootElement
+     * of the class name. 3) If not present, the namespace of the method's declared class +
+     * "/jaxws"
+     *
      * @return local name
      */
     public String getFaultBeanNamespace();
-    
-   
+
 
 }

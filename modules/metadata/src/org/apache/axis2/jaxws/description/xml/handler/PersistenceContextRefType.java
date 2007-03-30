@@ -8,8 +8,6 @@
 
 package org.apache.axis2.jaxws.description.xml.handler;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -18,59 +16,50 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * 
- * 	
- * 
- * 	  The persistence-context-ref element contains a declaration
- * 	  of Deployment Component's reference to a persistence context
- * 	  associated within a Deployment Component's
- * 	  environment. It consists of:
- * 
- * 		  - an optional description
- * 		  - the persistence context reference name
- * 		  - an optional persistence unit name.  If not specified,
- *                     the default persistence unit is assumed.
- * 		  - an optional specification as to whether
- * 		    the persistence context type is Transaction or
- * 		    Extended.  If not specified, Transaction is assumed.
- *                   - an optional list of persistence properties
- * 		  - optional injection targets
- * 
- * 	  Examples:
- * 
- *             <persistence-context-ref>
- *               <persistence-context-ref-name>myPersistenceContext
- *               </persistence-context-ref-name>
- *             </persistence-context-ref>
- * 
- *             <persistence-context-ref>
- *               <persistence-context-ref-name>myPersistenceContext
- *                 </persistence-context-ref-name>
- *               <persistence-unit-name>PersistenceUnit1
- *                 </persistence-unit-name>
- *               <persistence-context-type>Extended</persistence-context-type>
- *             </persistence-context-ref>
- * 
- * 	  
- *       
- * 
+ * The persistence-context-ref element contains a declaration of Deployment Component's reference to
+ * a persistence context associated within a Deployment Component's environment. It consists of:
+ * <p/>
+ * - an optional description - the persistence context reference name - an optional persistence unit
+ * name.  If not specified, the default persistence unit is assumed. - an optional specification as
+ * to whether the persistence context type is Transaction or Extended.  If not specified,
+ * Transaction is assumed. - an optional list of persistence properties - optional injection
+ * targets
+ * <p/>
+ * Examples:
+ * <p/>
+ * <persistence-context-ref> <persistence-context-ref-name>myPersistenceContext
+ * </persistence-context-ref-name> </persistence-context-ref>
+ * <p/>
+ * <persistence-context-ref> <persistence-context-ref-name>myPersistenceContext
+ * </persistence-context-ref-name> <persistence-unit-name>PersistenceUnit1 </persistence-unit-name>
+ * <persistence-context-type>Extended</persistence-context-type> </persistence-context-ref>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for persistence-context-refType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="persistence-context-refType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType"
+ * maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="persistence-context-ref-name" type="{http://java.sun.com/xml/ns/javaee}jndi-nameType"/>
- *         &lt;element name="persistence-unit-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
- *         &lt;element name="persistence-context-type" type="{http://java.sun.com/xml/ns/javaee}persistence-context-typeType" minOccurs="0"/>
- *         &lt;element name="persistence-property" type="{http://java.sun.com/xml/ns/javaee}propertyType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="persistence-unit-name" type="{http://java.sun.com/xml/ns/javaee}string"
+ * minOccurs="0"/>
+ *         &lt;element name="persistence-context-type" type="{http://java.sun.com/xml/ns/javaee}persistence-context-typeType"
+ * minOccurs="0"/>
+ *         &lt;element name="persistence-property" type="{http://java.sun.com/xml/ns/javaee}propertyType"
+ * maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}resourceGroup"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
@@ -78,34 +67,35 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-context-refType", propOrder = {
-    "description",
-    "persistenceContextRefName",
-    "persistenceUnitName",
-    "persistenceContextType",
-    "persistenceProperty",
-    "mappedName",
-    "injectionTarget"
-})
+        "description",
+        "persistenceContextRefName",
+        "persistenceUnitName",
+        "persistenceContextType",
+        "persistenceProperty",
+        "mappedName",
+        "injectionTarget"
+        })
 public class PersistenceContextRefType {
 
     @XmlElement(namespace = "http://java.sun.com/xml/ns/javaee", required = true)
     protected List<DescriptionType> description;
-    @XmlElement(name = "persistence-context-ref-name", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "persistence-context-ref-name",
+                namespace = "http://java.sun.com/xml/ns/javaee", required = true)
     protected JndiNameType persistenceContextRefName;
     @XmlElement(name = "persistence-unit-name", namespace = "http://java.sun.com/xml/ns/javaee")
     protected org.apache.axis2.jaxws.description.xml.handler.String persistenceUnitName;
     @XmlElement(name = "persistence-context-type", namespace = "http://java.sun.com/xml/ns/javaee")
     protected PersistenceContextTypeType persistenceContextType;
-    @XmlElement(name = "persistence-property", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "persistence-property", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected List<PropertyType> persistenceProperty;
     @XmlElement(name = "mapped-name", namespace = "http://java.sun.com/xml/ns/javaee")
     protected XsdStringType mappedName;
-    @XmlElement(name = "injection-target", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "injection-target", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected List<InjectionTargetType> injectionTarget;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -114,25 +104,21 @@ public class PersistenceContextRefType {
 
     /**
      * Gets the value of the description property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the description property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link DescriptionType }
      */
     public List<DescriptionType> getDescription() {
         if (description == null) {
@@ -143,11 +129,8 @@ public class PersistenceContextRefType {
 
     /**
      * Gets the value of the persistenceContextRefName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link JndiNameType }
-     *     
+     *
+     * @return possible object is {@link JndiNameType }
      */
     public JndiNameType getPersistenceContextRefName() {
         return persistenceContextRefName;
@@ -155,11 +138,8 @@ public class PersistenceContextRefType {
 
     /**
      * Sets the value of the persistenceContextRefName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link JndiNameType }
-     *     
+     *
+     * @param value allowed object is {@link JndiNameType }
      */
     public void setPersistenceContextRefName(JndiNameType value) {
         this.persistenceContextRefName = value;
@@ -167,11 +147,8 @@ public class PersistenceContextRefType {
 
     /**
      * Gets the value of the persistenceUnitName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link org.apache.axis2.jaxws.description.xml.handler.String }
-     *     
+     *
+     * @return possible object is {@link String }
      */
     public org.apache.axis2.jaxws.description.xml.handler.String getPersistenceUnitName() {
         return persistenceUnitName;
@@ -179,23 +156,19 @@ public class PersistenceContextRefType {
 
     /**
      * Sets the value of the persistenceUnitName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link org.apache.axis2.jaxws.description.xml.handler.String }
-     *     
+     *
+     * @param value allowed object is {@link String
+     *              }
      */
-    public void setPersistenceUnitName(org.apache.axis2.jaxws.description.xml.handler.String value) {
+    public void setPersistenceUnitName(
+            org.apache.axis2.jaxws.description.xml.handler.String value) {
         this.persistenceUnitName = value;
     }
 
     /**
      * Gets the value of the persistenceContextType property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PersistenceContextTypeType }
-     *     
+     *
+     * @return possible object is {@link PersistenceContextTypeType }
      */
     public PersistenceContextTypeType getPersistenceContextType() {
         return persistenceContextType;
@@ -203,11 +176,8 @@ public class PersistenceContextRefType {
 
     /**
      * Sets the value of the persistenceContextType property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PersistenceContextTypeType }
-     *     
+     *
+     * @param value allowed object is {@link PersistenceContextTypeType }
      */
     public void setPersistenceContextType(PersistenceContextTypeType value) {
         this.persistenceContextType = value;
@@ -215,25 +185,21 @@ public class PersistenceContextRefType {
 
     /**
      * Gets the value of the persistenceProperty property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the persistenceProperty property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the persistenceProperty property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPersistenceProperty().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link PropertyType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link PropertyType }
      */
     public List<PropertyType> getPersistenceProperty() {
         if (persistenceProperty == null) {
@@ -244,11 +210,8 @@ public class PersistenceContextRefType {
 
     /**
      * Gets the value of the mappedName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XsdStringType }
-     *     
+     *
+     * @return possible object is {@link XsdStringType }
      */
     public XsdStringType getMappedName() {
         return mappedName;
@@ -256,11 +219,8 @@ public class PersistenceContextRefType {
 
     /**
      * Sets the value of the mappedName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XsdStringType }
-     *     
+     *
+     * @param value allowed object is {@link XsdStringType }
      */
     public void setMappedName(XsdStringType value) {
         this.mappedName = value;
@@ -268,25 +228,21 @@ public class PersistenceContextRefType {
 
     /**
      * Gets the value of the injectionTarget property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the injectionTarget property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the injectionTarget property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getInjectionTarget().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link InjectionTargetType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link InjectionTargetType }
      */
     public List<InjectionTargetType> getInjectionTarget() {
         if (injectionTarget == null) {
@@ -297,11 +253,8 @@ public class PersistenceContextRefType {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -309,11 +262,8 @@ public class PersistenceContextRefType {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;

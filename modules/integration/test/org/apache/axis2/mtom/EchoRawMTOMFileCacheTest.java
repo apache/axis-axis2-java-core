@@ -16,15 +16,15 @@
 
 package org.apache.axis2.mtom;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
-public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest{
+public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest {
 
     private AxisService service;
 
@@ -38,12 +38,13 @@ public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest{
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(EchoRawMTOMFileCacheTest.class),Constants.TESTING_PATH + "MTOM-fileCache-enabledRepository");
+        return getTestSetup2(new TestSuite(EchoRawMTOMFileCacheTest.class),
+                             Constants.TESTING_PATH + "MTOM-fileCache-enabledRepository");
     }
 
     protected void setUp() throws Exception {
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
-                operationName);
+                                            operationName);
         UtilServer.deployService(service);
     }
 
@@ -59,7 +60,7 @@ public class EchoRawMTOMFileCacheTest extends EchoRawMTOMTest{
     public void testEchoXMLSync() throws Exception {
         super.testEchoXMLSync();
     }
-    
+
     public void testEchoXMLSyncSeperateListener() throws Exception {
         super.testEchoXMLSyncSeperateListener();
     }

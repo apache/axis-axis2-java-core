@@ -23,7 +23,7 @@ import javax.xml.stream.XMLStreamException;
  * 
  */
 public class EchoService {
-     public OMElement echo(OMElement element) throws XMLStreamException {
+    public OMElement echo(OMElement element) throws XMLStreamException {
         System.err.println("################ Echo Service was called, Element=" + element);
 
         //Praparing the OMElement so that it can be attached to another OM Tree.

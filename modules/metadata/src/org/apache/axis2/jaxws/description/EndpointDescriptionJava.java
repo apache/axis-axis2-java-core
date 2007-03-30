@@ -30,17 +30,26 @@ import javax.xml.ws.WebServiceProvider;
 public interface EndpointDescriptionJava {
 
     public WebService getAnnoWebService();
+
     public WebServiceProvider getAnnoWebServiceProvider();
+
     public String getAnnoWebServiceEndpointInterface();
+
     public String getAnnoWebServiceName();
+
     public String getAnnoWebServicePortName();
+
     public String getAnnoWebServiceServiceName();
+
     public String getAnnoWebServiceTargetNamespace();
+
     public String getAnnoWebServiceWSDLLocation();
-    
+
     public BindingType getAnnoBindingType();
+
     public String getAnnoBindingTypeValue();
-    
+
     public ServiceMode getAnnoServiceMode();
+
     public Service.Mode getAnnoServiceModeValue();
 }

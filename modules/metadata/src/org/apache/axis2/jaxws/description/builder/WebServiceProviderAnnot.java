@@ -19,127 +19,107 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class WebServiceProviderAnnot implements javax.xml.ws.WebServiceProvider{
-	
-	private String wsdlLocation = "";
-	private String serviceName = "";
-	private String portName = "";
-	private String targetNamespace = "";
+public class WebServiceProviderAnnot implements javax.xml.ws.WebServiceProvider {
 
-	/**
-     * A WebServiceProviderAnnot cannot be instantiated.
-     */
-	private  WebServiceProviderAnnot(){
-		
-	}
-	
-	private  WebServiceProviderAnnot(
-			String wsdlLocation,
-			String serviceName,
-			String portName,
-			String targetNamespace)
-	{
-		this.targetNamespace = targetNamespace;
-		this.serviceName = serviceName;
-		this.wsdlLocation = wsdlLocation;
-		this.portName = portName;
-	}
+    private String wsdlLocation = "";
+    private String serviceName = "";
+    private String portName = "";
+    private String targetNamespace = "";
+
+    /** A WebServiceProviderAnnot cannot be instantiated. */
+    private WebServiceProviderAnnot() {
+
+    }
+
+    private WebServiceProviderAnnot(
+            String wsdlLocation,
+            String serviceName,
+            String portName,
+            String targetNamespace) {
+        this.targetNamespace = targetNamespace;
+        this.serviceName = serviceName;
+        this.wsdlLocation = wsdlLocation;
+        this.portName = portName;
+    }
 
     public static WebServiceProviderAnnot createWebServiceAnnotImpl() {
         return new WebServiceProviderAnnot();
     }
 
-    public static WebServiceProviderAnnot createWebServiceAnnotImpl( 
-    			String name,
-    			String targetNamespace,
-    			String serviceName,
-    			String wsdlLocation,
-    			String endpointInterface,
-    			String portName
-    		) 
-    {
-        return new WebServiceProviderAnnot( wsdlLocation,
-        										serviceName,
-        										portName,
-        										targetNamespace); 
+    public static WebServiceProviderAnnot createWebServiceAnnotImpl(
+            String name,
+            String targetNamespace,
+            String serviceName,
+            String wsdlLocation,
+            String endpointInterface,
+            String portName
+    ) {
+        return new WebServiceProviderAnnot(wsdlLocation,
+                                           serviceName,
+                                           portName,
+                                           targetNamespace);
     }
 
-	/**
-	 * @return Returns the portName.
-	 */
-	public String portName() {
-		return portName;
-	}
+    /** @return Returns the portName. */
+    public String portName() {
+        return portName;
+    }
 
-	/**
-	 * @return Returns the serviceName.
-	 */
-	public String serviceName() {
-		return serviceName;
-	}
+    /** @return Returns the serviceName. */
+    public String serviceName() {
+        return serviceName;
+    }
 
-	/**
-	 * @return Returns the targetNamespace.
-	 */
-	public String targetNamespace() {
-		return targetNamespace;
-	}
+    /** @return Returns the targetNamespace. */
+    public String targetNamespace() {
+        return targetNamespace;
+    }
 
-	/**
-	 * @return Returns the wsdlLocation.
-	 */
-	public String wsdlLocation() {
-		return wsdlLocation;
-	}
+    /** @return Returns the wsdlLocation. */
+    public String wsdlLocation() {
+        return wsdlLocation;
+    }
 
-	/**
-	 * @param portName The portName to set.
-	 */
-	public void setPortName(String portName) {
-		this.portName = portName;
-	}
+    /** @param portName The portName to set. */
+    public void setPortName(String portName) {
+        this.portName = portName;
+    }
 
-	/**
-	 * @param serviceName The serviceName to set.
-	 */
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
-	}
+    /** @param serviceName The serviceName to set. */
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
 
-	/**
-	 * @param targetNamespace The targetNamespace to set.
-	 */
-	public void setTargetNamespace(String targetNamespace) {
-		this.targetNamespace = targetNamespace;
-	}
+    /** @param targetNamespace The targetNamespace to set. */
+    public void setTargetNamespace(String targetNamespace) {
+        this.targetNamespace = targetNamespace;
+    }
 
-	/**
-	 * @param wsdlLocation The wsdlLocation to set.
-	 */
-	public void setWsdlLocation(String wsdlLocation) {
-		this.wsdlLocation = wsdlLocation;
-	}
+    /** @param wsdlLocation The wsdlLocation to set. */
+    public void setWsdlLocation(String wsdlLocation) {
+        this.wsdlLocation = wsdlLocation;
+    }
 
-	public Class<Annotation> annotationType(){
-		return Annotation.class;
-	}
-	
-	/**
-	 * Convenience method for unit testing. We will print all of the 
-	 * data members here.
-	 */
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		String newLine = "\n";
-		sb.append(newLine);
-		sb.append("@WebServiceProvider.serviceName= " + serviceName);
-		sb.append(newLine);
-		sb.append("@WebServiceProvider.targetNamespace= " + targetNamespace);
-		sb.append(newLine);
-		sb.append("@WebServiceProvider.wsdlLocation= " + wsdlLocation);
-		sb.append(newLine);
-		sb.append("@WebServiceProvider.portName= " + portName);
-		sb.append(newLine);
-		return sb.toString();
+    public Class<Annotation> annotationType() {
+        return Annotation.class;
+    }
+
+    /**
+     * Convenience method for unit testing. We will print all of the
+     * data members here.
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        String newLine = "\n";
+        sb.append(newLine);
+        sb.append("@WebServiceProvider.serviceName= " + serviceName);
+        sb.append(newLine);
+        sb.append("@WebServiceProvider.targetNamespace= " + targetNamespace);
+        sb.append(newLine);
+        sb.append("@WebServiceProvider.wsdlLocation= " + wsdlLocation);
+        sb.append(newLine);
+        sb.append("@WebServiceProvider.portName= " + portName);
+        sb.append(newLine);
+        return sb.toString();
 	}
 }

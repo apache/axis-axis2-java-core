@@ -16,23 +16,22 @@
 
 package org.apache.axis2.wsdl.databinding;
 
-import org.apache.axis2.namespace.Constants;
-import org.apache.axis2.wsdl.i18n.CodegenMessages;
-import org.apache.axis2.util.JavaUtils;
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.namespace.Constants;
+import org.apache.axis2.util.JavaUtils;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 import javax.xml.namespace.QName;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class TypeMappingAdapter implements TypeMapper {
 
     /**
-     * Default class name is the OMElement or the default case
-     * However the extensions can override the default class
-     * to suit the databinding framework!
+     * Default class name is the OMElement or the default case However the extensions can override
+     * the default class to suit the databinding framework!
      */
     protected String defaultClassName = OMElement.class.getName();
 
@@ -61,8 +60,7 @@ public abstract class TypeMappingAdapter implements TypeMapper {
 
 
     /**
-     * Gets the type mapping name.
-     * If type mapping is not found, returns default.
+     * Gets the type mapping name. If type mapping is not found, returns default.
      *
      * @see TypeMapper#getTypeMappingName(javax.xml.namespace.QName)
      */
@@ -71,9 +69,9 @@ public abstract class TypeMappingAdapter implements TypeMapper {
         if ((qname != null)) {
             Object o = qName2NameMap.get(qname);
             if (o != null) {
-                return (String) o;
+                return (String)o;
             } else if (Constants.XSD_ANYTYPE.equals(qname) ||
-                     Constants.XSD_ANY.equals(qname)) {
+                    Constants.XSD_ANY.equals(qname)) {
                 return defaultClassName;
             } else if (Constants.XSD_STRING.equals(qname)) {
                 return String.class.getName();
@@ -84,16 +82,14 @@ public abstract class TypeMappingAdapter implements TypeMapper {
                                                    qname.getNamespaceURI())
                 );
             }
-        }else{
-           return null;
+        } else {
+            return null;
         }
 
 
     }
 
-    /**
-     * @see TypeMapper#getParameterName(javax.xml.namespace.QName)
-     */
+    /** @see TypeMapper#getParameterName(javax.xml.namespace.QName) */
     public String getParameterName(QName qname) {
         if (counter == UPPER_PARAM_LIMIT) {
             counter = 0;
@@ -101,7 +97,7 @@ public abstract class TypeMappingAdapter implements TypeMapper {
         if ((qname != null) && (qname.getLocalPart().length() != 0)) {
             String paramName = JavaUtils.xmlNameToJavaIdentifier(qname.getLocalPart());
 
-            if (parameterNameList.contains(paramName)){
+            if (parameterNameList.contains(paramName)) {
                 paramName = paramName + counter++;
             }
             parameterNameList.add(paramName);
@@ -111,9 +107,7 @@ public abstract class TypeMappingAdapter implements TypeMapper {
         }
     }
 
-    /**
-     * @see TypeMapper#addTypeMappingName(javax.xml.namespace.QName,String)
-     */
+    /** @see TypeMapper#addTypeMappingName(javax.xml.namespace.QName,String) */
     public void addTypeMappingName(QName qname, String value) {
         qName2NameMap.put(qname, value);
     }
@@ -138,54 +132,48 @@ public abstract class TypeMappingAdapter implements TypeMapper {
     }
 
     /**
-     * @see org.apache.axis2.wsdl.databinding.TypeMapper#isObjectMappingPresent()
      * @return Returns boolean.
+     * @see TypeMapper#isObjectMappingPresent()
      */
     public boolean isObjectMappingPresent() {
         return isObject;
     }
 
-    /**
-     * @see org.apache.axis2.wsdl.databinding.TypeMapper#getAllMappedNames()
-     */
+    /** @see TypeMapper#getAllMappedNames() */
     public Map getAllMappedNames() {
         return qName2NameMap;
     }
 
-    /**
-     * @see org.apache.axis2.wsdl.databinding.TypeMapper#getAllMappedObjects()
-     */
+    /** @see TypeMapper#getAllMappedObjects() */
     public Map getAllMappedObjects() {
         return qName2ObjectMap;
     }
 
-    /**
-     * @see org.apache.axis2.wsdl.databinding.TypeMapper#getDefaultMappingName()
-     */
+    /** @see TypeMapper#getDefaultMappingName() */
     public String getDefaultMappingName() {
         return defaultClassName;
     }
 
     /**
-     * @see TypeMapper#setDefaultMappingName(String)
      * @param defaultMapping
+     * @see TypeMapper#setDefaultMappingName(String)
      */
     public void setDefaultMappingName(String defaultMapping) {
         this.defaultClassName = defaultMapping;
     }
 
     /**
-     * @see TypeMapper#addTypeMappingStatus(javax.xml.namespace.QName, Object)
      * @param qName
      * @param status
+     * @see TypeMapper#addTypeMappingStatus(javax.xml.namespace.QName, Object)
      */
     public void addTypeMappingStatus(QName qName, Object status) {
         this.qName2StatusMap.put(qName, status);
     }
 
     /**
-     * @see TypeMapper#getTypeMappingStatus(javax.xml.namespace.QName)
      * @param qName
+     * @see TypeMapper#getTypeMappingStatus(javax.xml.namespace.QName)
      */
     public Object getTypeMappingStatus(QName qName) {
         return this.qName2StatusMap.get(qName);

@@ -16,33 +16,31 @@
 
 package org.apache.axis2.mtom;
 
-import org.apache.axis2.integration.UtilServerBasedTestCase;
-import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.engine.util.TestConstants;
-import org.apache.axis2.engine.Echo;
-import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
-import org.apache.axis2.client.Options;
-import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.util.Utils;
-import org.apache.axis2.description.AxisService;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.impl.llom.OMTextImpl;
-import org.apache.axiom.attachments.ByteArrayDataSource;
 import org.apache.axiom.soap.SOAP12Constants;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.framework.TestCase;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.engine.util.TestConstants;
+import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.util.Utils;
 
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
-import java.awt.*;
 import java.io.InputStream;
 
 public class EchoRawMTOMStreamingTest extends UtilServerBasedTestCase implements TestConstants {
@@ -68,12 +66,12 @@ public class EchoRawMTOMStreamingTest extends UtilServerBasedTestCase implements
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawMTOMStreamingTest.class),
-                Constants.TESTING_PATH + "MTOM-enabledRepository");
+                             Constants.TESTING_PATH + "MTOM-enabledRepository");
     }
 
     protected void setUp() throws Exception {
         AxisService service = Utils.createSimpleService(serviceName, EchoService2.class.getName(),
-                operationName);
+                                                        operationName);
         UtilServer.deployService(service);
     }
 
@@ -88,8 +86,9 @@ public class EchoRawMTOMStreamingTest extends UtilServerBasedTestCase implements
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement rpcWrapEle = fac.createOMElement("mtomSample", omNs);
         data = fac.createOMElement("data", omNs);
-        expectedDH = new DataHandler(new ByteArrayDataSource(new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
-                98}));
+        expectedDH = new DataHandler(
+                new ByteArrayDataSource(new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
+                        98 }));
         OMElement subData = fac.createOMElement("subData", omNs);
         OMText textData = new OMTextImpl(expectedDH, fac);
         subData.addChild(textData);

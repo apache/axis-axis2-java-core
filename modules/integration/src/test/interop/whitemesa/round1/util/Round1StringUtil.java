@@ -32,7 +32,8 @@ public class Round1StringUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://soapinterop.org/", "ns1");
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://www.w3.org/1999/XMLSchema", "xsd");
-        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/1999/XMLSchema-instance/", "xsi");
+        OMNamespace typeNs =
+                reqEnv.declareNamespace("http://www.w3.org/1999/XMLSchema-instance/", "xsi");
 
         OMElement method = omFactory.createOMElement("echoString", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(method);

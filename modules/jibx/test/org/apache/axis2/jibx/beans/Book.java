@@ -16,15 +16,15 @@
 
 package org.apache.axis2.jibx.beans;
 
-public class Book
-{
+public class Book {
     private String m_type;
     private String m_isbn;
     private String m_title;
     private String[] m_authors;
-    
-    public Book() {}
-    
+
+    public Book() {
+    }
+
     public Book(String type, String isbn, String title, String[] authors) {
         m_isbn = isbn;
         m_title = title;
@@ -35,15 +35,15 @@ public class Book
     public String getType() {
         return m_type;
     }
-    
+
     public String getIsbn() {
         return m_isbn;
     }
-    
+
     public String getTitle() {
         return m_title;
     }
-    
+
     public String[] getAuthors() {
         return m_authors;
     }

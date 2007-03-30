@@ -1,5 +1,20 @@
 package org.apache.axis2.databinding.utils;
 
+import org.apache.axiom.attachments.ByteArrayDataSource;
+import org.apache.axiom.attachments.utils.IOUtils;
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.Base64;
+import org.apache.axiom.om.util.StAXUtils;
+import org.apache.axis2.databinding.ADBBean;
+import org.apache.axis2.databinding.i18n.ADBMessages;
+import org.apache.axis2.databinding.types.*;
+
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -7,59 +22,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
-
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.axiom.attachments.ByteArrayDataSource;
-import org.apache.axiom.attachments.utils.IOUtils;
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.util.StAXUtils;
-import org.apache.axis2.databinding.i18n.ADBMessages;
-import org.apache.axis2.databinding.types.Day;
-import org.apache.axis2.databinding.types.Duration;
-import org.apache.axis2.databinding.types.Entities;
-import org.apache.axis2.databinding.types.Entity;
-import org.apache.axis2.databinding.types.HexBinary;
-import org.apache.axis2.databinding.types.IDRef;
-import org.apache.axis2.databinding.types.IDRefs;
-import org.apache.axis2.databinding.types.Id;
-import org.apache.axis2.databinding.types.Language;
-import org.apache.axis2.databinding.types.Month;
-import org.apache.axis2.databinding.types.MonthDay;
-import org.apache.axis2.databinding.types.NCName;
-import org.apache.axis2.databinding.types.NMToken;
-import org.apache.axis2.databinding.types.NMTokens;
-import org.apache.axis2.databinding.types.Name;
-import org.apache.axis2.databinding.types.NegativeInteger;
-import org.apache.axis2.databinding.types.NonNegativeInteger;
-import org.apache.axis2.databinding.types.NonPositiveInteger;
-import org.apache.axis2.databinding.types.NormalizedString;
-import org.apache.axis2.databinding.types.Notation;
-import org.apache.axis2.databinding.types.PositiveInteger;
-import org.apache.axis2.databinding.types.Time;
-import org.apache.axis2.databinding.types.Token;
-import org.apache.axis2.databinding.types.URI;
-import org.apache.axis2.databinding.types.UnsignedByte;
-import org.apache.axis2.databinding.types.UnsignedInt;
-import org.apache.axis2.databinding.types.UnsignedLong;
-import org.apache.axis2.databinding.types.UnsignedShort;
-import org.apache.axis2.databinding.types.Year;
-import org.apache.axis2.databinding.types.YearMonth;
-import org.apache.axis2.databinding.ADBBean;
-import org.apache.axiom.om.util.Base64;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -77,11 +47,8 @@ import org.apache.axiom.om.util.Base64;
  */
 
 /**
- * Converter methods to go from
- * 1. simple type -> String
- * 2. simple type -> Object
- * 3. String -> simpletype
- * 4. Object list -> array
+ * Converter methods to go from 1. simple type -> String 2. simple type -> Object 3. String ->
+ * simpletype 4. Object list -> array
  */
 public class ConverterUtil {
     private static final String POSITIVE_INFINITY = "INF";
@@ -284,10 +251,10 @@ public class ConverterUtil {
     public static boolean convertToBoolean(String s) {
 
         boolean returnValue = false;
-        if ((s != null) && (s.length() > 0)){
-            if ("1".equals(s) || s.toLowerCase().equals("true")){
+        if ((s != null) && (s.length() > 0)) {
+            if ("1".equals(s) || s.toLowerCase().equals("true")) {
                 returnValue = true;
-            } else if (!"0".equals(s) && !s.toLowerCase().equals("false")){
+            } else if (!"0".equals(s) && !s.toLowerCase().equals("false")) {
                 throw new RuntimeException("in valid string -" + s + " for boolean value");
             }
         }
@@ -351,8 +318,7 @@ public class ConverterUtil {
     }
 
     /**
-     * Converts a given string into a date.
-     * Code from Axis1 DateDeserializer.
+     * Converts a given string into a date. Code from Axis1 DateDeserializer.
      *
      * @param source
      * @return Returns Date.
@@ -522,8 +488,7 @@ public class ConverterUtil {
     }
 
     /**
-     * Code from Axis1 code base
-     * Note - We only follow the convention in the latest schema spec
+     * Code from Axis1 code base Note - We only follow the convention in the latest schema spec
      *
      * @param source
      * @return Returns Calendar.
@@ -763,7 +728,7 @@ public class ConverterUtil {
         }
 
         try {
-            objectList.toArray((Object[]) returnArray);
+            objectList.toArray((Object[])returnArray);
         } catch (Exception e) {
             //we are over with alternatives - throw the
             //converison exception
@@ -772,8 +737,7 @@ public class ConverterUtil {
     }
 
     /**
-     * We could have used the Arraya.asList() method
-     * but that returns an *immutable* list !!!!!
+     * We could have used the Arraya.asList() method but that returns an *immutable* list !!!!!
      *
      * @param array
      * @return list
@@ -864,22 +828,22 @@ public class ConverterUtil {
         return binBigDecimal.doubleValue() - Double.parseDouble(value);
     }
 
-    public static long compare(Duration duration, String value){
+    public static long compare(Duration duration, String value) {
         Duration compareValue = new Duration(value);
         return duration.compare(compareValue);
     }
 
-    public static long compare(Date date, String value){
+    public static long compare(Date date, String value) {
         Date newDate = convertToDate(value);
         return date.getTime() - newDate.getTime();
     }
 
-    public static long compare(Time time, String value){
+    public static long compare(Time time, String value) {
         Time newTime = new Time(value);
         return time.getAsCalendar().getTimeInMillis() - newTime.getAsCalendar().getTimeInMillis();
     }
 
-    public static long compare(Calendar calendar, String value){
+    public static long compare(Calendar calendar, String value) {
         Calendar newCalendar = convertToDateTime(value);
         return calendar.getTimeInMillis() - newCalendar.getTimeInMillis();
     }
@@ -904,8 +868,8 @@ public class ConverterUtil {
     }
 
     /**
-     * A reflection based method to generate an instance of
-     * a given class and populate it with a given value
+     * A reflection based method to generate an instance of a given class and populate it with a
+     * given value
      *
      * @param clazz
      * @param value
@@ -916,8 +880,8 @@ public class ConverterUtil {
         //take the string as an argument.
         boolean continueFlag = false;
         try {
-            Constructor stringConstructor = clazz.getConstructor(new Class[]{String.class});
-            return stringConstructor.newInstance(new Object[]{value});
+            Constructor stringConstructor = clazz.getConstructor(new Class[] { String.class });
+            return stringConstructor.newInstance(new Object[] { value });
         } catch (NoSuchMethodException e) {
             //oops - no such constructors - continue with the
             //parse method
@@ -925,34 +889,32 @@ public class ConverterUtil {
         } catch (Exception e) {
             throw new ObjectConversionException(
                     ADBMessages.getMessage("converter.cannotGenerate",
-                            clazz.getName()),
+                                           clazz.getName()),
                     e);
         }
 
         if (!continueFlag) {
             throw new ObjectConversionException(
                     ADBMessages.getMessage("converter.cannotConvert",
-                            clazz.getName()));
+                                           clazz.getName()));
         }
 
         try {
-            Method parseMethod = clazz.getMethod("parse", new Class[]{String.class});
+            Method parseMethod = clazz.getMethod("parse", new Class[] { String.class });
             Object instance = clazz.newInstance();
-            return parseMethod.invoke(instance, new Object[]{value});
+            return parseMethod.invoke(instance, new Object[] { value });
         } catch (NoSuchMethodException e) {
             throw new ObjectConversionException(e);
         } catch (Exception e) {
             throw new ObjectConversionException(
                     ADBMessages.getMessage("converter.cannotGenerate",
-                            clazz.getName()),
+                                           clazz.getName()),
                     e);
         }
 
     }
 
-    /**
-     * A simple exception that is thrown when the conversion fails
-     */
+    /** A simple exception that is thrown when the conversion fails */
     public static class ObjectConversionException extends RuntimeException {
         public ObjectConversionException() {
         }

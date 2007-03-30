@@ -18,27 +18,29 @@
  */
 package org.apache.axis2.jaxws.server.endpoint.injection.factory;
 
-import javax.xml.ws.WebServiceContext;
-
 import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.axis2.jaxws.server.endpoint.injection.ResourceInjector;
 import org.apache.axis2.jaxws.server.endpoint.injection.impl.ResourceInjectionException;
 import org.apache.axis2.jaxws.server.endpoint.injection.impl.WebServiceContextInjectorImpl;
 
+import javax.xml.ws.WebServiceContext;
+
 public class ResourceInjectionFactory {
 
-	/**
-	 * 
-	 */
-	public ResourceInjectionFactory() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	
-	public static ResourceInjector createResourceInjector(Class resourceType) throws ResourceInjectionException{
-		if(resourceType == WebServiceContext.class || resourceType.isAssignableFrom(WebServiceContext.class)){
-			return new WebServiceContextInjectorImpl();
-		}
-		throw new ResourceInjectionException(Messages.getMessage("ResourceInjectionFactoryErr1"));
-	}
+    /**
+     *
+     */
+    public ResourceInjectionFactory() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+    public static ResourceInjector createResourceInjector(Class resourceType)
+            throws ResourceInjectionException {
+        if (resourceType == WebServiceContext.class ||
+                resourceType.isAssignableFrom(WebServiceContext.class)) {
+            return new WebServiceContextInjectorImpl();
+        }
+        throw new ResourceInjectionException(Messages.getMessage("ResourceInjectionFactoryErr1"));
+    }
 }

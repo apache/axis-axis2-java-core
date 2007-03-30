@@ -1,6 +1,5 @@
 package org.apache.axis2.xmlbeans;
 
-import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -18,9 +17,8 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationException;
  */
 
 /**
- * Test for the WSDL that's missing a service
- * Since we do not permit the clients to be generated when
- * service is missing, we should get an error
+ * Test for the WSDL that's missing a service Since we do not permit the clients to be generated
+ * when service is missing, we should get an error
  */
 public class WSDL2Java2Test extends WSDL2JavaFailureTestBase {
 

@@ -43,15 +43,15 @@ public class ServiceGroupContextTest extends UtilServerBasedTestCase {
     /**
      * This test will first sends a request to a dummy service deployed. That service will get
      * message contexts as inputs and will put a property in the service group context to count the
-     * number of requests.
-     * Then the client, upon receiving the response, extracts the sgc id from the received message
-     * (this will come as a reference parameter in the ReplyTo EPR) and sets that as a top level
-     * soap header in the next request to the same service group.
-     * Server will correctly identify the service group from the information sent by the client and
-     * retrieve the sgc earlier used and will use that for the current request as well.
-     * The service will retrieve the request count from the sgc and increase that by one.
+     * number of requests. Then the client, upon receiving the response, extracts the sgc id from
+     * the received message (this will come as a reference parameter in the ReplyTo EPR) and sets
+     * that as a top level soap header in the next request to the same service group. Server will
+     * correctly identify the service group from the information sent by the client and retrieve the
+     * sgc earlier used and will use that for the current request as well. The service will retrieve
+     * the request count from the sgc and increase that by one.
      * <p/>
-     * Test will asserts whether the client gets the number of requests as 2, when he invokes two times.
+     * Test will asserts whether the client gets the number of requests as 2, when he invokes two
+     * times.
      */
 
     protected EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:" +
@@ -68,7 +68,7 @@ public class ServiceGroupContextTest extends UtilServerBasedTestCase {
 
     protected void setUp() throws Exception {
         service = Utils.createSimpleService(serviceName, new RequestCounterMessageReceiver(),
-                RequestCounter.class.getName(), operationName);
+                                            RequestCounter.class.getName(), operationName);
 //        service.setScope(Constants.SCOPE_TRANSPORT_SESSION);
         service.setScope(Constants.SCOPE_SOAP_SESSION);
         UtilServer.deployService(service);
@@ -91,7 +91,8 @@ public class ServiceGroupContextTest extends UtilServerBasedTestCase {
         options.setAction(operationName.getLocalPart());
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo", null);
         configContext.getAxisConfiguration().engageModule("addressing");
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);

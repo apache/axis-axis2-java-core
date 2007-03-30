@@ -26,15 +26,11 @@ public class JavaEmitter extends AxisServiceBasedMultiLanguageEmitter {
         super();
     }
 
-    /**
-     * @param configuration
-     */
+    /** @param configuration  */
     public JavaEmitter(CodeGenConfiguration configuration) {
         super();
         this.codeGenConfiguration = configuration;
         this.mapper = new DefaultTypeMapper();
-
-
 
 
     }

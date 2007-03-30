@@ -24,7 +24,7 @@ public class InvalidFaultWsdlTest extends TestCase {
     public void testInvaidWsdl() {
         try {
             String wsdluri = "test-resources/Invalid.wsdl";
-            String args[] = new String[]{"-uri", wsdluri, "-o", "target/invalidwsdloutlocation"};
+            String args[] = new String[] { "-uri", wsdluri, "-o", "target/invalidwsdloutlocation" };
             new WSDL2Code().main(args);
             fail("This must fail with the excetion :" +
                     "No element reference found for the part in fault message " +

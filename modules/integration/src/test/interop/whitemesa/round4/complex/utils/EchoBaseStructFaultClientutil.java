@@ -33,7 +33,8 @@ public class EchoBaseStructFaultClientutil implements SunClientUtil {
         OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
 
         OMElement method = fac.createOMElement("echoBaseStructFault", omNs);
-        method.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        method.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                            null);
         method.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance", null);
         method.addAttribute("xmlns:xsd", "http://www.w3.org/2001/XMLSchema", null);
         method.addAttribute("xmlns:ns2", "http://soapinterop.org/types", null);

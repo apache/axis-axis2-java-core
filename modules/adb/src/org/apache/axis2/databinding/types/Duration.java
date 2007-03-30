@@ -20,16 +20,16 @@ import java.io.Serializable;
 import java.util.Calendar;
 
 /**
- * Implementation of the XML Schema type duration. Duration supports a minimum
- * fractional second precision of milliseconds.
+ * Implementation of the XML Schema type duration. Duration supports a minimum fractional second
+ * precision of milliseconds.
  *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#duration">XML Schema 3.2.6</a>
  */
 public class Duration implements Serializable {
 
-	private static final long serialVersionUID = -3736760992541369098L;
-	
-	boolean isNegative;
+    private static final long serialVersionUID = -3736760992541369098L;
+
+    boolean isNegative;
     int years;
     int months;
     int days;
@@ -37,9 +37,7 @@ public class Duration implements Serializable {
     int minutes;
     double seconds;
 
-    /**
-     * Default no-arg constructor
-     */
+    /** Default no-arg constructor */
     public Duration() {
     }
 
@@ -64,8 +62,7 @@ public class Duration implements Serializable {
     }
 
     /**
-     * Constructs Duration from a String in an xsd:duration format -
-     * PnYnMnDTnHnMnS.
+     * Constructs Duration from a String in an xsd:duration format - PnYnMnDTnHnMnS.
      *
      * @param duration String
      * @throws IllegalArgumentException if the string doesn't parse correctly.
@@ -77,7 +74,7 @@ public class Duration implements Serializable {
         // P is required but P by itself is invalid
         if (duration.indexOf("P") == -1 || duration.equals("P")) {
             throw new IllegalArgumentException();
-                   // Messages.getMessage("badDuration"));
+            // Messages.getMessage("badDuration"));
         }
 
         // if present, time cannot be empty
@@ -109,8 +106,8 @@ public class Duration implements Serializable {
      * Constructs Duration from a Calendar.
      *
      * @param calendar Calendar
-     * @throws IllegalArgumentException if the calendar object does not
-     * represent any date nor time.
+     * @throws IllegalArgumentException if the calendar object does not represent any date nor
+     *                                  time.
      */
     public Duration(boolean negative, Calendar calendar) throws
             IllegalArgumentException {
@@ -121,32 +118,30 @@ public class Duration implements Serializable {
         this.hours = calendar.get(Calendar.HOUR);
         this.minutes = calendar.get(Calendar.MINUTE);
         this.seconds = calendar.get(Calendar.SECOND);
-        this.seconds += ((double) calendar.get(Calendar.MILLISECOND)) / 100;
+        this.seconds += ((double)calendar.get(Calendar.MILLISECOND)) / 100;
         if (years == 0 && months == 0 && days == 0 && hours == 0 &&
-            minutes == 0 && seconds == 0) {
+                minutes == 0 && seconds == 0) {
             throw new IllegalArgumentException();
-                    //Messages.getMessage("badCalendarForDuration"));
+            //Messages.getMessage("badCalendarForDuration"));
         }
     }
 
     /**
-     * This method parses the time portion of a String that represents
-     * xsd:duration - nHnMnS.
+     * This method parses the time portion of a String that represents xsd:duration - nHnMnS.
      *
      * @param time
      * @throws IllegalArgumentException if time does not match pattern
-     *
      */
     public void parseTime(String time) throws IllegalArgumentException {
         if (time.length() == 0 || time.indexOf("-") != -1) {
             throw new IllegalArgumentException();
-                    //Messages.getMessage("badTimeDuration"));
+            //Messages.getMessage("badTimeDuration"));
         }
 
         // check if time ends with either H, M, or S
         if (!time.endsWith("H") && !time.endsWith("M") && !time.endsWith("S")) {
             throw new IllegalArgumentException();
-                    //Messages.getMessage("badTimeDuration"));
+            //Messages.getMessage("badTimeDuration"));
         }
 
         try {
@@ -159,7 +154,7 @@ public class Duration implements Serializable {
             // throw an exception
             if (start == end) {
                 throw new IllegalArgumentException();
-                        //Messages.getMessage("badTimeDuration"));
+                //Messages.getMessage("badTimeDuration"));
             }
             if (end != -1) {
                 hours = Integer.parseInt(time.substring(0, end));
@@ -186,7 +181,7 @@ public class Duration implements Serializable {
             // throw an exception
             if (start == end) {
                 throw new IllegalArgumentException();
-                        //Messages.getMessage("badTimeDuration"));
+                //Messages.getMessage("badTimeDuration"));
             }
 
             if (end != -1) {
@@ -194,28 +189,26 @@ public class Duration implements Serializable {
             }
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException();
-                    //Messages.getMessage("badTimeDuration"));
+            //Messages.getMessage("badTimeDuration"));
         }
     }
 
     /**
-     * This method parses the date portion of a String that represents
-     * xsd:duration - nYnMnD.
+     * This method parses the date portion of a String that represents xsd:duration - nYnMnD.
      *
      * @param date
      * @throws IllegalArgumentException if date does not match pattern
-     *
      */
     public void parseDate(String date) throws IllegalArgumentException {
         if (date.length() == 0 || date.indexOf("-") != -1) {
             throw new IllegalArgumentException();
-                    //Messages.getMessage("badDateDuration"));
+            //Messages.getMessage("badDateDuration"));
         }
 
         // check if date string ends with either Y, M, or D
         if (!date.endsWith("Y") && !date.endsWith("M") && !date.endsWith("D")) {
             throw new IllegalArgumentException();
-                    //Messages.getMessage("badDateDuration"));
+            //Messages.getMessage("badDateDuration"));
         }
 
         // catch any parsing exception
@@ -228,7 +221,7 @@ public class Duration implements Serializable {
             // throw an exception
             if (start == end) {
                 throw new IllegalArgumentException();
-                       // Messages.getMessage("badDateDuration"));
+                // Messages.getMessage("badDateDuration"));
             }
             if (end != -1) {
                 years = Integer.parseInt(date.substring(0, end));
@@ -241,7 +234,7 @@ public class Duration implements Serializable {
             // throw an exception
             if (start == end) {
                 throw new IllegalArgumentException();
-                        //Messages.getMessage("badDateDuration"));
+                //Messages.getMessage("badDateDuration"));
             }
             if (end != -1) {
                 months = Integer.parseInt(date.substring(start, end));
@@ -253,14 +246,14 @@ public class Duration implements Serializable {
             // throw an exception
             if (start == end) {
                 throw new IllegalArgumentException();
-                       // Messages.getMessage("badDateDuration"));
+                // Messages.getMessage("badDateDuration"));
             }
             if (end != -1) {
                 days = Integer.parseInt(date.substring(start, end));
             }
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException();
-                    //Messages.getMessage("badDateDuration"));
+            //Messages.getMessage("badDateDuration"));
         }
     }
 
@@ -313,70 +306,54 @@ public class Duration implements Serializable {
         return seconds;
     }
 
-    /**
-     * @param negative
-     */
+    /** @param negative  */
     public void setNegative(boolean negative) {
         isNegative = negative;
     }
 
-    /**
-     * @param years
-     */
+    /** @param years  */
     public void setYears(int years) {
         this.years = years;
     }
 
-    /**
-     * @param months
-     */
+    /** @param months  */
     public void setMonths(int months) {
         this.months = months;
     }
 
-    /**
-     * @param days
-     */
+    /** @param days  */
     public void setDays(int days) {
         this.days = days;
     }
 
-    /**
-     * @param hours
-     */
+    /** @param hours  */
     public void setHours(int hours) {
         this.hours = hours;
     }
 
-    /**
-     * @param minutes
-     */
+    /** @param minutes  */
     public void setMinutes(int minutes) {
         this.minutes = minutes;
     }
 
     /**
      * @param seconds
-     * @deprecated use {@link #setSeconds(double) setSeconds(double)}
-     * instead
+     * @deprecated use {@link #setSeconds(double) setSeconds(double)} instead
      */
     public void setSeconds(int seconds) {
         this.seconds = seconds;
     }
 
     /**
-     * Sets the seconds. NOTE: The fractional value of seconds is rounded up to
-     * milliseconds.
+     * Sets the seconds. NOTE: The fractional value of seconds is rounded up to milliseconds.
      *
      * @param seconds double
      */
     public void setSeconds(double seconds) {
-        this.seconds = ((double) (Math.round(seconds * 100))) / 100;
+        this.seconds = ((double)(Math.round(seconds * 100))) / 100;
     }
 
-    /**
-     * This returns the xml representation of an xsd:duration object.
-     */
+    /** This returns the xml representation of an xsd:duration object. */
     public String toString() {
         StringBuffer duration = new StringBuffer();
 
@@ -403,8 +380,8 @@ public class Duration implements Serializable {
 
             }
             if (seconds != 0) {
-                if (seconds == (int) seconds) {
-                    duration.append((int) seconds).append("S");
+                if (seconds == (int)seconds) {
+                    duration.append((int)seconds).append("S");
                 } else {
                     duration.append(seconds).append("S");
                 }
@@ -423,9 +400,8 @@ public class Duration implements Serializable {
     }
 
     /**
-     * The equals method compares the time represented by duration object, not
-     * its string representation.
-     * Hence, a duration object representing 65 minutes is considered equal to a
+     * The equals method compares the time represented by duration object, not its string
+     * representation. Hence, a duration object representing 65 minutes is considered equal to a
      * duration object representing 1 hour and 5 minutes.
      *
      * @param object
@@ -435,13 +411,13 @@ public class Duration implements Serializable {
             return false;
         }
 
-        Duration duration = (Duration) object;
+        Duration duration = (Duration)object;
 
         return this.isNegative == duration.isNegative &&
                 this.getAsCalendar().equals(duration.getAsCalendar());
     }
 
-    public long compare(Duration duration){
+    public long compare(Duration duration) {
         return this.getAsCalendar().getTimeInMillis() - duration.getAsCalendar().getTimeInMillis();
     }
 
@@ -464,11 +440,10 @@ public class Duration implements Serializable {
     }
 
     /**
-     * Returns duration as a calendar.  Due to the way a Calendar class works,
-     * the values for particular fields may not be the same as obtained through
-     * getter methods.  For example, if a duration's object getMonths
-     * returns 20, a similar call on a calendar object will return 1 year and
-     * 8 months.
+     * Returns duration as a calendar.  Due to the way a Calendar class works, the values for
+     * particular fields may not be the same as obtained through getter methods.  For example, if a
+     * duration's object getMonths returns 20, a similar call on a calendar object will return 1
+     * year and 8 months.
      *
      * @return Calendar
      */
@@ -477,25 +452,24 @@ public class Duration implements Serializable {
     }
 
     /**
-     * Returns duration as a calendar.  Due to the way a Calendar class works,
-     * the values for particular fields may not be the same as obtained through
-     * getter methods.  For example, if a Duration's object getMonths
-     * returns 20, a similar call on a Calendar object will return 1 year and
-     * 8 months.
+     * Returns duration as a calendar.  Due to the way a Calendar class works, the values for
+     * particular fields may not be the same as obtained through getter methods.  For example, if a
+     * Duration's object getMonths returns 20, a similar call on a Calendar object will return 1
+     * year and 8 months.
      *
      * @param startTime Calendar
      * @return Calendar
      */
     public Calendar getAsCalendar(Calendar startTime) {
-        Calendar ret = (Calendar) startTime.clone();
+        Calendar ret = (Calendar)startTime.clone();
         ret.set(Calendar.YEAR, years);
         ret.set(Calendar.MONTH, months);
         ret.set(Calendar.DATE, days);
         ret.set(Calendar.HOUR, hours);
         ret.set(Calendar.MINUTE, minutes);
-        ret.set(Calendar.SECOND, (int) seconds);
+        ret.set(Calendar.SECOND, (int)seconds);
         ret.set(Calendar.MILLISECOND,
-                (int) (seconds * 100 - Math.round(seconds) * 100));
+                (int)(seconds * 100 - Math.round(seconds) * 100));
         return ret;
     }
 }

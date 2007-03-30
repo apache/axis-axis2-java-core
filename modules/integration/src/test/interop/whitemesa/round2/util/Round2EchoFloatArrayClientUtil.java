@@ -16,6 +16,7 @@
 
 
 package test.interop.whitemesa.round2.util;
+
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -34,13 +35,17 @@ public class Round2EchoFloatArrayClientUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
-        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance","xsi");
-        OMNamespace encNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
-        
+        OMNamespace typeNs =
+                reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        OMNamespace encNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
 
-        OMElement operation = omfactory.createOMElement("echoFloatArray", "http://soapinterop.org/", null);
+
+        OMElement operation =
+                omfactory.createOMElement("echoFloatArray", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                               null);
 
         OMElement part = omfactory.createOMElement("inputFloatArray", null);
         part.declareNamespace(typeNs);

@@ -15,7 +15,12 @@
  */
 package org.apache.axis2.saaj;
 
-import java.util.Locale;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
+import org.apache.axiom.om.impl.dom.ElementImpl;
+import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
@@ -25,13 +30,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
-
-import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMNamespace;
-import org.apache.axiom.om.impl.dom.DOOMAbstractFactory;
-import org.apache.axiom.om.impl.dom.ElementImpl;
-import org.apache.axiom.om.impl.dom.factory.OMDOMFactory;
-import org.w3c.dom.Element;
+import java.util.Locale;
 
 /**
  * 
@@ -41,15 +40,13 @@ public class SOAPFactoryImpl extends SOAPFactory {
     protected String soapVersion = SOAPConstants.SOAP_1_1_PROTOCOL;
 
     /**
-     * Create a <code>SOAPElement</code> object initialized with the
-     * given <code>Name</code> object.
+     * Create a <code>SOAPElement</code> object initialized with the given <code>Name</code>
+     * object.
      *
-     * @param name a <code>Name</code> object with the XML name for
-     *             the new element
-     * @return the new <code>SOAPElement</code> object that was
-     *         created
-     * @throws javax.xml.soap.SOAPException if there is an error in creating the
-     *                                      <code>SOAPElement</code> object
+     * @param name a <code>Name</code> object with the XML name for the new element
+     * @return the new <code>SOAPElement</code> object that was created
+     * @throws javax.xml.soap.SOAPException if there is an error in creating the <code>SOAPElement</code>
+     *                                      object
      */
     public SOAPElement createElement(Name name) throws SOAPException {
         String localName = name.getLocalName();
@@ -58,76 +55,69 @@ public class SOAPFactoryImpl extends SOAPFactory {
         OMElement omElement = null;
         if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
             omElement = DOOMAbstractFactory.getSOAP12Factory().createOMElement(localName
-            		, uri, prefix);
+                    , uri, prefix);
         } else {
             omElement = DOOMAbstractFactory.getSOAP11Factory().createOMElement(localName
-            		, uri, prefix);
+                    , uri, prefix);
         }
         DOOMAbstractFactory.getOMFactory().createOMElement(localName, uri, prefix);
-        return new SOAPElementImpl((ElementImpl) omElement);
+        return new SOAPElementImpl((ElementImpl)omElement);
     }
 
     /**
-     * Create a <code>SOAPElement</code> object initialized with the
-     * given local name.
+     * Create a <code>SOAPElement</code> object initialized with the given local name.
      *
-     * @param localName a <code>String</code> giving the local name for
-     *                  the new element
-     * @return the new <code>SOAPElement</code> object that was
-     *         created
-     * @throws javax.xml.soap.SOAPException if there is an error in creating the
-     *                                      <code>SOAPElement</code> object
+     * @param localName a <code>String</code> giving the local name for the new element
+     * @return the new <code>SOAPElement</code> object that was created
+     * @throws javax.xml.soap.SOAPException if there is an error in creating the <code>SOAPElement</code>
+     *                                      object
      */
     public SOAPElement createElement(String localName) throws SOAPException {
         OMDOMFactory omdomFactory = null;
         if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
-            omdomFactory = (OMDOMFactory) DOOMAbstractFactory.getSOAP12Factory();
+            omdomFactory = (OMDOMFactory)DOOMAbstractFactory.getSOAP12Factory();
         } else {
-            omdomFactory = (OMDOMFactory) DOOMAbstractFactory.getSOAP11Factory();
+            omdomFactory = (OMDOMFactory)DOOMAbstractFactory.getSOAP11Factory();
         }
         OMElement omElement = omdomFactory.createOMElement(new QName(localName));
-        return new SOAPElementImpl((ElementImpl) omElement);
+        return new SOAPElementImpl((ElementImpl)omElement);
     }
 
     /**
-     * Create a new <code>SOAPElement</code> object with the given
-     * local name, prefix and uri.
+     * Create a new <code>SOAPElement</code> object with the given local name, prefix and uri.
      *
-     * @param localName a <code>String</code> giving the local name
-     *                  for the new element
+     * @param localName a <code>String</code> giving the local name for the new element
      * @param prefix    the prefix for this <code>SOAPElement</code>
-     * @param uri       a <code>String</code> giving the URI of the
-     *                  namespace to which the new element belongs
-     * @return the new <code>SOAPElement</code> object that was
-     *         created
-     * @throws javax.xml.soap.SOAPException if there is an error in creating the
-     *                                      <code>SOAPElement</code> object
+     * @param uri       a <code>String</code> giving the URI of the namespace to which the new
+     *                  element belongs
+     * @return the new <code>SOAPElement</code> object that was created
+     * @throws javax.xml.soap.SOAPException if there is an error in creating the <code>SOAPElement</code>
+     *                                      object
      */
-    public SOAPElement createElement(String localName, String prefix, String uri) 
-    throws SOAPException {
+    public SOAPElement createElement(String localName, String prefix, String uri)
+            throws SOAPException {
         OMElement omElement = null;
         if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
             omElement = DOOMAbstractFactory.getSOAP12Factory().createOMElement(localName
-            		, uri, prefix);
+                    , uri, prefix);
         } else {
             omElement = DOOMAbstractFactory.getSOAP11Factory().createOMElement(localName
-            		, uri, prefix);
+                    , uri, prefix);
         }
-        return new SOAPElementImpl((ElementImpl) omElement);
+        return new SOAPElementImpl((ElementImpl)omElement);
     }
 
     /**
-     * Creates a new <code>Detail</code> object which serves as a container
-     * for <code>DetailEntry</code> objects.
+     * Creates a new <code>Detail</code> object which serves as a container for
+     * <code>DetailEntry</code> objects.
      * <p/>
-     * This factory method creates <code>Detail</code> objects for use in
-     * situations where it is not practical to use the <code>SOAPFault</code>
-     * abstraction.
+     * This factory method creates <code>Detail</code> objects for use in situations where it is not
+     * practical to use the <code>SOAPFault</code> abstraction.
      *
      * @return a <code>Detail</code> object
      * @throws javax.xml.soap.SOAPException if there is a SOAP error
      */
-    public Detail createDetail() throws SOAPException { 
+    public Detail createDetail() throws SOAPException {
         if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
             return new DetailImpl(DOOMAbstractFactory.getSOAP12Factory().createSOAPFaultDetail());
         } else {
@@ -136,18 +126,17 @@ public class SOAPFactoryImpl extends SOAPFactory {
     }
 
     /**
-     * Creates a new <code>Name</code> object initialized with the
-     * given local name, namespace prefix, and namespace URI.
+     * Creates a new <code>Name</code> object initialized with the given local name, namespace
+     * prefix, and namespace URI.
      * <p/>
-     * This factory method creates <code>Name</code> objects for use in
-     * situations where it is not practical to use the <code>SOAPEnvelope</code>
-     * abstraction.
+     * This factory method creates <code>Name</code> objects for use in situations where it is not
+     * practical to use the <code>SOAPEnvelope</code> abstraction.
      *
      * @param localName a <code>String</code> giving the local name
      * @param prefix    a <code>String</code> giving the prefix of the namespace
      * @param uri       a <code>String</code> giving the URI of the namespace
-     * @return a <code>Name</code> object initialized with the given
-     *         local name, namespace prefix, and namespace URI
+     * @return a <code>Name</code> object initialized with the given local name, namespace prefix,
+     *         and namespace URI
      * @throws javax.xml.soap.SOAPException if there is a SOAP error
      */
     public Name createName(String localName, String prefix, String uri) throws SOAPException {
@@ -155,16 +144,13 @@ public class SOAPFactoryImpl extends SOAPFactory {
     }
 
     /**
-     * Creates a new <code>Name</code> object initialized with the
-     * given local name.
+     * Creates a new <code>Name</code> object initialized with the given local name.
      * <p/>
-     * This factory method creates <code>Name</code> objects for use in
-     * situations where it is not practical to use the <code>SOAPEnvelope</code>
-     * abstraction.
+     * This factory method creates <code>Name</code> objects for use in situations where it is not
+     * practical to use the <code>SOAPEnvelope</code> abstraction.
      *
      * @param localName a <code>String</code> giving the local name
-     * @return a <code>Name</code> object initialized with the given
-     *         local name
+     * @return a <code>Name</code> object initialized with the given local name
      * @throws javax.xml.soap.SOAPException if there is a SOAP error
      */
     public Name createName(String localName) throws SOAPException {
@@ -173,72 +159,73 @@ public class SOAPFactoryImpl extends SOAPFactory {
 
     /**
      * Creates a new default SOAPFault object
-	 * @return a SOAPFault object
-	 * @throws SOAPException - if there is a SOAP error 
+     *
+     * @return a SOAPFault object
+     * @throws SOAPException - if there is a SOAP error
      */
     public SOAPFault createFault() throws SOAPException {
-    	org.apache.axiom.soap.SOAPFactory soapFactory;
+        org.apache.axiom.soap.SOAPFactory soapFactory;
         if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
-        	soapFactory = DOOMAbstractFactory.getSOAP12Factory();
-        	return new SOAPFaultImpl(soapFactory.createSOAPFault());        	
+            soapFactory = DOOMAbstractFactory.getSOAP12Factory();
+            return new SOAPFaultImpl(soapFactory.createSOAPFault());
         } else {
-        	soapFactory = DOOMAbstractFactory.getSOAP11Factory();
-        	return new SOAPFaultImpl(soapFactory.createSOAPFault());
+            soapFactory = DOOMAbstractFactory.getSOAP11Factory();
+            return new SOAPFaultImpl(soapFactory.createSOAPFault());
         }
     }
 
     /**
-	 * Creates a new SOAPFault object initialized with the given reasonText and faultCode
-     * @param
-     * reasonText - the ReasonText/FaultString for the fault
-     * faultCode - the FaultCode for the fault
+     * Creates a new SOAPFault object initialized with the given reasonText and faultCode
+     *
+     * @param reasonText - the ReasonText/FaultString for the fault faultCode - the FaultCode for
+     *                   the fault
      * @return: a SOAPFault object
      * @throws: SOAPException - if there is a SOAP error
      */
     public SOAPFault createFault(String reasonText, QName faultCode) throws SOAPException {
-    	SOAPFault soapFault;
+        SOAPFault soapFault;
         if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
-        	soapFault =  new SOAPFaultImpl(DOOMAbstractFactory.getSOAP12Factory()
-        			.createSOAPFault());
+            soapFault = new SOAPFaultImpl(DOOMAbstractFactory.getSOAP12Factory()
+                    .createSOAPFault());
         } else {
-        	soapFault =  new SOAPFaultImpl(DOOMAbstractFactory.getSOAP11Factory()
-        			.createSOAPFault());
+            soapFault = new SOAPFaultImpl(DOOMAbstractFactory.getSOAP11Factory()
+                    .createSOAPFault());
         }
-    	soapFault.setFaultCode(faultCode);
-    	try{
-    		soapFault.addFaultReasonText(reasonText, Locale.getDefault());
-    	}catch(UnsupportedOperationException e){
-    		throw new SOAPException(e.getMessage());
-    	}
-    	
-    	return soapFault;
+        soapFault.setFaultCode(faultCode);
+        try {
+            soapFault.addFaultReasonText(reasonText, Locale.getDefault());
+        } catch (UnsupportedOperationException e) {
+            throw new SOAPException(e.getMessage());
+        }
+
+        return soapFault;
     }
 
-    public void setSOAPVersion(String soapVersion){
+    public void setSOAPVersion(String soapVersion) {
         this.soapVersion = soapVersion;
     }
 
 
-	public SOAPElement createElement(QName qname) throws SOAPException {
+    public SOAPElement createElement(QName qname) throws SOAPException {
         String localName = qname.getLocalPart();
         String prefix = qname.getPrefix();
         String uri = qname.getNamespaceURI();
         OMElement omElement = DOOMAbstractFactory.getOMFactory().createOMElement(localName
-        		, uri, prefix);
-        return new SOAPElementImpl((ElementImpl) omElement);
-	}
+                , uri, prefix);
+        return new SOAPElementImpl((ElementImpl)omElement);
+    }
 
-	public SOAPElement createElement(Element element) throws SOAPException {
+    public SOAPElement createElement(Element element) throws SOAPException {
         OMDOMFactory omdomFactory = null;
         if (soapVersion.equals(SOAPConstants.SOAP_1_2_PROTOCOL)) {
-            omdomFactory = (OMDOMFactory) DOOMAbstractFactory.getSOAP12Factory();
+            omdomFactory = (OMDOMFactory)DOOMAbstractFactory.getSOAP12Factory();
         } else {
-            omdomFactory = (OMDOMFactory) DOOMAbstractFactory.getSOAP11Factory();
+            omdomFactory = (OMDOMFactory)DOOMAbstractFactory.getSOAP11Factory();
         }
         OMNamespace ns = omdomFactory.createOMNamespace(element.getNamespaceURI()
-        		,element.getPrefix());
+                , element.getPrefix());
         OMElement omElement = omdomFactory.createOMElement(element.getLocalName(), ns);
-        return new SOAPElementImpl((ElementImpl) omElement);
-	}
-    
+        return new SOAPElementImpl((ElementImpl)omElement);
+    }
+
 }

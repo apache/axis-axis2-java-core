@@ -27,12 +27,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
-/**
- * Converter
- */
+/** Converter */
 public class Converter {
-    public static Object convert(Object arg, Class destClass)
-    {
+    public static Object convert(Object arg, Class destClass) {
         if (destClass == null) {
             return arg;
         }
@@ -54,17 +51,17 @@ public class Converter {
 
         // Convert between Calendar and Date
         if (arg instanceof Calendar && destClass == Date.class) {
-            return ((Calendar) arg).getTime();
+            return ((Calendar)arg).getTime();
         }
         if (arg instanceof Date && destClass == Calendar.class) {
-        	Calendar calendar = Calendar.getInstance();
-        	calendar.setTime((Date) arg);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime((Date)arg);
             return calendar;
         }
 
         // Convert between Calendar and java.sql.Date
         if (arg instanceof Calendar && destClass == java.sql.Date.class) {
-            return new java.sql.Date(((Calendar) arg).getTime().getTime());
+            return new java.sql.Date(((Calendar)arg).getTime().getTime());
         }
 
         // Convert between HashMap and Hashtable
@@ -76,20 +73,20 @@ public class Converter {
         // is a suitable component, return an array with
         // the single item.
         if (arg != null &&
-            destClass.isArray() &&
-            !destClass.getComponentType().equals(Object.class) &&
-            destClass.getComponentType().isAssignableFrom(arg.getClass())) {
+                destClass.isArray() &&
+                !destClass.getComponentType().equals(Object.class) &&
+                destClass.getComponentType().isAssignableFrom(arg.getClass())) {
             Object array =
-                Array.newInstance(destClass.getComponentType(), 1);
+                    Array.newInstance(destClass.getComponentType(), 1);
             Array.set(array, 0, arg);
             return array;
         }
 
         // Return if no conversion is available
         if (!(arg instanceof Collection ||
-              (arg != null && arg.getClass().isArray())) &&
-            ((destHeldType == null && argHeldType == null) ||
-             (destHeldType != null && argHeldType != null))) {
+                (arg != null && arg.getClass().isArray())) &&
+                ((destHeldType == null && argHeldType == null) ||
+                        (destHeldType != null && argHeldType != null))) {
             return arg;
         }
 
@@ -104,7 +101,7 @@ public class Converter {
         if (arg.getClass().isArray()) {
             length = Array.getLength(arg);
         } else {
-            length = ((Collection) arg).size();
+            length = ((Collection)arg).size();
         }
         if (destClass.isArray()) {
             if (destClass.getComponentType().isPrimitive()) {
@@ -119,7 +116,7 @@ public class Converter {
                 } else {
                     int idx = 0;
                     for (Iterator i = ((Collection)arg).iterator();
-                            i.hasNext();) {
+                         i.hasNext();) {
                         Array.set(array, idx++, i.next());
                     }
                 }
@@ -143,15 +140,14 @@ public class Converter {
                 } else {
                     int idx = 0;
                     for (Iterator i = ((Collection)arg).iterator();
-                            i.hasNext();) {
+                         i.hasNext();) {
                         array[idx++] = convert(i.next(),
-                                           destClass.getComponentType());
+                                               destClass.getComponentType());
                     }
                 }
                 destValue = array;
             }
-        }
-        else if (Collection.class.isAssignableFrom(destClass)) {
+        } else if (Collection.class.isAssignableFrom(destClass)) {
             Collection newList = null;
             try {
                 // if we are trying to create an interface, build something
@@ -174,13 +170,12 @@ public class Converter {
                 }
             } else {
                 for (Iterator j = ((Collection)arg).iterator();
-                            j.hasNext();) {
+                     j.hasNext();) {
                     newList.add(j.next());
                 }
             }
             destValue = newList;
-        }
-        else {
+        } else {
             destValue = arg;
         }
 

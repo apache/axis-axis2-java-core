@@ -16,18 +16,17 @@
  */
 package org.apache.axis2.jaxws.core;
 
-import java.util.List;
-import java.util.concurrent.Executor;
-
-import javax.xml.ws.handler.Handler;
-
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 
+import javax.xml.ws.handler.Handler;
+import java.util.List;
+import java.util.concurrent.Executor;
+
 /**
  * An implementation of the InvocationContext interface.
- * 
- * @see org.apache.axis2.jaxws.core.InvocationContext
+ *
+ * @see InvocationContext
  */
 public class InvocationContextImpl implements InvocationContext {
 
@@ -36,32 +35,28 @@ public class InvocationContextImpl implements InvocationContext {
     private MessageContext responseMsgCtx;
     private Executor executor;
     private AsyncResponse asyncResponse;
-    
+
     private ServiceClient serviceClient; //FIXME: This is temporary
-    
+
     public InvocationContextImpl() {
         //do nothing
     }
-    
-    /**
-     * @see org.apache.axis2.jaxws.core.InvocationContext#getHandlers()
-     */
+
+    /** @see InvocationContext#getHandlers() */
     public List<Handler> getHandlers() {
         return handlers;
     }
-    
+
     /**
      * Sets the list of hanlders for this InvocationContext
-     * 
+     *
      * @param list
      */
     public void setHandlers(List<Handler> list) {
         handlers = list;
     }
 
-    /**
-     * @see org.apache.axis2.jaxws.core.InvocationContext#setRequestMessageContext(MessageContext)
-     */
+    /** @see InvocationContext#setRequestMessageContext(MessageContext) */
     public void setRequestMessageContext(MessageContext ctx) {
         requestMsgCtx = ctx;
         if (ctx != null) {
@@ -69,51 +64,45 @@ public class InvocationContextImpl implements InvocationContext {
         }
     }
 
-    /**
-     * @see org.apache.axis2.jaxws.core.InvocationContext#setResponseMessageContext(MessageContext)
-     */
+    /** @see InvocationContext#setResponseMessageContext(MessageContext) */
     public void setResponseMessageContext(MessageContext ctx) {
         responseMsgCtx = ctx;
         if (ctx != null) {
-            responseMsgCtx.setInvocationContext(this);    
+            responseMsgCtx.setInvocationContext(this);
         }
     }
 
-    /**
-     * @see org.apache.axis2.jaxws.core.InvocationContext#getResponseMessageContext()
-     */
+    /** @see InvocationContext#getResponseMessageContext() */
     public MessageContext getResponseMessageContext() {
         return responseMsgCtx;
     }
 
-    /**
-     * @see org.apache.axis2.jaxws.core.InvocationContext#getRequestMessageContext()
-     */
+    /** @see InvocationContext#getRequestMessageContext() */
     public MessageContext getRequestMessageContext() {
         return requestMsgCtx;
     }
-    
+
     public Executor getExecutor() {
         return executor;
     }
-    
+
     public void setExecutor(Executor e) {
         executor = e;
     }
-    
+
     public AsyncResponse getAsyncResponseListener() {
         return asyncResponse;
     }
-    
+
     public void setAsyncResponseListener(AsyncResponse ar) {
         asyncResponse = ar;
     }
-    
+
     // FIXME: This is temporary
     public ServiceClient getServiceClient() {
         return serviceClient;
     }
-    
+
     // FIXME: This is temporary
     public void setServiceClient(ServiceClient client) {
         serviceClient = client;

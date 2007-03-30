@@ -17,27 +17,23 @@ package javax.xml.soap;
 
 import javax.xml.namespace.QName;
 
-/**
- * The definition of constants pertaining to the SOAP 1.1 protocol.
- */
+/** The definition of constants pertaining to the SOAP 1.1 protocol. */
 public interface SOAPConstants {
 
-    /**
-     * The namespace identifier for the SOAP envelope.
-     */
+    /** The namespace identifier for the SOAP envelope. */
     public static final String URI_NS_SOAP_ENVELOPE =
             "http://schemas.xmlsoap.org/soap/envelope/";
 
     /**
-     * The namespace identifier for the SOAP encoding (see section 5 of
-     * the SOAP 1.1 specification).
+     * The namespace identifier for the SOAP encoding (see section 5 of the SOAP 1.1
+     * specification).
      */
     public static final String URI_NS_SOAP_ENCODING =
             "http://schemas.xmlsoap.org/soap/encoding/";
 
     /**
-     * The URI identifying the first application processing a SOAP request as the intended
-     * actor for a SOAP header entry (see section 4.2.2 of the SOAP 1.1 specification).
+     * The URI identifying the first application processing a SOAP request as the intended actor for
+     * a SOAP header entry (see section 4.2.2 of the SOAP 1.1 specification).
      */
     public static final String URI_SOAP_ACTOR_NEXT =
             "http://schemas.xmlsoap.org/soap/actor/next";

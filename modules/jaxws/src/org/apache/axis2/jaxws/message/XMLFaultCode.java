@@ -16,27 +16,29 @@
  */
 package org.apache.axis2.jaxws.message;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.soap.SOAP12Constants;
+
+import javax.xml.namespace.QName;
 
 /**
  * Agnostic representation of SOAP 1.1 and SOAP 1.2 fault code values.
+ *
  * @see XMLFault
  */
 public enum XMLFaultCode {
-                            // Rendered as qnames with the following local names
-                            //     (the namespace is the corresponding envelope namespace)
+    // Rendered as qnames with the following local names
+    //     (the namespace is the corresponding envelope namespace)
     SENDER,                 // SOAP 1.2 Sender                SOAP 1.1  Client
     RECEIVER,               // SOAP 1.2 Receiver              SOAP 1.1  Server
     MUSTUNDERSTAND,         // SOAP 1.2 MustUnderstand        SOAP 1.1  MustUnderstand
     DATAENCODINGUNKNOWN,    // SOAP 1.2 DataEncodingUnknown   SOAP 1.1  Server
-    VERSIONMISMATCH ;       // SOAP 1.2 VersionMismatch       SOAP 1.1  VersionMismatch
-    
+    VERSIONMISMATCH;       // SOAP 1.2 VersionMismatch       SOAP 1.1  VersionMismatch
+
     // Utility Methods
-    
+
     /**
      * Return QName for the given protocol
+     *
      * @param namespace of the envelope for the protocol
      * @return
      */
@@ -44,49 +46,50 @@ public enum XMLFaultCode {
         String localPart = null;
         if (namespace.equals(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
             // SOAP 1.2
-            switch(this) {
-            case SENDER:
-                localPart = "Sender";
-                break;
-            case RECEIVER:
-                localPart = "Receiver";
-                break;
-            case MUSTUNDERSTAND:
-                localPart = "MustUnderstand";
-                break;
-            case DATAENCODINGUNKNOWN:
-                localPart = "DataEncodingUnknown";
-                break;
-            case VERSIONMISMATCH:
-                localPart = "VersionMismatch";
-                break;
+            switch (this) {
+                case SENDER:
+                    localPart = "Sender";
+                    break;
+                case RECEIVER:
+                    localPart = "Receiver";
+                    break;
+                case MUSTUNDERSTAND:
+                    localPart = "MustUnderstand";
+                    break;
+                case DATAENCODINGUNKNOWN:
+                    localPart = "DataEncodingUnknown";
+                    break;
+                case VERSIONMISMATCH:
+                    localPart = "VersionMismatch";
+                    break;
             }
-            
+
         } else {
             // Assume SOAP 1.1
-            switch(this) {
-            case SENDER:
-                localPart = "Client";
-                break;
-            case RECEIVER:
-                localPart = "Server";
-                break;
-            case MUSTUNDERSTAND:
-                localPart = "MustUnderstand";
-                break;
-            case DATAENCODINGUNKNOWN:
-                localPart = "Server";
-                break;
-            case VERSIONMISMATCH:
-                localPart = "VersionMismatch";
-                break;
+            switch (this) {
+                case SENDER:
+                    localPart = "Client";
+                    break;
+                case RECEIVER:
+                    localPart = "Server";
+                    break;
+                case MUSTUNDERSTAND:
+                    localPart = "MustUnderstand";
+                    break;
+                case DATAENCODINGUNKNOWN:
+                    localPart = "Server";
+                    break;
+                case VERSIONMISMATCH:
+                    localPart = "VersionMismatch";
+                    break;
             }
         }
         return new QName(namespace, localPart);
     }
-    
+
     /**
      * get the XMLPart corresponding to this specified QName
+     *
      * @param qName
      * @return corresponding XMLPart
      */
@@ -97,7 +100,7 @@ public enum XMLFaultCode {
         }
         String namespace = qName.getNamespaceURI();
         String localPart = qName.getLocalPart();
-        XMLFaultCode xmlFaultCode= RECEIVER;
+        XMLFaultCode xmlFaultCode = RECEIVER;
         // Due to problems in the OM, sometimes that qname is not retrieved correctly.
         // So use the localName to find the XMLFaultCode
         if (localPart.equalsIgnoreCase("Sender")) {          // SOAP 1.2

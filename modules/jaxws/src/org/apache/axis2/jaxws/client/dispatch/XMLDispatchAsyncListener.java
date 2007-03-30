@@ -18,43 +18,42 @@
  */
 package org.apache.axis2.jaxws.client.dispatch;
 
-import javax.xml.ws.Service.Mode;
-
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.jaxws.description.EndpointDescription;
 
+import javax.xml.ws.Service.Mode;
+
 /**
- * The XMLDispatchAsyncListener is an extension of the  
- * {@link org.apache.axis2.jaxws.client.async.AsyncResponse} class to provide 
- * proper deserialization into the target format (XML String or Source).
+ * The XMLDispatchAsyncListener is an extension of the {@link org.apache.axis2.jaxws.client.async.AsyncResponse}
+ * class to provide proper deserialization into the target format (XML String or Source).
  */
 public class XMLDispatchAsyncListener extends AsyncResponse {
 
     private Mode mode;
     private Class type;
     private Class blockFactoryType;
-    
+
     public XMLDispatchAsyncListener(EndpointDescription ed) {
         super(ed);
     }
-    
+
     public void setMode(Mode m) {
         mode = m;
     }
-    
+
     public void setType(Class t) {
         type = t;
     }
-    
+
     public void setBlockFactoryType(Class t) {
         blockFactoryType = t;
     }
-    
+
     public Object getResponseValueObject(MessageContext mc) {
         return XMLDispatch.getValue(mc.getMessage(), mode, blockFactoryType);
     }
-    
+
     public Throwable getFaultResponse(MessageContext mc) {
         return BaseDispatch.getFaultResponse(mc);
     }

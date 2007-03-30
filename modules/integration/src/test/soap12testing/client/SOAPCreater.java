@@ -25,7 +25,6 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,18 +36,21 @@ import java.net.URL;
 
 public class SOAPCreater {
 
-	private static final Log log = LogFactory.getLog(SOAPCreater.class);
+    private static final Log log = LogFactory.getLog(SOAPCreater.class);
+
     public String getStringFromSOAPMessage(String testNumber, URL url) throws IOException {
         File file =
-            new File(
-                MessageComparator.TEST_MAIN_DIR + "test-resources/SOAP12Testing/RequestMessages/SOAP12ReqT" + testNumber + ".xml");
+                new File(
+                        MessageComparator.TEST_MAIN_DIR +
+                                "test-resources/SOAP12Testing/RequestMessages/SOAP12ReqT" +
+                                testNumber + ".xml");
         FileInputStream stream = new FileInputStream(file);
         StringBuffer sb = new StringBuffer();
 
         sb.append(HTTPConstants.HEADER_POST).append(" ");
         sb.append(url.getFile()).append(" ").append(HTTPConstants.HEADER_PROTOCOL_10).append("\n");
         sb.append(HTTPConstants.HEADER_CONTENT_TYPE).append(": ").append(
-            SOAP12Constants.SOAP_12_CONTENT_TYPE);
+                SOAP12Constants.SOAP_12_CONTENT_TYPE);
         sb.append("; charset=utf-8\n");
         sb.append("\n");
 
@@ -64,9 +66,9 @@ public class SOAPCreater {
         File file = new File(pathAndFileName);
         try {
             XMLStreamReader parser =
-                StAXUtils.createXMLStreamReader(new FileReader(file));
+                    StAXUtils.createXMLStreamReader(new FileReader(file));
             OMXMLParserWrapper builder = new StAXSOAPModelBuilder(parser, null);
-            return (SOAPEnvelope) builder.getDocumentElement();
+            return (SOAPEnvelope)builder.getDocumentElement();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

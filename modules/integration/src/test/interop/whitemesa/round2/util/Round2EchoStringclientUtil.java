@@ -36,10 +36,13 @@ public class Round2EchoStringclientUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace typeNs =
+                reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
-        OMElement operation = omfactory.createOMElement("echoString", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoString", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
         operation.declareNamespace(envNs);
         operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);

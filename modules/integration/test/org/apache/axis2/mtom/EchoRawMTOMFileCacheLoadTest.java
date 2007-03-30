@@ -16,6 +16,8 @@
 
 package org.apache.axis2.mtom;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.Echo;
@@ -23,9 +25,6 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.util.Utils;
 
 import javax.xml.namespace.QName;
-
-import junit.framework.TestSuite;
-import junit.framework.Test;
 
 public class EchoRawMTOMFileCacheLoadTest extends EchoRawMTOMLoadTest {
 
@@ -44,12 +43,13 @@ public class EchoRawMTOMFileCacheLoadTest extends EchoRawMTOMLoadTest {
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(EchoRawMTOMFileCacheLoadTest.class),Constants.TESTING_PATH + "MTOM-fileCache-enabledRepository");
+        return getTestSetup2(new TestSuite(EchoRawMTOMFileCacheLoadTest.class),
+                             Constants.TESTING_PATH + "MTOM-fileCache-enabledRepository");
     }
 
     protected void setUp() throws Exception {
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
-                operationName);
+                                            operationName);
         UtilServer.deployService(service);
     }
 

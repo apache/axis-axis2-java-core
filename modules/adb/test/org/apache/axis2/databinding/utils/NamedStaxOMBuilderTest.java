@@ -6,7 +6,6 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.util.StreamWrapper;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.StringReader;
 /*
@@ -27,36 +26,34 @@ import java.io.StringReader;
 
 public class NamedStaxOMBuilderTest extends TestCase {
 
-    public void testNamedOMBuilder() throws Exception{
+    public void testNamedOMBuilder() throws Exception {
 
-        String xmlDoc="<wrapper><myIntVal>200</myIntVal></wrapper>";
+        String xmlDoc = "<wrapper><myIntVal>200</myIntVal></wrapper>";
         XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                 new StringReader(xmlDoc));
 
-        NamedStaxOMBuilder  sm = new NamedStaxOMBuilder(reader,new QName("wrapper"));
+        NamedStaxOMBuilder sm = new NamedStaxOMBuilder(reader, new QName("wrapper"));
         OMElement elt = sm.getOMElement();
 
         assertNotNull(elt);
-        assertEquals(elt.getLocalName(),"wrapper");
-
-
+        assertEquals(elt.getLocalName(), "wrapper");
 
 
     }
 
-    public void testNamedOMBuilder1() throws Exception{
+    public void testNamedOMBuilder1() throws Exception {
 
-        String xmlDoc="<wrapper><myIntVal>200</myIntVal></wrapper>";
+        String xmlDoc = "<wrapper><myIntVal>200</myIntVal></wrapper>";
         XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                 new StringReader(xmlDoc));
 
         //move upto the  myIntVal start element first
         boolean done = false;
         QName nameToMatch = new QName("myIntVal");
-        while(!done){
-            if (reader.isStartElement() && nameToMatch.equals(reader.getName())){
+        while (!done) {
+            if (reader.isStartElement() && nameToMatch.equals(reader.getName())) {
                 done = true;
-            }else{
+            } else {
                 reader.next();
             }
         }
@@ -65,14 +62,12 @@ public class NamedStaxOMBuilderTest extends TestCase {
         //they expect the *next* event to be the start element (not the
         //current one) So we need the wrapper to simulate a full fledged
         //
-        NamedStaxOMBuilder  sm = new NamedStaxOMBuilder(
-                new StreamWrapper(reader),nameToMatch);
+        NamedStaxOMBuilder sm = new NamedStaxOMBuilder(
+                new StreamWrapper(reader), nameToMatch);
         OMElement elt = sm.getOMElement();
 
         assertNotNull(elt);
-        assertEquals(elt.getLocalName(),"myIntVal");
-
-
+        assertEquals(elt.getLocalName(), "myIntVal");
 
 
     }

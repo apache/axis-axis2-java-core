@@ -14,20 +14,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- * 	This simple type designates a boolean with only two
- * 	permissible values
- * 
- * 	- true
- * 	- false
- * 
- *       
- * 
+ * This simple type designates a boolean with only two permissible values
+ * <p/>
+ * - true - false
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for true-falseType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="true-falseType">
  *   &lt;simpleContent>
@@ -36,14 +32,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "true-falseType")
 public class TrueFalseType
-    extends XsdBooleanType
-{
+        extends XsdBooleanType {
 
 
 }

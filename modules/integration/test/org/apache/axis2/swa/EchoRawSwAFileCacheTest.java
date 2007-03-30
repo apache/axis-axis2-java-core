@@ -16,15 +16,14 @@
 
 package org.apache.axis2.swa;
 
-import org.apache.axis2.Constants;
-import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.Echo;
-import org.apache.axis2.integration.UtilServer;
-import org.apache.axis2.util.Utils;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.apache.axis2.Constants;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.integration.UtilServer;
+import org.apache.axis2.util.Utils;
 
-public class EchoRawSwAFileCacheTest extends EchoRawSwATest{
+public class EchoRawSwAFileCacheTest extends EchoRawSwATest {
 
     private AxisService service;
 
@@ -38,12 +37,13 @@ public class EchoRawSwAFileCacheTest extends EchoRawSwATest{
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(EchoRawSwAFileCacheTest.class),Constants.TESTING_PATH + "SwA-fileCache-enabledRepository");
+        return getTestSetup2(new TestSuite(EchoRawSwAFileCacheTest.class),
+                             Constants.TESTING_PATH + "SwA-fileCache-enabledRepository");
     }
 
     protected void setUp() throws Exception {
         service = Utils.createSimpleService(serviceName, EchoSwA.class.getName(),
-                operationName);
+                                            operationName);
         UtilServer.deployService(service);
     }
 
@@ -59,7 +59,7 @@ public class EchoRawSwAFileCacheTest extends EchoRawSwATest{
     public void testEchoXMLSync() throws Exception {
         super.testEchoXMLSync();
     }
-    
+
 //    public void testEchoXMLSyncSeperateListener() throws Exception {
 //        super.testEchoXMLSyncSeperateListener();
 //    }

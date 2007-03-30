@@ -18,14 +18,6 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
-import java.lang.reflect.Method;
-import java.util.StringTokenizer;
-
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchema;
-import javax.xml.namespace.QName;
-import javax.xml.ws.WebFault;
-
 import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.FaultDescriptionJava;
 import org.apache.axis2.jaxws.description.FaultDescriptionWSDL;
@@ -33,39 +25,43 @@ import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
 
+import javax.xml.ws.WebFault;
+import java.lang.reflect.Method;
+import java.util.StringTokenizer;
 
-/**
- * @see ../FaultDescription
- *
- */
+
+/** @see ../FaultDescription */
 
 
 class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, FaultDescriptionWSDL {
-    
+
     private Class exceptionClass;
     private DescriptionBuilderComposite composite;
     private WebFault annotation;
     private OperationDescription parent;
-    
-    
+
+
     private String name = "";  // WebFault.name
     private String faultBean = "";  // WebFault.faultBean
     private String targetNamespace = ""; // WebFault.targetNamespace
     private String faultInfo = null;
-    
+
     private static final String FAULT = "Fault";
 
 
     /**
-     * The FaultDescriptionImpl class will only be used to describe exceptions declared to be thrown by a service that has
-     * a WebFault annotation.  No generic exception should ever have a FaultDescription associated with it.  It is the
-     * responsibility of the user of the FaultDescriptionImpl class to avoid instantiating this object for non-annotated
-     * generic exceptions.
-     * 
-     * @param exceptionClass an exception declared to be thrown by the service on which this FaultDescription may apply.
-     * @param beanName fully qualified package+classname of the bean associated with this exception
-     * @param annotation the WebFault annotation object on this exception class
-     * @param parent the OperationDescription that is the parent of this FaultDescription
+     * The FaultDescriptionImpl class will only be used to describe exceptions declared to be thrown
+     * by a service that has a WebFault annotation.  No generic exception should ever have a
+     * FaultDescription associated with it.  It is the responsibility of the user of the
+     * FaultDescriptionImpl class to avoid instantiating this object for non-annotated generic
+     * exceptions.
+     *
+     * @param exceptionClass an exception declared to be thrown by the service on which this
+     *                       FaultDescription may apply.
+     * @param beanName       fully qualified package+classname of the bean associated with this
+     *                       exception
+     * @param annotation     the WebFault annotation object on this exception class
+     * @param parent         the OperationDescription that is the parent of this FaultDescription
      */
     FaultDescriptionImpl(Class exceptionClass, WebFault annotation, OperationDescription parent) {
         this.exceptionClass = exceptionClass;
@@ -79,13 +75,13 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
     }
 
     public WebFault getAnnoWebFault() {
-        
-    	if (annotation == null) {
+
+        if (annotation == null) {
             if (isDBC()) {
-            	annotation = this.composite.getWebFaultAnnot();              
+                annotation = this.composite.getWebFaultAnnot();
             }
         }
-    	
+
         return annotation;
     }
 
@@ -99,7 +95,7 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
             return composite.getClassName();
         }
     }
-    
+
     public String getFaultInfo() {
         if (faultInfo != null) {
             return faultInfo;
@@ -111,10 +107,10 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
             } catch (Exception e) {
                 // This must be a legacy exception
                 faultInfo = "";
-            } 
+            }
         } else {
-            MethodDescriptionComposite mdc = 
-                composite.getMethodDescriptionComposite("getFaultInfo", 1);
+            MethodDescriptionComposite mdc =
+                    composite.getMethodDescriptionComposite("getFaultInfo", 1);
             if (mdc != null) {
                 faultInfo = mdc.getReturnType();
             } else {
@@ -123,7 +119,7 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         }
         return faultInfo;
     }
-    
+
     public String getFaultBean() {
         if (faultBean != null && faultBean.length() > 0) {
             // Return the faultBean if it was already calculated
@@ -132,15 +128,15 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
             // Load up the WebFault annotation and get the faultBean.
             // @WebFault may not be present
             WebFault annotation = getAnnoWebFault();
-            
-            if (annotation != null && annotation.faultBean() != null && 
-                annotation.faultBean().length() > 0) {
+
+            if (annotation != null && annotation.faultBean() != null &&
+                    annotation.faultBean().length() > 0) {
                 faultBean = annotation.faultBean();
             } else {
                 // There is no default.  But it seems reasonable to return
                 // the fault info type.
                 faultBean = getFaultInfo();
-                
+
                 // The faultBean still may be "" at this point.  The JAXWS runtime
                 // is responsible for finding/buildin a representative fault bean.
             }
@@ -154,8 +150,8 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         } else {
             // Load the annotation. The annotation may not be present in WSGen cases
             WebFault annotation = this.getAnnoWebFault();
-            if (annotation != null && 
-                annotation.name().length() > 0) {
+            if (annotation != null &&
+                    annotation.name().length() > 0) {
                 name = annotation.name();
             } else {
                 // The default is undefined.
@@ -171,8 +167,8 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         } else {
             // Load the annotation. The annotation may not be present in WSGen cases
             WebFault annotation = this.getAnnoWebFault();
-            if (annotation != null && 
-                annotation.targetNamespace().length() > 0) {
+            if (annotation != null &&
+                    annotation.targetNamespace().length() > 0) {
                 targetNamespace = annotation.targetNamespace();
             } else {
                 // The default is undefined
@@ -182,14 +178,14 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         return targetNamespace;
     }
 
-    
 
     public OperationDescription getOperationDescription() {
         return parent;
     }
-    
+
     /**
      * utility method to get the last token in a "."-delimited package+classname string
+     *
      * @return
      */
     private static String getSimpleName(String in) {
@@ -207,12 +203,12 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         }
         return out;
     }
-    
+
     private boolean isDBC() {
-    	if (this.composite != null)
-    		return true;
-    	else 
-    		return false;
+        if (this.composite != null)
+            return true;
+        else
+            return false;
     }
 
     public String toString() {
@@ -220,7 +216,7 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
         final String sameline = "; ";
         StringBuffer string = new StringBuffer();
         try {
-        	string.append(super.toString());
+            string.append(super.toString());
             string.append(newline);
             string.append("Exception class: " + getExceptionClassName());
             string.append(newline);
@@ -231,13 +227,13 @@ class FaultDescriptionImpl implements FaultDescription, FaultDescriptionJava, Fa
             string.append("FaultBean: " + getFaultBean());
             string.append(newline);
             string.append("FaultInfo Type Name  : " + getFaultInfo());
-            
+
         }
-        catch(Throwable t) {
-        	string.append(newline);
-        	string.append("Complete debug information not currently available for " +
-        			"FaultDescription");
-        	return string.toString();
+        catch (Throwable t) {
+            string.append(newline);
+            string.append("Complete debug information not currently available for " +
+                    "FaultDescription");
+            return string.toString();
         }
         return string.toString();
     }

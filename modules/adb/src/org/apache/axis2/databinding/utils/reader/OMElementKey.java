@@ -16,8 +16,8 @@ package org.apache.axis2.databinding.utils.reader;
  */
 
 /**
- * A dummy class that creates nothing but a key for the
- * OMElement when it is passed to the ADBPullparser
+ * A dummy class that creates nothing but a key for the OMElement when it is passed to the
+ * ADBPullparser
  */
 public class OMElementKey {
 }

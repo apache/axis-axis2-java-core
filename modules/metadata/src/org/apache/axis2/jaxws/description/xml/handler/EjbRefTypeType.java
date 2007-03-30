@@ -14,23 +14,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- * 	The ejb-ref-typeType contains the expected type of the
- * 	referenced enterprise bean.
- * 
- * 	The ejb-ref-type designates a value
- * 	that must be one of the following:
- * 
- * 	    Entity
- * 	    Session
- * 
- *       
- * 
+ * The ejb-ref-typeType contains the expected type of the referenced enterprise bean.
+ * <p/>
+ * The ejb-ref-type designates a value that must be one of the following:
+ * <p/>
+ * Entity Session
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for ejb-ref-typeType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="ejb-ref-typeType">
  *   &lt;simpleContent>
@@ -39,14 +34,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ejb-ref-typeType")
 public class EjbRefTypeType
-    extends String
-{
+        extends String {
 
 
 }

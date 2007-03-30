@@ -22,7 +22,7 @@ import org.apache.axiom.om.OMFactory;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAP11Constants;
 
-public class EchoEmptyFaultClientUtil implements SunGroupHClientUtil{
+public class EchoEmptyFaultClientUtil implements SunGroupHClientUtil {
 
 
     public OMElement getEchoOMElement() {
@@ -33,21 +33,15 @@ public class EchoEmptyFaultClientUtil implements SunGroupHClientUtil{
 
         OMElement method = fac.createOMElement("echoEmptyFault", omNs);
         OMNamespace soapEnvNS = method.declareNamespace(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
-        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", soapEnvNS);
-
-
+                                                        SOAP11Constants.SOAP_DEFAULT_NAMESPACE_PREFIX);
+        method.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                            soapEnvNS);
 
 
         return method;
 
 
-
-
     }
-
-
-
 
 
 }

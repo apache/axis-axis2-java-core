@@ -25,22 +25,27 @@ import org.apache.axis2.jaxws.server.endpoint.injection.impl.ResourceInjectionEx
  * EndpointLifecycleManager is responsible to invoke lifycycle methods on Endpoint. An Endpoint could be a 
  * Java Bean Endpoint or Provider Endpoint. Lifecycle manager should be invoked with proper Endpoint Object.
  */
+
 public interface EndpointLifecycleManager {
-	
-	/**
-	 * EndpointLifecycleManager will create a service instance. It will inject Resources and then call 
-	 * the lifecycle methods on the service instance.
-	 * @param mc
-	 * @param serviceImplClass
-	 * @return
-	 */
-	public Object createServiceInstance(MessageContext mc, Class serviceImplClass) throws EndpointLifecycleException, ResourceInjectionException;
-	/*
-	 * Invokes method on endpoint marked with @PostConstruct annotation.
-	 */
-	public void invokePostConstruct() throws EndpointLifecycleException;
-	/*
-	 * Invokes method on endpoint marked with @preDestroy annotation.
-	 */
-	public void invokePreDestroy()throws EndpointLifecycleException;
+
+    /**
+     * EndpointLifecycleManager will create a service instance. It will inject Resources and then call
+     * the lifecycle methods on the service instance.
+     *
+     * @param mc
+     * @param serviceImplClass
+     * @return
+     */
+    public Object createServiceInstance(MessageContext mc, Class serviceImplClass)
+            throws EndpointLifecycleException, ResourceInjectionException;
+
+    /*
+      * Invokes method on endpoint marked with @PostConstruct annotation.
+      */
+    public void invokePostConstruct() throws EndpointLifecycleException;
+
+    /*
+      * Invokes method on endpoint marked with @preDestroy annotation.
+      */
+    public void invokePreDestroy() throws EndpointLifecycleException;
 }

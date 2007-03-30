@@ -18,22 +18,16 @@ package org.apache.axis2.jaxws.core;
 
 import javax.xml.ws.Binding;
 
-/**
- * The InvocationContextFactory is used to create instances of an
- * InvocationContext.  
- */
+/** The InvocationContextFactory is used to create instances of an InvocationContext. */
 public class InvocationContextFactory {
-    
-    /**
-     * Creates an instance of an InvocationContext based on the Binding
-     * that was passed in.  
-     */
+
+    /** Creates an instance of an InvocationContext based on the Binding that was passed in. */
     public static InvocationContext createInvocationContext(Binding binding) {
         InvocationContextImpl ic = new InvocationContextImpl();
         if (binding != null) {
-            ic.setHandlers(binding.getHandlerChain());        
+            ic.setHandlers(binding.getHandlerChain());
         }
-        
+
         return ic;
     }
 }

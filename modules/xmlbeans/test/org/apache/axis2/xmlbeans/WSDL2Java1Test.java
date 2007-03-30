@@ -18,7 +18,7 @@ package org.apache.axis2.xmlbeans;
 public class WSDL2Java1Test extends WSDL2JavaSuccessTestBase {
 
     protected void setUp() throws Exception {
-        this.wsdlFileName =  "wsat.wsdl";
+        this.wsdlFileName = "wsat.wsdl";
         super.setUp();
     }
 

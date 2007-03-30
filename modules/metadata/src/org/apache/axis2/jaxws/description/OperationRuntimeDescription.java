@@ -17,25 +17,20 @@
 package org.apache.axis2.jaxws.description;
 
 /**
- * A OperationRuntimeDescription object contains immutable data that is needed during the 
- * runtime (i.e. to cache marshal and demarshal information).  The 
- * OperationRuntimeDescription object must be immutable so that it can safely accessed by 
- * multiple theads without synchronization.
- *  
+ * A OperationRuntimeDescription object contains immutable data that is needed during the runtime
+ * (i.e. to cache marshal and demarshal information).  The OperationRuntimeDescription object must
+ * be immutable so that it can safely accessed by multiple theads without synchronization.
+ * <p/>
  * It cannot be used to store information that may not be available in different threads/
  * classloaders (i.e. it cannot have references to Class objects)
- * 
+ * <p/>
  * The actual OperationRuntimeDescription objects are accessed via the key.
  */
 public interface OperationRuntimeDescription {
-    
-   /**
-    * @return OperationDesc parent
-    */
+
+    /** @return OperationDesc parent */
     public OperationDescription getOperationDescription();
-   
-   /**
-    * @return String (i.e. JAXWS)
-    */
+
+    /** @return String (i.e. JAXWS) */
     public String getKey();
 }

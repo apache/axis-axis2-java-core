@@ -20,18 +20,18 @@ package org.apache.axis2.jaxws.server.dispatcher;
 import org.apache.axis2.jaxws.core.MessageContext;
 
 /**
- * The EndpointDispatcher is an abstraction for the object that will be doing
- * the invocation of an endpoints target Java object.  
+ * The EndpointDispatcher is an abstraction for the object that will be doing the invocation of an
+ * endpoints target Java object.
  */
 public interface EndpointDispatcher {
 
     /**
-     * Invoke the target endpoint synchronously 
-     * 
+     * Invoke the target endpoint synchronously
+     *
      * @param mc
      * @return
      */
     public MessageContext invoke(MessageContext mc)
-        throws Exception;
+            throws Exception;
 
 }

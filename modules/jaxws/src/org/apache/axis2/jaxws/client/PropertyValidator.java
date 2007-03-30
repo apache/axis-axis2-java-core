@@ -18,14 +18,13 @@
  */
 package org.apache.axis2.jaxws.client;
 
-import java.util.HashMap;
-
 import javax.xml.ws.BindingProvider;
+import java.util.HashMap;
 
 public class PropertyValidator {
 
     private static HashMap<String, Class> map = new HashMap<String, Class>();
-    
+
     static {
         map.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, String.class);
         map.put(BindingProvider.USERNAME_PROPERTY, String.class);
@@ -34,10 +33,11 @@ public class PropertyValidator {
         map.put(BindingProvider.SOAPACTION_USE_PROPERTY, Boolean.class);
         map.put(BindingProvider.SOAPACTION_URI_PROPERTY, String.class);
     }
-    
+
     /**
-     * Checks to see if the property value is valid given the name of the
-     * property and the type that is expected by JAX-WS.
+     * Checks to see if the property value is valid given the name of the property and the type that
+     * is expected by JAX-WS.
+     *
      * @param propName
      * @param value
      * @return
@@ -47,15 +47,14 @@ public class PropertyValidator {
         if (expectedType != null) {
             if (expectedType.equals(value.getClass())) {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     public static Class getExpectedValue(String key) {
         return map.get(key);
     }

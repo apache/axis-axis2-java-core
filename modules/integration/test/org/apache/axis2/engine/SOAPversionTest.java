@@ -58,8 +58,8 @@ public class SOAPversionTest extends UtilServerBasedTestCase implements TestCons
     protected void setUp() throws Exception {
         service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
     }
 
@@ -87,10 +87,11 @@ public class SOAPversionTest extends UtilServerBasedTestCase implements TestCons
         opClinet.addMessageContext(prepareTheSOAPEnvelope(payload, options));
         opClinet.execute(true);
 
-        SOAPEnvelope result = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
+        SOAPEnvelope result =
+                opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
         assertEquals("SOAP Version received is not compatible",
-                SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                result.getNamespace().getNamespaceURI());
+                     SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                     result.getNamespace().getNamespaceURI());
     }
 
     public void testSOAP12() throws AxisFault {
@@ -109,13 +110,15 @@ public class SOAPversionTest extends UtilServerBasedTestCase implements TestCons
         opClinet.addMessageContext(prepareTheSOAPEnvelope(payload, options));
         opClinet.execute(true);
 
-        SOAPEnvelope result = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
+        SOAPEnvelope result =
+                opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope();
         assertEquals("SOAP Version received is not compatible",
-                SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
-                result.getNamespace().getNamespaceURI());
+                     SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,
+                     result.getNamespace().getNamespaceURI());
     }
 
-    private MessageContext prepareTheSOAPEnvelope(OMElement toSend, Options options) throws AxisFault {
+    private MessageContext prepareTheSOAPEnvelope(OMElement toSend, Options options)
+            throws AxisFault {
         MessageContext msgctx = new MessageContext();
         SOAPFactory sf = getSOAPFactory(options);
         SOAPEnvelope se = sf.getDefaultEnvelope();

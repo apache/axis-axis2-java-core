@@ -23,8 +23,9 @@ class FaultBeanDescImpl implements FaultBeanDesc {
     String faultBeanClassName;
     String faultBeanLocalName;
     String faultBeanNamespace;
-    
-    FaultBeanDescImpl(String faultBeanClassName, String faultBeanLocalName, String faultBeanNamespace) {
+
+    FaultBeanDescImpl(String faultBeanClassName, String faultBeanLocalName,
+                      String faultBeanNamespace) {
         this.faultBeanClassName = faultBeanClassName;
         this.faultBeanLocalName = faultBeanLocalName;
         this.faultBeanNamespace = faultBeanNamespace;
@@ -41,7 +42,7 @@ class FaultBeanDescImpl implements FaultBeanDesc {
     public String getFaultBeanNamespace() {
         return faultBeanNamespace;
     }
-    
+
     public String toString() {
         final String newline = "\n";
         StringBuffer string = new StringBuffer();

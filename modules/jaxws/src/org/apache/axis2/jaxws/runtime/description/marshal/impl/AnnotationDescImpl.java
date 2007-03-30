@@ -16,14 +16,10 @@
  */
 package org.apache.axis2.jaxws.runtime.description.marshal.impl;
 
-import java.util.StringTokenizer;
-
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchema;
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
+
+import javax.xml.namespace.QName;
 
 /**
  *
@@ -33,7 +29,7 @@ class AnnotationDescImpl implements AnnotationDesc {
     private boolean _hasXmlRootElement = false;
     private String _XmlRootElementName = null;
     private String _XmlRootElementNamespace = null;
-    
+
     private AnnotationDescImpl() {
         super();
     }
@@ -43,7 +39,7 @@ class AnnotationDescImpl implements AnnotationDesc {
     }
 
     public String getXmlRootElementName() {
-       return _XmlRootElementName;
+        return _XmlRootElementName;
     }
 
     public String getXmlRootElementNamespace() {
@@ -52,7 +48,7 @@ class AnnotationDescImpl implements AnnotationDesc {
 
     static AnnotationDesc create(Class cls) {
         AnnotationDescImpl aDesc = new AnnotationDescImpl();
-        
+
         QName qName = XMLRootElementUtil.getXmlRootElementQName(cls);
         if (qName == null) {
             return aDesc;
@@ -60,25 +56,25 @@ class AnnotationDescImpl implements AnnotationDesc {
         aDesc._hasXmlRootElement = true;
         aDesc._XmlRootElementName = qName.getLocalPart();
         aDesc._XmlRootElementNamespace = qName.getNamespaceURI();
-          
+
         return aDesc;
     }
-    
+
     public String toString() {
         final String newline = "\n";
         StringBuffer string = new StringBuffer();
-        
+
         string.append(newline);
         string.append("      @XMLRootElement exists = " + this.hasXmlRootElement());
-        
+
         if (this.hasXmlRootElement()) {
             string.append(newline);
             string.append("      @XMLRootElement namespace = " + this.getXmlRootElementNamespace());
             string.append(newline);
             string.append("      @XMLRootElement name      = " + this.getXmlRootElementName());
         }
-        
-        
+
+
         return string.toString();
     }
 }

@@ -19,27 +19,29 @@ import java.util.StringTokenizer;
 
 /**
  * Custom class for supporting XSD data type Entities
- * 
+ *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#ENTITIES">XML Schema 3.3.12 ENTITIES</a>
  */
 public class Entities extends NCName {
-	
+
     private static final long serialVersionUID = -4511368195143560809L;
-    
-	private Entity[] entities;
-    
+
+    private Entity[] entities;
+
     public Entities() {
         super();
     }
+
     /**
      * ctor for Entities
-     * @exception IllegalArgumentException will be thrown if validation fails
+     *
+     * @throws IllegalArgumentException will be thrown if validation fails
      */
-    public Entities (String stValue) throws IllegalArgumentException {
+    public Entities(String stValue) throws IllegalArgumentException {
         StringTokenizer tokenizer = new StringTokenizer(stValue);
         int count = tokenizer.countTokens();
         entities = new Entity[count];
-        for(int i=0;i<count;i++){
+        for (int i = 0; i < count; i++) {
             entities[i] = new Entity(tokenizer.nextToken());
         }
     }

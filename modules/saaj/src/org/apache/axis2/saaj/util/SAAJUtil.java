@@ -30,9 +30,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-/**
- * Utility class for the Axis2-WSS4J Module
- */
+/** Utility class for the Axis2-WSS4J Module */
 public class SAAJUtil {
 
     /**
@@ -47,36 +45,8 @@ public class SAAJUtil {
         //Check the namespace and find SOAP version and factory
         String nsURI;
         SOAPFactory factory;
-        if (env.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
-            nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            factory = DOOMAbstractFactory.getSOAP11Factory();
-        } else {
-            nsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
-            factory = DOOMAbstractFactory.getSOAP11Factory();
-        }
-
-        StAXSOAPModelBuilder stAXSOAPModelBuilder = new StAXSOAPModelBuilder(env.getXMLStreamReader(), factory, nsURI);
-        SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
-        envelope.build();
-
-        Element envElem = (Element) envelope;
-        return envElem.getOwnerDocument();
-    }
-
-     /**
-     * Create a DOM Document using the org.apache.axiom.soap.SOAPEnvelope
-     *
-     * @param env An org.apache.axiom.soap.SOAPEnvelope instance
-     * @return the org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl of the given SOAP Envelope
-     */
-    public static org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl
-             toDOOMSOAPEnvelope(org.apache.axiom.soap.SOAPEnvelope env) {
-        env.build();
-
-        //Check the namespace and find SOAP version and factory
-        String nsURI;
-        SOAPFactory factory;
-        if (env.getNamespace().getNamespaceURI().equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+        if (env.getNamespace().getNamespaceURI()
+                .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
             nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
             factory = DOOMAbstractFactory.getSOAP11Factory();
         } else {
@@ -89,13 +59,44 @@ public class SAAJUtil {
         SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
         envelope.build();
 
-        return (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl) envelope;
+        Element envElem = (Element)envelope;
+        return envElem.getOwnerDocument();
+    }
+
+    /**
+     * Create a DOM Document using the org.apache.axiom.soap.SOAPEnvelope
+     *
+     * @param env An org.apache.axiom.soap.SOAPEnvelope instance
+     * @return the org.apache.axis2.soap.impl.dom.SOAPEnvelopeImpl of the given SOAP Envelope
+     */
+    public static org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl
+            toDOOMSOAPEnvelope(org.apache.axiom.soap.SOAPEnvelope env) {
+        env.build();
+
+        //Check the namespace and find SOAP version and factory
+        String nsURI;
+        SOAPFactory factory;
+        if (env.getNamespace().getNamespaceURI()
+                .equals(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI)) {
+            nsURI = SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            factory = DOOMAbstractFactory.getSOAP11Factory();
+        } else {
+            nsURI = SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI;
+            factory = DOOMAbstractFactory.getSOAP11Factory();
+        }
+
+        StAXSOAPModelBuilder stAXSOAPModelBuilder =
+                new StAXSOAPModelBuilder(env.getXMLStreamReader(), factory, nsURI);
+        SOAPEnvelope envelope = (stAXSOAPModelBuilder).getSOAPEnvelope();
+        envelope.build();
+
+        return (org.apache.axiom.soap.impl.dom.SOAPEnvelopeImpl)envelope;
     }
 
     public static org.apache.axiom.soap.SOAPEnvelope
             getSOAPEnvelopeFromDOOMDocument(org.w3c.dom.Document doc) {
 
-        OMElement docElem = (OMElement) doc.getDocumentElement();
+        OMElement docElem = (OMElement)doc.getDocumentElement();
         StAXSOAPModelBuilder stAXSOAPModelBuilder =
                 new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), null);
         return stAXSOAPModelBuilder.getSOAPEnvelope();
@@ -105,7 +106,7 @@ public class SAAJUtil {
     public static org.apache.axiom.soap.SOAPEnvelope
             toOMSOAPEnvelope(org.w3c.dom.Element elem) {
 
-        OMElement docElem = (OMElement) elem;
+        OMElement docElem = (OMElement)elem;
         StAXSOAPModelBuilder stAXSOAPModelBuilder =
                 new StAXSOAPModelBuilder(docElem.getXMLStreamReader(), null);
         return stAXSOAPModelBuilder.getSOAPEnvelope();

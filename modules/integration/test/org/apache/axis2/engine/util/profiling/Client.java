@@ -33,7 +33,8 @@ public class Client {
                 System.out.println("Iterations # = " + ++numberOfTimes);
                 contextMemoryHandlingTest.runOnce();
                 Runtime.getRuntime().gc();
-                System.out.println("Memory Usage = " + (initialMemory - Runtime.getRuntime().freeMemory()));
+                System.out.println(
+                        "Memory Usage = " + (initialMemory - Runtime.getRuntime().freeMemory()));
 
             }
         } catch (Exception e) {

@@ -39,15 +39,10 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
     private static Log log = LogFactory.getLog(RPCInOnlyMessageReceiver.class);
 
     /**
-     * reflect and get the Java method
-     * - for each i'th param in the java method
-     * - get the first child's i'th child
-     * -if the elem has an xsi:type attr then find the deserializer for it
-     * - if not found,
-     * lookup deser for th i'th param (java type)
-     * - error if not found
-     * - deserialize & save in an object array
-     * - end for
+     * reflect and get the Java method - for each i'th param in the java method - get the first
+     * child's i'th child -if the elem has an xsi:type attr then find the deserializer for it - if
+     * not found, lookup deser for th i'th param (java type) - error if not found - deserialize &
+     * save in an object array - end for
      * <p/>
      * - invoke method and get the return value
      * <p/>
@@ -60,7 +55,8 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
      * @throws AxisFault
      */
 
-    public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage) throws AxisFault {
+    public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage)
+            throws AxisFault {
         try {
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(inMessage);
@@ -93,18 +89,21 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
                     messageNameSpace = elementQName.getNamespaceURI();
                     OMNamespace namespace = methodElement.getNamespace();
                     if (messageNameSpace != null) {
-                        if (namespace == null || !messageNameSpace.equals(namespace.getNamespaceURI())) {
+                        if (namespace == null ||
+                                !messageNameSpace.equals(namespace.getNamespaceURI())) {
                             throw new AxisFault("namespace mismatch require " +
                                     messageNameSpace +
                                     " found " + methodElement.getNamespace().getNamespaceURI());
                         }
                     } else if (namespace != null) {
-                        throw new AxisFault("namespace mismatch. Axis Oepration expects non-namespace " +
-                                "qualified element. But received a namespace qualified element");
+                        throw new AxisFault(
+                                "namespace mismatch. Axis Oepration expects non-namespace " +
+                                        "qualified element. But received a namespace qualified element");
                     }
 
                     Object[] objectArray = RPCUtil.processRequest(methodElement,
-                            method, inMessage.getAxisService().getObjectSupplier());
+                                                                  method, inMessage
+                            .getAxisService().getObjectSupplier());
                     resObject = method.invoke(obj, objectArray);
                 }
 
@@ -121,11 +120,11 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             }
 
             OMNamespace ns = fac.createOMNamespace(messageNameSpace,
-                    service.getSchematargetNamespacePrefix());
+                                                   service.getSchematargetNamespacePrefix());
             SOAPEnvelope envelope = fac.getDefaultEnvelope();
             OMElement bodyContent = null;
             RPCUtil.processResponse(resObject, service,
-                    method, envelope, fac, ns, bodyContent, outMessage);
+                                    method, envelope, fac, ns, bodyContent, outMessage);
         } catch (InvocationTargetException e) {
             String msg = null;
             Throwable cause = e.getCause();
@@ -134,11 +133,11 @@ public class RPCInOutAsyncMessageReceiver extends AbstractInOutAsyncMessageRecei
             }
             if (msg == null) {
                 msg = "Exception occurred while trying to invoke service method " +
-                      method.getName();
+                        method.getName();
             }
             log.error(msg, e);
             if (cause instanceof AxisFault) {
-                throw (AxisFault) cause;
+                throw (AxisFault)cause;
             }
             throw new AxisFault(msg);
         } catch (Exception e) {

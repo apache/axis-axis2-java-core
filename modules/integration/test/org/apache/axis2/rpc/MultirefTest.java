@@ -16,17 +16,8 @@
 
 package org.apache.axis2.rpc;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-
-import javax.xml.namespace.QName;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -41,7 +32,11 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.context.*;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.context.ContextFactory;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.databinding.utils.BeanUtil;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.AxisConfiguration;
@@ -53,17 +48,24 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class MultirefTest extends UtilServerBasedTestCase{
+import javax.xml.namespace.QName;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+
+public class MultirefTest extends UtilServerBasedTestCase {
 
     protected EndpointReference targetEPR =
             new EndpointReference("http://127.0.0.1:"
                     + (UtilServer.TESTING_PORT)
                     + "/axis2/services/EchoXMLService/concat");
-	private static final Log log = LogFactory.getLog(MultirefTest.class);
+    private static final Log log = LogFactory.getLog(MultirefTest.class);
     protected QName serviceName = new QName("EchoXMLService");
     protected QName operationName = new QName(NAMESPACE, "concat");
     protected QName transportName = new QName(NAMESPACE,
-            "NullTransport");
+                                              "NullTransport");
 
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
@@ -90,7 +92,7 @@ public class MultirefTest extends UtilServerBasedTestCase{
         String className = "org.apache.axis2.rpc.RPCServiceClass";
         operationName = new QName("http://rpc.axis2.apache.org/xsd", opName, "req");
         AxisService service = AxisService.createService(
-                className,UtilServer.getConfigurationContext().getAxisConfiguration());
+                className, UtilServer.getConfigurationContext().getAxisConfiguration());
         service.setName("EchoXMLService");
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         UtilServer.deployService(service);
@@ -120,7 +122,7 @@ public class MultirefTest extends UtilServerBasedTestCase{
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configConetxt = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null,null);
+                .createConfigurationContextFromFileSystem(null, null);
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
@@ -131,7 +133,8 @@ public class MultirefTest extends UtilServerBasedTestCase{
         opClinet.addMessageContext(reqMessageContext);
         opClinet.execute(true);
 
-        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        MessageContext responseMessageContx =
+                opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
@@ -172,7 +175,7 @@ public class MultirefTest extends UtilServerBasedTestCase{
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configConetxt = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null,null);
+                .createConfigurationContextFromFileSystem(null, null);
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
@@ -183,7 +186,8 @@ public class MultirefTest extends UtilServerBasedTestCase{
         opClinet.addMessageContext(reqMessageContext);
         opClinet.execute(true);
 
-        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        MessageContext responseMessageContx =
+                opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
@@ -219,7 +223,7 @@ public class MultirefTest extends UtilServerBasedTestCase{
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configConetxt = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null,null);
+                .createConfigurationContextFromFileSystem(null, null);
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
@@ -230,7 +234,8 @@ public class MultirefTest extends UtilServerBasedTestCase{
         opClinet.addMessageContext(reqMessageContext);
         opClinet.execute(true);
 
-        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        MessageContext responseMessageContx =
+                opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "20");
@@ -270,7 +275,7 @@ public class MultirefTest extends UtilServerBasedTestCase{
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
             ConfigurationContext configConetxt = ConfigurationContextFactory
-                    .createConfigurationContextFromFileSystem(null,null);
+                    .createConfigurationContextFromFileSystem(null, null);
             RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
             rpcClient.setOptions(options);
             MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
@@ -287,7 +292,8 @@ public class MultirefTest extends UtilServerBasedTestCase{
             System.out.println("val = " + val);
             int index = val.indexOf("org.apache.axis2.AxisFault: Invalid reference :2");
             if (index < 0) {
-                fail("This should fail with : " + "org.apache.axis2.AxisFault: Invalid reference :2");
+                fail("This should fail with : " +
+                        "org.apache.axis2.AxisFault: Invalid reference :2");
             }
         }
     }
@@ -312,7 +318,8 @@ public class MultirefTest extends UtilServerBasedTestCase{
         envelope.getBody().addChild(method);
 
 
-        String ref1 = "<reference id=\"1\"><name>Deepal</name><value href=\"#2\"/><address href=\"#3\"/></reference>";
+        String ref1 =
+                "<reference id=\"1\"><name>Deepal</name><value href=\"#2\"/><address href=\"#3\"/></reference>";
         OMElement om1 = getOMelemnt(ref1, fac);
         envelope.getBody().addChild(om1);
         String ref2 = "<reference id=\"2\">false</reference>";
@@ -330,7 +337,7 @@ public class MultirefTest extends UtilServerBasedTestCase{
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configConetxt = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null,null);
+                .createConfigurationContextFromFileSystem(null, null);
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
@@ -341,12 +348,14 @@ public class MultirefTest extends UtilServerBasedTestCase{
         opClinet.addMessageContext(reqMessageContext);
         opClinet.execute(true);
 
-        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        MessageContext responseMessageContx =
+                opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
         OMElement response = env.getBody().getFirstElement();
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement() , new DefaultObjectSupplier(), null);
+        MyBean resBean = (MyBean)BeanUtil.deserialize(MyBean.class, response.getFirstElement(),
+                                                      new DefaultObjectSupplier(), null);
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
@@ -371,7 +380,8 @@ public class MultirefTest extends UtilServerBasedTestCase{
         envelope.getBody().addChild(method);
 
 
-        String ref1 = "<reference id=\"1\"><name>Deepal</name><value href=\"#2\"/><address href=\"#3\"/></reference>";
+        String ref1 =
+                "<reference id=\"1\"><name>Deepal</name><value href=\"#2\"/><address href=\"#3\"/></reference>";
         OMElement om1 = getOMelemnt(ref1, fac);
         envelope.getBody().addChild(om1);
         String ref2 = "<reference id=\"2\">false</reference>";
@@ -389,10 +399,10 @@ public class MultirefTest extends UtilServerBasedTestCase{
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configConetxt = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null,null);
+                .createConfigurationContextFromFileSystem(null, null);
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext =ContextFactory.createMessageContext(configConetxt);
+        MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -400,12 +410,14 @@ public class MultirefTest extends UtilServerBasedTestCase{
         opClinet.addMessageContext(reqMessageContext);
         opClinet.execute(true);
 
-        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        MessageContext responseMessageContx =
+                opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
         OMElement response = env.getBody().getFirstElement();
-        MyBean resBean = (MyBean) BeanUtil.deserialize(MyBean.class, response.getFirstElement()  , new DefaultObjectSupplier(), null);
+        MyBean resBean = (MyBean)BeanUtil.deserialize(MyBean.class, response.getFirstElement(),
+                                                      new DefaultObjectSupplier(), null);
         assertNotNull(resBean);
         assertEquals(resBean.getAge(), 159);
     }
@@ -432,7 +444,8 @@ public class MultirefTest extends UtilServerBasedTestCase{
         envelope.getBody().addChild(method);
 
 
-        String ref1 = "<reference id=\"1\"><name>Deepal</name><value href=\"#2\"/><address href=\"#3\"/></reference>";
+        String ref1 =
+                "<reference id=\"1\"><name>Deepal</name><value href=\"#2\"/><address href=\"#3\"/></reference>";
         OMElement om1 = getOMelemnt(ref1, fac);
         envelope.getBody().addChild(om1);
         String ref2 = "<reference id=\"2\">false</reference>";
@@ -449,10 +462,10 @@ public class MultirefTest extends UtilServerBasedTestCase{
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configConetxt = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null,null);
+                .createConfigurationContextFromFileSystem(null, null);
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
-        MessageContext reqMessageContext =ContextFactory.createMessageContext(configConetxt);
+        MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
         OperationClient opClinet = rpcClient.createClient(ServiceClient.ANON_OUT_IN_OP);
         opClinet.setOptions(options);
         reqMessageContext.setEnvelope(envelope);
@@ -460,7 +473,8 @@ public class MultirefTest extends UtilServerBasedTestCase{
         opClinet.addMessageContext(reqMessageContext);
         opClinet.execute(true);
 
-        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        MessageContext responseMessageContx =
+                opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
@@ -469,9 +483,10 @@ public class MultirefTest extends UtilServerBasedTestCase{
         ArrayList args = new ArrayList();
         args.add(boolean.class);
 
-        Object [] resBean = BeanUtil.deserialize(response, args.toArray()  , new DefaultObjectSupplier());
+        Object [] resBean =
+                BeanUtil.deserialize(response, args.toArray(), new DefaultObjectSupplier());
         assertNotNull(resBean);
-        assertEquals(((Boolean) resBean[0]).booleanValue(), true);
+        assertEquals(((Boolean)resBean[0]).booleanValue(), true);
     }
 
     private OMElement getOMelemnt(String str, OMFactory fac) throws AxisFault {
@@ -523,7 +538,7 @@ public class MultirefTest extends UtilServerBasedTestCase{
         options.setTo(targetEPR);
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configConetxt = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null,null);
+                .createConfigurationContextFromFileSystem(null, null);
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
@@ -534,11 +549,13 @@ public class MultirefTest extends UtilServerBasedTestCase{
         opClinet.addMessageContext(reqMessageContext);
         opClinet.execute(true);
 
-        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        MessageContext responseMessageContx =
+                opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
         SOAPEnvelope env = responseMessageContx.getEnvelope();
 
-        Employee emp = (Employee) BeanUtil.deserialize(Employee.class, env.getBody().getFirstElement().getFirstElement()  , new DefaultObjectSupplier(), null);
+        Employee emp = (Employee)BeanUtil.deserialize(Employee.class, env.getBody()
+                .getFirstElement().getFirstElement(), new DefaultObjectSupplier(), null);
         assertNotNull(emp);
     }
 
@@ -589,7 +606,7 @@ public class MultirefTest extends UtilServerBasedTestCase{
 
 
         ConfigurationContext configConetxt = ConfigurationContextFactory
-                .createConfigurationContextFromFileSystem(null,null);
+                .createConfigurationContextFromFileSystem(null, null);
         RPCServiceClient rpcClient = new RPCServiceClient(configConetxt, null);
         rpcClient.setOptions(options);
         MessageContext reqMessageContext = ContextFactory.createMessageContext(configConetxt);
@@ -600,7 +617,8 @@ public class MultirefTest extends UtilServerBasedTestCase{
         opClinet.addMessageContext(reqMessageContext);
         opClinet.execute(true);
 
-        MessageContext responseMessageContx = opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+        MessageContext responseMessageContx =
+                opClinet.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
         SOAPEnvelope env = responseMessageContx.getEnvelope();
         assertEquals(env.getBody().getFirstElement().getFirstElement().getText(), "abcdefghiklm10");

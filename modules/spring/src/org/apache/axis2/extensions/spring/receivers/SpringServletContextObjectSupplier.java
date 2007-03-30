@@ -50,7 +50,7 @@ public class SpringServletContextObjectSupplier implements ServiceObjectSupplier
             // as normally done in a spring type of way and subsequently loaded by Spring.
             // Axis2 just assumes that the bean is configured and is in the classloader.
             Parameter implBeanParam = axisService.getParameter(SERVICE_SPRING_BEANNAME);
-            String beanName = ((String) implBeanParam.getValue()).trim();
+            String beanName = ((String)implBeanParam.getValue()).trim();
             if (beanName != null) {
                 Parameter servletConfigParam = axisService.getAxisConfiguration()
                         .getParameter(HTTPConstants.HTTP_SERVLETCONFIG);

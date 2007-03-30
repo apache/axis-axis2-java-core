@@ -23,9 +23,7 @@
 
 package org.apache.axis2.databinding;
 
-/**
- * CreateAccountRequest bean class
- */
+/** CreateAccountRequest bean class */
 
 public class CreateAccountRequest implements
         org.apache.axis2.databinding.ADBBean {
@@ -33,14 +31,12 @@ public class CreateAccountRequest implements
     public static final javax.xml.namespace.QName MY_QNAME = new javax.xml.namespace.QName(
             "http://www.wso2.com/types", "createAccountRequest", "ns1");
 
-    /**
-     * field for ClientInfo
-     */
+    /** field for ClientInfo */
     protected ClientInfo localClientInfo;
 
     /**
      * Auto generated getter method
-     * 
+     *
      * @return com.wso2.www.types.ClientInfo
      */
     public ClientInfo getClientInfo() {
@@ -49,23 +45,20 @@ public class CreateAccountRequest implements
 
     /**
      * Auto generated setter method
-     * 
-     * @param param
-     *            ClientInfo
+     *
+     * @param param ClientInfo
      */
     public void setClientInfo(ClientInfo param) {
 
         this.localClientInfo = param;
     }
 
-    /**
-     * field for Password
-     */
+    /** field for Password */
     protected java.lang.String localPassword;
 
     /**
      * Auto generated getter method
-     * 
+     *
      * @return java.lang.String
      */
     public java.lang.String getPassword() {
@@ -74,19 +67,15 @@ public class CreateAccountRequest implements
 
     /**
      * Auto generated setter method
-     * 
-     * @param param
-     *            Password
+     *
+     * @param param Password
      */
     public void setPassword(java.lang.String param) {
 
         this.localPassword = param;
     }
 
-    /**
-     * databinding method to get an XML representation of this object
-     * 
-     */
+    /** databinding method to get an XML representation of this object */
     public javax.xml.stream.XMLStreamReader getPullParser(
             javax.xml.namespace.QName qName) {
 
@@ -107,13 +96,9 @@ public class CreateAccountRequest implements
 
     }
 
-    /**
-     * Factory class that keeps the parse method
-     */
+    /** Factory class that keeps the parse method */
     public static class Factory {
-        /**
-         * static method to create the object
-         */
+        /** static method to create the object */
         public static CreateAccountRequest parse(
                 javax.xml.stream.XMLStreamReader reader)
                 throws java.lang.Exception {

@@ -16,44 +16,42 @@
  */
 package org.apache.axis2.jaxws.message.util;
 
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axis2.jaxws.message.util.impl.XMLStreamReaderFromDOM;
 import org.w3c.dom.Element;
 
-/**
- * DOMReader
- * Creates an XMLStreamReader backed by a DOM tree.
- */
+import javax.xml.stream.XMLStreamReader;
+
+/** DOMReader Creates an XMLStreamReader backed by a DOM tree. */
 public class DOMReader extends Reader {
 
-	Element element;
-	
-	/**
-	 * @param reader
-	 * @param resettable
-	 */
-	public DOMReader(Element element) {
-		super(_newReader(element), true);
-		
-		this.element = element;
-	}
+    Element element;
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.util.Reader#newReader()
-	 */
-	@Override
-	protected XMLStreamReader newReader() {
-		return _newReader(element);
-	}
+    /**
+     * @param reader
+     * @param resettable
+     */
+    public DOMReader(Element element) {
+        super(_newReader(element), true);
 
-	/**
-	 * Utility method to get the stream reader
-	 * @param element
-	 * @return
-	 */
-	private static XMLStreamReader _newReader(Element element) {
-		// Construct a reader from an element
-		return new XMLStreamReaderFromDOM(element);
-	}
+        this.element = element;
+    }
+
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.util.Reader#newReader()
+      */
+    @Override
+    protected XMLStreamReader newReader() {
+        return _newReader(element);
+    }
+
+    /**
+     * Utility method to get the stream reader
+     *
+     * @param element
+     * @return
+     */
+    private static XMLStreamReader _newReader(Element element) {
+        // Construct a reader from an element
+        return new XMLStreamReaderFromDOM(element);
+    }
 }

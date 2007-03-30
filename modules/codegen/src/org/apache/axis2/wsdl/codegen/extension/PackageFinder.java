@@ -33,7 +33,7 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
             // if this target name space exists in the ns2p then we have to get that package
             if ((configuration.getUri2PackageNameMap() != null) &&
                     configuration.getUri2PackageNameMap().containsKey(targetNameSpace.trim())) {
-                packageName = (String) configuration.getUri2PackageNameMap().get(targetNameSpace);
+                packageName = (String)configuration.getUri2PackageNameMap().get(targetNameSpace);
             } else {
                 // i.e. user have not given any ns2p information for this name space
                 packageName = URLProcessor.makePackageName(configuration.getTargetNamespace());
@@ -41,7 +41,7 @@ public class PackageFinder extends AbstractCodeGenerationExtension {
 
         }
 
-        if ((packageName == null) || "".equals(packageName)){
+        if ((packageName == null) || "".equals(packageName)) {
             packageName = URLProcessor.DEFAULT_PACKAGE;
         }
 

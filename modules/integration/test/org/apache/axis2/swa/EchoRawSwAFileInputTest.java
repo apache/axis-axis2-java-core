@@ -16,19 +16,8 @@
 
 package org.apache.axis2.swa;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.SocketException;
-
-import javax.xml.namespace.QName;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.axis2.Constants;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
@@ -38,6 +27,15 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOutMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
+
+import javax.xml.namespace.QName;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.net.SocketException;
 
 public class EchoRawSwAFileInputTest extends UtilServerBasedTestCase {
 
@@ -55,7 +53,7 @@ public class EchoRawSwAFileInputTest extends UtilServerBasedTestCase {
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(EchoRawSwAFileInputTest.class),
-                Constants.TESTING_PATH + "MTOM-enabledRepository");
+                             Constants.TESTING_PATH + "MTOM-enabledRepository");
     }
 
     protected void setUp() throws Exception {

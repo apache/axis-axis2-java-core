@@ -18,14 +18,13 @@ package org.apache.axis2.jibx.wrappers;
 
 import org.apache.axis2.jibx.beans.Book;
 
-public class AddBookRequest
-{
+public class AddBookRequest {
     private Book m_book;
-    
+
     public AddBookRequest(Book book) {
         m_book = book;
     }
-    
+
     public Book getBook() {
         return m_book;
     }

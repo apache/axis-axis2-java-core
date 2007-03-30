@@ -65,9 +65,11 @@ public class GroupcBase64Util implements SunClientUtil {
         block2.addChild(h2Val2);
         block2.addChild(h2Val3);
 
-        OMElement operation = omfactory.createOMElement("echoBase64", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoBase64", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                               null);
 
         OMElement part = omfactory.createOMElement("inputBase64", "", null);
         part.addAttribute("xsi:type", "xsd:base64Binary", null);

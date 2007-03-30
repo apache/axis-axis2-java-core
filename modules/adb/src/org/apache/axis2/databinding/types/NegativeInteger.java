@@ -22,20 +22,19 @@ import java.util.Random;
 
 /**
  * Custom class for supporting primitive XSD data type negativeinteger
- *
- * negativeInteger is derived from nonPositiveInteger by setting the
- * value of maxInclusive to be -1. This results in the standard 
- * mathematical concept of the negative integers. The value space of 
- * negativeInteger is the infinite set {...,-2,-1}. 
- * The base type of negativeInteger is nonPositiveInteger. 
+ * <p/>
+ * negativeInteger is derived from nonPositiveInteger by setting the value of maxInclusive to be -1.
+ * This results in the standard mathematical concept of the negative integers. The value space of
+ * negativeInteger is the infinite set {...,-2,-1}. The base type of negativeInteger is
+ * nonPositiveInteger.
  *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#negativeInteger">XML Schema 3.3.15</a>
  */
 public class NegativeInteger extends NonPositiveInteger {
 
     private static final long serialVersionUID = -2295928715693639427L;
-    
-	public NegativeInteger(byte[] val) {
+
+    public NegativeInteger(byte[] val) {
         super(val);
         checkValidity();
     } // ctor
@@ -65,33 +64,35 @@ public class NegativeInteger extends NonPositiveInteger {
         checkValidity();
     } // ctor
 
-    /**
-     * validate the value against the xsd definition
-     */
+    /** validate the value against the xsd definition */
     private BigInteger zero = new BigInteger("0");
+
     private void checkValidity() {
         if (compareTo(zero) >= 0) {
             throw new NumberFormatException(
-                   // Messages.getMessage("badnegInt00") + 
+                    // Messages.getMessage("badnegInt00") +
                     ":  " + this);
         }
     } // checkValidity
 
     /**
      * Work-around for http://developer.java.sun.com/developer/bugParade/bugs/4378370.html
+     *
      * @return BigIntegerRep
      * @throws java.io.ObjectStreamException
-     */ 
+     */
     public Object writeReplace() throws ObjectStreamException {
         return new BigIntegerRep(toByteArray());
     }
-    
+
     protected static class BigIntegerRep implements java.io.Serializable {
         private static final long serialVersionUID = 1209618487031404110L;
-		private byte[] array;
+        private byte[] array;
+
         protected BigIntegerRep(byte[] array) {
             this.array = array;
         }
+
         protected Object readResolve() throws java.io.ObjectStreamException {
             return new NegativeInteger(array);
         }

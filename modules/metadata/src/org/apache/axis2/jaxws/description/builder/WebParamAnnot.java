@@ -18,113 +18,101 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class WebParamAnnot implements javax.jws.WebParam{
+public class WebParamAnnot implements javax.jws.WebParam {
 
-	private String 	name;
-	private String 	targetNamespace;
-	private Mode 	mode = Mode.IN;
-	private boolean header;
-	private String 	partName;
+    private String name;
+    private String targetNamespace;
+    private Mode mode = Mode.IN;
+    private boolean header;
+    private String partName;
 
-	/**
-     * A WebParamAnnot cannot be instantiated.
-     */
-	private  WebParamAnnot(){
-		
-	}
-	
+    /** A WebParamAnnot cannot be instantiated. */
+    private WebParamAnnot() {
+
+    }
+
     public static WebParamAnnot createWebParamAnnotImpl() {
         return new WebParamAnnot();
     }
-    
+
     /**
      * Get the 'name'
-     * @return String 
+     *
+     * @return String
      */
-	public String name() {
-		return this.name;
-	}
-	
-	public String targetNamespace() {
-		return this.targetNamespace;
-	}
-	
-	public Mode mode() {
-		return this.mode;
-	}
-	
-	public boolean header () {
-		return this.header;
-	}
-	
-	public String partName() {
-		return this.partName;
-	}
-	
-	/**
-	 * @param name The name to set.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String name() {
+        return this.name;
+    }
 
-	/**
-	 * @param targetNamespace The targetNamespace to set.
-	 */
-	public void setTargetNamespace(String targetNamespace) {
-		this.targetNamespace = targetNamespace;
-	}
+    public String targetNamespace() {
+        return this.targetNamespace;
+    }
 
-	/**
-	 * @param mode The mode to set.
-	 */
-	public void setMode(Mode mode) {
-		this.mode = mode;
-	}
+    public Mode mode() {
+        return this.mode;
+    }
 
-	/**
-	 * @param header The header to set.
-	 */
-	public void setHeader(boolean header) {
-		this.header = header;
-	}
+    public boolean header() {
+        return this.header;
+    }
 
-	/**
-	 * @param partName The partName to set.
-	 */
-	public void setPartName(String partName) {
-		this.partName = partName;
-	}
-				
-	public Class<Annotation> annotationType(){
-		return Annotation.class;
-	}
-	
-	/**
-	 * Convenience method for unit testing. We will print all of the 
-	 * data members here.
-	 */
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		String newLine = "\n";
-		sb.append(newLine);
-		sb.append("@WebParam.name= " + name);
-		sb.append(newLine);
-		sb.append("@WebParam.partName= " + partName);
-		sb.append(newLine);
-		sb.append("@WebParam.mode = " + mode.toString());
-		sb.append(newLine);
-		sb.append("@WebParam.targetNamespace= " + targetNamespace);
-		sb.append(newLine);
-		sb.append("@WebParam.header= ");
-		if(header) {
-			sb.append("true");
-		}
-		else {
-			sb.append("false");
-		}
-		sb.append(newLine);
-		return sb.toString();
+    public String partName() {
+        return this.partName;
+    }
+
+    /** @param name The name to set. */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /** @param targetNamespace The targetNamespace to set. */
+    public void setTargetNamespace(String targetNamespace) {
+        this.targetNamespace = targetNamespace;
+    }
+
+    /** @param mode The mode to set. */
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+
+    /** @param header The header to set. */
+    public void setHeader(boolean header) {
+        this.header = header;
+    }
+
+    /** @param partName The partName to set. */
+    public void setPartName(String partName) {
+        this.partName = partName;
+    }
+
+    public Class<Annotation> annotationType() {
+        return Annotation.class;
+    }
+
+    /**
+     * Convenience method for unit testing. We will print all of the
+     * data members here.
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        String newLine = "\n";
+        sb.append(newLine);
+        sb.append("@WebParam.name= " + name);
+        sb.append(newLine);
+        sb.append("@WebParam.partName= " + partName);
+        sb.append(newLine);
+        sb.append("@WebParam.mode = " + mode.toString());
+        sb.append(newLine);
+        sb.append("@WebParam.targetNamespace= " + targetNamespace);
+        sb.append(newLine);
+        sb.append("@WebParam.header= ");
+        if (header) {
+            sb.append("true");
+        } else {
+            sb.append("false");
+        }
+        sb.append(newLine);
+        return sb.toString();
 	}
 
 }

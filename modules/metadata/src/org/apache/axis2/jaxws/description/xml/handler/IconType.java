@@ -19,30 +19,27 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- * 	The icon type contains small-icon and large-icon elements
- * 	that specify the file names for small and large GIF, JPEG,
- * 	or PNG icon images used to represent the parent element in a
- * 	GUI tool.
- * 
- * 	The xml:lang attribute defines the language that the
- * 	icon file names are provided in. Its value is "en" (English)
- * 	by default.
- * 
- *       
- * 
+ * The icon type contains small-icon and large-icon elements that specify the file names for small
+ * and large GIF, JPEG, or PNG icon images used to represent the parent element in a GUI tool.
+ * <p/>
+ * The xml:lang attribute defines the language that the icon file names are provided in. Its value
+ * is "en" (English) by default.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for iconType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="iconType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="small-icon" type="{http://java.sun.com/xml/ns/javaee}pathType" minOccurs="0"/>
- *         &lt;element name="large-icon" type="{http://java.sun.com/xml/ns/javaee}pathType" minOccurs="0"/>
+ *         &lt;element name="small-icon" type="{http://java.sun.com/xml/ns/javaee}pathType"
+ * minOccurs="0"/>
+ *         &lt;element name="large-icon" type="{http://java.sun.com/xml/ns/javaee}pathType"
+ * minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
  *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/>
@@ -50,14 +47,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "iconType", propOrder = {
-    "smallIcon",
-    "largeIcon"
-})
+        "smallIcon",
+        "largeIcon"
+        })
 public class IconType {
 
     @XmlElement(name = "small-icon", namespace = "http://java.sun.com/xml/ns/javaee")
@@ -73,11 +68,8 @@ public class IconType {
 
     /**
      * Gets the value of the smallIcon property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PathType }
-     *     
+     *
+     * @return possible object is {@link PathType }
      */
     public PathType getSmallIcon() {
         return smallIcon;
@@ -85,11 +77,8 @@ public class IconType {
 
     /**
      * Sets the value of the smallIcon property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PathType }
-     *     
+     *
+     * @param value allowed object is {@link PathType }
      */
     public void setSmallIcon(PathType value) {
         this.smallIcon = value;
@@ -97,11 +86,8 @@ public class IconType {
 
     /**
      * Gets the value of the largeIcon property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PathType }
-     *     
+     *
+     * @return possible object is {@link PathType }
      */
     public PathType getLargeIcon() {
         return largeIcon;
@@ -109,11 +95,8 @@ public class IconType {
 
     /**
      * Sets the value of the largeIcon property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PathType }
-     *     
+     *
+     * @param value allowed object is {@link PathType }
      */
     public void setLargeIcon(PathType value) {
         this.largeIcon = value;
@@ -121,11 +104,8 @@ public class IconType {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -133,11 +113,8 @@ public class IconType {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;
@@ -145,11 +122,8 @@ public class IconType {
 
     /**
      * Gets the value of the lang property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getLang() {
         return lang;
@@ -157,11 +131,8 @@ public class IconType {
 
     /**
      * Sets the value of the lang property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setLang(java.lang.String value) {
         this.lang = value;

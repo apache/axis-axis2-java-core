@@ -16,21 +16,23 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
+import org.apache.axis2.jaxws.message.Attachment;
+
 import javax.activation.DataHandler;
 import javax.xml.soap.MimeHeaders;
 
-import org.apache.axis2.jaxws.message.Attachment;
-
 /**
  * Implementation of the Attachment interface
+ *
  * @see org.apache.axis2.jaxws.message.Attachment
  */
 public class AttachmentImpl implements Attachment {
     private DataHandler dh;
-    private MimeHeaders mimeHeaders = new MimeHeaders(); 
-    
+    private MimeHeaders mimeHeaders = new MimeHeaders();
+
     /**
      * Constructor
+     *
      * @param dh DataHandler
      * @param id Content ID
      */
@@ -38,19 +40,19 @@ public class AttachmentImpl implements Attachment {
         setDataHandler(dh);
         setContentID(id);
     }
-    
+
     /*
-     * (non-Javadoc)
-     * @see org.apache.axis2.jaxws.message.Attachment#getContentType()
-     */
+    * (non-Javadoc)
+    * @see org.apache.axis2.jaxws.message.Attachment#getContentType()
+    */
     public String getContentType() {
         return getHeaderValue(CONTENT_TYPE);
     }
-    
-  
+
+
     /* (non-Javadoc)
-     * @see org.apache.axis2.jaxws.message.Attachment#setContentType(java.lang.String)
-     */
+    * @see org.apache.axis2.jaxws.message.Attachment#setContentType(java.lang.String)
+    */
     public void setContentType(String contentType) {
         mimeHeaders.setHeader(CONTENT_TYPE, contentType);
     }
@@ -62,44 +64,43 @@ public class AttachmentImpl implements Attachment {
     public String getContentID() {
         return getHeaderValue(CONTENT_ID);
     }
-    
+
     /* (non-Javadoc)
-     * @see org.apache.axis2.jaxws.message.Attachment#setContentID(java.lang.String)
-     */
+    * @see org.apache.axis2.jaxws.message.Attachment#setContentID(java.lang.String)
+    */
     public void setContentID(String contentID) {
         mimeHeaders.setHeader(CONTENT_ID, contentID);
     }
-    
+
     /*
-     * (non-Javadoc)
-     * @see org.apache.axis2.jaxws.message.Attachment#getDataHandler()
-     */
+    * (non-Javadoc)
+    * @see org.apache.axis2.jaxws.message.Attachment#getDataHandler()
+    */
     public DataHandler getDataHandler() {
         return dh;
     }
-    
+
     /* (non-Javadoc)
-     * @see org.apache.axis2.jaxws.message.Attachment#setDataHandler(javax.activation.DataHandler)
-     */
+    * @see org.apache.axis2.jaxws.message.Attachment#setDataHandler(javax.activation.DataHandler)
+    */
     public void setDataHandler(DataHandler dh) {
         this.dh = dh;
         if (dh.getContentType() != null) {
             setContentType(dh.getContentType());
         }
     }
-    
+
     /* (non-Javadoc)
-     * @see org.apache.axis2.jaxws.message.Attachment#getMimeHeaders()
-     */
+    * @see org.apache.axis2.jaxws.message.Attachment#getMimeHeaders()
+    */
     public MimeHeaders getMimeHeaders() {
-       return mimeHeaders;
+        return mimeHeaders;
     }
 
-    
 
     /* (non-Javadoc)
-     * @see org.apache.axis2.jaxws.message.Attachment#setMimeHeaders(javax.xml.soap.MimeHeaders)
-     */
+    * @see org.apache.axis2.jaxws.message.Attachment#setMimeHeaders(javax.xml.soap.MimeHeaders)
+    */
     public void setMimeHeaders(MimeHeaders mhs) {
         mimeHeaders = mhs;
         if (mimeHeaders == null) {

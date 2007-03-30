@@ -15,6 +15,8 @@
  */
 package org.apache.axis2.saaj;
 
+import junit.framework.TestCase;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
@@ -27,8 +29,6 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-
-import junit.framework.TestCase;
 
 /**
  * 
@@ -51,10 +51,10 @@ public class SAAJDetailTest extends TestCase {
         headerEle.setActor("actor-URI");
     }
 
-    
+
     /*
-     * for soap version 1.1
-     */
+    * for soap version 1.1
+    */
     public void testAddDetailEntry() throws Exception {
         //Add a SOAPFault object to the SOAPBody
         SOAPFault sf = body.addFault();
@@ -76,7 +76,7 @@ public class SAAJDetailTest extends TestCase {
         sp = msg.getSOAPPart();
         envelope = sp.getEnvelope();
         body = envelope.getBody();
-    		
+
         //Add a SOAPFault object to the SOAPBody
         SOAPFault sf = body.addFault();
         //Add a Detail object to the SOAPFault object

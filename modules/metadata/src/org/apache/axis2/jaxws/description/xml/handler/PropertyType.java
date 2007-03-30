@@ -19,16 +19,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- * 	Specifies a name/value pair.
- * 
- *       
- * 
+ * Specifies a name/value pair.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for propertyType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="propertyType">
  *   &lt;complexContent>
@@ -42,14 +40,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "propertyType", propOrder = {
-    "name",
-    "value"
-})
+        "name",
+        "value"
+        })
 public class PropertyType {
 
     @XmlElement(namespace = "http://java.sun.com/xml/ns/javaee", required = true)
@@ -63,11 +59,8 @@ public class PropertyType {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XsdStringType }
-     *     
+     *
+     * @return possible object is {@link XsdStringType }
      */
     public XsdStringType getName() {
         return name;
@@ -75,11 +68,8 @@ public class PropertyType {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XsdStringType }
-     *     
+     *
+     * @param value allowed object is {@link XsdStringType }
      */
     public void setName(XsdStringType value) {
         this.name = value;
@@ -87,11 +77,8 @@ public class PropertyType {
 
     /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XsdStringType }
-     *     
+     *
+     * @return possible object is {@link XsdStringType }
      */
     public XsdStringType getValue() {
         return value;
@@ -99,11 +86,8 @@ public class PropertyType {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XsdStringType }
-     *     
+     *
+     * @param value allowed object is {@link XsdStringType }
      */
     public void setValue(XsdStringType value) {
         this.value = value;
@@ -111,11 +95,8 @@ public class PropertyType {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -123,11 +104,8 @@ public class PropertyType {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;

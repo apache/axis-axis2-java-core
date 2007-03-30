@@ -16,61 +16,51 @@
  */
 package org.apache.axis2.jaxws.runtime.description.marshal.impl;
 
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import javax.annotation.Resource;
-
-import org.apache.axis2.java.security.AccessController;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.runtime.description.marshal.AnnotationDesc;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
-import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeSet;
 
 public class MarshalServiceRuntimeDescriptionBuilder {
 
     private static Log log = LogFactory.getLog(MarshalServiceRuntimeDescriptionBuilder.class);
-    /**
-     * Intentionally Private
-     */
-    private MarshalServiceRuntimeDescriptionBuilder() { }
+
+    /** Intentionally Private */
+    private MarshalServiceRuntimeDescriptionBuilder() {
+    }
 
     /**
      * create
+     *
      * @param opDesc
      * @param implClassName
      * @return
      */
     static public MarshalServiceRuntimeDescription create(ServiceDescription serviceDesc) {
-        MarshalServiceRuntimeDescriptionImpl desc = 
-            new MarshalServiceRuntimeDescriptionImpl(getKey(), serviceDesc);
+        MarshalServiceRuntimeDescriptionImpl desc =
+                new MarshalServiceRuntimeDescriptionImpl(getKey(), serviceDesc);
         init(desc, serviceDesc);
         return desc;
     }
-    
+
     static public String getKey() {
         return "JAXWS-MARSHAL";
     }
-    
+
     /**
      * @param implClass
-     * @return true if Field or Method has a @Resource annotation 
+     * @return true if Field or Method has a @Resource annotation
      */
-    static private void init(MarshalServiceRuntimeDescriptionImpl marshalDesc, 
-            ServiceDescription serviceDesc) {
-        
+    static private void init(MarshalServiceRuntimeDescriptionImpl marshalDesc,
+                             ServiceDescription serviceDesc) {
+
         // Artifact class discovery/builder
         ArtifactProcessor artifactProcessor = new ArtifactProcessor(serviceDesc);
         try {
@@ -81,33 +71,38 @@ public class MarshalServiceRuntimeDescriptionBuilder {
         marshalDesc.setRequestWrapperMap(artifactProcessor.getRequestWrapperMap());
         marshalDesc.setResponseWrapperMap(artifactProcessor.getResponseWrapperMap());
         marshalDesc.setFaultBeanDescMap(artifactProcessor.getFaultBeanDescMap());
-        
+
         // Build the annotation map
         Map<String, AnnotationDesc> map;
         try {
-           map = AnnotationBuilder.getAnnotationDescs(serviceDesc, artifactProcessor);
-        } catch(Throwable t) {
+            map = AnnotationBuilder.getAnnotationDescs(serviceDesc, artifactProcessor);
+        } catch (Throwable t) {
             // Since we are building a cache, proceed without exception
             if (log.isDebugEnabled()) {
-                log.debug("Exception occurred during cache processing.  This will impact performance:" + t);
+                log.debug(
+                        "Exception occurred during cache processing.  This will impact performance:" +
+                                t);
             }
             map = new HashMap<String, AnnotationDesc>();
         }
         marshalDesc.setAnnotationMap(map);
-        
+
         // Build the property descriptor map
         Map<Class, Map<String, PropertyDescriptorPlus>> cache;
         try {
-            cache = PropertyDescriptorMapBuilder.getPropertyDescMaps(serviceDesc,artifactProcessor);
+            cache = PropertyDescriptorMapBuilder
+                    .getPropertyDescMaps(serviceDesc, artifactProcessor);
         } catch (Throwable t) {
             // Since we are building a cache, proceed without exception
             if (log.isDebugEnabled()) {
-                log.debug("Exception occurred during cache processing.  This will impact performance:" + t);
+                log.debug(
+                        "Exception occurred during cache processing.  This will impact performance:" +
+                                t);
             }
-            cache = new HashMap<Class, Map<String, PropertyDescriptorPlus>> ();
+            cache = new HashMap<Class, Map<String, PropertyDescriptorPlus>>();
         }
         marshalDesc.setPropertyDescriptorMapCache(cache);
-            
+
         // @TODO There are two ways to get the packages.
         // Schema Walk (prefered) and Annotation Walk.
         // The Schema walk requires an existing or generated schema.

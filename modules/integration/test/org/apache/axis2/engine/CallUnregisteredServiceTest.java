@@ -18,7 +18,6 @@ package org.apache.axis2.engine;
 
 //todo
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -54,12 +53,12 @@ public class CallUnregisteredServiceTest extends UtilServerBasedTestCase {
             SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
             OMNamespace omNs = fac.createOMNamespace("http://localhost/my",
-                    "my");
+                                                     "my");
             OMElement method = fac.createOMElement("echoOMElement", omNs);
             OMElement value = fac.createOMElement("myValue", omNs);
             value.addChild(
                     fac.createOMText(value,
-                            "Isaac Asimov, The Foundation Trilogy"));
+                                     "Isaac Asimov, The Foundation Trilogy"));
             method.addChild(value);
 
             EndpointReference targetEPR =
@@ -72,7 +71,8 @@ public class CallUnregisteredServiceTest extends UtilServerBasedTestCase {
             options.setTo(targetEPR);
 
             ConfigurationContext configContext =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                            "target/test-resources/integrationRepo", null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
 

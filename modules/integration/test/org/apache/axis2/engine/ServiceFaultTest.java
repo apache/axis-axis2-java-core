@@ -16,11 +16,8 @@
 
 package org.apache.axis2.engine;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -39,9 +36,9 @@ import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 
-/**
- * This test will make sure, faults thrown by services are handled properly.
- */
+import javax.xml.namespace.QName;
+
+/** This test will make sure, faults thrown by services are handled properly. */
 public class ServiceFaultTest extends UtilServerBasedTestCase implements TestConstants {
 
     protected String testResourceDir = "test-resources";
@@ -55,31 +52,33 @@ public class ServiceFaultTest extends UtilServerBasedTestCase implements TestCon
     public static Test suite() {
         return getTestSetup(new TestSuite(ServiceFaultTest.class));
     }
-    
+
     protected void setUp() throws Exception {
         service =
                 Utils.createSimpleService(serviceName,
-                        FaultThrowingService.class.getName(),
-                        operationName);
+                                          FaultThrowingService.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
         targetEPR = new EndpointReference(
                 "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
 //                "http://127.0.0.1:5556"
-                        + "/axis2/services/" + serviceName.getLocalPart() + "/" + operationName.getLocalPart());
+                        + "/axis2/services/" + serviceName.getLocalPart() + "/" +
+                        operationName.getLocalPart());
     }
-    
+
     protected void tearDown() throws Exception {
         UtilServer.unDeployService(serviceName);
         UtilServer.unDeployClientService();
     }
-    
+
     /**
-     * Service throws a fault from the service impl, by just creating an AxisFault from all the fault
-     * information.
+     * Service throws a fault from the service impl, by just creating an AxisFault from all the
+     * fault information.
      */
     public void testFaultThrownByServiceUsingAxisFaultOnly() {
         try {
-            OMElement payload = getOMElementWithText(FaultThrowingService.THROW_FAULT_AS_AXIS_FAULT);
+            OMElement payload =
+                    getOMElementWithText(FaultThrowingService.THROW_FAULT_AS_AXIS_FAULT);
             Options options = new Options();
             options.setTo(targetEPR);
             options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
@@ -87,7 +86,8 @@ public class ServiceFaultTest extends UtilServerBasedTestCase implements TestCon
             options.setExceptionToBeThrownOnSOAPFault(false);
 
             ConfigurationContext configContext =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
+                    ConfigurationContextFactory
+                            .createConfigurationContextFromFileSystem(null, null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
 
@@ -102,12 +102,11 @@ public class ServiceFaultTest extends UtilServerBasedTestCase implements TestCon
         }
     }
 
-    /**
-     * Service sends out a fault, filling all the information to the message context
-     */
+    /** Service sends out a fault, filling all the information to the message context */
     public void testFaultThrownByServiceUsingMessageContext() {
         try {
-            OMElement payload = getOMElementWithText(FaultThrowingService.THROW_FAULT_WITH_MSG_CTXT);
+            OMElement payload =
+                    getOMElementWithText(FaultThrowingService.THROW_FAULT_WITH_MSG_CTXT);
             Options options = new Options();
             options.setTo(targetEPR);
             options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
@@ -115,7 +114,8 @@ public class ServiceFaultTest extends UtilServerBasedTestCase implements TestCon
             options.setExceptionToBeThrownOnSOAPFault(false);
 
             ConfigurationContext configContext =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(null, null);
+                    ConfigurationContextFactory
+                            .createConfigurationContextFromFileSystem(null, null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
 

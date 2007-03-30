@@ -19,11 +19,12 @@ public class TypeTesterUtil {
 
     /**
      * Check whether a given classname is primitives
+     *
      * @param className
      */
-    public static boolean isPrimitive(String className){
+    public static boolean isPrimitive(String className) {
 
-        return  "int".equals(className) ||
+        return "int".equals(className) ||
                 "float".equals(className) ||
                 "boolean".equals(className) ||
                 "double".equals(className) ||
@@ -35,12 +36,12 @@ public class TypeTesterUtil {
     }
 
     /**
-     * Tests whether the given classname has a package
-     * the current logic is simple where we look for a
-     * '.' inside the classname string
+     * Tests whether the given classname has a package the current logic is simple where we look
+     * for a '.' inside the classname string
+     *
      * @param className
      */
-     public static boolean hasPackage(String className){
-        return  (className.indexOf('.')!= -1);
+    public static boolean hasPackage(String className) {
+        return (className.indexOf('.') != -1);
     }
 }

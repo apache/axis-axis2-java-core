@@ -16,12 +16,10 @@
  */
 package org.apache.axis2.jaxws.marshaller.factory;
 
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.ws.Holder;
-
 import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.OperationDescription;
+import org.apache.axis2.jaxws.description.ParameterDescription;
+import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.marshaller.MethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitBareMethodMarshaller;
 import org.apache.axis2.jaxws.marshaller.impl.alt.DocLitBareMinimalMethodMarshaller;
@@ -32,58 +30,64 @@ import org.apache.axis2.jaxws.marshaller.impl.alt.RPCLitMethodMarshaller;
 import org.apache.axis2.jaxws.message.databinding.JAXBUtils;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
 import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescriptionFactory;
-import org.apache.axis2.jaxws.description.OperationDescription;
-import org.apache.axis2.jaxws.description.ParameterDescription;
-import org.apache.axis2.jaxws.description.ServiceDescription;
+
+import javax.jws.soap.SOAPBinding;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.ws.Holder;
 
 /**
- * The MethodMarshallerFactory creates a Doc/Lit Wrapped, Doc/Lit Bare or RPC Marshaller using SOAPBinding information
+ * The MethodMarshallerFactory creates a Doc/Lit Wrapped, Doc/Lit Bare or RPC Marshaller using
+ * SOAPBinding information
  */
 public class MethodMarshallerFactory {
 
-    
-    private enum SUBTYPE {NORMAL, PLUS, MINIMAL };
-    
-	/**
-	 * Intentionally private
-	 */
-	private MethodMarshallerFactory() {	
+
+    private enum SUBTYPE {
+        NORMAL, PLUS, MINIMAL }
+
+    ;
+
+    /** Intentionally private */
+    private MethodMarshallerFactory() {
     }
-   
+
     /**
      * Create Marshaller usining the Binding information
+     *
      * @param style
      * @param paramStyle
-     * @param isPlus  used to designated DOCLITWRAPPED plus additional rules (i.e. header processing)
+     * @param isPlus     used to designated DOCLITWRAPPED plus additional rules (i.e. header
+     *                   processing)
      * @param isClient
      * @return
      */
-    private static MethodMarshaller createMethodMarshaller(SOAPBinding.Style style, 
-            SOAPBinding.ParameterStyle paramStyle,
-            SUBTYPE subType, 
-            boolean isClient){  // This flag is for testing only !
-		if (style == SOAPBinding.Style.RPC) {
-            return new RPCLitMethodMarshaller();  
-        } else if (paramStyle == SOAPBinding.ParameterStyle.WRAPPED){
+    private static MethodMarshaller createMethodMarshaller(SOAPBinding.Style style,
+                                                           SOAPBinding.ParameterStyle paramStyle,
+                                                           SUBTYPE subType,
+                                                           boolean isClient) {  // This flag is for testing only !
+        if (style == SOAPBinding.Style.RPC) {
+            return new RPCLitMethodMarshaller();
+        } else if (paramStyle == SOAPBinding.ParameterStyle.WRAPPED) {
             if (subType == SUBTYPE.PLUS) {
                 // Abnormal case
                 return new DocLitWrappedPlusMethodMarshaller();
             } else if (subType == SUBTYPE.MINIMAL) {
                 // Abnormal case
                 return new DocLitWrappedMinimalMethodMarshaller();
-            }else {
-                return new DocLitWrappedMethodMarshaller();  
+            } else {
+                return new DocLitWrappedMethodMarshaller();
             }
-        } else if (paramStyle == SOAPBinding.ParameterStyle.BARE){
+        } else if (paramStyle == SOAPBinding.ParameterStyle.BARE) {
             if (subType == SUBTYPE.MINIMAL) {
                 // Abnormal case
                 return new DocLitBareMinimalMethodMarshaller();
-            }else {
+            } else {
                 return new DocLitBareMethodMarshaller();
             }
         }
-		return null;
-	}
+        return null;
+    }
 
     public static MethodMarshaller getMarshaller(OperationDescription op, boolean isClient) {
 
@@ -104,15 +108,16 @@ public class MethodMarshallerFactory {
         return marshaller;
     }
 
-    private static MethodMarshaller createDocLitMethodMarshaller(OperationDescription op, boolean isClient){
+    private static MethodMarshaller createDocLitMethodMarshaller(OperationDescription op,
+                                                                 boolean isClient) {
         SOAPBinding.ParameterStyle parameterStyle = null;
         SUBTYPE subType = SUBTYPE.NORMAL;
-        if(isDocLitBare(op)){
+        if (isDocLitBare(op)) {
             if (isDocLitBareMinimal(op)) {
                 subType = SUBTYPE.MINIMAL;
             }
             parameterStyle = SOAPBinding.ParameterStyle.BARE;
-        } else { 
+        } else {
             if (isDocLitWrappedMinimal(op)) {
                 subType = SUBTYPE.MINIMAL;
             } else if (isDocLitWrappedPlus(op)) {
@@ -120,54 +125,56 @@ public class MethodMarshallerFactory {
             }
             parameterStyle = SOAPBinding.ParameterStyle.WRAPPED;
         }
-        return createMethodMarshaller(SOAPBinding.Style.DOCUMENT, parameterStyle, subType, isClient);
+        return createMethodMarshaller(SOAPBinding.Style.DOCUMENT, parameterStyle, subType,
+                                      isClient);
     }
 
-    private static MethodMarshaller createRPCLitMethodMarshaller(boolean isClient){
-        return createMethodMarshaller(SOAPBinding.Style.RPC, SOAPBinding.ParameterStyle.WRAPPED, SUBTYPE.NORMAL, isClient);
+    private static MethodMarshaller createRPCLitMethodMarshaller(boolean isClient) {
+        return createMethodMarshaller(SOAPBinding.Style.RPC, SOAPBinding.ParameterStyle.WRAPPED,
+                                      SUBTYPE.NORMAL, isClient);
     }
 
-    protected static boolean isDocLitBare(OperationDescription op){
+    protected static boolean isDocLitBare(OperationDescription op) {
         SOAPBinding.ParameterStyle methodParamStyle = op.getSoapBindingParameterStyle();
-        if(methodParamStyle!=null){
+        if (methodParamStyle != null) {
             return methodParamStyle == SOAPBinding.ParameterStyle.BARE;
-        }
-        else{
-            SOAPBinding.ParameterStyle SEIParamStyle = op.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
+        } else {
+            SOAPBinding.ParameterStyle SEIParamStyle =
+                    op.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
             return SEIParamStyle == SOAPBinding.ParameterStyle.BARE;
         }
     }
 
-    protected static boolean isDocLitWrapped(OperationDescription op){
+    protected static boolean isDocLitWrapped(OperationDescription op) {
         SOAPBinding.ParameterStyle methodParamStyle = op.getSoapBindingParameterStyle();
-        if(methodParamStyle!=null){
+        if (methodParamStyle != null) {
             return methodParamStyle == SOAPBinding.ParameterStyle.WRAPPED;
-        }
-        else{
-            SOAPBinding.ParameterStyle SEIParamStyle = op.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
+        } else {
+            SOAPBinding.ParameterStyle SEIParamStyle =
+                    op.getEndpointInterfaceDescription().getSoapBindingParameterStyle();
             return SEIParamStyle == SOAPBinding.ParameterStyle.WRAPPED;
         }
     }
-    
+
     /**
-     * If an web service is created using wsgen, it is possible that the
-     * sei does not comply with the wrapped rules.  For example, wsgen will
-     * allow header parameters and return values.
-     * In such cases we will use the DocLitWrappedPlus marshaller to marshal
-     * and unmarshal the xml in these extraordinary situations
+     * If an web service is created using wsgen, it is possible that the sei does not comply with
+     * the wrapped rules.  For example, wsgen will allow header parameters and return values. In
+     * such cases we will use the DocLitWrappedPlus marshaller to marshal and unmarshal the xml in
+     * these extraordinary situations
+     *
      * @param op
      * @return
      */
-    protected static boolean isDocLitWrappedPlus(OperationDescription op){
+    protected static boolean isDocLitWrappedPlus(OperationDescription op) {
         if (isDocLitWrapped(op)) {
-            if (isContextPathConstruction(op)) { 
+            if (isContextPathConstruction(op)) {
                 return true;
             }
             if (op.isResultHeader()) {
                 return true;
             }
             ParameterDescription[] pds = op.getParameterDescriptions();
-            for (int i=0; i<pds.length; i++) {
+            for (int i = 0; i < pds.length; i++) {
                 if (pds[i].isHeader()) {
                     return true;
                 }
@@ -175,30 +182,33 @@ public class MethodMarshallerFactory {
         }
         return false;
     }
-    
+
     /**
-     * If a webservices is created without xjc, then there will be no ObjectFactory
-     * classes packaged with the webservice.  In such cases, use the doc/lit bare minimal marshaller.
-     * This marshaller will use "by java type" marshalling/unmarshalling for primitives and Strings.
+     * If a webservices is created without xjc, then there will be no ObjectFactory classes packaged
+     * with the webservice.  In such cases, use the doc/lit bare minimal marshaller. This marshaller
+     * will use "by java type" marshalling/unmarshalling for primitives and Strings.
+     *
      * @param op
      * @return
      */
     protected static boolean isDocLitBareMinimal(OperationDescription op) {
         return isDocLitBare(op) && !isContextPathConstruction(op);
     }
-    
+
     /**
      * @param op
      * @return true if JAXBContext constructed using CONTEXT PATH
      */
     private static boolean isContextPathConstruction(OperationDescription op) {
-        ServiceDescription serviceDesc = op.getEndpointInterfaceDescription().getEndpointDescription().getServiceDescription();
-        MarshalServiceRuntimeDescription marshalDesc = 
-            MarshalServiceRuntimeDescriptionFactory.get(serviceDesc);
+        ServiceDescription serviceDesc = op.getEndpointInterfaceDescription()
+                .getEndpointDescription().getServiceDescription();
+        MarshalServiceRuntimeDescription marshalDesc =
+                MarshalServiceRuntimeDescriptionFactory.get(serviceDesc);
         // Get the JAXBContext...Since this is a cached object we incur no penalty by looking at this point.
         Holder<JAXBUtils.CONSTRUCTION_TYPE> holder = new Holder<JAXBUtils.CONSTRUCTION_TYPE>();
         try {
-            JAXBContext context = JAXBUtils.getJAXBContext(marshalDesc.getPackages(), holder, marshalDesc.getPackagesKey());
+            JAXBContext context = JAXBUtils.getJAXBContext(marshalDesc.getPackages(), holder,
+                                                           marshalDesc.getPackagesKey());
         } catch (JAXBException e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
@@ -212,32 +222,36 @@ public class MethodMarshallerFactory {
             return false;
         }
     }
+
     /**
-     * If a web service is created without wsgen, it is possible that the
-     * wrapper elements are missing.  In such cases, use the doc/lit wrapped minimal marshaller
+     * If a web service is created without wsgen, it is possible that the wrapper elements are
+     * missing.  In such cases, use the doc/lit wrapped minimal marshaller
+     *
      * @param op
      * @return
      */
-    protected static boolean isDocLitWrappedMinimal(OperationDescription op){
+    protected static boolean isDocLitWrappedMinimal(OperationDescription op) {
         if (isDocLitWrapped(op)) {
-           ServiceDescription serviceDesc = op.getEndpointInterfaceDescription().getEndpointDescription().getServiceDescription();
-           MarshalServiceRuntimeDescription marshalDesc = 
-               MarshalServiceRuntimeDescriptionFactory.get(serviceDesc);
-           String requestWrapper = marshalDesc.getRequestWrapperClassName(op);
-           if (!exists(requestWrapper)) {
-               // TODO DEBUG
-               return true;
-           }
-           
-           String responseWrapper = marshalDesc.getRequestWrapperClassName(op);
-           if (!exists(responseWrapper)) {
-               // TODO DEBUG
-               return true;
-           }
-           // TODO Do the same for the fault beans
+            ServiceDescription serviceDesc = op.getEndpointInterfaceDescription()
+                    .getEndpointDescription().getServiceDescription();
+            MarshalServiceRuntimeDescription marshalDesc =
+                    MarshalServiceRuntimeDescriptionFactory.get(serviceDesc);
+            String requestWrapper = marshalDesc.getRequestWrapperClassName(op);
+            if (!exists(requestWrapper)) {
+                // TODO DEBUG
+                return true;
+            }
+
+            String responseWrapper = marshalDesc.getRequestWrapperClassName(op);
+            if (!exists(responseWrapper)) {
+                // TODO DEBUG
+                return true;
+            }
+            // TODO Do the same for the fault beans
         }
         return false;
     }
+
     private static boolean exists(String className) {
         if (className == null || className.length() == 0) {
             return false;

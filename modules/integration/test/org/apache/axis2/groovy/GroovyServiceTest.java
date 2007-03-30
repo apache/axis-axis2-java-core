@@ -17,14 +17,12 @@
 package org.apache.axis2.groovy;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
-import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
+import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
@@ -32,12 +30,10 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.engine.EchoRawXMLTest;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
@@ -63,9 +59,9 @@ public class GroovyServiceTest extends UtilServerBasedTestCase {
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(GroovyServiceTest.class),"target/groovyRepo");
+        return getTestSetup2(new TestSuite(GroovyServiceTest.class), "target/groovyRepo");
     }
-    
+
     public void testServiceExists() throws Exception {
         AxisService desc = UtilServer.getConfigurationContext().
                 getAxisConfiguration().getService(serviceName.getLocalPart());
@@ -87,13 +83,14 @@ public class GroovyServiceTest extends UtilServerBasedTestCase {
 
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         OMElement result = sender.sendReceive(payload);
 
         assertNotNull(result);
-        OMElement person = (OMElement) result.getFirstOMChild();
+        OMElement person = (OMElement)result.getFirstOMChild();
         assertEquals(person.getLocalName(), "person");
 
         StringWriter writer = new StringWriter();

@@ -24,24 +24,28 @@ import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
 
 import javax.wsdl.Definition;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class CodeGenConfiguration implements CommandLineOptionConstants {
 
-    /**  Axis Services reference*/
+    /** Axis Services reference */
     private List axisServices;
 
     /** Axis service to use */
     private AxisService axisService;
 
-    /**  Base URI */
+    /** Base URI */
     private String baseURI;
     /** path to the repository - used for evaluating policy */
     private String repositoryPath;
     /** Mapping file including the qname to type map */
     private File typeMappingFile;
 
-    /** keeps the WSDL version  - default is 1.1*/
+    /** keeps the WSDL version  - default is 1.1 */
     private String WSDLVersion = WSDL2JavaConstants.WSDL_VERSION_1;
 
     public String getWSDLVersion() {
@@ -60,9 +64,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.typeMappingFile = typeMappingFile;
     }
 
-    /**
-     * A map to keep the custom namespace and package name mappings
-     */
+    /** A map to keep the custom namespace and package name mappings */
     private Map uri2PackageNameMap;
 
 
@@ -71,9 +73,9 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     public void setUri2PackageNameMap(Map uri2PackageNameMap) {
-        if (this.uri2PackageNameMap==null){
+        if (this.uri2PackageNameMap == null) {
             this.uri2PackageNameMap = uri2PackageNameMap;
-        }else{
+        } else {
             this.uri2PackageNameMap.putAll(uri2PackageNameMap);
         }
     }
@@ -87,7 +89,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      * @return Full path and name of XMLBeans xsdconfig file to use
      */
     public String getXsdConfigFile() {
-      return xsdConfigFile;
+        return xsdConfigFile;
     }
 
     /**
@@ -96,12 +98,10 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      * @param xsdConfigFile Full path and name of XMLBeans xsdconfig file to use
      */
     public void setXsdConfigFile(String xsdConfigFile) {
-      this.xsdConfigFile = xsdConfigFile;
+        this.xsdConfigFile = xsdConfigFile;
     }
 
-    /**
-     * Says whether to flatten the files or put them in specific folders
-     */
+    /** Says whether to flatten the files or put them in specific folders */
     private boolean flattenFiles = false;
 
     public boolean isFlattenFiles() {
@@ -112,10 +112,8 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.flattenFiles = flattenFiles;
     }
 
-    /**
-     * Folder name for the resource files
-     */
-    private  String resourceLocation = ConfigPropertyFileLoader.getResourceFolderName();
+    /** Folder name for the resource files */
+    private String resourceLocation = ConfigPropertyFileLoader.getResourceFolderName();
 
     public String getResourceLocation() {
         return resourceLocation;
@@ -125,10 +123,8 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.resourceLocation = resourceLocation;
     }
 
-    /**
-     * Folder name for the source files
-     */
-    private String sourceLocation  = ConfigPropertyFileLoader.getSrcFolderName();
+    /** Folder name for the source files */
+    private String sourceLocation = ConfigPropertyFileLoader.getSrcFolderName();
 
     public String getSourceLocation() {
         return sourceLocation;
@@ -138,10 +134,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.sourceLocation = sourceLocation;
     }
 
-    /**
-     * Determines whether the parameters are wrapped or unwrapped
-     * true by default
-     */
+    /** Determines whether the parameters are wrapped or unwrapped true by default */
     private boolean parametersWrapped = true;
 
 
@@ -259,9 +252,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.serviceName = serviceName;
     }
 
-    /**
-     * A hashmap to hang the property objects
-     */
+    /** A hashmap to hang the property objects */
     private Map policyMap = new HashMap();
 
     /*
@@ -348,30 +339,22 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     private TypeMapper typeMapper;
 
 
-    /**
-     * @return Returns TypeMapper.
-     */
+    /** @return Returns TypeMapper. */
     public TypeMapper getTypeMapper() {
         return typeMapper;
     }
 
-    /**
-     * @param typeMapper
-     */
+    /** @param typeMapper  */
     public void setTypeMapper(TypeMapper typeMapper) {
         this.typeMapper = typeMapper;
     }
 
-    /**
-     * @return Returns String.
-     */
+    /** @return Returns String. */
     public String getDatabindingType() {
         return databindingType;
     }
 
-    /**
-     * @param databindingType
-     */
+    /** @param databindingType  */
     public void setDatabindingType(String databindingType) {
         this.databindingType = databindingType;
     }
@@ -383,15 +366,12 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
      * @param optionMap
      */
     public CodeGenConfiguration(Map optionMap) {
-        CodegenConfigLoader.loadConfig(this,optionMap);
+        CodegenConfigLoader.loadConfig(this, optionMap);
         this.axisServices = new ArrayList();
     }
 
 
-
-    /**
-     * @return Returns the outputLocation.
-     */
+    /** @return Returns the outputLocation. */
     public File getOutputLocation() {
         return outputLocation;
     }
@@ -405,16 +385,12 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
 
-    /**
-     * @return Returns the packageName.
-     */
+    /** @return Returns the packageName. */
     public String getPackageName() {
         return packageName;
     }
 
-    /**
-     * @param packageName The packageName to set.
-     */
+    /** @param packageName The packageName to set. */
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
@@ -466,16 +442,16 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.axisServices = axisServices;
     }
 
-    public void addAxisService(AxisService axisService){
+    public void addAxisService(AxisService axisService) {
         this.axisServices.add(axisService);
     }
 
     public AxisService getAxisService() {
         // return the first element of the axis services
-        if (axisService != null){
+        if (axisService != null) {
             return axisService;
-        } else if ((axisServices != null) && (axisServices.size() > 0)){
-            return (AxisService) axisServices.get(0);
+        } else if ((axisServices != null) && (axisServices.size() > 0)) {
+            return (AxisService)axisServices.get(0);
         } else {
             return null;
         }
@@ -486,8 +462,8 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
     }
 
     /**
-     * This flag determines whether the generated classes are expected to be
-     * backword compatible with Axis 1.x
+     * This flag determines whether the generated classes are expected to be backword compatible
+     * with Axis 1.x
      */
     private boolean backwordCompatibilityMode = false;
 
@@ -499,9 +475,7 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.backwordCompatibilityMode = backwordCompatibilityMode;
     }
 
-    /**
-     * Should we suppress namespace prefixes
-     */
+    /** Should we suppress namespace prefixes */
     private boolean suppressPrefixesMode = false;
 
     public boolean isSuppressPrefixesMode() {
@@ -512,27 +486,25 @@ public class CodeGenConfiguration implements CommandLineOptionConstants {
         this.suppressPrefixesMode = suppressPrefixesMode;
     }
 
-    public String getTargetNamespace(){
+    public String getTargetNamespace() {
         String targetNamespace = null;
-        if ((this.axisServices != null) && (this.axisServices.size() > 0)){
+        if ((this.axisServices != null) && (this.axisServices.size() > 0)) {
             targetNamespace = ((AxisService)this.axisServices.get(0)).getTargetNamespace();
         }
         return targetNamespace;
     }
 
-    public List getSchemaListForAllServices(){
+    public List getSchemaListForAllServices() {
         List schemas = new ArrayList();
         AxisService axisService;
-        for (Iterator iter = this.axisServices.iterator();iter.hasNext();){
-            axisService = (AxisService) iter.next();
+        for (Iterator iter = this.axisServices.iterator(); iter.hasNext();) {
+            axisService = (AxisService)iter.next();
             schemas.addAll(axisService.getSchema());
         }
         return schemas;
     }
 
-    /**
-     * keep this wsdl definition to write the wsdl file later
-     */
+    /** keep this wsdl definition to write the wsdl file later */
     private Definition wsdlDefinition;
 
     public Definition getWsdlDefinition() {

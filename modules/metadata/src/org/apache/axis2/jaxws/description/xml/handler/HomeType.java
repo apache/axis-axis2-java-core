@@ -14,23 +14,19 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 	
- * 
- * 	  The homeType defines the fully-qualified name of
- * 	  an enterprise bean's home interface.
- * 
- * 	  Example:
- * 
- * 	      <home>com.aardvark.payroll.PayrollHome</home>
- * 
- * 	  
- *       
- * 
+ * The homeType defines the fully-qualified name of an enterprise bean's home interface.
+ * <p/>
+ * Example:
+ * <p/>
+ * <home>com.aardvark.payroll.PayrollHome</home>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for homeType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="homeType">
  *   &lt;simpleContent>
@@ -39,14 +35,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "homeType")
 public class HomeType
-    extends FullyQualifiedClassType
-{
+        extends FullyQualifiedClassType {
 
 
 }

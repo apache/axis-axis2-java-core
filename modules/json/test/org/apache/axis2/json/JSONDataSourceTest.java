@@ -15,22 +15,19 @@
  */
 package org.apache.axis2.json;
 
+import org.apache.axiom.om.util.StAXUtils;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.json.JSONException;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.parsers.ParserConfigurationException;
-
-import junit.framework.TestCase;
-
-import org.apache.axiom.om.util.StAXUtils;
-import org.json.JSONException;
-import org.custommonkey.xmlunit.XMLTestCase;
-import org.xml.sax.SAXException;
 
 public class JSONDataSourceTest extends XMLTestCase {
 
@@ -60,7 +57,9 @@ public class JSONDataSourceTest extends XMLTestCase {
         JSONDataSource source = getMappedDataSource(jsonString);
         source.serialize(writer);
         writer.flush();
-        assertEquals("<?xml version='1.0' encoding='UTF-8'?><mapping><inner><first>test string one</first></inner><inner>test string two</inner><name>foo</name></mapping>", new String(outStream.toByteArray()));
+        assertEquals(
+                "<?xml version='1.0' encoding='UTF-8'?><mapping><inner><first>test string one</first></inner><inner>test string two</inner><name>foo</name></mapping>",
+                new String(outStream.toByteArray()));
     }
 
     public void testBadgerfishSerialize1() throws XMLStreamException {
@@ -81,14 +80,17 @@ public class JSONDataSourceTest extends XMLTestCase {
         assertEquals(jsonString, new String(outStream.toByteArray()));
     }
 
-    public void testBadgerfishSerialize3() throws XMLStreamException, JSONException, IOException, ParserConfigurationException, SAXException {
+    public void testBadgerfishSerialize3() throws XMLStreamException, JSONException, IOException,
+            ParserConfigurationException, SAXException {
         String jsonString = getBadgerfishJSONString();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(outStream);
         JSONBadgerfishDataSource source = getBadgerfishDataSource(jsonString);
         source.serialize(writer);
         writer.flush();
-        assertXMLEqual("<?xml version='1.0' encoding='UTF-8'?><p xmlns=\"http://def.ns\" xmlns:bb=\"http://other.nsb\" xmlns:aa=\"http://other.ns\"><sam att=\"lets\">555</sam></p>", new String(outStream.toByteArray()));
+        assertXMLEqual(
+                "<?xml version='1.0' encoding='UTF-8'?><p xmlns=\"http://def.ns\" xmlns:bb=\"http://other.nsb\" xmlns:aa=\"http://other.ns\"><sam att=\"lets\">555</sam></p>",
+                new String(outStream.toByteArray()));
     }
 
     private JSONBadgerfishDataSource getBadgerfishDataSource(String jsonString) {
@@ -111,7 +113,7 @@ public class JSONDataSourceTest extends XMLTestCase {
 
     private InputStream readLocalName(InputStream in) {
         try {
-            while ((char) in.read() != ':') {
+            while ((char)in.read() != ':') {
             }
         } catch (IOException e) {
             e.printStackTrace();

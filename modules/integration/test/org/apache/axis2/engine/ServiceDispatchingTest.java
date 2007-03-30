@@ -16,9 +16,8 @@
 
 package org.apache.axis2.engine;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
@@ -51,8 +50,8 @@ public class ServiceDispatchingTest extends UtilServerBasedTestCase implements T
 
     protected void setUp() throws Exception {
         AxisService service = Utils.createSimpleService(serviceName,
-                Echo.class.getName(),
-                operationName);
+                                                        Echo.class.getName(),
+                                                        operationName);
         UtilServer.deployService(service);
 
     }

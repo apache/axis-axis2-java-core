@@ -64,9 +64,11 @@ public class WMRound2Soap12GroupcVoidUtil implements SunClientUtil {
         block1.addAttribute("xsi:type", "xsd:string", null);
         block1.addChild(omfactory.createOMText("string"));
 
-        OMElement operation = omfactory.createOMElement("echoVoid", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoVoid", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://www.w3.org/2003/05/soap-encoding", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://www.w3.org/2003/05/soap-encoding",
+                               null);
 
         return reqEnv;
 
