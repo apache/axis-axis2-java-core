@@ -51,7 +51,7 @@
 
      <!--Codegen wizard libraries -->
      <fileset id="codegen.libs" dir="${axis2.lib.dir}">
- 		<include name="geronimo-activation_1.1_spec-${activation.version}.jar" />
+ 		<include name="activation-${activation.version}.jar" />
  		<include name="annogen-${annogen.version}.jar" />
 		<include name="ant-${ant.version}.jar" />
 		<include name="axiom-api-${axiom.version}.jar" />
