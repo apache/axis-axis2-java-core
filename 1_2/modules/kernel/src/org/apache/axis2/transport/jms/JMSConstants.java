@@ -28,9 +28,14 @@ public class JMSConstants {
     public static final String JMS_PREFIX = "jms:/";
 
     /**
-     * The Parameter name indicating a JMS destination
+     * The Parameter name indicating a JMS destination for requests
      */
     public static final String DEST_PARAM = "transport.jms.Destination";
+
+    /**
+     * The Parameter name indicating the response JMS destination
+     */
+    public static final String REPLY_PARAM = "transport.jms.ReplyDestination";
 
     /**
      * The Parameter name indicating the JMS destination type
