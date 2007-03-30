@@ -59,7 +59,7 @@ public class Java2WSDLFrame extends JFrame {
 
         //add option panel
 
-        outPanel=new OutputPanel(wsdlgenBean);
+        outPanel=new OutputPanel(this,wsdlgenBean);
         outPanel .setVisible(false);
         getContentPane() .add(outPanel);
 
@@ -76,6 +76,12 @@ public class Java2WSDLFrame extends JFrame {
     public void setProject(Project project) {
         this.project = project;
     }
+
+    public Project getActiveProject() {
+        return project;
+
+    }
+
     public ClassLoader getClassLoader() {
         return classLoader;
     }
