@@ -52,6 +52,20 @@ public class SimpleTypeMapper {
     private static final String FLOAT = "float";
     private static final String CHAR = "char";
 
+    /*
+     * To support deserialize BigDecimal, BigInteger
+     * Day, Duration, Month, MonthDay, Time, Year, YearMonth
+     */
+    private static final String BIG_DECIMAL = "java.math.BigDecimal";
+    private static final String BIG_INTEGER = "java.math.BigInteger";
+    private static final String DAY = "org.apache.axis2.databinding.types.Day";
+    private static final String DURATION = "org.apache.axis2.databinding.types.Duration";
+    private static final String MONTH = "org.apache.axis2.databinding.types.Month";
+    private static final String MONTH_DAY = "org.apache.axis2.databinding.types.MonthDay";
+    private static final String TIME = "org.apache.axis2.databinding.types.Time";
+    private static final String YEAR = "org.apache.axis2.databinding.types.Year";
+    private static final String YEAR_MONTH = "org.apache.axis2.databinding.types.YearMonth";
+
     public static Object getSimpleTypeObject(Class parameter, OMElement value) {
         String name = parameter.getName();
         String text = value.getText();
@@ -96,7 +110,37 @@ public class SimpleTypeMapper {
             return makeCalendar(text, false);
         } else if (name.equals(W_DATE)) {
             return makeCalendar(text, true);
-        } else {
+        }/*
+         * return the correpsonding object for adding data type
+         */
+        else if(name.equals(BIG_DECIMAL)) {
+        	return new java.math.BigDecimal(text);
+        }
+        else if(name.equals(BIG_INTEGER)) {
+        	return new java.math.BigInteger(text);
+        }
+        else if(name.equals(DAY)) {
+        	return new org.apache.axis2.databinding.types.Day(text);
+        }
+        else if(name.equals(DURATION)) {
+        	return new org.apache.axis2.databinding.types.Duration(text);
+        }
+        else if(name.equals(MONTH)) {
+        	return new org.apache.axis2.databinding.types.Month(text);
+        }
+        else if(name.equals(MONTH_DAY)) {
+        	return new org.apache.axis2.databinding.types.MonthDay(text);
+        }
+        else if(name.equals(TIME)) {
+        	return new org.apache.axis2.databinding.types.Time(text);
+        }
+        else if(name.equals(YEAR)) {
+        	return new org.apache.axis2.databinding.types.Year(text);
+        }
+        else if(name.equals(YEAR_MONTH)) {
+        	return new org.apache.axis2.databinding.types.YearMonth(text);
+        }
+        else {
             return null;
         }
     }
@@ -194,7 +238,23 @@ public class SimpleTypeMapper {
             return true;
         } else if (objClassName.equals(W_DATE)) {
             return true;
-        } else {
+        } /*
+         * consider BigDecimal, BigInteger, Day, Duration, Month
+         * MonthDay, Time, Year, YearMonth as simple type
+         */
+        else if(objClassName.equals(BIG_DECIMAL)
+        		|| objClassName.equals(BIG_INTEGER)
+        		|| objClassName.equals(DAY)
+        		|| objClassName.equals(DURATION)
+        		|| objClassName.equals(MONTH)
+        		|| objClassName.equals(MONTH_DAY)
+        		|| objClassName.equals(TIME)
+        		|| objClassName.equals(YEAR)
+        		|| objClassName.equals(YEAR_MONTH))
+        {
+        	return true;
+        }
+        else {
             return objClassName.equals(W_CHAR);
         }
     }
