@@ -1,7 +1,7 @@
 <xs:schema elementFormDefault="qualified"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:tns="http://tempuri.org/attribute"
-           targetNamespace="http://tempuri.org/attribute">
+           xmlns:tns="http://tempuri.org/boolean1"
+           targetNamespace="http://tempuri.org/boolean1">
 
     <xs:element name="TestBoolean1" type="xs:boolean"/>
     <xs:element name="TestBoolean2" >
