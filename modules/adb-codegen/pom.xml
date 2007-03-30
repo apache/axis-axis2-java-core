@@ -354,7 +354,7 @@
         </java>
         <!-- ################################################################### -->
         <!-- All simple derived types xsd -->
-        <ant:echo>Compiling boolean.xsd</ant:echo>
+        <echo>Compiling boolean.xsd</echo>
         <java classname="org.apache.axis2.schema.XSD2Java" fork="true">
             <jvmarg line="${maven.junit.jvmargs}"/>
             <classpath refid="maven.dependency.classpath"/>
