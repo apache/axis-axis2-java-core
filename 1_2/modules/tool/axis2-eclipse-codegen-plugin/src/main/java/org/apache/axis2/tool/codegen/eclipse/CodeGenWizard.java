@@ -49,6 +49,8 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.codegen.CodeGenerationEngine;
 import org.apache.ws.java2wsdl.Java2WSDLCodegenEngine;
 import org.apache.ws.java2wsdl.utils.Java2WSDLCommandLineOption;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -293,7 +295,8 @@ public class CodeGenWizard extends Wizard implements INewWizard,CommandLineOptio
                  //This will Create a jar file from the codegen results and add to the output 
                  //locations lib directory
                  if (outputPage.getCreateJarCheckBoxSelection()){
-                	 String tempCodegenLocation =  System.getProperty("user.dir")+File.separator+"codegen";
+                	 IWorkspace workspace = ResourcesPlugin.getWorkspace();
+                	 String tempCodegenLocation =  workspace.getRoot().getLocation().toString()+File.separator+"codegen";
                 	 String tempProjectSrcLocation = tempCodegenLocation+File.separator+"codegen_temp_src_"+
                 	 								 System.currentTimeMillis();
                 	 String tempProjectClassLocation = tempCodegenLocation+File.separator+"codegen_temp_class_"+
