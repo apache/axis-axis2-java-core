@@ -17,33 +17,36 @@
 package org.apache.axis2.json;
 
 
-import org.json.JSONTokener;
 import org.codehaus.jettison.badgerfish.BadgerFishXMLInputFactory;
-import java.io.*;
+import org.json.JSONTokener;
+
+import java.io.InputStream;
 
 /**
- * JSONDataSource keeps the JSON String inside and consumes it when needed.
- * This is to be kept in the OMSourcedElementImpl and can be used either to
- * expand the tree or get the JSON String directly without expanding.
- * This uses the "Badgerfish" JSON convention.
+ * JSONDataSource keeps the JSON String inside and consumes it when needed. This is to be kept in
+ * the OMSourcedElementImpl and can be used either to expand the tree or get the JSON String
+ * directly without expanding. This uses the "Badgerfish" JSON convention.
  */
 
-public class JSONBadgerfishDataSource extends JSONDataSource{
+public class JSONBadgerfishDataSource extends JSONDataSource {
 
-    public JSONBadgerfishDataSource(InputStream jsonInputStream, String localName){
+    public JSONBadgerfishDataSource(InputStream jsonInputStream, String localName) {
         super(jsonInputStream, localName);
     }
 
     /**
      * Gives the StAX reader using the "Badgerfish" formatted input JSON String.
+     *
      * @return The XMLStreamReader according to the JSON String.
-     * @throws javax.xml.stream.XMLStreamException if there is an error while making the StAX reader.
+     * @throws javax.xml.stream.XMLStreamException
+     *          if there is an error while making the StAX reader.
      */
     public javax.xml.stream.XMLStreamReader getReader() throws javax.xml.stream.XMLStreamException {
 
         //input factory for "Badgerfish"
         BadgerFishXMLInputFactory inputFactory = new BadgerFishXMLInputFactory();
-        return inputFactory.createXMLStreamReader(new JSONTokener("{" + localName + ":" + this.getJSONString()));
+        return inputFactory.createXMLStreamReader(
+                new JSONTokener("{" + localName + ":" + this.getJSONString()));
 
     }
 }

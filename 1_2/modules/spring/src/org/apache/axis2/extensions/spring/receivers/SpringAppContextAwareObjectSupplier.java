@@ -28,8 +28,7 @@ public class SpringAppContextAwareObjectSupplier implements ServiceObjectSupplie
     public static final String SERVICE_SPRING_BEANNAME = "SpringBeanName";
 
     /**
-     * Method getServiceObject that is Spring aware via Spring interface
-     * ApplicationContextAware.
+     * Method getServiceObject that is Spring aware via Spring interface ApplicationContextAware.
      *
      * @param axisService
      * @return Returns Object.
@@ -43,7 +42,7 @@ public class SpringAppContextAwareObjectSupplier implements ServiceObjectSupplie
             // as normally done in a spring type of way and subsequently loaded by Spring.
             // Axis2 just assumes that the bean is configured and is in the classloader.
             Parameter implBeanParam = axisService.getParameter(SERVICE_SPRING_BEANNAME);
-            String beanName = ((String) implBeanParam.getValue()).trim();
+            String beanName = ((String)implBeanParam.getValue()).trim();
             if (beanName != null) {
                 // ApplicationContextHolder implements Spring interface ApplicationContextAware
                 ApplicationContext aCtx = ApplicationContextHolder.getContext();

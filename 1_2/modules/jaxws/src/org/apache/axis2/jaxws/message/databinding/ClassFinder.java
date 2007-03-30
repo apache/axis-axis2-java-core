@@ -24,14 +24,16 @@ import java.util.ArrayList;
  */
 
 public interface ClassFinder {
-	
-	
-	/** This method reads all the classes from given package in a jar file. 
-	 * It uses ClassLoader to find the given package in a jar file that is located
-	 * in classpath. 
-	 * @param pkg
-	 * @param cl
-	 * @return
-	 */
-	ArrayList<Class> getClassesFromJarFile(String pkg, ClassLoader cl)throws ClassNotFoundException;
+
+
+    /**
+     * This method reads all the classes from given package in a jar file. It uses ClassLoader to find
+     * the given package in a jar file that is located in classpath.
+     *
+     * @param pkg
+     * @param cl
+     * @return
+     */
+    ArrayList<Class> getClassesFromJarFile(String pkg, ClassLoader cl)
+            throws ClassNotFoundException;
 }

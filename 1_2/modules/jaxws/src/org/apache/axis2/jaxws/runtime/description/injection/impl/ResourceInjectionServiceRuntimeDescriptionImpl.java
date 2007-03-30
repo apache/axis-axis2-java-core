@@ -16,22 +16,22 @@
  */
 package org.apache.axis2.jaxws.runtime.description.injection.impl;
 
-import java.lang.reflect.Method;
-
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.runtime.description.injection.ResourceInjectionServiceRuntimeDescription;
+
+import java.lang.reflect.Method;
 
 public class ResourceInjectionServiceRuntimeDescriptionImpl implements
         ResourceInjectionServiceRuntimeDescription {
 
     private ServiceDescription serviceDesc;
-    private String key; 
+    private String key;
     private boolean _hasResourceAnnotation;
     private Method _postConstructMethod;
     private Method _preDestroyMethod;
-    
+
     protected ResourceInjectionServiceRuntimeDescriptionImpl(String key,
-                ServiceDescription serviceDesc) {
+                                                             ServiceDescription serviceDesc) {
         this.serviceDesc = serviceDesc;
         this.key = key;
     }
@@ -39,7 +39,7 @@ public class ResourceInjectionServiceRuntimeDescriptionImpl implements
     public boolean hasResourceAnnotation() {
         return _hasResourceAnnotation;
     }
-    
+
     public Method getPostConstructMethod() {
         return _postConstructMethod;
     }
@@ -56,25 +56,27 @@ public class ResourceInjectionServiceRuntimeDescriptionImpl implements
         return key;
     }
 
-    /** Called by Builder code
+    /**
+     * Called by Builder code
+     *
      * @param value
      */
     void setResourceAnnotation(boolean value) {
         _hasResourceAnnotation = value;
     }
-    
+
     void setPostConstructMethod(Method method) {
         _postConstructMethod = method;
     }
-    
+
     void setPreDestroyMethod(Method method) {
         _preDestroyMethod = method;
     }
-    
+
     public String toString() {
         final String newline = "\n";
         StringBuffer string = new StringBuffer();
-        
+
         string.append(newline);
         string.append("  ResourceInjectionServiceRuntime:" + getKey());
         string.append(newline);
@@ -87,6 +89,5 @@ public class ResourceInjectionServiceRuntimeDescriptionImpl implements
         return string.toString();
     }
 
-    
-   
+
 }

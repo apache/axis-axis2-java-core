@@ -18,8 +18,6 @@
  */
 package org.apache.axis2.jaxws.client.async;
 
-import javax.xml.ws.WebServiceException;
-
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
@@ -28,38 +26,44 @@ import org.apache.axis2.util.ThreadContextMigratorUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.ws.WebServiceException;
+
 public class AsyncUtils {
 
     private static final Log log = LogFactory.getLog(AsyncUtils.class);
     private static final boolean debug = log.isDebugEnabled();
-    
-    public static MessageContext createJAXWSMessageContext(AsyncResult result) throws WebServiceException {
+
+    public static MessageContext createJAXWSMessageContext(AsyncResult result)
+            throws WebServiceException {
         return AsyncUtils.createJAXWSMessageContext(result.getResponseMessageContext());
     }
-    
-    public static MessageContext createJAXWSMessageContext(org.apache.axis2.context.MessageContext mc) throws WebServiceException {
+
+    public static MessageContext createJAXWSMessageContext(
+            org.apache.axis2.context.MessageContext mc) throws WebServiceException {
         MessageContext response = null;
-        
+
         if (debug) {
             log.debug("Creating response MessageContext");
         }
-        
+
         // Create the JAX-WS response MessageContext from the Axis2 response
         response = new MessageContext(mc);
-        
+
         // REVIEW: Are we on the final thread of execution here or does this get handed off to the executor?
         // TODO: Remove workaround for WS-Addressing running in thin client (non-server) environment
         try {
-            ThreadContextMigratorUtil.performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, mc);
+            ThreadContextMigratorUtil
+                    .performMigrationToThread(Constants.THREAD_CONTEXT_MIGRATOR_LIST_ID, mc);
         }
         catch (Throwable t) {
             if (debug) {
-                log.debug(mc.getLogIDString()+" An error occurred in the ThreadContextMigratorUtil " + t);
+                log.debug(mc.getLogIDString() +
+                        " An error occurred in the ThreadContextMigratorUtil " + t);
                 log.debug("...caused by " + t.getCause());
             }
             throw ExceptionFactory.makeWebServiceException(t);
         }
-        
+
         return response;
     }
 }

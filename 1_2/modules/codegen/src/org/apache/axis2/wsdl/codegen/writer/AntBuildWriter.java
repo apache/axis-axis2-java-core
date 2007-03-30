@@ -45,9 +45,9 @@ public class AntBuildWriter extends ClassWriter {
 
     public void createOutFile(String packageName, String fileName) throws Exception {
         File outputFile = FileWriter.createClassFile(outputFileLocation,
-                "",
-                "build",
-                ".xml");
+                                                     "",
+                                                     "build",
+                                                     ".xml");
         //set the existing flag
         fileExists = outputFile.exists();
         if (!fileExists) {
@@ -72,7 +72,8 @@ public class AntBuildWriter extends ClassWriter {
                 propertyValue = languageSpecificPropertyMap.get(key).toString();
                 if (propertyValue.startsWith(ownClazzName)) {
                     if (key.indexOf(databindingFramework) != -1) {
-                        templateName = propertyValue.substring(propertyValue.indexOf(SEPARATOR_STRING) + 1);
+                        templateName = propertyValue
+                                .substring(propertyValue.indexOf(SEPARATOR_STRING) + 1);
                         break;
                     }
                 }
@@ -92,9 +93,9 @@ public class AntBuildWriter extends ClassWriter {
     public void parse(Document doc, URIResolver resolver) throws Exception {
         if (!fileExists) {
             XSLTTemplateProcessor.parse(this.stream,
-                    doc,
-                    this.xsltStream,
-                    resolver);
+                                        doc,
+                                        this.xsltStream,
+                                        resolver);
             this.stream.flush();
             this.stream.close();
         }

@@ -16,9 +16,8 @@
 
 package org.apache.axis2.mtom;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -45,7 +44,7 @@ import javax.activation.DataHandler;
 
 public class EchoRawMTOMLoadTest extends UtilServerBasedTestCase implements TestConstants {
 
-	private static final Log log = LogFactory.getLog(EchoRawMTOMLoadTest.class);
+    private static final Log log = LogFactory.getLog(EchoRawMTOMLoadTest.class);
 
     private ServiceContext serviceContext;
 
@@ -65,12 +64,13 @@ public class EchoRawMTOMLoadTest extends UtilServerBasedTestCase implements Test
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(EchoRawMTOMLoadTest.class),Constants.TESTING_PATH + "MTOM-enabledRepository");
+        return getTestSetup2(new TestSuite(EchoRawMTOMLoadTest.class),
+                             Constants.TESTING_PATH + "MTOM-enabledRepository");
     }
 
     protected void setUp() throws Exception {
         service = Utils.createSimpleService(serviceName, Echo.class.getName(),
-                operationName);
+                                            operationName);
         UtilServer.deployService(service);
     }
 
@@ -86,8 +86,8 @@ public class EchoRawMTOMLoadTest extends UtilServerBasedTestCase implements Test
         OMNamespace omNs = fac.createOMNamespace("http://localhost/my", "my");
         OMElement rpcWrapEle = fac.createOMElement("echoOMElement", omNs);
         OMElement data = fac.createOMElement("data", omNs);
-        expectedByteArray = new byte[]{13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
-                98};
+        expectedByteArray = new byte[] { 13, 56, 65, 32, 12, 12, 7, -3, -2, -1,
+                98 };
         for (int i = 0; i < 4; i++) {
             OMElement subData = fac.createOMElement("subData", omNs);
             DataHandler dataHandler = new DataHandler("Thilina", "text/plain");
@@ -108,21 +108,22 @@ public class EchoRawMTOMLoadTest extends UtilServerBasedTestCase implements Test
             Options options = new Options();
             options.setTo(targetEPR);
             options.setProperty(Constants.Configuration.ENABLE_MTOM,
-                    Constants.VALUE_TRUE);
+                                Constants.VALUE_TRUE);
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setSoapVersionURI(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI);
             ConfigurationContext configContext =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                            "target/test-resources/integrationRepo", null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
             OMElement result = sender.sendReceive(payload);
 
-            OMElement ele = (OMElement) result.getFirstOMChild();
-            OMElement ele1 = (OMElement) ele.getFirstOMChild();
-            OMText binaryNode = (OMText) ele1.getFirstOMChild();
+            OMElement ele = (OMElement)result.getFirstOMChild();
+            OMElement ele1 = (OMElement)ele.getFirstOMChild();
+            OMText binaryNode = (OMText)ele1.getFirstOMChild();
             compareWithActualOMText(binaryNode);
-            OMElement ele2 = (OMElement) ele1.getNextOMSibling();
-            binaryNode = (OMText) ele2.getFirstOMChild();
+            OMElement ele2 = (OMElement)ele1.getNextOMSibling();
+            binaryNode = (OMText)ele2.getFirstOMChild();
             compareWithActualOMText(binaryNode);
             log.info("" + i);
             UtilServer.unDeployClientService();

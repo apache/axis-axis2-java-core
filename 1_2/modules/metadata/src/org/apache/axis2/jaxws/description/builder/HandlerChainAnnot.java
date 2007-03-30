@@ -18,61 +18,55 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class HandlerChainAnnot implements javax.jws.HandlerChain{
+public class HandlerChainAnnot implements javax.jws.HandlerChain {
 
-	private String file = "";
-	private String name = "";
-	
-	/**
-     * A WebServiceAnnot cannot be instantiated.
-     */
-	private  HandlerChainAnnot(){
-		
-	}
-	
+    private String file = "";
+    private String name = "";
+
+    /** A WebServiceAnnot cannot be instantiated. */
+    private HandlerChainAnnot() {
+
+    }
+
     public static HandlerChainAnnot createHandlerChainAnnotImpl() {
         return new HandlerChainAnnot();
     }
 
-    public String file(){
-		return this.file;
-	}
-		
-	public String name(){
-		return this.name;
-	}
-	
-	/**
-	 * @param file The file to set.
-	 */
-	public void setFile(String file) {
-		this.file = file;
-	}
+    public String file() {
+        return this.file;
+    }
 
-	/**
-	 * @param name The name to set.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String name() {
+        return this.name;
+    }
 
-	//hmm, should we really do this
-	public Class<Annotation> annotationType(){
-		return Annotation.class;
-	}
-	
-	/**
-	 * Convenience method for unit testing. We will print all of the 
-	 * data members here.
-	 */
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		String newLine = "\n";
-		sb.append(newLine);
-		sb.append("@HandlerChain.file= " + file);
-		sb.append(newLine);
-		sb.append("@HandlerChain.name= " + name);
-		sb.append(newLine);
-		return sb.toString();
+    /** @param file The file to set. */
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+    /** @param name The name to set. */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    //hmm, should we really do this
+    public Class<Annotation> annotationType() {
+        return Annotation.class;
+    }
+
+    /**
+     * Convenience method for unit testing. We will print all of the
+     * data members here.
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        String newLine = "\n";
+        sb.append(newLine);
+        sb.append("@HandlerChain.file= " + file);
+        sb.append(newLine);
+        sb.append("@HandlerChain.name= " + name);
+        sb.append(newLine);
+        return sb.toString();
 	}
 }

@@ -148,7 +148,7 @@ public class AddressingValidationHandler extends AbstractHandler implements Addr
      * @see AddressingSubmissionInHandler#checkForMandatoryHeaders
      */
     private void checkMessageIDHeader(MessageContext msgContext) throws AxisFault {
-        String namespace = (String) msgContext.getProperty(WS_ADDRESSING_VERSION);
+        String namespace = (String)msgContext.getProperty(WS_ADDRESSING_VERSION);
         if (!Final.WSA_NAMESPACE.equals(namespace)) {
             return;
         }

@@ -18,13 +18,6 @@
  */
 package org.apache.axis2.jaxws.client.dispatch;
 
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.Source;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.Service.Mode;
-
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 import org.apache.axis2.jaxws.description.EndpointDescription;
@@ -41,59 +34,67 @@ import org.apache.axis2.jaxws.spi.ServiceDelegate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.Source;
+import javax.xml.ws.Service.Mode;
+import javax.xml.ws.WebServiceException;
+
 public class XMLDispatch<T> extends BaseDispatch<T> {
     private static final Log log = LogFactory.getLog(XMLDispatch.class);
     private Class type;
     private Class blockFactoryType;
-    
+
     public XMLDispatch(ServiceDelegate svcDelegate, EndpointDescription enpdointDesc) {
         super(svcDelegate, enpdointDesc);
     }
-    
+
     public Class getType() {
         return type;
     }
-    
+
     public void setType(Class c) {
         type = c;
     }
-    
+
     public AsyncResponse createAsyncResponseListener() {
         if (log.isDebugEnabled()) {
             log.debug("Creating new AsyncListener for XMLDispatch");
         }
-        
+
         XMLDispatchAsyncListener al = new XMLDispatchAsyncListener(getEndpointDescription());
         al.setMode(mode);
         al.setType(type);
         al.setBlockFactoryType(blockFactoryType);
         return al;
     }
-    
+
     public Message createMessageFromValue(Object value) {
-    	if(value!=null){
-	        type = value.getClass();
-	        if (log.isDebugEnabled()) {
-	            log.debug("Parameter type: " + type.getName());
-	            log.debug("Message mode: " + mode.name());
-	        }
-    	}else{
-    		if (log.isDebugEnabled()) {
-    			log.debug("Dispatch invoked with null parameter Value");
-    			log.debug("creating empty soap message");
-    		}
-    		try{
-    			blockFactoryType = getBlockFactory();
-    			return createEmptyMessage(Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()));
-    			
-    		}catch(XMLStreamException e){
-    			throw ExceptionFactory.makeWebServiceException(e);
-    		}
-    		
-    	}
+        if (value != null) {
+            type = value.getClass();
+            if (log.isDebugEnabled()) {
+                log.debug("Parameter type: " + type.getName());
+                log.debug("Message mode: " + mode.name());
+            }
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Dispatch invoked with null parameter Value");
+                log.debug("creating empty soap message");
+            }
+            try {
+                blockFactoryType = getBlockFactory();
+                return createEmptyMessage(
+                        Protocol.getProtocolForBinding(endpointDesc.getClientBindingID()));
+
+            } catch (XMLStreamException e) {
+                throw ExceptionFactory.makeWebServiceException(e);
+            }
+
+        }
         Block block = null;
         blockFactoryType = getBlockFactory(value);
-        BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(blockFactoryType);
+        BlockFactory factory = (BlockFactory)FactoryRegistry.getFactory(blockFactoryType);
         if (log.isDebugEnabled()) {
             log.debug("Loaded block factory type [" + blockFactoryType.getName());
         }
@@ -103,31 +104,31 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         Message message = null;
         if (mode.equals(Mode.PAYLOAD)) {
             try {
-                MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
+                MessageFactory mf =
+                        (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
                 block = factory.createFrom(value, null, null);
-                
-                
-                               
+
+
                 message = mf.create(proto);
                 message.setBodyBlock(block);
             } catch (Exception e) {
-            	throw ExceptionFactory.makeWebServiceException(e);
+                throw ExceptionFactory.makeWebServiceException(e);
             }
-        }
-        else if (mode.equals(Mode.MESSAGE)) {
+        } else if (mode.equals(Mode.MESSAGE)) {
             try {
-            	MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
-            	// If the value contains just the xml data, then you can create the Message directly from the 
-            	// Block.  If the value contains attachments, you need to do more.  
-            	// TODO For now the only value that contains Attachments is SOAPMessage
-            	if (value instanceof SOAPMessage) {
-            		message = mf.createFrom((SOAPMessage) value);
-            	} else {
-            		block = factory.createFrom(value, null, null);
-            		message = mf.createFrom(block, null, proto);
-            	}
+                MessageFactory mf =
+                        (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+                // If the value contains just the xml data, then you can create the Message directly from the
+                // Block.  If the value contains attachments, you need to do more.
+                // TODO For now the only value that contains Attachments is SOAPMessage
+                if (value instanceof SOAPMessage) {
+                    message = mf.createFrom((SOAPMessage)value);
+                } else {
+                    block = factory.createFrom(value, null, null);
+                    message = mf.createFrom(block, null, proto);
+                }
             } catch (Exception e) {
-            	throw ExceptionFactory.makeWebServiceException(e);
+                throw ExceptionFactory.makeWebServiceException(e);
             }
         }
 
@@ -137,83 +138,83 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
     public Object getValueFromMessage(Message message) {
         return getValue(message, mode, blockFactoryType);
     }
-    
+
     /**
      * Common code used by XMLDispatch and XMLDispatchAsyncListener
+     *
      * @param message
      * @return object
      */
     static Object getValue(Message message, Mode mode, Class blockFactoryType) {
         Object value = null;
         Block block = null;
-        
+
         if (log.isDebugEnabled()) {
             log.debug("Attempting to get the value object from the returned message");
         }
-        
+
         try {
             if (mode.equals(Mode.PAYLOAD)) {
-				BlockFactory factory = (BlockFactory) FactoryRegistry
-						.getFactory(blockFactoryType);
-				block = message.getBodyBlock(null, factory);
+                BlockFactory factory = (BlockFactory)FactoryRegistry
+                        .getFactory(blockFactoryType);
+                block = message.getBodyBlock(null, factory);
                 if (block != null) {
                     value = block.getBusinessObject(true);
                 } else {
                     // REVIEW This seems like the correct behavior.  If the body is empty, return a null
                     // Any changes here should also be made to XMLDispatch.getValue
                     if (log.isDebugEnabled()) {
-                        log.debug("There are no elements in the body to unmarshal.  XMLDispatch returns a null value");
+                        log.debug(
+                                "There are no elements in the body to unmarshal.  XMLDispatch returns a null value");
                     }
                     value = null;
                 }
-				
-			} else if (mode.equals(Mode.MESSAGE)) {
-                BlockFactory factory = (BlockFactory) FactoryRegistry.getFactory(blockFactoryType);
+
+            } else if (mode.equals(Mode.MESSAGE)) {
+                BlockFactory factory = (BlockFactory)FactoryRegistry.getFactory(blockFactoryType);
                 value = message.getValue(null, factory);
                 if (value == null) {
                     if (log.isDebugEnabled()) {
-                        log.debug("There are no elements to unmarshal.  XMLDispatch returns a null value");
+                        log.debug(
+                                "There are no elements to unmarshal.  XMLDispatch returns a null value");
                     }
                 }
             }
-            
+
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("An error occured while creating the block");
             }
             throw ExceptionFactory.makeWebServiceException(e);
         }
-        
+
         if (log.isDebugEnabled()) {
-            if (value == null) 
+            if (value == null)
                 log.debug("Returning a null value");
-            else 
+            else
                 log.debug("Returning value of type: " + value.getClass().getName());
         }
-        
+
         return value;
     }
-    
+
     private Class getBlockFactory(Object o) {
         if (o instanceof String) {
             if (log.isDebugEnabled()) {
                 log.debug(">> returning XMLStringBlockFactory");
             }
             return XMLStringBlockFactory.class;
-        }
-        else if (Source.class.isAssignableFrom(o.getClass())) {
+        } else if (Source.class.isAssignableFrom(o.getClass())) {
             if (log.isDebugEnabled()) {
                 log.debug(">> returning SourceBlockFactory");
             }
             return SourceBlockFactory.class;
-        }
-        else if (SOAPMessage.class.isAssignableFrom(o.getClass())) {
+        } else if (SOAPMessage.class.isAssignableFrom(o.getClass())) {
             if (log.isDebugEnabled()) {
                 log.debug(">> returning SOAPMessageFactory");
             }
             return SOAPEnvelopeBlockFactory.class;
-        } 
-        else if (SOAPEnvelope.class.isAssignableFrom(o.getClass())) {
+        } else if (SOAPEnvelope.class.isAssignableFrom(o.getClass())) {
             if (log.isDebugEnabled()) {
                 log.debug(">> returning SOAPEnvelope");
             }
@@ -224,28 +225,25 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         }
         return null;
     }
-    
+
     private Class getBlockFactory() {
-    	
+
         if (String.class.isAssignableFrom(type)) {
             if (log.isDebugEnabled()) {
                 log.debug(">> returning XMLStringBlockFactory");
             }
             return XMLStringBlockFactory.class;
-        }
-        else if (Source.class.isAssignableFrom(type)) {
+        } else if (Source.class.isAssignableFrom(type)) {
             if (log.isDebugEnabled()) {
                 log.debug(">> returning SourceBlockFactory");
             }
             return SourceBlockFactory.class;
-        }
-        else if (SOAPMessage.class.isAssignableFrom(type)) {
+        } else if (SOAPMessage.class.isAssignableFrom(type)) {
             if (log.isDebugEnabled()) {
                 log.debug(">> returning SOAPMessageFactory");
             }
             return SOAPEnvelopeBlockFactory.class;
-        } 
-        else if (SOAPEnvelope.class.isAssignableFrom(type)) {
+        } else if (SOAPEnvelope.class.isAssignableFrom(type)) {
             if (log.isDebugEnabled()) {
                 log.debug(">> returning SOAPEnvelope");
             }
@@ -256,11 +254,13 @@ public class XMLDispatch<T> extends BaseDispatch<T> {
         }
         return null;
     }
-    private Message createEmptyMessage(Protocol protocol)throws WebServiceException, XMLStreamException{
-    	MessageFactory mf = (MessageFactory) FactoryRegistry.getFactory(MessageFactory.class);
-    	Message m = mf.create(protocol);
-    	return m;
+
+    private Message createEmptyMessage(Protocol protocol)
+            throws WebServiceException, XMLStreamException {
+        MessageFactory mf = (MessageFactory)FactoryRegistry.getFactory(MessageFactory.class);
+        Message m = mf.create(protocol);
+        return m;
     }
-   
-   
+
+
 }

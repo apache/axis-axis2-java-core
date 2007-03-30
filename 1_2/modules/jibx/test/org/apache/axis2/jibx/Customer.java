@@ -23,10 +23,12 @@ public class Customer {
     public String state;
     public Integer zip;
     public String phone;
-    
-    public Customer() {}
-    
-    public Customer(String city, Person person, String phone, String state, String street, Integer zip) {
+
+    public Customer() {
+    }
+
+    public Customer(String city, Person person, String phone, String state, String street,
+                    Integer zip) {
         this.city = city;
         this.person = person;
         this.phone = phone;
@@ -34,13 +36,13 @@ public class Customer {
         this.street = street;
         this.zip = zip;
     }
-    
+
     public boolean equals(Object obj) {
         if (obj instanceof Customer) {
             Customer cust = (Customer)obj;
             return person.equals(cust.person) && street.equals(cust.street) &&
-                city.equals(cust.city) && state.equals(cust.state) &&
-                zip.equals(cust.zip) && phone.equals(cust.phone);
+                    city.equals(cust.city) && state.equals(cust.state) &&
+                    zip.equals(cust.zip) && phone.equals(cust.phone);
         } else {
             return false;
         }

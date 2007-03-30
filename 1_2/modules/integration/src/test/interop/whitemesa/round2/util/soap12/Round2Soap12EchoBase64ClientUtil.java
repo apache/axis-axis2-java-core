@@ -34,9 +34,11 @@ public class Round2Soap12EchoBase64ClientUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
-        OMElement operation = omfactory.createOMElement("echoBase64", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoBase64", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://www.w3.org/2003/05/soap-encoding", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://www.w3.org/2003/05/soap-encoding",
+                               null);
 
         OMElement part = omfactory.createOMElement("inputBase64", "", null);
         part.addAttribute("xsi:type", "xsd:base64Binary", null);

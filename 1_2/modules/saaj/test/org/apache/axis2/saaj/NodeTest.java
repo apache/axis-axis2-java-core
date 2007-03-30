@@ -15,7 +15,7 @@
  */
 package org.apache.axis2.saaj;
 
-import java.util.Iterator;
+import junit.framework.TestCase;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPBody;
@@ -25,8 +25,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-
-import junit.framework.TestCase;
+import java.util.Iterator;
 
 /**
  * 
@@ -76,7 +75,7 @@ public class NodeTest extends TestCase {
             SOAPElement se = headerEle.getParentElement();
             assertTrue("SOAPHeader element not returned - unexpected",
                        se instanceof SOAPHeader);
-            SOAPHeader sh = (SOAPHeader) se;
+            SOAPHeader sh = (SOAPHeader)se;
             assertTrue("SOAPHeader element does not match", sh.equals(header));
         } catch (Exception e) {
             fail("Exception: " + e);

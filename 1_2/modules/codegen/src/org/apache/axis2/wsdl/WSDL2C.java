@@ -20,9 +20,10 @@ public class WSDL2C {
     public static void main(String[] args) throws Exception {
         String[] cargs = new String[args.length + 2];
         System.arraycopy(args, 0, cargs, 0, args.length);
-        System.setProperty("org.apache.adb.properties","/org/apache/axis2/schema/c-schema-compile.properties");
+        System.setProperty("org.apache.adb.properties",
+                           "/org/apache/axis2/schema/c-schema-compile.properties");
         cargs[args.length] = "-l";
-        cargs[args.length +1] = "c";
+        cargs[args.length + 1] = "c";
 
         WSDL2Code.main(cargs);
     }

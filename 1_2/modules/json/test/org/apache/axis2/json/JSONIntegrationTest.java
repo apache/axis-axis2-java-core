@@ -16,11 +16,7 @@
 
 package org.apache.axis2.json;
 
-import java.io.File;
-import java.net.ServerSocket;
-
 import junit.framework.TestCase;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -35,6 +31,9 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 
+import java.io.File;
+import java.net.ServerSocket;
+
 public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
 
     private static AxisService service;
@@ -44,42 +43,45 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
     private static SimpleHTTPServer server;
 
     private static ConfigurationContext configurationContext;
-    
+
     private static EndpointReference targetEPR;
 
     public JSONIntegrationTest() {
     }
 
     private static int count = 0;
+
     protected void setUp() throws Exception {
-    	if(count == 0){
-    		int testingPort = findAvailablePort();
-    		targetEPR = new EndpointReference(
-    	            "http://127.0.0.1:" + (testingPort)
-    	                    + "/axis2/services/EchoXMLService/echoOM");
-    		
-	        File configFile = new File(System.getProperty("basedir",".") + "/test-resources/axis2.xml");
-	        configurationContext = ConfigurationContextFactory
-	                .createConfigurationContextFromFileSystem(null, configFile
-	                        .getAbsolutePath());
-	        server = new SimpleHTTPServer(configurationContext, testingPort);
-	        try {
-	            server.start();
-	        } finally {
-	
-	        }
-	        service = Utils.createSimpleService(serviceName, org.apache.axis2.json.Echo.class.getName(),
-	                operationName);
-	        server.getConfigurationContext().getAxisConfiguration().addService(
-	                service);
-    	}
-    	count++;
+        if (count == 0) {
+            int testingPort = findAvailablePort();
+            targetEPR = new EndpointReference(
+                    "http://127.0.0.1:" + (testingPort)
+                            + "/axis2/services/EchoXMLService/echoOM");
+
+            File configFile =
+                    new File(System.getProperty("basedir", ".") + "/test-resources/axis2.xml");
+            configurationContext = ConfigurationContextFactory
+                    .createConfigurationContextFromFileSystem(null, configFile
+                            .getAbsolutePath());
+            server = new SimpleHTTPServer(configurationContext, testingPort);
+            try {
+                server.start();
+            } finally {
+
+            }
+            service = Utils.createSimpleService(serviceName,
+                                                org.apache.axis2.json.Echo.class.getName(),
+                                                operationName);
+            server.getConfigurationContext().getAxisConfiguration().addService(
+                    service);
+        }
+        count++;
     }
 
     protected void tearDown() throws Exception {
-    	if(count == 2){
-    		server.stop();
-    	}
+        if (count == 2) {
+            server.stop();
+        }
     }
 
     protected OMElement createEnvelope() throws Exception {
@@ -97,8 +99,8 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
         return rpcWrapEle;
     }
 
-    private void doEchoOM(String messageType) throws Exception{
-    	OMElement payload = createEnvelope();
+    private void doEchoOM(String messageType) throws Exception {
+        OMElement payload = createEnvelope();
         Options options = new Options();
         options.setTo(targetEPR);
         options.setProperty(Constants.Configuration.MESSAGE_TYPE, messageType);
@@ -109,30 +111,30 @@ public class JSONIntegrationTest extends TestCase implements JSONTestConstants {
         sender.setOptions(options);
         options.setTo(targetEPR);
         OMElement result = sender.sendReceive(payload);
-        OMElement ele = (OMElement) result.getFirstOMChild();
+        OMElement ele = (OMElement)result.getFirstOMChild();
         compareWithCreatedOMText(ele.getText());
     }
-    
-    public void testEchoOMWithJSONBadgerfish() throws Exception{
-    	doEchoOM("application/json/badgerfish");
+
+    public void testEchoOMWithJSONBadgerfish() throws Exception {
+        doEchoOM("application/json/badgerfish");
     }
-    
+
     public void testEchoOMWithJSON() throws Exception {
-    	doEchoOM("application/json");
+        doEchoOM("application/json");
     }
 
     protected void compareWithCreatedOMText(String response) {
         TestCase.assertEquals(response, expectedString);
     }
 
-    protected static int findAvailablePort(){
-    	try{
-    		ServerSocket ss = new ServerSocket(0);
-    		int result = ss.getLocalPort();
-    		ss.close();
-    		return result;
-    	}catch(Exception e){
-    		return 5555;
-    	}
+    protected static int findAvailablePort() {
+        try {
+            ServerSocket ss = new ServerSocket(0);
+            int result = ss.getLocalPort();
+            ss.close();
+            return result;
+        } catch (Exception e) {
+            return 5555;
+        }
     }
 }

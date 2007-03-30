@@ -15,25 +15,6 @@
  */
 package org.apache.axis2.saaj;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPConstants;
-import javax.xml.soap.SOAPElement;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPBody;
-import javax.xml.soap.SOAPFault;
-import javax.xml.soap.SOAPFaultElement;
-import javax.xml.soap.SOAPEnvelope;
-import javax.xml.soap.Detail;
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.axiom.om.OMAttribute;
 import org.apache.axiom.om.OMContainer;
 import org.apache.axiom.om.OMException;
@@ -56,12 +37,29 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import javax.xml.namespace.QName;
+import javax.xml.soap.Detail;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPFaultElement;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.stream.XMLStreamException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
 public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 
     /**
-     * Using a delegate because we can't extend from
-     * org.apache.axiom.om.impl.dom.ElementImpl since this class
-     * must extend SNodeImpl
+     * Using a delegate because we can't extend from org.apache.axiom.om.impl.dom.ElementImpl since
+     * this class must extend SNodeImpl
      */
     protected ElementImpl element;
 
@@ -79,34 +77,34 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 
     /* (non-Javadoc)
       */
-    public void internalSerialize(javax.xml.stream.XMLStreamWriter writer) throws XMLStreamException {
+    public void internalSerialize(javax.xml.stream.XMLStreamWriter writer)
+            throws XMLStreamException {
         element.internalSerialize(writer);
     }
 
     /* (non-Javadoc)
       * @see org.apache.axiom.om.OMNode#serializeAndConsume(org.apache.axiom.om.impl.OMOutputImpl)
       */
-    public void internalSerializeAndConsume(javax.xml.stream.XMLStreamWriter writer) throws XMLStreamException {
+    public void internalSerializeAndConsume(javax.xml.stream.XMLStreamWriter writer)
+            throws XMLStreamException {
         element.internalSerializeAndConsume(writer);
     }
 
     /**
-     * Adds an attribute with the specified name and value to this
-     * <code>SOAPElement</code> object.
+     * Adds an attribute with the specified name and value to this <code>SOAPElement</code> object.
      * <p/>
      *
      * @param name  a <code>Name</code> object with the name of the attribute
      * @param value a <code>String</code> giving the value of the attribute
-     * @return the <code>SOAPElement</code> object into which the attribute was
-     *         inserted
-     * @throws SOAPException if there is an error in creating the
-     *                       Attribute
+     * @return the <code>SOAPElement</code> object into which the attribute was inserted
+     * @throws SOAPException if there is an error in creating the Attribute
      */
     public SOAPElement addAttribute(Name name, String value) throws SOAPException {
         if (name.getURI() == null || name.getURI().trim().length() == 0) {
             element.setAttribute(name.getLocalName(), value);
         } else {
-            element.setAttributeNS(name.getURI(), name.getPrefix() + ":" + name.getLocalName(), value);
+            element.setAttributeNS(name.getURI(), name.getPrefix() + ":" + name.getLocalName(),
+                                   value);
         }
         return this;
     }
@@ -116,7 +114,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       */
     public SOAPElement addChildElement(Name name) throws SOAPException {
         String prefix = name.getPrefix();
-        return addChildElement(name.getLocalName(), "".equals(prefix) ? null : prefix  , name.getURI());
+        return addChildElement(name.getLocalName(), "".equals(prefix) ? null : prefix,
+                               name.getURI());
     }
 
     /* (non-Javadoc)
@@ -129,26 +128,26 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         element.declareNamespace(namespaceURI, prefix);
 
         SOAPElementImpl childEle =
-                new SOAPElementImpl((ElementImpl) getOwnerDocument().createElementNS(namespaceURI,
-                                                                                     localName));
+                new SOAPElementImpl((ElementImpl)getOwnerDocument().createElementNS(namespaceURI,
+                                                                                    localName));
         for (Iterator iter = soapElement.getAllAttributes(); iter.hasNext();) {
-            Name name = (Name) iter.next();
+            Name name = (Name)iter.next();
             childEle.addAttribute(name, soapElement.getAttributeValue(name));
         }
 
         for (Iterator iter = soapElement.getChildElements(); iter.hasNext();) {
             Object o = iter.next();
             if (o instanceof Text) {
-                childEle.addTextNode(((Text) o).getData());
+                childEle.addTextNode(((Text)o).getData());
             } else {
-                childEle.addChildElement((SOAPElement) o);
+                childEle.addChildElement((SOAPElement)o);
             }
         }
 
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
         childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
         element.appendChild(childEle.element);
-        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -171,7 +170,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     /* (non-Javadoc)
     * @see javax.xml.soap.SOAPElement#addChildElement(java.lang.String, java.lang.String, java.lang.String)
     */
-    public SOAPElement addChildElement(String localName, String prefix, String uri) throws SOAPException {
+    public SOAPElement addChildElement(String localName, String prefix, String uri)
+            throws SOAPException {
         OMNamespace omNamespace = element.declareNamespace(uri, prefix);
         return addChildElement(localName, omNamespace.getPrefix());
     }
@@ -185,15 +185,15 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         if (namespaceURI == null) {
             throw new SOAPException("Namespace not declared for the give prefix: " + prefix);
         }
-        
+
         SOAPElementImpl childEle =
-            new SOAPElementImpl((ElementImpl) getOwnerDocument().
-                    createElementNS(namespaceURI, prefix + ":" + localName));
-        
+                new SOAPElementImpl((ElementImpl)getOwnerDocument().
+                        createElementNS(namespaceURI, prefix + ":" + localName));
+
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
         childEle.element.setNamespace(childEle.element.declareNamespace(namespaceURI, prefix));
         element.appendChild(childEle.element);
-        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -203,10 +203,10 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       */
     public SOAPElement addChildElement(String localName) throws SOAPException {
         SOAPElementImpl childEle =
-                new SOAPElementImpl((ElementImpl) getOwnerDocument().createElement(localName));
+                new SOAPElementImpl((ElementImpl)getOwnerDocument().createElement(localName));
         childEle.element.setUserData(SAAJ_NODE, childEle, null);
         element.appendChild(childEle.element);
-        ((NodeImpl) childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
+        ((NodeImpl)childEle.element.getParentNode()).setUserData(SAAJ_NODE, this, null);
         childEle.setParentElement(this);
         return childEle;
     }
@@ -220,32 +220,29 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     /**
-     * Creates a new <code>Text</code> object initialized with the given
-     * <code>String</code> and adds it to this <code>SOAPElement</code> object.
+     * Creates a new <code>Text</code> object initialized with the given <code>String</code> and
+     * adds it to this <code>SOAPElement</code> object.
      *
      * @param text a <code>String</code> object with the textual content to be added
-     * @return the <code>SOAPElement</code> object into which
-     *         the new <code>Text</code> object was inserted
-     * @throws SOAPException if there is an error in creating the
-     *                       new <code>Text</code> object
+     * @return the <code>SOAPElement</code> object into which the new <code>Text</code> object was
+     *         inserted
+     * @throws SOAPException if there is an error in creating the new <code>Text</code> object
      */
     public SOAPElement addTextNode(String text) throws SOAPException {
         //OmElement.setText() will remove all the other text nodes that it contains
         //Therefore create a text node and add it
         //TODO: May need to address the situation where the prev sibling of the textnode itself is a textnode
         Text textNode = getOwnerDocument().createTextNode(text);
-        NodeImpl node = ((NodeImpl) element.appendChild(textNode));
+        NodeImpl node = ((NodeImpl)element.appendChild(textNode));
         TextImplEx saajTextNode = new TextImplEx(text, this);
         node.setUserData(SAAJ_NODE, saajTextNode, null);
         return this;
     }
 
     /**
-     * Returns an iterator over all of the attribute names in
-     * this <CODE>SOAPElement</CODE> object. The iterator can be
-     * used to get the attribute names, which can then be passed to
-     * the method <CODE>getAttributeValue</CODE> to retrieve the
-     * value of each attribute.
+     * Returns an iterator over all of the attribute names in this <CODE>SOAPElement</CODE> object.
+     * The iterator can be used to get the attribute names, which can then be passed to the method
+     * <CODE>getAttributeValue</CODE> to retrieve the value of each attribute.
      *
      * @return an iterator over the names of the attributes
      */
@@ -254,7 +251,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         Collection attribName = new ArrayList();
         Attr attr;
         while (attribIter.hasNext()) {
-            attr = (Attr) attribIter.next();
+            attr = (Attr)attribIter.next();
             PrefixedQName qname;
             if (attr.getNamespaceURI() == null || attr.getNamespaceURI().trim().length() == 0) {
                 qname = new PrefixedQName(attr.getNamespaceURI(),
@@ -286,18 +283,17 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     /**
-     * Returns an iterator over all the immediate content of
-     * this element. This includes <CODE>Text</CODE> objects as well
-     * as <CODE>SOAPElement</CODE> objects.
+     * Returns an iterator over all the immediate content of this element. This includes
+     * <CODE>Text</CODE> objects as well as <CODE>SOAPElement</CODE> objects.
      *
-     * @return an iterator over <CODE>Text</CODE> and <CODE>SOAPElement</CODE>
-     *         contained within this <CODE>SOAPElement</CODE> object
+     * @return an iterator over <CODE>Text</CODE> and <CODE>SOAPElement</CODE> contained within this
+     *         <CODE>SOAPElement</CODE> object
      */
     public Iterator getChildElements() {
         Iterator childIter = element.getChildren();
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
-            childElements.add(toSAAJNode((org.w3c.dom.Node) childIter.next()));
+            childElements.add(toSAAJNode((org.w3c.dom.Node)childIter.next()));
         }
         return childElements.iterator();
     }
@@ -310,7 +306,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         Iterator childIter = element.getChildrenWithName(qName);
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
-            childElements.add(toSAAJNode((org.w3c.dom.Node) childIter.next()));
+            childElements.add(toSAAJNode((org.w3c.dom.Node)childIter.next()));
         }
         return childElements.iterator();
     }
@@ -329,7 +325,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       * @see javax.xml.soap.SOAPElement#getEncodingStyle()
       */
     public String getEncodingStyle() {
-        return ((DocumentImpl) getOwnerDocument()).getCharsetEncoding();
+        return ((DocumentImpl)getOwnerDocument()).getCharsetEncoding();
     }
 
     /* (non-Javadoc)
@@ -342,7 +338,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         while (nsIter.hasNext()) {
             Object o = nsIter.next();
             if (o instanceof org.apache.axiom.om.OMNamespace) {
-                org.apache.axiom.om.OMNamespace ns = (org.apache.axiom.om.OMNamespace) o;
+                org.apache.axiom.om.OMNamespace ns = (org.apache.axiom.om.OMNamespace)o;
                 prefixList.add(ns.getPrefix());
             }
         }
@@ -366,7 +362,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         while (namespacesIter.hasNext()) {
             Object o = namespacesIter.next();
             if (o instanceof OMNamespace) {
-                OMNamespace ns = (OMNamespace) o;
+                OMNamespace ns = (OMNamespace)o;
                 if (ns.getPrefix() != null) {
                     returnList.add(ns.getPrefix());
                 }
@@ -377,11 +373,12 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         //this nodes' parent.
         org.apache.axiom.om.OMContainer parent = element.getParent();
         if (parent != null && parent instanceof org.apache.axiom.om.OMElement) {
-            Iterator parentScopeNamespacesIter = ((org.apache.axiom.om.OMElement) parent).getAllDeclaredNamespaces();
+            Iterator parentScopeNamespacesIter =
+                    ((org.apache.axiom.om.OMElement)parent).getAllDeclaredNamespaces();
             while (parentScopeNamespacesIter.hasNext()) {
                 Object o = parentScopeNamespacesIter.next();
                 if (o instanceof OMNamespace) {
-                    OMNamespace ns = (OMNamespace) o;
+                    OMNamespace ns = (OMNamespace)o;
                     if (ns.getPrefix() != null) {
                         returnList.add(ns.getPrefix());
                     }
@@ -391,69 +388,68 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         return returnList.iterator();
     }
 
-    
+
     public SOAPElement addAttribute(QName qname, String value) throws SOAPException {
         if (qname.getNamespaceURI() == null || qname.getNamespaceURI().trim().length() == 0) {
             element.setAttribute(qname.getLocalPart(), value);
         } else {
-            element.setAttributeNS(qname.getNamespaceURI(), qname.getPrefix() + ":" + 
-            		qname.getLocalPart(), value);
+            element.setAttributeNS(qname.getNamespaceURI(), qname.getPrefix() + ":" +
+                    qname.getLocalPart(), value);
         }
         return this;
     }
 
     public SOAPElement addChildElement(QName qname) throws SOAPException {
         String prefix = qname.getPrefix();
-        return addChildElement(qname.getLocalPart(), "".equals(prefix) ? 
-        		null : prefix  , qname.getNamespaceURI());
+        return addChildElement(qname.getLocalPart(), "".equals(prefix) ?
+                null : prefix, qname.getNamespaceURI());
     }
 
     /**
-     * Creates a QName whose namespace URI is the one associated with the parameter, prefix, 
-     * in the context of this SOAPElement. The remaining elements of the new QName are taken 
-     * directly from the parameters, localName and prefix.
-     * 
-     * @param localName - a String containing the local part of the name.
-     *        prefix - a String containing the prefix for the name.
+     * Creates a QName whose namespace URI is the one associated with the parameter, prefix, in the
+     * context of this SOAPElement. The remaining elements of the new QName are taken directly from
+     * the parameters, localName and prefix.
+     *
+     * @param localName - a String containing the local part of the name. prefix - a String
+     *                  containing the prefix for the name.
      * @return a QName with the specified localName and prefix, and with a namespace that is
-     *         associated with the prefix in the context of this SOAPElement. This namespace will 
-     *         be the same as the one that would be returned by getNamespaceURI(String) if it 
-     *         were given prefix as its parameter.
+     *         associated with the prefix in the context of this SOAPElement. This namespace will be
+     *         the same as the one that would be returned by getNamespaceURI(String) if it were
+     *         given prefix as its parameter.
      * @throws SOAPException - if the QName cannot be created.
      * @since SAAJ 1.3
      */
     public QName createQName(String localName, String prefix) throws SOAPException {
-    	if(this.element.getNamespaceURI(prefix) == null){
-    		throw new SOAPException("Invalid prefix");
-    	}
-    	QName qname = null;
-    	if(this.element.getOMFactory() instanceof SOAP11Factory){
-    		qname = new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI,localName,prefix);   		
-    	}
-    	else if(this.element.getOMFactory() instanceof SOAP12Factory){
-    		qname = new QName(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI,localName,prefix);
-    	}
-    	return qname;
+        if (this.element.getNamespaceURI(prefix) == null) {
+            throw new SOAPException("Invalid prefix");
+        }
+        QName qname = null;
+        if (this.element.getOMFactory() instanceof SOAP11Factory) {
+            qname = new QName(SOAP11Constants.SOAP_ENVELOPE_NAMESPACE_URI, localName, prefix);
+        } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
+            qname = new QName(SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI, localName, prefix);
+        }
+        return qname;
     }
 
     public Iterator getAllAttributesAsQNames() {
-    	final Iterator attribIter = element.getAllAttributes();
+        final Iterator attribIter = element.getAllAttributes();
         Collection attributesAsQNames = new ArrayList();
         Attr attr;
         QName qname;
         while (attribIter.hasNext()) {
-			attr = (Attr) attribIter.next();
-			//Check : attr.getLocalName() | attr.getName()
-			qname = new QName(attr.getNamespaceURI(),attr.getName(),attr.getPrefix());
-			attributesAsQNames.add(qname);
-		}
+            attr = (Attr)attribIter.next();
+            //Check : attr.getLocalName() | attr.getName()
+            qname = new QName(attr.getNamespaceURI(), attr.getName(), attr.getPrefix());
+            attributesAsQNames.add(qname);
+        }
         return attributesAsQNames.iterator();
     }
 
     public String getAttributeValue(QName qname) {
         final OMAttribute attribute = element.getAttribute(qname);
         if (attribute == null) {
-        	return null;
+            return null;
         }
         return attribute.getAttributeValue();
     }
@@ -462,7 +458,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         Iterator childIter = element.getChildrenWithName(qname);
         Collection childElements = new ArrayList();
         while (childIter.hasNext()) {
-            childElements.add(toSAAJNode((org.w3c.dom.Node) childIter.next()));
+            childElements.add(toSAAJNode((org.w3c.dom.Node)childIter.next()));
         }
         return childElements.iterator();
     }
@@ -474,21 +470,22 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     public boolean removeAttribute(QName qname) {
         org.apache.axiom.om.OMAttribute attr = element.getAttribute(qname);
         if (attr != null) {
-        	element.removeAttribute(attr);
-        	return true;
+            element.removeAttribute(attr);
+            return true;
         }
         return false;
     }
 
     public SOAPElement setElementQName(QName newName) throws SOAPException {
-    	String localName = this.element.getLocalName();
-    	if(org.apache.axiom.soap.SOAPConstants.BODY_LOCAL_NAME.equals(localName)
-    			|| org.apache.axiom.soap.SOAPConstants.HEADER_LOCAL_NAME.equals(localName)
-    			|| org.apache.axiom.soap.SOAPConstants.SOAPENVELOPE_LOCAL_NAME .equals(localName)){
-    		throw new SOAPException("changing this element name is not allowed");
-    	}
-    	OMNamespace omNamespace = new OMNamespaceImpl(newName.getNamespaceURI(),newName.getPrefix());
-    	this.element.setNamespace(omNamespace);
+        String localName = this.element.getLocalName();
+        if (org.apache.axiom.soap.SOAPConstants.BODY_LOCAL_NAME.equals(localName)
+                || org.apache.axiom.soap.SOAPConstants.HEADER_LOCAL_NAME.equals(localName)
+                || org.apache.axiom.soap.SOAPConstants.SOAPENVELOPE_LOCAL_NAME .equals(localName)) {
+            throw new SOAPException("changing this element name is not allowed");
+        }
+        OMNamespace omNamespace =
+                new OMNamespaceImpl(newName.getNamespaceURI(), newName.getPrefix());
+        this.element.setNamespace(omNamespace);
         this.element.setLocalName(newName.getLocalPart());
         return this;
     }
@@ -498,8 +495,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       */
     public boolean removeAttribute(Name name) {
         org.apache.axiom.om.OMAttribute attr = element.getAttribute(new QName(name.getURI(),
-                                                                                   name.getLocalName(),
-                                                                                   name.getPrefix()));
+                                                                              name.getLocalName(),
+                                                                              name.getPrefix()));
         if (attr != null) {
             element.removeAttribute(attr);
             return true;
@@ -512,13 +509,13 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
       */
     public void removeContents() {
         //We will get all the children and iteratively call the detach() on all of 'em.
-    	Iterator childIter = element.getChildElements();
-    	while (childIter.hasNext()) {
-          Object o = childIter.next();
-          if (o instanceof org.apache.axiom.om.OMNode) {
-              ((org.apache.axiom.om.OMNode) o).detach();
-          }
-    	}
+        Iterator childIter = element.getChildElements();
+        while (childIter.hasNext()) {
+            Object o = childIter.next();
+            if (o instanceof org.apache.axiom.om.OMNode) {
+                ((org.apache.axiom.om.OMNode)o).detach();
+            }
+        }
     }
 
     /* (non-Javadoc)
@@ -531,29 +528,32 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
 
     /**
      * Sets the encoding style for this SOAPElement object to one specified.
-     * 
+     *
      * @param encodingStyle - a String giving the encoding style
-     * @throws java.lang.IllegalArgumentException - if there was a problem in the encoding
-     *         style being set.
-     *         SOAPException - if setting the encodingStyle is invalid for this SOAPElement.
+     * @throws IllegalArgumentException
+     *          - if there was a problem in the encoding style being set. SOAPException - if setting
+     *          the encodingStyle is invalid for this SOAPElement.
      */
     public void setEncodingStyle(String encodingStyle) throws SOAPException {
         if (this.element.getOMFactory() instanceof SOAP11Factory) {
             try {
                 URI uri = new URI(encodingStyle);
-                if(!(this instanceof SOAPEnvelope)){
+                if (!(this instanceof SOAPEnvelope)) {
                     if (!encodingStyle.equals(SOAPConstants.URI_NS_SOAP_ENCODING)) {
-                        throw new IllegalArgumentException("Invalid Encoding style : " + encodingStyle);
+                        throw new IllegalArgumentException(
+                                "Invalid Encoding style : " + encodingStyle);
                     }
                 }
-                ((DocumentImpl) getOwnerDocument()).setCharsetEncoding(encodingStyle);
+                ((DocumentImpl)getOwnerDocument()).setCharsetEncoding(encodingStyle);
             } catch (URISyntaxException e) {
                 throw new IllegalArgumentException("Invalid Encoding style : "
                         + encodingStyle + ":" + e);
             }
         } else if (this.element.getOMFactory() instanceof SOAP12Factory) {
-            if (this instanceof SOAPHeader || this instanceof SOAPBody || this instanceof SOAPFault ||
-                    this instanceof SOAPFaultElement || this instanceof SOAPEnvelope || this instanceof Detail) {
+            if (this instanceof SOAPHeader || this instanceof SOAPBody ||
+                    this instanceof SOAPFault ||
+                    this instanceof SOAPFaultElement || this instanceof SOAPEnvelope ||
+                    this instanceof Detail) {
                 throw new SOAPException("EncodingStyle attribute cannot appear in : " + this);
             }
         }
@@ -698,19 +698,17 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     /**
-     * Returns the parent element of this <code>Node</code> object.
-     * This method can throw an <code>UnsupportedOperationException</code>
-     * if the tree is not kept in memory.
+     * Returns the parent element of this <code>Node</code> object. This method can throw an
+     * <code>UnsupportedOperationException</code> if the tree is not kept in memory.
      *
-     * @return the <code>SOAPElement</code> object that is the parent of
-     *         this <code>Node</code> object or <code>null</code> if this
-     *         <code>Node</code> object is root
+     * @return the <code>SOAPElement</code> object that is the parent of this <code>Node</code>
+     *         object or <code>null</code> if this <code>Node</code> object is root
      * @throws UnsupportedOperationException if the whole tree is not kept in memory
      * @see #setParentElement(javax.xml.soap.SOAPElement) setParentElement(javax.xml.soap.SOAPElement)
      */
     public SOAPElement getParentElement() {
         if (this.parentElement == null) {
-            return (SOAPElement) toSAAJNode(element.getParentNode());
+            return (SOAPElement)toSAAJNode(element.getParentNode());
         }
         return this.parentElement;
     }
@@ -721,20 +719,19 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     /**
-     * Find the Document that this Node belongs to (the document in
-     * whose context the Node was created). The Node may or may not
+     * Find the Document that this Node belongs to (the document in whose context the Node was
+     * created). The Node may or may not
      */
     public Document getOwnerDocument() {
         return element.getOwnerDocument();
     }
 
     /**
-     * Returns the the value of the immediate child of this <code>Node</code>
-     * object if a child exists and its value is text.
+     * Returns the the value of the immediate child of this <code>Node</code> object if a child
+     * exists and its value is text.
      *
-     * @return a <code>String</code> with the text of the immediate child of
-     *         this <code>Node</code> object if (1) there is a child and
-     *         (2) the child is a <code>Text</code> object;
+     * @return a <code>String</code> with the text of the immediate child of this <code>Node</code>
+     *         object if (1) there is a child and (2) the child is a <code>Text</code> object;
      *         <code>null</code> otherwise
      */
     public String getValue() {
@@ -743,9 +740,9 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         } else if (element.getType() == OMNode.ELEMENT_NODE) {
             final OMNode firstOMChild = element.getFirstOMChild();
             if (firstOMChild instanceof TextImpl) {
-                return ((TextImpl) firstOMChild).getData();
+                return ((TextImpl)firstOMChild).getData();
             } else if (firstOMChild instanceof SOAPElementImpl) {
-                return ((SOAPElementImpl) firstOMChild).getValue();
+                return ((SOAPElementImpl)firstOMChild).getValue();
             }
         }
         return null;
@@ -769,9 +766,7 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
         return getParentElement();
     }
 
-    /**
-     * dom Node method
-     */
+    /** dom Node method */
     public org.w3c.dom.Node getNextSibling() {
         return toSAAJNode(element.getNextSibling());
     }
@@ -795,16 +790,14 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     /**
-     * If this is a Text node then this method will set its value, otherwise it
-     * sets the value of the immediate (Text) child of this node. The value of
-     * the immediate child of this node can be set only if, there is one child
-     * node and that node is a Text node, or if there are no children in which
-     * case a child Text node will be created.
+     * If this is a Text node then this method will set its value, otherwise it sets the value of
+     * the immediate (Text) child of this node. The value of the immediate child of this node can be
+     * set only if, there is one child node and that node is a Text node, or if there are no
+     * children in which case a child Text node will be created.
      *
      * @param value the text to set
-     * @throws IllegalStateException if the node is not a Text  node and
-     *                               either has more than one child node or has a child node that
-     *                               is not a Text node
+     * @throws IllegalStateException if the node is not a Text  node and either has more than one
+     *                               child node or has a child node that is not a Text node
      */
     public void setValue(String value) {
         OMNode firstChild = element.getFirstOMChild();
@@ -814,13 +807,13 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
             } catch (SOAPException e) {
                 throw new RuntimeException("Cannot add text node", e);
             }
-        } else if (((org.w3c.dom.Node) firstChild).getNodeType() == javax.xml.soap.Node.TEXT_NODE
+        } else if (((org.w3c.dom.Node)firstChild).getNodeType() == javax.xml.soap.Node.TEXT_NODE
                 && firstChild.getNextOMSibling() == null) {
-            ((org.w3c.dom.Text) firstChild).setData(value);
+            ((org.w3c.dom.Text)firstChild).setData(value);
         } else {
             throw new IllegalStateException("This node is not a Text  node and " +
-                                            "either has more than one child node or has a child " +
-                                            "node that is not a Text node");
+                    "either has more than one child node or has a child " +
+                    "node that is not a Text node");
         }
     }
 
@@ -835,9 +828,8 @@ public class SOAPElementImpl extends NodeImplEx implements SOAPElement {
     }
 
     /**
-     * Returns the collection of attributes associated with this node, or null
-     * if none. At this writing, Element is the only type of node which will
-     * ever have attributes.
+     * Returns the collection of attributes associated with this node, or null if none. At this
+     * writing, Element is the only type of node which will ever have attributes.
      *
      * @see org.apache.axiom.om.impl.dom.ElementImpl
      */

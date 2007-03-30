@@ -24,25 +24,22 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.util.Constants;
 
 
-/**
- * This class serves as a factory for ConfigurationContexts suitable in the client environment.  
- */
+/** This class serves as a factory for ConfigurationContexts suitable in the client environment. */
 public class ClientConfigurationFactory {
-    
+
     private static ClientConfigurationFactory instance = new ClientConfigurationFactory();
-    
-    protected ClientConfigurationFactory(){
+
+    protected ClientConfigurationFactory() {
     }
 
-    /**
-     * Returns a ClientConfigurationFactory object.
-     */
+    /** Returns a ClientConfigurationFactory object. */
     public static ClientConfigurationFactory newInstance() {
         return instance;
     }
 
     /**
      * Loads up a ConfigurationContext object using the configuration builder.
+     *
      * @return a ConfigurationContext object that is suitable for the client environment
      */
     public synchronized ConfigurationContext getClientConfigurationContext() {
@@ -59,14 +56,16 @@ public class ClientConfigurationFactory {
         }
         return configContext;
     }
-    
+
     /**
      * Perform any final client-specific configuration on a newly created AxisService.
-     * 
-     * @param service A newly created AxisService on which to perform any final client-related configuration.
+     *
+     * @param service A newly created AxisService on which to perform any final client-related
+     *                configuration.
      * @throws DeploymentException
      * @throws Exception
      */
-    public synchronized void completeAxis2Configuration(AxisService service) throws DeploymentException, Exception {
+    public synchronized void completeAxis2Configuration(AxisService service)
+            throws DeploymentException, Exception {
     }
 }

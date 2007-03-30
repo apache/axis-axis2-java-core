@@ -17,9 +17,6 @@
 
 package org.apache.axis2.jaxws.registry;
 
-import java.util.Hashtable;
-import java.util.Map;
-
 import org.apache.axis2.jaxws.message.databinding.impl.JAXBBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.OMBlockFactoryImpl;
 import org.apache.axis2.jaxws.message.databinding.impl.SOAPEnvelopeBlockFactoryImpl;
@@ -39,47 +36,48 @@ import org.apache.axis2.jaxws.message.impl.XMLPartFactoryImpl;
 import org.apache.axis2.jaxws.message.util.impl.SAAJConverterFactoryImpl;
 import org.apache.axis2.jaxws.server.endpoint.lifecycle.factory.EndpointLifecycleManagerFactory;
 
-/**
- * FactoryRegistry
- * Registry containing Factories related to the JAX-WS Implementation
- */
+import java.util.Hashtable;
+import java.util.Map;
+
+/** FactoryRegistry Registry containing Factories related to the JAX-WS Implementation */
 public class FactoryRegistry {
 
-	private final static Map<Class,Object> table;
-	static {
-		table = new Hashtable<Class,Object>();
-		table.put(XMLStringBlockFactory.class, new XMLStringBlockFactoryImpl());
-		table.put(JAXBBlockFactory.class, new JAXBBlockFactoryImpl());
-		table.put(OMBlockFactory.class, new OMBlockFactoryImpl());
-		table.put(SourceBlockFactory.class, new SourceBlockFactoryImpl());
-		table.put(SOAPEnvelopeBlockFactory.class, new SOAPEnvelopeBlockFactoryImpl());
-		table.put(MessageFactory.class, new MessageFactoryImpl());
-		table.put(XMLPartFactory.class, new XMLPartFactoryImpl());
-		table.put(SAAJConverterFactory.class, new SAAJConverterFactoryImpl());
-	    table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactory());
-	    table.put(ClassFinderFactory.class, new ClassFinderFactory());
-	}
-	/**
-	 * FactoryRegistry is currently a static singleton
-	 */
-	private FactoryRegistry() {
-	}
-	
-	/**
-	 * getFactory
-	 * @param intface of the Factory
-	 * @return Object that is the factory implementation for the intface
-	 */
-	public static Object getFactory(Class intface) {
-		return table.get(intface);
-	}
-	
-	/**
-	 * setFactory
-	 * @param intface
-	 * @param factoryObject
-	 */
-	public static void setFactory(Class intface, Object factoryObject){
-		table.put(intface, factoryObject);
-	}
+    private final static Map<Class, Object> table;
+
+    static {
+        table = new Hashtable<Class, Object>();
+        table.put(XMLStringBlockFactory.class, new XMLStringBlockFactoryImpl());
+        table.put(JAXBBlockFactory.class, new JAXBBlockFactoryImpl());
+        table.put(OMBlockFactory.class, new OMBlockFactoryImpl());
+        table.put(SourceBlockFactory.class, new SourceBlockFactoryImpl());
+        table.put(SOAPEnvelopeBlockFactory.class, new SOAPEnvelopeBlockFactoryImpl());
+        table.put(MessageFactory.class, new MessageFactoryImpl());
+        table.put(XMLPartFactory.class, new XMLPartFactoryImpl());
+        table.put(SAAJConverterFactory.class, new SAAJConverterFactoryImpl());
+        table.put(EndpointLifecycleManagerFactory.class, new EndpointLifecycleManagerFactory());
+        table.put(ClassFinderFactory.class, new ClassFinderFactory());
+    }
+
+    /** FactoryRegistry is currently a static singleton */
+    private FactoryRegistry() {
+    }
+
+    /**
+     * getFactory
+     *
+     * @param intface of the Factory
+     * @return Object that is the factory implementation for the intface
+     */
+    public static Object getFactory(Class intface) {
+        return table.get(intface);
+    }
+
+    /**
+     * setFactory
+     * @param intface
+     * @param factoryObject
+     */
+    public static void setFactory(Class intface, Object factoryObject) {
+        table.put(intface, factoryObject);
+    }
 }

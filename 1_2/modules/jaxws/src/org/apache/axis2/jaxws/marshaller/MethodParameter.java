@@ -19,65 +19,76 @@ package org.apache.axis2.jaxws.marshaller;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 
 /**
- * Stores Method Parameter as Name and Value. Method Parameter can be an input Method Parameter or output Method parameter.
- * input Method Parameter is a input to a java Method.
- * output Method Parameter is a return parameter from a java Method.
+ * Stores Method Parameter as Name and Value. Method Parameter can be an input Method Parameter or
+ * output Method parameter. input Method Parameter is a input to a java Method. output Method
+ * Parameter is a return parameter from a java Method.
  */
 public class MethodParameter {
-	private ParameterDescription 	parameterDescription = null;
-	private String 					webResultName = null;
-	private String 					webResultTNS = null;
-	private Class 					webResultType = null;
-	private boolean 				isWebResult = false;
-	private Object 					value = null;
-	
-	public MethodParameter(ParameterDescription parameterDescription, Object value){
-		super();
-		this.parameterDescription = parameterDescription;
-		this.value = value;
-	}
-	
-	public MethodParameter(String webResultName, String webResultTNS, Class webResultType, Object value) {
-		super();
-		this.parameterDescription = null;
-		this.webResultName = webResultName;
-		this.webResultTNS = webResultTNS;
-		this.webResultType = webResultType;
-		this.value = value;
-		this.isWebResult = true;
-	}
+    private ParameterDescription parameterDescription = null;
+    private String webResultName = null;
+    private String webResultTNS = null;
+    private Class webResultType = null;
+    private boolean isWebResult = false;
+    private Object value = null;
 
-	public ParameterDescription getParameterDescription() {
-		return parameterDescription;
-	}
-	public void setParameterDescription(ParameterDescription parameterDescription) {
-		this.parameterDescription = parameterDescription;
-	}
-	public String getWebResultName() {
-		return webResultName;
-	}
-	public void setWebResultName(String webResultName) {
-		this.webResultName = webResultName;
-	}
-	public boolean isWebResult() {
-		return isWebResult;
-	}
-	public void setWebResult(boolean isWebResult) {
-		this.isWebResult = isWebResult;
-	}
-	public Object getValue() {
-		return value;
-	}
-	public String getWebResultTNS() {
-		return webResultTNS;
-	}
-	public void setWebResultTNS(String webResultTNS) {
-		this.webResultTNS = webResultTNS;
-	}
-	public Class getWebResultType() {
-		return webResultType;
-	}
-	public void setWebResultType(Class webResultType) {
-		this.webResultType = webResultType;
-	}
+    public MethodParameter(ParameterDescription parameterDescription, Object value) {
+        super();
+        this.parameterDescription = parameterDescription;
+        this.value = value;
+    }
+
+    public MethodParameter(String webResultName, String webResultTNS, Class webResultType,
+                           Object value) {
+        super();
+        this.parameterDescription = null;
+        this.webResultName = webResultName;
+        this.webResultTNS = webResultTNS;
+        this.webResultType = webResultType;
+        this.value = value;
+        this.isWebResult = true;
+    }
+
+    public ParameterDescription getParameterDescription() {
+        return parameterDescription;
+    }
+
+    public void setParameterDescription(ParameterDescription parameterDescription) {
+        this.parameterDescription = parameterDescription;
+    }
+
+    public String getWebResultName() {
+        return webResultName;
+    }
+
+    public void setWebResultName(String webResultName) {
+        this.webResultName = webResultName;
+    }
+
+    public boolean isWebResult() {
+        return isWebResult;
+    }
+
+    public void setWebResult(boolean isWebResult) {
+        this.isWebResult = isWebResult;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public String getWebResultTNS() {
+        return webResultTNS;
+    }
+
+    public void setWebResultTNS(String webResultTNS) {
+        this.webResultTNS = webResultTNS;
+    }
+
+    public Class getWebResultType() {
+        return webResultType;
+    }
+
+    public void setWebResultType(Class webResultType) {
+        this.webResultType = webResultType;
+    }
 }

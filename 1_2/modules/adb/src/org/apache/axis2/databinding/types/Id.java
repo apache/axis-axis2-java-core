@@ -17,8 +17,7 @@ package org.apache.axis2.databinding.types;
 
 
 /**
- * Custom class for supporting XSD data type ID
- * The base type of Id is NCName.
+ * Custom class for supporting XSD data type ID The base type of Id is NCName.
  *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#ID">XML Schema 3.3.8</a>
  */
@@ -26,13 +25,14 @@ public class Id extends NCName {
 
     private static final long serialVersionUID = -8442438083214211437L;
 
-	public Id() {
+    public Id() {
         super();
     }
 
     /**
      * Constructor for Id.
-     * @exception IllegalArgumentException will be thrown if validation fails
+     *
+     * @throws IllegalArgumentException will be thrown if validation fails
      */
     public Id(String stValue) throws IllegalArgumentException {
         try {
@@ -41,32 +41,31 @@ public class Id extends NCName {
         catch (IllegalArgumentException e) {
             // recast normalizedString exception as token exception
             throw new IllegalArgumentException();
-                    //Messages.getMessage("badIdType00") + "data=[" +
-                    //stValue + "]");
+            //Messages.getMessage("badIdType00") + "data=[" +
+            //stValue + "]");
         }
     }
 
     /**
-     *
      * Validates the data and sets the value for the object.
+     *
      * @param stValue String value
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {
         if (!Id.isValid(stValue))
             throw new IllegalArgumentException(
-              // Messages.getMessage("badIdType00") +
-               " data=[" + stValue + "]");
+                    // Messages.getMessage("badIdType00") +
+                    " data=[" + stValue + "]");
         m_value = stValue;
     }
 
     /**
-     *
      * Validates the value against the xsd definition.
-     *
+     * <p/>
      * Same validation as NCName for the time being
      */
     public static boolean isValid(String stValue) {
-      return NCName.isValid(stValue);
+        return NCName.isValid(stValue);
     }
 }

@@ -1,21 +1,19 @@
 package org.apache.axis2.engine;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.util.TestConstants;
 import org.apache.axis2.integration.TestingUtils;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
+import org.apache.axis2.rpc.receivers.RPCMessageReceiver;
 
 import javax.xml.namespace.QName;
-import java.io.IOException;
 import java.net.URL;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
@@ -43,7 +41,9 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
 
     protected void setUp() throws Exception {
         service = AxisService.createService(Echo.class.getName(),
-                UtilServer.getConfigurationContext().getAxisConfiguration(),RPCMessageReceiver.class );
+                                            UtilServer
+                                                    .getConfigurationContext().getAxisConfiguration(),
+                                            RPCMessageReceiver.class);
         service.setName(serviceName.getLocalPart());
         UtilServer.deployService(service);
     }
@@ -58,10 +58,14 @@ public class WSDLClientTest extends UtilServerBasedTestCase implements TestConst
             URL wsdlURL = new URL("http://localhost:" + UtilServer.TESTING_PORT +
                     "/axis2/services/EchoXMLService?wsdl");
             ServiceClient serviceClient = new ServiceClient(null, wsdlURL,
-                    new QName("http://engine.axis2.apache.org/xsd", "EchoXMLService"),
-                    "EchoXMLServiceSOAP11port_http");
-            OMElement payload = TestingUtils.createDummyOMElement("http://engine.axis2.apache.org/xsd");
-            String epr = "http://127.0.0.1:" + UtilServer.TESTING_PORT + "/axis2/services/EchoXMLService";
+                                                            new QName(
+                                                                    "http://engine.axis2.apache.org/xsd",
+                                                                    "EchoXMLService"),
+                                                            "EchoXMLServiceSOAP11port_http");
+            OMElement payload =
+                    TestingUtils.createDummyOMElement("http://engine.axis2.apache.org/xsd");
+            String epr = "http://127.0.0.1:" + UtilServer.TESTING_PORT +
+                    "/axis2/services/EchoXMLService";
             //This is not smt we need to do but , my build is fail if I dont do that :)
             serviceClient.getOptions().setTo(new EndpointReference(epr));
             System.out.println(serviceClient.getOptions().getTo().getAddress());

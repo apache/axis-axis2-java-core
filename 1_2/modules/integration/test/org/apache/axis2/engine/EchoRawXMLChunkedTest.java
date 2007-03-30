@@ -18,9 +18,8 @@ package org.apache.axis2.engine;
 
 //todo
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.Constants;
 import org.apache.axis2.client.Options;
@@ -47,13 +46,13 @@ public class EchoRawXMLChunkedTest extends UtilServerBasedTestCase implements Te
     }
 
     public static Test suite() {
-        return getTestSetup2(new TestSuite(EchoRawXMLChunkedTest.class),CLIENT_HOME);
+        return getTestSetup2(new TestSuite(EchoRawXMLChunkedTest.class), CLIENT_HOME);
     }
 
     protected void setUp() throws Exception {
         AxisService service = Utils.createSimpleService(serviceName,
-                Echo.class.getName(),
-                operationName);
+                                                        Echo.class.getName(),
+                                                        operationName);
         UtilServer.deployService(service);
     }
 
@@ -68,7 +67,8 @@ public class EchoRawXMLChunkedTest extends UtilServerBasedTestCase implements Te
         clientOptions.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem(CLIENT_HOME,null);
+                ConfigurationContextFactory
+                        .createConfigurationContextFromFileSystem(CLIENT_HOME, null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(clientOptions);
         clientOptions.setTo(targetEPR);

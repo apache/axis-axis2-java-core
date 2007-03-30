@@ -21,19 +21,18 @@ import java.util.Random;
 
 /**
  * Custom class for supporting primitive XSD data type nonPositiveInteger
- *
- * nonPositiveInteger is derived from integer by setting the value of 
- * maxInclusive to be 0. This results in the standard mathematical 
- * concept of the non-positive integers. The value space of 
- * nonPositiveInteger is the infinite set {...,-2,-1,0}. 
+ * <p/>
+ * nonPositiveInteger is derived from integer by setting the value of maxInclusive to be 0. This
+ * results in the standard mathematical concept of the non-positive integers. The value space of
+ * nonPositiveInteger is the infinite set {...,-2,-1,0}.
  *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#nonPositiveInteger">XML Schema 3.3.14</a>
  */
 public class NonPositiveInteger extends BigInteger {
 
     private static final long serialVersionUID = -8609051961838117600L;
-    
-	public NonPositiveInteger(byte[] val) {
+
+    public NonPositiveInteger(byte[] val) {
         super(val);
         checkValidity();
     } // ctor
@@ -63,33 +62,35 @@ public class NonPositiveInteger extends BigInteger {
         checkValidity();
     } // ctor
 
-    /**
-     * validate the value against the xsd definition
-     */
+    /** validate the value against the xsd definition */
     private BigInteger zero = new BigInteger("0");
+
     private void checkValidity() {
         if (compareTo(zero) > 0) {
             throw new NumberFormatException(
                     //Messages.getMessage("badNonPosInt00") +
-                     ":  " + this);
+                    ":  " + this);
         }
     } // checkValidity
 
     /**
      * Work-around for http://developer.java.sun.com/developer/bugParade/bugs/4378370.html
+     *
      * @return BigIntegerRep
      * @throws java.io.ObjectStreamException
-     */ 
+     */
     public Object writeReplace() throws ObjectStreamException {
         return new BigIntegerRep(toByteArray());
     }
-    
+
     protected static class BigIntegerRep implements java.io.Serializable {
         private static final long serialVersionUID = -3601357690365698517L;
-		private byte[] array;
+        private byte[] array;
+
         protected BigIntegerRep(byte[] array) {
             this.array = array;
         }
+
         protected Object readResolve() throws java.io.ObjectStreamException {
             return new NonPositiveInteger(array);
         }

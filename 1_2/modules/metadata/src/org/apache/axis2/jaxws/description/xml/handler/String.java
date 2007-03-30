@@ -19,20 +19,16 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- * 	This is a special string datatype that is defined by Java EE as
- * 	a base type for defining collapsed strings. When schemas
- * 	require trailing/leading space elimination as well as
- * 	collapsing the existing whitespace, this base type may be
- * 	used.
- * 
- *       
- * 
+ * This is a special string datatype that is defined by Java EE as a base type for defining
+ * collapsed strings. When schemas require trailing/leading space elimination as well as collapsing
+ * the existing whitespace, this base type may be used.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for string complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="string">
  *   &lt;simpleContent>
@@ -42,13 +38,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "string", propOrder = {
-    "value"
-})
+        "value"
+        })
 public class String {
 
     @XmlValue
@@ -61,11 +55,8 @@ public class String {
 
     /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getValue() {
         return value;
@@ -73,11 +64,8 @@ public class String {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setValue(java.lang.String value) {
         this.value = value;
@@ -85,11 +73,8 @@ public class String {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -97,11 +82,8 @@ public class String {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;

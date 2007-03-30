@@ -37,7 +37,8 @@ public class Round3EmptySAEchoStringUtil implements SunClientUtil {
 
         OMElement operation = omfactory.createOMElement("echoString", "http://soapinterop/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                               null);
 
         OMElement part = omfactory.createOMElement("a", "", null);
         part.addAttribute("xsi:type", "xsd:string", null);

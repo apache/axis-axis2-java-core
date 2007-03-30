@@ -18,73 +18,65 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class SoapBindingAnnot implements javax.jws.soap.SOAPBinding{
+public class SoapBindingAnnot implements javax.jws.soap.SOAPBinding {
 
     private Style style = Style.DOCUMENT;
     private Use use = Use.LITERAL;
     private ParameterStyle parameterStyle = ParameterStyle.WRAPPED;
 
-	/**
-     * A SoapBindingAnnot cannot be instantiated.
-     */
-	private  SoapBindingAnnot(){
-		
-	}
-	
+    /** A SoapBindingAnnot cannot be instantiated. */
+    private SoapBindingAnnot() {
+
+    }
+
     public static SoapBindingAnnot createSoapBindingAnnotImpl() {
         return new SoapBindingAnnot();
     }
 
-    public Style style(){
-		return this.style;
-	}
-		
-    public Use use(){
-		return this.use;
-	}
-	
-    public ParameterStyle parameterStyle(){
-		return this.parameterStyle;
-	}
-			
+    public Style style() {
+        return this.style;
+    }
 
-	/**
-	 * @param parameterStyle The parameterStyle to set.
-	 */
-	public void setParameterStyle(ParameterStyle parameterStyle) {
-		this.parameterStyle = parameterStyle;
-	}
+    public Use use() {
+        return this.use;
+    }
 
-	/**
-	 * @param style The style to set.
-	 */
-	public void setStyle(Style style) {
-		this.style = style;
-	}
+    public ParameterStyle parameterStyle() {
+        return this.parameterStyle;
+    }
 
-	/**
-	 * @param use The use to set.
-	 */
-	public void setUse(Use use) {
-		this.use = use;
-	}
 
-	public Class<Annotation> annotationType(){
-		return Annotation.class;
-	}
+    /** @param parameterStyle The parameterStyle to set. */
+    public void setParameterStyle(ParameterStyle parameterStyle) {
+        this.parameterStyle = parameterStyle;
+    }
 
-	/**
-	 * Convenience method for unit testing. We will print all of the 
-	 * data members here.
-	 */
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		String newLine = "\n";
-		sb.append(newLine);
-		sb.append("@SOAPBinding.style= " + style.toString());
-		sb.append("@SOAPBinding.parameterStyle= " + parameterStyle.toString());
-		sb.append("@SOAPBinding.use= " + use.toString());
-		sb.append(newLine);
-		return sb.toString();
+    /** @param style The style to set. */
+    public void setStyle(Style style) {
+        this.style = style;
+    }
+
+    /** @param use The use to set. */
+    public void setUse(Use use) {
+        this.use = use;
+    }
+
+    public Class<Annotation> annotationType() {
+        return Annotation.class;
+    }
+
+    /**
+     * Convenience method for unit testing. We will print all of the
+     * data members here.
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        String newLine = "\n";
+        sb.append(newLine);
+        sb.append("@SOAPBinding.style= " + style.toString());
+        sb.append("@SOAPBinding.parameterStyle= " + parameterStyle.toString());
+        sb.append("@SOAPBinding.use= " + use.toString());
+        sb.append(newLine);
+        return sb.toString();
 	}
 }

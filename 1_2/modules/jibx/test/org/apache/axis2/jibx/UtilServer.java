@@ -16,16 +16,15 @@
 
 package org.apache.axis2.jibx;
 
-import java.io.File;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.engine.ListenerManager;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
+
+import javax.xml.namespace.QName;
+import java.io.File;
 
 public class UtilServer {
     private static int count = 0;
@@ -73,9 +72,9 @@ public class UtilServer {
         count++;
     }
 
-     public static synchronized void start(String repository , String axis2xml) throws Exception {
+    public static synchronized void start(String repository, String axis2xml) throws Exception {
         if (count == 0) {
-            ConfigurationContext er = getNewConfigurationContext(repository,axis2xml);
+            ConfigurationContext er = getNewConfigurationContext(repository, axis2xml);
 
             receiver = new SimpleHTTPServer(er, TESTING_PORT);
 
@@ -104,19 +103,22 @@ public class UtilServer {
             throw new Exception("repository directory "
                     + file.getAbsolutePath() + " does not exists");
         }
-        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),
-                file.getAbsolutePath() + "/conf/axis2.xml");
+        return ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(file.getAbsolutePath(),
+                                                          file.getAbsolutePath() +
+                                                                  "/conf/axis2.xml");
     }
 
-      public static ConfigurationContext getNewConfigurationContext(
-            String repository , String axis2xml) throws Exception {
+    public static ConfigurationContext getNewConfigurationContext(
+            String repository, String axis2xml) throws Exception {
         File file = new File(repository);
         if (!file.exists()) {
             throw new Exception("repository directory "
                     + file.getAbsolutePath() + " does not exists");
         }
-        return ConfigurationContextFactory.createConfigurationContextFromFileSystem(file.getAbsolutePath(),
-                axis2xml);
+        return ConfigurationContextFactory
+                .createConfigurationContextFromFileSystem(file.getAbsolutePath(),
+                                                          axis2xml);
     }
 
     public static synchronized void stop() throws AxisFault {

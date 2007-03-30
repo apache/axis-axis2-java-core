@@ -21,15 +21,6 @@ package org.apache.axis2.jaxws.description.impl;
 /**
  * 
  */
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
 
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisService;
@@ -45,113 +36,125 @@ import org.apache.axis2.jaxws.description.validator.ServiceDescriptionValidator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 /**
- * Creates the JAX-WS metadata descritpion hierachy from some combinations of
- * WSDL, Java classes with annotations, and (in the future) deployment
- * descriptors.  This is the implementation and is not intended to be a public API.  The API is:
+ * Creates the JAX-WS metadata descritpion hierachy from some combinations of WSDL, Java classes
+ * with annotations, and (in the future) deployment descriptors.  This is the implementation and is
+ * not intended to be a public API.  The API is:
+ *
  * @see org.apache.axis2.jaxws.description.DescriptionFactory
  */
 public class DescriptionFactoryImpl {
     private static final Log log = LogFactory.getLog(DescriptionFactoryImpl.class);
-    private static ClientConfigurationFactory clientConfigFactory = ClientConfigurationFactory.newInstance();
-    private static Map<DescriptionKey, ServiceDescription> cache = new Hashtable<DescriptionKey, ServiceDescription>();
+    private static ClientConfigurationFactory clientConfigFactory =
+            ClientConfigurationFactory.newInstance();
+    private static Map<DescriptionKey, ServiceDescription> cache =
+            new Hashtable<DescriptionKey, ServiceDescription>();
 
-    /**
-     * A DescrptionFactory can not be instantiated; all methods are static.
-     */
+    /** A DescrptionFactory can not be instantiated; all methods are static. */
     private DescriptionFactoryImpl() {
     }
 
     /**
-     * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescription(URL, QName, Class)
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescription(URL,
+     *      QName, Class)
      */
     public static ServiceDescription createServiceDescription(URL wsdlURL,
-            QName serviceQName, Class serviceClass) {
-        ConfigurationContext configContext = DescriptionFactory.createClientConfigurationFactory().getClientConfigurationContext();
+                                                              QName serviceQName,
+                                                              Class serviceClass) {
+        ConfigurationContext configContext = DescriptionFactory.createClientConfigurationFactory()
+                .getClientConfigurationContext();
         DescriptionKey key = new DescriptionKey(serviceQName, wsdlURL, serviceClass, configContext);
-        if(log.isDebugEnabled()){
-            log.debug("Cache Map = "+ cache.toString());
-            if(key !=null)
+        if (log.isDebugEnabled()) {
+            log.debug("Cache Map = " + cache.toString());
+            if (key != null)
                 log.debug("Description Key = " + key.printKey());
-            
+
         }
         ServiceDescription serviceDesc = cache.get(key);
-        if(log.isDebugEnabled()){
+        if (log.isDebugEnabled()) {
             log.debug("Check to see if ServiceDescription is found in cache");
         }
-        if(serviceDesc !=null){
-            if(log.isDebugEnabled()){
+        if (serviceDesc != null) {
+            if (log.isDebugEnabled()) {
                 log.debug("ServiceDescription found in the cache");
                 log.debug(serviceDesc.toString());
             }
         }
-        if(serviceDesc == null){
-            if(log.isDebugEnabled()){
+        if (serviceDesc == null) {
+            if (log.isDebugEnabled()) {
                 log.debug("ServiceDescription not found in the cache");
                 log.debug(" creating new ServiceDescriptionImpl");
             }
-            
+
             serviceDesc = new ServiceDescriptionImpl(wsdlURL, serviceQName, serviceClass);
             if (log.isDebugEnabled()) {
-                log.debug("ServiceDescription created with WSDL URL: " + wsdlURL + "; QName: " + serviceQName + "; Class: " + serviceClass);
+                log.debug("ServiceDescription created with WSDL URL: " + wsdlURL + "; QName: " +
+                        serviceQName + "; Class: " + serviceClass);
                 log.debug(serviceDesc.toString());
             }
-            if(log.isDebugEnabled()){
+            if (log.isDebugEnabled()) {
                 log.debug("Caching new ServiceDescription in the cache");
-                
+
             }
             cache.put(key, serviceDesc);
         }
-        
+
         return serviceDesc;
     }
 
     /**
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescriptionFromServiceImpl(Class,
+     *      AxisService)
      * @deprecated
-     * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescriptionFromServiceImpl(Class, AxisService)
      */
     public static ServiceDescription createServiceDescriptionFromServiceImpl(
             Class serviceImplClass, AxisService axisService) {
         ServiceDescription serviceDesc = new ServiceDescriptionImpl(serviceImplClass, axisService);
         if (log.isDebugEnabled()) {
-            log.debug("Deprecated method used!  ServiceDescription created with Class: " + serviceImplClass + "; AxisService: " + axisService);
+            log.debug("Deprecated method used!  ServiceDescription created with Class: " +
+                    serviceImplClass + "; AxisService: " + axisService);
             log.debug(serviceDesc.toString());
         }
         return serviceDesc;
     }
-    
-    /**
-     * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescription(Class)
-     */
+
+    /** @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescription(Class) */
     public static ServiceDescription createServiceDescription(Class serviceImplClass) {
         ServiceDescription serviceDesc = null;
-        
+
         if (serviceImplClass != null) {
             JavaClassToDBCConverter converter = new JavaClassToDBCConverter(serviceImplClass);
             HashMap<String, DescriptionBuilderComposite> dbcMap = converter.produceDBC();
-            List<ServiceDescription> serviceDescList =  createServiceDescriptionFromDBCMap(dbcMap);
+            List<ServiceDescription> serviceDescList = createServiceDescriptionFromDBCMap(dbcMap);
             if (serviceDescList != null && serviceDescList.size() > 0) {
                 serviceDesc = serviceDescList.get(0);
                 if (log.isDebugEnabled()) {
                     log.debug("ServiceDescription created with class: " + serviceImplClass);
                     log.debug(serviceDesc);
                 }
-            }
-            else {
+            } else {
                 if (log.isDebugEnabled()) {
                     log.debug("ServiceDesciption was not created for class: " + serviceImplClass);
                 }
                 // TODO: NLS & RAS
-                throw ExceptionFactory.makeWebServiceException("A ServiceDescription was not created for " + serviceImplClass);
+                throw ExceptionFactory.makeWebServiceException(
+                        "A ServiceDescription was not created for " + serviceImplClass);
             }
         }
         return serviceDesc;
     }
 
 
-    /**
-     * @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescriptionFromDBCMap(HashMap)
-     */
+    /** @see org.apache.axis2.jaxws.description.DescriptionFactory#createServiceDescriptionFromDBCMap(HashMap) */
     public static List<ServiceDescription> createServiceDescriptionFromDBCMap(
             HashMap<String, DescriptionBuilderComposite> dbcMap) {
 
@@ -164,30 +167,31 @@ public class DescriptionFactoryImpl {
                 // process this impl class
                 ServiceDescription serviceDescription = new ServiceDescriptionImpl(
                         dbcMap, serviceImplComposite);
-                ServiceDescriptionValidator validator = new ServiceDescriptionValidator(serviceDescription);
+                ServiceDescriptionValidator validator =
+                        new ServiceDescriptionValidator(serviceDescription);
                 if (validator.validate()) {
                     serviceDescriptionList.add(serviceDescription);
                     if (log.isDebugEnabled()) {
-                        log.debug("Service Description created from DescriptionComposite: " + serviceDescription);
+                        log.debug("Service Description created from DescriptionComposite: " +
+                                serviceDescription);
                     }
-                }
-                else {
-                	
-                	String msg = "The ServiceDescription failed to validate due to the following errors: \n" +
-                	validator.toString();
-                    
+                } else {
+
+                    String msg =
+                            "The ServiceDescription failed to validate due to the following errors: \n" +
+                                    validator.toString();
+
                     if (log.isDebugEnabled()) {
                         log.debug("Validation Phase 2 failure: " + msg);
                         log.debug("Failing composite: " + serviceImplComposite.toString());
                         log.debug("Failing Service Description: " + serviceDescription.toString());
                     }
-                	
+
                     // TODO: Validate all service descriptions before failing
                     // TODO: Get more detailed failure information from the Validator
                     throw ExceptionFactory.makeWebServiceException(msg);
                 }
-            }
-            else {
+            } else {
                 if (log.isDebugEnabled()) {
                     log.debug("DBC is not a service impl: " + serviceImplComposite.toString());
                 }
@@ -203,33 +207,33 @@ public class DescriptionFactoryImpl {
     }
 
     /**
-     * @see org.apache.axis2.jaxws.description.DescriptionFactory#updateEndpoint(ServiceDescription, Class, QName, org.apache.axis2.jaxws.description.DescriptionFactory.UpdateType)
+     * @see org.apache.axis2.jaxws.description.DescriptionFactory#updateEndpoint(ServiceDescription,
+     *      Class, QName, org.apache.axis2.jaxws.description.DescriptionFactory.UpdateType)
      */
     public static EndpointDescription updateEndpoint(
             ServiceDescription serviceDescription, Class sei, QName portQName,
             DescriptionFactory.UpdateType updateType) {
-        EndpointDescription endpointDesc = 
-            ((ServiceDescriptionImpl) serviceDescription).updateEndpointDescription(sei, portQName, updateType);
+        EndpointDescription endpointDesc =
+                ((ServiceDescriptionImpl)serviceDescription)
+                        .updateEndpointDescription(sei, portQName, updateType);
         if (log.isDebugEnabled()) {
             log.debug("EndpointDescription updated: " + endpointDesc);
         }
         return endpointDesc;
     }
-    
+
     public static ClientConfigurationFactory getClientConfigurationFactory() {
-        
-        if (clientConfigFactory == null ) {
+
+        if (clientConfigFactory == null) {
             clientConfigFactory = ClientConfigurationFactory.newInstance();
         }
         return clientConfigFactory;
     }
 
     /**
-     * Builds a list of DescriptionBuilderComposite which is relevant to the
-     * particular class
-     * 
-     * @param List<>
-     *            A list of DescriptionBuilderComposite objects
+     * Builds a list of DescriptionBuilderComposite which is relevant to the particular class
+     *
+     * @param List<>          A list of DescriptionBuilderComposite objects
      * @param serviceImplName
      * @return List<>
      */
@@ -249,17 +253,16 @@ public class DescriptionFactoryImpl {
     }
 
     /**
-     * This method will be used to determine if a given DBC represents a Web
-     * service implementation.
-     * 
-     * @param dbc -
-     *            <code>DescriptionBuilderComposite</code>
+     * This method will be used to determine if a given DBC represents a Web service
+     * implementation.
+     *
+     * @param dbc - <code>DescriptionBuilderComposite</code>
      * @return - <code>boolean</code>
      */
     private static boolean isImpl(DescriptionBuilderComposite dbc) {
         if (!dbc.isInterface()
                 && (dbc.getWebServiceAnnot() != null || dbc
-                        .getWebServiceProviderAnnot() != null)) {
+                .getWebServiceProviderAnnot() != null)) {
             return true;
         }
         return false;

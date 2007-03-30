@@ -30,21 +30,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
  */
 
 /**
- * The purpose of this extension is to populate the type mapper from the
- * type mapping file. The format of the type mapping file is as follows
- * <mappings dbf="adb">
- *     <mapping>
- *         <qname namespace="ns" prefix="p1">localName</qname>
- *         <value>type</value>
- *     </mapping>
- * </mappings>
- *
- * In any case it is best that the type mapper extension be after all the
- * databinding extensions
+ * The purpose of this extension is to populate the type mapper from the type mapping file. The
+ * format of the type mapping file is as follows <mappings dbf="adb"> <mapping> <qname
+ * namespace="ns" prefix="p1">localName</qname> <value>type</value> </mapping> </mappings>
+ * <p/>
+ * In any case it is best that the type mapper extension be after all the databinding extensions
  */
 
 public class TypeMapperExtension implements CodeGenExtension {
-
 
 
     private static final String MAPPING_ELEMENT_NAME = "mapping";
@@ -54,12 +47,9 @@ public class TypeMapperExtension implements CodeGenExtension {
     private static final String DB_FRAMEWORK_ATTRIBUTE_NAME = "dbf";
 
 
-    /**
-     *
-     * @throws CodeGenerationException
-     */
+    /** @throws CodeGenerationException  */
     public void engage(CodeGenConfiguration configuration) throws CodeGenerationException {
-        if (configuration.getTypeMappingFile()!=null){
+        if (configuration.getTypeMappingFile() != null) {
             //a type mapping is present. try building the
             //mapping from it
 
@@ -68,7 +58,7 @@ public class TypeMapperExtension implements CodeGenExtension {
             // mappings
             TypeMapper mapper = configuration.getTypeMapper();
             // there is no mapper present - so just create a new one
-            if (mapper==null){
+            if (mapper == null) {
                 mapper = new DefaultTypeMapper();
             }
 
@@ -86,7 +76,7 @@ public class TypeMapperExtension implements CodeGenExtension {
 
             String databindingName = rootMappingsElement.
                     getAttribute(DB_FRAMEWORK_ATTRIBUTE_NAME);
-            if (!databindingName.equals(configuration.getDatabindingType())){
+            if (!databindingName.equals(configuration.getDatabindingType())) {
                 throw new CodeGenerationException(
                         CodegenMessages.
                                 getMessage("extension.databindingMismatch")
@@ -98,7 +88,7 @@ public class TypeMapperExtension implements CodeGenExtension {
 
 
             NodeList mappingList = rootMappingsElement.
-                                    getElementsByTagName(MAPPING_ELEMENT_NAME);
+                    getElementsByTagName(MAPPING_ELEMENT_NAME);
             int length = mappingList.getLength();
             for (int i = 0; i < length; i++) {
                 Element mappingNode = (Element)mappingList.item(i);
@@ -114,7 +104,7 @@ public class TypeMapperExtension implements CodeGenExtension {
                 mapper.addTypeMappingName(new QName(
                         qNameChild.getAttribute(NAMESPACE_ATTRIBUTE_NAME),
                         getTextFromElement(qNameChild)),
-                        getTextFromElement(valueChild));
+                                          getTextFromElement(valueChild));
 
             }
 
@@ -125,9 +115,11 @@ public class TypeMapperExtension implements CodeGenExtension {
 
     /**
      * Build a dom document from the mapping file
+     *
      * @throws CodeGenerationException
      */
-    private Document buildDocument(CodeGenConfiguration configuration) throws CodeGenerationException {
+    private Document buildDocument(CodeGenConfiguration configuration)
+            throws CodeGenerationException {
         try {
             DocumentBuilderFactory documentBuilderFactory
                     = DocumentBuilderFactory.newInstance();
@@ -141,19 +133,19 @@ public class TypeMapperExtension implements CodeGenExtension {
     }
 
     /**
-     * Gets the string content from an element. returns null if there are
-     * no test nodes found
+     * Gets the string content from an element. returns null if there are no test nodes found
+     *
      * @param elt
      * @return text cotent of the element
      */
-    private String getTextFromElement(Element elt){
+    private String getTextFromElement(Element elt) {
         NodeList children = elt.getChildNodes();
         String returnString = null;
         int length = children.getLength();
         for (int i = 0; i < length; i++) {
             Node node = children.item(i);
-            if (Node.TEXT_NODE == node.getNodeType()){
-                returnString = (returnString==null?"":returnString) + node.getNodeValue();
+            if (Node.TEXT_NODE == node.getNodeType()) {
+                returnString = (returnString == null ? "" : returnString) + node.getNodeValue();
             }
 
         }

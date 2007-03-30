@@ -42,7 +42,8 @@ public class ContextMemoryHandlingUtil implements TestConstants {
         Options options = new Options();
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
-                ConfigurationContextFactory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo",null);
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                        "target/test-resources/integrationRepo", null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
         options.setTo(targetEPR);
@@ -63,7 +64,8 @@ public class ContextMemoryHandlingUtil implements TestConstants {
             while (true) {
                 System.out.println("Iterations # = " + ++numberOfTimes);
                 contextMemoryHandlingTest.runOnce();
-                System.out.println("Memory Usage = " + (initialMemory - Runtime.getRuntime().freeMemory()));
+                System.out.println(
+                        "Memory Usage = " + (initialMemory - Runtime.getRuntime().freeMemory()));
             }
         } catch (Exception e) {
             e.printStackTrace();

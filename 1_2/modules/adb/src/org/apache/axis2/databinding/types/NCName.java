@@ -19,9 +19,8 @@ import org.apache.axis2.util.XMLChar;
 
 
 /**
- * Custom class for supporting XSD data type NCName
- * NCName represents XML "non-colonized" Names
- * The base type of NCName is Name.
+ * Custom class for supporting XSD data type NCName NCName represents XML "non-colonized" Names The
+ * base type of NCName is Name.
  *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#NCName">XML Schema 3.3.7</a>
  * @see <A href="http://www.w3.org/TR/1999/REC-xml-names-19990114/#NT-NCName">NCName Production</a>
@@ -30,13 +29,14 @@ public class NCName extends Name {
 
     private static final long serialVersionUID = 8573451628276898297L;
 
-	public NCName() {
+    public NCName() {
         super();
     }
 
     /**
      * ctor for NCName
-     * @exception IllegalArgumentException will be thrown if validation fails
+     *
+     * @throws IllegalArgumentException will be thrown if validation fails
      */
     public NCName(String stValue) throws IllegalArgumentException {
         try {
@@ -45,45 +45,44 @@ public class NCName extends Name {
         catch (IllegalArgumentException e) {
             // recast normalizedString exception as token exception
             throw new IllegalArgumentException(
-                   // Messages.getMessage("badNCNameType00") +
-                            "data=[" +
-                    stValue + "]");
+                    // Messages.getMessage("badNCNameType00") +
+                    "data=[" +
+                            stValue + "]");
         }
     }
 
     /**
-     *
      * validates the data and sets the value for the object.
+     *
      * @param stValue String value
      * @throws IllegalArgumentException if invalid format
      */
     public void setValue(String stValue) throws IllegalArgumentException {
         if (!NCName.isValid(stValue))
             throw new IllegalArgumentException(
-               //Messages.getMessage("badNCNameType00") +
-               " data=[" + stValue + "]");
+                    //Messages.getMessage("badNCNameType00") +
+                    " data=[" + stValue + "]");
         m_value = stValue;
     }
 
     /**
-     *
      * validate the value against the xsd definition
-     *
-     * NCName ::=  (Letter | '_') (NCNameChar)*
-     * NCNameChar ::=  Letter | Digit | '.' | '-' | '_' | CombiningChar | Extender
+     * <p/>
+     * NCName ::=  (Letter | '_') (NCNameChar)* NCNameChar ::=  Letter | Digit | '.' | '-' | '_' |
+     * CombiningChar | Extender
      */
     public static boolean isValid(String stValue) {
         int scan;
         boolean bValid = true;
 
-        for (scan=0; scan < stValue.length(); scan++) {
+        for (scan = 0; scan < stValue.length(); scan++) {
             if (scan == 0)
-              bValid = XMLChar.isNCNameStart(stValue.charAt(scan));
+                bValid = XMLChar.isNCNameStart(stValue.charAt(scan));
             else
-              bValid = XMLChar.isNCName(stValue.charAt(scan));
+                bValid = XMLChar.isNCName(stValue.charAt(scan));
             if (!bValid)
-              break;
+                break;
         }
-    return bValid;
+        return bValid;
     }
 }

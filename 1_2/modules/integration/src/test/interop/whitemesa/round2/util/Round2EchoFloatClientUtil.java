@@ -38,9 +38,11 @@ public class Round2EchoFloatClientUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
 
-        OMElement operation = omfactory.createOMElement("echoFloat", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoFloat", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
         operation.declareNamespace(envNs);
         operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);

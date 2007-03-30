@@ -15,15 +15,13 @@
  */
 package org.apache.axis2.saaj;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import org.custommonkey.xmlunit.XMLTestCase;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPMessage;
-
-import org.custommonkey.xmlunit.XMLTestCase;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * 
@@ -48,7 +46,8 @@ public class MessageFactoryTest extends XMLTestCase {
 
             // Create SOAPMessage from MessageFactory object using InputStream
             SOAPMessage msg2 = mf.createMessage(headers,
-                                                new ByteArrayInputStream(baos1.toString().getBytes()));
+                                                new ByteArrayInputStream(
+                                                        baos1.toString().getBytes()));
             if (msg2 == null) {
                 fail();
             }
@@ -69,20 +68,20 @@ public class MessageFactoryTest extends XMLTestCase {
 
             final String XML_STRING =
                     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                    "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-                    "                   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n" +
-                    "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
-                    " <soapenv:Header>\n" +
-                    "  <shw:Hello xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
-                    "    <shw:Myname>Tony</shw:Myname>\n" +
-                    "  </shw:Hello>\n" +
-                    " </soapenv:Header>\n" +
-                    " <soapenv:Body>\n" +
-                    "<shw:Address shw:t='test' xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
-                    "<shw:City>GENT</shw:City>\n" +
-                    "</shw:Address>\n" +
-                    "</soapenv:Body>\n" +
-                    "</soapenv:Envelope>";
+                            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
+                            "                   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n" +
+                            "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+                            " <soapenv:Header>\n" +
+                            "  <shw:Hello xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
+                            "    <shw:Myname>Tony</shw:Myname>\n" +
+                            "  </shw:Hello>\n" +
+                            " </soapenv:Header>\n" +
+                            " <soapenv:Body>\n" +
+                            "<shw:Address shw:t='test' xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
+                            "<shw:City>GENT</shw:City>\n" +
+                            "</shw:Address>\n" +
+                            "</soapenv:Body>\n" +
+                            "</soapenv:Envelope>";
 
             MimeHeaders headers = new MimeHeaders();
             headers.addHeader("Content-Type", "text/xml");
@@ -93,7 +92,8 @@ public class MessageFactoryTest extends XMLTestCase {
 
             // Create SOAPMessage from MessageFactory object using InputStream
             SOAPMessage msg2 = mf.createMessage(headers,
-                                                new ByteArrayInputStream(baos1.toString().getBytes()));
+                                                new ByteArrayInputStream(
+                                                        baos1.toString().getBytes()));
             if (msg2 == null) {
                 fail();
             }
@@ -106,21 +106,21 @@ public class MessageFactoryTest extends XMLTestCase {
         }
     }
 
-    
-    public void testNewInstane(){
-    	try {
-    		MessageFactory mf = MessageFactory.newInstance();
-    		assertNotNull(mf);
-    		ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
 
-    		SOAPMessage msg1 = mf.createMessage();
-    		msg1.writeTo(baos1);
+    public void testNewInstane() {
+        try {
+            MessageFactory mf = MessageFactory.newInstance();
+            assertNotNull(mf);
+            ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
 
-    		MimeHeaders headers = new MimeHeaders();
-    		headers.addHeader("Content-Type", "text/xml");
+            SOAPMessage msg1 = mf.createMessage();
+            msg1.writeTo(baos1);
 
-    	} catch(Exception e) {
-    		fail("Exception: " + e);
-    	}
+            MimeHeaders headers = new MimeHeaders();
+            headers.addHeader("Content-Type", "text/xml");
+
+        } catch (Exception e) {
+            fail("Exception: " + e);
+        }
     }
 }

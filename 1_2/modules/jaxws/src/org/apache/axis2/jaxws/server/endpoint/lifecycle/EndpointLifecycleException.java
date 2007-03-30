@@ -21,35 +21,31 @@ package org.apache.axis2.jaxws.server.endpoint.lifecycle;
 
 public class EndpointLifecycleException extends Exception {
 
-	
-	public EndpointLifecycleException() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
 
-	/**
-	 * @param message
-	 */
-	public EndpointLifecycleException(String message) {
-		super(message);
-		// TODO Auto-generated constructor stub
-	}
+    public EndpointLifecycleException() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public EndpointLifecycleException(String message, Throwable cause) {
-		super(message, cause);
-		// TODO Auto-generated constructor stub
-	}
+    /** @param message  */
+    public EndpointLifecycleException(String message) {
+        super(message);
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * @param cause
-	 */
-	public EndpointLifecycleException(Throwable cause) {
-		super(cause);
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public EndpointLifecycleException(String message, Throwable cause) {
+        super(message, cause);
+        // TODO Auto-generated constructor stub
+    }
+
+    /** @param cause  */
+    public EndpointLifecycleException(Throwable cause) {
+        super(cause);
+        // TODO Auto-generated constructor stub
+    }
 
 }

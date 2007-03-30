@@ -18,29 +18,31 @@
  */
 package org.apache.axis2.jaxws.context.factory;
 
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
-
 import org.apache.axis2.jaxws.context.WebServiceContextImpl;
 import org.apache.axis2.jaxws.handler.ProtectedMessageContext;
 import org.apache.axis2.jaxws.handler.SoapMessageContext;
 
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
+
 public class MessageContextFactory {
 
-	public MessageContextFactory() {
-		super();
-		
-	}
+    public MessageContextFactory() {
+        super();
 
-	public static WebServiceContext createWebServiceContext(){
-		return new WebServiceContextImpl();
-	}
-	
-	public static MessageContext createSoapMessageContext(org.apache.axis2.jaxws.core.MessageContext jaxwsMessageContext){
-		return new SoapMessageContext(jaxwsMessageContext);
-	}
-	
-	public static MessageContext createProtectedMessageContext(org.apache.axis2.jaxws.core.MessageContext jaxwsMessageContext){
-		return new ProtectedMessageContext(jaxwsMessageContext);
-	}
+    }
+
+    public static WebServiceContext createWebServiceContext() {
+        return new WebServiceContextImpl();
+    }
+
+    public static MessageContext createSoapMessageContext(
+            org.apache.axis2.jaxws.core.MessageContext jaxwsMessageContext) {
+        return new SoapMessageContext(jaxwsMessageContext);
+    }
+
+    public static MessageContext createProtectedMessageContext(
+            org.apache.axis2.jaxws.core.MessageContext jaxwsMessageContext) {
+        return new ProtectedMessageContext(jaxwsMessageContext);
+    }
 }

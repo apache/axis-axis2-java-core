@@ -22,18 +22,18 @@ import java.util.Random;
 
 /**
  * Custom class for supporting primitive XSD data type positiveInteger
- *
- * positiveInteger is derived from nonNegativeInteger by setting the value of minInclusive to be 1. 
- * This results in the standard mathematical concept of the positive integer numbers. The value space
- * of positiveInteger is the infinite set {1,2,...}. 
+ * <p/>
+ * positiveInteger is derived from nonNegativeInteger by setting the value of minInclusive to be 1.
+ * This results in the standard mathematical concept of the positive integer numbers. The value
+ * space of positiveInteger is the infinite set {1,2,...}.
  *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#positiveInteger">XML Schema 3.3.25</a>
  */
 public class PositiveInteger extends NonNegativeInteger {
 
     private static final long serialVersionUID = -4562301423231920813L;
-    
-	public PositiveInteger(byte[] val) {
+
+    public PositiveInteger(byte[] val) {
         super(val);
         checkValidity();
     } // ctor
@@ -63,10 +63,9 @@ public class PositiveInteger extends NonNegativeInteger {
         checkValidity();
     } // ctor
 
-    /**
-     * validate the value against the xsd definition
-     */
+    /** validate the value against the xsd definition */
     private BigInteger iMinInclusive = new BigInteger("1");
+
     private void checkValidity() {
         if (compareTo(iMinInclusive) < 0) {
             throw new NumberFormatException(
@@ -77,19 +76,22 @@ public class PositiveInteger extends NonNegativeInteger {
 
     /**
      * Work-around for http://developer.java.sun.com/developer/bugParade/bugs/4378370.html
+     *
      * @return BigIntegerRep
      * @throws java.io.ObjectStreamException
-     */ 
+     */
     public Object writeReplace() throws ObjectStreamException {
         return new BigIntegerRep(toByteArray());
     }
-    
+
     protected static class BigIntegerRep implements java.io.Serializable {
         private static final long serialVersionUID = 1251664160936150499L;
-		private byte[] array;
+        private byte[] array;
+
         protected BigIntegerRep(byte[] array) {
             this.array = array;
         }
+
         protected Object readResolve() throws java.io.ObjectStreamException {
             return new PositiveInteger(array);
         }

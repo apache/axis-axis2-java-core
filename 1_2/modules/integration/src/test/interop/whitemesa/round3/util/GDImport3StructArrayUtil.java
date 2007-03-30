@@ -37,9 +37,11 @@ public class GDImport3StructArrayUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://soapinterop/", "ns1");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
-        OMElement operation = omfactory.createOMElement("echoStructArray", "http://soapinterop/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoStructArray", "http://soapinterop/", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                               null);
 
         OMElement part = omfactory.createOMElement("inputArray", "", null);
         part.addAttribute("xsi:type", "SOAP-ENC:Array", null);

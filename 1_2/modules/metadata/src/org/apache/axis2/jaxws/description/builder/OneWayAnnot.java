@@ -20,18 +20,15 @@ import java.lang.annotation.Annotation;
 
 public class OneWayAnnot implements javax.jws.Oneway {
 
-		/**
-	     * A OneWayAnnot cannot be instantiated.
-	     */
-		private	OneWayAnnot()
-		{
-		}
-		
-	    public static OneWayAnnot createOneWayAnnotImpl() {
-	        return new OneWayAnnot();
-	    }
+    /** A OneWayAnnot cannot be instantiated. */
+    private OneWayAnnot() {
+    }
 
-	    public Class<Annotation> annotationType(){
-			return Annotation.class;
-		}
+    public static OneWayAnnot createOneWayAnnotImpl() {
+        return new OneWayAnnot();
+    }
+
+    public Class<Annotation> annotationType() {
+        return Annotation.class;
+    }
 }

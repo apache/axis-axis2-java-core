@@ -18,14 +18,6 @@
  */
 package org.apache.axis2.jaxws.client.async;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.WebServiceException;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.client.async.AsyncResult;
 import org.apache.axis2.client.async.Callback;
@@ -33,19 +25,25 @@ import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.ws.AsyncHandler;
+import javax.xml.ws.WebServiceException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+
 /**
- * The CallbackFuture implements the Axis2 <link>org.apache.axis2.client.async.Callback</link>
- * API and will get registered with the Axis2 engine to receive the asynchronous
- * callback responses.  This object is also responsible for taking the 
- * <link>java.util.concurrent.Executor</link> given to it by the JAX-WS client
- * and using that as the thread on which to deliver the async response the 
- * JAX-WS <link>javax.xml.ws.AsynchHandler</link>.
+ * The CallbackFuture implements the Axis2 <link>org.apache.axis2.client.async.Callback</link> API
+ * and will get registered with the Axis2 engine to receive the asynchronous callback responses.
+ * This object is also responsible for taking the <link>java.util.concurrent.Executor</link> given
+ * to it by the JAX-WS client and using that as the thread on which to deliver the async response
+ * the JAX-WS <link>javax.xml.ws.AsynchHandler</link>.
  */
 public class CallbackFuture extends Callback {
-    
+
     private static final Log log = LogFactory.getLog(CallbackFuture.class);
     private static final boolean debug = log.isDebugEnabled();
-    
+
     private CallbackFutureTask cft;
     private Executor executor;
     private FutureTask task;
@@ -67,38 +65,39 @@ public class CallbackFuture extends Callback {
      * the Future cannot be cancelled once the task has been submitted. Also the response has already arrived so 
      * we will make the AsyncHandler and let the client code decided how it wants to treat the response.
      */
-   
+
     @SuppressWarnings("unchecked")
     public CallbackFuture(AsyncResponse response, AsyncHandler handler, Executor exec) {
         cft = new CallbackFutureTask(response, handler);
         task = new FutureTask(cft);
         executor = exec;
     }
-    
+
     public Future<?> getFutureTask() {
-        return (Future<?>) task;
+        return (Future<?>)task;
     }
-    
+
     @Override
     public void onComplete(AsyncResult result) {
         if (debug) {
             log.debug("JAX-WS received the async response");
         }
-        
+
         MessageContext response = null;
         try {
             response = AsyncUtils.createJAXWSMessageContext(result);
         } catch (WebServiceException e) {
             cft.setError(e);
             if (debug) {
-                log.debug("An error occured while processing the async response.  " + e.getMessage());
+                log.debug(
+                        "An error occured while processing the async response.  " + e.getMessage());
             }
         }
-        
+
         if (response == null) {
             // TODO: throw an exception
         }
-        
+
         cft.setMessageContext(response);
         execute();
     }
@@ -109,38 +108,39 @@ public class CallbackFuture extends Callback {
         // that is returned should have a MessageContext with it.  Use
         // this to unmarshall the fault included there.
         if (e.getClass().isAssignableFrom(AxisFault.class)) {
-            AxisFault fault = (AxisFault) e;
+            AxisFault fault = (AxisFault)e;
             MessageContext faultMessageContext = null;
             try {
-                faultMessageContext  = AsyncUtils.createJAXWSMessageContext(fault.getFaultMessageContext());                
+                faultMessageContext =
+                        AsyncUtils.createJAXWSMessageContext(fault.getFaultMessageContext());
             }
             catch (WebServiceException wse) {
                 cft.setError(wse);
             }
-            
+
             cft.setError(e);
             cft.setMessageContext(faultMessageContext);
+        } else {
+            cft.setError(e);
         }
-        else {
-            cft.setError(e);            
-        }
-        
+
         execute();
     }
-    
+
     private void execute() {
         if (log.isDebugEnabled()) {
             log.debug("Executor task starting to process async response");
         }
 
         if (executor != null) {
-        	if(task!=null && !task.isCancelled()){
+            if (task != null && !task.isCancelled()) {
                 try {
                     executor.execute(task);
                 }
                 catch (Exception executorExc) {
-                    if(log.isDebugEnabled()){
-                        log.debug("CallbackFuture.execute():  executor exception ["+executorExc.getClass().getName()+"]");
+                    if (log.isDebugEnabled()) {
+                        log.debug("CallbackFuture.execute():  executor exception [" +
+                                executorExc.getClass().getName() + "]");
                     }
 
                     // attempt to cancel the FutureTask
@@ -154,56 +154,56 @@ public class CallbackFuture extends Callback {
                     //
                 }
 
-        		if(log.isDebugEnabled()){
-        			log.debug("Task submitted to Executor");
-        		}
-        	}else{
-        		if(log.isDebugEnabled()){
-        			log.info("Executor task was not sumbitted as Async Future task was cancelled by clients");
-        		}
-        	}
+                if (log.isDebugEnabled()) {
+                    log.debug("Task submitted to Executor");
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.info(
+                            "Executor task was not sumbitted as Async Future task was cancelled by clients");
+                }
+            }
         }
-        
+
         if (log.isDebugEnabled()) {
             log.debug("Executor task completed");
         }
-    }    
+    }
 }
 
 class CallbackFutureTask implements Callable {
-    
+
     private static final Log log = LogFactory.getLog(CallbackFutureTask.class);
     private static final boolean debug = log.isDebugEnabled();
-    
+
     AsyncResponse response;
     MessageContext msgCtx;
     AsyncHandler handler;
     Exception error;
-    
+
     CallbackFutureTask(AsyncResponse r, AsyncHandler h) {
         response = r;
         handler = h;
     }
-    
+
     void setMessageContext(MessageContext mc) {
         msgCtx = mc;
     }
-    
+
     void setError(Exception e) {
         error = e;
     }
-    
+
     @SuppressWarnings("unchecked")
     public Object call() throws Exception {
         // Set the response or fault content on the AsyncResponse object
         // so that it can be collected inside the Executor thread and processed.
         if (error != null) {
             response.onError(error, msgCtx);
+        } else {
+            response.onComplete(msgCtx);
         }
-        else {
-            response.onComplete(msgCtx);    
-        }
-        
+
         // Now that the content is available, call the JAX-WS AsyncHandler class
         // to deliver the response to the user.
         try {
@@ -211,7 +211,7 @@ class CallbackFutureTask implements Callable {
                 log.debug("Calling JAX-WS AsyncHandler with the Response object");
                 log.debug("AyncHandler class: " + handler.getClass());
             }
-            handler.handleResponse(response);    
+            handler.handleResponse(response);
         }
         catch (Throwable t) {
             if (debug) {
@@ -219,7 +219,7 @@ class CallbackFutureTask implements Callable {
                 log.debug("Error: " + t.getMessage());
             }
         }
-                
+
         return null;
     }
 }

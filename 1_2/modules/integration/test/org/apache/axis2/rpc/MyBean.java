@@ -17,11 +17,7 @@ package org.apache.axis2.rpc;
 *
 */
 
-/**
- * Author: Deepal Jayasinghe
- * Date: Oct 12, 2005
- * Time: 11:24:03 AM
- */
+/** Author: Deepal Jayasinghe Date: Oct 12, 2005 Time: 11:24:03 AM */
 public class MyBean {
     private String name;
     private int age;
@@ -60,7 +56,7 @@ public class MyBean {
         this.address = address;
     }
 
-    public String toString(){
-        return ("name:" + name + " Age : " + age + " Value : " + value + " Address : " );
+    public String toString() {
+        return ("name:" + name + " Age : " + age + " Value : " + value + " Address : ");
     }
 }

@@ -21,7 +21,7 @@ package org.apache.axis2.jaxws.description;
 import javax.wsdl.PortType;
 
 public interface EndpointInterfaceDescriptionWSDL {
-    
+
     public PortType getWSDLPortType();
-    
+
 }

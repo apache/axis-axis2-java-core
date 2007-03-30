@@ -18,75 +18,74 @@
  */
 package org.apache.axis2.jaxws.server.endpoint;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executor;
+import org.apache.axis2.jaxws.binding.BindingImpl;
+import org.apache.axis2.jaxws.description.EndpointDescription;
 
 import javax.xml.transform.Source;
 import javax.xml.ws.Binding;
-
-import org.apache.axis2.jaxws.binding.BindingImpl;
-import org.apache.axis2.jaxws.description.EndpointDescription;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executor;
 
 public class EndpointImpl extends javax.xml.ws.Endpoint {
 
     private Object implementor;
     private EndpointDescription endpointDesc;
     private Binding binding;
-    
+
     public EndpointImpl(Object o) {
         implementor = o;
         initialize();
     }
-    
+
     public EndpointImpl(Object o, EndpointDescription ed) {
         implementor = o;
         endpointDesc = ed;
         initialize();
     }
-    
+
     private void initialize() {
         if (endpointDesc != null) {
             binding = new BindingImpl(endpointDesc.getBindingType());
         }
     }
-    
+
     /*
-     * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#getMetadata()
-     */
+    * (non-Javadoc)
+    * @see javax.xml.ws.Endpoint#getMetadata()
+    */
     public List<Source> getMetadata() {
         return null;
     }
-    
+
     /*
-     * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#setMetadata(java.util.List)
-     */
+    * (non-Javadoc)
+    * @see javax.xml.ws.Endpoint#setMetadata(java.util.List)
+    */
     public void setMetadata(List<Source> list) {
         return;
     }
-    
+
     /*
-     * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#getProperties()
-     */
+    * (non-Javadoc)
+    * @see javax.xml.ws.Endpoint#getProperties()
+    */
     public Map<String, Object> getProperties() {
         return null;
     }
-    
+
     /*
-     * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#setProperties(java.util.Map)
-     */
+    * (non-Javadoc)
+    * @see javax.xml.ws.Endpoint#setProperties(java.util.Map)
+    */
     public void setProperties(Map<String, Object> properties) {
         return;
     }
-    
+
     /*
-     * (non-Javadoc)
-     * @see javax.xml.ws.Endpoint#getBinding()
-     */
+    * (non-Javadoc)
+    * @see javax.xml.ws.Endpoint#getBinding()
+    */
     public Binding getBinding() {
         return binding;
     }
@@ -120,7 +119,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      * @see javax.xml.ws.Endpoint#publish(java.lang.Object)
      */
     public void publish(Object obj) {
-       
+
     }
 
     /*
@@ -128,7 +127,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      * @see javax.xml.ws.Endpoint#publish(java.lang.String)
      */
     public void publish(String s) {
-        
+
     }
 
     /*
@@ -136,7 +135,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      * @see javax.xml.ws.Endpoint#setExecutor(java.util.concurrent.Executor)
      */
     public void setExecutor(Executor executor) {
-        
+
     }
 
     /*
@@ -144,7 +143,7 @@ public class EndpointImpl extends javax.xml.ws.Endpoint {
      * @see javax.xml.ws.Endpoint#stop()
      */
     public void stop() {
-        
+
     }
 
 }

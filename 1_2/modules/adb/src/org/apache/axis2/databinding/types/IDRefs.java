@@ -26,19 +26,21 @@ import java.util.StringTokenizer;
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#IDREFS">XML Schema 3.3.10 IDREFS</a>
  */
 public class IDRefs extends NCName {
-	
+
     private static final long serialVersionUID = 5394097798361075902L;
-    
-	private IDRef[] idrefs;
+
+    private IDRef[] idrefs;
 
     public IDRefs() {
         super();
     }
+
     /**
      * ctor for IDRefs
-     * @exception IllegalArgumentException will be thrown if validation fails
+     *
+     * @throws IllegalArgumentException will be thrown if validation fails
      */
-    public IDRefs (String stValue) throws IllegalArgumentException {
+    public IDRefs(String stValue) throws IllegalArgumentException {
         setValue(stValue);
     }
 
@@ -46,7 +48,7 @@ public class IDRefs extends NCName {
         StringTokenizer tokenizer = new StringTokenizer(stValue);
         int count = tokenizer.countTokens();
         idrefs = new IDRef[count];
-        for(int i=0;i<count;i++){
+        for (int i = 0; i < count; i++) {
             idrefs[i] = new IDRef(tokenizer.nextToken());
         }
     }
@@ -62,9 +64,8 @@ public class IDRefs extends NCName {
     }
 
     /**
-     * IDREFs can be equal without having identical ordering because
-     * they represent a set of references.  Hence we have to compare
-     * values here as a set, not a list.
+     * IDREFs can be equal without having identical ordering because they represent a set of
+     * references.  Hence we have to compare values here as a set, not a list.
      *
      * @param object an <code>Object</code> value
      * @return a <code>boolean</code> value
@@ -88,8 +89,8 @@ public class IDRefs extends NCName {
     }
 
     /**
-     * Returns the sum of the hashcodes of the underlying idrefs, an
-     * operation which is not sensitive to ordering.
+     * Returns the sum of the hashcodes of the underlying idrefs, an operation which is not
+     * sensitive to ordering.
      *
      * @return an <code>int</code> value
      */

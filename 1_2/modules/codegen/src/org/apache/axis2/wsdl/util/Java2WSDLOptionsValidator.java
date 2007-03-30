@@ -20,35 +20,41 @@ import org.apache.axis2.util.OptionsValidator;
  * limitations under the License.
  */
 
-public class Java2WSDLOptionsValidator implements OptionsValidator,CommandLineOptionConstants {
+public class Java2WSDLOptionsValidator implements OptionsValidator, CommandLineOptionConstants {
 
     public boolean isInvalid(CommandLineOption option) {
         boolean invalid;
         String optionType = option.getOptionType();
 
-        if (optionType.startsWith(WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX)){
+        if (optionType.startsWith(WSDL2JavaConstants.EXTRA_OPTIONTYPE_PREFIX)) {
             invalid = false;
-        } else{
+        } else {
             invalid = !((Java2WSDLConstants.CLASSNAME_OPTION).equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.OUTPUT_LOCATION_OPTION.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.OUTPUT_FILENAME_OPTION.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.CLASSPATH_OPTION.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.TARGET_NAMESPACE_OPTION.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.TARGET_NAMESPACE_PREFIX_OPTION.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_OPTION.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.SERVICE_NAME_OPTION.equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.OUTPUT_LOCATION_OPTION.equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.OUTPUT_FILENAME_OPTION.equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.CLASSPATH_OPTION.equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.TARGET_NAMESPACE_OPTION.equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.TARGET_NAMESPACE_PREFIX_OPTION
+                            .equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_OPTION
+                            .equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION
+                            .equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.SERVICE_NAME_OPTION.equalsIgnoreCase(optionType) ||
 
-                       Java2WSDLConstants.CLASSNAME_OPTION_LONG.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.OUTPUT_FILENAME_OPTION_LONG.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.OUTPUT_LOCATION_OPTION_LONG.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.CLASSNAME_OPTION_LONG.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.CLASSPATH_OPTION_LONG.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.TARGET_NAMESPACE_OPTION_LONG.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.TARGET_NAMESPACE_PREFIX_OPTION_LONG.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_OPTION_LONG.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION_LONG.equalsIgnoreCase(optionType) ||
-                       Java2WSDLConstants.SERVICE_NAME_OPTION_LONG.equalsIgnoreCase(optionType));
+                    Java2WSDLConstants.CLASSNAME_OPTION_LONG.equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.OUTPUT_FILENAME_OPTION_LONG.equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.OUTPUT_LOCATION_OPTION_LONG.equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.CLASSNAME_OPTION_LONG.equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.CLASSPATH_OPTION_LONG.equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.TARGET_NAMESPACE_OPTION_LONG.equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.TARGET_NAMESPACE_PREFIX_OPTION_LONG
+                            .equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_OPTION_LONG
+                            .equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.SCHEMA_TARGET_NAMESPACE_PREFIX_OPTION_LONG
+                            .equalsIgnoreCase(optionType) ||
+                    Java2WSDLConstants.SERVICE_NAME_OPTION_LONG.equalsIgnoreCase(optionType));
 
         }
 

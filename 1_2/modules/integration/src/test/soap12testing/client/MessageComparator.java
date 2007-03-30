@@ -16,16 +16,6 @@
 
 package test.soap12testing.client;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.axiom.om.OMXMLParserWrapper;
 import org.apache.axiom.om.impl.exception.XMLComparisonException;
 import org.apache.axiom.om.util.StAXUtils;
@@ -37,31 +27,45 @@ import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+
 public class MessageComparator {
     //public static final String TEST_MAIN_DIR = "./modules/samples/";
     public static final String TEST_MAIN_DIR = "./";
-	private static final Log log = LogFactory.getLog(MessageComparator.class);
+    private static final Log log = LogFactory.getLog(MessageComparator.class);
 
     public boolean compare(String testNumber, InputStream replyMessage) {
         SOAPEnvelope replyMessageEnvelope;
         SOAPEnvelope requiredMessageEnvelope;
         try {
-            File file = new File(TEST_MAIN_DIR+"test-resources/SOAP12Testing/ReplyMessages/SOAP12ResT" + testNumber + ".xml");
+            File file = new File(TEST_MAIN_DIR +
+                    "test-resources/SOAP12Testing/ReplyMessages/SOAP12ResT" + testNumber + ".xml");
 
             //This step is needed to skip the headers :)
             parseTheHeaders(replyMessage, false);
 
-            XMLStreamReader requiredMessageParser = StAXUtils.createXMLStreamReader(new FileReader(file));
-            OMXMLParserWrapper requiredMessageBuilder = new StAXSOAPModelBuilder(requiredMessageParser,null);
-            requiredMessageEnvelope = (SOAPEnvelope) requiredMessageBuilder.getDocumentElement();
+            XMLStreamReader requiredMessageParser =
+                    StAXUtils.createXMLStreamReader(new FileReader(file));
+            OMXMLParserWrapper requiredMessageBuilder =
+                    new StAXSOAPModelBuilder(requiredMessageParser, null);
+            requiredMessageEnvelope = (SOAPEnvelope)requiredMessageBuilder.getDocumentElement();
 
             XMLStreamReader replyMessageParser = StAXUtils.createXMLStreamReader(replyMessage);
-            OMXMLParserWrapper replyMessageBuilder = new StAXSOAPModelBuilder(replyMessageParser,null);
-            replyMessageEnvelope = (SOAPEnvelope) replyMessageBuilder.getDocumentElement();
+            OMXMLParserWrapper replyMessageBuilder =
+                    new StAXSOAPModelBuilder(replyMessageParser, null);
+            replyMessageEnvelope = (SOAPEnvelope)replyMessageBuilder.getDocumentElement();
 
             SOAPComparator soapComparator = new SOAPComparator();
             //ignore elements that belong to the addressing namespace
-            soapComparator.addIgnorableNamespace("http://schemas.xmlsoap.org/ws/2004/08/addressing");
+            soapComparator
+                    .addIgnorableNamespace("http://schemas.xmlsoap.org/ws/2004/08/addressing");
 
             System.out.println("######################################################");
             requiredMessageEnvelope.serialize(System.out);
@@ -69,9 +73,9 @@ public class MessageComparator {
             System.out.println("-------------------------------------------------------");
             replyMessageEnvelope.serialize(System.out);
             System.out.println("");
-                   System.out.println("`######################################################");
+            System.out.println("`######################################################");
 
-            return soapComparator.compare(requiredMessageEnvelope,replyMessageEnvelope);
+            return soapComparator.compare(requiredMessageEnvelope, replyMessageEnvelope);
 
         } catch (XMLStreamException e) {
             log.info(e.getMessage());
@@ -86,57 +90,33 @@ public class MessageComparator {
     }
 
 
-    /**
-     * Field BEFORE_SEPARATOR
-     */
+    /** Field BEFORE_SEPARATOR */
     private static final int BEFORE_SEPARATOR = 3;
 
-    /**
-     * Field AFTER_SEPARATOR
-     */
+    /** Field AFTER_SEPARATOR */
     private static final int AFTER_SEPARATOR = 4;
 
-    /**
-     * Field lastRead
-     */
+    /** Field lastRead */
     private int lastRead = -1;
 
-    /**
-     * Field index
-     */
+    /** Field index */
     int index = 0;
 
-    /**
-     * Field buf
-     */
+    /** Field buf */
     private byte[] buf = new byte[1024];
 
-    /**
-     * Field length
-     */
+    /** Field length */
     int length = 0;
 
-    /**
-     * Field done
-     */
+    /** Field done */
     private boolean done = false;
 
     /**
-     * Parses following two styles of HTTP stuff
-     * Server Side
-     * POST /axis2/services/echo HTTP/1.0
-     * Content-Type: text/xml; charset=utf-8
-     * Accept: application/soap+xml, application/dime, multipart/related, text
-     * User-Agent: Axis/1.2RC1
-     * Host: 127.0.0.1:8081
-     * Cache-Control: no-cache
-     * Pragma: no-cache
-     * SOAPAction: ""
-     * Content-Length: 73507
-     * HTTP/1.1 200 OK
-     * Content-Type: text/xml;charset=utf-8
-     * Date: Sat, 12 Feb 2005 10:39:39 GMT
-     * Server: Apache-Coyote/1.1
+     * Parses following two styles of HTTP stuff Server Side POST /axis2/services/echo HTTP/1.0
+     * Content-Type: text/xml; charset=utf-8 Accept: application/soap+xml, application/dime,
+     * multipart/related, text User-Agent: Axis/1.2RC1 Host: 127.0.0.1:8081 Cache-Control: no-cache
+     * Pragma: no-cache SOAPAction: "" Content-Length: 73507 HTTP/1.1 200 OK Content-Type:
+     * text/xml;charset=utf-8 Date: Sat, 12 Feb 2005 10:39:39 GMT Server: Apache-Coyote/1.1
      * Connection: close
      *
      * @param in
@@ -208,7 +188,7 @@ public class MessageComparator {
                                     i++;    // ignore next space
                                 }
                             } else {
-                                str.append((char) buf[i]);
+                                str.append((char)buf[i]);
                             }
 
                             break;
@@ -220,7 +200,7 @@ public class MessageComparator {
                                 str = new StringBuffer();
                                 i = length;
                             } else {
-                                str.append((char) buf[i]);
+                                str.append((char)buf[i]);
                             }
 
                             break;
@@ -251,7 +231,7 @@ public class MessageComparator {
 
         try {
             while ((buf[index] != terminal) && (index < length)) {
-                str.append((char) buf[index]);
+                str.append((char)buf[index]);
                 index++;
             }
 
@@ -284,7 +264,7 @@ public class MessageComparator {
 
         while (c != -1) {
             if ((c != '\n') && (c != '\r')) {
-                b[off++] = (byte) c;
+                b[off++] = (byte)c;
                 count++;
                 c = is.read();
             } else {

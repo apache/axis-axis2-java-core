@@ -30,9 +30,12 @@ public class EchoIntArrayFaultClientUtil implements SunClientUtil {
         SOAPEnvelope reqEnv = omfactory.getDefaultEnvelope();
 
         OMNamespace omNs = omfactory.createOMNamespace("http://soapinterop.org/wsdl", "m");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
-        OMNamespace encNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
-        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "SOAP-ENV");
+        OMNamespace encNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        OMNamespace typeNs =
+                reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "m0");
 
         OMElement operation = omfactory.createOMElement("echoIntArrayFault", omNs);

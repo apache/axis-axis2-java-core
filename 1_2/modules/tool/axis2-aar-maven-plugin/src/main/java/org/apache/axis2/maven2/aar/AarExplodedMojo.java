@@ -26,11 +26,9 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @requiresDependencyResolution runtime
  */
 public class AarExplodedMojo
-    extends AbstractAarMojo
-{
-    public void execute() 
-      throws MojoExecutionException
-    {
+        extends AbstractAarMojo {
+    public void execute()
+            throws MojoExecutionException {
         buildExplodedAar();
     }
 }

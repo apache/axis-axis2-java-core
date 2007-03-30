@@ -1,11 +1,11 @@
 package org.apache.axis2.databinding.i18n;
 
-import org.apache.axis2.i18n.MessagesConstants;
 import org.apache.axis2.i18n.MessageBundle;
+import org.apache.axis2.i18n.MessagesConstants;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -23,7 +23,7 @@ import java.util.MissingResourceException;
  */
 
 public class ADBMessages {
-     private static Class thisClass = ADBMessages.class;
+    private static Class thisClass = ADBMessages.class;
 
     private static final String PROJECT_NAME = MessagesConstants.projectName;
 
@@ -35,17 +35,15 @@ public class ADBMessages {
 
     private static final ResourceBundle PARENT =
             (MessagesConstants.rootPackageName.equals(PACKAGE_NAME))
-            ? null
-            : MessagesConstants.rootBundle;
+                    ? null
+                    : MessagesConstants.rootBundle;
 
 
-    /**
-     * ** NO NEED TO CHANGE ANYTHING BELOW ****
-     */
+    /** ** NO NEED TO CHANGE ANYTHING BELOW **** */
 
     private static final MessageBundle messageBundle =
             new MessageBundle(PROJECT_NAME, PACKAGE_NAME, RESOURCE_NAME,
-                    LOCAL, CLASS_LOADER, PARENT);
+                              LOCAL, CLASS_LOADER, PARENT);
 
     /**
      * Gets a message from resource.properties from the package of the given object.
@@ -123,7 +121,8 @@ public class ADBMessages {
      * @param arg4 The argument to place in variable {4}
      * @return Returns the formatted message.
      */
-    public static String getMessage(String key, String arg0, String arg1, String arg2, String arg3, String arg4)
+    public static String getMessage(String key, String arg0, String arg1, String arg2, String arg3,
+                                    String arg4)
             throws MissingResourceException {
         return messageBundle.getMessage(key, arg0, arg1, arg2, arg3, arg4);
     }

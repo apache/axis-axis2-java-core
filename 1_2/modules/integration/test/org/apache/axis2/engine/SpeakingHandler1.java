@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import javax.xml.namespace.QName;
 
 public class SpeakingHandler1 extends AbstractHandler implements Handler {
-	private static final Log log = LogFactory.getLog(SpeakingHandler1.class);
+    private static final Log log = LogFactory.getLog(SpeakingHandler1.class);
     private String message;
     private String name;
 
@@ -50,7 +50,7 @@ public class SpeakingHandler1 extends AbstractHandler implements Handler {
 
     public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
         log.info("I am " + message + " Handler Running :)");
-        return InvocationResponse.CONTINUE;        
+        return InvocationResponse.CONTINUE;
     }
 
     public void revoke(MessageContext msgContext) {

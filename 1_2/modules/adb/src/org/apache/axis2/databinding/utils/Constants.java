@@ -1,8 +1,8 @@
 package org.apache.axis2.databinding.utils;
 
+import org.apache.axiom.om.OMConstants;
 import org.apache.axis2.databinding.utils.reader.OMAttribKey;
 import org.apache.axis2.databinding.utils.reader.OMElementKey;
-import org.apache.axiom.om.OMConstants;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -22,9 +22,9 @@ import org.apache.axiom.om.OMConstants;
 
 public interface Constants {
 
-    static  String NIL="nil";
-    static  String TRUE="true";
-    static  String XSI_NAMESPACE ="http://www.w3.org/2001/XMLSchema-instance";
+    static String NIL = "nil";
+    static String TRUE = "true";
+    static String XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
 
     static Object OM_ATTRIBUTE_KEY = new OMAttribKey();
     static Object OM_ELEMENT_KEY = new OMElementKey();

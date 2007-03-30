@@ -19,8 +19,6 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.util.Utils;
@@ -55,7 +53,8 @@ public class IntegrationTest extends TestCase {
     public static final QName SERVICE_NAME = new QName("Echo");
     public static final QName OPERATION_NAME = new QName("echo");
 
-    public static final String SAAJ_REPO = System.getProperty("basedir",".")+"/"+"target/test-resources/saaj-repo";
+    public static final String SAAJ_REPO =
+            System.getProperty("basedir", ".") + "/" + "target/test-resources/saaj-repo";
 
     public IntegrationTest(String name) {
         super(name);
@@ -71,8 +70,9 @@ public class IntegrationTest extends TestCase {
         return new TestSetup(new TestSuite(IntegrationTest.class)) {
             public void setUp() throws Exception {
                 port = UtilServer.start(SAAJ_REPO);
-                Parameter eneblemtom = new Parameter("enableMTOM","true");
-                UtilServer.getConfigurationContext().getAxisConfiguration().addParameter(eneblemtom);
+                Parameter eneblemtom = new Parameter("enableMTOM", "true");
+                UtilServer.getConfigurationContext().getAxisConfiguration()
+                        .addParameter(eneblemtom);
             }
 
             public void tearDown() throws Exception {
@@ -124,7 +124,7 @@ public class IntegrationTest extends TestCase {
         String responseStr = baos.toString();
 
         System.out.println("\n\n----------------------Message-------------------------\n" +
-                           responseStr);
+                responseStr);
         System.out.println("-------------------------------------------------------\n\n");
         assertTrue(responseStr.indexOf("This is some text") != -1);
         return responseStr;
@@ -145,7 +145,7 @@ public class IntegrationTest extends TestCase {
         request.addAttachmentPart(textAttach);
 
         //Attach a java.awt.Image object to the SOAP request
-        String jpgfilename = System.getProperty("basedir",".")+"/"+"test-resources/axis2.jpg";
+        String jpgfilename = System.getProperty("basedir", ".") + "/" + "test-resources/axis2.jpg";
         File myfile = new File(jpgfilename);
         FileDataSource fds = new FileDataSource(myfile);
         DataHandler imageDH = new DataHandler(fds);
@@ -165,22 +165,23 @@ public class IntegrationTest extends TestCase {
 
         int i = 0;
         while (attachIter.hasNext()) {
-            AttachmentPart attachment = (AttachmentPart) attachIter.next();
+            AttachmentPart attachment = (AttachmentPart)attachIter.next();
             final Object content = attachment.getDataHandler().getContent();
             if (content instanceof String) {
-                assertEquals(sampleMessage, (String) content);
+                assertEquals(sampleMessage, (String)content);
             } else if (content instanceof ByteArrayInputStream) {
-                ByteArrayInputStream bais = (ByteArrayInputStream) content;
+                ByteArrayInputStream bais = (ByteArrayInputStream)content;
                 byte[] b = new byte[15000];
                 final int lengthRead = bais.read(b);
                 FileOutputStream fos =
-                        new FileOutputStream(new File(System.getProperty("basedir",".")+"/"+"target/test-resources/result" + (i++) + ".jpg"));
+                        new FileOutputStream(new File(System.getProperty("basedir", ".") + "/" +
+                                "target/test-resources/result" + (i++) + ".jpg"));
                 fos.write(b, 0, lengthRead);
                 fos.flush();
                 fos.close();
 
                 assertTrue(attachment.getContentType().equals("image/jpeg")
-                           || attachment.getContentType().equals("text/plain"));
+                        || attachment.getContentType().equals("text/plain"));
             }
         }
 
@@ -199,10 +200,10 @@ public class IntegrationTest extends TestCase {
         String sampleMessage = "Sample Message: Hello World!";
         AttachmentPart textAttach = request.createAttachmentPart(sampleMessage, "text/plain");
         request.addAttachmentPart(textAttach);
-        
-        
+
         //Attach a java.awt.Image object to the SOAP request
-        String jpgfilename = System.getProperty("basedir",".")+"/"+"target/test-resources/axis2.jpg";
+        String jpgfilename =
+                System.getProperty("basedir", ".") + "/" + "target/test-resources/axis2.jpg";
         File myfile = new File(jpgfilename);
         FileDataSource fds = new FileDataSource(myfile);
         DataHandler imageDH = new DataHandler(fds);
@@ -210,7 +211,7 @@ public class IntegrationTest extends TestCase {
         jpegAttach.addMimeHeader("Content-Transfer-Encoding", "binary");
         jpegAttach.setContentType("image/jpg");
         request.addAttachmentPart(jpegAttach);
-        
+
 
         SOAPConnection sCon = SOAPConnectionFactory.newInstance().createConnection();
         SOAPMessage response = sCon.call(request, getAddress());
@@ -222,22 +223,23 @@ public class IntegrationTest extends TestCase {
 
         int i = 0;
         while (attachIter.hasNext()) {
-            AttachmentPart attachment = (AttachmentPart) attachIter.next();
+            AttachmentPart attachment = (AttachmentPart)attachIter.next();
             final Object content = attachment.getDataHandler().getContent();
             if (content instanceof String) {
-                assertEquals(sampleMessage, (String) content);
+                assertEquals(sampleMessage, (String)content);
             } else if (content instanceof ByteArrayInputStream) {
-                ByteArrayInputStream bais = (ByteArrayInputStream) content;
+                ByteArrayInputStream bais = (ByteArrayInputStream)content;
                 byte[] b = new byte[15000];
                 final int lengthRead = bais.read(b);
                 FileOutputStream fos =
-                        new FileOutputStream(new File(System.getProperty("basedir",".")+"/"+"target/target/test-resources/axis2.jpg"));
+                        new FileOutputStream(new File(System.getProperty("basedir", ".") + "/" +
+                                "target/target/test-resources/axis2.jpg"));
                 fos.write(b, 0, lengthRead);
                 fos.flush();
                 fos.close();
 
                 assertTrue(attachment.getContentType().equals("image/jpeg")
-                           || attachment.getContentType().equals("text/plain"));
+                        || attachment.getContentType().equals("text/plain"));
             }
         }
 
@@ -250,10 +252,13 @@ public class IntegrationTest extends TestCase {
         SOAPBody body = env.getBody();
 
         final SOAPHeader soapHeader = env.getHeader();
-        soapHeader.addHeaderElement(env.createName("TestHeader1", "swa", "http://fakeNamespace.org"));
-        soapHeader.addHeaderElement(env.createName("TestHeader2", "swa", "http://fakeNamespace.org"));
+        soapHeader
+                .addHeaderElement(env.createName("TestHeader1", "swa", "http://fakeNamespace.org"));
+        soapHeader
+                .addHeaderElement(env.createName("TestHeader2", "swa", "http://fakeNamespace.org"));
         final SOAPHeaderElement headerEle3 =
-                soapHeader.addHeaderElement(env.createName("TestHeader3", "swa", "http://fakeNamespace.org"));
+                soapHeader.addHeaderElement(
+                        env.createName("TestHeader3", "swa", "http://fakeNamespace.org"));
         final SOAPElement ch1 = headerEle3.addChildElement("he3", "swa");
         ch1.addTextNode("Im Header Element of header3");
 
@@ -293,7 +298,8 @@ public class IntegrationTest extends TestCase {
         SOAPHeader header = env.getHeader();
         header.addHeaderElement(env.createName("Header1",
                                                "pref",
-                                               "http://test.apach.org/test")).addTextNode("This is header1");
+                                               "http://test.apach.org/test"))
+                .addTextNode("This is header1");
 
         Name ns = env.createName("echo", "swa2", "http://fakeNamespace2.org");
         final SOAPBodyElement bodyElement = body.addBodyElement(ns);

@@ -16,13 +16,13 @@
 
 package org.apache.axis2.wsdl.codegen.extension;
 
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
 import org.apache.axis2.wsdl.databinding.TypeMapper;
 import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.util.ConfigPropertyFileLoader;
-import org.apache.axis2.description.AxisService;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.jaxme.generator.impl.GeneratorImpl;
 import org.apache.ws.jaxme.generator.sg.GroupSG;
@@ -45,9 +45,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-import java.util.Iterator;
 
 public class JaxMeExtension extends AbstractDBProcessingExtension {
     public static final String SCHEMA_FOLDER = "schemas";
@@ -75,8 +75,8 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
             List typesList = new ArrayList();
             List axisServices = configuration.getAxisServices();
             AxisService axisService = null;
-            for (Iterator iter = axisServices.iterator();iter.hasNext();){
-                axisService = (AxisService) iter.next();
+            for (Iterator iter = axisServices.iterator(); iter.hasNext();) {
+                axisService = (AxisService)iter.next();
                 typesList.addAll(axisService.getSchema());
             }
 
@@ -91,15 +91,15 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
 
 
             Vector xmlObjectsVector = new Vector();
-             //create the type mapper
-        //First try to take the one that is already there
-        TypeMapper mapper = configuration.getTypeMapper();
-        if (mapper==null){
-            mapper =new JavaTypeMapper();
-        }
+            //create the type mapper
+            //First try to take the one that is already there
+            TypeMapper mapper = configuration.getTypeMapper();
+            if (mapper == null) {
+                mapper = new JavaTypeMapper();
+            }
 
             for (int i = 0; i < typesList.size(); i++) {
-                XmlSchema schema = (XmlSchema) typesList.get(i);
+                XmlSchema schema = (XmlSchema)typesList.get(i);
                 xmlObjectsVector.add(new InputSource(new StringReader(getSchemaAsString(schema))));
             }
 
@@ -111,7 +111,8 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
 //                xmlObjectsVector.add(new InputSource(new StringReader(s)));
 //            }
 
-            File outputDir = new File(configuration.getOutputLocation(),configuration.getSourceLocation());
+            File outputDir =
+                    new File(configuration.getOutputLocation(), configuration.getSourceLocation());
 
             JAXBSchemaReader reader = new JAXBSchemaReader();
             reader.setSupportingExtensions(true);
@@ -122,26 +123,29 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
             generator.setSchemaReader(reader);
 
             for (int i = 0; i < xmlObjectsVector.size(); i++) {
-                SchemaSG sg = generator.generate((InputSource) xmlObjectsVector.elementAt(i));
+                SchemaSG sg = generator.generate((InputSource)xmlObjectsVector.elementAt(i));
                 ObjectSG[] elements = sg.getElements();
                 for (int j = 0; j < elements.length; j++) {
                     XsQName qName = elements[j].getName();
                     JavaQName name = elements[j].getClassContext().getXMLInterfaceName();
-                    mapper.addTypeMappingName(new QName(qName.getNamespaceURI(), qName.getLocalName()),
+                    mapper.addTypeMappingName(
+                            new QName(qName.getNamespaceURI(), qName.getLocalName()),
                             name.getPackageName() + '.' + name.getClassName());
                 }
                 TypeSG[] types = sg.getTypes();
                 for (int j = 0; j < types.length; j++) {
                     XsQName qName = types[j].getName();
                     JavaQName name = types[j].getRuntimeType();
-                    mapper.addTypeMappingName(new QName(qName.getNamespaceURI(), qName.getLocalName()),
+                    mapper.addTypeMappingName(
+                            new QName(qName.getNamespaceURI(), qName.getLocalName()),
                             name.getPackageName() + '.' + name.getClassName());
                 }
                 GroupSG[] groups = sg.getGroups();
                 for (int j = 0; j < groups.length; j++) {
                     XsQName qName = groups[j].getName();
                     JavaQName name = groups[j].getClassContext().getXMLInterfaceName();
-                    mapper.addTypeMappingName(new QName(qName.getNamespaceURI(), qName.getLocalName()),
+                    mapper.addTypeMappingName(
+                            new QName(qName.getNamespaceURI(), qName.getLocalName()),
                             name.getPackageName() + '.' + name.getClassName());
                 }
             }
@@ -173,7 +177,8 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
             for (int i = 0; i < schemaNames.length; i++) {
                 //the location for the third party schema;s is hardcoded
                 if (!"".equals(schemaNames[i].trim())) {
-                    InputStream schemaStream = this.getClass().getResourceAsStream(SCHEMA_PATH + schemaNames[i]);
+                    InputStream schemaStream =
+                            this.getClass().getResourceAsStream(SCHEMA_PATH + schemaNames[i]);
                     Document doc = documentBuilder.parse(schemaStream);
                     additionalSchemaElements.add(doc.getDocumentElement());
                 }
@@ -182,11 +187,12 @@ public class JaxMeExtension extends AbstractDBProcessingExtension {
             //Create the Schema element array
             schemaElements = new Element[additionalSchemaElements.size()];
             for (int i = 0; i < additionalSchemaElements.size(); i++) {
-                schemaElements[i] = (Element) additionalSchemaElements.get(i);
+                schemaElements[i] = (Element)additionalSchemaElements.get(i);
 
             }
         } catch (Exception e) {
-            throw new RuntimeException(CodegenMessages.getMessage("extension.additionalSchemaFailure"), e);
+            throw new RuntimeException(
+                    CodegenMessages.getMessage("extension.additionalSchemaFailure"), e);
         }
 
         return schemaElements;

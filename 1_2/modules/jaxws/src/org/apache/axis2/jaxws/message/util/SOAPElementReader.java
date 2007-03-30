@@ -16,44 +16,42 @@
  */
 package org.apache.axis2.jaxws.message.util;
 
+import org.apache.axis2.jaxws.message.util.impl.XMLStreamReaderFromDOM;
+
 import javax.xml.soap.SOAPElement;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.axis2.jaxws.message.util.impl.XMLStreamReaderFromDOM;
-
-/**
- * SOAPElementReader
- * Creates an XMLStreamReader backed by a SOAPElement tree.
- */
+/** SOAPElementReader Creates an XMLStreamReader backed by a SOAPElement tree. */
 public class SOAPElementReader extends Reader {
 
-	SOAPElement element;
-	
-	/**
-	 * @param reader
-	 * @param resettable
-	 */
-	public SOAPElementReader(SOAPElement element) {
-		super(_newReader(element), true);
-		
-		this.element = element;
-	}
+    SOAPElement element;
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.util.Reader#newReader()
-	 */
-	@Override
-	protected XMLStreamReader newReader() {
-		return _newReader(element);
-	}
+    /**
+     * @param reader
+     * @param resettable
+     */
+    public SOAPElementReader(SOAPElement element) {
+        super(_newReader(element), true);
 
-	/**
-	 * Utility method to get the stream reader
-	 * @param element
-	 * @return
-	 */
-	private static XMLStreamReader _newReader(SOAPElement element) {
-		// Construct a reader from an element
-		return new XMLStreamReaderFromDOM(element);
-	}
+        this.element = element;
+    }
+
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.util.Reader#newReader()
+      */
+    @Override
+    protected XMLStreamReader newReader() {
+        return _newReader(element);
+    }
+
+    /**
+     * Utility method to get the stream reader
+     *
+     * @param element
+     * @return
+     */
+    private static XMLStreamReader _newReader(SOAPElement element) {
+        // Construct a reader from an element
+        return new XMLStreamReaderFromDOM(element);
+    }
 }

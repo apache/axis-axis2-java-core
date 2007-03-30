@@ -22,11 +22,11 @@ import java.io.File;
 public class CSkelHeaderWriter extends CStubHeaderWriter {
 
     public CSkelHeaderWriter(String outputFileLocation) {
-        super ( outputFileLocation);
+        super(outputFileLocation);
     }
 
     public CSkelHeaderWriter(File outputFileLocation, String language) {
-        super ( outputFileLocation, language );
+        super(outputFileLocation, language);
     }
 
 }

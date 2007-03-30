@@ -21,15 +21,12 @@ package org.apache.axis2.jaxws.marshaller.impl.alt;
 import org.apache.axis2.jaxws.description.ParameterDescription;
 
 
-/**
- * A PDElement object holds a ParameterDescription and the matching 
- * Element object
- */
+/** A PDElement object holds a ParameterDescription and the matching Element object */
 public class PDElement {
     private ParameterDescription param;
     private Element element;
     private Class byJavaTypeClass;  // Class for "by java type" marshalling and unmarshalling is used....normally null
-    
+
     public PDElement(ParameterDescription param, Element element, Class byType) {
         super();
         this.param = param;
@@ -42,7 +39,7 @@ public class PDElement {
     }
 
     public Element getElement() {
-       
+
         return element;
     }
 

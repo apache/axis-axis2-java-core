@@ -16,24 +16,25 @@
 package org.apache.axis2.databinding.types;
 
 
-
 /**
  * Custom class for supporting XSD data type IDRef
- * 
+ *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#IDREF">XML Schema 3.3.10 IDREFS</a>
  */
 public class IDRef extends NCName {
-	
+
     private static final long serialVersionUID = 6821835065939868576L;
-    
-	public IDRef() {
+
+    public IDRef() {
         super();
     }
+
     /**
      * ctor for IDRef
-     * @exception IllegalArgumentException will be thrown if validation fails
+     *
+     * @throws IllegalArgumentException will be thrown if validation fails
      */
-    public IDRef (String stValue) throws IllegalArgumentException {
+    public IDRef(String stValue) throws IllegalArgumentException {
         super(stValue);
     }
 }

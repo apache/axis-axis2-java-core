@@ -17,8 +17,8 @@ package org.apache.axis2.xmlbeans;
 
 public class WSDL2Java5Test extends WSDL2JavaSuccessTestBase {
 
-     protected void setUp() throws Exception {
-        this.wsdlFileName =   "interoptestdoclitparameters.wsdl";
+    protected void setUp() throws Exception {
+        this.wsdlFileName = "interoptestdoclitparameters.wsdl";
         super.setUp();
     }
 

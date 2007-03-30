@@ -37,9 +37,9 @@ public class AntCodegenTask extends Task {
     private String output = ".";
     private String language = ConfigPropertyFileLoader.getDefaultLanguage();
     private String packageName = URLProcessor.DEFAULT_PACKAGE;
-    private String databindingName=ConfigPropertyFileLoader.getDefaultDBFrameworkName();
-    private String portName=null;
-    private String serviceName=null;
+    private String databindingName = ConfigPropertyFileLoader.getDefaultDBFrameworkName();
+    private String portName = null;
+    private String serviceName = null;
 
     private boolean asyncOnly = false;
     private boolean syncOnly = false;
@@ -48,7 +48,7 @@ public class AntCodegenTask extends Task {
     private boolean generateServiceXml = false;
     private boolean generateAllClasses = false;
     private boolean unpackClasses = false;
-    private boolean serverSideInterface  = false;
+    private boolean serverSideInterface = false;
 
     private String repositoryPath = null;
     private String externalMapping = null;
@@ -62,8 +62,6 @@ public class AntCodegenTask extends Task {
     private Path classpath;
 
 
-
-
     /**
      * 
      */
@@ -74,6 +72,7 @@ public class AntCodegenTask extends Task {
 
     /**
      * Sets the classpath.
+     *
      * @return Returns Path.
      */
     public Path createClasspath() {
@@ -85,7 +84,7 @@ public class AntCodegenTask extends Task {
     }
 
     /**
-     * Set the reference to an optional classpath 
+     * Set the reference to an optional classpath
      *
      * @param r the id of the Ant path instance to act as the classpath
      */
@@ -93,26 +92,17 @@ public class AntCodegenTask extends Task {
         createClasspath().setRefid(r);
     }
 
-    /**
-     *
-     * @return
-     */
+    /** @return  */
     public boolean isServerSideInterface() {
         return serverSideInterface;
     }
 
-    /**
-     *
-     * @param serverSideInterface
-     */
+    /** @param serverSideInterface  */
     public void setServerSideInterface(boolean serverSideInterface) {
         this.serverSideInterface = serverSideInterface;
     }
 
-    /**
-     * Fills the option map. This map is passed onto
-     * the code generation API to generate the code.
-     */
+    /** Fills the option map. This map is passed onto the code generation API to generate the code. */
     private Map fillOptionMap() {
         Map optionMap = new HashMap();
 
@@ -123,59 +113,59 @@ public class AntCodegenTask extends Task {
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
                         getStringArray(wsdlFileName)));
-        
+
         //WSDL version
         if (wsdlVersion != null) {
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION,
-                        getStringArray(wsdlVersion)));
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_OPTION,
+                            getStringArray(wsdlVersion)));
         }
 
         // repository path
         if (repositoryPath != null) {
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.REPOSITORY_PATH_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.REPOSITORY_PATH_OPTION,
-                        getStringArray(repositoryPath)));
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.REPOSITORY_PATH_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.REPOSITORY_PATH_OPTION,
+                            getStringArray(repositoryPath)));
         }
 
         // external mapping
         if (externalMapping != null) {
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION,
-                        getStringArray(externalMapping)));
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.EXTERNAL_MAPPING_OPTION,
+                            getStringArray(externalMapping)));
         }
 
         // target source folder location
         if (targetSourceFolderLocation != null) {
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
-                        getStringArray(targetSourceFolderLocation)));
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.SOURCE_FOLDER_NAME_OPTION,
+                            getStringArray(targetSourceFolderLocation)));
         }
 
         // target source folder location
         if (targetResourcesFolderLocation != null) {
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.RESOURCE_FOLDER_OPTION,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.RESOURCE_FOLDER_OPTION,
-                        getStringArray(targetResourcesFolderLocation)));
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.RESOURCE_FOLDER_OPTION,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.RESOURCE_FOLDER_OPTION,
+                            getStringArray(targetResourcesFolderLocation)));
         }
 
         // target source folder location
         if (unwrap) {
-        optionMap.put(
-                CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
-                new CommandLineOption(
-                        CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
-                        new String[0]));
+            optionMap.put(
+                    CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
+                    new CommandLineOption(
+                            CommandLineOptionConstants.WSDL2JavaConstants.UNWRAP_PARAMETERS,
+                            new String[0]));
         }
 
         //output location
@@ -222,7 +212,6 @@ public class AntCodegenTask extends Task {
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.STUB_LANGUAGE_OPTION,
                         getStringArray(language)));
-
 
         //server side and generate services.xml options
         if (serverSide) {
@@ -284,25 +273,26 @@ public class AntCodegenTask extends Task {
                 CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.SERVICE_NAME_OPTION,
-                        new String[]{serviceName}));
+                        new String[] { serviceName }));
 
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.PORT_NAME_OPTION,
-                        new String[]{portName}));
+                        new String[] { portName }));
         // set the namespaces
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.NAME_SPACE_TO_PACKAGE_OPTION,
-                        new String[]{namespaceToPackages}));
+                        new String[] { namespaceToPackages }));
 
         return optionMap;
     }
 
     /**
      * Utility method to convert a string into a single item string[]
+     *
      * @param value
      * @return Returns String[].
      */
@@ -415,16 +405,12 @@ public class AntCodegenTask extends Task {
         this.unwrap = unwrap;
     }
 
-    /**
-     * @return Returns Path.
-     */
+    /** @return Returns Path. */
     public Path getClasspath() {
         return classpath;
     }
 
-    /**
-     * @param path
-     */
+    /** @param path  */
     public void setClasspath(Path path) {
         classpath = path;
     }

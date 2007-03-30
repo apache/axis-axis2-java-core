@@ -8,8 +8,6 @@
 
 package org.apache.axis2.jaxws.description.xml.handler;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -18,20 +16,19 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * 
- * 
- * 	The listenerType indicates the deployment properties for a web
- * 	application listener bean.
- * 
- *       
- * 
+ * The listenerType indicates the deployment properties for a web application listener bean.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for listenerType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="listenerType">
  *   &lt;complexContent>
@@ -45,25 +42,25 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "listenerType", propOrder = {
-    "description",
-    "displayName",
-    "icon",
-    "listenerClass"
-})
+        "description",
+        "displayName",
+        "icon",
+        "listenerClass"
+        })
 public class ListenerType {
 
     @XmlElement(namespace = "http://java.sun.com/xml/ns/javaee", required = true)
     protected List<DescriptionType> description;
-    @XmlElement(name = "display-name", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "display-name", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected List<DisplayNameType> displayName;
     @XmlElement(namespace = "http://java.sun.com/xml/ns/javaee", required = true)
     protected List<IconType> icon;
-    @XmlElement(name = "listener-class", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "listener-class", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected FullyQualifiedClassType listenerClass;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -72,25 +69,21 @@ public class ListenerType {
 
     /**
      * Gets the value of the description property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the description property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link DescriptionType }
      */
     public List<DescriptionType> getDescription() {
         if (description == null) {
@@ -101,25 +94,21 @@ public class ListenerType {
 
     /**
      * Gets the value of the displayName property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the displayName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the displayName property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDisplayName().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DisplayNameType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link DisplayNameType }
      */
     public List<DisplayNameType> getDisplayName() {
         if (displayName == null) {
@@ -130,25 +119,21 @@ public class ListenerType {
 
     /**
      * Gets the value of the icon property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the icon property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the icon property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIcon().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link IconType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link IconType }
      */
     public List<IconType> getIcon() {
         if (icon == null) {
@@ -159,11 +144,8 @@ public class ListenerType {
 
     /**
      * Gets the value of the listenerClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FullyQualifiedClassType }
-     *     
+     *
+     * @return possible object is {@link FullyQualifiedClassType }
      */
     public FullyQualifiedClassType getListenerClass() {
         return listenerClass;
@@ -171,11 +153,8 @@ public class ListenerType {
 
     /**
      * Sets the value of the listenerClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FullyQualifiedClassType }
-     *     
+     *
+     * @param value allowed object is {@link FullyQualifiedClassType }
      */
     public void setListenerClass(FullyQualifiedClassType value) {
         this.listenerClass = value;
@@ -183,11 +162,8 @@ public class ListenerType {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -195,11 +171,8 @@ public class ListenerType {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;

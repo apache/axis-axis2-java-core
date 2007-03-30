@@ -33,17 +33,21 @@ public class Round2EchoStringArrayClientUtil implements SunClientUtil {
 
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
-        OMNamespace encNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
-        OMNamespace typeNs = reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+        OMNamespace encNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace typeNs =
+                reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
-        OMElement operation = omfactory.createOMElement("echoStringArray", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoStringArray", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
         operation.declareNamespace(envNs);
         operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);
 
         OMElement part = omfactory.createOMElement("inputStringArray", null);
-       // part.declareNamespace(typeNs);
+        // part.declareNamespace(typeNs);
         part.declareNamespace(encNs);
         part.addAttribute("xsi:type", "SOAP-ENC:Array", null);
         part.addAttribute("arrayType", "xsd:string[3]", encNs);
@@ -66,7 +70,7 @@ public class Round2EchoStringArrayClientUtil implements SunClientUtil {
         part.addChild(value2);
 
         operation.addChild(part);
-        
+
         return reqEnv;
     }
 }

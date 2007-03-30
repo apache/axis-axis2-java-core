@@ -16,17 +16,15 @@
 
 package org.apache.axis2.wsdl.databinding;
 
-import org.apache.axiom.om.OMElement;
-
 import javax.xml.namespace.QName;
 import java.util.Map;
 
 public interface TypeMapper {
 
-   
 
     /**
      * Returns whether the mapping is the object type or the normal class name type
+     *
      * @return Returns boolean.
      */
     public boolean isObjectMappingPresent();
@@ -43,10 +41,10 @@ public interface TypeMapper {
      * Gets the type mapping Object.
      *
      * @param qname name of the XML element to be mapped
-     * @return Returns an Object that represents the particular class in a pre specified form.
-     *         It can be a specific format to the databinding framework used.
-     *         This allows tight integrations with the databinding framework, allowing the emitter
-     *         to write the databinding classes in its own way.
+     * @return Returns an Object that represents the particular class in a pre specified form. It
+     *         can be a specific format to the databinding framework used. This allows tight
+     *         integrations with the databinding framework, allowing the emitter to write the
+     *         databinding classes in its own way.
      */
     public Object getTypeMappingObject(QName qname);
 
@@ -76,48 +74,40 @@ public interface TypeMapper {
      */
     public void addTypeMappingObject(QName qname, Object value);
 
-    /**
-     * @return Returns a map containing all type mapping names
-     * i.e. Qname to  classname
-     */
+    /** @return Returns a map containing all type mapping names i.e. Qname to  classname */
     public Map getAllMappedNames();
 
-    /**
-     * @return Returns a map containing all type mapping model objects
-     * i.e. Qname to model objects
-     */
+    /** @return Returns a map containing all type mapping model objects i.e. Qname to model objects */
     public Map getAllMappedObjects();
 
-    /**
-     *
-     * @return the default mapping name for this type mapper
-     */
+    /** @return the default mapping name for this type mapper */
     public String getDefaultMappingName();
 
     /**
-     * Sets the default type mapping - the databinders may
-     * change the default mapping to suit their default
-     * mapping
+     * Sets the default type mapping - the databinders may change the default mapping to suit their
+     * default mapping
+     *
      * @param defaultMapping
      */
     public void setDefaultMappingName(String defaultMapping);
 
 
     /**
-     * Allows the storage of a status object with a mapping to
-     * the qname. This may be used to store certain status information
-     * that will be used by different type mappers. A given type mapper
+     * Allows the storage of a status object with a mapping to the qname. This may be used to store
+     * certain status information that will be used by different type mappers. A given type mapper
      * may choose not to implement this!
+     *
      * @param qname
      * @param status
      */
-    public void addTypeMappingStatus(QName qName,Object status);
+    public void addTypeMappingStatus(QName qName, Object status);
 
     /**
      * Returns the relevant status object given the qName of the xml element
-     * @see #addTypeMappingStatus(javax.xml.namespace.QName, Object)
+     *
      * @param qName
      * @return the status object
+     * @see #addTypeMappingStatus(javax.xml.namespace.QName, Object)
      */
     public Object getTypeMappingStatus(QName qName);
 }

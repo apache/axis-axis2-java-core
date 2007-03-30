@@ -18,7 +18,6 @@ package org.apache.axis2.engine;
 
 //todo
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMAbstractFactory;
@@ -28,7 +27,6 @@ import org.apache.axiom.om.util.StAXUtils;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
@@ -45,12 +43,11 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.stream.XMLOutputFactory;
 import java.util.ArrayList;
 
 
 public class HandlerFailureTest extends UtilServerBasedTestCase implements TestConstants {
-	private static final Log log = LogFactory.getLog(HandlerFailureTest.class);
+    private static final Log log = LogFactory.getLog(HandlerFailureTest.class);
 
     public HandlerFailureTest() {
         super(HandlerFailureTest.class.getName());
@@ -68,8 +65,8 @@ public class HandlerFailureTest extends UtilServerBasedTestCase implements TestC
     public void testFailureAtServerRequestFlow() throws Exception {
 
         AxisService service = Utils.createSimpleService(serviceName,
-                Echo.class.getName(),
-                operationName);
+                                                        Echo.class.getName(),
+                                                        operationName);
 
         UtilServer.deployService(service);
         AxisOperation operation = service.getOperation(operationName);
@@ -78,7 +75,7 @@ public class HandlerFailureTest extends UtilServerBasedTestCase implements TestC
         operation.setRemainingPhasesInFlow(phasec);
         ArrayList phase = operation.getRemainingPhasesInFlow();
         for (int i = 0; i < phase.size(); i++) {
-            Phase phase1 = (Phase) phase.get(i);
+            Phase phase1 = (Phase)phase.get(i);
             if (PhaseMetadata.PHASE_POLICY_DETERMINATION.equals(phase1.getPhaseName())) {
                 phase1.addHandler(culprit);
             }
@@ -95,7 +92,7 @@ public class HandlerFailureTest extends UtilServerBasedTestCase implements TestC
             SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
 
             OMNamespace omNs = fac.createOMNamespace("http://localhost/my",
-                    "my");
+                                                     "my");
             OMElement method = fac.createOMElement("echoOMElement", omNs);
             OMElement value = fac.createOMElement("myValue", omNs);
             value.setText("Isaac Asimov, The Foundation Trilogy");
@@ -104,7 +101,8 @@ public class HandlerFailureTest extends UtilServerBasedTestCase implements TestC
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
             options.setTo(targetEPR);
             ConfigurationContext configContext =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(null,null);
+                    ConfigurationContextFactory
+                            .createConfigurationContextFromFileSystem(null, null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
 

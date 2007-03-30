@@ -4,11 +4,10 @@ import org.apache.axiom.om.OMDataSource;
 import org.apache.axiom.om.OMOutputFormat;
 import org.apache.axiom.om.util.StAXUtils;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.OutputStream;
 import java.io.Writer;
 /*
@@ -33,19 +32,20 @@ public abstract class ADBDataSource implements OMDataSource {
 
     /**
      * Constructor taking in an ADBBean
+     *
      * @param bean
      */
-    protected ADBDataSource(ADBBean bean,QName parentQName) {
+    protected ADBDataSource(ADBBean bean, QName parentQName) {
         this.bean = bean;
         this.parentQName = parentQName;
     }
 
 
     /**
-     * @see OMDataSource#serialize(java.io.OutputStream, org.apache.axiom.om.OMOutputFormat)
      * @param output
      * @param format
      * @throws XMLStreamException
+     * @see OMDataSource#serialize(java.io.OutputStream, org.apache.axiom.om.OMOutputFormat)
      */
     public void serialize(OutputStream output, OMOutputFormat format) throws XMLStreamException {
         XMLStreamWriter xmlStreamWriter = StAXUtils.createXMLStreamWriter(output);
@@ -54,10 +54,10 @@ public abstract class ADBDataSource implements OMDataSource {
     }
 
     /**
-     * @see OMDataSource#serialize(java.io.Writer, org.apache.axiom.om.OMOutputFormat)
      * @param writer
      * @param format
      * @throws XMLStreamException
+     * @see OMDataSource#serialize(java.io.Writer, org.apache.axiom.om.OMOutputFormat)
      */
     public void serialize(Writer writer, OMOutputFormat format) throws XMLStreamException {
         serialize(StAXUtils.createXMLStreamWriter(writer));
@@ -65,17 +65,18 @@ public abstract class ADBDataSource implements OMDataSource {
 
     /**
      * This needs to be generated inside the ADB bean
-     * @see OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
+     *
      * @param xmlWriter
      * @throws XMLStreamException
+     * @see OMDataSource#serialize(javax.xml.stream.XMLStreamWriter)
      */
     public abstract void serialize(XMLStreamWriter xmlWriter)
             throws XMLStreamException;
 
 
     /**
-     * @see org.apache.axiom.om.OMDataSource#getReader()
      * @throws XMLStreamException
+     * @see org.apache.axiom.om.OMDataSource#getReader()
      */
     public XMLStreamReader getReader() throws XMLStreamException {
         // since only ADBBeans related to elements can be serialized

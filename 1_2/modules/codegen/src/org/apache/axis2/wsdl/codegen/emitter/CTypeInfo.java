@@ -15,19 +15,17 @@
  */
 package org.apache.axis2.wsdl.codegen.emitter;
 
-import org.apache.axis2.databinding.types.*;
 import org.apache.axis2.namespace.Constants;
 
 import javax.xml.namespace.QName;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- * The java type map. uses a static map for caching
- * Most code from Axis 1 Codebase*
- * Most code JavaTypeMap
+ * The java type map. uses a static map for caching Most code from Axis 1 Codebase* Most code
+ * JavaTypeMap
  */
-public class CTypeInfo extends Constants{
+public class CTypeInfo extends Constants {
 
     public static Map getTypeMap() {
         return CTypeInfo.typeMap;
@@ -38,97 +36,97 @@ public class CTypeInfo extends Constants{
     static {
         // If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
         CTypeInfo.addTypemapping(XSD_STRING,
-                "axis2_char_t*");
+                                 "axis2_char_t*");
 
         // The XSD Primitives are mapped to java primitives.
-        CTypeInfo.addTypemapping(XSD_BOOLEAN,"axis2_bool_t");
+        CTypeInfo.addTypemapping(XSD_BOOLEAN, "axis2_bool_t");
         CTypeInfo.addTypemapping(XSD_DOUBLE, "double");
         CTypeInfo.addTypemapping(XSD_FLOAT, "float");
         CTypeInfo.addTypemapping(XSD_INT, "int");
         CTypeInfo.addTypemapping(XSD_INTEGER,
-                "int");
+                                 "int");
         CTypeInfo.addTypemapping(XSD_LONG, "long");
         CTypeInfo.addTypemapping(XSD_SHORT, "short");
         CTypeInfo.addTypemapping(XSD_BYTE, "axis2_byte_t");
-        CTypeInfo.addTypemapping(XSD_ANY,  "axiom_node_t*");
+        CTypeInfo.addTypemapping(XSD_ANY, "axiom_node_t*");
         CTypeInfo.addTypemapping(XSD_DECIMAL, "int");
 
         //anytype is mapped to the OMElement instead of the java.lang.Object
         CTypeInfo.addTypemapping(XSD_ANYTYPE,
-                "axiom_node_t*");
+                                 "axiom_node_t*");
 
         //Qname maps to  jax rpc QName class
         CTypeInfo.addTypemapping(XSD_QNAME,
-                "axis2_qname_t*");
+                                 "axis2_qname_t*");
 
         //xsd Date is mapped to the java.util.date!
         CTypeInfo.addTypemapping(XSD_DATE,
-                "axis2_date_time_t*");
+                                 "axis2_date_time_t*");
 
         // Mapping for xsd:time.  Map to Axis type Time
         CTypeInfo.addTypemapping(XSD_TIME,
-                "axis2_date_time_t*");
+                                 "axis2_date_time_t*");
         CTypeInfo.addTypemapping(XSD_DATETIME,
-                "axis2_date_time_t*");
+                                 "axis2_date_time_t*");
 
         //as for the base 64 encoded binary stuff we map it to a javax.
         // activation.Datahandler object
         CTypeInfo.addTypemapping(XSD_BASE64,
-                "axis2_base64_binary_t*");
+                                 "axis2_base64_binary_t*");
 
         CTypeInfo.addTypemapping(XSD_HEXBIN,
-                "void*");
+                                 "void*");
 
         // These are the g* types (gYearMonth, etc) which map to Axis types
         CTypeInfo.addTypemapping(XSD_YEARMONTH,
-                "int");
+                                 "int");
         CTypeInfo.addTypemapping(XSD_YEAR,
-                "int");
+                                 "int");
         CTypeInfo.addTypemapping(XSD_MONTH,
-                "int");
+                                 "int");
         CTypeInfo.addTypemapping(XSD_DAY,
-                "int");
+                                 "int");
         CTypeInfo.addTypemapping(XSD_MONTHDAY,
-                "int");
+                                 "int");
 
         // xsd:token
         CTypeInfo.addTypemapping(XSD_TOKEN, "axis2_char_t*");
 
         // a xsd:normalizedString
         CTypeInfo.addTypemapping(XSD_NORMALIZEDSTRING,
-                "axis2_char_t*");
+                                 "axis2_char_t*");
 
         // a xsd:unsignedLong
         CTypeInfo.addTypemapping(XSD_UNSIGNEDLONG,
-                "unsigned long");
+                                 "unsigned long");
 
         // a xsd:unsignedInt
         CTypeInfo.addTypemapping(XSD_UNSIGNEDINT,
-                "unsigned int");
+                                 "unsigned int");
 
         // a xsd:unsignedShort
         CTypeInfo.addTypemapping(XSD_UNSIGNEDSHORT,
-                "unsigned short");
+                                 "unsigned short");
 
         // a xsd:unsignedByte
         CTypeInfo.addTypemapping(XSD_UNSIGNEDBYTE,
-                "unsigned char");
+                                 "unsigned char");
 
         // a xsd:nonNegativeInteger
         CTypeInfo.addTypemapping(XSD_NONNEGATIVEINTEGER,
-                "unsigned int");
+                                 "unsigned int");
 
         // a xsd:negativeInteger
         CTypeInfo.addTypemapping(XSD_NEGATIVEINTEGER,
-                "int");
+                                 "int");
 
         // a xsd:positiveInteger
         CTypeInfo.addTypemapping(XSD_POSITIVEINTEGER,
-                "unsigned int");
+                                 "unsigned int");
 
         // a xsd:nonPositiveInteger
         CTypeInfo.addTypemapping(XSD_NONPOSITIVEINTEGER,
-                "int");
+                                 "int");
 
         // a xsd:Name
         CTypeInfo.addTypemapping(XSD_NAME, "axiom_node_t*");
@@ -171,7 +169,7 @@ public class CTypeInfo extends Constants{
 
         // a xsd:anyURI
         CTypeInfo.addTypemapping(XSD_ANYURI,
-                "axis2_uri_t*");
+                                 "axis2_uri_t*");
 
 
     }

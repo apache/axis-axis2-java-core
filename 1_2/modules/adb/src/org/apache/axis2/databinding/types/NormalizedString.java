@@ -17,25 +17,25 @@ package org.apache.axis2.databinding.types;
 
 
 /**
- * Custom class for supporting XSD data type NormalizedString.
- * normalizedString represents white space normalized strings.
- * The base type of normalizedString is string.
+ * Custom class for supporting XSD data type NormalizedString. normalizedString represents white
+ * space normalized strings. The base type of normalizedString is string.
  *
- * @see <a href="http://www.w3.org/TR/xmlschema-2/#normalizedString">XML Schema Part 2: Datatypes 3.3.1</a>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#normalizedString">XML Schema Part 2: Datatypes
+ *      3.3.1</a>
  */
 public class NormalizedString implements java.io.Serializable {
 
     private static final long serialVersionUID = -290878151870399401L;
-    
-	String m_value;   // JAX-RPC maps xsd:string to java.lang.String
+
+    String m_value;   // JAX-RPC maps xsd:string to java.lang.String
 
     public NormalizedString() {
         super();
     }
 
     /**
-     *
      * ctor for NormalizedString
+     *
      * @param stValue is the String value
      * @throws IllegalArgumentException if invalid format
      */
@@ -44,8 +44,8 @@ public class NormalizedString implements java.io.Serializable {
     }
 
     /**
-     *
      * validates the data and sets the value for the object.
+     *
      * @param stValue String value
      * @throws IllegalArgumentException if invalid format
      */
@@ -53,32 +53,30 @@ public class NormalizedString implements java.io.Serializable {
         if (!NormalizedString.isValid(stValue))
             throw new IllegalArgumentException(
 //               Messages.getMessage("badNormalizedString00") +
-               " data=[" + stValue + "]");
+" data=[" + stValue + "]");
         m_value = stValue;
     }
 
-    public String toString(){
+    public String toString() {
         return m_value;
     }
 
-    public int hashCode(){
+    public int hashCode() {
         return m_value.hashCode();
     }
 
     /**
-     *
      * validate the value against the xsd definition for the object
-     *
-     * The value space of normalizedString is the set of strings that
-     * do not contain the carriage return (#xD), line feed (#xA) nor
-     * tab (#x9) characters. The lexical space of normalizedString is
-     * the set of strings that do not contain the carriage return (#xD)
-     * nor tab (#x9) characters.
+     * <p/>
+     * The value space of normalizedString is the set of strings that do not contain the carriage
+     * return (#xD), line feed (#xA) nor tab (#x9) characters. The lexical space of normalizedString
+     * is the set of strings that do not contain the carriage return (#xD) nor tab (#x9)
+     * characters.
      *
      * @param stValue the String to test
      * @return Returns true if valid normalizedString.
      */
-    public static boolean isValid(String stValue)  {
+    public static boolean isValid(String stValue) {
         int scan;
 
         for (scan = 0; scan < stValue.length(); scan++) {
@@ -95,7 +93,7 @@ public class NormalizedString implements java.io.Serializable {
         return true;
     }
 
-    public boolean equals(Object object)  {
+    public boolean equals(Object object) {
         String s1 = object.toString();
         return s1.equals(m_value);
     }

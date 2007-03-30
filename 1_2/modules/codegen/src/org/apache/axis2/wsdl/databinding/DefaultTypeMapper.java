@@ -17,22 +17,16 @@
 
 package org.apache.axis2.wsdl.databinding;
 
-import org.apache.axis2.namespace.Constants;
-import org.apache.axis2.wsdl.i18n.CodegenMessages;
-
 import javax.xml.namespace.QName;
 
-/**
- * The default type mapper. This type mapper has no default configurations
- */
+/** The default type mapper. This type mapper has no default configurations */
 public class DefaultTypeMapper extends TypeMappingAdapter {
 
     public DefaultTypeMapper() {
     }
 
     /**
-     * Gets the type mapping name.
-     * always returns the default mapping
+     * Gets the type mapping name. always returns the default mapping
      *
      * @see TypeMapper#getTypeMappingName(javax.xml.namespace.QName)
      */
@@ -40,7 +34,7 @@ public class DefaultTypeMapper extends TypeMappingAdapter {
 
         if ((qname != null)) {
             return defaultClassName;
-        }else{
+        } else {
             return null;
         }
 

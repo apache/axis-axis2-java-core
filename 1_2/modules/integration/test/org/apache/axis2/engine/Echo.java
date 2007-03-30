@@ -21,13 +21,12 @@ import org.apache.axiom.om.OMText;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * @version $Rev: $ $Date: $
- */
+/** @version $Rev: $ $Date: $ */
 
 public class Echo {
 
-	private static final Log log = LogFactory.getLog(Echo.class);
+    private static final Log log = LogFactory.getLog(Echo.class);
+
     public Echo() {
     }
 
@@ -40,14 +39,15 @@ public class Echo {
     }
 
     public OMElement echoOMElement(OMElement omEle) {
-    	omEle.buildWithAttachments();
+        omEle.buildWithAttachments();
         omEle.setLocalName(omEle.getLocalName() + "Response");
-        if(omEle.getFirstElement().getText().trim().startsWith("fault")){
+        if (omEle.getFirstElement().getText().trim().startsWith("fault")) {
             throw new RuntimeException("fault string found in echoOMElement");
         }
         return omEle;
     }
-     public OMElement echoOM(OMElement omEle) {
+
+    public OMElement echoOM(OMElement omEle) {
         return omEle;
     }
 
@@ -60,7 +60,7 @@ public class Echo {
     }
 
     public OMElement echoMTOMtoBase64(OMElement omEle) {
-        OMText omText =  (OMText) (omEle.getFirstElement()).getFirstOMChild();
+        OMText omText = (OMText)(omEle.getFirstElement()).getFirstOMChild();
         omText.setOptimize(false);
         return omEle;
     }

@@ -19,16 +19,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * 
- * 
- * 	This type adds an "id" attribute to xsd:anyURI.
- * 
- *       
- * 
+ * This type adds an "id" attribute to xsd:anyURI.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for xsdAnyURIType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="xsdAnyURIType">
  *   &lt;simpleContent>
@@ -38,13 +36,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "xsdAnyURIType", propOrder = {
-    "value"
-})
+        "value"
+        })
 public class XsdAnyURIType {
 
     @XmlValue
@@ -56,11 +52,8 @@ public class XsdAnyURIType {
 
     /**
      * Gets the value of the value property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getValue() {
         return value;
@@ -68,11 +61,8 @@ public class XsdAnyURIType {
 
     /**
      * Sets the value of the value property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setValue(java.lang.String value) {
         this.value = value;
@@ -80,11 +70,8 @@ public class XsdAnyURIType {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -92,11 +79,8 @@ public class XsdAnyURIType {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;

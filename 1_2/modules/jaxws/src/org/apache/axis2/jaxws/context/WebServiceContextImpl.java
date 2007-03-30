@@ -18,44 +18,44 @@
  */
 package org.apache.axis2.jaxws.context;
 
-import java.security.Principal;
-
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import java.security.Principal;
 
 public class WebServiceContextImpl implements WebServiceContext {
 
-	private MessageContext soapMessageContext;
-	public WebServiceContextImpl() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    private MessageContext soapMessageContext;
 
-	/* (non-Javadoc)
-	 * @see javax.xml.ws.WebServiceContext#getMessageContext()
-	 */
-	public MessageContext getMessageContext() {
-		return soapMessageContext;
-	}
+    public WebServiceContextImpl() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
-	/* (non-Javadoc)
-	 * @see javax.xml.ws.WebServiceContext#getUserPrincipal()
-	 */
-	public Principal getUserPrincipal() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    /* (non-Javadoc)
+      * @see javax.xml.ws.WebServiceContext#getMessageContext()
+      */
+    public MessageContext getMessageContext() {
+        return soapMessageContext;
+    }
 
-	/* (non-Javadoc)
-	 * @see javax.xml.ws.WebServiceContext#isUserInRole(java.lang.String)
-	 */
-	public boolean isUserInRole(String s) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	public void setSoapMessageContext(MessageContext soapMessageContext){
-		this.soapMessageContext = soapMessageContext;
-	}
+    /* (non-Javadoc)
+      * @see javax.xml.ws.WebServiceContext#getUserPrincipal()
+      */
+    public Principal getUserPrincipal() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+      * @see javax.xml.ws.WebServiceContext#isUserInRole(java.lang.String)
+      */
+    public boolean isUserInRole(String s) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public void setSoapMessageContext(MessageContext soapMessageContext) {
+        this.soapMessageContext = soapMessageContext;
+    }
 
 }

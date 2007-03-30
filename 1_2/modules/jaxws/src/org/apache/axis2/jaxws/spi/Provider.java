@@ -18,11 +18,10 @@
  */
 package org.apache.axis2.jaxws.spi;
 
-import java.net.URL;
-
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.spi.ServiceDelegate;
+import java.net.URL;
 
 public class Provider extends javax.xml.ws.spi.Provider {
 
@@ -38,7 +37,7 @@ public class Provider extends javax.xml.ws.spi.Provider {
     }
 
     @Override
-    public ServiceDelegate createServiceDelegate(URL url, QName qname, Class clazz){
+    public ServiceDelegate createServiceDelegate(URL url, QName qname, Class clazz) {
         return new org.apache.axis2.jaxws.spi.ServiceDelegate(url, qname, clazz);
     }
 }

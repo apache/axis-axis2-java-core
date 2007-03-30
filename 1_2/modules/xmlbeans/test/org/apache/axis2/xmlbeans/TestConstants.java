@@ -17,7 +17,7 @@ package org.apache.axis2.xmlbeans;
 
 public class TestConstants {
 
-     public interface LanguageNames {
+    public interface LanguageNames {
         public static final String JAVA = "java";
         public static final String C_SHARP = "cs";
         public static final String VB_DOT_NET = "vb";
@@ -26,9 +26,9 @@ public class TestConstants {
     }
 
     public interface Databinding {
-    	public static final String XML_BEANS = "xmlbeans";
-    	public static final String JAXME = "jaxme";
-    	public static final String ADB = "adb";
+        public static final String XML_BEANS = "xmlbeans";
+        public static final String JAXME = "jaxme";
+        public static final String ADB = "adb";
         public static final String NONE = "none";
     }
 }

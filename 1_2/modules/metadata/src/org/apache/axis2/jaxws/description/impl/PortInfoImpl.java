@@ -16,11 +16,11 @@
  */
 package org.apache.axis2.jaxws.description.impl;
 
-import javax.xml.namespace.QName;
-import javax.xml.ws.handler.PortInfo;
-
 import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.i18n.Messages;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.handler.PortInfo;
 
 public class PortInfoImpl implements PortInfo {
     private QName serviceName = null;
@@ -35,13 +35,16 @@ public class PortInfoImpl implements PortInfo {
     PortInfoImpl(QName serviceName, QName portName, String bindingId) {
         super();
         if (serviceName == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("portInfoErr0", "<null>"));
+            throw ExceptionFactory
+                    .makeWebServiceException(Messages.getMessage("portInfoErr0", "<null>"));
         }
         if (portName == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("portInfoErr1", "<null>"));
+            throw ExceptionFactory
+                    .makeWebServiceException(Messages.getMessage("portInfoErr1", "<null>"));
         }
         if (bindingId == null) {
-            throw ExceptionFactory.makeWebServiceException(Messages.getMessage("portInfoErr2", "<null>"));
+            throw ExceptionFactory
+                    .makeWebServiceException(Messages.getMessage("portInfoErr2", "<null>"));
         }
         this.serviceName = serviceName;
         this.portName = portName;

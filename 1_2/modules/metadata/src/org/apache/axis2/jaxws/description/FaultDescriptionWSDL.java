@@ -19,5 +19,5 @@
 package org.apache.axis2.jaxws.description;
 
 public interface FaultDescriptionWSDL {
-    
+
 }

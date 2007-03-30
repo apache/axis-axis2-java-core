@@ -22,7 +22,8 @@ public abstract class SAAJMetaFactory {
             throws SOAPException {
         if (instance == null) {
             try {
-                instance = (SAAJMetaFactory) FactoryFinder.find("javax.xml.soap.MetaFactory", "org.apache.axis2.saaj.SAAJMetaFactoryImpl");
+                instance = (SAAJMetaFactory)FactoryFinder.find("javax.xml.soap.MetaFactory",
+                                                               "org.apache.axis2.saaj.SAAJMetaFactoryImpl");
             } catch (Exception exception) {
                 throw new SOAPException(exception.getMessage());
             }

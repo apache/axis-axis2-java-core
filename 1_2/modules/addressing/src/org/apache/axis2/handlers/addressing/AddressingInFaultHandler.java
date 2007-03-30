@@ -19,12 +19,12 @@ import org.apache.axiom.soap.SOAP11Constants;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPFaultDetail;
 import org.apache.axiom.soap.SOAPFaultReason;
+import org.apache.axiom.soap.SOAPFaultSubCode;
 import org.apache.axiom.soap.SOAPFaultText;
 import org.apache.axiom.soap.SOAPHeader;
-import org.apache.axiom.soap.SOAPFaultDetail;
-import org.apache.axiom.soap.SOAPFaultCode;
-import org.apache.axiom.soap.SOAPFaultSubCode;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.AddressingConstants;
@@ -53,7 +53,7 @@ public class AddressingInFaultHandler extends AbstractHandler implements Address
                 throw new AxisFault("Problem");
             }
 
-            SOAPFactory sf = ((SOAPFactory) envelope.getOMFactory());
+            SOAPFactory sf = ((SOAPFactory)envelope.getOMFactory());
             SOAPFaultDetail detail = null;
 
             if (msgContext.isSOAP11()) {

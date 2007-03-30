@@ -23,9 +23,8 @@ import java.util.ResourceBundle;
  */
 
 /**
- * @see org.apache.axis2.i18n.Messages
- * The implementation is the same but just 
- * thisClass static reference has CodegenMessages.class
+ * @see org.apache.axis2.i18n.Messages The implementation is the same but just thisClass static
+ *      reference has CodegenMessages.class
  */
 public class CodegenMessages {
 
@@ -46,13 +45,11 @@ public class CodegenMessages {
                     : MessagesConstants.rootBundle;
 
 
-    /**
-     * ** NO NEED TO CHANGE ANYTHING BELOW ****
-     */
+    /** ** NO NEED TO CHANGE ANYTHING BELOW **** */
 
     private static final MessageBundle messageBundle =
             new MessageBundle(projectName, packageName, resourceName,
-                    locale, classLoader, parent);
+                              locale, classLoader, parent);
 
     /**
      * Gets a message from resource.properties from the package of the given object.
@@ -130,7 +127,8 @@ public class CodegenMessages {
      * @param arg4 The argument to place in variable {4}
      * @return Returns the formatted message.
      */
-    public static String getMessage(String key, String arg0, String arg1, String arg2, String arg3, String arg4)
+    public static String getMessage(String key, String arg0, String arg1, String arg2, String arg3,
+                                    String arg4)
             throws MissingResourceException {
         return messageBundle.getMessage(key, arg0, arg1, arg2, arg3, arg4);
     }

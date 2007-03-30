@@ -16,8 +16,7 @@
 
 package org.apache.axis2.saaj;
 
-import java.io.ByteArrayInputStream;
-import java.util.Iterator;
+import junit.framework.TestCase;
 
 import javax.xml.soap.Detail;
 import javax.xml.soap.DetailEntry;
@@ -36,27 +35,27 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
-
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.util.Iterator;
 
 public class SOAPEnvelopeTest extends TestCase {
 
     private static final String XML_STRING =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-            "                   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n" +
-            "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
-            " <soapenv:Header>\n" +
-            "  <shw:Hello xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
-            "    <shw:Myname>Tony</shw:Myname>\n" +
-            "  </shw:Hello>\n" +
-            " </soapenv:Header>\n" +
-            " <soapenv:Body>\n" +
-            "<shw:Address shw:t='test' xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
-            "<shw:City>GENT</shw:City>\n" +
-            "</shw:Address>\n" +
-            "</soapenv:Body>\n" +
-            "</soapenv:Envelope>";
+                    "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
+                    "                   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n" +
+                    "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+                    " <soapenv:Header>\n" +
+                    "  <shw:Hello xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
+                    "    <shw:Myname>Tony</shw:Myname>\n" +
+                    "  </shw:Hello>\n" +
+                    " </soapenv:Header>\n" +
+                    " <soapenv:Body>\n" +
+                    "<shw:Address shw:t='test' xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
+                    "<shw:City>GENT</shw:City>\n" +
+                    "</shw:Address>\n" +
+                    "</soapenv:Body>\n" +
+                    "</soapenv:Envelope>";
 
     public SOAPEnvelopeTest(String name) {
         super(name);
@@ -65,7 +64,8 @@ public class SOAPEnvelopeTest extends TestCase {
     public void testEnvelope() throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage smsg =
-                mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(XML_STRING.getBytes()));
+                mf.createMessage(new MimeHeaders(),
+                                 new ByteArrayInputStream(XML_STRING.getBytes()));
         SOAPPart sp = smsg.getSOAPPart();
         SOAPEnvelope se = sp.getEnvelope();
         smsg.writeTo(System.out);
@@ -79,7 +79,8 @@ public class SOAPEnvelopeTest extends TestCase {
     public void testDetachHeader() throws Exception {
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage smsg =
-                mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(XML_STRING.getBytes()));
+                mf.createMessage(new MimeHeaders(),
+                                 new ByteArrayInputStream(XML_STRING.getBytes()));
         SOAPPart sp = smsg.getSOAPPart();
         SOAPEnvelope se = sp.getEnvelope();
         smsg.writeTo(System.out);
@@ -95,7 +96,8 @@ public class SOAPEnvelopeTest extends TestCase {
         try {
             MessageFactory mf = MessageFactory.newInstance();
             SOAPMessage smsg =
-                    mf.createMessage(new MimeHeaders(), new ByteArrayInputStream(XML_STRING.getBytes()));
+                    mf.createMessage(new MimeHeaders(),
+                                     new ByteArrayInputStream(XML_STRING.getBytes()));
             SOAPPart sp = smsg.getSOAPPart();
             SOAPEnvelope se = sp.getEnvelope();
 
@@ -140,15 +142,16 @@ public class SOAPEnvelopeTest extends TestCase {
     public void _testEnvelopeWithLeadingComment() throws Exception {
         String soapMessageWithLeadingComment =
                 "<?xml version='1.0' encoding='UTF-8'?>" +
-                "<!-- Comment -->" +
-                "<env:Envelope xmlns:env='http://schemas.xmlsoap.org/soap/envelope/'>" +
-                "<env:Body><echo><arg0>Hello</arg0></echo></env:Body>" +
-                "</env:Envelope>";
+                        "<!-- Comment -->" +
+                        "<env:Envelope xmlns:env='http://schemas.xmlsoap.org/soap/envelope/'>" +
+                        "<env:Body><echo><arg0>Hello</arg0></echo></env:Body>" +
+                        "</env:Envelope>";
 
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message =
                 factory.createMessage(new MimeHeaders(),
-                                      new ByteArrayInputStream(soapMessageWithLeadingComment.getBytes()));
+                                      new ByteArrayInputStream(
+                                              soapMessageWithLeadingComment.getBytes()));
         SOAPPart part = message.getSOAPPart();
         SOAPEnvelope envelope = part.getEnvelope();
         message.writeTo(System.out);
@@ -160,21 +163,22 @@ public class SOAPEnvelopeTest extends TestCase {
 
         String soapMessageWithLeadingComment =
                 "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                "<soapenv:Envelope  xmlns='http://somewhere.com/html'\n" +
-                "                   xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'\n" +
-                "                   xmlns:xsd='http://www.w3.org/2001/XMLSchema'\n" +
-                "                   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>\n" +
-                "<!-- Comment -->" +
-                " <soapenv:Body>\n" +
-                "    <echo><arg0>Hello</arg0></echo>" +
+                        "<soapenv:Envelope  xmlns='http://somewhere.com/html'\n" +
+                        "                   xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'\n" +
+                        "                   xmlns:xsd='http://www.w3.org/2001/XMLSchema'\n" +
+                        "                   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>\n" +
+                        "<!-- Comment -->" +
+                        " <soapenv:Body>\n" +
+                        "    <echo><arg0>Hello</arg0></echo>" +
 //                "    <t:echo xmlns:t='http://test.org/Test'><t:arg0>Hello</t:arg0></t:echo>" +
-" </soapenv:Body>\n" +
-"</soapenv:Envelope>";
+                        " </soapenv:Body>\n" +
+                        "</soapenv:Envelope>";
 
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message =
                 factory.createMessage(new MimeHeaders(),
-                                      new ByteArrayInputStream(soapMessageWithLeadingComment.getBytes()));
+                                      new ByteArrayInputStream(
+                                              soapMessageWithLeadingComment.getBytes()));
         SOAPPart part = message.getSOAPPart();
         SOAPEnvelope envelope = part.getEnvelope();
         message.writeTo(System.out);
@@ -186,20 +190,21 @@ public class SOAPEnvelopeTest extends TestCase {
 
         String soapMessageWithLeadingComment =
                 "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                "<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'\n" +
-                "                   xmlns:xsd='http://www.w3.org/2001/XMLSchema'\n" +
-                "                   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>\n" +
-                " <soapenv:Body>\n" +
-                "<!-- Comment -->" +
+                        "<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'\n" +
+                        "                   xmlns:xsd='http://www.w3.org/2001/XMLSchema'\n" +
+                        "                   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>\n" +
+                        " <soapenv:Body>\n" +
+                        "<!-- Comment -->" +
 //                "    <echo><arg0>Hello</arg0></echo>" +
-"    <t:echo xmlns:t='http://test.org/Test'><t:arg0>Hello</t:arg0></t:echo>" +
-" </soapenv:Body>\n" +
-"</soapenv:Envelope>";
+                        "    <t:echo xmlns:t='http://test.org/Test'><t:arg0>Hello</t:arg0></t:echo>" +
+                        " </soapenv:Body>\n" +
+                        "</soapenv:Envelope>";
 
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message =
                 factory.createMessage(new MimeHeaders(),
-                                      new ByteArrayInputStream(soapMessageWithLeadingComment.getBytes()));
+                                      new ByteArrayInputStream(
+                                              soapMessageWithLeadingComment.getBytes()));
         SOAPPart part = message.getSOAPPart();
         SOAPEnvelope envelope = part.getEnvelope();
         message.writeTo(System.out);
@@ -211,26 +216,27 @@ public class SOAPEnvelopeTest extends TestCase {
 
         String soapMessageWithLeadingComment =
                 "<?xml version='1.0' encoding='UTF-8'?>\n" +
-                "<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'\n" +
-                "                   xmlns:xsd='http://www.w3.org/2001/XMLSchema'\n" +
-                "                   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>\n" +
-                " <soapenv:Header>\n" +
-                "<!-- Comment -->" +
-                "  <shw:Hello xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
-                "<!-- Comment -->" +
-                "    <shw:Myname><!-- Comment -->Tony</shw:Myname>\n" +
-                "  </shw:Hello>\n" +
-                " </soapenv:Header>\n" +
-                " <soapenv:Body>\n" +
-                "<!-- Comment -->" +
-                "    <t:echo xmlns:t='http://test.org/Test'><t:arg0>Hello</t:arg0></t:echo>" +
-                " </soapenv:Body>\n" +
-                "</soapenv:Envelope>";
+                        "<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/'\n" +
+                        "                   xmlns:xsd='http://www.w3.org/2001/XMLSchema'\n" +
+                        "                   xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>\n" +
+                        " <soapenv:Header>\n" +
+                        "<!-- Comment -->" +
+                        "  <shw:Hello xmlns:shw=\"http://www.jcommerce.net/soap/ns/SOAPHelloWorld\">\n" +
+                        "<!-- Comment -->" +
+                        "    <shw:Myname><!-- Comment -->Tony</shw:Myname>\n" +
+                        "  </shw:Hello>\n" +
+                        " </soapenv:Header>\n" +
+                        " <soapenv:Body>\n" +
+                        "<!-- Comment -->" +
+                        "    <t:echo xmlns:t='http://test.org/Test'><t:arg0>Hello</t:arg0></t:echo>" +
+                        " </soapenv:Body>\n" +
+                        "</soapenv:Envelope>";
 
         MessageFactory factory = MessageFactory.newInstance();
         SOAPMessage message =
                 factory.createMessage(new MimeHeaders(),
-                                      new ByteArrayInputStream(soapMessageWithLeadingComment.getBytes()));
+                                      new ByteArrayInputStream(
+                                              soapMessageWithLeadingComment.getBytes()));
         SOAPPart part = message.getSOAPPart();
         SOAPEnvelope envelope = part.getEnvelope();
         message.writeTo(System.out);
@@ -273,7 +279,7 @@ public class SOAPEnvelopeTest extends TestCase {
         assertTrue(getIteratorCount(i) == 1);
         i = d2.getDetailEntries();
         while (i.hasNext()) {
-            DetailEntry de = (DetailEntry) i.next();
+            DetailEntry de = (DetailEntry)i.next();
             assertEquals(de.getElementName(), name);
         }
     }
@@ -292,7 +298,7 @@ public class SOAPEnvelopeTest extends TestCase {
         int cnt = 0;
         while (iterator.hasNext()) {
             cnt++;
-            SOAPHeaderElement resultHeaderEle = (SOAPHeaderElement) iterator.next();
+            SOAPHeaderElement resultHeaderEle = (SOAPHeaderElement)iterator.next();
 
             assertEquals(headerEle.getActor(), resultHeaderEle.getActor());
             assertEquals(resultHeaderEle.getMustUnderstand(), headerEle.getMustUnderstand());
@@ -334,7 +340,7 @@ public class SOAPEnvelopeTest extends TestCase {
             }
         }
         assertTrue(o instanceof Text);
-        Text t = (Text) o;
+        Text t = (Text)o;
         assertTrue(!t.isComment());
     }
 
@@ -346,13 +352,13 @@ public class SOAPEnvelopeTest extends TestCase {
         Iterator iterator = se.getChildElements();
         Node n = null;
         while (iterator.hasNext()) {
-            n = (Node) iterator.next();
+            n = (Node)iterator.next();
             if (n instanceof Text) {
                 break;
             }
         }
         assertTrue(n instanceof Text);
-        Text t = (Text) n;
+        Text t = (Text)n;
         assertTrue(t.isComment());
     }
 
@@ -381,7 +387,7 @@ public class SOAPEnvelopeTest extends TestCase {
         boolean foundName2 = false;
         boolean foundName3 = false;
         while (iterator.hasNext()) {
-            Name name = (Name) iterator.next();
+            Name name = (Name)iterator.next();
             if (name.equals(name1)) {
                 foundName1 = true;
                 assertEquals(value1, body.getAttributeValue(name));
@@ -421,7 +427,7 @@ public class SOAPEnvelopeTest extends TestCase {
         boolean foundName2 = false;
         boolean foundName3 = false;
         while (iterator.hasNext()) {
-            Name name = (Name) iterator.next();
+            Name name = (Name)iterator.next();
             if (name.equals(name1)) {
                 foundName1 = true;
                 assertEquals(value1, body.getAttributeValue(name));
@@ -461,7 +467,7 @@ public class SOAPEnvelopeTest extends TestCase {
         boolean foundName2 = false;
         boolean foundName3 = false;
         while (iterator.hasNext()) {
-            Name name = (Name) iterator.next();
+            Name name = (Name)iterator.next();
             if (name.equals(name1)) {
                 foundName1 = true;
                 assertEquals(value1, body.getAttributeValue(name));
@@ -520,14 +526,14 @@ public class SOAPEnvelopeTest extends TestCase {
         while (iter.hasNext()) {
             final Object obj = iter.next();
             if (obj instanceof Text) {
-                final String data = ((Text) obj).getData();
+                final String data = ((Text)obj).getData();
                 assertTrue("\n".equals(data) || "GENT".equals(data));
             } else {
-                final SOAPElement soapElement = (SOAPElement) obj;
+                final SOAPElement soapElement = (SOAPElement)obj;
                 final Iterator attIter = soapElement.getAllAttributes();
                 while (attIter.hasNext()) {
                     final Object o = attIter.next();
-                    assertEquals("test", soapElement.getAttributeValue((Name) o));
+                    assertEquals("test", soapElement.getAttributeValue((Name)o));
                 }
 
                 final Iterator childElementIter = soapElement.getChildElements();
@@ -538,30 +544,29 @@ public class SOAPEnvelopeTest extends TestCase {
             }
         }
     }
-    
+
     //TODO : check
     public void _testSetEncodingStyle() throws Exception {
         SOAPEnvelope envelope = getSOAPEnvelope();
         envelope.setEncodingStyle("http://example.com/MyEncodings");
         assertNotNull(envelope.getEncodingStyle());
     }
-    
-    public void testElementAfterBody() throws Exception{
-    	MessageFactory factory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
-    	SOAPMessage message = factory.createMessage();
-    	SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
 
-    	try
-    	{
-    		//SOAP1.2 does not allow trailing blocks after the Body
-    		//Call SOAPEnvelope.addChildElement() and (expect SOAPException)
-    		Name elementAfterBody = envelope.createName("AfterBody", "e", "some-uri");
-    		envelope.addChildElement(elementAfterBody);
-    		fail("Did not throw expected SOAPException");
-    	} catch (SOAPException e) {
-    		//Did throw expected SOAPException"
-    	} catch (Exception e) {
-    		fail("Unexpected Exception: " + e.getMessage());
-    	}
+    public void testElementAfterBody() throws Exception {
+        MessageFactory factory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        SOAPMessage message = factory.createMessage();
+        SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
+
+        try {
+            //SOAP1.2 does not allow trailing blocks after the Body
+            //Call SOAPEnvelope.addChildElement() and (expect SOAPException)
+            Name elementAfterBody = envelope.createName("AfterBody", "e", "some-uri");
+            envelope.addChildElement(elementAfterBody);
+            fail("Did not throw expected SOAPException");
+        } catch (SOAPException e) {
+            //Did throw expected SOAPException"
+        } catch (Exception e) {
+            fail("Unexpected Exception: " + e.getMessage());
+        }
     }
 }

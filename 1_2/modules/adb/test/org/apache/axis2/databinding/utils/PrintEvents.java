@@ -57,8 +57,8 @@ public class PrintEvents {
                 int start = xmlr.getTextStart();
                 int length = xmlr.getTextLength();
                 System.out.print(new String(xmlr.getTextCharacters(),
-                        start,
-                        length));
+                                            start,
+                                            length));
                 break;
 
             case XMLStreamConstants.PROCESSING_INSTRUCTION:
@@ -73,8 +73,8 @@ public class PrintEvents {
                 start = xmlr.getTextStart();
                 length = xmlr.getTextLength();
                 System.out.print(new String(xmlr.getTextCharacters(),
-                        start,
-                        length));
+                                            start,
+                                            length));
                 System.out.print("]]>");
                 break;
 

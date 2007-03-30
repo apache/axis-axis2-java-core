@@ -40,8 +40,8 @@ import org.apache.axis2.engine.Echo;
 import org.apache.axis2.engine.MessageReceiver;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.mail.UtilsMailServer;
-import org.apache.axis2.transport.mail.server.MailServer;
 import org.apache.axis2.transport.mail.Constants;
+import org.apache.axis2.transport.mail.server.MailServer;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,7 +53,7 @@ public class DualChannelRequestResponseRawXMLTest extends TestCase {
     private EndpointReference targetEPR = new EndpointReference("http://127.0.0.1:5555"
             + "/axis2/services/EchoXMLService/echoOMElement"); //mail:foo@
 
-	private static final Log log = LogFactory.getLog(DualChannelRequestResponseRawXMLTest.class);
+    private static final Log log = LogFactory.getLog(DualChannelRequestResponseRawXMLTest.class);
 
     private QName serviceName = new QName("EchoXMLService");
 
@@ -66,9 +66,9 @@ public class DualChannelRequestResponseRawXMLTest extends TestCase {
     private ConfigurationContext serverConfigContext;
 
     private AxisService service;
-    
+
     private MailServer mailServer;
-    
+
     public DualChannelRequestResponseRawXMLTest() {
         super(DualChannelRequestResponseRawXMLTest.class.getName());
     }
@@ -98,13 +98,14 @@ public class DualChannelRequestResponseRawXMLTest extends TestCase {
     protected void setUp() throws Exception {
         service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
-        UtilServer.start(org.apache.axis2.Constants.TESTING_PATH + "mail-transport-server-enabledRepository");
+                                          Echo.class.getName(),
+                                          operationName);
+        UtilServer.start(org.apache.axis2.Constants.TESTING_PATH +
+                "mail-transport-server-enabledRepository");
         UtilServer.deployService(service);
         mailServer =
-            new MailServer(Constants.POP_SERVER_PORT,
-                    Constants.SMTP_SERVER_PORT);
+                new MailServer(Constants.POP_SERVER_PORT,
+                               Constants.SMTP_SERVER_PORT);
 /*        SimpleMailListener ml = new SimpleMailListener();
         ml.init(serverConfigContext, serverConfigContext.getAxisConfiguration()
                 .getTransportIn(new QName(Constants.TRANSPORT_MAIL)));
@@ -125,7 +126,7 @@ public class DualChannelRequestResponseRawXMLTest extends TestCase {
         OMElement method = fac.createOMElement("echoOMElement", omNs);
         OMElement value = fac.createOMElement("myValue", omNs);
         value.addChild(fac.createOMText(value,
-                "Isaac Asimov, The Foundation Trilogy"));
+                                        "Isaac Asimov, The Foundation Trilogy"));
         method.addChild(value);
 
         return method;
@@ -148,7 +149,7 @@ public class DualChannelRequestResponseRawXMLTest extends TestCase {
         Options options = new Options();
         options.setTo(targetEPR);
         options.setAction(operationName.getLocalPart());
- 
+
         //options.setTransportInfo(Constants.TRANSPORT_HTTP, Constants.TRANSPORT_MAIL, true);
 
 //        options.setTransport InProtocol("smtp");

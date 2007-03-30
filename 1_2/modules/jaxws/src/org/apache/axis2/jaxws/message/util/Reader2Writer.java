@@ -16,69 +16,69 @@
  */
 package org.apache.axis2.jaxws.message.util;
 
-import java.io.StringWriter;
-import java.util.Iterator;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
 import org.apache.axiom.om.OMDocument;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.util.StAXUtils;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.StringWriter;
+import java.util.Iterator;
+
 /**
- * Reader2Writer
- * This is a simple converter that is constructed with an XMLStreamReader
- * and allows you to write the contents to an XMLStreamWriter.
+ * Reader2Writer This is a simple converter that is constructed with an XMLStreamReader and allows
+ * you to write the contents to an XMLStreamWriter.
  */
 public class Reader2Writer {
 
-	private XMLStreamReader reader;
-	
-	/**
-	 * Construct from a Reader
-	 * @param reader -- the input to the converter
-	 */
-	public Reader2Writer(XMLStreamReader reader) {
-		this.reader = reader;
-	}
+    private XMLStreamReader reader;
 
-	/**
-	 * outputTo the writer.
-	 * @param writer -- the output of the converter
-	 */
-	public void outputTo(XMLStreamWriter writer) throws XMLStreamException {
-		// Using OM to convert the reader to a writer.  This seems to be
-		// the safest way to make the conversion, and it promotes code re-use.
-		StAXOMBuilder builder = new StAXOMBuilder(reader);  
-		OMDocument omDocument = builder.getDocument();
-		Iterator it = omDocument.getChildren();
-		while(it.hasNext()) {
-			OMNode omNode = (OMNode) it.next();
-			omNode.serializeAndConsume(writer);
-		}
-		// Close the reader
+    /**
+     * Construct from a Reader
+     *
+     * @param reader -- the input to the converter
+     */
+    public Reader2Writer(XMLStreamReader reader) {
+        this.reader = reader;
+    }
+
+    /**
+     * outputTo the writer.
+     *
+     * @param writer -- the output of the converter
+     */
+    public void outputTo(XMLStreamWriter writer) throws XMLStreamException {
+        // Using OM to convert the reader to a writer.  This seems to be
+        // the safest way to make the conversion, and it promotes code re-use.
+        StAXOMBuilder builder = new StAXOMBuilder(reader);
+        OMDocument omDocument = builder.getDocument();
+        Iterator it = omDocument.getChildren();
+        while (it.hasNext()) {
+            OMNode omNode = (OMNode)it.next();
+            omNode.serializeAndConsume(writer);
+        }
+        // Close the reader
         reader.close();
-	}
-	
-	/**
-	 * Utility method to write the reader contents to a String
-	 * @return String
-	 */
-	public String getAsString() throws XMLStreamException {
-		StringWriter sw = new StringWriter();
-		XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(sw);
-		
-		// Write the reader to the writer
-		outputTo(writer);
-		
-		// Flush the writer and get the String
-		writer.flush();
-		sw.flush();
-		String str = sw.toString();
+    }
+
+    /**
+     * Utility method to write the reader contents to a String
+     * @return String
+     */
+    public String getAsString() throws XMLStreamException {
+        StringWriter sw = new StringWriter();
+        XMLStreamWriter writer = StAXUtils.createXMLStreamWriter(sw);
+
+        // Write the reader to the writer
+        outputTo(writer);
+
+        // Flush the writer and get the String
+        writer.flush();
+        sw.flush();
+        String str = sw.toString();
         writer.close();
-		return str;
-	}
+        return str;
+    }
 }

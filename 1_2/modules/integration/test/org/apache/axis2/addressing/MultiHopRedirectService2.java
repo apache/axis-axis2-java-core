@@ -22,7 +22,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 
 public class MultiHopRedirectService2 {
-    public OMElement echoRedirect(OMElement ome) throws AxisFault{
+    public OMElement echoRedirect(OMElement ome) throws AxisFault {
         System.out.println("MultiHopRedirectService2");
         MessageContext currInMc = MessageContext.getCurrentMessageContext();
         MessageContext currOutMc = currInMc.getOperationContext().getMessageContext("Out");

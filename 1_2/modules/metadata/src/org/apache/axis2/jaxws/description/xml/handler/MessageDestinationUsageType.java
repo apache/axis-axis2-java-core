@@ -14,27 +14,20 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- * 	The message-destination-usageType specifies the use of the
- * 	message destination indicated by the reference.  The value
- * 	indicates whether messages are consumed from the message
- * 	destination, produced for the destination, or both.  The
- * 	Assembler makes use of this information in linking producers
- * 	of a destination with its consumers.
- * 
- * 	The value of the message-destination-usage element must be
- * 	one of the following:
- * 	    Consumes
- * 	    Produces
- * 	    ConsumesProduces
- * 
- *       
- * 
+ * The message-destination-usageType specifies the use of the message destination indicated by the
+ * reference.  The value indicates whether messages are consumed from the message destination,
+ * produced for the destination, or both.  The Assembler makes use of this information in linking
+ * producers of a destination with its consumers.
+ * <p/>
+ * The value of the message-destination-usage element must be one of the following: Consumes
+ * Produces ConsumesProduces
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for message-destination-usageType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="message-destination-usageType">
  *   &lt;simpleContent>
@@ -43,14 +36,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "message-destination-usageType")
 public class MessageDestinationUsageType
-    extends String
-{
+        extends String {
 
 
 }

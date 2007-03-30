@@ -18,21 +18,6 @@
 
 package org.apache.axis2.jaxws.description.impl;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.wsdl.Definition;
-import javax.wsdl.PortType;
-import javax.xml.namespace.QName;
-
-import org.apache.axis2.description.AxisMessage;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.jaxws.ExceptionFactory;
@@ -45,72 +30,86 @@ import org.apache.axis2.jaxws.description.ServiceDescriptionWSDL;
 import org.apache.axis2.jaxws.description.builder.DescriptionBuilderComposite;
 import org.apache.axis2.jaxws.description.builder.MDQConstants;
 import org.apache.axis2.jaxws.description.builder.MethodDescriptionComposite;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
+import javax.wsdl.Definition;
+import javax.wsdl.PortType;
+import javax.xml.namespace.QName;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 //import org.apache.log4j.BasicConfigurator;
 
-/**
- * @see ../EndpointInterfaceDescription
- *
- */
-class EndpointInterfaceDescriptionImpl 
-implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, EndpointInterfaceDescriptionWSDL {
+/** @see ../EndpointInterfaceDescription */
+class EndpointInterfaceDescriptionImpl
+        implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava,
+        EndpointInterfaceDescriptionWSDL {
     private EndpointDescriptionImpl parentEndpointDescription;
-    private ArrayList<OperationDescription> operationDescriptions = new ArrayList<OperationDescription>();
+    private ArrayList<OperationDescription> operationDescriptions =
+            new ArrayList<OperationDescription>();
     // This may be an actual Service Endpoint Interface -OR- it may be a service implementation class that did not 
     // specify an @WebService.endpointInterface.
     private Class seiClass;
     private DescriptionBuilderComposite dbc;
-    
+
     //Logging setup
     private static final Log log = LogFactory.getLog(EndpointInterfaceDescriptionImpl.class);
-    
+
     // ===========================================
     // ANNOTATION related information
     // ===========================================
-    
+
     // ANNOTATION: @WebService
-    private WebService          webServiceAnnotation;
-    private String              webServiceTargetNamespace;
-    private String              webService_Name;
-    
-    
+    private WebService webServiceAnnotation;
+    private String webServiceTargetNamespace;
+    private String webService_Name;
+
+
     // ANNOTATION: @SOAPBinding
     // Note this is the Type-level annotation.  See OperationDescription for the Method-level annotation
-    private SOAPBinding         soapBindingAnnotation;
+    private SOAPBinding soapBindingAnnotation;
     // TODO: Should this be using the jaxws annotation values or should that be wrappered?
-    private javax.jws.soap.SOAPBinding.Style            soapBindingStyle;
+    private javax.jws.soap.SOAPBinding.Style soapBindingStyle;
     // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
-    public static final javax.jws.soap.SOAPBinding.Style SOAPBinding_Style_DEFAULT = javax.jws.soap.SOAPBinding.Style.DOCUMENT;
-    private javax.jws.soap.SOAPBinding.Use              soapBindingUse;
+    public static final javax.jws.soap.SOAPBinding.Style SOAPBinding_Style_DEFAULT =
+            javax.jws.soap.SOAPBinding.Style.DOCUMENT;
+    private javax.jws.soap.SOAPBinding.Use soapBindingUse;
     // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
-    public static final javax.jws.soap.SOAPBinding.Use  SOAPBinding_Use_DEFAULT = javax.jws.soap.SOAPBinding.Use.LITERAL;
-    private javax.jws.soap.SOAPBinding.ParameterStyle   soapParameterStyle;
+    public static final javax.jws.soap.SOAPBinding.Use SOAPBinding_Use_DEFAULT =
+            javax.jws.soap.SOAPBinding.Use.LITERAL;
+    private javax.jws.soap.SOAPBinding.ParameterStyle soapParameterStyle;
     // Default value per JSR-181 MR Sec 4.7 "Annotation: javax.jws.soap.SOAPBinding" pg 28
-    public static final javax.jws.soap.SOAPBinding.ParameterStyle SOAPBinding_ParameterStyle_DEFAULT = javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
-    
+    public static final javax.jws.soap.SOAPBinding.ParameterStyle SOAPBinding_ParameterStyle_DEFAULT =
+            javax.jws.soap.SOAPBinding.ParameterStyle.WRAPPED;
+
     void addOperation(OperationDescription operation) {
         operationDescriptions.add(operation);
     }
-    
+
     EndpointInterfaceDescriptionImpl(Class sei, EndpointDescriptionImpl parent) {
         seiClass = sei;
-        
+
         // Per JSR-181 all methods on the SEI are mapped to operations regardless
         // of whether they include an @WebMethod annotation.  That annotation may
         // be present to customize the mapping, but is not required (p14)
         // TODO:  Testcases that do and do not include @WebMethod anno
-        for (Method method:getSEIMethods(seiClass)) {
+        for (Method method : getSEIMethods(seiClass)) {
             OperationDescription operation = new OperationDescriptionImpl(method, this);
             addOperation(operation);
         }
-        
+
         parentEndpointDescription = parent;
     }
-    
+
     /**
      * Build from AxisService
+     *
      * @param parent
      */
     EndpointInterfaceDescriptionImpl(EndpointDescriptionImpl parent) {
@@ -120,7 +119,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
             ArrayList publishedOperations = axisService.getPublishedOperations();
             Iterator operationsIterator = publishedOperations.iterator();
             while (operationsIterator.hasNext()) {
-                AxisOperation axisOperation = (AxisOperation) operationsIterator.next();
+                AxisOperation axisOperation = (AxisOperation)operationsIterator.next();
                 addOperation(new OperationDescriptionImpl(axisOperation, this));
             }
         }
@@ -128,73 +127,77 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
 
     /**
      * Build an EndpointInterfaceDescription from a DescriptionBuilderComposite
+     *
      * @param dbc
      * @param isClass
      * @param parent
      */
-    EndpointInterfaceDescriptionImpl(   DescriptionBuilderComposite dbc, 
-                                    boolean isClass,
-                                    EndpointDescriptionImpl parent){
-        
+    EndpointInterfaceDescriptionImpl(DescriptionBuilderComposite dbc,
+                                     boolean isClass,
+                                     EndpointDescriptionImpl parent) {
+
         parentEndpointDescription = parent;
         this.dbc = dbc;
-        
+
         //TODO: yikes! ...too much redirection, consider setting this in higher level
-        getEndpointDescription().getAxisService().setTargetNamespace(getEndpointDescriptionImpl().getTargetNamespace());
-		        
+        getEndpointDescription().getAxisService()
+                .setTargetNamespace(getEndpointDescriptionImpl().getTargetNamespace());
+
         //TODO: Determine if the isClass parameter is really necessary
-        
+
         // Per JSR-181 all methods on the SEI are mapped to operations regardless
         // of whether they include an @WebMethod annotation.  That annotation may
         // be present to customize the mapping, but is not required (p14)
-        
+
         // TODO:  Testcases that do and do not include @WebMethod anno
-        
+
         //We are processing the SEI composite
         //For every MethodDescriptionComposite in this list, call OperationDescription 
         //constructor for it, then add this operation
-        
+
         //Retrieve the relevent method composites for this dbc (and those in the superclass chain)
         Iterator<MethodDescriptionComposite> iter = retrieveReleventMethods(dbc);
-        
+
         if (log.isDebugEnabled())
             log.debug("EndpointInterfaceDescriptionImpl: Finished retrieving methods");
         MethodDescriptionComposite mdc = null;
-        
+
         while (iter.hasNext()) {
             mdc = iter.next();
-            
+
             //TODO: Verify that this classname is truly always the wrapper class
             mdc.setDeclaringClass(dbc.getClassName());
-            
+
             // Only add if it is a method that would be or is in the WSDL i.e. 
             // don't create an OperationDescriptor for the MDC representing the
             // constructor
-            if(DescriptionUtils.createOperationDescription(mdc.getMethodName())) {
-            	//First check if this operation already exists on the AxisService, if so
-            	//then use that in the description hierarchy
-            	
-            	AxisService axisService = getEndpointDescription().getAxisService();
-            	AxisOperation axisOperation = axisService.getOperation(OperationDescriptionImpl.determineOperationQName(mdc));
-            	
-           		OperationDescription operation = new OperationDescriptionImpl(mdc, this, axisOperation);
-           	
-            	if (axisOperation == null) {
-            		// This axisOperation did not already exist on the AxisService, and so was created
+            if (DescriptionUtils.createOperationDescription(mdc.getMethodName())) {
+                //First check if this operation already exists on the AxisService, if so
+                //then use that in the description hierarchy
+
+                AxisService axisService = getEndpointDescription().getAxisService();
+                AxisOperation axisOperation = axisService
+                        .getOperation(OperationDescriptionImpl.determineOperationQName(mdc));
+
+                OperationDescription operation =
+                        new OperationDescriptionImpl(mdc, this, axisOperation);
+
+                if (axisOperation == null) {
+                    // This axisOperation did not already exist on the AxisService, and so was created
                     // with the OperationDescription, so we need to add the operation to the service
-                    ((OperationDescriptionImpl) operation).addToAxisService(axisService);
-            	}
-            	
-        		if (log.isDebugEnabled())
-        			log.debug("EID: Just added operation= " +operation.getOperationName());
-        		addOperation(operation);
+                    ((OperationDescriptionImpl)operation).addToAxisService(axisService);
+                }
+
+                if (log.isDebugEnabled())
+                    log.debug("EID: Just added operation= " + operation.getOperationName());
+                addOperation(operation);
             }
- 
+
         }
-        
+
         if (log.isDebugEnabled())
             log.debug("EndpointInterfaceDescriptionImpl: Finished Adding operations");
-        
+
         //TODO: Need to process the other annotations that can exist, on the server side
         //      and at the class level.
         //      They are, as follows:       
@@ -213,9 +216,9 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         Method[] seiMethods = sei.getMethods();
         ArrayList methodList = new ArrayList();
         if (sei != null) {
-            for (Method method:seiMethods) {
+            for (Method method : seiMethods) {
 
-                if(method.getDeclaringClass().getName().equals("java.lang.Object")){
+                if (method.getDeclaringClass().getName().equals("java.lang.Object")) {
                     continue;
                 }
                 methodList.add(method);
@@ -231,24 +234,26 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         return (Method[])methodList.toArray(new Method[methodList.size()]);
 //        return seiMethods;
     }
-    
+
     /**
-     * Update a previously created EndpointInterfaceDescription with information from an
-     * annotated SEI.  This should only be necessary when the this was created with WSDL.  
-     * In this case, the information from the WSDL is augmented based on the annotated SEI.
+     * Update a previously created EndpointInterfaceDescription with information from an annotated
+     * SEI.  This should only be necessary when the this was created with WSDL. In this case, the
+     * information from the WSDL is augmented based on the annotated SEI.
+     *
      * @param sei
      */
     void updateWithSEI(Class sei) {
         if (seiClass != null && seiClass != sei)
             // TODO: It probably is invalid to try reset the SEI; but this isn't the right error processing
-            throw new UnsupportedOperationException("The seiClass is already set; reseting it is not supported");
+            throw new UnsupportedOperationException(
+                    "The seiClass is already set; reseting it is not supported");
         else if (seiClass != null && seiClass == sei)
             // We've already done the necessary updates for this SEI
             return;
         else if (sei != null) {
             seiClass = sei;
             // Update (or possibly add) the OperationDescription for each of the methods on the SEI.
-            for (Method seiMethod:getSEIMethods(seiClass)) {
+            for (Method seiMethod : getSEIMethods(seiClass)) {
 
                 if (getOperation(seiMethod) != null) {
                     // If an OpDesc already exists with this java method set on it, then the OpDesc has already
@@ -282,12 +287,13 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
                 //
                 // TODO: May need to change when Axis2 supports overloaded WSDL operations
                 // TODO: May need to change when ServiceDescription can build an AxisService from annotations
-                
+
                 // Get the QName for this java method and then update (or add) the appropriate OperationDescription
                 // See comments below for imporant notes about the current implementation.
                 // NOTE ON OVERLOADED OPERATIONS
                 // Axis2 does NOT currently support overloading WSDL operations.
-                QName seiOperationQName = OperationDescriptionImpl.determineOperationQName(seiMethod);
+                QName seiOperationQName =
+                        OperationDescriptionImpl.determineOperationQName(seiMethod);
                 OperationDescription[] updateOpDesc = getOperation(seiOperationQName);
                 if (updateOpDesc == null || updateOpDesc.length == 0) {
                     // This operation wasn't defined in the WSDL.  Note that the JAX-WS async methods
@@ -298,8 +304,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
                     //       WSDL operation?
                     OperationDescription operation = new OperationDescriptionImpl(seiMethod, this);
                     addOperation(operation);
-                }
-                else { 
+                } else {
                     // Currently Axis2 does not support overloaded operations.  That means that even if the WSDL
                     // defined overloaded operations, there would still only be a single AxisOperation, and it
                     // would be the last operation encounterd.
@@ -311,16 +316,17 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
                     // Loop through all the opdescs; if one doesn't currently have a java method set, set it
                     // If all have java methods set, then add a new one.  Assume we'll need to add a new one.
                     boolean addOpDesc = true;
-                    for (OperationDescription checkOpDesc:updateOpDesc) {
+                    for (OperationDescription checkOpDesc : updateOpDesc) {
                         if (checkOpDesc.getSEIMethod() == null) {
                             // TODO: Should this be checking (somehow) that the signature matches?  Probably not an issue until overloaded WSDL ops are supported.
-                            ((OperationDescriptionImpl) checkOpDesc).setSEIMethod(seiMethod);
+                            ((OperationDescriptionImpl)checkOpDesc).setSEIMethod(seiMethod);
                             addOpDesc = false;
                             break;
                         }
                     }
                     if (addOpDesc) {
-                        OperationDescription operation = new OperationDescriptionImpl(seiMethod, this);
+                        OperationDescription operation =
+                                new OperationDescriptionImpl(seiMethod, this);
                         addOperation(operation);
                     }
                 }
@@ -329,9 +335,9 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
     }
 
     /**
-     * Return the OperationDescriptions corresponding to a particular Java method name.
-     * Note that an array is returned because a method could be overloaded.
-     * 
+     * Return the OperationDescriptions corresponding to a particular Java method name. Note that an
+     * array is returned because a method could be overloaded.
+     *
      * @param javaMethodName String representing a Java Method Name
      * @return
      */
@@ -340,22 +346,23 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         if (DescriptionUtils.isEmpty(javaMethodName)) {
             return null;
         }
-        
+
         ArrayList<OperationDescription> matchingOperations = new ArrayList<OperationDescription>();
-        for (OperationDescription operation: getOperations()) {
+        for (OperationDescription operation : getOperations()) {
             if (javaMethodName.equals(operation.getJavaMethodName())) {
                 matchingOperations.add(operation);
             }
         }
-        
+
         if (matchingOperations.size() == 0)
             return null;
         else
             return matchingOperations.toArray(new OperationDescription[0]);
     }
-    
+
     /**
      * Return the OperationDesription (only one) corresponding to the OperationName passed in.
+     *
      * @param operationName
      * @return
      */
@@ -363,9 +370,9 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         if (DescriptionUtils.isEmpty(operationName)) {
             return null;
         }
-        
+
         OperationDescription matchingOperation = null;
-        for (OperationDescription operation:getOperations()) {
+        for (OperationDescription operation : getOperations()) {
             if (operationName.equals(operation.getOperationName())) {
                 matchingOperation = operation;
                 break;
@@ -373,30 +380,33 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         }
         return matchingOperation;
     }
-    
+
     public OperationDescription[] getOperations() {
         return operationDescriptions.toArray(new OperationDescription[0]);
     }
-    
+
     EndpointDescriptionImpl getEndpointDescriptionImpl() {
-        return (EndpointDescriptionImpl) parentEndpointDescription;
+        return (EndpointDescriptionImpl)parentEndpointDescription;
     }
+
     public EndpointDescription getEndpointDescription() {
         return parentEndpointDescription;
     }
-    
+
     /**
-     * Return an array of Operations given an operation QName.  Note that an array is returned
-     * since a WSDL operation may be overloaded per JAX-WS.
+     * Return an array of Operations given an operation QName.  Note that an array is returned since
+     * a WSDL operation may be overloaded per JAX-WS.
+     *
      * @param operationQName
      * @return
      */
     public OperationDescription[] getOperation(QName operationQName) {
         OperationDescription[] returnOperations = null;
         if (!DescriptionUtils.isEmpty(operationQName)) {
-            ArrayList<OperationDescription> matchingOperations = new ArrayList<OperationDescription>();
+            ArrayList<OperationDescription> matchingOperations =
+                    new ArrayList<OperationDescription>();
             OperationDescription[] allOperations = getOperations();
-            for (OperationDescription operation:allOperations) {
+            for (OperationDescription operation : allOperations) {
                 if (operation.getName().equals(operationQName)) {
                     matchingOperations.add(operation);
                 }
@@ -408,21 +418,22 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         }
         return returnOperations;
     }
-    
+
     /* (non-Javadoc)
-     * @see org.apache.axis2.jaxws.description.EndpointInterfaceDescription#getDispatchableOperation(QName operationQName)
-     */
+    * @see org.apache.axis2.jaxws.description.EndpointInterfaceDescription#getDispatchableOperation(QName operationQName)
+    */
     public OperationDescription[] getDispatchableOperation(QName operationQName) {
         OperationDescription[] returnOperations = null;
         OperationDescription[] allMatchingOperations = getOperation(operationQName);
         if (allMatchingOperations != null && allMatchingOperations.length > 0) {
-            ArrayList<OperationDescription> dispatchableOperations = new ArrayList<OperationDescription>();
+            ArrayList<OperationDescription> dispatchableOperations =
+                    new ArrayList<OperationDescription>();
             for (OperationDescription operation : allMatchingOperations) {
                 if (!operation.isJAXWSAsyncClientMethod()) {
                     dispatchableOperations.add(operation);
                 }
             }
-            
+
             if (dispatchableOperations.size() > 0) {
                 returnOperations = dispatchableOperations.toArray(new OperationDescription[0]);
             }
@@ -432,33 +443,36 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
 
     /**
      * Return an OperationDescription for the corresponding SEI method.  Note that this ONLY works
-     * if the OperationDescriptions were created from introspecting an SEI.  If the were created with a WSDL
-     * then use the getOperation(QName) method, which can return > 1 operation.
-     * @param seiMethod The java.lang.Method from the SEI for which an OperationDescription is wanted
+     * if the OperationDescriptions were created from introspecting an SEI.  If the were created
+     * with a WSDL then use the getOperation(QName) method, which can return > 1 operation.
+     *
+     * @param seiMethod The java.lang.Method from the SEI for which an OperationDescription is
+     *                  wanted
      * @return
      */
     public OperationDescription getOperation(Method seiMethod) {
         OperationDescription returnOperation = null;
         if (seiMethod != null) {
             OperationDescription[] allOperations = getOperations();
-            for (OperationDescription operation:allOperations) {
-                if (operation.getSEIMethod() != null && operation.getSEIMethod().equals(seiMethod)) {
+            for (OperationDescription operation : allOperations) {
+                if (operation.getSEIMethod() != null && operation.getSEIMethod().equals(seiMethod))
+                {
                     returnOperation = operation;
                 }
             }
         }
         return returnOperation;
     }
-    
+
     public Class getSEIClass() {
         return seiClass;
     }
     // Annotation-realted getters
-    
+
     // ========================================
     // SOAP Binding annotation realted methods
     // ========================================
-    public SOAPBinding getAnnoSoapBinding(){
+    public SOAPBinding getAnnoSoapBinding() {
         // TODO: Test with sei Null, not null, SOAP Binding annotated, not annotated
 
         if (soapBindingAnnotation == null) {
@@ -466,7 +480,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
                 soapBindingAnnotation = dbc.getSoapBindingAnnot();
             } else {
                 if (seiClass != null) {
-                    soapBindingAnnotation = (SOAPBinding) seiClass.getAnnotation(SOAPBinding.class);                
+                    soapBindingAnnotation = (SOAPBinding)seiClass.getAnnotation(SOAPBinding.class);
                 }
             }
         }
@@ -477,251 +491,266 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         // REVIEW: Implement WSDL/Anno merge
         return getAnnoSoapBindingStyle();
     }
-    
+
     public javax.jws.soap.SOAPBinding.Style getAnnoSoapBindingStyle() {
         if (soapBindingStyle == null) {
             if (getAnnoSoapBinding() != null && getAnnoSoapBinding().style() != null) {
                 soapBindingStyle = getAnnoSoapBinding().style();
-            }
-            else {
+            } else {
                 soapBindingStyle = SOAPBinding_Style_DEFAULT;
             }
         }
         return soapBindingStyle;
     }
-    
+
     public javax.jws.soap.SOAPBinding.Use getSoapBindingUse() {
         // REVIEW: Implement WSDL/Anno merge
         return getAnnoSoapBindingUse();
     }
-    
+
     public javax.jws.soap.SOAPBinding.Use getAnnoSoapBindingUse() {
         if (soapBindingUse == null) {
             if (getAnnoSoapBinding() != null && getAnnoSoapBinding().use() != null) {
                 soapBindingUse = getAnnoSoapBinding().use();
-            }
-            else {
+            } else {
                 soapBindingUse = SOAPBinding_Use_DEFAULT;
             }
         }
         return soapBindingUse;
     }
-    
-    public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle(){
+
+    public javax.jws.soap.SOAPBinding.ParameterStyle getSoapBindingParameterStyle() {
         // REVIEW: Implement WSDL/Anno merge
         return getAnnoSoapBindingParameterStyle();
     }
+
     public javax.jws.soap.SOAPBinding.ParameterStyle getAnnoSoapBindingParameterStyle() {
         if (soapParameterStyle == null) {
             if (getAnnoSoapBinding() != null && getAnnoSoapBinding().parameterStyle() != null) {
                 soapParameterStyle = getAnnoSoapBinding().parameterStyle();
-            }
-            else {
+            } else {
                 soapParameterStyle = SOAPBinding_ParameterStyle_DEFAULT;
             }
         }
         return soapParameterStyle;
     }
-    
+
     /*
-     * Returns a non-null (possibly empty) list of MethodDescriptionComposites
-     */
+    * Returns a non-null (possibly empty) list of MethodDescriptionComposites
+    */
     Iterator<MethodDescriptionComposite> retrieveReleventMethods(DescriptionBuilderComposite dbc) {
- 
+
         /*
-         * Depending on whether this is an implicit SEI or an actual SEI, Gather up and build a 
-         * list of MDC's. If this is an actual SEI, then starting with this DBC, build a list of all
-         * MDC's that are public methods in the chain of extended classes.
-         * If this is an implicit SEI, then starting with this DBC,
-         *  1. If a false exclude is found, then take only those that have false excludes
-         *  2. Assuming no false excludes, take all public methods that don't have exclude == true
-         *  3. For each super class, if 'WebService' present, take all MDC's according to rules 1&2
-         *    But, if WebService not present, grab only MDC's that are annotated.
-         */
+        * Depending on whether this is an implicit SEI or an actual SEI, Gather up and build a
+        * list of MDC's. If this is an actual SEI, then starting with this DBC, build a list of all
+        * MDC's that are public methods in the chain of extended classes.
+        * If this is an implicit SEI, then starting with this DBC,
+        *  1. If a false exclude is found, then take only those that have false excludes
+        *  2. Assuming no false excludes, take all public methods that don't have exclude == true
+        *  3. For each super class, if 'WebService' present, take all MDC's according to rules 1&2
+        *    But, if WebService not present, grab only MDC's that are annotated.
+        */
         if (log.isTraceEnabled()) {
             log.trace("retrieveReleventMethods: Enter");
         }
-        
-        ArrayList<MethodDescriptionComposite> retrieveList = new ArrayList<MethodDescriptionComposite>();
+
+        ArrayList<MethodDescriptionComposite> retrieveList =
+                new ArrayList<MethodDescriptionComposite>();
 
         if (dbc.isInterface()) {
-        	
+
             retrieveList.addAll(retrieveSEIMethodsChain(dbc));
-            
+
         } else {
             //this is an implied SEI...rules are more complicated
-            
+
             retrieveList = retrieveImplicitSEIMethods(dbc);
-                    
+
             //Now, continue to build this list with relevent methods in the chain of
             //superclasses. If the logic for processing superclasses is the same as for
             //the original SEI, then we can combine this code with above code. But, its possible
             //the logic is different for superclasses...keeping separate for now.
             DescriptionBuilderComposite tempDBC = dbc;
-            
+
             while (!DescriptionUtils.isEmpty(tempDBC.getSuperClassName())) {
-                
+
                 //verify that this superclass name is not
                 //      java.lang.object, if so, then we're done processing
-                if (DescriptionUtils.javifyClassName(tempDBC.getSuperClassName()).equals(MDQConstants.OBJECT_CLASS_NAME))
+                if (DescriptionUtils.javifyClassName(tempDBC.getSuperClassName())
+                        .equals(MDQConstants.OBJECT_CLASS_NAME))
                     break;
-                
-                DescriptionBuilderComposite superDBC = 
-                                    getEndpointDescriptionImpl().getServiceDescriptionImpl().getDBCMap().get(tempDBC.getSuperClassName());
-                    
+
+                DescriptionBuilderComposite superDBC =
+                        getEndpointDescriptionImpl().getServiceDescriptionImpl().getDBCMap()
+                                .get(tempDBC.getSuperClassName());
+
                 if (log.isTraceEnabled())
-                    log.trace("superclass name for this DBC is:" +tempDBC.getSuperClassName());
+                    log.trace("superclass name for this DBC is:" + tempDBC.getSuperClassName());
 
                 //Verify that we can find the SEI in the composite list
-                if (superDBC == null){
-                    throw ExceptionFactory.makeWebServiceException("EndpointInterfaceDescriptionImpl: cannot find super class that was specified for this class");
+                if (superDBC == null) {
+                    throw ExceptionFactory.makeWebServiceException(
+                            "EndpointInterfaceDescriptionImpl: cannot find super class that was specified for this class");
                 }
-                
+
                 if (superDBC.getWebServiceAnnot() != null) {
                     //Now, gather the list of Methods just like we do for the lowest subclass
                     retrieveList.addAll(retrieveImplicitSEIMethods(superDBC));
                 } else {
                     //This superclass does not contain a WebService annotation, add only the
                     //methods that are annotated with WebMethod
-                    
-                    Iterator<MethodDescriptionComposite> iterMethod = dbc.getMethodDescriptionsList().iterator();
-                    
+
+                    Iterator<MethodDescriptionComposite> iterMethod =
+                            dbc.getMethodDescriptionsList().iterator();
+
                     while (iterMethod.hasNext()) {
                         MethodDescriptionComposite mdc = iterMethod.next();
-                        
+
                         if (!DescriptionUtils.isExcludeTrue(mdc)) {
                             mdc.setDeclaringClass(superDBC.getClassName());
                             retrieveList.add(mdc);
                         }
-                    }                   
+                    }
                 }
                 tempDBC = superDBC;
             } //Done with implied SEI's superclasses
-            retrieveList = removeOverriddenMethods(retrieveList, dbc);  
+            retrieveList = removeOverriddenMethods(retrieveList, dbc);
         }//Done with implied SEI's
-        
+
         return retrieveList.iterator();
     }
 
-    
+
     /**
-     * This method will establish a <code>HashMap</code> that represents a class name of a 
-     * composite and an integer value for the entry. The integer represents the classes 
-     * level in the Java hierarchy. 0 represents the most basic class with n representing the
-     * highest level class.
+     * This method will establish a <code>HashMap</code> that represents a class name of a composite
+     * and an integer value for the entry. The integer represents the classes level in the Java
+     * hierarchy. 0 represents the most basic class with n representing the highest level class.
+     *
      * @param dbc - <code>DescriptionBuilderComposite</code>
      * @return - <code>HashMap</code>
      */
     private HashMap<String, Integer> getClassHierarchy(DescriptionBuilderComposite dbc) {
-       HashMap<String, DescriptionBuilderComposite> dbcMap = getEndpointDescriptionImpl().
-           getServiceDescriptionImpl().getDBCMap();
-       HashMap<String, Integer> hierarchyMap = new HashMap<String, Integer>();
-       if(log.isDebugEnabled()) {
-           log.debug("Putting class at base level: " + dbc.getClassName());
-       }
-       hierarchyMap.put(dbc.getClassName(), Integer.valueOf(0));
-       DescriptionBuilderComposite superDBC = dbcMap.get((dbc.getSuperClassName()));
-       int i = 1;
-       while(superDBC != null && !superDBC.getClassName().equals("java.lang.Object")) {
-           hierarchyMap.put(superDBC.getClassName(), Integer.valueOf(i));
-           if(log.isDebugEnabled()) {
-               log.debug("Putting class: " + superDBC.getClassName() + " at hierarchy rank: " + 
-                       i);
-           }
-           i++;
-           superDBC = dbcMap.get(superDBC.getSuperClassName());
-       }
-       return hierarchyMap;
+        HashMap<String, DescriptionBuilderComposite> dbcMap = getEndpointDescriptionImpl().
+                getServiceDescriptionImpl().getDBCMap();
+        HashMap<String, Integer> hierarchyMap = new HashMap<String, Integer>();
+        if (log.isDebugEnabled()) {
+            log.debug("Putting class at base level: " + dbc.getClassName());
+        }
+        hierarchyMap.put(dbc.getClassName(), Integer.valueOf(0));
+        DescriptionBuilderComposite superDBC = dbcMap.get((dbc.getSuperClassName()));
+        int i = 1;
+        while (superDBC != null && !superDBC.getClassName().equals("java.lang.Object")) {
+            hierarchyMap.put(superDBC.getClassName(), Integer.valueOf(i));
+            if (log.isDebugEnabled()) {
+                log.debug("Putting class: " + superDBC.getClassName() + " at hierarchy rank: " +
+                        i);
+            }
+            i++;
+            superDBC = dbcMap.get(superDBC.getSuperClassName());
+        }
+        return hierarchyMap;
     }
-    
+
     /**
-     * This method will loop through each method that was previously determined as being relevant
-     * to the current composite. It will then drive the call to determine if this represents a
-     * method that has been overridden. If it represents an overriding method declaration it will
-     * remove the inherited methods from the list leaving only the most basic method declaration.
+     * This method will loop through each method that was previously determined as being relevant to
+     * the current composite. It will then drive the call to determine if this represents a method
+     * that has been overridden. If it represents an overriding method declaration it will remove
+     * the inherited methods from the list leaving only the most basic method declaration.
+     *
      * @param methodList - <code>ArrayList</code> list of relevant methods
-     * @param dbc - <code>DescriptionBuilderComposite</code> current composite
+     * @param dbc        - <code>DescriptionBuilderComposite</code> current composite
      * @return - <code>ArrayList</code>
      */
-    private ArrayList<MethodDescriptionComposite> removeOverriddenMethods(ArrayList<MethodDescriptionComposite> 
-       methodList, DescriptionBuilderComposite dbc) {
-       HashMap<String, Integer> hierarchyMap = getClassHierarchy(dbc);
-       ArrayList<MethodDescriptionComposite> returnMethods = new ArrayList<MethodDescriptionComposite>();
-       for(int i=0; i < methodList.size(); i++) {
-           if(notFound(returnMethods, methodList.get(i))) {
-               returnMethods.add(getBaseMethod(methodList.get(i), i, methodList, hierarchyMap));
-           }
-     
-       }
-       return returnMethods;
+    private ArrayList<MethodDescriptionComposite> removeOverriddenMethods(
+            ArrayList<MethodDescriptionComposite>
+                    methodList, DescriptionBuilderComposite dbc) {
+        HashMap<String, Integer> hierarchyMap = getClassHierarchy(dbc);
+        ArrayList<MethodDescriptionComposite> returnMethods =
+                new ArrayList<MethodDescriptionComposite>();
+        for (int i = 0; i < methodList.size(); i++) {
+            if (notFound(returnMethods, methodList.get(i))) {
+                returnMethods.add(getBaseMethod(methodList.get(i), i, methodList, hierarchyMap));
+            }
+
+        }
+        return returnMethods;
     }
-    
+
     /**
-     * This method will loop through each method we have already identified as a base method and compare
-     * the current method.
+     * This method will loop through each method we have already identified as a base method and
+     * compare the current method.
+     *
      * @param mdcList - <code>ArrayList</code> identified base methods
-     * @param mdc - <code>MethodDescriptionComposite</code> current method
+     * @param mdc     - <code>MethodDescriptionComposite</code> current method
      * @return - boolean
      */
-    private boolean notFound(ArrayList<MethodDescriptionComposite> mdcList, MethodDescriptionComposite mdc) {
-       for(MethodDescriptionComposite method : mdcList) {
-           if(mdc.compare(method)) {
-               return false;
-           }
-       }
-       return true;
+    private boolean notFound(ArrayList<MethodDescriptionComposite> mdcList,
+                             MethodDescriptionComposite mdc) {
+        for (MethodDescriptionComposite method : mdcList) {
+            if (mdc.compare(method)) {
+                return false;
+            }
+        }
+        return true;
     }
-    
+
     /**
      * This method is responsible for determining the most basic level of a method declaration in
-     * the <code>DescriptionBuilderComposite</code> hierarchy. 
-     * @param mdc - <code>MethodDescriptionComposite</code> current method
-     * @param index - <code>int</code> current location in method list
-     * @param methodList - <code>List</code> list of methods available on this composite
+     * the <code>DescriptionBuilderComposite</code> hierarchy.
+     *
+     * @param mdc          - <code>MethodDescriptionComposite</code> current method
+     * @param index        - <code>int</code> current location in method list
+     * @param methodList   - <code>List</code> list of methods available on this composite
      * @param hierarchyMap - <code>HashMap</code> map that represents the hierarchy of the current
-     * <code>DescriptionBuilderComposite</code>
+     *                     <code>DescriptionBuilderComposite</code>
      * @return - <code>MethodDescriptionComposite</code> most basic method declaration
      */
-    private static MethodDescriptionComposite getBaseMethod(MethodDescriptionComposite mdc, 
-           int index, ArrayList<MethodDescriptionComposite> methodList, HashMap<String, Integer> 
-           hierarchyMap){
-       int baseLevel = hierarchyMap.get(mdc.getDeclaringClass());
-       if(log.isDebugEnabled()) {
-           log.debug("Base method: " + mdc.getMethodName() + " initial level: " + baseLevel);
-       }
-       for(; index < methodList.size(); index++) {
-           MethodDescriptionComposite compareMDC = methodList.get(index);
-           // If the two methods are the same method that means we have found an inherited
-           // overridden case
-           if(mdc.equals(compareMDC)) {
-               if(log.isDebugEnabled()) {
-                   log.debug("Found equivalent methods: " + mdc.getMethodName());
-               }
-               // get the declaration level of the method we are comparing to
-               int compareLevel = hierarchyMap.get(compareMDC.getDeclaringClass());
-               // if the method was declared by a class in a lower level of the hierarchy it
-               // becomes the method that we will compare other methods to
-               if(compareLevel < baseLevel) {
-                   if(log.isDebugEnabled()) {
-                       log.debug("Found method lower in hierarchy chain: " + compareMDC.getMethodName()
-                               + " of class: " + compareMDC.getMethodName());
-                   }
-                   mdc = compareMDC;
-                   baseLevel = compareLevel;
-               }
-           }
-       }
-       return mdc;
+    private static MethodDescriptionComposite getBaseMethod(MethodDescriptionComposite mdc,
+                                                            int index,
+                                                            ArrayList<MethodDescriptionComposite> methodList,
+                                                            HashMap<String, Integer>
+                                                                    hierarchyMap) {
+        int baseLevel = hierarchyMap.get(mdc.getDeclaringClass());
+        if (log.isDebugEnabled()) {
+            log.debug("Base method: " + mdc.getMethodName() + " initial level: " + baseLevel);
+        }
+        for (; index < methodList.size(); index++) {
+            MethodDescriptionComposite compareMDC = methodList.get(index);
+            // If the two methods are the same method that means we have found an inherited
+            // overridden case
+            if (mdc.equals(compareMDC)) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Found equivalent methods: " + mdc.getMethodName());
+                }
+                // get the declaration level of the method we are comparing to
+                int compareLevel = hierarchyMap.get(compareMDC.getDeclaringClass());
+                // if the method was declared by a class in a lower level of the hierarchy it
+                // becomes the method that we will compare other methods to
+                if (compareLevel < baseLevel) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Found method lower in hierarchy chain: " +
+                                compareMDC.getMethodName()
+                                + " of class: " + compareMDC.getMethodName());
+                    }
+                    mdc = compareMDC;
+                    baseLevel = compareLevel;
+                }
+            }
+        }
+        return mdc;
     }
+
     /*
-     * This is called when we know that this DBC is an implicit SEI
-     */
-    private ArrayList<MethodDescriptionComposite> retrieveImplicitSEIMethods(DescriptionBuilderComposite dbc) {
-        
-        ArrayList<MethodDescriptionComposite> retrieveList = new ArrayList<MethodDescriptionComposite>();
+    * This is called when we know that this DBC is an implicit SEI
+    */
+    private ArrayList<MethodDescriptionComposite> retrieveImplicitSEIMethods(
+            DescriptionBuilderComposite dbc) {
+
+        ArrayList<MethodDescriptionComposite> retrieveList =
+                new ArrayList<MethodDescriptionComposite>();
 
         retrieveList = DescriptionUtils.getMethodsWithFalseExclusions(dbc);
-        
+
         //If this list is empty, then there are no false exclusions, so gather
         //all composites that don't have exclude == true
         //If the list is not empty, then it means we found at least one method with 'exclude==false'
@@ -731,10 +760,10 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
             List<MethodDescriptionComposite> mdcList = dbc.getMethodDescriptionsList();
 
             if (mdcList != null) {
-            	iter = dbc.getMethodDescriptionsList().iterator();
+                iter = dbc.getMethodDescriptionsList().iterator();
                 while (iter.hasNext()) {
                     MethodDescriptionComposite mdc = iter.next();
-                    
+
                     if (!DescriptionUtils.isExcludeTrue(mdc)) {
                         mdc.setDeclaringClass(dbc.getClassName());
                         retrieveList.add(mdc);
@@ -746,58 +775,64 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         return retrieveList;
     }
 
-    private ArrayList<MethodDescriptionComposite> retrieveSEIMethods(DescriptionBuilderComposite dbc) {
-        
+    private ArrayList<MethodDescriptionComposite> retrieveSEIMethods(
+            DescriptionBuilderComposite dbc) {
+
         //Rules for retrieving Methods on an SEI (or a superclass of an SEI) are simple
         //Just retrieve all methods regardless of WebMethod annotations
-        ArrayList<MethodDescriptionComposite> retrieveList = new ArrayList<MethodDescriptionComposite>();
-        
+        ArrayList<MethodDescriptionComposite> retrieveList =
+                new ArrayList<MethodDescriptionComposite>();
+
         Iterator<MethodDescriptionComposite> iter = null;
         List<MethodDescriptionComposite> mdcList = dbc.getMethodDescriptionsList();
-        
+
         if (mdcList != null) {
-        	iter = dbc.getMethodDescriptionsList().iterator();
+            iter = dbc.getMethodDescriptionsList().iterator();
             while (iter.hasNext()) {
-                MethodDescriptionComposite mdc = iter.next(); 
+                MethodDescriptionComposite mdc = iter.next();
                 mdc.setDeclaringClass(dbc.getClassName());
                 retrieveList.add(mdc);
             }
         }
-                
+
         return retrieveList;
     }
 
-    private ArrayList<MethodDescriptionComposite> retrieveSEIMethodsChain(DescriptionBuilderComposite tmpDBC) {
-        
-    	DescriptionBuilderComposite dbc = tmpDBC;
-        ArrayList<MethodDescriptionComposite> retrieveList = new ArrayList<MethodDescriptionComposite>();
+    private ArrayList<MethodDescriptionComposite> retrieveSEIMethodsChain(
+            DescriptionBuilderComposite tmpDBC) {
 
-    	retrieveList = retrieveSEIMethods(dbc);
+        DescriptionBuilderComposite dbc = tmpDBC;
+        ArrayList<MethodDescriptionComposite> retrieveList =
+                new ArrayList<MethodDescriptionComposite>();
+
+        retrieveList = retrieveSEIMethods(dbc);
 
         //Since this is an interface, anything that is in the extends clause will actually appear
         // in the interfaces list instead.
         Iterator<String> iter = null;
         List<String> interfacesList = dbc.getInterfacesList();
-        if (interfacesList != null ) {
-        	iter = dbc.getInterfacesList().iterator();
-        
-        	while (iter.hasNext()) {
-        		
-        		String interfaceName = iter.next();
-        		DescriptionBuilderComposite superInterface = 
-                    getEndpointDescriptionImpl().getServiceDescriptionImpl().getDBCMap().get(interfaceName);
-        		   
+        if (interfacesList != null) {
+            iter = dbc.getInterfacesList().iterator();
+
+            while (iter.hasNext()) {
+
+                String interfaceName = iter.next();
+                DescriptionBuilderComposite superInterface =
+                        getEndpointDescriptionImpl().getServiceDescriptionImpl().getDBCMap()
+                                .get(interfaceName);
+
                 retrieveList.addAll(retrieveSEIMethodsChain(superInterface));
-        	}
+            }
         }
-        	
-       return retrieveList;
+
+        return retrieveList;
     }
-    
+
     private Definition getWSDLDefinition() {
-        return ((ServiceDescriptionWSDL) getEndpointDescription().getServiceDescription()).getWSDLDefinition();
+        return ((ServiceDescriptionWSDL)getEndpointDescription().getServiceDescription())
+                .getWSDLDefinition();
     }
-    
+
     public PortType getWSDLPortType() {
         PortType portType = null;
 //        EndpointDescriptionWSDL endpointDescWSDL = (EndpointDescriptionWSDL) getEndpointDescription();
@@ -814,7 +849,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
         return portType;
     }
 
-    
+
     public String getTargetNamespace() {
         // REVIEW: WSDL/Anno mertge
         return getAnnoWebServiceTargetNamespace();
@@ -827,7 +862,7 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
                 webServiceAnnotation = dbc.getWebServiceAnnot();
             } else {
                 if (seiClass != null) {
-                    webServiceAnnotation = (WebService) seiClass.getAnnotation(WebService.class);                
+                    webServiceAnnotation = (WebService)seiClass.getAnnotation(WebService.class);
                 }
             }
         }
@@ -836,86 +871,87 @@ implements EndpointInterfaceDescription, EndpointInterfaceDescriptionJava, Endpo
 
     public String getAnnoWebServiceTargetNamespace() {
         if (webServiceTargetNamespace == null) {
-            if (getAnnoWebService() != null 
+            if (getAnnoWebService() != null
                     && !DescriptionUtils.isEmpty(getAnnoWebService().targetNamespace())) {
                 webServiceTargetNamespace = getAnnoWebService().targetNamespace();
-            }
-            else {
+            } else {
                 // Default value per JSR-181 MR Sec 4.1 pg 15 defers to "Implementation defined, 
                 // as described in JAX-WS 2.0, section 3.2" which is JAX-WS 2.0 Sec 3.2, pg 29.
                 // FIXME: Hardcoded protocol for namespace
                 if (dbc != null)
-                    webServiceTargetNamespace = 
-                        DescriptionUtils.makeNamespaceFromPackageName(DescriptionUtils.getJavaPackageName(dbc.getClassName()), "http");
+                    webServiceTargetNamespace =
+                            DescriptionUtils.makeNamespaceFromPackageName(
+                                    DescriptionUtils.getJavaPackageName(dbc.getClassName()),
+                                    "http");
                 else
-                    webServiceTargetNamespace = 
-                        DescriptionUtils.makeNamespaceFromPackageName(DescriptionUtils.getJavaPackageName(seiClass), "http");
+                    webServiceTargetNamespace =
+                            DescriptionUtils.makeNamespaceFromPackageName(
+                                    DescriptionUtils.getJavaPackageName(seiClass), "http");
 
             }
         }
         return webServiceTargetNamespace;
     }
-   
+
     public String getAnnoWebServiceName() {
         //REVIEW the following, used to get Port
-    	if (webService_Name == null) {
-    		
-    		if (getAnnoWebService() != null 
-    				&& !DescriptionUtils.isEmpty(getAnnoWebService().name())) {
-    			webService_Name = getAnnoWebService().name();
-     		}
-    		else {
-    			webService_Name = "";
-    		}
-    	}
+        if (webService_Name == null) {
+
+            if (getAnnoWebService() != null
+                    && !DescriptionUtils.isEmpty(getAnnoWebService().name())) {
+                webService_Name = getAnnoWebService().name();
+            } else {
+                webService_Name = "";
+            }
+        }
         return webService_Name;
     }
-    
-    public String getName(){
-    	return getAnnoWebServiceName();
+
+    public String getName() {
+        return getAnnoWebServiceName();
     }
-    public QName getPortType(){
-    	String name = getName();
-    	String tns = getTargetNamespace();
-    	return new QName(tns, name);
+
+    public QName getPortType() {
+        String name = getName();
+        String tns = getTargetNamespace();
+        return new QName(tns, name);
     }
-    
+
     public String toString() {
         final String newline = "\n";
         final String sameline = "; ";
         StringBuffer string = new StringBuffer();
-		try {
-			string.append(super.toString());
-	        string.append(newline);
-	        string.append("Name: " + getName());
-	        string.append(sameline);
-	        string.append("PortType: " + getPortType());
-	        //
-	        string.append(newline);
-	        string.append("SOAP Style: " + getSoapBindingStyle());
-	        string.append(sameline);
-	        string.append("SOAP Use: " + getSoapBindingUse());
-	        string.append(sameline);
-	        string.append("SOAP Paramater Style: " + getSoapBindingParameterStyle());
-	        //
-	        string.append(newline);
-	        OperationDescription[] operations = getOperations();
-	        if (operations != null && operations.length > 0) {
-	            string.append("Number of operations: " + operations.length);
-	            for (OperationDescription operation : operations) {
-	                string.append(newline);
-	                string.append("Operation: " + operation.toString());
-	            }
-	        }
-	        else {
-	            string.append("OperationDescription array is null");
-	        }
-		}
-        catch(Throwable t) {
-        	string.append(newline);
-        	string.append("Complete debug information not currently available for " +
-        			"EndpointInterfaceDescription");
-        	return string.toString();
+        try {
+            string.append(super.toString());
+            string.append(newline);
+            string.append("Name: " + getName());
+            string.append(sameline);
+            string.append("PortType: " + getPortType());
+            //
+            string.append(newline);
+            string.append("SOAP Style: " + getSoapBindingStyle());
+            string.append(sameline);
+            string.append("SOAP Use: " + getSoapBindingUse());
+            string.append(sameline);
+            string.append("SOAP Paramater Style: " + getSoapBindingParameterStyle());
+            //
+            string.append(newline);
+            OperationDescription[] operations = getOperations();
+            if (operations != null && operations.length > 0) {
+                string.append("Number of operations: " + operations.length);
+                for (OperationDescription operation : operations) {
+                    string.append(newline);
+                    string.append("Operation: " + operation.toString());
+                }
+            } else {
+                string.append("OperationDescription array is null");
+            }
+        }
+        catch (Throwable t) {
+            string.append(newline);
+            string.append("Complete debug information not currently available for " +
+                    "EndpointInterfaceDescription");
+            return string.toString();
         }
         return string.toString();
     }

@@ -15,8 +15,7 @@
  */
 package org.apache.axis2.saaj;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import junit.framework.TestCase;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
@@ -31,8 +30,8 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-
-import junit.framework.TestCase;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class SOAPHeaderTest extends TestCase {
     private MessageFactory mf = null;
@@ -53,37 +52,39 @@ public class SOAPHeaderTest extends TestCase {
         javax.xml.soap.SOAPEnvelope soapEnv =
                 soapMessage.getSOAPPart().getEnvelope();
         javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
-        try{
-        	header.addChildElement("ebxmlms1");
-        }catch(Exception e){
-        	assertTrue(e instanceof SOAPException);
+        try {
+            header.addChildElement("ebxmlms1");
+        } catch (Exception e) {
+            assertTrue(e instanceof SOAPException);
         }
 
-        assertTrue(header.addChildElement("ebxmlms1", "ns-prefix", "http://test.apache.org") instanceof SOAPHeaderElement);
+        assertTrue(header.addChildElement("ebxmlms1", "ns-prefix",
+                                          "http://test.apache.org") instanceof SOAPHeaderElement);
         ((SOAPHeaderElement)header.getFirstChild()).addTextNode("test add");
-        
-
-        assertTrue(header.addHeaderElement(soapEnv.createName("ebxmlms2", "ns-prefix", "http://test2.apache.org")) != null);
-        assertTrue(header.addHeaderElement(new PrefixedQName("http://test3.apache.org", "ebxmlms3", "ns-prefix")) != null);
-        
 
 
-        SOAPHeaderElement firstChild = (SOAPHeaderElement) header.getFirstChild();
+        assertTrue(header.addHeaderElement(
+                soapEnv.createName("ebxmlms2", "ns-prefix", "http://test2.apache.org")) != null);
+        assertTrue(header.addHeaderElement(
+                new PrefixedQName("http://test3.apache.org", "ebxmlms3", "ns-prefix")) != null);
+
+
+        SOAPHeaderElement firstChild = (SOAPHeaderElement)header.getFirstChild();
         assertEquals("ebxmlms1", firstChild.getLocalName());
         assertEquals("ns-prefix", firstChild.getPrefix());
         assertEquals("http://test.apache.org", firstChild.getNamespaceURI());
 
-        SOAPHeaderElement secondChild = (SOAPHeaderElement) firstChild.getNextSibling();
+        SOAPHeaderElement secondChild = (SOAPHeaderElement)firstChild.getNextSibling();
         assertEquals("ebxmlms2", secondChild.getLocalName());
         assertEquals("ns-prefix", secondChild.getPrefix());
         assertEquals("http://test2.apache.org", secondChild.getNamespaceURI());
 
-        SOAPHeaderElement lastChild = (SOAPHeaderElement) header.getLastChild();
+        SOAPHeaderElement lastChild = (SOAPHeaderElement)header.getLastChild();
         assertEquals("ebxmlms3", lastChild.getLocalName());
         assertEquals("ns-prefix", lastChild.getPrefix());
         assertEquals("http://test3.apache.org", lastChild.getNamespaceURI());
 
-        SOAPHeaderElement fourthChild = (SOAPHeaderElement) lastChild.getPreviousSibling();
+        SOAPHeaderElement fourthChild = (SOAPHeaderElement)lastChild.getPreviousSibling();
         assertEquals("ebxmlms2", fourthChild.getLocalName());
         assertEquals("ns-prefix", fourthChild.getPrefix());
         assertEquals("http://test2.apache.org", fourthChild.getNamespaceURI());
@@ -93,7 +94,7 @@ public class SOAPHeaderTest extends TestCase {
         while (it.hasNext()) {
             Object o = it.next();
             assertTrue(o instanceof SOAPHeaderElement);
-            SOAPHeaderElement el = (SOAPHeaderElement) o;
+            SOAPHeaderElement el = (SOAPHeaderElement)o;
             String lName = el.getLocalName();
             assertTrue(lName.equals("ebxmlms" + ++numOfHeaderElements));
         }
@@ -163,7 +164,7 @@ public class SOAPHeaderTest extends TestCase {
 
             while (allHeaders.hasNext()) {
                 SOAPHeaderElement headerElement =
-                        (SOAPHeaderElement) allHeaders.next();
+                        (SOAPHeaderElement)allHeaders.next();
                 Name headerName = headerElement.getElementName();
                 //System.out.println("\nHeader name is " +
                 //                   headerName.getQualifiedName());
@@ -193,7 +194,7 @@ public class SOAPHeaderTest extends TestCase {
             int cnt = 0;
             while (iterator.hasNext()) {
                 cnt++;
-                she = (SOAPHeaderElement) iterator.next();
+                she = (SOAPHeaderElement)iterator.next();
                 if (!she.equals(she1)) {
                     fail("SOAP Header Elements do not match");
                 }
@@ -212,147 +213,148 @@ public class SOAPHeaderTest extends TestCase {
             fail("Unexpected Exception: " + e);
         }
     }
-    
+
     public void testAddNotUnderstoodHeaderElement() throws Exception {
         javax.xml.soap.SOAPMessage soapMessage =
                 javax.xml.soap.MessageFactory.newInstance(
-                		SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
-        
+                        SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
+
         javax.xml.soap.SOAPEnvelope soapEnv =
                 soapMessage.getSOAPPart().getEnvelope();
         javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
-        
-	    SOAPElement soapElement = header.addNotUnderstoodHeaderElement(
-	    		new QName("http://foo.org", "foo", "f"));
-	    
+
+        SOAPElement soapElement = header.addNotUnderstoodHeaderElement(
+                new QName("http://foo.org", "foo", "f"));
+
         assertNotNull(soapElement);
-	        Name name = soapElement.getElementName();
-	        String uri = name.getURI();
-	        String localName = name.getLocalName();
-	        assertEquals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE, uri);
-	        //Validate the LocalName which must be NotUnderstood
-	        assertEquals("NotUnderstood", localName);
+        Name name = soapElement.getElementName();
+        String uri = name.getURI();
+        String localName = name.getLocalName();
+        assertEquals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE, uri);
+        //Validate the LocalName which must be NotUnderstood
+        assertEquals("NotUnderstood", localName);
     }
 
-    
+
     public void testAddUpgradeHeaderElement() throws Exception {
-    	javax.xml.soap.SOAPMessage soapMessage =
-    		javax.xml.soap.MessageFactory.newInstance(
-    				SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
+        javax.xml.soap.SOAPMessage soapMessage =
+                javax.xml.soap.MessageFactory.newInstance(
+                        SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
 
-    	javax.xml.soap.SOAPEnvelope soapEnv =
-    		soapMessage.getSOAPPart().getEnvelope();
-    	javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
+        javax.xml.soap.SOAPEnvelope soapEnv =
+                soapMessage.getSOAPPart().getEnvelope();
+        javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
 
-    	// create a list of supported URIs.
-    	ArrayList supported = new ArrayList();
-    	supported.add(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE);
-    	supported.add(SOAPConstants.URI_NS_SOAP_ENVELOPE);
+        // create a list of supported URIs.
+        ArrayList supported = new ArrayList();
+        supported.add(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE);
+        supported.add(SOAPConstants.URI_NS_SOAP_ENVELOPE);
 
-    	SOAPElement soapElement = header.addUpgradeHeaderElement(supported.iterator());
-    	assertNotNull(soapElement);
-    	Name name = soapElement.getElementName();
-    	String uri = name.getURI();
-    	String localName = name.getLocalName();
+        SOAPElement soapElement = header.addUpgradeHeaderElement(supported.iterator());
+        assertNotNull(soapElement);
+        Name name = soapElement.getElementName();
+        String uri = name.getURI();
+        String localName = name.getLocalName();
 
-    	//Validate the URI which must be SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE);
-    	assertTrue(uri.equals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE));
-    	assertTrue(localName.equals("Upgrade"));
+        //Validate the URI which must be SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE);
+        assertTrue(uri.equals(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE));
+        assertTrue(localName.equals("Upgrade"));
     }
 
     public void testExamineHeaderElements() throws Exception {
-    	javax.xml.soap.SOAPMessage soapMessage =
-    		javax.xml.soap.MessageFactory.newInstance(
-    				SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
+        javax.xml.soap.SOAPMessage soapMessage =
+                javax.xml.soap.MessageFactory.newInstance(
+                        SOAPConstants.SOAP_1_2_PROTOCOL).createMessage();
 
-    	javax.xml.soap.SOAPEnvelope soapEnv =
-    		soapMessage.getSOAPPart().getEnvelope();
-    	javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
+        javax.xml.soap.SOAPEnvelope soapEnv =
+                soapMessage.getSOAPPart().getEnvelope();
+        javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
 
-    	SOAPHeaderElement soapHeaderElement = header.addHeaderElement(envelope.createName("foo1", "f1", "foo1-URI"));
+        SOAPHeaderElement soapHeaderElement =
+                header.addHeaderElement(envelope.createName("foo1", "f1", "foo1-URI"));
 
-    	Iterator iterator = null;
-    	soapHeaderElement.setRole("role-URI");
+        Iterator iterator = null;
+        soapHeaderElement.setRole("role-URI");
 
-    	iterator = header.examineHeaderElements("role1-URI");
+        iterator = header.examineHeaderElements("role1-URI");
 
-    	int count=0;
-    	while (iterator.hasNext()) {
-    		count++;
-    		iterator.next();
-    	}
-    	assertEquals(0, count);
+        int count = 0;
+        while (iterator.hasNext()) {
+            count++;
+            iterator.next();
+        }
+        assertEquals(0, count);
     }
-    
+
 
     public void testExamineHeaderElements2() throws Exception {
-    	javax.xml.soap.SOAPMessage soapMessage =
-    		javax.xml.soap.MessageFactory.newInstance().createMessage();
+        javax.xml.soap.SOAPMessage soapMessage =
+                javax.xml.soap.MessageFactory.newInstance().createMessage();
 
-    	javax.xml.soap.SOAPEnvelope soapEnv =
-    		soapMessage.getSOAPPart().getEnvelope();
-    	javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
-    	SOAPHeaderElement soapHeaderElement = null;
+        javax.xml.soap.SOAPEnvelope soapEnv =
+                soapMessage.getSOAPPart().getEnvelope();
+        javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
+        SOAPHeaderElement soapHeaderElement = null;
 
-    	try{
-    		// Add some soap header elements
-    		SOAPElement se = header.addHeaderElement(
-    				envelope.createName("Header1", "prefix", "http://myuri"))
-    				.addTextNode("This is Header1");
-    		soapHeaderElement = (SOAPHeaderElement) se;
-    		soapHeaderElement.setMustUnderstand(true);
+        try {
+            // Add some soap header elements
+            SOAPElement se = header.addHeaderElement(
+                    envelope.createName("Header1", "prefix", "http://myuri"))
+                    .addTextNode("This is Header1");
+            soapHeaderElement = (SOAPHeaderElement)se;
+            soapHeaderElement.setMustUnderstand(true);
 
-    		se = header.addHeaderElement(
-    				envelope.createName("Header2", "prefix", "http://myuri"))
-    				.addTextNode("This is Header2");
-    		soapHeaderElement = (SOAPHeaderElement) se;
-    		soapHeaderElement.setMustUnderstand(false);
+            se = header.addHeaderElement(
+                    envelope.createName("Header2", "prefix", "http://myuri"))
+                    .addTextNode("This is Header2");
+            soapHeaderElement = (SOAPHeaderElement)se;
+            soapHeaderElement.setMustUnderstand(false);
 
-    		se = header.addHeaderElement(
-    				envelope.createName("Header3", "prefix", "http://myuri"))
-    				.addTextNode("This is Header3");
-    		soapHeaderElement = (SOAPHeaderElement) se;
-    		soapHeaderElement.setMustUnderstand(true);
+            se = header.addHeaderElement(
+                    envelope.createName("Header3", "prefix", "http://myuri"))
+                    .addTextNode("This is Header3");
+            soapHeaderElement = (SOAPHeaderElement)se;
+            soapHeaderElement.setMustUnderstand(true);
 
-    		se = header.addHeaderElement(
-    				envelope.createName("Header4", "prefix", "http://myuri"))
-    				.addTextNode("This is Header4");
-    		soapHeaderElement = (SOAPHeaderElement) se;
-    		soapHeaderElement.setMustUnderstand(false);
+            se = header.addHeaderElement(
+                    envelope.createName("Header4", "prefix", "http://myuri"))
+                    .addTextNode("This is Header4");
+            soapHeaderElement = (SOAPHeaderElement)se;
+            soapHeaderElement.setMustUnderstand(false);
 
-    		Iterator iterator = header.examineAllHeaderElements();
+            Iterator iterator = header.examineAllHeaderElements();
 
-    		//validating Iterator count .... should be 4");
-    		int cnt=0;
-    		while (iterator.hasNext()) {
-    			cnt++;
-    			soapHeaderElement = (SOAPHeaderElement)iterator.next();
-    		}
-    		assertEquals(cnt,4);
-    		iterator = header.examineHeaderElements(SOAPConstants.URI_SOAP_ACTOR_NEXT);
-    		cnt=0;
-    		while (iterator.hasNext()) {
-    			cnt++;
-    			soapHeaderElement = (SOAPHeaderElement)iterator.next();
-    		}
-    		assertEquals(cnt,0);
-    	} catch (Exception e) {
-    		fail("Unexpected Exception: " + e);
-    	}
+            //validating Iterator count .... should be 4");
+            int cnt = 0;
+            while (iterator.hasNext()) {
+                cnt++;
+                soapHeaderElement = (SOAPHeaderElement)iterator.next();
+            }
+            assertEquals(cnt, 4);
+            iterator = header.examineHeaderElements(SOAPConstants.URI_SOAP_ACTOR_NEXT);
+            cnt = 0;
+            while (iterator.hasNext()) {
+                cnt++;
+                soapHeaderElement = (SOAPHeaderElement)iterator.next();
+            }
+            assertEquals(cnt, 0);
+        } catch (Exception e) {
+            fail("Unexpected Exception: " + e);
+        }
     }
-    
-    public void testQNamesOnHeader(){
-    	SOAPHeaderElement headerElement = null;
-    	try {
-    		//SOAP1.1 and SOAP1.2 requires all HeaderElements to be namespace qualified
-    		//Try adding HeaderElement with unqualified QName not belonging to any namespace 
-    		//(expect SOAPException)
-    		headerElement = hdr.addHeaderElement(envelope.createName("Transaction"));
-    		fail("Did not throw expected SOAPException");
-    	} catch (SOAPException e) {
-    		//Did throw expected SOAPException
-    	} catch (Exception e) {
-    		fail("Unexpected Exception: " + e.getMessage());
-    	}
+
+    public void testQNamesOnHeader() {
+        SOAPHeaderElement headerElement = null;
+        try {
+            //SOAP1.1 and SOAP1.2 requires all HeaderElements to be namespace qualified
+            //Try adding HeaderElement with unqualified QName not belonging to any namespace
+            //(expect SOAPException)
+            headerElement = hdr.addHeaderElement(envelope.createName("Transaction"));
+            fail("Did not throw expected SOAPException");
+        } catch (SOAPException e) {
+            //Did throw expected SOAPException
+        } catch (Exception e) {
+            fail("Unexpected Exception: " + e.getMessage());
+        }
     }
 }

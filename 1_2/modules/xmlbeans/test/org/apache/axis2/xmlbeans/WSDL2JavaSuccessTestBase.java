@@ -17,7 +17,6 @@
 package org.apache.axis2.xmlbeans;
 
 import junit.framework.TestCase;
-
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
@@ -34,14 +33,17 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class WSDL2JavaSuccessTestBase extends TestCase{
+public abstract class WSDL2JavaSuccessTestBase extends TestCase {
 
-    public static final String OUTPUT_LOCATION_BASE = System.getProperty("basedir",".")+"/out_put_classes";
+    public static final String OUTPUT_LOCATION_BASE =
+            System.getProperty("basedir", ".") + "/out_put_classes";
     public static final String OUTPUT_LOCATION_PREFIX = "/test";
     protected static int folderCount = 0;
-    public static final String WSDL_BASE_DIR = System.getProperty("basedir",".")+"/test-resources/";
-    public static final String CLASSES_DIR = System.getProperty("basedir",".")+"/target/classes/";
-    private String[] moduleNames={"xml","common","core"};
+    public static final String WSDL_BASE_DIR =
+            System.getProperty("basedir", ".") + "/test-resources/";
+    public static final String CLASSES_DIR =
+            System.getProperty("basedir", ".") + "/target/classes/";
+    private String[] moduleNames = { "xml", "common", "core" };
     private static final String MODULE_PATH_PREFIX = "../modules/";
     private static final String COMPILE_TARGET_NAME = "compile";
 
@@ -49,38 +51,39 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase{
 
     /**
      * Make the root output directory
+     *
      * @throws Exception
      */
     protected void setUp() throws Exception {
         File outputFile = new File(OUTPUT_LOCATION_BASE);
-        if (outputFile.exists() && outputFile.isDirectory()){
+        if (outputFile.exists() && outputFile.isDirectory()) {
             deleteDir(outputFile);
             outputFile.mkdir();
-        }else{
+        } else {
             outputFile.mkdir();
         }
     }
 
     /**
-     *  Remove the root output directory
+     * Remove the root output directory
+     *
      * @throws Exception
      */
     protected void tearDown() throws Exception {
         File outputFile = new File(OUTPUT_LOCATION_BASE);
-        if (outputFile.exists() && outputFile.isDirectory()){
+        if (outputFile.exists() && outputFile.isDirectory()) {
             deleteDir(outputFile);
         }
     }
 
     /**
-     * Deletes all files and subdirectories under dir.
-     * Returns true if all deletions were successful.
-     * If a deletion fails, the method stops attempting to delete and returns false.
+     * Deletes all files and subdirectories under dir. Returns true if all deletions were
+     * successful. If a deletion fails, the method stops attempting to delete and returns false.
      */
     private boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i=0; i<children.length; i++) {
+            for (int i = 0; i < children.length; i++) {
                 boolean success = deleteDir(new File(dir, children[i]));
                 if (!success) {
                     return false;
@@ -93,18 +96,16 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase{
     }
 
 
-    public void testWSDLFile(){
-         try {
-            generateAndCompile(wsdlFileName, OUTPUT_LOCATION_BASE+OUTPUT_LOCATION_PREFIX+folderCount++);
+    public void testWSDLFile() {
+        try {
+            generateAndCompile(wsdlFileName,
+                               OUTPUT_LOCATION_BASE + OUTPUT_LOCATION_PREFIX + folderCount++);
         } catch (CodeGenerationException e) {
-             e.printStackTrace();
+            e.printStackTrace();
             fail("Exception while code generation test! " + wsdlFileName + e.getMessage());
         }
 
     }
-
-
-
 
 //    /**
 //     * Test for the sales rank and price!
@@ -116,7 +117,6 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase{
 //            fail("Exception while code generation test!"+ e.getMessage());
 //        }
 //    }
-
 
 //     /**
 //     * Test for the dime doc
@@ -145,46 +145,44 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase{
 
 
     /**
-     *
      * @param wsdlName
      * @param outputLocation
      * @throws CodeGenerationException
      */
-    protected void generateAndCompile(String wsdlName, String outputLocation) throws CodeGenerationException {
-        codeGenerate(WSDL_BASE_DIR + wsdlName,outputLocation);
+    protected void generateAndCompile(String wsdlName, String outputLocation)
+            throws CodeGenerationException {
+        codeGenerate(WSDL_BASE_DIR + wsdlName, outputLocation);
         compile(outputLocation);
     }
 
     /**
-     *
      * @param wsdlFile
      * @param outputLocation
      * @throws CodeGenerationException
      */
-    private void codeGenerate(String wsdlFile,String outputLocation) throws CodeGenerationException {
+    private void codeGenerate(String wsdlFile, String outputLocation)
+            throws CodeGenerationException {
         //create the option map
-        Map optionMap = fillOptionMap(wsdlFile,outputLocation);
+        Map optionMap = fillOptionMap(wsdlFile, outputLocation);
         CommandLineOptionParser parser =
                 new CommandLineOptionParser(optionMap);
         new CodeGenerationEngine(parser).generate();
     }
 
-    /**
-     *
-     * @param outputLocation
-     */
-    private void compile(String outputLocation){
+    /** @param outputLocation  */
+    private void compile(String outputLocation) {
         String cp = null;
-        try{
-            BufferedReader br = new BufferedReader(new FileReader(System.getProperty("basedir",".")+"/target/cp.txt"));
+        try {
+            BufferedReader br = new BufferedReader(
+                    new FileReader(System.getProperty("basedir", ".") + "/target/cp.txt"));
             cp = br.readLine();
-        }catch(Exception e){
+        } catch (Exception e) {
             // Don't care
         }
-        if(cp == null){
+        if (cp == null) {
             cp = "";
         }
-        
+
         //using the ant javac task for compilation
         Javac javaCompiler = new Javac();
         Project codeGenProject = new Project();
@@ -208,18 +206,19 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase{
         //reason for this is that some codegenerators(XMLBeans) produce compiled classes as part of
         //generated artifacts
         File outputLocationFile = new File(outputLocation);
-        Path classPath = new Path(codeGenProject,outputLocation) ;
-        classPath.addExisting(classPath.concatSystemClasspath(),false);
+        Path classPath = new Path(codeGenProject, outputLocation);
+        classPath.addExisting(classPath.concatSystemClasspath(), false);
         for (int i = 0; i < moduleNames.length; i++) {
-            classPath.add(new Path(codeGenProject,MODULE_PATH_PREFIX +moduleNames[i]+CLASSES_DIR));
+            classPath.add(new Path(codeGenProject,
+                                   MODULE_PATH_PREFIX + moduleNames[i] + CLASSES_DIR));
         }
-        
+
         classPath.add(new Path(codeGenProject, cp));
-        
+
         javaCompiler.setClasspath(classPath);
 
         //set sourcePath - The generated output directories also become part of the sourcepath
-        Path sourcePath = new Path(codeGenProject,outputLocation) ;
+        Path sourcePath = new Path(codeGenProject, outputLocation);
         sourcePath.setLocation(outputLocationFile);
         javaCompiler.setSrcdir(sourcePath);
 
@@ -233,13 +232,13 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase{
     /**
      *
      */
-    private Map fillOptionMap(String wsdlFileName,String outputLocation) {
+    private Map fillOptionMap(String wsdlFileName, String outputLocation) {
         Map optionMap = new HashMap();
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.WSDL_LOCATION_URI_OPTION,
-                        new String[]{wsdlFileName}));
+                        new String[] { wsdlFileName }));
 
         //use default sync option - No option is given
         //use default async option - No option is given
@@ -250,7 +249,7 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase{
                 CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
                 new CommandLineOption(
                         CommandLineOptionConstants.WSDL2JavaConstants.OUTPUT_LOCATION_OPTION,
-                        new String[]{outputLocation}));
+                        new String[] { outputLocation }));
         //server side option is on
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.SERVER_SIDE_CODE_OPTION,
@@ -260,17 +259,20 @@ public abstract class WSDL2JavaSuccessTestBase extends TestCase{
         // descriptor option is on
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
-                new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_SERVICE_DESCRIPTION_OPTION,
                         new String[0]));
         // db is xmlbeans option is on
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
-                new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
-                        new String[]{TestConstants.Databinding.XML_BEANS}));
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.DATA_BINDING_TYPE_OPTION,
+                        new String[] { TestConstants.Databinding.XML_BEANS }));
 
         optionMap.put(
                 CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
-                new CommandLineOption(CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
+                new CommandLineOption(
+                        CommandLineOptionConstants.WSDL2JavaConstants.GENERATE_ALL_OPTION,
                         new String[0]));
 
         //todo Make this work

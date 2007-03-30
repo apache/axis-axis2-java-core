@@ -14,26 +14,21 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- * 	The res-authType specifies whether the Deployment Component
- * 	code signs on programmatically to the resource manager, or
- * 	whether the Container will sign on to the resource manager
- * 	on behalf of the Deployment Component. In the latter case,
- * 	the Container uses information that is supplied by the
- * 	Deployer.
- * 
- * 	The value must be one of the two following:
- * 
- * 	    Application
- * 	    Container
- * 
- *       
- * 
+ * The res-authType specifies whether the Deployment Component code signs on programmatically to the
+ * resource manager, or whether the Container will sign on to the resource manager on behalf of the
+ * Deployment Component. In the latter case, the Container uses information that is supplied by the
+ * Deployer.
+ * <p/>
+ * The value must be one of the two following:
+ * <p/>
+ * Application Container
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for res-authType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="res-authType">
  *   &lt;simpleContent>
@@ -42,14 +37,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "res-authType")
 public class ResAuthType
-    extends String
-{
+        extends String {
 
 
 }

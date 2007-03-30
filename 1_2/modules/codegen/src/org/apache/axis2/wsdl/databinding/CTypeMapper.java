@@ -16,12 +16,12 @@
 
 package org.apache.axis2.wsdl.databinding;
 
-import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.codegen.emitter.CTypeInfo;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 import javax.xml.namespace.QName;
 
-public class CTypeMapper extends TypeMappingAdapter{
+public class CTypeMapper extends TypeMappingAdapter {
 
     private String defaultStructName = "axiom_node_t*";
 
@@ -33,19 +33,19 @@ public class CTypeMapper extends TypeMappingAdapter{
         if ((qname != null)) {
             Object o = qName2NameMap.get(qname);
             if (o != null) {
-                return (String) o;
+                return (String)o;
             } else if (CTypeInfo.XSD_ANYTYPE.equals(qname) ||
-                     CTypeInfo.XSD_ANY.equals(qname)) {
+                    CTypeInfo.XSD_ANY.equals(qname)) {
                 return defaultStructName;
-            }else{
+            } else {
                 throw new UnmatchedTypeException(
                         CodegenMessages.getMessage("databinding.typemapper.typeunmatched",
-                                qname.getLocalPart(),
-                                qname.getNamespaceURI())
+                                                   qname.getLocalPart(),
+                                                   qname.getNamespaceURI())
                 );
             }
-        }else{
-           return null;
+        } else {
+            return null;
         }
 
 
@@ -55,7 +55,7 @@ public class CTypeMapper extends TypeMappingAdapter{
         return defaultStructName;
     }
 
-     public void setDefaultMappingName(String defaultMapping) {
+    public void setDefaultMappingName(String defaultMapping) {
         this.defaultStructName = defaultMapping;
     }
 

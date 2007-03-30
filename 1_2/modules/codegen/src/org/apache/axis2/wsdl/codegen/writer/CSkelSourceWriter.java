@@ -21,11 +21,11 @@ import java.io.File;
 public class CSkelSourceWriter extends CStubSourceWriter {
 
     public CSkelSourceWriter(String outputFileLocation) {
-        super ( outputFileLocation);
+        super(outputFileLocation);
     }
 
     public CSkelSourceWriter(File outputFileLocation, String language) {
-        super ( outputFileLocation, language );
+        super(outputFileLocation, language);
     }
 
 }

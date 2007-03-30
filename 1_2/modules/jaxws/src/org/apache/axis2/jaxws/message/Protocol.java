@@ -18,34 +18,29 @@
  */
 package org.apache.axis2.jaxws.message;
 
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.http.HTTPBinding;
-import javax.xml.ws.soap.SOAPBinding;
-
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.i18n.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.ws.http.HTTPBinding;
+import javax.xml.ws.soap.SOAPBinding;
+
 /**
- * Protocol
- * Each message has a protocol (soap11, soap12, rest)
- * This enum represents the protocol within the Message sub-component
+ * Protocol Each message has a protocol (soap11, soap12, rest) This enum represents the protocol
+ * within the Message sub-component
  */
 public enum Protocol {
-	soap11, soap12, rest, unknown;
-    
-	private static final Log log = LogFactory.getLog(Protocol.class);
-    
+    soap11, soap12, rest, unknown;
+
+    private static final Log log = LogFactory.getLog(Protocol.class);
+
     // These namespaces are used in the WSDL document to indentify a 
     // SOAP 1.1 vs. a SOAP 1.2 binding
     private static final String SOAP11_WSDL_BINDING = "http://schemas.xmlsoap.org/wsdl/soap";
     private static final String SOAP12_WSDL_BINDING = "http://schemas.xmlsoap.org/wsdl/soap12";
-    
+
     /**
-     * Return the right value for the Protocol based on the binding
-     * URL that was passed in.
-     * 
+     * Return the right value for the Protocol based on the binding URL that was passed in.
+     *
      * @param url
      * @return Protocol or null
      */
@@ -54,18 +49,17 @@ public enum Protocol {
         if (debug) {
             log.debug("Configuring message protocol for binding [" + url + "]");
         }
-        
-        if (namespaceEquals(Protocol.SOAP11_WSDL_BINDING, url) || 
-            namespaceEquals(SOAPBinding.SOAP11HTTP_BINDING, url) ||
-            namespaceEquals(SOAPBinding.SOAP11HTTP_MTOM_BINDING, url)) {
+
+        if (namespaceEquals(Protocol.SOAP11_WSDL_BINDING, url) ||
+                namespaceEquals(SOAPBinding.SOAP11HTTP_BINDING, url) ||
+                namespaceEquals(SOAPBinding.SOAP11HTTP_MTOM_BINDING, url)) {
             if (debug) {
                 log.debug("SOAP 1.1 protocol configured for message");
             }
             return Protocol.soap11;
-        }
-        else if (namespaceEquals(Protocol.SOAP12_WSDL_BINDING, url) ||
-                 namespaceEquals(SOAPBinding.SOAP12HTTP_BINDING, url) ||
-                 namespaceEquals(SOAPBinding.SOAP12HTTP_MTOM_BINDING, url)) {
+        } else if (namespaceEquals(Protocol.SOAP12_WSDL_BINDING, url) ||
+                namespaceEquals(SOAPBinding.SOAP12HTTP_BINDING, url) ||
+                namespaceEquals(SOAPBinding.SOAP12HTTP_MTOM_BINDING, url)) {
             if (debug) {
                 log.debug("SOAP 1.2 protocol configured for message");
             }
@@ -75,27 +69,25 @@ public enum Protocol {
                 log.debug("XML/HTTP protocol configured for message");
             }
             return Protocol.rest;
-        }
-        else {
+        } else {
             if (debug) {
                 log.debug("Protocol was not found for:" + url);
             }
             return null;
         }
     }
-    
+
     /*
-     * Check to see if the two strings (namespaces) passed in are the same, but
-     * also accounts for any trailing "/" characters in the string.
-     */
+    * Check to see if the two strings (namespaces) passed in are the same, but
+    * also accounts for any trailing "/" characters in the string.
+    */
     private static boolean namespaceEquals(String target, String input) {
         if (target.equals(input)) {
             return true;
-        }
-        else if ((target + "/").equals(input)) {
+        } else if ((target + "/").equals(input)) {
             return true;
         }
-        
-        return false;            
+
+        return false;
     }
 }

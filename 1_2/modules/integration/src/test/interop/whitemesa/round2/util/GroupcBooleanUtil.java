@@ -34,13 +34,15 @@ public class GroupcBooleanUtil implements SunClientUtil {
         SOAPEnvelope reqEnv = omfactory.createSOAPEnvelope();
         reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema", "xsd");
-        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC"); //xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+        reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/",
+                                "SOAP-ENC"); //xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
         reqEnv.declareNamespace("http://soapinterop.org/", "m");
 
         SOAPHeader header = omfactory.createSOAPHeader(reqEnv);
-        OMNamespace hns = reqEnv.declareNamespace("http://soapinterop.org/echoheader/", "hns"); //xmlns:m0="http://soapinterop.org/echoheader/
+        OMNamespace hns = reqEnv.declareNamespace("http://soapinterop.org/echoheader/",
+                                                  "hns"); //xmlns:m0="http://soapinterop.org/echoheader/
         SOAPHeaderBlock block1 = header.addHeaderBlock("echoMeStringRequest", hns);
         block1.addAttribute("xsi:type", "xsd:string", null);
         block1.addChild(omfactory.createOMText("string"));
@@ -66,10 +68,12 @@ public class GroupcBooleanUtil implements SunClientUtil {
         block2.addChild(h2Val2);
         block2.addChild(h2Val3);
 
-        OMElement operation = omfactory.createOMElement("echoBoolean", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoBoolean", "http://soapinterop.org/", null);
         SOAPBody body = omfactory.createSOAPBody(reqEnv);
         body.addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                               null);
 
         OMElement part = omfactory.createOMElement("inputBoolean", "", null);
         part.addAttribute("xsi:type", "xsd:boolean", null);

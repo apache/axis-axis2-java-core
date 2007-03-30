@@ -1,6 +1,5 @@
 package org.apache.axis2.xmlbeans;
 
-import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -17,9 +16,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationException;
  * limitations under the License.
  */
 
-/**
- * Test for the WSDL that's unreferenced type
- */
+/** Test for the WSDL that's unreferenced type */
 public class WSDL2Java12Test extends WSDL2JavaFailureTestBase {
 
     protected void setUp() throws Exception {

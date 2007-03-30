@@ -18,9 +18,8 @@ package org.apache.axis2.wsdl.databinding;
 
 
 /**
- * The java type mapper can do without any default configuration
- * However if any such default type mappings are needed, they can be
- * put inside the constructor
+ * The java type mapper can do without any default configuration However if any such default type
+ * mappings are needed, they can be put inside the constructor
  */
 public class JavaTypeMapper extends TypeMappingAdapter {
 

@@ -32,13 +32,15 @@ public class RequestCounterMessageReceiver extends AbstractInOutSyncMessageRecei
     public RequestCounterMessageReceiver() {
     }
 
-    public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage) throws AxisFault {
+    public void invokeBusinessLogic(MessageContext inMessage, MessageContext outMessage)
+            throws AxisFault {
         RequestCounter requestCounter = new RequestCounter();
         requestCounter.getRequestCount(inMessage, outMessage);
 
         SOAPFactory factory;
 
-        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI.equals(inMessage.getEnvelope().getNamespace().getNamespaceURI())) {
+        if (SOAP12Constants.SOAP_ENVELOPE_NAMESPACE_URI
+                .equals(inMessage.getEnvelope().getNamespace().getNamespaceURI())) {
             factory = OMAbstractFactory.getSOAP12Factory();
         } else {
             factory = OMAbstractFactory.getSOAP11Factory();
@@ -47,9 +49,12 @@ public class RequestCounterMessageReceiver extends AbstractInOutSyncMessageRecei
         SOAPEnvelope defaultEnvelope = factory.getDefaultEnvelope();
         outMessage.setEnvelope(defaultEnvelope);
 
-        OMNamespace axis2Namespace = factory.createOMNamespace("http://ws.apache.org/axis2/namespaces/", "axis2");
-        OMElement firstElement = factory.createOMElement("RequestCount", axis2Namespace, defaultEnvelope.getBody());
-        firstElement.setText(""+((Integer)inMessage.getServiceGroupContext().getProperty(RequestCounter.REQUEST_COUNT)).intValue());
+        OMNamespace axis2Namespace =
+                factory.createOMNamespace("http://ws.apache.org/axis2/namespaces/", "axis2");
+        OMElement firstElement =
+                factory.createOMElement("RequestCount", axis2Namespace, defaultEnvelope.getBody());
+        firstElement.setText("" + ((Integer)inMessage.getServiceGroupContext()
+                .getProperty(RequestCounter.REQUEST_COUNT)).intValue());
 
     }
 }

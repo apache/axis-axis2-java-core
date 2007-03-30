@@ -32,10 +32,8 @@ import org.apache.axis2.client.async.Callback;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.engine.AxisConfiguration;
 import org.apache.axis2.engine.Echo;
@@ -47,16 +45,13 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
-/**
- * These tests willcheck wheather the mail transport works ok with charactor set
- * encoding changes.
- */
+/** These tests willcheck wheather the mail transport works ok with charactor set encoding changes. */
 public class MailCharSetEncodingTest extends TestCase {
 
     private EndpointReference targetEPR = new EndpointReference("mail:foo@127.0.0.1"
             + "/axis2/services/EchoXMLService/echoOMElement");
 
-	private static final Log log = LogFactory.getLog(MailCharSetEncodingTest.class);
+    private static final Log log = LogFactory.getLog(MailCharSetEncodingTest.class);
 
     private String stringServiceName = "EchoXMLService";
 
@@ -83,11 +78,11 @@ public class MailCharSetEncodingTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
-    	    serverConfigContext = UtilsMailServer.start();
-        if (serverConfigContext.getAxisConfiguration().getService(stringServiceName) == null){
-		    AxisService service = Utils.createSimpleService(serviceName,
-		            Echo.class.getName(), operationName);
-		    serverConfigContext.getAxisConfiguration().addService(service);
+        serverConfigContext = UtilsMailServer.start();
+        if (serverConfigContext.getAxisConfiguration().getService(stringServiceName) == null) {
+            AxisService service = Utils.createSimpleService(serviceName,
+                                                            Echo.class.getName(), operationName);
+            serverConfigContext.getAxisConfiguration().addService(service);
         }
 
         SimpleMailListener ml = new SimpleMailListener();
@@ -110,7 +105,7 @@ public class MailCharSetEncodingTest extends TestCase {
                 .createClientConfigurationContext();
         AxisService service = null;
         AxisOperation axisOperation = null;
-        if (configContext.getAxisConfiguration().getService(stringServiceName) != null){
+        if (configContext.getAxisConfiguration().getService(stringServiceName) != null) {
             configContext.getAxisConfiguration().removeService(stringServiceName);
         }
         service = new AxisService(serviceName.getLocalPart());
@@ -157,7 +152,7 @@ public class MailCharSetEncodingTest extends TestCase {
             }
         }
         assertNotNull("Result is null", resultElem);
-        String result = ((OMElement) resultElem.getFirstOMChild()
+        String result = ((OMElement)resultElem.getFirstOMChild()
                 .getNextOMSibling()).getFirstElement().getFirstElement()
                 .getText();
 

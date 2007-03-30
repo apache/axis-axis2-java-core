@@ -65,10 +65,12 @@ public class GroupcIntegerArrayUtil implements SunClientUtil {
         block2.addChild(h2Val2);
         block2.addChild(h2Val3);
 
-        OMElement operation = omfactory.createOMElement("echoIntegerArray", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoIntegerArray", "http://soapinterop.org/", null);
         SOAPBody body = omfactory.createSOAPBody(reqEnv);
         body.addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                               null);
         OMElement part = omfactory.createOMElement("inputIntegerArray", "", null);
         part.addAttribute("xsi:type", "SOAP-ENC:Array", null);
         part.addAttribute("SOAP-ENC:arrayType", "xsd:int[3]", null);

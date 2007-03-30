@@ -19,8 +19,6 @@ package test.interop.whitemesa;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
@@ -28,13 +26,16 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.wsdl.WSDLConstants;
 
 import java.net.URL;
 
 
 public class SunClient {
 
-    public SOAPEnvelope sendMsg(SunClientUtil util, String epUrl, String soapAction) throws AxisFault {
+    public SOAPEnvelope sendMsg(SunClientUtil util, String epUrl, String soapAction)
+            throws AxisFault {
 
         SOAPEnvelope resEnv;
         URL url;
@@ -54,13 +55,15 @@ public class SunClient {
             ConfigurationContextFactory factory = new ConfigurationContextFactory();
             ConfigurationContext configContext =
                     //factory.createConfigurationContextFromFileSystem("target/test-resources/integrationRepo", null);
-            factory.createConfigurationContextFromFileSystem("itest-resources/integrationRepo", null);
+                    factory.createConfigurationContextFromFileSystem(
+                            "itest-resources/integrationRepo", null);
             ServiceClient serviceClient = new ServiceClient(configContext, null);
             serviceClient.setOptions(options);
             OperationClient opClient = serviceClient.createClient(ServiceClient.ANON_OUT_IN_OP);
             opClient.addMessageContext(messageContext);
             opClient.execute(true);
-            MessageContext responseMCtx = opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            MessageContext responseMCtx =
+                    opClient.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 
             resEnv = responseMCtx.getEnvelope();
 

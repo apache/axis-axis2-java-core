@@ -36,12 +36,10 @@ import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-/**
- * Testing character encoding support
- */
+/** Testing character encoding support */
 public class CharactersetEncodingTest extends UtilServerBasedTestCase implements TestConstants {
 
-	private static final Log log = LogFactory.getLog(CharactersetEncodingTest.class);
+    private static final Log log = LogFactory.getLog(CharactersetEncodingTest.class);
 
     private AxisService service;
 
@@ -51,14 +49,14 @@ public class CharactersetEncodingTest extends UtilServerBasedTestCase implements
 
     public static Test suite() {
         return getTestSetup2(new TestSuite(CharactersetEncodingTest.class),
-                Constants.TESTING_PATH + "chunking-enabledRepository");
+                             Constants.TESTING_PATH + "chunking-enabledRepository");
     }
 
     protected void setUp() throws Exception {
         service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
     }
 
@@ -85,7 +83,8 @@ public class CharactersetEncodingTest extends UtilServerBasedTestCase implements
             options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 
             ConfigurationContext configContext =
-                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(Constants.TESTING_PATH + "chunking-enabledRepository", null);
+                    ConfigurationContextFactory.createConfigurationContextFromFileSystem(
+                            Constants.TESTING_PATH + "chunking-enabledRepository", null);
             ServiceClient sender = new ServiceClient(configContext, null);
             sender.setOptions(options);
 
@@ -93,7 +92,7 @@ public class CharactersetEncodingTest extends UtilServerBasedTestCase implements
 
 
             assertNotNull("Result is null", resultElem);
-            String result = ((OMElement) resultElem.getFirstOMChild()).getText();
+            String result = ((OMElement)resultElem.getFirstOMChild()).getText();
 
             assertNotNull("Result value is null", result);
 

@@ -15,9 +15,9 @@
  */
 package org.apache.axis2.saaj;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.Iterator;
+import junit.framework.TestCase;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,17 +30,9 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.dom.DOMSource;
-
-import junit.framework.TestCase;
-
-import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMDocument;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
-import org.apache.axiom.om.impl.llom.factory.OMXMLBuilderFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import java.io.File;
+import java.util.Iterator;
 
 /**
  * 
@@ -50,7 +42,7 @@ public class SOAPPartTest extends TestCase {
     public void testAddSource() {
         DOMSource domSource;
         try {
-        	/*
+            /*
             FileReader testFile = new FileReader(new File(System.getProperty("basedir",".")+"/test-resources" + File.separator + "soap-part.xml"));
             StAXOMBuilder stAXOMBuilder =
                     OMXMLBuilderFactory.createStAXOMBuilder(
@@ -58,9 +50,10 @@ public class SOAPPartTest extends TestCase {
                             XMLInputFactory.newInstance().createXMLStreamReader(
                                     testFile));
             */
-            
+
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document document = builder.parse(new File(System.getProperty("basedir",".")+"/test-resources" + File.separator + "soap-part.xml"));
+            Document document = builder.parse(new File(System.getProperty("basedir", ".") +
+                    "/test-resources" + File.separator + "soap-part.xml"));
             domSource = new DOMSource(document);
 
             SOAPMessage message = MessageFactory.newInstance().createMessage();
@@ -87,19 +80,19 @@ public class SOAPPartTest extends TestCase {
 
     public void getContents(Iterator iterator, String indent) {
         while (iterator.hasNext()) {
-            Node node = (Node) iterator.next();
+            Node node = (Node)iterator.next();
             SOAPElement element = null;
             Text text = null;
 
             if (node instanceof SOAPElement) {
-                element = (SOAPElement) node;
+                element = (SOAPElement)node;
 
                 Name name = element.getElementName();
 
                 Iterator attrs = element.getAllAttributes();
 
                 while (attrs.hasNext()) {
-                    Name attrName = (Name) attrs.next();
+                    Name attrName = (Name)attrs.next();
                     assertNotNull(attrName);
                     //System.out.println(indent + " Attribute name is " +
                     //                   attrName.getQualifiedName());
@@ -110,15 +103,14 @@ public class SOAPPartTest extends TestCase {
                 Iterator iter2 = element.getChildElements();
                 getContents(iter2, indent + " ");
             } else {
-                text = (Text) node;
+                text = (Text)node;
                 String content = text.getValue();
                 assertNotNull(content);
             }
         }
     }
-    
-    
-    
+
+
     public void testAddSource2() throws Exception {
         javax.xml.soap.SOAPMessage soapMessage =
                 javax.xml.soap.MessageFactory.newInstance().createMessage();
@@ -126,22 +118,25 @@ public class SOAPPartTest extends TestCase {
                 soapMessage.getSOAPPart().getEnvelope();
         javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
         javax.xml.soap.SOAPBody body = soapEnv.getBody();
-        
-        assertTrue(header.addChildElement("ebxmlms1", "ch2", "http://test.apache.org") instanceof SOAPHeaderElement);
-        assertTrue(header.addHeaderElement(soapEnv.createName("ebxmlms2", "ch3", "http://test2.apache.org")) != null);
-        assertTrue(header.addHeaderElement(new PrefixedQName("http://test3.apache.org", "ebxmlms3", "ch5")) != null);
+
+        assertTrue(header.addChildElement("ebxmlms1", "ch2",
+                                          "http://test.apache.org") instanceof SOAPHeaderElement);
+        assertTrue(header.addHeaderElement(
+                soapEnv.createName("ebxmlms2", "ch3", "http://test2.apache.org")) != null);
+        assertTrue(header.addHeaderElement(
+                new PrefixedQName("http://test3.apache.org", "ebxmlms3", "ch5")) != null);
 
         body.addChildElement("bodyEle1", "ele1", "http://ws.apache.org");
         soapMessage.saveChanges();
-        
+
         javax.xml.soap.SOAPMessage soapMessage2 =
-            javax.xml.soap.MessageFactory.newInstance().createMessage();
+                javax.xml.soap.MessageFactory.newInstance().createMessage();
         SOAPPart soapPart = soapMessage2.getSOAPPart();
         soapPart.setContent(soapMessage.getSOAPPart().getContent());
         soapMessage2.saveChanges();
         assertNotNull(soapMessage2);
     }
-    
+
     public void testAddSource3() throws Exception {
         javax.xml.soap.SOAPMessage soapMessage =
                 javax.xml.soap.MessageFactory.newInstance().createMessage();
@@ -149,28 +144,32 @@ public class SOAPPartTest extends TestCase {
                 soapMessage.getSOAPPart().getEnvelope();
         javax.xml.soap.SOAPHeader header = soapEnv.getHeader();
         javax.xml.soap.SOAPBody body = soapEnv.getBody();
-        
-        assertTrue(header.addChildElement("ebxmlms1", "ch2", "http://test.apache.org") instanceof SOAPHeaderElement);
-        assertTrue(header.addHeaderElement(soapEnv.createName("ebxmlms2", "ch3", "http://test2.apache.org")) != null);
-        assertTrue(header.addHeaderElement(new PrefixedQName("http://test3.apache.org", "ebxmlms3", "ch5")) != null);
+
+        assertTrue(header.addChildElement("ebxmlms1", "ch2",
+                                          "http://test.apache.org") instanceof SOAPHeaderElement);
+        assertTrue(header.addHeaderElement(
+                soapEnv.createName("ebxmlms2", "ch3", "http://test2.apache.org")) != null);
+        assertTrue(header.addHeaderElement(
+                new PrefixedQName("http://test3.apache.org", "ebxmlms3", "ch5")) != null);
 
         body.addChildElement("bodyEle1", "ele1", "http://ws.apache.org");
         soapMessage.saveChanges();
-        
+
         javax.xml.soap.SOAPMessage soapMessage2 =
-            javax.xml.soap.MessageFactory.newInstance().createMessage();
+                javax.xml.soap.MessageFactory.newInstance().createMessage();
         SOAPPart soapPart = soapMessage2.getSOAPPart();
         soapPart.setContent(soapMessage.getSOAPPart().getContent());
         soapMessage2.saveChanges();
         assertNotNull(soapMessage2);
     }
 
-    
+
     public void _testInputEncoding() {
         try {
-        	DOMSource domSource;
+            DOMSource domSource;
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document document = builder.parse(new File(System.getProperty("basedir",".")+"/test-resources" + File.separator + "soap-part.xml"));
+            Document document = builder.parse(new File(System.getProperty("basedir", ".") +
+                    "/test-resources" + File.separator + "soap-part.xml"));
             domSource = new DOMSource(document);
 
             SOAPMessage message = MessageFactory.newInstance().createMessage();
@@ -179,7 +178,7 @@ public class SOAPPartTest extends TestCase {
             SOAPPart soapPart = message.getSOAPPart();
             soapPart.setContent(domSource);
             message.saveChanges();
-            
+
             SOAPPart sp = message.getSOAPPart();
 
 //            String inputEncoding = sp.getInputEncoding();
@@ -188,5 +187,5 @@ public class SOAPPartTest extends TestCase {
             fail("Unexpected Exception " + e);
         }
     }
-    
+
 }

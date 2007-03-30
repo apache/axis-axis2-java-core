@@ -37,9 +37,10 @@ public class UtilsJMSServer {
 
     public static final String FAILURE_MESSAGE = "Intentional Failure";
 
-    public static final String REPOSITORY_JMS = "target/test-resources/jms-enabled-server-repository";
+    public static final String REPOSITORY_JMS =
+            "target/test-resources/jms-enabled-server-repository";
 
-	private static final Log log = LogFactory.getLog(UtilsJMSServer.class);
+    private static final Log log = LogFactory.getLog(UtilsJMSServer.class);
 
     public static synchronized void deployService(AxisService service)
             throws AxisFault {
@@ -55,37 +56,39 @@ public class UtilsJMSServer {
     }
 
     public static synchronized void start() throws Exception {
-            // start JMS Listener
-            File file = new File(REPOSITORY_JMS);
-            System.out.println(file.getAbsoluteFile());
-            if (!file.exists()) {
-                throw new Exception("Repository directory does not exist");
-            }
+        // start JMS Listener
+        File file = new File(REPOSITORY_JMS);
+        System.out.println(file.getAbsoluteFile());
+        if (!file.exists()) {
+            throw new Exception("Repository directory does not exist");
+        }
 
-            ConfigurationContext configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(file
-                    .getAbsolutePath(),REPOSITORY_JMS + "/conf/axis2.xml");
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e1) {
-                throw new AxisFault("Thread interuptted", e1);
-            }
-            receiver = new JMSListener();
-            ListenerManager listenerManager = configurationContext.getListenerManager();
-            TransportInDescription trsIn = configurationContext.getAxisConfiguration().getTransportIn(Constants.TRANSPORT_JMS);
-            trsIn.setReceiver(receiver);
-            if (listenerManager == null) {
-                listenerManager = new ListenerManager();
-                listenerManager.init(configurationContext);
-            }
-            listenerManager.addListener(trsIn, true);
-            receiver.init(configurationContext, trsIn);
-            receiver.start();
+        ConfigurationContext configurationContext =
+                ConfigurationContextFactory.createConfigurationContextFromFileSystem(file
+                        .getAbsolutePath(), REPOSITORY_JMS + "/conf/axis2.xml");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e1) {
+            throw new AxisFault("Thread interuptted", e1);
+        }
+        receiver = new JMSListener();
+        ListenerManager listenerManager = configurationContext.getListenerManager();
+        TransportInDescription trsIn =
+                configurationContext.getAxisConfiguration().getTransportIn(Constants.TRANSPORT_JMS);
+        trsIn.setReceiver(receiver);
+        if (listenerManager == null) {
+            listenerManager = new ListenerManager();
+            listenerManager.init(configurationContext);
+        }
+        listenerManager.addListener(trsIn, true);
+        receiver.init(configurationContext, trsIn);
+        receiver.start();
     }
 
     public static synchronized void stop() {
         try {
-                receiver.stop();
-                System.out.print("Server stopped .....");
+            receiver.stop();
+            System.out.print("Server stopped .....");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

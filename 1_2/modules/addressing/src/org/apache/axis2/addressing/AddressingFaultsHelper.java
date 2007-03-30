@@ -109,10 +109,13 @@ public class AddressingFaultsHelper {
             } else {
                 result = AddressingMessages.getMessage("addressingHeaderRequired");
             }
-        }else if(AddressingConstants.FAULT_ADDRESSING_DESTINATION_UNREACHABLE.equals(faultCodeLocalName)){
-            if(faultDetail!=null){
-                result = AddressingMessages.getMessage("specificDestinationUnreachable", faultDetail);
-            }else{
+        } else
+        if (AddressingConstants.FAULT_ADDRESSING_DESTINATION_UNREACHABLE.equals(faultCodeLocalName))
+        {
+            if (faultDetail != null) {
+                result = AddressingMessages
+                        .getMessage("specificDestinationUnreachable", faultDetail);
+            } else {
                 result = AddressingMessages.getMessage("destinationUnreachable");
             }
         } else if (AddressingConstants.FAULT_ACTION_NOT_SUPPORTED.equals(faultCodeLocalName)) {
@@ -137,7 +140,7 @@ public class AddressingFaultsHelper {
                     " incorrectHeaderName: " + incorrectHeaderName);
         }
         String namespace =
-                (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+                (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)) {
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME,
                                    AddressingConstants.WSA_DEFAULT_PREFIX + ":" +
@@ -163,7 +166,7 @@ public class AddressingFaultsHelper {
                     " incorrectHeaderName: " + incorrectHeaderName);
         }
         String namespace =
-                (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+                (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)) {
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME,
                                    AddressingConstants.WSA_DEFAULT_PREFIX + ":" +
@@ -187,7 +190,7 @@ public class AddressingFaultsHelper {
             log.debug("triggerActionMismatchFault: messageContext: " + messageContext);
         }
         String namespace =
-                (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+                (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)) {
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME,
                                    AddressingConstants.WSA_DEFAULT_PREFIX + ":Action",
@@ -212,7 +215,7 @@ public class AddressingFaultsHelper {
                     messageContext + " incorrectHeaderName: " + incorrectHeaderName);
         }
         String namespace =
-                (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+                (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)) {
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME,
                                    AddressingConstants.WSA_DEFAULT_PREFIX + ":" +
@@ -238,7 +241,7 @@ public class AddressingFaultsHelper {
                     messageContext + " incorrectHeaderName: " + incorrectHeaderName);
         }
         String namespace =
-                (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+                (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)) {
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME,
                                    AddressingConstants.WSA_DEFAULT_PREFIX + ":" +
@@ -264,7 +267,7 @@ public class AddressingFaultsHelper {
                     " missingHeaderName: " + missingHeaderName);
         }
         String namespace =
-                (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+                (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         if (Submission.WSA_NAMESPACE.equals(namespace)) {
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_HEADER_QNAME,
                                    AddressingConstants.WSA_DEFAULT_PREFIX + ":" + missingHeaderName,
@@ -281,21 +284,24 @@ public class AddressingFaultsHelper {
     }
 
     //    wsa:DestinationUnreachable [Reason] the string: "No route can be determined to reach [destination]"
-    public static void triggerDestinationUnreachableFault(MessageContext messageContext, String address) throws AxisFault {
-        if(log.isDebugEnabled()){
-            log.debug("triggerDestinationUnreachableFault: messageContext: "+messageContext+
-                    " address: "+address);
+    public static void triggerDestinationUnreachableFault(MessageContext messageContext,
+                                                          String address) throws AxisFault {
+        if (log.isDebugEnabled()) {
+            log.debug("triggerDestinationUnreachableFault: messageContext: " + messageContext +
+                    " address: " + address);
         }
         String namespace =
-                (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
-        if (Submission.WSA_NAMESPACE.equals(namespace)){
+                (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+        if (Submission.WSA_NAMESPACE.equals(namespace)) {
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_IRI, address,
-                                   AddressingConstants.FAULT_ADDRESSING_DESTINATION_UNREACHABLE, null,
+                                   AddressingConstants.FAULT_ADDRESSING_DESTINATION_UNREACHABLE,
+                                   null,
                                    AddressingMessages.getMessage(
                                            "spec.submission.FAULT_ADDRESSING_DESTINATION_UNREACHABLE_REASON"));
-        }else{
+        } else {
             triggerAddressingFault(messageContext, Final.FAULT_HEADER_PROB_IRI, null,
-                                   AddressingConstants.FAULT_ADDRESSING_DESTINATION_UNREACHABLE, null,
+                                   AddressingConstants.FAULT_ADDRESSING_DESTINATION_UNREACHABLE,
+                                   null,
                                    AddressingMessages.getMessage(
                                            "spec.final.FAULT_ADDRESSING_DESTINATION_UNREACHABLE_REASON"));
         }
@@ -322,7 +328,7 @@ public class AddressingFaultsHelper {
                                                String faultSubcode, String faultReason)
             throws AxisFault {
         Map faultInformation =
-                (Map) messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+                (Map)messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         if (faultInformation == null) {
             faultInformation = new HashMap();
             messageContext.setProperty(Constants.FAULT_INFORMATION_FOR_HEADERS, faultInformation);
@@ -342,7 +348,7 @@ public class AddressingFaultsHelper {
         messageContext.setProperty(AddressingConstants.DISABLE_ADDRESSING_FOR_OUT_MESSAGES,
                                    Boolean.FALSE);
         String namespace =
-                (String) messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
+                (String)messageContext.getProperty(AddressingConstants.WS_ADDRESSING_VERSION);
         throw new AxisFault(faultReason, new QName(namespace, faultcode,
                                                    AddressingConstants.WSA_DEFAULT_PREFIX));
     }
@@ -374,13 +380,13 @@ public class AddressingFaultsHelper {
 
     public static OMElement getDetailElementForAddressingFault(MessageContext messageContext,
                                                                OMNamespace addressingNamespaceObject) {
-        Map faultInfo = (Map) messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
+        Map faultInfo = (Map)messageContext.getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS);
         OMElement problemDetail = null;
         if (faultInfo != null) {
-            String faultyHeaderQName = (String) faultInfo.get(Final.FAULT_HEADER_PROB_HEADER_QNAME);
-            String faultyAction = (String) faultInfo.get(Final.FAULT_PROBLEM_ACTION_NAME);
-            String faultyAddress = (String) faultInfo.get(Final.FAULT_HEADER_PROB_IRI);
-            if(faultyAddress!=null && !"".equals(faultyAddress)){
+            String faultyHeaderQName = (String)faultInfo.get(Final.FAULT_HEADER_PROB_HEADER_QNAME);
+            String faultyAction = (String)faultInfo.get(Final.FAULT_PROBLEM_ACTION_NAME);
+            String faultyAddress = (String)faultInfo.get(Final.FAULT_HEADER_PROB_IRI);
+            if (faultyAddress != null && !"".equals(faultyAddress)) {
                 problemDetail = messageContext.getEnvelope().getOMFactory().createOMElement(
                         Final.FAULT_HEADER_PROB_IRI, addressingNamespaceObject);
                 problemDetail.setText(faultyAddress);

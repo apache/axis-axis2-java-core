@@ -63,7 +63,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
                                                                 MessageContext mc)
             throws Exception {
         StAXSOAPModelBuilder omBuilder = testUtil.getOMBuilder(testMessagePath);
-        SOAPHeader header = ((SOAPEnvelope) omBuilder.getDocumentElement()).getHeader();
+        SOAPHeader header = ((SOAPEnvelope)omBuilder.getDocumentElement()).getHeader();
         ArrayList addressingHeaderBlocks = header.getHeaderBlocksWithNSURI(addressingNamespace);
         inHandler.extractAddressingInformation(header, mc, addressingHeaderBlocks,
                                                addressingNamespace);
@@ -261,12 +261,12 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
         //</wsa:ReferenceParameters>
         Map referenceParameters = epr.getAllReferenceParameters();
         if (referenceParameters != null) {
-            OMElement refparm1 = (OMElement) referenceParameters
+            OMElement refparm1 = (OMElement)referenceParameters
                     .get(new QName("http://example.com/fabrikam", "CustomerKey"));
             assertNotNull(refparm1);
             assertEquals("ReferenceParameter value incorrect.", refparm1.getText(), "123456789");
 
-            OMElement refparm2 = (OMElement) referenceParameters
+            OMElement refparm2 = (OMElement)referenceParameters
                     .get(new QName("http://example.com/fabrikam", "ShoppingCart"));
             assertNotNull(refparm2);
             assertEquals("ReferenceParameter value incorrect.", refparm2.getText(), "ABCDEFG");
@@ -277,11 +277,11 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
 
     private void assertActionHasExtensibilityAttribute(MessageContext mc) {
         boolean attributeFound = false;
-        ArrayList attributes = (ArrayList) mc.getProperty(AddressingConstants.ACTION_ATTRIBUTES);
+        ArrayList attributes = (ArrayList)mc.getProperty(AddressingConstants.ACTION_ATTRIBUTES);
         if (attributes != null) {
             Iterator iter = attributes.iterator();
             while (iter.hasNext()) {
-                OMAttribute oa = (OMAttribute) iter.next();
+                OMAttribute oa = (OMAttribute)iter.next();
                 if (oa.getLocalName().equals("AttrExt")) {
                     attributeFound = true;
                     assertEquals("Attribute value incorrectly deserialised", oa.getAttributeValue(),
@@ -294,11 +294,11 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
 
     private void assertMessageIDHasExtensibilityAttribute(MessageContext mc) {
         boolean attributeFound = false;
-        ArrayList attributes = (ArrayList) mc.getProperty(AddressingConstants.MESSAGEID_ATTRIBUTES);
+        ArrayList attributes = (ArrayList)mc.getProperty(AddressingConstants.MESSAGEID_ATTRIBUTES);
         if (attributes != null) {
             Iterator iter = attributes.iterator();
             while (iter.hasNext()) {
-                OMAttribute oa = (OMAttribute) iter.next();
+                OMAttribute oa = (OMAttribute)iter.next();
                 if (oa.getLocalName().equals("AttrExt")) {
                     attributeFound = true;
                     assertEquals("Attribute value incorrectly deserialised", oa.getAttributeValue(),
@@ -315,7 +315,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
         if (attributes != null) {
             Iterator iter = attributes.iterator();
             while (iter.hasNext()) {
-                OMAttribute oa = (OMAttribute) iter.next();
+                OMAttribute oa = (OMAttribute)iter.next();
                 if (oa.getLocalName().equals("AttrExt")) {
                     attributeFound = true;
                     assertEquals("Attribute value incorrectly deserialised", oa.getAttributeValue(),
@@ -332,7 +332,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
         if (attributes != null) {
             Iterator iter = attributes.iterator();
             while (iter.hasNext()) {
-                OMAttribute oa = (OMAttribute) iter.next();
+                OMAttribute oa = (OMAttribute)iter.next();
                 if (oa.getLocalName().equals("AttrExt")) {
                     attributeFound = true;
                     assertEquals("Attribute value incorrectly deserialised", oa.getAttributeValue(),
@@ -349,7 +349,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
         if (attributes != null) {
             Iterator iter = attributes.iterator();
             while (iter.hasNext()) {
-                OMAttribute oa = (OMAttribute) iter.next();
+                OMAttribute oa = (OMAttribute)iter.next();
                 if (oa.getLocalName().equals("AttrExt")) {
                     attributeFound = true;
                     assertEquals("Attribute value incorrectly deserialised", oa.getAttributeValue(),
@@ -363,7 +363,7 @@ public abstract class AddressingInHandlerTestBase extends TestCase {
     private void assertEPRHasCorrectExtensibilityElements(EndpointReference epr) {
         ArrayList eelements = epr.getExtensibleElements();
         if (eelements != null) {
-            OMElement ee = (OMElement) eelements.get(0);
+            OMElement ee = (OMElement)eelements.get(0);
             assertEquals(ee.getQName(),
                          new QName("http://ws.apache.org/namespaces/axis2", "EPRExt"));
             assertEquals(ee.getText(), "123456789");

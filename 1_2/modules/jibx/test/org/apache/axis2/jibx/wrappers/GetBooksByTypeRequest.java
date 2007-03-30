@@ -16,14 +16,13 @@
 
 package org.apache.axis2.jibx.wrappers;
 
-public class GetBooksByTypeRequest
-{
+public class GetBooksByTypeRequest {
     private String m_type;
-    
+
     public GetBooksByTypeRequest(String type) {
         m_type = type;
     }
-    
+
     public String getType() {
         return m_type;
     }

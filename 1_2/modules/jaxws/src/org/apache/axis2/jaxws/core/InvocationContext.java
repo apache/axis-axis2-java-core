@@ -16,44 +16,42 @@
  */
 package org.apache.axis2.jaxws.core;
 
-import java.util.List;
-import java.util.concurrent.Executor;
-
-import javax.xml.ws.handler.Handler;
-
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.jaxws.client.async.AsyncResponse;
 
+import javax.xml.ws.handler.Handler;
+import java.util.List;
+import java.util.concurrent.Executor;
+
 /**
- * The <code>InvocationContext</code> encapsulates all of the information 
- * relevant to a particular invocation.  This ties the context of the 
- * request back to the context of the response message (if applicable)
- * through the use of the MessageContext API.  There is a separate 
- * MessageContext for both the request and the response. *
+ * The <code>InvocationContext</code> encapsulates all of the information relevant to a particular
+ * invocation.  This ties the context of the request back to the context of the response message (if
+ * applicable) through the use of the MessageContext API.  There is a separate MessageContext for
+ * both the request and the response. *
  */
 public interface InvocationContext {
 
     public List<Handler> getHandlers();
-    
+
     public MessageContext getRequestMessageContext();
-    
+
     public void setRequestMessageContext(MessageContext ctx);
-    
+
     public MessageContext getResponseMessageContext();
-    
+
     public void setResponseMessageContext(MessageContext ctx);
-    
+
     public Executor getExecutor();
-    
+
     public void setExecutor(Executor e);
-    
+
     public AsyncResponse getAsyncResponseListener();
-    
+
     public void setAsyncResponseListener(AsyncResponse al);
-    
+
     //FIXME: This is temporary.
     public void setServiceClient(ServiceClient client);
-    
+
     //FIXME: This is temporary.
     public ServiceClient getServiceClient();
 }

@@ -19,19 +19,19 @@ package org.apache.axis2.jaxws.message.factory;
 import org.apache.axis2.jaxws.message.util.SAAJConverter;
 
 /**
- * SAAJConverterFactory
- * Creates an SAAJConverter object
- * A factory is necessary because implementations may need to plug in their
- * own SAAJ or OM implementations.
- * 
+ * SAAJConverterFactory Creates an SAAJConverter object A factory is necessary because
+ * implementations may need to plug in their own SAAJ or OM implementations.
+ * <p/>
  * Factories are obtained from the FactoryRegistry
+ *
  * @see org.apache.axis2.jaxws.registry.FactoryRegistry
  */
 public interface SAAJConverterFactory {
-	
-	/**
-	 * Get or create the SAAJConverter
-	 * @return SAAJConverter
-	 */
-	public SAAJConverter getSAAJConverter();
+
+    /**
+     * Get or create the SAAJConverter
+     *
+     * @return SAAJConverter
+     */
+    public SAAJConverter getSAAJConverter();
 }

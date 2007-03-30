@@ -14,23 +14,19 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 	
- * 
- * 	  The remote element contains the fully-qualified name
- * 	  of the enterprise bean's remote interface.
- * 
- * 	  Example:
- * 
- * 	      <remote>com.wombat.empl.EmployeeService</remote>
- * 
- * 	  
- *       
- * 
+ * The remote element contains the fully-qualified name of the enterprise bean's remote interface.
+ * <p/>
+ * Example:
+ * <p/>
+ * <remote>com.wombat.empl.EmployeeService</remote>
+ * <p/>
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for remoteType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="remoteType">
  *   &lt;simpleContent>
@@ -39,14 +35,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/simpleContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "remoteType")
 public class RemoteType
-    extends FullyQualifiedClassType
-{
+        extends FullyQualifiedClassType {
 
 
 }

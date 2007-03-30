@@ -18,108 +18,92 @@ package org.apache.axis2.jaxws.description.builder;
 
 import java.lang.annotation.Annotation;
 
-public class RequestWrapperAnnot implements javax.xml.ws.RequestWrapper{
+public class RequestWrapperAnnot implements javax.xml.ws.RequestWrapper {
 
-	private String 	localName;
-	private String 	targetNamespace;
-	private String 	className;			
+    private String localName;
+    private String targetNamespace;
+    private String className;
 
-	
-	/**
-     * A RequestWrapperAnnot cannot be instantiated.
-     */
-	private  RequestWrapperAnnot(){
-		
-	}
-	
-	private  RequestWrapperAnnot(
-			String localName,
-			String targetNamespace,
-			String className)
-	{
-		this.localName = localName;
-		this.targetNamespace = targetNamespace;
-		this.className = className;
-	}
+
+    /** A RequestWrapperAnnot cannot be instantiated. */
+    private RequestWrapperAnnot() {
+
+    }
+
+    private RequestWrapperAnnot(
+            String localName,
+            String targetNamespace,
+            String className) {
+        this.localName = localName;
+        this.targetNamespace = targetNamespace;
+        this.className = className;
+    }
 
     public static RequestWrapperAnnot createRequestWrapperAnnotImpl() {
         return new RequestWrapperAnnot();
     }
 
-    public static RequestWrapperAnnot createRequestWrapperAnnotImpl( 
-    			String localName,
-    			String targetNamespace,
-    			String className
-    		) 
-    {
-        return new RequestWrapperAnnot( localName, 
-        								targetNamespace, 
-        								className);
+    public static RequestWrapperAnnot createRequestWrapperAnnotImpl(
+            String localName,
+            String targetNamespace,
+            String className
+    ) {
+        return new RequestWrapperAnnot(localName,
+                                       targetNamespace,
+                                       className);
     }
-	
-	
-	/**
-	 * @return Returns the name.
-	 */
-	public String localName() {
-		return this.localName;
-	}
-	
-	/**
-	 * @return Returns the targetNamespace.
-	 */
-	public String targetNamespace() {
-		return this.targetNamespace;
-	}
-	
-	/**
-	 * @return Returns the wsdlLocation.
-	 */
-	public String className() {
-		return this.className;
-	}
 
-	/**
-	 * @param name The name to set.
-	 */
-	public void setLocalName(String localName) {
-		this.localName = localName;
-	}
 
-	/**
-	 * @param targetNamespace The targetNamespace to set.
-	 */
-	public void setTargetNamespace(String targetNamespace) {
-		this.targetNamespace = targetNamespace;
-	}
+    /** @return Returns the name. */
+    public String localName() {
+        return this.localName;
+    }
 
-	/**
-	 * @param wsdlLocation The wsdlLocation to set.
-	 */
-	public void setClassName(String className) {
-		this.className = className;
-	}
-	
-	//hmm, should we really do this
-	public Class<Annotation> annotationType(){
-		return Annotation.class;
-	}
-	
-	/**
-	 * Convenience method for unit testing. We will print all of the 
-	 * data members here.
-	 */
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		String newLine = "\n";
-		sb.append(newLine);
-		sb.append("@RequestWrapper.localName= " + localName);
-		sb.append(newLine);
-		sb.append("@RequestWrapper.className= " + className);
-		sb.append(newLine);
-		sb.append("@RequestWrapper.targetNamespace= " + targetNamespace);
-		sb.append(newLine);
-		return sb.toString();
+    /** @return Returns the targetNamespace. */
+    public String targetNamespace() {
+        return this.targetNamespace;
+    }
+
+    /** @return Returns the wsdlLocation. */
+    public String className() {
+        return this.className;
+    }
+
+    /** @param name The name to set. */
+    public void setLocalName(String localName) {
+        this.localName = localName;
+    }
+
+    /** @param targetNamespace The targetNamespace to set. */
+    public void setTargetNamespace(String targetNamespace) {
+        this.targetNamespace = targetNamespace;
+    }
+
+    /** @param wsdlLocation The wsdlLocation to set. */
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    //hmm, should we really do this
+    public Class<Annotation> annotationType() {
+        return Annotation.class;
+    }
+
+    /**
+     * Convenience method for unit testing. We will print all of the
+     * data members here.
+     */
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        String newLine = "\n";
+        sb.append(newLine);
+        sb.append("@RequestWrapper.localName= " + localName);
+        sb.append(newLine);
+        sb.append("@RequestWrapper.className= " + className);
+        sb.append(newLine);
+        sb.append("@RequestWrapper.targetNamespace= " + targetNamespace);
+        sb.append(newLine);
+        return sb.toString();
 	}
 
 

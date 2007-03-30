@@ -35,10 +35,13 @@ public class GroupbEchoNestedArrayUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://soapinterop.org/", "tns");
         reqEnv.declareNamespace("http://soapinterop.org/xsd", "s");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
-        OMNamespace encNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace encNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/encoding/", "SOAP-ENC");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
 
-        OMElement operation = omfactory.createOMElement("echoNestedArray", "http://soapinterop.org/", null);
+        OMElement operation =
+                omfactory.createOMElement("echoNestedArray", "http://soapinterop.org/", null);
         reqEnv.getBody().addChild(operation);
         operation.declareNamespace(envNs);
         operation.addAttribute("encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", envNs);

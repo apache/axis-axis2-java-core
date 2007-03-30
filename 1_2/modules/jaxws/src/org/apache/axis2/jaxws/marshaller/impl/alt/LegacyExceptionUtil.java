@@ -17,35 +17,29 @@
 
 package org.apache.axis2.jaxws.marshaller.impl.alt;
 
+import org.apache.axis2.jaxws.ExceptionFactory;
+import org.apache.axis2.jaxws.description.FaultDescription;
+import org.apache.axis2.jaxws.i18n.Messages;
+import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
+import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
+import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
+import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
+import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.ws.WebServiceException;
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
-
-import javax.xml.ws.WebServiceException;
-
-import org.apache.axis2.jaxws.ExceptionFactory;
-import org.apache.axis2.jaxws.description.FaultDescription;
-import org.apache.axis2.jaxws.i18n.Messages;
-import org.apache.axis2.jaxws.runtime.description.marshal.FaultBeanDesc;
-import org.apache.axis2.jaxws.runtime.description.marshal.MarshalServiceRuntimeDescription;
-import org.apache.axis2.jaxws.utility.ClassUtils;
-import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
-import org.apache.axis2.jaxws.utility.XMLRootElementUtil;
-import org.apache.axis2.jaxws.wrapper.JAXBWrapperTool;
-import org.apache.axis2.jaxws.wrapper.impl.JAXBWrapperToolImpl;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.Set;
 
 /**
  * The JAX-WS Specification (chapter 3.7) indicates that JAX-WS
@@ -66,15 +60,14 @@ import org.apache.commons.logging.LogFactory;
  * 
  *
  */
-/**
- * @author scheu
- *
- */
+
+/** @author scheu */
 class LegacyExceptionUtil {
 
     private static Log log = LogFactory.getLog(LegacyExceptionUtil.class);
-    
+
     private static Set<String> ignore = new HashSet<String>();
+
     static {
         // Per Chap 3.7 rule 3, ignore these properties on the exception
         ignore.add("localizedMessage");
@@ -82,24 +75,25 @@ class LegacyExceptionUtil {
         ignore.add("class");
         ignore.add("cause");
     }
-    
+
+    /** Static class.  Constructor is intentionally private */
+    private LegacyExceptionUtil() {
+    }
+
+
     /**
-     * Static class.  Constructor is intentionally private
-     */
-    private LegacyExceptionUtil() {}
-    
-    
-    /**
-     * Create a FaultBean populated with the data from the Exception t
-     * The algorithm used to populate the FaultBean is described in 
-     * JAX-WS 3.7
+     * Create a FaultBean populated with the data from the Exception t The algorithm used to
+     * populate the FaultBean is described in JAX-WS 3.7
+     *
      * @param t
      * @param fd
      * @param marshalDesc
      * @return faultBean
      */
-    static Object createFaultBean(Throwable t, FaultDescription fd, MarshalServiceRuntimeDescription marshalDesc) throws WebServiceException {
-        
+    static Object createFaultBean(Throwable t, FaultDescription fd,
+                                  MarshalServiceRuntimeDescription marshalDesc)
+            throws WebServiceException {
+
         Object faultBean = null;
         try {
             // Get the fault bean name from the fault description.
@@ -108,12 +102,12 @@ class LegacyExceptionUtil {
             //      Name = <exception name> + Bean
             FaultBeanDesc faultBeanDesc = marshalDesc.getFaultBeanDesc(fd);
             String faultBeanName = faultBeanDesc.getFaultBeanClassName();
-            
+
             // TODO Add check that faultBeanName is correct
             if (log.isDebugEnabled()) {
                 log.debug("Legacy Exception FaultBean name is = " + faultBeanName);
             }
-            
+
             // Load the FaultBean Class
             Class faultBeanClass = null;
             if (faultBeanName != null && faultBeanName.length() > 0) {
@@ -121,31 +115,35 @@ class LegacyExceptionUtil {
                     faultBeanClass = MethodMarshallerUtils.loadClass(faultBeanName);
                 } catch (Throwable throwable) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Cannot load fault bean class = " + faultBeanName + ".  Fallback to using the exception object");
-                    } 
+                        log.debug("Cannot load fault bean class = " + faultBeanName +
+                                ".  Fallback to using the exception object");
+                    }
                 }
             }
-            
+
             if (faultBeanClass != null) {
-                
+
                 // Get the properties names from the exception class
-                Map<String, PropertyDescriptorPlus> pdMap = marshalDesc.getPropertyDescriptorMap(t.getClass());
-                
+                Map<String, PropertyDescriptorPlus> pdMap =
+                        marshalDesc.getPropertyDescriptorMap(t.getClass());
+
                 // We need to assign the legacy exception data to the java bean class.
                 // We will use the JAXBWrapperTool.wrap utility to do this.
-                
+
                 // Get the map of child objects
                 Map<String, Object> childObjects = getChildObjectsMap(t, pdMap);
-                
+
                 List<String> childNames = new ArrayList<String>(childObjects.keySet());
-                
+
                 if (log.isErrorEnabled()) {
                     log.debug("List of properties on the Legacy Exception is " + childNames);
                 }
                 // Use the wrapper tool to get the child objects.
                 JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-                Map<String, PropertyDescriptorPlus> pdMapForBean = marshalDesc.getPropertyDescriptorMap(faultBeanClass);
-                faultBean = wrapperTool.wrap(faultBeanClass, childNames, childObjects, pdMapForBean);
+                Map<String, PropertyDescriptorPlus> pdMapForBean =
+                        marshalDesc.getPropertyDescriptorMap(faultBeanClass);
+                faultBean =
+                        wrapperTool.wrap(faultBeanClass, childNames, childObjects, pdMapForBean);
                 if (log.isErrorEnabled()) {
                     log.debug("Completed creation of the fault bean.");
                 }
@@ -154,38 +152,42 @@ class LegacyExceptionUtil {
                 //    log.debug("The fault bean could not be loaded...Fallback to using the fault exception: " + t.getClass());
                 //}
                 //return t;
-                throw ExceptionFactory.makeWebServiceException(Messages.getMessage("faultProcessingNotSupported", 
-                        "the @WebFault faultbean is missing for " + t.getClass()));
+                throw ExceptionFactory
+                        .makeWebServiceException(Messages.getMessage("faultProcessingNotSupported",
+                                                                     "the @WebFault faultbean is missing for " +
+                                                                             t.getClass()));
             }
-            
+
         } catch (Exception e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
         return faultBean;
     }
-    
+
     /**
-     * Create an Exception using the data in the JAXB object.  
-     * The specification is silent on this issue.
+     * Create an Exception using the data in the JAXB object. The specification is silent on this
+     * issue.
+     *
      * @param exceptionClass
      * @param jaxb
      * @param marshalDesc
      * @return
      */
-    static Exception createFaultException(Class exceptionClass, 
-            Object jaxb,
-            MarshalServiceRuntimeDescription marshalDesc) {
+    static Exception createFaultException(Class exceptionClass,
+                                          Object jaxb,
+                                          MarshalServiceRuntimeDescription marshalDesc) {
         Exception e = null;
         try {
             if (log.isErrorEnabled()) {
                 log.debug("Create Legacy Exception for " + exceptionClass.getName());
             }
             // Get the properties names from the exception class
-            Map<String, PropertyDescriptorPlus> pdMap = marshalDesc.getPropertyDescriptorMap(exceptionClass);
-            
+            Map<String, PropertyDescriptorPlus> pdMap =
+                    marshalDesc.getPropertyDescriptorMap(exceptionClass);
+
             // Now get a list of PropertyDescriptorPlus objects that map to the jaxb bean properties
             Iterator<Entry<String, PropertyDescriptorPlus>> it = pdMap.entrySet().iterator();
-            List<PropertyDescriptorPlus> piList= new ArrayList<PropertyDescriptorPlus>();
+            List<PropertyDescriptorPlus> piList = new ArrayList<PropertyDescriptorPlus>();
             while (it.hasNext()) {
                 Entry<String, PropertyDescriptorPlus> entry = it.next();
                 String propertyName = entry.getValue().getPropertyName();
@@ -194,70 +196,74 @@ class LegacyExceptionUtil {
                     piList.add(entry.getValue());
                 }
             }
-            
+
             // Find a matching constructor
             List<String>  childNames = new ArrayList<String>();
             if (log.isErrorEnabled()) {
                 log.debug("List of childNames on legacy exception is " + childNames);
             }
             Constructor constructor = findConstructor(exceptionClass, piList, childNames);
-            
+
             if (log.isErrorEnabled()) {
                 log.debug("The constructor used to create the exception is " + constructor);
             }
             // Use the wrapper tool to unwrap the jaxb object
             JAXBWrapperTool wrapperTool = new JAXBWrapperToolImpl();
-            Map<String, PropertyDescriptorPlus> pdMapForBean = marshalDesc.getPropertyDescriptorMap(jaxb.getClass());
+            Map<String, PropertyDescriptorPlus> pdMapForBean =
+                    marshalDesc.getPropertyDescriptorMap(jaxb.getClass());
             Object[] childObjects = wrapperTool.unWrap(jaxb, childNames, pdMapForBean);
-            
+
             if (log.isErrorEnabled()) {
                 log.debug("Calling newInstance on the constructor " + constructor);
             }
-            e = (Exception) constructor.newInstance(childObjects);
+            e = (Exception)constructor.newInstance(childObjects);
         } catch (Exception ex) {
             throw ExceptionFactory.makeWebServiceException(ex);
         }
         return e;
     }
-    
+
     /**
      * Find a construcor that matches this set of properties
+     *
      * @param cls
      * @param pdList
      * @param childNames returned in the order that they occur in the constructor
      * @return Constructor or null
      */
-    private static Constructor findConstructor(Class cls, List<PropertyDescriptorPlus> pdList, List<String> childNames) {
+    private static Constructor findConstructor(Class cls, List<PropertyDescriptorPlus> pdList,
+                                               List<String> childNames) {
         Constructor[] constructors = cls.getConstructors();
         Constructor constructor = null;
         if (constructors != null) {
-            for (int i=0; i<constructors.length && constructor == null; i++) {
+            for (int i = 0; i < constructors.length && constructor == null; i++) {
                 Constructor tryConstructor = constructors[i];
-                if (tryConstructor.getParameterTypes().length  == pdList.size()) {
+                if (tryConstructor.getParameterTypes().length == pdList.size()) {
                     // Try and find the best match using the property types
-                    List<PropertyDescriptorPlus> list = new ArrayList<PropertyDescriptorPlus>(pdList);
+                    List<PropertyDescriptorPlus> list =
+                            new ArrayList<PropertyDescriptorPlus>(pdList);
                     List<PropertyDescriptorPlus> args = new ArrayList<PropertyDescriptorPlus>();
-                    
+
                     Class[] parms = tryConstructor.getParameterTypes();
-                    boolean valid= true;
-                    
+                    boolean valid = true;
+
                     // Assume the message is first in the constructor
-                    for (int j=0; j<list.size(); j++) {
+                    for (int j = 0; j < list.size(); j++) {
                         if ("message".equals(list.get(j).getPropertyName())) {
                             args.add(list.remove(j));
                         }
                     }
                     if (args.size() != 1 ||
-                        !parms[0].isAssignableFrom(args.get(0).getPropertyType())) {
+                            !parms[0].isAssignableFrom(args.get(0).getPropertyType())) {
                         valid = false;
                     }
-                    
+
                     // Now process the rest of the args
-                    for (int j=1; j<parms.length && valid; j++) {
+                    for (int j = 1; j < parms.length && valid; j++) {
                         // Find a compatible argument
                         Class parm = parms[j];
                         boolean found = false;
-                        for (int k=0; k<list.size() && !found; k++) {
+                        for (int k = 0; k < list.size() && !found; k++) {
                             Class arg = list.get(k).getPropertyType();
                             if (parm.isAssignableFrom(arg)) {
                                 found = true;
@@ -266,37 +272,39 @@ class LegacyExceptionUtil {
                         }
                         // If no compatible argument then this constructor is not valid
                         if (!found) {
-                            valid = false;   
+                            valid = false;
                         }
                     }
                     // A constructor is found
                     if (valid) {
                         constructor = tryConstructor;
-                        for (int index = 0; index<args.size(); index++) {
+                        for (int index = 0; index < args.size(); index++) {
                             childNames.add(args.get(index).getPropertyName());
                         }
                     }
                 }
             }
         }
-        
+
         return constructor;
     }
-    
-    
+
+
     /**
      * Get the child objects map that is required by the wrapper tool.
-     * @param t Exception
+     *
+     * @param t                       Exception
      * @param ParameterDescriptorPlus map for Throwable t
      * @return Map with key is bean property names and values are objects from the Exception
      * @throws IntrospectionException
      */
-    private static Map<String, Object> getChildObjectsMap(Throwable t, Map<String, PropertyDescriptorPlus> pdMap) 
-        throws IntrospectionException, InvocationTargetException, IllegalAccessException {
-        
-        
+    private static Map<String, Object> getChildObjectsMap(Throwable t,
+                                                          Map<String, PropertyDescriptorPlus> pdMap)
+            throws IntrospectionException, InvocationTargetException, IllegalAccessException {
+
+
         Map<String, Object> coMap = new HashMap<String, Object>();
-        
+
         Iterator<Entry<String, PropertyDescriptorPlus>> it = pdMap.entrySet().iterator();
         while (it.hasNext()) {
             Entry<String, PropertyDescriptorPlus> entry = it.next();
@@ -310,5 +318,5 @@ class LegacyExceptionUtil {
         }
         return coMap;
     }
-    
+
 }

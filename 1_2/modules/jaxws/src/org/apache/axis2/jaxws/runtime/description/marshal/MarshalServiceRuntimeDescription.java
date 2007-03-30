@@ -16,71 +16,65 @@
  */
 package org.apache.axis2.jaxws.runtime.description.marshal;
 
-import java.util.Map;
-import java.util.TreeSet;
-
 import org.apache.axis2.jaxws.description.FaultDescription;
 import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceRuntimeDescription;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.utility.PropertyDescriptorPlus;
 
+import java.util.Map;
+import java.util.TreeSet;
 
-/**
- * Used to cache marshal information
- */
+
+/** Used to cache marshal information */
 public interface MarshalServiceRuntimeDescription extends ServiceRuntimeDescription {
-   
-    /**
-     * @return Set of package names for this service
-     */
+
+    /** @return Set of package names for this service */
     public TreeSet<String> getPackages();
-    
-    /**
-     * @return Unique key that represents the object returned by getPackages
-     */
+
+    /** @return Unique key that represents the object returned by getPackages */
     public String getPackagesKey();
-    
+
     /**
-     * Get the AnnotationDesc for this class.
-     * If one is not cached, a new one is creatd
+     * Get the AnnotationDesc for this class. If one is not cached, a new one is creatd
+     *
      * @param cls
      * @return AnnotationDesc
      */
     public AnnotationDesc getAnnotationDesc(Class cls);
-    
-    
+
+
     /**
-     * Get the PropertyDescriptor map for the class.
-     * The key of the map is a child xml local name.
-     * The value is a PropertyDescriptor, that will be used to 
-     * set/get values from a bean of the indicated class
+     * Get the PropertyDescriptor map for the class. The key of the map is a child xml local name.
+     * The value is a PropertyDescriptor, that will be used to set/get values from a bean of the
+     * indicated class
+     *
      * @param cls
      * @return get the cached copy or create a new one
      */
     public Map<String, PropertyDescriptorPlus> getPropertyDescriptorMap(Class cls);
-    
+
     /**
      * @param operationDesc
-     * @return specified or defaulted wrapper class name.  Always returns null if the wrapper class does not exist.
+     * @return specified or defaulted wrapper class name.  Always returns null if the wrapper class
+     *         does not exist.
      */
     public String getRequestWrapperClassName(OperationDescription operationDesc);
-    
+
     /**
      * @param operationDesc
-     * @return specified or defaulted wrapper class name.  Always returns null if the wrapper class does not exist.
+     * @return specified or defaulted wrapper class name.  Always returns null if the wrapper class
+     *         does not exist.
      */
     public String getResponseWrapperClassName(OperationDescription operationDesc);
-  
+
     /**
      * @param faultDesc
      * @return FaultBeanDescriptor that describes the fault bean
      */
     public FaultBeanDesc getFaultBeanDesc(FaultDescription faultDesc);
-    
-    /**
-     * @return MessageFactory for this Marshaller
-     */
+
+    /** @return MessageFactory for this Marshaller */
     public MessageFactory getMessageFactory();
 
 }

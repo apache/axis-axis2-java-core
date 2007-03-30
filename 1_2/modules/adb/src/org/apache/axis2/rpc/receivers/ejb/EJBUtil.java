@@ -1,6 +1,10 @@
 package org.apache.axis2.rpc.receivers.ejb;
 
-import edu.emory.mathcs.backport.java.util.concurrent.*;
+import edu.emory.mathcs.backport.java.util.concurrent.CountDownLatch;
+import edu.emory.mathcs.backport.java.util.concurrent.ExecutorService;
+import edu.emory.mathcs.backport.java.util.concurrent.LinkedBlockingQueue;
+import edu.emory.mathcs.backport.java.util.concurrent.ThreadPoolExecutor;
+import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.AxisService;
@@ -10,9 +14,9 @@ import org.apache.axis2.util.threadpool.DefaultThreadFactory;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import java.lang.reflect.Method;
-import java.util.Properties;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Properties;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -43,8 +47,11 @@ public class EJBUtil {
     private static ExecutorService workerPool = null;
 
     static {
-        workerPool = new ThreadPoolExecutor(1, 50, 150L, TimeUnit.SECONDS, new LinkedBlockingQueue(),
-                new DefaultThreadFactory(new ThreadGroup("EJB provider thread group"), "EJBProvider"));
+        workerPool =
+                new ThreadPoolExecutor(1, 50, 150L, TimeUnit.SECONDS, new LinkedBlockingQueue(),
+                                       new DefaultThreadFactory(
+                                               new ThreadGroup("EJB provider thread group"),
+                                               "EJBProvider"));
     }
 
     /**
@@ -66,7 +73,7 @@ public class EJBUtil {
             throw AxisFault.makeFault(e);
         }
 
-        if (worker.getException()!=null) {
+        if (worker.getException() != null) {
             throw AxisFault.makeFault(worker.getException());
         }
 
@@ -84,7 +91,8 @@ public class EJBUtil {
         private Exception exception = null;
         private Object returnedValue = null;
 
-        public EJBClientWorker(MessageContext msgContext, CountDownLatch startLatch, CountDownLatch stopLatch) {
+        public EJBClientWorker(MessageContext msgContext, CountDownLatch startLatch,
+                               CountDownLatch stopLatch) {
             this.msgContext = msgContext;
             this.startLatch = startLatch;
             this.stopLatch = stopLatch;
@@ -97,7 +105,8 @@ public class EJBUtil {
                 AccessController.doPrivileged(
                         new PrivilegedAction() {
                             public Object run() {
-                                Thread.currentThread().setContextClassLoader(service.getClassLoader());
+                                Thread.currentThread()
+                                        .setContextClassLoader(service.getClassLoader());
                                 return null;
                             }
                         }
@@ -105,7 +114,7 @@ public class EJBUtil {
                 Parameter remoteHomeName = service.getParameter(EJB_HOME_INTERFACE_NAME);
                 Parameter localHomeName = service.getParameter(EJB_LOCAL_HOME_INTERFACE_NAME);
                 Parameter jndiName = service.getParameter(EJB_JNDI_NAME);
-                Parameter homeName = (remoteHomeName != null ? remoteHomeName:localHomeName);
+                Parameter homeName = (remoteHomeName != null ? remoteHomeName : localHomeName);
 
                 if (jndiName == null || jndiName.getValue() == null) {
                     throw new AxisFault("jndi name is not specified");
@@ -116,9 +125,12 @@ public class EJBUtil {
 
                 // we create either the ejb using either the RemoteHome or LocalHome object
                 if (remoteHomeName != null)
-                    returnedValue = createRemoteEJB(msgContext, ((String) jndiName.getValue()).trim(), ((String) homeName.getValue()).trim());
+                    returnedValue = createRemoteEJB(msgContext,
+                                                    ((String)jndiName.getValue()).trim(),
+                                                    ((String)homeName.getValue()).trim());
                 else
-                    returnedValue = createLocalEJB(msgContext, ((String) jndiName.getValue()).trim(), ((String) homeName.getValue()).trim());
+                    returnedValue = createLocalEJB(msgContext, ((String)jndiName.getValue()).trim(),
+                                                   ((String)homeName.getValue()).trim());
             } catch (Exception e) {
                 e.printStackTrace();
                 exception = e;
@@ -130,13 +142,14 @@ public class EJBUtil {
         /**
          * Create an EJB using a remote home object
          *
-         * @param msgContext the message context
+         * @param msgContext   the message context
          * @param beanJndiName The JNDI name of the EJB remote home class
-         * @param homeName the name of the home interface class
+         * @param homeName     the name of the home interface class
          * @return an EJB
          * @throws Exception If fails
          */
-        private Object createRemoteEJB(MessageContext msgContext, String beanJndiName, String homeName) throws Exception {
+        private Object createRemoteEJB(MessageContext msgContext, String beanJndiName,
+                                       String homeName) throws Exception {
             // Get the EJB Home object from JNDI
             Object ejbHome = getEJBHome(msgContext.getAxisService(), beanJndiName);
             Class cls = getContextClassLoader().loadClass(homeName);
@@ -152,13 +165,14 @@ public class EJBUtil {
         /**
          * Create an EJB using a local home object
          *
-         * @param msgContext the message context
+         * @param msgContext   the message context
          * @param beanJndiName The JNDI name of the EJB local home class
-         * @param homeName the name of the home interface class
+         * @param homeName     the name of the home interface class
          * @return an EJB
          * @throws Exception if fails
          */
-        private Object createLocalEJB(MessageContext msgContext, String beanJndiName, String homeName)
+        private Object createLocalEJB(MessageContext msgContext, String beanJndiName,
+                                      String homeName)
                 throws Exception {
             // Get the EJB Home object from JNDI
             Object ejbHome = getEJBHome(msgContext.getAxisService(), beanJndiName);
@@ -182,10 +196,11 @@ public class EJBUtil {
         }
 
         /**
-         * Common routine to do the JNDI lookup on the Home interface object
-         * username and password for jndi lookup are got from the configuration or from
-         * the messageContext if not found in the configuration
-         * @param service AxisService object
+         * Common routine to do the JNDI lookup on the Home interface object username and password
+         * for jndi lookup are got from the configuration or from the messageContext if not found in
+         * the configuration
+         *
+         * @param service      AxisService object
          * @param beanJndiName JNDI name of the EJB home object
          * @return EJB home object
          * @throws AxisFault If fals
@@ -205,7 +220,8 @@ public class EJBUtil {
                 if (username != null) {
                     if (properties == null)
                         properties = new Properties();
-                    properties.setProperty(Context.SECURITY_PRINCIPAL, ((String) username.getValue()).trim());
+                    properties.setProperty(Context.SECURITY_PRINCIPAL,
+                                           ((String)username.getValue()).trim());
                 }
 
                 // password
@@ -213,7 +229,8 @@ public class EJBUtil {
                 if (password != null) {
                     if (properties == null)
                         properties = new Properties();
-                    properties.setProperty(Context.SECURITY_CREDENTIALS, ((String) password.getValue()).trim());
+                    properties.setProperty(Context.SECURITY_CREDENTIALS,
+                                           ((String)password.getValue()).trim());
                 }
 
                 // factory class
@@ -221,7 +238,8 @@ public class EJBUtil {
                 if (factoryClass != null) {
                     if (properties == null)
                         properties = new Properties();
-                    properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, ((String) factoryClass.getValue()).trim());
+                    properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
+                                           ((String)factoryClass.getValue()).trim());
                 }
 
                 // contextUrl
@@ -229,7 +247,8 @@ public class EJBUtil {
                 if (contextUrl != null) {
                     if (properties == null)
                         properties = new Properties();
-                    properties.setProperty(Context.PROVIDER_URL, ((String) contextUrl.getValue()).trim());
+                    properties.setProperty(Context.PROVIDER_URL,
+                                           ((String)contextUrl.getValue()).trim());
                 }
 
                 // get context using these properties
@@ -272,7 +291,7 @@ public class EJBUtil {
         }
 
         private ClassLoader getContextClassLoader() {
-            return (ClassLoader) AccessController.doPrivileged(
+            return (ClassLoader)AccessController.doPrivileged(
                     new PrivilegedAction() {
                         public Object run() {
                             return Thread.currentThread().getContextClassLoader();

@@ -20,7 +20,7 @@ public class CodeGenerationException extends Exception {
 
     private static final long serialVersionUID = 7763140075166886795L;
 
-	public CodeGenerationException(String message) {
+    public CodeGenerationException(String message) {
         super(message);
     }
 

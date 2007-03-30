@@ -1,6 +1,5 @@
 package org.apache.axis2.xmlbeans;
 
-import org.apache.axis2.wsdl.codegen.CodeGenerationException;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -18,11 +17,9 @@ import org.apache.axis2.wsdl.codegen.CodeGenerationException;
  */
 
 /**
-     * Test for the modified ping-unboond wsdl.
-     * The binding is removed in this wsdl.Codegen should fail for this
-     * WSDL by saying  no binding!
-     *
-     */
+ * Test for the modified ping-unboond wsdl. The binding is removed in this wsdl.Codegen should fail
+ * for this WSDL by saying  no binding!
+ */
 public class WSDL2Java13Test extends WSDL2JavaFailureTestBase {
 
     protected void setUp() throws Exception {

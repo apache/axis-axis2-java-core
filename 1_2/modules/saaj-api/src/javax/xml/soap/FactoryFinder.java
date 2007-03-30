@@ -23,9 +23,8 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 /**
- * This class is used to locate factory classes for javax.xml.soap.
- * It has package scope since it is not part of JAXM and should not
- * be accessed from other packages.
+ * This class is used to locate factory classes for javax.xml.soap. It has package scope since it is
+ * not part of JAXM and should not be accessed from other packages.
  */
 class FactoryFinder {
     /**
@@ -65,15 +64,14 @@ class FactoryFinder {
         } catch (Exception exception) {
             throw new SOAPException(
                     "Provider " + factoryClassName +
-                    " could not be instantiated: " +
-                    exception,
+                            " could not be instantiated: " +
+                            exception,
                     exception);
         }
     }
 
     /**
-     * Instantiates a factory object given the factory's property name and the
-     * default class name.
+     * Instantiates a factory object given the factory's property name and the default class name.
      *
      * @param factoryPropertyName
      * @param defaultFactoryClassName
@@ -141,16 +139,13 @@ class FactoryFinder {
     /**
      * Returns an input stream for the specified resource.
      * <p/>
-     * <p>This method will firstly try
-     * <code>ClassLoader.getSystemResourceAsStream()</code> then
-     * the class loader of the current thread with
-     * <code>getResourceAsStream()</code> and finally attempt
-     * <code>getResourceAsStream()</code> on
-     * <code>FactoryFinder.class.getClassLoader()</code>.
+     * <p>This method will firstly try <code>ClassLoader.getSystemResourceAsStream()</code> then the
+     * class loader of the current thread with <code>getResourceAsStream()</code> and finally
+     * attempt <code>getResourceAsStream()</code> on <code>FactoryFinder.class.getClassLoader()</code>.
      *
      * @param factoryResource the resource name
-     * @return an InputStream that can be used to read that resource, or
-     *         <code>null</code> if the resource could not be resolved
+     * @return an InputStream that can be used to read that resource, or <code>null</code> if the
+     *         resource could not be resolved
      */
     private static InputStream getResource(String factoryResource) {
         ClassLoader classloader = null;

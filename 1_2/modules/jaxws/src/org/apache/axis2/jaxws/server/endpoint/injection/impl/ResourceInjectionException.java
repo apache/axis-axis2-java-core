@@ -21,37 +21,33 @@ package org.apache.axis2.jaxws.server.endpoint.injection.impl;
 
 public class ResourceInjectionException extends Exception {
 
-	/**
-	 * 
-	 */
-	public ResourceInjectionException() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     *
+     */
+    public ResourceInjectionException() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * @param message
-	 */
-	public ResourceInjectionException(String message) {
-		super(message);
-		// TODO Auto-generated constructor stub
-	}
+    /** @param message  */
+    public ResourceInjectionException(String message) {
+        super(message);
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public ResourceInjectionException(String message, Throwable cause) {
-		super(message, cause);
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public ResourceInjectionException(String message, Throwable cause) {
+        super(message, cause);
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * @param cause
-	 */
-	public ResourceInjectionException(Throwable cause) {
-		super(cause);
-		// TODO Auto-generated constructor stub
-	}
+    /** @param cause  */
+    public ResourceInjectionException(Throwable cause) {
+        super(cause);
+        // TODO Auto-generated constructor stub
+    }
 
 }

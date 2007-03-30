@@ -16,9 +16,6 @@ package org.apache.axis2.maven2.aar;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.archiver.MavenArchiver;
 import org.apache.maven.artifact.Artifact;
@@ -29,18 +26,20 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.jar.ManifestException;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Build a aar.
- * 
+ *
  * @goal aar
  * @phase package
  * @requiresDependencyResolution runtime
  */
-public class AarMojo extends AbstractAarMojo
-{
+public class AarMojo extends AbstractAarMojo {
     /**
      * The directory for the generated aar.
-     * 
+     *
      * @parameter expression="${project.build.directory}"
      * @required
      */
@@ -48,7 +47,7 @@ public class AarMojo extends AbstractAarMojo
 
     /**
      * The name of the generated aar.
-     * 
+     *
      * @parameter expression="${project.build.finalName}"
      * @required
      */
@@ -56,7 +55,7 @@ public class AarMojo extends AbstractAarMojo
 
     /**
      * The Jar archiver.
-     * 
+     *
      * @parameter expression="${component.org.codehaus.plexus.archiver.Archiver#jar}"
      * @required
      */
@@ -64,97 +63,84 @@ public class AarMojo extends AbstractAarMojo
 
     /**
      * The maven archive configuration to use.
-     * 
+     *
      * @parameter
      */
     private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
-     * Classifier to add to the artifact generated. If given, the artifact will be an attachment instead.
-     * 
+     * Classifier to add to the artifact generated. If given, the artifact will be an attachment
+     * instead.
+     *
      * @parameter
      */
     private String classifier;
 
     /**
-     * Whether this is the main artifact being built. Set to <code>false</code> if you don't want to install or deploy
-     * it to the local repository instead of the default one in an execution.
-     * 
+     * Whether this is the main artifact being built. Set to <code>false</code> if you don't want to
+     * install or deploy it to the local repository instead of the default one in an execution.
+     *
      * @parameter expression="${primaryArtifact}" default-value="true"
      */
     private boolean primaryArtifact;
 
-    /**
-     * @component
-     */
+    /** @component */
     private MavenProjectHelper projectHelper;
 
     /**
      * Executes the AarMojo on the current project.
-     * 
-     * @throws MojoExecutionException
-     *             if an error occured while building the webapp
+     *
+     * @throws MojoExecutionException if an error occured while building the webapp
      */
-    public void execute() throws MojoExecutionException
-    {
+    public void execute() throws MojoExecutionException {
 
-        File aarFile = new File( outputDirectory, aarName + ".aar" );
+        File aarFile = new File(outputDirectory, aarName + ".aar");
 
-        try
-        {
-            performPackaging( aarFile );
+        try {
+            performPackaging(aarFile);
         }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Error assembling aar", e );
+        catch (Exception e) {
+            throw new MojoExecutionException("Error assembling aar", e);
         }
     }
 
     /**
      * Generates the aar.
-     * 
-     * @param aarFile
-     *            the target aar file
+     *
+     * @param aarFile the target aar file
      * @throws IOException
      * @throws ArchiverException
      * @throws ManifestException
      * @throws DependencyResolutionRequiredException
+     *
      */
-    private void performPackaging( File aarFile )
-        throws IOException, ArchiverException, ManifestException, DependencyResolutionRequiredException,
-        MojoExecutionException
-    {
+    private void performPackaging(File aarFile)
+            throws IOException, ArchiverException, ManifestException,
+            DependencyResolutionRequiredException,
+            MojoExecutionException {
 
-        buildExplodedAar( );
+        buildExplodedAar();
 
         // generate aar file
-        getLog().info( "Generating aar " + aarFile.getAbsolutePath() );
+        getLog().info("Generating aar " + aarFile.getAbsolutePath());
         MavenArchiver archiver = new MavenArchiver();
-        archiver.setArchiver( jarArchiver );
-        archiver.setOutputFile( aarFile );
-        jarArchiver.addDirectory( aarDirectory );
+        archiver.setArchiver(jarArchiver);
+        archiver.setOutputFile(aarFile);
+        jarArchiver.addDirectory(aarDirectory);
 
         // create archive
-        archiver.createArchive( project, archive );
+        archiver.createArchive(project, archive);
 
-        if ( classifier != null )
-        {
-            projectHelper.attachArtifact( project, "aar", classifier, aarFile );
-        }
-        else
-        {
+        if (classifier != null) {
+            projectHelper.attachArtifact(project, "aar", classifier, aarFile);
+        } else {
             Artifact artifact = project.getArtifact();
-            if ( primaryArtifact )
-            {
-                artifact.setFile( aarFile );
-            }
-            else if ( artifact.getFile() == null || artifact.getFile().isDirectory() )
-            {
-                artifact.setFile( aarFile );
-            }
-            else
-            {
-                projectHelper.attachArtifact( project, "aar", aarFile );
+            if (primaryArtifact) {
+                artifact.setFile(aarFile);
+            } else if (artifact.getFile() == null || artifact.getFile().isDirectory()) {
+                artifact.setFile(aarFile);
+            } else {
+                projectHelper.attachArtifact(project, "aar", aarFile);
             }
         }
     }

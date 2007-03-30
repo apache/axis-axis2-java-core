@@ -29,7 +29,8 @@ public class EchoBlockingClient {
     public OMElement sendMsg(SunGroupHClientUtil util, String soapAction) {
         OMElement firstchild = null;
 
-        EndpointReference targetEPR = new EndpointReference("http://soapinterop.java.sun.com:80/round4/grouph/complexrpcenc");
+        EndpointReference targetEPR = new EndpointReference(
+                "http://soapinterop.java.sun.com:80/round4/grouph/complexrpcenc");
         try {
             Options options = new Options();
             options.setTo(targetEPR);

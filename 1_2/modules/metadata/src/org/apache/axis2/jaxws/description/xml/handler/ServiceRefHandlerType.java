@@ -8,8 +8,6 @@
 
 package org.apache.axis2.jaxws.description.xml.handler;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -18,24 +16,23 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * 
- * 
- * 	Declares the handler for a port-component. Handlers can access the
- * 	init-param name/value pairs using the HandlerInfo interface. If
- * 	port-name is not specified, the handler is assumed to be associated
- * 	with all ports of the service.
- * 
- * 	Used in: service-ref
- * 
- *       
- * 
+ * Declares the handler for a port-component. Handlers can access the init-param name/value pairs
+ * using the HandlerInfo interface. If port-name is not specified, the handler is assumed to be
+ * associated with all ports of the service.
+ * <p/>
+ * Used in: service-ref
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for service-ref_handlerType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="service-ref_handlerType">
  *   &lt;complexContent>
@@ -44,50 +41,59 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
  *         &lt;element name="handler-name" type="{http://java.sun.com/xml/ns/javaee}string"/>
  *         &lt;element name="handler-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="init-param" type="{http://java.sun.com/xml/ns/javaee}param-valueType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="soap-header" type="{http://java.sun.com/xml/ns/javaee}xsdQNameType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="soap-role" type="{http://java.sun.com/xml/ns/javaee}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="port-name" type="{http://java.sun.com/xml/ns/javaee}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="init-param" type="{http://java.sun.com/xml/ns/javaee}param-valueType"
+ * maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="soap-header" type="{http://java.sun.com/xml/ns/javaee}xsdQNameType"
+ * maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="soap-role" type="{http://java.sun.com/xml/ns/javaee}string"
+ * maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="port-name" type="{http://java.sun.com/xml/ns/javaee}string"
+ * maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "service-ref_handlerType", propOrder = {
-    "description",
-    "displayName",
-    "icon",
-    "handlerName",
-    "handlerClass",
-    "initParam",
-    "soapHeader",
-    "soapRole",
-    "portName"
-})
+        "description",
+        "displayName",
+        "icon",
+        "handlerName",
+        "handlerClass",
+        "initParam",
+        "soapHeader",
+        "soapRole",
+        "portName"
+        })
 public class ServiceRefHandlerType {
 
     @XmlElement(namespace = "http://java.sun.com/xml/ns/javaee", required = true)
     protected List<DescriptionType> description;
-    @XmlElement(name = "display-name", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "display-name", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected List<DisplayNameType> displayName;
     @XmlElement(namespace = "http://java.sun.com/xml/ns/javaee", required = true)
     protected List<IconType> icon;
-    @XmlElement(name = "handler-name", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "handler-name", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected org.apache.axis2.jaxws.description.xml.handler.String handlerName;
-    @XmlElement(name = "handler-class", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "handler-class", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected FullyQualifiedClassType handlerClass;
-    @XmlElement(name = "init-param", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "init-param", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected List<ParamValueType> initParam;
-    @XmlElement(name = "soap-header", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "soap-header", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected List<XsdQNameType> soapHeader;
-    @XmlElement(name = "soap-role", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "soap-role", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected List<org.apache.axis2.jaxws.description.xml.handler.String> soapRole;
-    @XmlElement(name = "port-name", namespace = "http://java.sun.com/xml/ns/javaee", required = true)
+    @XmlElement(name = "port-name", namespace = "http://java.sun.com/xml/ns/javaee",
+                required = true)
     protected List<org.apache.axis2.jaxws.description.xml.handler.String> portName;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -96,25 +102,21 @@ public class ServiceRefHandlerType {
 
     /**
      * Gets the value of the description property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the description property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the description property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DescriptionType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link DescriptionType }
      */
     public List<DescriptionType> getDescription() {
         if (description == null) {
@@ -125,25 +127,21 @@ public class ServiceRefHandlerType {
 
     /**
      * Gets the value of the displayName property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the displayName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the displayName property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDisplayName().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link DisplayNameType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link DisplayNameType }
      */
     public List<DisplayNameType> getDisplayName() {
         if (displayName == null) {
@@ -154,25 +152,21 @@ public class ServiceRefHandlerType {
 
     /**
      * Gets the value of the icon property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the icon property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the icon property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIcon().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link IconType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link IconType }
      */
     public List<IconType> getIcon() {
         if (icon == null) {
@@ -183,11 +177,8 @@ public class ServiceRefHandlerType {
 
     /**
      * Gets the value of the handlerName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link org.apache.axis2.jaxws.description.xml.handler.String }
-     *     
+     *
+     * @return possible object is {@link String }
      */
     public org.apache.axis2.jaxws.description.xml.handler.String getHandlerName() {
         return handlerName;
@@ -195,11 +186,9 @@ public class ServiceRefHandlerType {
 
     /**
      * Sets the value of the handlerName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link org.apache.axis2.jaxws.description.xml.handler.String }
-     *     
+     *
+     * @param value allowed object is {@link String
+     *              }
      */
     public void setHandlerName(org.apache.axis2.jaxws.description.xml.handler.String value) {
         this.handlerName = value;
@@ -207,11 +196,8 @@ public class ServiceRefHandlerType {
 
     /**
      * Gets the value of the handlerClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FullyQualifiedClassType }
-     *     
+     *
+     * @return possible object is {@link FullyQualifiedClassType }
      */
     public FullyQualifiedClassType getHandlerClass() {
         return handlerClass;
@@ -219,11 +205,8 @@ public class ServiceRefHandlerType {
 
     /**
      * Sets the value of the handlerClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FullyQualifiedClassType }
-     *     
+     *
+     * @param value allowed object is {@link FullyQualifiedClassType }
      */
     public void setHandlerClass(FullyQualifiedClassType value) {
         this.handlerClass = value;
@@ -231,25 +214,21 @@ public class ServiceRefHandlerType {
 
     /**
      * Gets the value of the initParam property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the initParam property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the initParam property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getInitParam().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ParamValueType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link ParamValueType }
      */
     public List<ParamValueType> getInitParam() {
         if (initParam == null) {
@@ -260,25 +239,21 @@ public class ServiceRefHandlerType {
 
     /**
      * Gets the value of the soapHeader property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the soapHeader property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the soapHeader property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSoapHeader().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link XsdQNameType }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link XsdQNameType }
      */
     public List<XsdQNameType> getSoapHeader() {
         if (soapHeader == null) {
@@ -289,25 +264,22 @@ public class ServiceRefHandlerType {
 
     /**
      * Gets the value of the soapRole property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the soapRole property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the soapRole property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSoapRole().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link org.apache.axis2.jaxws.description.xml.handler.String }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link
+     * org.apache.axis2.jaxws.description.xml.handler.String }
      */
     public List<org.apache.axis2.jaxws.description.xml.handler.String> getSoapRole() {
         if (soapRole == null) {
@@ -318,25 +290,22 @@ public class ServiceRefHandlerType {
 
     /**
      * Gets the value of the portName property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the portName property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any
+     * modification you make to the returned list will be present inside the JAXB object. This is
+     * why there is not a <CODE>set</CODE> method for the portName property.
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPortName().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link org.apache.axis2.jaxws.description.xml.handler.String }
-     * 
-     * 
+     * <p/>
+     * <p/>
+     * <p/>
+     * Objects of the following type(s) are allowed in the list {@link
+     * org.apache.axis2.jaxws.description.xml.handler.String }
      */
     public List<org.apache.axis2.jaxws.description.xml.handler.String> getPortName() {
         if (portName == null) {
@@ -347,11 +316,8 @@ public class ServiceRefHandlerType {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @return possible object is {@link java.lang.String }
      */
     public java.lang.String getId() {
         return id;
@@ -359,11 +325,8 @@ public class ServiceRefHandlerType {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link java.lang.String }
-     *     
+     *
+     * @param value allowed object is {@link java.lang.String }
      */
     public void setId(java.lang.String value) {
         this.id = value;

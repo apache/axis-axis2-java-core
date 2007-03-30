@@ -20,16 +20,16 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This is a value class that is an agnostic representation of a fault.
- * The XMLFault can be added to or queried from a Message/XMLPart.
- * 
- * Even though XMLFault is SOAP 1.1/SOAP 1.2 agnostic, SOAP 1.2 terms will be used.
- * For example, "reason" means SOAP 1.2 Reason or SOAP 1.1 faultstring.
- * 
+ * This is a value class that is an agnostic representation of a fault. The XMLFault can be added to
+ * or queried from a Message/XMLPart.
+ * <p/>
+ * Even though XMLFault is SOAP 1.1/SOAP 1.2 agnostic, SOAP 1.2 terms will be used. For example,
+ * "reason" means SOAP 1.2 Reason or SOAP 1.1 faultstring.
+ *
  * @see XMLFaultUtils
  */
 public class XMLFault {
-    
+
     // Here is a sample comprehensive SOAP 1.2 fault which will help you understand the
     // structure of XMLFault.
     // <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
@@ -55,7 +55,7 @@ public class XMLFault {
     //      </env:Fault>
     //   </env:Body>
     // </env:Envelope>
-    
+
     // Here is the same information rendered as a SOAP 1.1 fault.  Notice
     // that this is a subset of information.
     // <env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
@@ -72,22 +72,24 @@ public class XMLFault {
     //      </env:Fault>
     //   </env:Body>
     // </env:Envelope>
-    
+
     // The required information (necessary for both SOAP 1.1 and SOAP 1.2)
     private XMLFaultCode code;
     private XMLFaultReason reason;
     private Block[] detailBlocks;
-    
+
     // The optional information (can be set on XMLFault, but only rendered in SOAP 1.2 Faults)
     private String role;
     private String node;
-    private QName[] subCodes = null;  // The subCodes are user-defined.  The values are not defined by a specification
+    private QName[] subCodes =
+            null;  // The subCodes are user-defined.  The values are not defined by a specification
     private XMLFaultReason[] secondaryReasons = null;
-   
+
     /**
      * Construct Application XMLFault with minimum required information
-     * @param code - XMLFaultCode or null if default XMLFaultCode
-     * @param reason - String reason
+     *
+     * @param code         - XMLFaultCode or null if default XMLFaultCode
+     * @param reason       - String reason
      * @param detailBlocks - Block[] or null if no detailBlocks
      */
     public XMLFault(XMLFaultCode code, XMLFaultReason reason, Block[] detailBlocks) {
@@ -102,7 +104,8 @@ public class XMLFault {
 
     /**
      * Construct System XMLFault with minimum required information
-     * @param code - XMLFaultCode or null if default XMLFaultCode
+     *
+     * @param code   - XMLFaultCode or null if default XMLFaultCode
      * @param reason - String reason
      */
     public XMLFault(XMLFaultCode code, XMLFaultReason reason) {
@@ -110,89 +113,67 @@ public class XMLFault {
     }
 
 
-    /**
-     * @return Returns the code.
-     */
+    /** @return Returns the code. */
     public XMLFaultCode getCode() {
         return code;
     }
 
 
-    /**
-     * @return Returns the detailBlocks.
-     */
+    /** @return Returns the detailBlocks. */
     public Block[] getDetailBlocks() {
         return detailBlocks;
     }
 
 
-    /**
-     * @return Returns the reason.
-     */
+    /** @return Returns the reason. */
     public XMLFaultReason getReason() {
         return reason;
     }
 
 
-    /**
-     * @return Returns the node.
-     */
+    /** @return Returns the node. */
     public String getNode() {
         return node;
     }
 
 
-    /**
-     * @param node The node to set.
-     */
+    /** @param node The node to set. */
     public void setNode(String node) {
         this.node = node;
     }
 
 
-    /**
-     * @return Returns the role.
-     */
+    /** @return Returns the role. */
     public String getRole() {
         return role;
     }
 
 
-    /**
-     * @param role The role to set.
-     */
+    /** @param role The role to set. */
     public void setRole(String role) {
         this.role = role;
     }
 
 
-    /**
-     * @return Returns the secondaryReasons.
-     */
+    /** @return Returns the secondaryReasons. */
     public XMLFaultReason[] getSecondaryReasons() {
         return secondaryReasons;
     }
 
 
-    /**
-     * @param secondaryReasons The secondaryReasons to set.
-     */
+    /** @param secondaryReasons The secondaryReasons to set. */
     public void setSecondaryReasons(XMLFaultReason[] secondaryReasons) {
         this.secondaryReasons = secondaryReasons;
     }
 
 
-    /**
-     * @return Returns the subCodes.
-     */
+    /** @return Returns the subCodes. */
     public QName[] getSubCodes() {
         return subCodes;
     }
 
 
-    /**
-     * @param subCodes The subCodes to set.
-     */
+    /** @param subCodes The subCodes to set. */
     public void setSubCodes(QName[] subCodes) {
         this.subCodes = subCodes;
     }

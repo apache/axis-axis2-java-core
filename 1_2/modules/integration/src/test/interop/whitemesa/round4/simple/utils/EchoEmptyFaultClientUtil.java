@@ -31,7 +31,8 @@ public class EchoEmptyFaultClientUtil implements SunClientUtil {
         SOAPEnvelope reqEnv = fac.getDefaultEnvelope();
 
         OMNamespace omNs = fac.createOMNamespace("http://soapinterop.org/wsdl", "m");
-        OMNamespace envNs = reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
+        OMNamespace envNs =
+                reqEnv.declareNamespace("http://schemas.xmlsoap.org/soap/envelope/", "soapenv");
 
         OMElement operation = fac.createOMElement("echoEmptyFault", omNs);
         operation.declareNamespace(envNs);

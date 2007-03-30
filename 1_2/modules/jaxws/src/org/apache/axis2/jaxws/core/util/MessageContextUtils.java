@@ -21,53 +21,51 @@ import org.apache.axis2.jaxws.ExceptionFactory;
 import org.apache.axis2.jaxws.core.MessageContext;
 import org.apache.axis2.util.MessageContextBuilder;
 
-/**
- * A utility class for handling some of the common issues related to 
- * the JAX-WS MessageContext.
- */
+/** A utility class for handling some of the common issues related to the JAX-WS MessageContext. */
 public class MessageContextUtils {
 
     /**
-     * Given a request MessageContext, create a new MessageContext from there with the necessary 
-     * information to make sure the new MessageContext is related to the existing one.  
-     * 
+     * Given a request MessageContext, create a new MessageContext from there with the necessary
+     * information to make sure the new MessageContext is related to the existing one.
+     *
      * @param mc - the MessageContext to use as the source
      * @return
      */
     public static MessageContext createResponseMessageContext(MessageContext mc) {
         try {
             org.apache.axis2.context.MessageContext sourceAxisMC = mc.getAxisMessageContext();
-            
+
             // There are a number of things that need to be copied over at the
             // Axis2 level.
-            org.apache.axis2.context.MessageContext newAxisMC = 
-                MessageContextBuilder.createOutMessageContext(sourceAxisMC);
-            
+            org.apache.axis2.context.MessageContext newAxisMC =
+                    MessageContextBuilder.createOutMessageContext(sourceAxisMC);
+
             MessageContext newMC = new MessageContext(newAxisMC);
-            
+
             return newMC;
         } catch (AxisFault e) {
             throw ExceptionFactory.makeWebServiceException(e);
         }
     }
-    
+
     /**
      * Given a request MessageContext, create a new MessageContext for a fault response.
-     * 
+     *
      * @param mc
      * @return
      */
     public static MessageContext createFaultMessageContext(MessageContext mc) {
         try {
-            org.apache.axis2.context.MessageContext faultMC = MessageContextBuilder.createFaultMessageContext(
-                    mc.getAxisMessageContext(), null);
+            org.apache.axis2.context.MessageContext faultMC =
+                    MessageContextBuilder.createFaultMessageContext(
+                            mc.getAxisMessageContext(), null);
             MessageContext jaxwsFaultMC = new MessageContext(faultMC);
             return jaxwsFaultMC;
         }
         catch (AxisFault e) {
-            
+
         }
         return null;
     }
-    
+
 }

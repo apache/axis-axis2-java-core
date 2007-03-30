@@ -25,31 +25,26 @@ import java.text.NumberFormat;
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gYear">XML Schema 3.2.11</a>
  */
 public class Year implements Serializable {
-	
+
     private static final long serialVersionUID = 7498876120334857019L;
-    
-	int year;
+
+    int year;
     String timezone = null;
 
-    /**
-     * Constructs a Year with the given values
-     * No timezone is specified
-     */
+    /** Constructs a Year with the given values No timezone is specified */
     public Year(int year) throws NumberFormatException {
         setValue(year);
     }
 
     /**
-     * Constructs a Year with the given values, including a timezone string
-     * The timezone is validated but not used.
+     * Constructs a Year with the given values, including a timezone string The timezone is
+     * validated but not used.
      */
     public Year(int year, String timezone) throws NumberFormatException {
         setValue(year, timezone);
     }
 
-    /**
-     * Construct a Year from a String in the format [-]CCYY[timezone]
-     */
+    /** Construct a Year from a String in the format [-]CCYY[timezone] */
     public Year(String source) throws NumberFormatException {
         int negative = 0;
 
@@ -58,7 +53,7 @@ public class Year implements Serializable {
         }
         if (source.length() < (4 + negative)) {
             throw new NumberFormatException();
-                    //Messages.getMessage("badYear00"));
+            //Messages.getMessage("badYear00"));
         }
 
         // calculate how many more than 4 digits (if any) in the year
@@ -67,7 +62,7 @@ public class Year implements Serializable {
             ++pos;
         }
 
-        setValue(Integer.parseInt(source.substring(0,pos)),
+        setValue(Integer.parseInt(source.substring(0, pos)),
                  source.substring(pos));
     }
 
@@ -79,7 +74,7 @@ public class Year implements Serializable {
         // validate year, more than 4 digits are allowed!
         if (year == 0) {
             throw new NumberFormatException();
-                    //Messages.getMessage("badYear00"));
+            //Messages.getMessage("badYear00"));
         }
 
         this.year = year;
@@ -93,19 +88,19 @@ public class Year implements Serializable {
         // validate timezone
         if (timezone != null && timezone.length() > 0) {
             // Format [+/-]HH:MM
-            if (timezone.charAt(0)=='+' || (timezone.charAt(0)=='-')) {
-                    if (timezone.length() != 6 ||
+            if (timezone.charAt(0) == '+' || (timezone.charAt(0) == '-')) {
+                if (timezone.length() != 6 ||
                         !Character.isDigit(timezone.charAt(1)) ||
                         !Character.isDigit(timezone.charAt(2)) ||
-                        timezone.charAt(3) != ':'              ||
+                        timezone.charAt(3) != ':' ||
                         !Character.isDigit(timezone.charAt(4)) ||
                         !Character.isDigit(timezone.charAt(5)))
-                        throw new NumberFormatException();
-                                //Messages.getMessage("badTimezone00"));
+                    throw new NumberFormatException();
+                //Messages.getMessage("badTimezone00"));
 
             } else if (!timezone.equals("Z")) {
                 throw new NumberFormatException();
-                       // Messages.getMessage("badTimezone00"));
+                // Messages.getMessage("badTimezone00"));
             }
             // if we got this far, its good
             this.timezone = timezone;
@@ -113,7 +108,7 @@ public class Year implements Serializable {
     }
 
     public void setValue(int year, String timezone)
-        throws NumberFormatException {
+            throws NumberFormatException {
         setYear(year);
         setTimezone(timezone);
     }
@@ -140,7 +135,7 @@ public class Year implements Serializable {
 
     public boolean equals(Object obj) {
         if (!(obj instanceof Year)) return false;
-        Year other = (Year) obj;
+        Year other = (Year)obj;
         if (this == obj) return true;
 
         boolean equals = (this.year == other.year);
@@ -151,8 +146,7 @@ public class Year implements Serializable {
     }
 
     /**
-     * Return the value of year XORed with the hashCode of timezone
-     * iff one is defined.
+     * Return the value of year XORed with the hashCode of timezone iff one is defined.
      *
      * @return an <code>int</code> value
      */

@@ -17,8 +17,6 @@
 
 package org.apache.axis2.policy.builders;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.policy.model.MTOMAssertion;
 import org.apache.commons.logging.Log;
@@ -27,28 +25,25 @@ import org.apache.neethi.Assertion;
 import org.apache.neethi.AssertionBuilderFactory;
 import org.apache.neethi.builders.AssertionBuilder;
 
-/**
- * The builder will be picked by the "org.apache.neethi.AssertionBuilderFactory".
- * 
- * */
-public class MTOMAssertionBuilder implements AssertionBuilder{
-		
-		private static Log log = LogFactory.getLog(MTOMAssertionBuilder.class);
-	  	
-	    public Assertion build(OMElement element, AssertionBuilderFactory factory) throws IllegalArgumentException 
-	    { 
-	    	MTOMAssertion mtomAssertion = new MTOMAssertion();
-	    	return mtomAssertion;
-	    }
-	    
-	    public QName[] getKnownElements() 
-	    {
-	    	return new QName[] {new QName(MTOMAssertion.NS, MTOMAssertion.MTOM_SERIALIZATION_CONFIG_LN)};
-	    }
-	    
-   
-	    
-	    
+import javax.xml.namespace.QName;
+
+/** The builder will be picked by the "org.apache.neethi.AssertionBuilderFactory". */
+public class MTOMAssertionBuilder implements AssertionBuilder {
+
+    private static Log log = LogFactory.getLog(MTOMAssertionBuilder.class);
+
+    public Assertion build(OMElement element, AssertionBuilderFactory factory)
+            throws IllegalArgumentException {
+        MTOMAssertion mtomAssertion = new MTOMAssertion();
+        return mtomAssertion;
+    }
+
+    public QName[] getKnownElements() {
+        return new QName[] {
+                new QName(MTOMAssertion.NS, MTOMAssertion.MTOM_SERIALIZATION_CONFIG_LN) };
+    }
+
+
 }
 
 

@@ -1,6 +1,5 @@
 package org.apache.axis2.engine;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axis2.context.MessageContext;
@@ -38,10 +37,10 @@ import java.util.GregorianCalendar;
 public class ThreadingTest extends UtilServerBasedTestCase implements TestConstants {
 
 
-	private static final Log log = LogFactory.getLog(ThreadingTest.class);
+    private static final Log log = LogFactory.getLog(ThreadingTest.class);
 
     protected QName transportName = new QName("http://localhost/my",
-            "NullTransport");
+                                              "NullTransport");
 
     protected AxisConfiguration engineRegistry;
     protected MessageContext mc;
@@ -57,8 +56,8 @@ public class ThreadingTest extends UtilServerBasedTestCase implements TestConsta
     protected void setUp() throws Exception {
         service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
     }
 
@@ -90,7 +89,7 @@ public class ThreadingTest extends UtilServerBasedTestCase implements TestConsta
                 }
                 Exception exception = invokerThreads[i].getThrownException();
                 if (exception != null) {
-                    throw new Exception("Exception thrown in thread "+ i + " ....", exception);
+                    throw new Exception("Exception thrown in thread " + i + " ....", exception);
                 }
             }
 

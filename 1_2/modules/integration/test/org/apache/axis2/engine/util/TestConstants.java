@@ -21,9 +21,7 @@ import javax.xml.namespace.QName;
  * limitations under the License.
  */
 
-/**
- * This will contain the information shared across the integration test cases.
- */
+/** This will contain the information shared across the integration test cases. */
 public interface TestConstants {
     public static final EndpointReference targetEPR = new EndpointReference(
             "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
@@ -33,6 +31,6 @@ public interface TestConstants {
     public static final QName serviceName = new QName("EchoXMLService");
 
     public static final QName operationName = new QName("echoOMElement");
-    
+
     public static final QName swaServiceName = new QName("EchoSwAService");
 }

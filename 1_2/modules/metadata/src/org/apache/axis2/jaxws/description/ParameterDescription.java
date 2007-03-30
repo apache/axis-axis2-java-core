@@ -17,53 +17,57 @@
 
 
 package org.apache.axis2.jaxws.description;
+
 import javax.jws.WebParam;
 
 /**
- * A ParameterDescripton corresponds to parameter to a method on an SEI. That
- * SEI could be explicit (i.e. WebService.endpointInterface=sei.class) or
- * implicit (i.e. public methods on the service implementation are the contract
- * and thus the implicit SEI).
- * 
- * ParameterDescriptons contain information that is only relevent for and
- * SEI-based service, i.e. one that is invoked via specific methods. This class
- * does not exist for Provider-based services (i.e. those that specify
- * WebServiceProvider)
- * 
+ * A ParameterDescripton corresponds to parameter to a method on an SEI. That SEI could be explicit
+ * (i.e. WebService.endpointInterface=sei.class) or implicit (i.e. public methods on the service
+ * implementation are the contract and thus the implicit SEI).
+ * <p/>
+ * ParameterDescriptons contain information that is only relevent for and SEI-based service, i.e.
+ * one that is invoked via specific methods. This class does not exist for Provider-based services
+ * (i.e. those that specify WebServiceProvider)
+ * <p/>
  * <pre>
  *  <b>ParameternDescription details</b>
- *  
- *      CORRESPONDS TO:      A parameter to a method on an SEI (on both Client and Server)      
- *          
+ * <p/>
+ *      CORRESPONDS TO:      A parameter to a method on an SEI (on both Client and Server)
+ * <p/>
  *      AXIS2 DELEGATE:      None
- *      
+ * <p/>
  *      CHILDREN:            None
- *      
+ * <p/>
  *      ANNOTATIONS:
  *          WebParam [181]
- *      
+ * <p/>
  *      WSDL ELEMENTS:
  *          message parts
- *          
+ * <p/>
  * </pre>
- * 
  */
 public interface ParameterDescription {
 // TODO: Fix this to not be the WebParam mode
 //    public enum Mode{IN, OUT, INOUT};
+
     public OperationDescription getOperationDescription();
-    
+
     public String getParameterName();
+
     public String getTargetNamespace();
+
     public String getPartName();
-    
+
     public boolean isHolderType();
+
     public Class getParameterType();
+
     public Class getParameterActualType();
-    
+
     public boolean isHeader();
 //  TODO: Fix this to not be the WebParam mode
+
     public WebParam.Mode getMode();
 
-    
+
 }

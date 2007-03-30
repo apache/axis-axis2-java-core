@@ -22,8 +22,8 @@ import com.sun.tools.xjc.api.Mapping;
 import com.sun.tools.xjc.api.S2JJAXBModel;
 import com.sun.tools.xjc.api.SchemaCompiler;
 import com.sun.tools.xjc.api.XJC;
-import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.util.SchemaUtil;
+import org.apache.axis2.util.URLProcessor;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 import org.apache.axis2.wsdl.databinding.DefaultTypeMapper;
 import org.apache.axis2.wsdl.databinding.JavaTypeMapper;
@@ -45,59 +45,58 @@ import java.util.Vector;
 public class CodeGenerationUtility {
 
     /**
-     *
      * @param additionalSchemas
      * @throws RuntimeException
      */
     public static TypeMapper processSchemas(List schemas,
-                                             Element[] additionalSchemas,
-                                             CodeGenConfiguration cgconfig)
-        throws RuntimeException
-    {
+                                            Element[] additionalSchemas,
+                                            CodeGenConfiguration cgconfig)
+            throws RuntimeException {
         try {
 
-        	//check for the imported types. Any imported types are supposed to be here also
+            //check for the imported types. Any imported types are supposed to be here also
             if (schemas == null || schemas.isEmpty()) {
                 //there are no types to be code generated
                 //However if the type mapper is left empty it will be a problem for the other
                 //processes. Hence the default type mapper is set to the configuration
                 return new DefaultTypeMapper();
             }
-            
+
             Vector xmlObjectsVector = new Vector();
-            
+
             //create the type mapper
             JavaTypeMapper mapper = new JavaTypeMapper();
 
             String baseURI = cgconfig.getBaseURI();
-            
+
             for (int i = 0; i < schemas.size(); i++) {
-                XmlSchema schema = (XmlSchema) schemas.get(i);
-                InputSource inputSource = new InputSource(new StringReader(getSchemaAsString(schema)));
+                XmlSchema schema = (XmlSchema)schemas.get(i);
+                InputSource inputSource =
+                        new InputSource(new StringReader(getSchemaAsString(schema)));
                 inputSource.setSystemId(baseURI);
                 xmlObjectsVector.add(inputSource);
             }
 
             File outputDir = new File(cgconfig.getOutputLocation(), "src");
             outputDir.mkdir();
-            
+
             Map nsMap = cgconfig.getUri2PackageNameMap();
 
             for (int i = 0; i < xmlObjectsVector.size(); i++) {
-            	
+
                 SchemaCompiler sc = XJC.createSchemaCompiler();
-                XmlSchema schema = (XmlSchema) schemas.get(i);
+                XmlSchema schema = (XmlSchema)schemas.get(i);
 
                 String pkg = null;
-                if(nsMap != null) {
-                    pkg = (String) nsMap.get(schema.getTargetNamespace());
+                if (nsMap != null) {
+                    pkg = (String)nsMap.get(schema.getTargetNamespace());
                 }
                 if (pkg == null) {
                     pkg = extractNamespace(schema);
                 }
                 sc.setDefaultPackageName(pkg);
 
-                sc.parseSchema((InputSource) xmlObjectsVector.elementAt(i));
+                sc.parseSchema((InputSource)xmlObjectsVector.elementAt(i));
 
                 // Bind the XML
                 S2JJAXBModel jaxbModel = sc.bind();
@@ -111,13 +110,12 @@ public class CodeGenerationUtility {
 
                 Iterator iter = mappings.iterator();
 
-                while ( iter.hasNext() )
-                {
+                while (iter.hasNext()) {
                     Mapping mapping = (Mapping)iter.next();
                     QName qn = mapping.getElement();
                     String typeName = mapping.getType().getTypeClass().fullName();
 
-                    mapper.addTypeMappingName( qn, typeName );
+                    mapper.addTypeMappingName(qn, typeName);
                 }
             }
 
@@ -151,5 +149,5 @@ public class CodeGenerationUtility {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         schema.write(baos);
         return baos.toString();
-    }    
+    }
 }

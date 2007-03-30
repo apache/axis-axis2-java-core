@@ -22,8 +22,8 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNode;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.engine.ObjectSupplier;
 import org.apache.axis2.databinding.typemapping.SimpleTypeMapper;
+import org.apache.axis2.engine.ObjectSupplier;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;
@@ -51,14 +51,14 @@ public class MultirefHelper {
     }
 
     public OMElement getOMElement(String id) {
-        return (OMElement) omElementMap.get(id);
+        return (OMElement)omElementMap.get(id);
     }
 
     public OMElement processOMElementRef(String id) throws AxisFault {
         if (!filledTable) {
             readallChildElements();
         }
-        OMElement val = (OMElement) elementMap.get(id);
+        OMElement val = (OMElement)elementMap.get(id);
         if (val == null) {
             throw new AxisFault("Invalid reference :" + id);
         } else {
@@ -72,7 +72,7 @@ public class MultirefHelper {
     public OMElement processElementforRefs(OMElement elemnts) throws AxisFault {
         Iterator itr = elemnts.getChildElements();
         while (itr.hasNext()) {
-            OMElement omElement = (OMElement) itr.next();
+            OMElement omElement = (OMElement)itr.next();
             OMAttribute attri = processRefAtt(omElement);
             if (attri != null) {
                 String ref = getAttvalue(attri);
@@ -85,7 +85,7 @@ public class MultirefHelper {
                 while (itrChild.hasNext()) {
                     Object obj = itrChild.next();
                     if (obj instanceof OMNode) {
-                        omElement.addChild((OMNode) obj);
+                        omElement.addChild((OMNode)obj);
                     }
                 }
             }
@@ -97,11 +97,12 @@ public class MultirefHelper {
         return new StAXOMBuilder(ele.getXMLStreamReader()).getDocumentElement();
     }
 
-    public Object processRef(Class javatype, String id  , ObjectSupplier objectSupplier) throws AxisFault {
+    public Object processRef(Class javatype, String id, ObjectSupplier objectSupplier)
+            throws AxisFault {
         if (!filledTable) {
             readallChildElements();
         }
-        OMElement val = (OMElement) elementMap.get(id);
+        OMElement val = (OMElement)elementMap.get(id);
         if (val == null) {
             throw new AxisFault("Invalid reference :" + id);
         } else {
@@ -123,7 +124,7 @@ public class MultirefHelper {
                 objectmap.put(id, valobj);
                 return valobj;
             } else {
-                Object obj = BeanUtil.deserialize(javatype, val, this , objectSupplier);
+                Object obj = BeanUtil.deserialize(javatype, val, this, objectSupplier);
                 objectmap.put(id, obj);
                 return obj;
             }
@@ -133,7 +134,7 @@ public class MultirefHelper {
     private void readallChildElements() {
         Iterator childs = parent.getChildElements();
         while (childs.hasNext()) {
-            OMElement omElement = (OMElement) childs.next();
+            OMElement omElement = (OMElement)childs.next();
             OMAttribute id = omElement.getAttribute(new QName("id"));
             if (id != null) {
                 omElement.build();

@@ -16,31 +16,32 @@
  */
 package org.apache.axis2.jaxws.runtime.description.injection;
 
-import org.apache.axis2.jaxws.description.OperationDescription;
 import org.apache.axis2.jaxws.description.ServiceDescription;
 import org.apache.axis2.jaxws.runtime.description.injection.impl.ResourceInjectionServiceRuntimeDescriptionBuilder;
 
 public class ResourceInjectionServiceRuntimeDescriptionFactory {
 
-    /**
-     * intentionally private
-     */
-    private ResourceInjectionServiceRuntimeDescriptionFactory() {}
+    /** intentionally private */
+    private ResourceInjectionServiceRuntimeDescriptionFactory() {
+    }
 
     /**
      * Get or create MarshalServiceRuntimeDescription
+     *
      * @param serviceDesc
      * @param implClass
      * @return OperationRuntimeDescription
      */
-    public static ResourceInjectionServiceRuntimeDescription get(ServiceDescription serviceDesc, Class implClass) {
+    public static ResourceInjectionServiceRuntimeDescription get(ServiceDescription serviceDesc,
+                                                                 Class implClass) {
         String key = ResourceInjectionServiceRuntimeDescriptionBuilder.getKey(implClass);
-        ResourceInjectionServiceRuntimeDescription  risrDesc = 
-            (ResourceInjectionServiceRuntimeDescription ) 
-                serviceDesc.getServiceRuntimeDesc(key);
-        
+        ResourceInjectionServiceRuntimeDescription risrDesc =
+                (ResourceInjectionServiceRuntimeDescription)
+                        serviceDesc.getServiceRuntimeDesc(key);
+
         if (risrDesc == null) {
-            risrDesc = ResourceInjectionServiceRuntimeDescriptionBuilder.create(serviceDesc, implClass);
+            risrDesc = ResourceInjectionServiceRuntimeDescriptionBuilder
+                    .create(serviceDesc, implClass);
             serviceDesc.setServiceRuntimeDesc(risrDesc);
         }
         return risrDesc;

@@ -16,14 +16,14 @@
 
 package org.apache.axis2.jibx.beans;
 
-public class Type
-{
+public class Type {
     private String m_name;
     private String m_description;
     private int m_count;
-    
-    public Type() {}
-    
+
+    public Type() {
+    }
+
     public Type(String name, String description) {
         m_name = name;
         m_description = description;
@@ -32,15 +32,15 @@ public class Type
     public String getName() {
         return m_name;
     }
-    
+
     public String getDescription() {
         return m_description;
     }
-    
+
     public int getCount() {
         return m_count;
     }
-    
+
     public void setCount(int count) {
         m_count = count;
     }

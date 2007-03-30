@@ -19,7 +19,7 @@ package org.apache.axis2.json;
 import javax.xml.namespace.QName;
 
 public interface JSONTestConstants {
-    
+
     public static final QName serviceName = new QName("EchoXMLService");
 
     public static final QName operationName = new QName("echoOM");

@@ -36,9 +36,11 @@ public class GDRpcVoidUtil implements SunClientUtil {
         reqEnv.declareNamespace("http://soapinterop.org/WSDLInteropTestRpcEnc", "tns");
         reqEnv.declareNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
 
-        OMElement operation = omfactory.createOMElement("echoVoid", "http://soapinterop.org/WSDLInteropTestRpcEnc", null);
+        OMElement operation = omfactory
+                .createOMElement("echoVoid", "http://soapinterop.org/WSDLInteropTestRpcEnc", null);
         reqEnv.getBody().addChild(operation);
-        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/", null);
+        operation.addAttribute("soapenv:encodingStyle", "http://schemas.xmlsoap.org/soap/encoding/",
+                               null);
 
         return reqEnv;
 

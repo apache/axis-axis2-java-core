@@ -1,14 +1,14 @@
 package org.apache.axis2.om;
 
 import junit.framework.TestCase;
-import za.co.eskom.nrs.xmlvend.base.x20.schema.AdviceReqDocument;
-import za.co.eskom.nrs.xmlvend.base.x20.schema.MsgID;
-import za.co.eskom.nrs.xmlvend.base.x20.schema.ConfirmationAdviceReq;
-import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.om.OMAbstractFactory;
-import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMAttribute;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axis2.util.StreamWrapper;
+import za.co.eskom.nrs.xmlvend.base.x20.schema.AdviceReqDocument;
+import za.co.eskom.nrs.xmlvend.base.x20.schema.ConfirmationAdviceReq;
+import za.co.eskom.nrs.xmlvend.base.x20.schema.MsgID;
 
 import javax.xml.namespace.QName;
 /*
@@ -28,12 +28,12 @@ import javax.xml.namespace.QName;
  */
 
 /**
- * To run this test,maven build should have been run and the
- * relevant type classes need to be generated
+ * To run this test,maven build should have been run and the relevant type classes need to be
+ * generated
  */
 public class OMAttributeTest extends TestCase {
 
-    public void testAttribNamespace(){
+    public void testAttribNamespace() {
 
         //create a documentType
         AdviceReqDocument doc = AdviceReqDocument.Factory.newInstance();
@@ -51,12 +51,13 @@ public class OMAttributeTest extends TestCase {
         OMElement elt = builder.getDocumentElement();
 
         //traverse the element and look at the namespace of the attribute
-        OMAttribute att = elt.getAttribute(new QName("http://www.w3.org/2001/XMLSchema-instance","type"));
+        OMAttribute att =
+                elt.getAttribute(new QName("http://www.w3.org/2001/XMLSchema-instance", "type"));
         assertNotNull(att);
 
         String prefix = att.getNamespace().getPrefix();
         assertNotNull(prefix);
-        assertEquals(prefix,"xsi");
+        assertEquals(prefix, "xsi");
 
     }
 

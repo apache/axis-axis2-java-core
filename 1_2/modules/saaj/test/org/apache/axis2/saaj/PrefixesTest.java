@@ -15,9 +15,7 @@
  */
 package org.apache.axis2.saaj;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
+import junit.framework.TestCase;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -29,8 +27,9 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 import javax.xml.soap.Text;
-
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.Iterator;
 
 public class PrefixesTest extends TestCase {
 
@@ -64,16 +63,17 @@ public class PrefixesTest extends TestCase {
     public void testAttribute() throws Exception {
         String soappacket =
                 "<soapenv:Envelope xmlns:soapenv =\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-                "                   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n" +
-                "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
-                "   <soapenv:Body>\n" +
-                "       <t:helloworld t:name=\"test\" xmlns:t='http://test.org/Test'>Hello</t:helloworld>\n" +
-                "   </soapenv:Body>\n" +
-                "</soapenv:Envelope>";
+                        "                   xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"\n" +
+                        "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+                        "   <soapenv:Body>\n" +
+                        "       <t:helloworld t:name=\"test\" xmlns:t='http://test.org/Test'>Hello</t:helloworld>\n" +
+                        "   </soapenv:Body>\n" +
+                        "</soapenv:Envelope>";
 
         SOAPMessage msg =
                 MessageFactory.newInstance().createMessage(new MimeHeaders(),
-                                                           new ByteArrayInputStream(soappacket.getBytes()));
+                                                           new ByteArrayInputStream(
+                                                                   soappacket.getBytes()));
         SOAPBody body = msg.getSOAPPart().getEnvelope().getBody();
         msg.writeTo(System.out);
 
@@ -86,10 +86,10 @@ public class PrefixesTest extends TestCase {
             if (obj instanceof Text) {
                 //System.out.println("\n- Text Ignored.");
             } else {
-                final SOAPElement soapElement = (SOAPElement) obj;
+                final SOAPElement soapElement = (SOAPElement)obj;
                 final Iterator attIter = soapElement.getAllAttributes();
                 while (attIter.hasNext()) {
-                    final Name name = (Name) attIter.next();
+                    final Name name = (Name)attIter.next();
                     assertEquals("test", soapElement.getAttributeValue(name));
                     assertEquals("t", name.getPrefix());
                     assertEquals("t:name", name.getQualifiedName());
@@ -111,21 +111,21 @@ public class PrefixesTest extends TestCase {
             SOAPMessage msg = fac.createMessage();
             SOAPEnvelope env = msg.getSOAPPart().getEnvelope();
             SOAPHeader header = msg.getSOAPHeader();
-            
-            Name name = env.createName("Local","pre1", "http://test1");
+
+            Name name = env.createName("Local", "pre1", "http://test1");
             SOAPElement local = header.addChildElement(name);
 
-            Name name2 = env.createName("Local1","pre1", "http://test1");
+            Name name2 = env.createName("Local1", "pre1", "http://test1");
             SOAPElement local2 = local.addChildElement(name2);
 
-            Name aName = env.createName("attrib","pre1", "http://test1");
+            Name aName = env.createName("attrib", "pre1", "http://test1");
             local2.addAttribute(aName, "value");
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             msg.writeTo(baos);
-            
+
             String xml = new String(baos.toByteArray());
-            
+
             assertTrue(xml.indexOf("xmlns:http://test1") == -1);
             assertTrue(xml.indexOf("pre1:attrib=\"value\"") > 0);
 

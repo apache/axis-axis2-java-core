@@ -19,17 +19,18 @@ package test.interop.sun.round4.simple;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
-import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.transport.http.HTTPConstants;
 import test.interop.sun.round4.simple.util.SunGroupHClientUtil;
 
 public class EchoBlockingClient {
     public OMElement sendMsg(SunGroupHClientUtil util, String soapAction) {
         OMElement firstchild = null;
         EndpointReference targetEPR =
-                new EndpointReference("http://soapinterop.java.sun.com:80/round4/grouph/simplerpcenc");
+                new EndpointReference(
+                        "http://soapinterop.java.sun.com:80/round4/grouph/simplerpcenc");
         try {
             Options options = new Options();
             options.setTo(targetEPR);

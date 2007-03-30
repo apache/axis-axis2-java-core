@@ -21,9 +21,7 @@ import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
 
 import java.lang.reflect.Method;
 
-/**
- * Extension for simple data binding.
- */
+/** Extension for simple data binding. */
 public class SimpleDBExtension extends AbstractDBProcessingExtension {
 
     private static final String ADB_INVOKE_CLASS_NAME =
@@ -45,8 +43,8 @@ public class SimpleDBExtension extends AbstractDBProcessingExtension {
                     forName(ADB_INVOKE_CLASS_NAME);
             Method invokeMethod = adbGeneratorClass.getMethod(
                     INVOKE_METHOD_NAME,
-                    new Class[]{CodeGenConfiguration.class});
-            invokeMethod.invoke(null,new Object[]{configuration});
+                    new Class[] { CodeGenConfiguration.class });
+            invokeMethod.invoke(null, new Object[] { configuration });
 
         } catch (Exception e) {
             throw new RuntimeException(e);

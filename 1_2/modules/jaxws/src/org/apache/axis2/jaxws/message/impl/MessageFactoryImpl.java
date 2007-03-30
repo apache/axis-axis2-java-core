@@ -16,14 +16,6 @@
  */
 package org.apache.axis2.jaxws.message.impl;
 
-import java.util.Iterator;
-
-import javax.xml.soap.AttachmentPart;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.ws.WebServiceException;
-
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 import org.apache.axiom.soap.SOAPEnvelope;
@@ -37,80 +29,87 @@ import org.apache.axis2.jaxws.message.databinding.SOAPEnvelopeBlock;
 import org.apache.axis2.jaxws.message.factory.MessageFactory;
 import org.apache.axis2.jaxws.message.util.MessageUtils;
 
-/**
- * MessageFactoryImpl
- */
+import javax.xml.soap.AttachmentPart;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.ws.WebServiceException;
+import java.util.Iterator;
+
+/** MessageFactoryImpl */
 public class MessageFactoryImpl implements MessageFactory {
 
-	/**
-	 * Default Constructor required for Factory 
-	 */
-	public MessageFactoryImpl() {
-		super();
-	}
+    /** Default Constructor required for Factory */
+    public MessageFactoryImpl() {
+        super();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(javax.xml.stream.XMLStreamReader)
-	 */
-	public Message createFrom(XMLStreamReader reader, Protocol protocol) throws XMLStreamException, WebServiceException {
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(javax.xml.stream.XMLStreamReader)
+      */
+    public Message createFrom(XMLStreamReader reader, Protocol protocol)
+            throws XMLStreamException, WebServiceException {
         StAXOMBuilder builder;
         if (protocol == Protocol.rest) {
             // Build a normal OM tree
             builder = new StAXOMBuilder(reader);
         } else {
             // Build a SOAP OM tree
-            builder = new StAXSOAPModelBuilder(reader, null);  // Pass null as the version to trigger autodetection
+            builder = new StAXSOAPModelBuilder(reader,
+                                               null);  // Pass null as the version to trigger autodetection
         }
         OMElement omElement = builder.getDocumentElement();
-		return createFrom(omElement, protocol);
-	}
+        return createFrom(omElement, protocol);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.MessageFactory#createFrom(org.apache.axiom.om.OMElement)
-	 */
-	public Message createFrom(OMElement omElement, Protocol protocol) throws XMLStreamException, WebServiceException {
-		return new MessageImpl(omElement, protocol);
-	}
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.MessageFactory#createFrom(org.apache.axiom.om.OMElement)
+      */
+    public Message createFrom(OMElement omElement, Protocol protocol)
+            throws XMLStreamException, WebServiceException {
+        return new MessageImpl(omElement, protocol);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.MessageFactory#create(org.apache.axis2.jaxws.message.Protocol)
-	 */
-	public Message create(Protocol protocol) throws XMLStreamException, WebServiceException {
-		return new MessageImpl(protocol);
-	}
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.MessageFactory#create(org.apache.axis2.jaxws.message.Protocol)
+      */
+    public Message create(Protocol protocol) throws XMLStreamException, WebServiceException {
+        return new MessageImpl(protocol);
+    }
 
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(javax.xml.soap.SOAPMessage)
-	 */
-	public Message createFrom(SOAPMessage message) throws XMLStreamException, WebServiceException {
-		try {
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(javax.xml.soap.SOAPMessage)
+      */
+    public Message createFrom(SOAPMessage message) throws XMLStreamException, WebServiceException {
+        try {
             // Create a Message with an XMLPart from the SOAPEnvelope
-			Message m = new MessageImpl(message.getSOAPPart().getEnvelope());
-			if (message.countAttachments() > 0) {
+            Message m = new MessageImpl(message.getSOAPPart().getEnvelope());
+            if (message.countAttachments() > 0) {
                 Iterator it = message.getAttachments();
                 while (it.hasNext()) {
-                    AttachmentPart ap = (AttachmentPart) it.next();
+                    AttachmentPart ap = (AttachmentPart)it.next();
                     Attachment a = MessageUtils.createAttachment(ap, m);
                     m.addAttachment(a);
                 }
             }
-			return m;
-		} catch (Exception e) {
-			throw ExceptionFactory.makeWebServiceException(e);
-		}
-	}
+            return m;
+        } catch (Exception e) {
+            throw ExceptionFactory.makeWebServiceException(e);
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(org.apache.axis2.jaxws.message.Block, java.lang.Object)
-	 */
-	public Message createFrom(Block block, Object context, Protocol protocol) throws XMLStreamException, WebServiceException {
-		
-		// Small optimization to quickly consider the SOAPEnvelope case
-		if (block instanceof SOAPEnvelopeBlock) {
-			return new MessageImpl((SOAPEnvelope) block.getBusinessObject(true), protocol);
-		}
-		return createFrom(block.getXMLStreamReader(true), protocol);
-	}
+    /* (non-Javadoc)
+      * @see org.apache.axis2.jaxws.message.factory.MessageFactory#createFrom(org.apache.axis2.jaxws.message.Block, java.lang.Object)
+      */
+    public Message createFrom(Block block, Object context, Protocol protocol)
+            throws XMLStreamException, WebServiceException {
+
+        // Small optimization to quickly consider the SOAPEnvelope case
+        if (block instanceof SOAPEnvelopeBlock) {
+            return new MessageImpl((SOAPEnvelope)block.getBusinessObject(true), protocol);
+        }
+        return createFrom(block.getXMLStreamReader(true), protocol);
+    }
 
 }

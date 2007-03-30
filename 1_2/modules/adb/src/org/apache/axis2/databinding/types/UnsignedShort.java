@@ -25,24 +25,24 @@ public class UnsignedShort extends UnsignedInt {
 
     private static final long serialVersionUID = 6822598447692816380L;
 
-	public UnsignedShort() {
+    public UnsignedShort() {
 
     }
 
     /**
      * ctor for UnsignedShort
-     * @exception NumberFormatException will be thrown if validation fails
+     *
+     * @throws NumberFormatException will be thrown if validation fails
      */
     public UnsignedShort(long sValue) throws NumberFormatException {
-      setValue(sValue);
+        setValue(sValue);
     }
 
     public UnsignedShort(String sValue) throws NumberFormatException {
-      setValue(Long.parseLong(sValue));
+        setValue(Long.parseLong(sValue));
     }
 
     /**
-     *
      * validates the data and sets the value for the object.
      *
      * @param sValue value
@@ -50,16 +50,12 @@ public class UnsignedShort extends UnsignedInt {
     public void setValue(long sValue) throws NumberFormatException {
         if (!UnsignedShort.isValid(sValue))
             throw new NumberFormatException(
-               // Messages.getMessage("badUnsignedShort00") +
+                    // Messages.getMessage("badUnsignedShort00") +
                     String.valueOf(sValue) + "]");
         lValue = new Long(sValue);
     }
 
-    /**
-     *
-     * validate the value against the xsd definition
-     *
-     */
+    /** validate the value against the xsd definition */
     public static boolean isValid(long sValue) {
         return !((sValue < 0L) || (sValue > 65535L));
     }

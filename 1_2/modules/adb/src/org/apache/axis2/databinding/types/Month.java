@@ -24,47 +24,42 @@ import java.text.NumberFormat;
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gMonth">XML Schema 3.2.14</a>
  */
 public class Month implements java.io.Serializable {
-	
+
     private static final long serialVersionUID = -7469265802807262347L;
-    
-	int month;
+
+    int month;
     String timezone;
 
-    /**
-     * Constructs a Month with the given values
-     * No timezone is specified
-     */
+    /** Constructs a Month with the given values No timezone is specified */
     public Month(int month) throws NumberFormatException {
         setValue(month);
     }
 
     /**
-     * Constructs a Month with the given values, including a timezone string
-     * The timezone is validated but not used.
+     * Constructs a Month with the given values, including a timezone string The timezone is
+     * validated but not used.
      */
     public Month(int month, String timezone)
-        throws NumberFormatException {
+            throws NumberFormatException {
         setValue(month, timezone);
     }
 
-    /**
-     * Construct a Month from a String in the format --MM--[timezone]
-     */
+    /** Construct a Month from a String in the format --MM--[timezone] */
     public Month(String source) throws NumberFormatException {
         if (source.length() < (6)) {
             throw new NumberFormatException();
-                   // Messages.getMessage("badMonth00"));
+            // Messages.getMessage("badMonth00"));
         }
 
         if (source.charAt(0) != '-' ||
-            source.charAt(1) != '-' ||
-            source.charAt(4) != '-' ||
-            source.charAt(5) != '-' ) {
+                source.charAt(1) != '-' ||
+                source.charAt(4) != '-' ||
+                source.charAt(5) != '-') {
             throw new NumberFormatException();
-                    //Messages.getMessage("badMonth00"));
+            //Messages.getMessage("badMonth00"));
         }
 
-        setValue(Integer.parseInt(source.substring(2,4)),
+        setValue(Integer.parseInt(source.substring(2, 4)),
                  source.substring(6));
     }
 
@@ -76,7 +71,7 @@ public class Month implements java.io.Serializable {
         // validate month
         if (month < 1 || month > 12) {
             throw new NumberFormatException();
-                   // Messages.getMessage("badMonth00"));
+            // Messages.getMessage("badMonth00"));
         }
         this.month = month;
     }
@@ -89,19 +84,19 @@ public class Month implements java.io.Serializable {
         // validate timezone
         if (timezone != null && timezone.length() > 0) {
             // Format [+/-]HH:MM
-            if (timezone.charAt(0)=='+' || (timezone.charAt(0)=='-')) {
-                    if (timezone.length() != 6 ||
+            if (timezone.charAt(0) == '+' || (timezone.charAt(0) == '-')) {
+                if (timezone.length() != 6 ||
                         !Character.isDigit(timezone.charAt(1)) ||
                         !Character.isDigit(timezone.charAt(2)) ||
-                        timezone.charAt(3) != ':'              ||
+                        timezone.charAt(3) != ':' ||
                         !Character.isDigit(timezone.charAt(4)) ||
                         !Character.isDigit(timezone.charAt(5)))
-                        throw new NumberFormatException();
-                                //Messages.getMessage("badTimezone00"));
+                    throw new NumberFormatException();
+                //Messages.getMessage("badTimezone00"));
 
             } else if (!timezone.equals("Z")) {
                 throw new NumberFormatException();
-                        //Messages.getMessage("badTimezone00"));
+                //Messages.getMessage("badTimezone00"));
             }
             // if we got this far, its good
             this.timezone = timezone;
@@ -135,7 +130,7 @@ public class Month implements java.io.Serializable {
 
     public boolean equals(Object obj) {
         if (!(obj instanceof Month)) return false;
-        Month other = (Month) obj;
+        Month other = (Month)obj;
         if (this == obj) return true;
 
         boolean equals = (this.month == other.month);
@@ -146,8 +141,7 @@ public class Month implements java.io.Serializable {
     }
 
     /**
-     * Return the value of month XORed with the hashCode of timezone
-     * iff one is defined.
+     * Return the value of month XORed with the hashCode of timezone iff one is defined.
      *
      * @return an <code>int</code> value
      */

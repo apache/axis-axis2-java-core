@@ -1,7 +1,7 @@
 package org.apache.axis2.wsdl.util;
 
-import org.apache.axis2.wsdl.i18n.CodegenMessages;
 import org.apache.axis2.wsdl.codegen.CodeGenConfiguration;
+import org.apache.axis2.wsdl.i18n.CodegenMessages;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -9,8 +9,8 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Iterator;
+import java.util.Map;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -27,17 +27,14 @@ import java.util.Iterator;
  * limitations under the License.
  */
 
-public class XSLTIncludeResolver implements URIResolver,Constants {
+public class XSLTIncludeResolver implements URIResolver, Constants {
 
     private CodeGenConfiguration configuration;
 
     public XSLTIncludeResolver() {
     }
 
-    /**
-     * 
-     * @param config
-     */
+    /** @param config  */
     public XSLTIncludeResolver(CodeGenConfiguration config) {
         this.configuration = config;
     }
@@ -45,6 +42,7 @@ public class XSLTIncludeResolver implements URIResolver,Constants {
 
     /**
      * Resolves a given href and base combination
+     *
      * @param href
      * @param base
      * @throws TransformerException
@@ -54,27 +52,27 @@ public class XSLTIncludeResolver implements URIResolver,Constants {
         Map externalPropertyMap = configuration.getProperties();
 
         InputStream supporterTemplateStream;
-        if (XSLT_INCLUDE_DATABIND_SUPPORTER_HREF_KEY.equals(href)){
+        if (XSLT_INCLUDE_DATABIND_SUPPORTER_HREF_KEY.equals(href)) {
             //use the language name from the configuration to search the key
             //our search only consists of looking for the data binding name
             //in the key
             Map dbSupporterMap = ConfigPropertyFileLoader.getDbSupporterTemplatesMap();
             String key;
-            for (Iterator keys = dbSupporterMap.keySet().iterator();keys.hasNext();){
-                key = (String) keys.next();
-                if (key.indexOf(configuration.getDatabindingType())!=-1){
+            for (Iterator keys = dbSupporterMap.keySet().iterator(); keys.hasNext();) {
+                key = (String)keys.next();
+                if (key.indexOf(configuration.getDatabindingType()) != -1) {
                     return getSourceFromTemplateName((String)dbSupporterMap.get(key));
                 }
             }
         }
 
-        if (XSLT_INCLUDE_TEST_OBJECT_HREF_KEY.equals((href))){
-              return getSourceFromTemplateName(ConfigPropertyFileLoader.getTestObjectTemplateName());
+        if (XSLT_INCLUDE_TEST_OBJECT_HREF_KEY.equals((href))) {
+            return getSourceFromTemplateName(ConfigPropertyFileLoader.getTestObjectTemplateName());
         }
 
-        if (externalPropertyMap.get(href)!=null){
+        if (externalPropertyMap.get(href) != null) {
             templateName = externalPropertyMap.get(href).toString();
-            if(templateName!=null){
+            if (templateName != null) {
                 supporterTemplateStream = getClass().getResourceAsStream(templateName);
                 return new StreamSource(supporterTemplateStream);
             }
@@ -85,25 +83,29 @@ public class XSLTIncludeResolver implements URIResolver,Constants {
 
     /**
      * load the template from a given resource path
+     *
      * @param templateName
-     * @return  the loaded transform source
+     * @return the loaded transform source
      * @throws TransformerException
      */
     private Source getSourceFromTemplateName(String templateName) throws TransformerException {
         InputStream supporterTemplateStream;
-        if(templateName!=null){
+        if (templateName != null) {
             supporterTemplateStream = getClass().getResourceAsStream(templateName);
             return new StreamSource(supporterTemplateStream);
-        } else{
-            throw new TransformerException(CodegenMessages.getMessage("resolver.templateNotFound",templateName));
+        } else {
+            throw new TransformerException(
+                    CodegenMessages.getMessage("resolver.templateNotFound", templateName));
         }
     }
 
     /**
      * returns an empty source
+     *
      * @return stream source
      */
-    private Source getEmptySource(){
-        return new StreamSource(new ByteArrayInputStream("<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"/>".getBytes()));
+    private Source getEmptySource() {
+        return new StreamSource(new ByteArrayInputStream(
+                "<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"/>".getBytes()));
     }
 }

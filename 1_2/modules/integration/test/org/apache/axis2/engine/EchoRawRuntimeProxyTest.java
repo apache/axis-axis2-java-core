@@ -1,6 +1,5 @@
 package org.apache.axis2.engine;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.apache.axiom.om.OMElement;
@@ -61,8 +60,8 @@ public class EchoRawRuntimeProxyTest extends UtilServerBasedTestCase {
     protected void setUp() throws Exception {
         AxisService service =
                 Utils.createSimpleService(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                          Echo.class.getName(),
+                                          operationName);
         UtilServer.deployService(service);
 
 
@@ -79,7 +78,8 @@ public class EchoRawRuntimeProxyTest extends UtilServerBasedTestCase {
         /**
          * Proxy setting in runtime
          */
-        HttpTransportProperties.ProxyProperties proxyproperties = new HttpTransportProperties.ProxyProperties();
+        HttpTransportProperties.ProxyProperties proxyproperties =
+                new HttpTransportProperties.ProxyProperties();
         proxyproperties.setProxyName("localhost");
         proxyproperties.setProxyPort(5555);
         proxyproperties.setDomain("anonymous");
@@ -92,7 +92,7 @@ public class EchoRawRuntimeProxyTest extends UtilServerBasedTestCase {
         options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
         ConfigurationContext configContext =
                 ConfigurationContextFactory.createConfigurationContextFromFileSystem(
-                       null, null);
+                        null, null);
         ServiceClient sender = new ServiceClient(configContext, null);
         sender.setOptions(options);
 

@@ -17,10 +17,9 @@
 package org.apache.axis2.wsdl.codegen;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.description.WSDL11ToAxisServiceBuilder;
 import org.apache.axis2.description.WSDL20ToAxisServiceBuilder;
-import org.apache.axis2.description.WSDL20ToAllAxisServicesBuilder;
-import org.apache.axis2.description.WSDL11ToAllAxisServicesBuilder;
 import org.apache.axis2.util.CommandLineOption;
 import org.apache.axis2.util.CommandLineOptionConstants;
 import org.apache.axis2.util.CommandLineOptionParser;
@@ -37,7 +36,6 @@ import org.xml.sax.SAXException;
 
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
-import javax.wsdl.Service;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.namespace.QName;
@@ -48,7 +46,6 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
 
 public class CodeGenerationEngine {
 
@@ -56,14 +53,13 @@ public class CodeGenerationEngine {
 
     /** Array List for pre-extensions. Extensions that run before the emitter */
     private List preExtensions = new ArrayList();
-    /** Array List for post-extensions. Extensions that run after the codegens*/
+    /** Array List for post-extensions. Extensions that run after the codegens */
     private List postExtensions = new ArrayList();
 
     /** Codegen configuration  reference */
     private CodeGenConfiguration configuration;
 
     /**
-     * 
      * @param configuration
      * @throws CodeGenerationException
      */
@@ -73,7 +69,6 @@ public class CodeGenerationEngine {
     }
 
     /**
-     *
      * @param parser
      * @throws CodeGenerationException
      */
@@ -89,22 +84,22 @@ public class CodeGenerationEngine {
             configuration = new CodeGenConfiguration(allOptions);
 
 
-            if(CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
-                    equals(configuration.getWSDLVersion())){
+            if (CommandLineOptionConstants.WSDL2JavaConstants.WSDL_VERSION_2.
+                    equals(configuration.getWSDLVersion())) {
                 WSDL20ToAxisServiceBuilder builder = new WSDL20ToAxisServiceBuilder(wsdlUri,
-                                configuration.getServiceName(),
-                                configuration.getPortName());
+                                                                                    configuration.getServiceName(),
+                                                                                    configuration.getPortName());
                 builder.setCodegen(true);
                 configuration.addAxisService(builder.populateService());
 
-            }else{
+            } else {
                 //It'll be WSDL 1.1
                 Definition wsdl4jDef = readInTheWSDLFile(wsdlUri);
 
                 // we save the original wsdl definition to write it to the resource folder later
                 // this is required only if it has imports
                 Map imports = wsdl4jDef.getImports();
-                if ((imports != null) && (imports.size() > 0)){
+                if ((imports != null) && (imports.size() > 0)) {
                     configuration.setWsdlDefinition(readInTheWSDLFile(wsdlUri));
                 } else {
                     configuration.setWsdlDefinition(wsdl4jDef);
@@ -117,7 +112,8 @@ public class CodeGenerationEngine {
                 QName serviceQname = null;
 
                 if (configuration.getServiceName() != null) {
-                    serviceQname = new QName(wsdl4jDef.getTargetNamespace(), configuration.getServiceName());
+                    serviceQname = new QName(wsdl4jDef.getTargetNamespace(),
+                                             configuration.getServiceName());
                 }
 
                 WSDL11ToAxisServiceBuilder builder = null;
@@ -131,16 +127,20 @@ public class CodeGenerationEngine {
                 } else {
                     builder = new WSDL11ToAllAxisServicesBuilder(wsdl4jDef);
                     builder.setCodegen(true);
-                    configuration.setAxisServices(((WSDL11ToAllAxisServicesBuilder) builder).populateAllServices());
+                    configuration.setAxisServices(
+                            ((WSDL11ToAllAxisServicesBuilder)builder).populateAllServices());
                 }
             }
 
         } catch (AxisFault axisFault) {
-            throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), axisFault);
+            throw new CodeGenerationException(
+                    CodegenMessages.getMessage("engine.wsdlParsingException"), axisFault);
         } catch (WSDLException e) {
-            throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), e);
+            throw new CodeGenerationException(
+                    CodegenMessages.getMessage("engine.wsdlParsingException"), e);
         } catch (Exception e) {
-            throw new CodeGenerationException(CodegenMessages.getMessage("engine.wsdlParsingException"), e);
+            throw new CodeGenerationException(
+                    CodegenMessages.getMessage("engine.wsdlParsingException"), e);
         }
 
         configuration.setBaseURI(getBaseURI(wsdlUri));
@@ -155,19 +155,20 @@ public class CodeGenerationEngine {
     private void loadExtensions() throws CodeGenerationException {
         //load pre extensions
         String[] extensions = ConfigPropertyFileLoader.getExtensionClassNames();
-        if (extensions!=null){
+        if (extensions != null) {
             for (int i = 0; i < extensions.length; i++) {
                 //load the Extension class
-                addPreExtension((CodeGenExtension) getObjectFromClassName(extensions[i].trim()));
+                addPreExtension((CodeGenExtension)getObjectFromClassName(extensions[i].trim()));
             }
         }
 
         //load post extensions
         String[] postExtensions = ConfigPropertyFileLoader.getPostExtensionClassNames();
-        if (postExtensions!=null){
+        if (postExtensions != null) {
             for (int i = 0; i < postExtensions.length; i++) {
                 //load the Extension class
-                addPostExtension((CodeGenExtension) getObjectFromClassName(postExtensions[i].trim()));
+                addPostExtension(
+                        (CodeGenExtension)getObjectFromClassName(postExtensions[i].trim()));
             }
         }
 
@@ -175,33 +176,36 @@ public class CodeGenerationEngine {
 
     /**
      * Adds a given extension to the list
+     *
      * @param ext
      */
     private void addPreExtension(CodeGenExtension ext) {
-        if(ext != null) {
+        if (ext != null) {
             preExtensions.add(ext);
         }
     }
 
     /**
      * Adds a given extension to the list
+     *
      * @param ext
      */
     private void addPostExtension(CodeGenExtension ext) {
-        if(ext != null) {
+        if (ext != null) {
             postExtensions.add(ext);
         }
     }
 
     /**
      * Generate the code!!
+     *
      * @throws CodeGenerationException
      */
     public void generate() throws CodeGenerationException {
         try {
             //engage the pre-extensions
             for (int i = 0; i < preExtensions.size(); i++) {
-                ((CodeGenExtension) preExtensions.get(i)).engage(configuration);
+                ((CodeGenExtension)preExtensions.get(i)).engage(configuration);
             }
 
             Emitter emitter;
@@ -213,20 +217,20 @@ public class CodeGenerationEngine {
                 // have already figured this out and thrown an error message. However in case the
                 // users decides to mess with the config it is safe to keep this check in order to throw
                 // a meaningful error message
-                throw new CodeGenerationException(CodegenMessages.getMessage("engine.noProperDatabindingException"));
+                throw new CodeGenerationException(
+                        CodegenMessages.getMessage("engine.noProperDatabindingException"));
             }
 
             //Find and invoke the emitter by reflection
             Map emitterMap = ConfigPropertyFileLoader.getLanguageEmitterMap();
             String className = (String)emitterMap.get(configuration.getOutputLanguage());
             if (className != null) {
-                emitter = (Emitter) getObjectFromClassName(className);
+                emitter = (Emitter)getObjectFromClassName(className);
                 emitter.setCodeGenConfiguration(configuration);
                 emitter.setMapper(mapper);
             } else {
                 throw new Exception(CodegenMessages.getMessage("engine.emitterMissing"));
             }
-
 
             //invoke the necessary methods in the emitter
             if (configuration.isServerSide()) {
@@ -236,13 +240,13 @@ public class CodeGenerationEngine {
                 if (configuration.isGenerateAll()) {
                     emitter.emitStub();
                 }
-            }else{
+            } else {
                 emitter.emitStub();
             }
 
             //engage the post-extensions
             for (int i = 0; i < postExtensions.size(); i++) {
-                ((CodeGenExtension) postExtensions.get(i)).engage(configuration);
+                ((CodeGenExtension)postExtensions.get(i)).engage(configuration);
             }
 
         } catch (ClassCastException e) {
@@ -257,21 +261,22 @@ public class CodeGenerationEngine {
 
     /**
      * Read the WSDL file
+     *
      * @param uri
      * @throws WSDLException
      */
     public Definition readInTheWSDLFile(String uri) throws WSDLException {
 
-        WSDLReader reader =  WSDLFactory.newInstance().newWSDLReader();
+        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         reader.setFeature("javax.wsdl.importDocuments", true);
 
         File file = new File(uri);
         String baseURI;
 
-        if (uri.startsWith("http://")){
+        if (uri.startsWith("http://")) {
             baseURI = uri;
-        } else{
-            if(file.getParentFile() == null){
+        } else {
+            if (file.getParentFile() == null) {
                 try {
                     baseURI = new File(".").getCanonicalFile().toURI().toString();
                 } catch (IOException e) {
@@ -288,12 +293,12 @@ public class CodeGenerationEngine {
             doc = XMLUtils.newDocument(uri);
         } catch (ParserConfigurationException e) {
             throw new WSDLException(WSDLException.PARSER_ERROR,
-                    "Parser Configuration Error",
-                    e);
+                                    "Parser Configuration Error",
+                                    e);
         } catch (SAXException e) {
             throw new WSDLException(WSDLException.PARSER_ERROR,
-                    "Parser SAX Error",
-                    e);
+                                    "Parser SAX Error",
+                                    e);
 
         } catch (IOException e) {
             throw new WSDLException(WSDLException.INVALID_WSDL, "IO Error", e);
@@ -301,8 +306,6 @@ public class CodeGenerationEngine {
 
         return reader.readWSDL(baseURI, doc);
     }
-
-
 
 
     /**
@@ -318,9 +321,11 @@ public class CodeGenerationEngine {
             log.debug(CodegenMessages.getMessage("engine.extensionLoadProblem"), e);
             return null;
         } catch (InstantiationException e) {
-            throw new CodeGenerationException(CodegenMessages.getMessage("engine.extensionInstantiationProblem"), e);
+            throw new CodeGenerationException(
+                    CodegenMessages.getMessage("engine.extensionInstantiationProblem"), e);
         } catch (IllegalAccessException e) {
-            throw new CodeGenerationException(CodegenMessages.getMessage("engine.illegalExtension"), e);
+            throw new CodeGenerationException(CodegenMessages.getMessage("engine.illegalExtension"),
+                                              e);
         } catch (NoClassDefFoundError e) {
             log.debug(CodegenMessages.getMessage("engine.extensionLoadProblem"), e);
             return null;
@@ -331,11 +336,11 @@ public class CodeGenerationEngine {
     }
 
     /**
-     * calculates the base URI
-     * Needs improvement but works fine for now ;)
+     * calculates the base URI Needs improvement but works fine for now ;)
+     *
      * @param currentURI
      */
-    private String getBaseURI(String currentURI){
+    private String getBaseURI(String currentURI) {
         String baseURI;
         if (!currentURI.startsWith("http://")) {
             // the uri should be a file

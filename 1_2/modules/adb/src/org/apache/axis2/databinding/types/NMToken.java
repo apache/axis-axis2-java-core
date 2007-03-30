@@ -20,12 +20,10 @@ import org.apache.axis2.util.XMLChar;
 
 /**
  * Custom class for supporting XSD data type NMToken
- *
- * NMTOKEN represents the NMTOKEN attribute type from
- * [XML 1.0(Second Edition)]. The value space of NMTOKEN
- * is the set of tokens that match the Nmtoken production
- * in [XML 1.0 (Second Edition)].
- * The base type of NMTOKEN is token.
+ * <p/>
+ * NMTOKEN represents the NMTOKEN attribute type from [XML 1.0(Second Edition)]. The value space of
+ * NMTOKEN is the set of tokens that match the Nmtoken production in [XML 1.0 (Second Edition)]. The
+ * base type of NMTOKEN is token.
  *
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#nmtoken">XML Schema 3.3.4</a>
  */
@@ -33,13 +31,14 @@ public class NMToken extends Token {
 
     private static final long serialVersionUID = -1319741002733174329L;
 
-	public NMToken() {
+    public NMToken() {
         super();
     }
 
     /**
      * ctor for NMToken
-     * @exception IllegalArgumentException will be thrown if validation fails
+     *
+     * @throws IllegalArgumentException will be thrown if validation fails
      */
     public NMToken(String stValue) throws IllegalArgumentException {
         try {
@@ -49,22 +48,20 @@ public class NMToken extends Token {
             // recast normalizedString exception as token exception
             throw new IllegalArgumentException(
                     //  Messages.getMessage("badNmtoken00") + "data=[" +
-                stValue + "]");
+                    stValue + "]");
         }
     }
 
     /**
-     *
-     * validate the value against the xsd definition
-     * Nmtoken    ::=    (NameChar)+
-     * NameChar    ::=     Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender
+     * validate the value against the xsd definition Nmtoken    ::=    (NameChar)+ NameChar    ::=
+     * Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender
      */
     public static boolean isValid(String stValue) {
         int scan;
 
-        for (scan=0; scan < stValue.length(); scan++) {
-          if (!XMLChar.isName(stValue.charAt(scan)))
-            return false;
+        for (scan = 0; scan < stValue.length(); scan++) {
+            if (!XMLChar.isName(stValue.charAt(scan)))
+                return false;
         }
 
         return true;

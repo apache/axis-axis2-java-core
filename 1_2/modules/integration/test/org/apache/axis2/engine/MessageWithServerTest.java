@@ -20,7 +20,11 @@ package org.apache.axis2.engine;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.apache.axis2.description.*;
+import org.apache.axis2.description.AxisModule;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.HandlerDescription;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.integration.UtilServer;
 import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
@@ -56,8 +60,8 @@ public class MessageWithServerTest extends UtilServerBasedTestCase {
 
     protected void setUp() throws Exception {
         AxisService service = Utils.createSimpleService(serviceName,
-                Echo.class.getName(),
-                operationName);
+                                                        Echo.class.getName(),
+                                                        operationName);
 
         //service.setFaultInFlow(new MockFlow("service faultflow", 1));
 

@@ -24,15 +24,13 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @goal inplace
  * @requiresDependencyResolution runtime
  */
-public class AarInPlaceMojo 
-  extends AbstractAarMojo
-{
+public class AarInPlaceMojo
+        extends AbstractAarMojo {
 
-  public void execute()
-    throws MojoExecutionException
-  {
+    public void execute()
+            throws MojoExecutionException {
 
-    getLog().debug("Generating aar in source directory... " + aarDirectory);
-    buildExplodedAar();
-  }
+        getLog().debug("Generating aar in source directory... " + aarDirectory);
+        buildExplodedAar();
+    }
 }

@@ -20,12 +20,12 @@ import javax.xml.namespace.QName;
 
 public class CDefaultTypeMapper extends TypeMappingAdapter {
     private String defaultStructName = "axiom_node_t*";
+
     public CDefaultTypeMapper() {
     }
 
     /**
-     * Gets the type mapping name.
-     * always returns the default mapping
+     * Gets the type mapping name. always returns the default mapping
      *
      * @see TypeMapper#getTypeMappingName(javax.xml.namespace.QName)
      */
@@ -33,7 +33,7 @@ public class CDefaultTypeMapper extends TypeMappingAdapter {
 
         if ((qname != null)) {
             return defaultStructName;
-        }else{
+        } else {
             return null;
         }
 

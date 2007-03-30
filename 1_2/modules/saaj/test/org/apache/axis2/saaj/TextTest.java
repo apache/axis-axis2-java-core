@@ -16,8 +16,9 @@
 
 package org.apache.axis2.saaj;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import junit.framework.TestCase;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -29,11 +30,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.Text;
-
-import junit.framework.TestCase;
-
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 public class TextTest extends TestCase {
 
@@ -52,7 +50,7 @@ public class TextTest extends TestCase {
         Name bodyName = soapFactory.createName("VBGenReceiver", "xsi",
                                                "http://www.w3.org/2001/XMLSchema-instance");
         SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
-                                                           
+
         // Create the MetaData Tag
         Name name = soapFactory.createName("MetaData");
         SOAPElement metaData = bodyElement.addChildElement(name);
@@ -151,16 +149,16 @@ public class TextTest extends TestCase {
     public void testComment() throws SOAPException, IOException {
 
         String xmlString = "<?xml version='1.0' encoding='utf-8'?> " +
-                           "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-                           "<soapenv:Header></soapenv:Header>" +
-                           "<soapenv:Body>" +
-                           "<Node:abc xmlns:Node=\"http://www.simpletest.org\">" +
-                           "This is some text" +
-                           "<!--This is comment-->This is other text" +
-                           "<!--This is another comment-->This is some other text" +
-                           "</Node:abc>" +
-                           "</soapenv:Body>" +
-                           "</soapenv:Envelope>";
+                "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                "<soapenv:Header></soapenv:Header>" +
+                "<soapenv:Body>" +
+                "<Node:abc xmlns:Node=\"http://www.simpletest.org\">" +
+                "This is some text" +
+                "<!--This is comment-->This is other text" +
+                "<!--This is another comment-->This is some other text" +
+                "</Node:abc>" +
+                "</soapenv:Body>" +
+                "</soapenv:Envelope>";
 
         MessageFactory mf = MessageFactory.newInstance();
         SOAPMessage message =
@@ -175,7 +173,7 @@ public class TextTest extends TestCase {
         for (int i = 0; i < textNodes.getLength(); i++) {
             Node node = textNodes.item(i);
             boolean isComment;
-            isComment = ((Text) node).isComment();
+            isComment = ((Text)node).isComment();
             if (i == 1 || i == 3) {
                 assertEquals(true, isComment);
             } else {

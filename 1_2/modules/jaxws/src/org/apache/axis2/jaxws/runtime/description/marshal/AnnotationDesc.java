@@ -16,24 +16,16 @@
  */
 package org.apache.axis2.jaxws.runtime.description.marshal;
 
-/**
- * Annotation information cached for a particular class
- */
+/** Annotation information cached for a particular class */
 public interface AnnotationDesc {
-    
-    /**
-     * @return true if class has @XmlRootElement
-     */
+
+    /** @return true if class has @XmlRootElement */
     public boolean hasXmlRootElement();
-    
-    /**
-     * @return @XmlRootElement name or defaulted name (null if !hasXmlRootElement)
-     */
+
+    /** @return @XmlRootElement name or defaulted name (null if !hasXmlRootElement) */
     public String getXmlRootElementName();
-    
-    /**
-     * @return @XmlRootElement namespace or default namespace (null if !hasXmlRootElement)
-     */
+
+    /** @return @XmlRootElement namespace or default namespace (null if !hasXmlRootElement) */
     public String getXmlRootElementNamespace();
 
 }

@@ -20,24 +20,25 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-/** Implementation of a Spring interface who is configured in Spring's 
- *  applicationContext.xml or some other Spring type of way. This class
- *  and the spring bean needed to wire it could be used as an alternative 
- *  to getting the ApplicationContext from the ServletContext. 
+/**
+ * Implementation of a Spring interface who is configured in Spring's applicationContext.xml or some
+ * other Spring type of way. This class and the spring bean needed to wire it could be used as an
+ * alternative to getting the ApplicationContext from the ServletContext.
  */
 public class ApplicationContextHolder implements ApplicationContextAware {
 
     private static ApplicationContext appCtx;
 
-    public ApplicationContextHolder() {}
+    public ApplicationContextHolder() {
+    }
 
     /** Spring supplied interface method for injecting app context. */
-    public void setApplicationContext(ApplicationContext applicationContext) 
-        throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext)
+            throws BeansException {
         appCtx = applicationContext;
     }
 
-    /** Access to spring wired beans. */    
+    /** Access to spring wired beans. */
     public static ApplicationContext getContext() {
         return appCtx;
     }

@@ -20,20 +20,20 @@
  */
 package samples.wsdl.perf;
 
-/**
- * PerfPortTypeSkeleton java skeleton for the axisService
- */
-public class PerfPortTypeSkeleton{
+/** PerfPortTypeSkeleton java skeleton for the axisService */
+public class PerfPortTypeSkeleton {
     /**
      * Auto generated method signature
      *
      * @param param0
      */
     public samples.wsdl.perf.OutputElementDocument handleStringArray(
-        samples.wsdl.perf.InputElementDocument param0) {
+            samples.wsdl.perf.InputElementDocument param0) {
 
-        samples.wsdl.perf.OutputElementDocument output = samples.wsdl.perf.OutputElementDocument.Factory.newInstance();
-        output.setOutputElement("The Array length is - " + param0.getInputElement().getItemArray().length);
+        samples.wsdl.perf.OutputElementDocument output =
+                samples.wsdl.perf.OutputElementDocument.Factory.newInstance();
+        output.setOutputElement(
+                "The Array length is - " + param0.getInputElement().getItemArray().length);
         return output;
-    } 
+    }
 }

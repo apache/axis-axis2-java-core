@@ -3,8 +3,8 @@ package org.apache.axis2.databinding.utils.reader;
 import org.apache.axis2.util.ArrayStack;
 
 import javax.xml.namespace.NamespaceContext;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -42,29 +42,29 @@ public class ADBNamespaceContext implements NamespaceContext {
 
     /**
      * Register a namespace in this context
+     *
      * @param prefix
      * @param uri
      */
-    public void pushNamespace(String prefix,String uri){
+    public void pushNamespace(String prefix, String uri) {
         prefixStack.push(prefix);
         uriStack.push(uri);
 
     }
 
-    /**
-     * Pop a namespace
-     */
-    public void popNamespace(){
+    /** Pop a namespace */
+    public void popNamespace() {
         prefixStack.pop();
         uriStack.pop();
     }
+
     public String getNamespaceURI(String prefix) {
         //do the corrections as per the javadoc
-        if (prefixStack.contains(prefix)){
+        if (prefixStack.contains(prefix)) {
             int index = prefixStack.indexOf(prefix);
             return (String)uriStack.get(index);
         }
-        if (parentNsContext!=null){
+        if (parentNsContext != null) {
             return parentNsContext.getPrefix(prefix);
         }
         return null;
@@ -73,11 +73,11 @@ public class ADBNamespaceContext implements NamespaceContext {
     public String getPrefix(String uri) {
         //do the corrections as per the javadoc
         int index = uriStack.indexOf(uri);
-        if (index != -1){
+        if (index != -1) {
             return (String)prefixStack.get(index);
         }
 
-        if (parentNsContext!=null){
+        if (parentNsContext != null) {
             return parentNsContext.getPrefix(uri);
         }
         return null;
@@ -88,7 +88,7 @@ public class ADBNamespaceContext implements NamespaceContext {
         String[] uris = (String[])uriStack.toArray(new String[uriStack.size()]);
         ArrayList tempList = new ArrayList();
         for (int i = 0; i < uris.length; i++) {
-            if (uris[i].equals(uri)){
+            if (uris[i].equals(uri)) {
                 tempList.add(prefixStack.get(i));
                 //we assume that array conversion preserves the order
             }
@@ -100,7 +100,7 @@ public class ADBNamespaceContext implements NamespaceContext {
     }
 
 
-    private class WrappingIterator implements Iterator{
+    private class WrappingIterator implements Iterator {
 
         private Iterator containedIterator = null;
 
@@ -117,8 +117,8 @@ public class ADBNamespaceContext implements NamespaceContext {
         }
 
         /**
-         * As per the contract on the API of Namespace context
-         * the returned iterator should be immutable
+         * As per the contract on the API of Namespace context the returned iterator should be
+         * immutable
          */
         public void remove() {
             throw new UnsupportedOperationException();

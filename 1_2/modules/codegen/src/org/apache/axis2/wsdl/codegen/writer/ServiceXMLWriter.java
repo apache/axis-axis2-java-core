@@ -36,9 +36,9 @@ public class ServiceXMLWriter extends ClassWriter {
 
     public void createOutFile(String packageName, String fileName) throws Exception {
         File outputFile = FileWriter.createClassFile(outputFileLocation,
-                packageName,
-                "services",
-                ".xml");
+                                                     packageName,
+                                                     "services",
+                                                     ".xml");
         //set the existing flag
         fileExists = outputFile.exists();
         if (!fileExists) {

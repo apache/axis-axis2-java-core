@@ -28,9 +28,7 @@ import org.apache.axis2.wsdl.WSDLConstants;
 import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
 
-/**
- * @version $Rev: $ $Date: $
- */
+/** @version $Rev: $ $Date: $ */
 
 public class EchoSwA {
 
@@ -38,7 +36,7 @@ public class EchoSwA {
     }
 
     public OMElement echoAttachment(OMElement omEle) throws AxisFault {
-        OMElement child = (OMElement) omEle.getFirstOMChild();
+        OMElement child = (OMElement)omEle.getFirstOMChild();
         OMAttribute attr = child.getAttribute(new QName("href"));
         String contentID = attr.getAttributeValue();
         contentID = contentID.trim();
@@ -58,7 +56,7 @@ public class EchoSwA {
     }
 
     public OMElement echoOMElement(OMElement omEle) throws AxisFault {
-        OMElement child = (OMElement) omEle.getFirstOMChild();
+        OMElement child = (OMElement)omEle.getFirstOMChild();
         MessageContext msgCtx = MessageContext.getCurrentMessageContext();
         Attachments attachment = (msgCtx).getAttachmentMap();
         msgCtx.removeAttachment(attachment.getSOAPPartContentID());

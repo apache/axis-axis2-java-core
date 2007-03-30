@@ -42,7 +42,7 @@ public class AddressingFaultsTest extends TestCase {
             assertEquals(Final.FAULT_INVALID_HEADER_REASON, af.getMessage());
             assertEquals(new QName(Final.WSA_NAMESPACE, Final.FAULT_INVALID_HEADER),
                          af.getFaultCode());
-            assertEquals("wsa:Action", ((Map) messageContext
+            assertEquals("wsa:Action", ((Map)messageContext
                     .getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS)).get(
                     Final.FAULT_HEADER_PROB_HEADER_QNAME));
             assertEquals(Boolean.FALSE, messageContext.getProperty(
@@ -63,7 +63,7 @@ public class AddressingFaultsTest extends TestCase {
             assertEquals(Final.FAULT_INVALID_HEADER_REASON, af.getMessage());
             assertEquals(new QName(Final.WSA_NAMESPACE, Final.FAULT_INVALID_HEADER),
                          af.getFaultCode());
-            assertEquals("wsa:Action", ((Map) messageContext
+            assertEquals("wsa:Action", ((Map)messageContext
                     .getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS)).get(
                     Final.FAULT_HEADER_PROB_HEADER_QNAME));
             assertEquals(Boolean.FALSE, messageContext.getProperty(
@@ -88,7 +88,7 @@ public class AddressingFaultsTest extends TestCase {
             assertEquals(Final.FAULT_INVALID_HEADER_REASON, af.getMessage());
             assertEquals(new QName(Final.WSA_NAMESPACE, Final.FAULT_INVALID_HEADER),
                          af.getFaultCode());
-            assertEquals("wsa:ReplyTo", ((Map) messageContext
+            assertEquals("wsa:ReplyTo", ((Map)messageContext
                     .getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS)).get(
                     Final.FAULT_HEADER_PROB_HEADER_QNAME));
             assertEquals(Boolean.FALSE, messageContext.getProperty(
@@ -113,7 +113,7 @@ public class AddressingFaultsTest extends TestCase {
             assertEquals(Final.FAULT_INVALID_HEADER_REASON, af.getMessage());
             assertEquals(new QName(Final.WSA_NAMESPACE, Final.FAULT_INVALID_HEADER),
                          af.getFaultCode());
-            assertEquals("wsa:ReplyTo", ((Map) messageContext
+            assertEquals("wsa:ReplyTo", ((Map)messageContext
                     .getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS)).get(
                     Final.FAULT_HEADER_PROB_HEADER_QNAME));
             assertEquals(Boolean.FALSE, messageContext.getProperty(
@@ -137,7 +137,7 @@ public class AddressingFaultsTest extends TestCase {
             assertEquals(Final.FAULT_ADDRESSING_HEADER_REQUIRED_REASON, af.getMessage());
             assertEquals(new QName(Final.WSA_NAMESPACE, Final.FAULT_ADDRESSING_HEADER_REQUIRED),
                          af.getFaultCode());
-            assertEquals("wsa:Action", ((Map) messageContext
+            assertEquals("wsa:Action", ((Map)messageContext
                     .getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS)).get(
                     Final.FAULT_HEADER_PROB_HEADER_QNAME));
             assertEquals(Boolean.FALSE, messageContext.getProperty(
@@ -163,7 +163,7 @@ public class AddressingFaultsTest extends TestCase {
             assertEquals(
                     new QName(Final.WSA_NAMESPACE, AddressingConstants.FAULT_ACTION_NOT_SUPPORTED),
                     af.getFaultCode());
-            assertEquals("http://incorrect/action", ((Map) messageContext
+            assertEquals("http://incorrect/action", ((Map)messageContext
                     .getProperty(Constants.FAULT_INFORMATION_FOR_HEADERS)).get(
                     AddressingConstants.Final.FAULT_PROBLEM_ACTION_NAME));
             assertEquals(Boolean.FALSE, messageContext.getProperty(

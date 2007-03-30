@@ -1,10 +1,7 @@
 package org.apache.axis2.async;
 
-import javax.xml.namespace.QName;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMFactory;
@@ -29,6 +26,8 @@ import org.apache.axis2.integration.UtilServerBasedTestCase;
 import org.apache.axis2.util.Utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.xml.namespace.QName;
 /*
 * Copyright 2004,2005 The Apache Software Foundation.
 *
@@ -49,9 +48,9 @@ import org.apache.commons.logging.LogFactory;
 
 public class AsyncServiceTest extends UtilServerBasedTestCase implements TestConstants {
 
-	private static final Log log = LogFactory.getLog(AsyncServiceTest.class);
+    private static final Log log = LogFactory.getLog(AsyncServiceTest.class);
     protected QName transportName = new QName("http://localhost/my",
-            "NullTransport");
+                                              "NullTransport");
     EndpointReference targetEPR = new EndpointReference(
             "http://127.0.0.1:" + (UtilServer.TESTING_PORT)
 //            "http://127.0.0.1:" + 5556
@@ -69,9 +68,9 @@ public class AsyncServiceTest extends UtilServerBasedTestCase implements TestCon
 
     protected void setUp() throws Exception {
         service = Utils.createSimpleService(serviceName,
-                new AsyncMessageReceiver(),
-                Echo.class.getName(),
-                operationName);
+                                            new AsyncMessageReceiver(),
+                                            Echo.class.getName(),
+                                            operationName);
         UtilServer.deployService(service);
     }
 
@@ -83,8 +82,8 @@ public class AsyncServiceTest extends UtilServerBasedTestCase implements TestCon
     public void testEchoXMLCompleteASync() throws Exception {
         AxisService service =
                 Utils.createSimpleServiceforClient(serviceName,
-                        Echo.class.getName(),
-                        operationName);
+                                                   Echo.class.getName(),
+                                                   operationName);
 
         ConfigurationContext configcontext = UtilServer.createClientConfigurationContext();
 
@@ -110,7 +109,7 @@ public class AsyncServiceTest extends UtilServerBasedTestCase implements TestCon
                             result.getResponseEnvelope().getBody()
                                     .getFirstElement());
                     System.out.println("result = " + result.getResponseEnvelope().getBody()
-                                    .getFirstElement());
+                            .getFirstElement());
                     finish = true;
                 }
 

@@ -1,15 +1,13 @@
 package org.apache.axis2.databinding.utils;
 
 import junit.framework.TestCase;
+import org.apache.axiom.om.util.StAXUtils;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.StringReader;
-
-import org.apache.axiom.om.util.StAXUtils;
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
  *
@@ -28,12 +26,13 @@ import org.apache.axiom.om.util.StAXUtils;
 
 public class SimpleArrayReaderStateMachineTest extends TestCase {
 
-    public void testStateMachine() throws Exception{
-        String xmlDoc="<wrapper><myIntVal>200</myIntVal><myIntVal>200</myIntVal><myIntVal>200</myIntVal>" +
-                "<myIntVal>200</myIntVal><myIntVal>200</myIntVal><myIntVal>200</myIntVal></wrapper>";
+    public void testStateMachine() throws Exception {
+        String xmlDoc =
+                "<wrapper><myIntVal>200</myIntVal><myIntVal>200</myIntVal><myIntVal>200</myIntVal>" +
+                        "<myIntVal>200</myIntVal><myIntVal>200</myIntVal><myIntVal>200</myIntVal></wrapper>";
         XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                 new StringReader(xmlDoc));
-        SimpleArrayReaderStateMachine  sm = new SimpleArrayReaderStateMachine();
+        SimpleArrayReaderStateMachine sm = new SimpleArrayReaderStateMachine();
         sm.setElementNameToTest(new QName("myIntVal"));
         try {
             sm.read(reader);
@@ -41,25 +40,27 @@ public class SimpleArrayReaderStateMachineTest extends TestCase {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        assertEquals(6,sm.getTextArray().length);
+        assertEquals(6, sm.getTextArray().length);
 
     }
 
-    public void testStateMachine3() throws Exception{
-        String xmlDoc="<wrapper><myIntVal>200</myIntVal><myIntVal>200</myIntVal><myIntVal>200</myIntVal>" +
-                "<myIntVal>200</myIntVal><myIntVal>200</myIntVal><myIntVal>200</myIntVal></wrapper>";
+    public void testStateMachine3() throws Exception {
+        String xmlDoc =
+                "<wrapper><myIntVal>200</myIntVal><myIntVal>200</myIntVal><myIntVal>200</myIntVal>" +
+                        "<myIntVal>200</myIntVal><myIntVal>200</myIntVal><myIntVal>200</myIntVal></wrapper>";
         XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                 new StringReader(xmlDoc));
 
-        while(reader.hasNext()){
+        while (reader.hasNext()) {
             int event = reader.next();
-            if (event== XMLStreamConstants.START_ELEMENT && "myIntVal".equals(reader.getLocalName())){
+            if (event == XMLStreamConstants.START_ELEMENT &&
+                    "myIntVal".equals(reader.getLocalName())) {
                 break;
             }
 
         }
 
-        SimpleArrayReaderStateMachine  sm = new SimpleArrayReaderStateMachine();
+        SimpleArrayReaderStateMachine sm = new SimpleArrayReaderStateMachine();
         sm.setElementNameToTest(new QName("myIntVal"));
         try {
             sm.read(reader);
@@ -67,15 +68,15 @@ public class SimpleArrayReaderStateMachineTest extends TestCase {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        assertEquals(6,sm.getTextArray().length);
+        assertEquals(6, sm.getTextArray().length);
 
     }
 
-    public void testStateMachine2() throws Exception{
-        String xmlDoc="<wrapper><myIntVal>200</myIntVal></wrapper>";
+    public void testStateMachine2() throws Exception {
+        String xmlDoc = "<wrapper><myIntVal>200</myIntVal></wrapper>";
         XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                 new StringReader(xmlDoc));
-        SimpleArrayReaderStateMachine  sm = new SimpleArrayReaderStateMachine();
+        SimpleArrayReaderStateMachine sm = new SimpleArrayReaderStateMachine();
         sm.setElementNameToTest(new QName("myIntVal"));
         try {
             sm.read(reader);
@@ -83,14 +84,14 @@ public class SimpleArrayReaderStateMachineTest extends TestCase {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
-        assertEquals("200",sm.getTextArray()[0]);
+        assertEquals("200", sm.getTextArray()[0]);
     }
 
-     public void testStateMachineEmptyArray() throws Exception{
-        String xmlDoc="<wrapper></wrapper>";
+    public void testStateMachineEmptyArray() throws Exception {
+        String xmlDoc = "<wrapper></wrapper>";
         XMLStreamReader reader = StAXUtils.createXMLStreamReader(
                 new StringReader(xmlDoc));
-        SimpleArrayReaderStateMachine  sm = new SimpleArrayReaderStateMachine();
+        SimpleArrayReaderStateMachine sm = new SimpleArrayReaderStateMachine();
         sm.setElementNameToTest(new QName("myIntVal"));
         try {
             sm.read(reader);
@@ -98,7 +99,7 @@ public class SimpleArrayReaderStateMachineTest extends TestCase {
 
         }
 
-        assertEquals(0,sm.getTextArray().length);
+        assertEquals(0, sm.getTextArray().length);
 
 
     }
